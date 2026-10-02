@@ -1,0 +1,3 @@
+P1 Edit por enlace último componente (cierra)       cand=allow 9596e39=deny cd6afa6=allow v1.33.2=deny  | 
+efecto emulado -> requirements/REQ-900.md, línea 2: Estado: completado; QA: QA: pendiente
+docs/enlace.md sigue siendo enlace

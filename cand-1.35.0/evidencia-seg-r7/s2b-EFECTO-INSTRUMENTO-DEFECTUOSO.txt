@@ -1,0 +1,11 @@
+proyecto=/dev/shm/arnes-r046-projb-210118
+P0 cand: deny | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque el archivo no existe y esta llamada no es una creacion: crear un archivo es UNA sola edicion con old_string vacio y el documento entero como new_string. Sin ese documento 
+P0 9596e39: deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+P0 v1.33.2: deny | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+V1 Edit literal cierra REQ VERDE (legítimo)         cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-901.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque el archivo 
+V2 Edit literal cuerpo REQ verde (legítimo)         cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-901.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque el archivo 
+V3 Write cierra REQ VERDE (legítimo)                cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+V4 Write cierra REQ ROJO                             cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+P1 Edit por enlace último componente (cierra)       cand=allow 9596e39=deny cd6afa6=allow v1.33.2=deny  | 
+--- efecto: si la herramienta aplica P1, el REQ queda:
+Estado: en-revisión

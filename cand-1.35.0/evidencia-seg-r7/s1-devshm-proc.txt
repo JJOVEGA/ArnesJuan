@@ -1,0 +1,32 @@
+proyecto=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/p1  enlaces: /dev/shm/arnes-r046-208508 -> requirements ; /dev/shm/arnes-r046-src-208508 -> src ; /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/fuera-208508/lreq, /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/fuera-208508/lsrc
+== Controles: ruta canónica ==
+C1 Edit canónico cierra REQ rojo                    cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+C2 Write canónico coordinadora src/a.ts             cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquier
+C3 sed -i relativo cierra REQ rojo                   cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+C4 echo > src/a.ts coordinadora                      cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+== SEC-119 fuera del proyecto, enlace NO bajo /dev (controles de que la identidad funciona) ==
+O1 Edit por enlace externo                           cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+O2 Write por enlace externo                          cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquier
+O3 sed -i por enlace externo                         cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+O4 echo > por enlace externo                         cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+== /dev/shm: un enlace simbólico corriente en un tmpfs escribible ==
+D1 Edit /dev/shm/<enlace>/REQ-900.md                 cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+D1b Edit no literal (SEC-117) por /dev/shm           cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+D2 Write /dev/shm/<enlace>/a.ts coordinadora         cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+D3 sed -i por /dev/shm                               cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+D4 echo > por /dev/shm                               cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+D5 Write del REQ cerrado por /dev/shm                cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== /proc/self/root y /proc/self/cwd ==
+R1 Edit /proc/self/root<raíz>/requirements/…      cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+R2 Write /proc/self/root<raíz>/src/a.ts             cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+R3 sed -i /proc/self/root                            cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+R4 echo > /proc/self/root                            cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+R5 echo > /proc/self/cwd/src/a.ts (cwd=raíz)        cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+R6 sed -i /proc/self/cwd (cwd=raíz)                 cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== Lo legítimo bajo /dev (debe seguir pasando) ==
+N1 > /dev/null                                       cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+N2 > /dev/stderr                                     cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== El shell, de verdad: ¿escribe en el archivo protegido? (árbol aparte) ==
+src/a.ts tras escribir por /dev/shm y /proc/self/root:
+INTRUSO-shm
+INTRUSO-proc

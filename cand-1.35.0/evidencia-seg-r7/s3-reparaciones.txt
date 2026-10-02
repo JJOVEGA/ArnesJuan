@@ -1,0 +1,42 @@
+== QA-023-13: cwd = <fuera>/d␍ (enlace a la raíz); <fuera>/d normal ==
+A1 echo > src/a.ts, coordinadora                     cand=deny 9596e39=deny cd6afa6=allow v1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura d
+A2 sed -i cierra REQ rojo                            cand=deny 9596e39=deny cd6afa6=allow v1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, q
+A3 Edit relativo cierra REQ rojo                     cand=deny 9596e39=deny cd6afa6=allow v1.33.2=allow  | ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, q
+A4 Write relativo src/a.ts coordinadora              cand=deny 9596e39=deny cd6afa6=allow v1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura d
+A5 Write ABSOLUTO docs/legit.md (legítimo)          cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+A6 ls -la (legítimo)                                cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+A7 desarrollador echo > src/b.ts relativo            cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== file_path / tool_name con CR ==
+B1 Write <raíz>/docs/l␍ (enlace a src/a.ts)       cand=deny 9596e39=allow cd6afa6=allow v1.33.2=allow  | ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/p3/docs/l\r': llev
+B2 Write <raíz>/docs/n.md (legítimo)               cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+B3 tool_name Edit␍ cierra REQ rojo                 cand=deny 9596e39=allow cd6afa6=allow v1.33.2=allow  | ARNES: el nombre de la herramienta de esta llamada, $'Edit\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escrib
+B4 tool_name Bash␍ + file_path src                 cand=deny 9596e39=allow cd6afa6=allow v1.33.2=allow  | ARNES: el nombre de la herramienta de esta llamada, $'Bash\r', lleva un retorno de carro y no identifica ninguna herramienta, asi que esta puerta no puede saber si escrib
+== QA-023-09: cwd con LF ==
+L1 cwd /tmp␊b, Edit canónico cierra REQ rojo      cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+L2 cwd /tmp␊b, Write src/a.ts coordinadora         cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquier
+L3 cwd /tmp␊b, Edit no literal (SEC-117)           cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+L4 cwd x␊y real, Write docs (legítimo)            cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+L5 file_path con LF final                            cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe $'/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/p3/requirements/RE
+== SEC-117 (REQ-023 CA-13) ==
+S1 old_string con \u00f3n literal (no está)         cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_stri
+S2 Edit literal cuerpo REQ verde (legítimo)         cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+S3 Edit literal cierra REQ verde (legítimo)         cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== SEC-119: rutas equivalentes ==
+I1 Edit <raíz>/docs/../requirements                 cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+I2 Edit <raíz>/././requirements                     cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+I3 Edit por directorio enlazado                      cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+I4 Write <raíz>/docs/../src/a.ts                    cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquier
+I5 printf > docs/../src/a.ts                         cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+I6 sed -i docs/../requirements                       cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesi
+I7 echo > docs/dsrc/a.ts                             cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escribirlo por Bash no
+I8 Write src/../README.md (fuera, movimiento declarado) cand=allow 9596e39=deny cd6afa6=allow v1.33.2=deny  | 
+I9 Write docs/nuevo/dir/x.md (creación legítima)   cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+I10 Write requirements/<no existe>/../REQ-900        cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se pudo determinar a que archivo escribe '/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev/p3/requirements/nue
+== O-11 (CA-45): REQ ilegible ==
+O1 Edit sobre REQ con NUL (no cierra)                cand=deny 9596e39=allow cd6afa6=deny v1.33.2=allow  | ARNES: no se permite esta edicion de 'requirements/REQ-902.md': el archivo existe pero no se puede leer entero como archivo de texto —el archivo contiene un byte NUL, que
+O2 Write REQ cerrado en rojo sobre ilegible          cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/REQ-902.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+O3 Write que rehace el ilegible, sin cerrar (salida) cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+== CA-60: manifiesto roto, reparación ==
+M1 Write al manifiesto roto (reparación)            cand=allow 9596e39=allow cd6afa6=allow v1.33.2=allow  | 
+M2 Write al manifiesto por docs/../                  cand=allow 9596e39=deny cd6afa6=allow v1.33.2=deny  | 
+M3 Write src/a.ts con manifiesto roto                cand=deny 9596e39=deny cd6afa6=deny v1.33.2=deny  | ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas protege este proyect

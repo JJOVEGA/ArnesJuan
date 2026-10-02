@@ -1,0 +1,18 @@
+REQ-023  Seguridad                  cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-031  Seguridad                  cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-001  Seguridad                  cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-007  Seguridad                  cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-023  Hallazgos SEC-119          cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-023  Hallazgos SEC-120          cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-007  Hallazgos +SEC-122         cand=allow/aviso=no instalada=allow/aviso=no 
+== lector: tools/arnes-lectura.sh sobre la copia ==
+rc lector: 0
+== cierre simulado: QA y Seguridad en verde, cola vacía, gates true ==
+REQ-023  cierre cand=allow 
+REQ-023  cierre instalada=allow 
+REQ-031  cierre cand=allow 
+REQ-031  cierre instalada=allow 
+REQ-001  cierre cand=allow 
+REQ-001  cierre instalada=allow 
+REQ-007  cierre cand=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, deci
+REQ-007  cierre instalada=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, deci

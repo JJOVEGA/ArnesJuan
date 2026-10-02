@@ -1,0 +1,8 @@
+n=100000  big   cand     rc=0 dec=deny t=2.8s json=100313 bytes
+n=100000  bigb  cand     rc=0 dec=deny t=3.1s json=100221 bytes
+n=100000  big   cd6afa6  rc=0 dec=deny t=0.1s json=100313 bytes
+n=100000  bigb  cd6afa6  rc=0 dec=deny t=0.3s json=100221 bytes
+n=200000  big   cand     rc=0 dec=deny t=10.3s json=200313 bytes
+n=200000  bigb  cand     rc=0 dec=deny t=11.6s json=200221 bytes
+n=200000  big   cd6afa6  rc=0 dec=deny t=0.2s json=200313 bytes
+n=200000  bigb  cd6afa6  rc=0 dec=deny t=0.8s json=200221 bytes
