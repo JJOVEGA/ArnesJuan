@@ -15,8 +15,8 @@
 # Cada fila juzgada por un guardián se comprueba además en la candidata por `guard.sh`. Las filas que
 # dependen de /dev/shm o de /proc se miden sólo en Linux (donde se midió; F6), y fuera, SKIP y motivo.
 # Esto NO es la validación en el host.
-CASOS_ESPERADOS_SECCION=160
-PISO_AUTONOMO_SECCION=76  # 20 preámbulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO45, mat45_reg y mat45, copia de mat44, líneas 21-44) + 32 bloque indivisible mayor (g45, juicio45, fila45 y fila45c, líneas 58-89)
+CASOS_ESPERADOS_SECCION=206
+PISO_AUTONOMO_SECCION=76  # 20 preámbulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO45, mat45_reg y mat45, copia de mat44, líneas 21-44) + 32 bloque indivisible mayor (g45, juicio45, fila45 y fila45c, líneas 62-93)
 seccion_nueva "--- 45 · dependencia del proceso y CR del comando (SEC-122, P-023-13-A, QA-023-14; octava autorización) ---"
 REPO45="${SEC_DIR%/}/../../../.."; MAT45_RUTAS='hooks'; MAT45_REG=''; MAT45_T0=0; MAT45_REF='-'
 mat45_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT45_REG, UNA sola línea (la lee `sonda_lee`)
@@ -47,6 +47,10 @@ if mat45 3bc7d3c "$RFB"; then RFB_OK=si
 else RFB_MOT="3bc7d3c no se materializó (${MAT45_REG#*motivo=})"; RFB_MOT="${RFB_MOT%% corrida=*})"; fi
 if mat45 9596e39 "$R95"; then R95_OK=si
 else R95_MOT="9596e39 no se materializó (${MAT45_REG#*motivo=})"; R95_MOT="${R95_MOT%% corrida=*})"; fi
+RCC="$RAIZ/r922-$BASHPID"; RCC_OK=no; RCC_MOT=''   # 9220c71: el fail-before del bloque C (pasada correctiva)
+if mat45 9220c71 "$RCC"; then RCC_OK=si
+else RCC_MOT="9220c71 no se materializó (${MAT45_REG#*motivo=})"; RCC_MOT="${RCC_MOT%% corrida=*})"; fi
+FB45="$RFB"; FB45_OK="$RFB_OK"; FB45_MOT="$RFB_MOT"; FB45_NOM=3bc7d3c   # el bloque C lo cambia a 9220c71
 v45() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
 # ¿Se puede medir lo que depende de /dev/shm y de /proc? Sólo en Linux, donde se midió.
 LNX45=no; LNX45_MOT='sólo se midió en Linux (F6 de REQ-007 CA-47); aquí no es Linux'
@@ -77,8 +81,8 @@ fila45() {
   if ! json_no_vacio "$nom candidata" "$json"; then FAIL=$((FAIL + 2 + g)); return 0; fi
   g45 "$HOOKS_DIR" "$s" "$json"; juicio45 "$nom candidata" "$ec" "$cita"
   if [ "$g" = 1 ]; then g45 "$HOOKS_DIR" guard.sh "$json"; juicio45 "$nom candidata por guard.sh" "$ec" "$cita"; fi
-  if [ "$RFB_OK" = si ]; then g45 "$RFB/hooks" "$s" "$json"; juicio45 "$nom 3bc7d3c (fail-before o control)" "$efb" -
-  else v45 SKIP "$nom 3bc7d3c  $RFB_MOT"; fi
+  if [ "$FB45_OK" = si ]; then g45 "$FB45/hooks" "$s" "$json"; juicio45 "$nom $FB45_NOM (fail-before o control)" "$efb" -
+  else v45 SKIP "$nom $FB45_NOM  $FB45_MOT"; fi
   if [ "$R95_OK" = si ]; then g45 "$R95/hooks" "$s" "$json"; juicio45 "$nom 9596e39 (referencia de los movimientos)" "$e95" -
   else v45 SKIP "$nom 9596e39  $R95_MOT"; fi
 }
@@ -156,8 +160,7 @@ fila45 "H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio)"
 fila45 "H5 el desarrollador: H2 por guard-codigo (podía escribir)" guard-codigo.sh:solo allow allow allow - "$(j45 Bash "$P45" desarrollador "command=$H2")"
 fila45 "H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ)" guard-completado.sh deny allow allow "$HCR45" "$(j45 Bash "$P45" desarrollador "command=$H2")"
 
-# --- G: guard-git juzga el comando que recibe git (git rechaza el argumento con CR) ---------------
-fila45 "G1 git reset --hard\\r (opción desconocida para git: de deny a allow, declarado)" guard-git.sh allow deny deny - "$(j45 Bash "$P45" - "command=git reset --hard$CR")"
+# --- G: guard-git juzga el comando que recibe git (con un CR pegado, también sin él: bloque C) ------
 fila45 "G2 git reset --hard (control)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - 'command=git reset --hard')"
 fila45 "G3 git reset --hard \\r (el CR es otro argumento: --hard se ve)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - "command=git reset --hard $CR")"
 
@@ -175,6 +178,28 @@ fila45c "$LNX45" "$LNX45_MOT" "B3 Edit literal sin estado sobre un REQ que exist
 fila45c "$LNX45" "$LNX45_MOT" "B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado)" guard-codigo.sh deny allow allow "$SRC45" "$(j45 Bash "$PB45" - 'command=echo x > docs/dsrc/a.ts')"
 fila45c "$LNX45" "$LNX45_MOT" "B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba)" guard.sh allow deny allow - "$(cierre45 "$PB45/requirements/REQ-901.md" "$PB45")"
 P45="$PROJ"
+
+# --- C: pasada correctiva — P-122-A (1), QA-023-16 y QA-023-17; fail-before 9220c71 ---------------
+# Un CR pegado a las palabras de una orden de git: lo que git haga depende de su configuración
+# (`help.autocorrect`), y la orden se juzga también sin el CR. Y la ruta de un enlace a un descriptor
+# se juzga por las tres vías de CA-47, punto 6: dentro de un ámbito, deny.
+FB45="$RCC"; FB45_OK="$RCC_OK"; FB45_MOT="$RCC_MOT"; FB45_NOM=9220c71
+GCR45='lleva un retorno de carro pegado a sus palabras'
+fila45 "C1 git reset --hard\\r (G1: vuelve a deny)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git reset --hard$CR")"
+fila45 "C2 git stash\\r (P-122-A 1: con help.autocorrect git lo ejecuta)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git stash$CR")"
+fila45 "C3 git checkout .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout .$CR")"
+fila45 "C4 git checkout -- .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout -- .$CR")"
+fila45 "C5 git restore .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git restore .$CR")"
+fila45 "C6 git checkout HEAD .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout HEAD .$CR")"
+fila45 "C7 git clean\\r -f (CR en medio: de allow a deny, declarado)" guard-git.sh deny allow allow "$GCR45" "$(j45 Bash "$P45" - "command=git clean$CR -f")"
+fila45 "C8 git status\\r (control: no está en la lista)" guard-git.sh allow allow allow - "$(j45 Bash "$P45" - "command=git status$CR")"
+fila45 "C9 git stash list\\r (control: una lectura)" guard-git.sh allow allow allow - "$(j45 Bash "$P45" - "command=git stash list$CR")"
+if [ "$LNX45" = si ]; then ln -s /dev/stderr "$P45/src/log"; ln -s /dev/stderr "$R/log"; ln -s /dev/stderr "$P45/docs/err"; fi
+fila45c "$LNX45" "$LNX45_MOT" "C10 coordinadora: echo x > src/log (src/log -> /dev/stderr; QA-023-17)" guard-codigo.sh deny allow deny "$SRC45" "$(j45 Bash "$P45" - 'command=echo x > src/log')"
+fila45c "$LNX45" "$LNX45_MOT" "C11 sed -i que cierra por requirements/log (-> /dev/stderr; QA-023-17)" guard-completado.sh deny allow deny "menciona 'completado'" "$(j45 Bash "$P45" - "command=sed -i 's/x/completado/' requirements/log")"
+fila45c "$LNX45" "$LNX45_MOT" "C12 el desarrollador: echo x > src/log (control)" guard.sh allow allow allow - "$(j45 Bash "$P45" desarrollador 'command=echo x > src/log')"
+fila45c "$LNX45" "$LNX45_MOT" "C13 coordinadora: echo x > docs/err (-> /dev/stderr, fuera del ámbito: control)" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo x > docs/err')"
+FB45="$RFB"; FB45_OK="$RFB_OK"; FB45_MOT="$RFB_MOT"; FB45_NOM=3bc7d3c
 
 # --- Q: la lectura de la entrada conserva el CR del dato (QA-023-14), sin recorrer el valor --------
 Q45_IN="$(jq -cn '{tool_name:"Bash\r",cwd:"/tmp",tool_input:{file_path:"a\r\nb\r",command:"ls\r\nx > y\r"}}')"
@@ -203,4 +228,4 @@ Q45_IN="$(jq -cn '{tool_name:"Write",cwd:"/tmp",tool_input:{file_path:"/tmp/f",c
 nom45="QA-023-14 Q3 sin CR en el dato, el jq que añade CR no deja ninguno (ningún falso positivo)"
 q45 "$HOOKS_DIR" "$JQW45"
 if [ "$Q45" = "$Q45_ESP" ]; then v45 PASS "$nom45  candidata"; else v45 FAIL "$nom45  candidata: <$Q45> en vez de <$Q45_ESP>"; fi
-rm -rf "$RFB" "$R95" "$FUERA45" "$JQW45"; [ "$LNX45" != si ] || rm -rf "$SHM45"
+rm -rf "$RFB" "$R95" "$RCC" "$FUERA45" "$JQW45"; [ "$LNX45" != si ] || rm -rf "$SHM45"

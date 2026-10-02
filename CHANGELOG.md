@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización, pasada correctiva única (desarrollador): P-122-A (1), QA-023-16 y QA-023-17 reparados a nivel de hook — `guard-git` juzga también sin el CR pegado a las palabras de una orden de git; la ruta de un enlace a un descriptor se juzga por las tres vías de CA-47, punto 6; sección 45 (1741 → 1787) — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **`hooks/guard-git.sh`** (P-122-A (1) y QA-023-16):
+  - si el comando lleva un retorno de carro, cada orden se juzga además con una copia sin CR, y basta que case una de las dos lecturas;
+  - motivo: con `help.autocorrect` git corrige `stash␍` y lo ejecuta, y esa configuración la puerta no la lee;
+  - la copia sin CR sólo puede añadir denegaciones; es lineal y sin procesos (un troceado por `IFS`);
+  - el motivo del deny lo dice.
+- **`hooks/lib.sh`, `arnes_id_pertenece`** (QA-023-17): un descriptor del shell ya no sale «fuera» antes de mirar las tres vías. Su ruta se juzga como la de cualquier enlace, así que `src/log -> /dev/stderr` está en `src/*`; el destino, la ranura del descriptor, no aporta pertenencia.
+- **Antes → después**, contra 9220c71 (`evidencia-dev-r8b/`):
+  - `git reset --hard␍` (G1), `git stash␍` y `git checkout .␍`, `checkout -- .␍`, `restore .␍`, `checkout HEAD .␍`: allow → **deny**;
+  - `echo x > src/log` y `sed -i` por `requirements/log`, los dos hacia `/dev/stderr`: allow → **deny**;
+  - todos deniegan también en 3bc7d3c, 9596e39 y 1.33.2.
+- **Movimientos que quedan:**
+  - ninguno de deny a allow por estos tres;
+  - G1 deja de ser un movimiento declarado: vuelve a deny;
+  - **de allow a deny, por el mismo mecanismo:** un CR **en medio** de una orden de git (`git clean␍ -f`, `git re␍set --hard`), allow en los cuatro árboles anteriores (preexistente, observación de QA).
+- **Comprobado:**
+  - sección 45: 206/0; contra los hooks de 9220c71, 18 FAIL, todos del bloque C;
+  - secciones 41 a 45: 806/0;
+  - banco completo: **1775 PASS, 0 FAIL, 12 SKIP** (1 INCONCLUSO de rendimiento, REQ-017 CA-08 (ii), conservado), cuadre 1787;
+  - autoprueba 117/0 y gates rc 0.
+- **sha256 (16 hex):** `lib.sh` 565b3c89bd82cb70, `guard-git.sh` f65edc844cac31b2; `guard-codigo.sh`, `guard-completado.sh` y `guard.sh` sin cambios.
+- **Avance (regla 6):** los tres defectos de la vuelta de QA quedan reparados en el candidato. Faltan el write-back del analista, la re-verificación de QA y seguridad.
+
 ## [Interno] — 2026-10-02 · Octava autorización: QA sobre `c877246` CON HALLAZGOS — reparación central verificada (SEC-122 caras a y b, QA-023-14 y QA-023-15 cerrados a nivel de hook); tres defectos dentro del alcance van a la pasada correctiva (QA-023-16, QA-023-17 y P-122-A (1))
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 333 k tokens en la comisión de QA (cifra del arnés).
 

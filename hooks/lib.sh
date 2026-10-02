@@ -1096,12 +1096,15 @@ arnes_id_pertenece() {
   local -n pats="ARNES_AMB_${amb}_P" ct="ARNES_AMB_${amb}_T" cf="ARNES_AMB_${amb}_F" cq="ARNES_AMB_${amb}_Q"
   # Un ambito sin ningun patron no tiene «dentro»: ni siquiera un destino no determinable cae en el.
   [ "${#pats[@]}" -gt 0 ] || return 1
-  # Un descriptor del shell no es un archivo de ningun ambito (SEC-122, `_arnes_id_propio`).
-  [ "$ARNES_ID_E" != desc ] || return 1
-  [ "$ARNES_ID_E" = ok ] || return 2
+  # Un descriptor del shell (SEC-122, `_arnes_id_propio`) no es un archivo de ningun ambito, pero la
+  # RUTA por la que se llega a el se juzga por las tres vias de abajo, como la de cualquier otro enlace
+  # (QA-023-17, pasada correctiva de la octava autorizacion): `src/log -> /dev/stderr` esta en `src/*`
+  # por su lectura fisica y por la lexica, y salia «fuera» antes de mirarlas. Su destino —la ranura
+  # del descriptor— no aporta pertenencia: no entra en `fis` (`ARNES_ID_O` sigue siendo el enlace).
+  case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
   if [ "$ARNES_ID_K" = 1 ]; then
     _arnes_id_resuelve_enlace
-    case "$ARNES_ID_E" in ok) ;; desc) return 1 ;; *) return 2 ;; esac
+    case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
   fi
   [ -z "$ARNES_ID_F" ]  || fis+=("$ARNES_ID_F")
   [ -z "$ARNES_ID_F2" ] || fis+=("$ARNES_ID_F2")
