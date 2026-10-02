@@ -1,0 +1,6 @@
+== caso de la seccion 25 (heredoc CITADO ~300 KB, guard-codigo.sh), aislado, 1 calentamiento + 5 corridas alternadas por arbol, 2026-10-01T17:44:44-06:00, carga 0.19 0.59 0.72 ==
+bytes del comando: 279033
+ArnesJuan-v1.35: 1494(allow) 1487(allow) 1689(allow) 1583(allow) 1538(allow)
+43b948a: 1503(allow) 1725(allow) 1580(allow) 1501(allow) 1542(allow)
+9596e39: 1492(allow) 1554(allow) 1580(allow) 1515(allow) 1565(allow)
+carga final 0.47 0.62 0.73

@@ -1,0 +1,177 @@
+== seccion 44 con ARNES_HOOKS_DIR=43b948a (/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r6/arboles/43b948a/hooks), 2026-10-01T17:33:57-06:00
+--- 44 · integridad de la entrada del hook (QA-023-09; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---
+  FAIL  QA-023-09 N1 (E1) Edit que cierra un REQ critico, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N1 (E1) Edit que cierra un REQ critico, cwd /tmp\nb candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N1 (E1) Edit que cierra un REQ critico, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N1 (E1) Edit que cierra un REQ critico, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N2 (E1) Edit que cierra, cwd <raíz>\n (salto final) candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N2 (E1) Edit que cierra, cwd <raíz>\n (salto final) candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N2 (E1) Edit que cierra, cwd <raíz>\n (salto final) 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N2 (E1) Edit que cierra, cwd <raíz>\n (salto final) 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N3 (E1) MultiEdit que cierra, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N3 (E1) MultiEdit que cierra, cwd /tmp\nb candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N3 (E1) MultiEdit que cierra, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N3 (E1) MultiEdit que cierra, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N16 (E1) Write que cierra, cwd <raíz>\n<raíz>/docs candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N16 (E1) Write que cierra, cwd <raíz>\n<raíz>/docs candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N16 (E1) Write que cierra, cwd <raíz>\n<raíz>/docs 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N16 (E1) Write que cierra, cwd <raíz>\n<raíz>/docs 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N8 (E1) por guard.sh: Edit que cierra, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N8 (E1) por guard.sh: Edit que cierra, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N8 (E1) por guard.sh: Edit que cierra, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N4 (E2) Write de la coordinadora a src/a.ts, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N4 (E2) Write de la coordinadora a src/a.ts, cwd /tmp\nb candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N4 (E2) Write de la coordinadora a src/a.ts, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N4 (E2) Write de la coordinadora a src/a.ts, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N5 (E2) Write a src/a.ts, cwd <raíz>\n<raíz>/docs candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N5 (E2) Write a src/a.ts, cwd <raíz>\n<raíz>/docs candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N5 (E2) Write a src/a.ts, cwd <raíz>\n<raíz>/docs 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N5 (E2) Write a src/a.ts, cwd <raíz>\n<raíz>/docs 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N9 (E2) por guard.sh: Write a src/a.ts, cwd <raíz>\n candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 N9 (E2) por guard.sh: Write a src/a.ts, cwd <raíz>\n 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N9 (E2) por guard.sh: Write a src/a.ts, cwd <raíz>\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N7 (E3) CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N7 (E3) CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N7 (E3) CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N7 (E3) CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb candidata  el motivo no cita «'src/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe '../../src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si >
+  FAIL  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb candidata por guard.sh  el motivo no cita «'src/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe '../../src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si >
+  PASS  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb 43b948a: fail-before: deniega juzgando otra ruta  (deny, juzga otra ruta)
+  PASS  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt candidata  el motivo no cita «'src/s
+t/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe 'a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si es codigo >
+  FAIL  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt candidata por guard.sh  el motivo no cita «'src/s
+t/a.ts', que es código de la app»  <ARNES: no se pudo determinar a que archivo escribe 'a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si es codigo >
+  PASS  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt 43b948a: fail-before: deniega juzgando otra ruta  (deny, juzga otra ruta)
+  PASS  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq candidata  el motivo no cita «'requirements/r
+q/REQ-9.md' y menciona 'completado'»  <ARNES: este comando escribe en 'REQ-9.md' y menciona 'completado', y no se pudo determinar a que archivo escribe: es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Podria ser un>
+  FAIL  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq candidata por guard.sh  el motivo no cita «'requirements/r
+q/REQ-9.md' y menciona 'completado'»  <ARNES: no se pudo determinar a que archivo escribe 'REQ-9.md': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede decidir si es cod>
+  PASS  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq 43b948a: fail-before: deniega juzgando otra ruta  (deny, juzga otra ruta)
+  PASS  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  PASS  QA-023-09 C1 (G1) el desarrollador escribe src/a.ts, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C1 (G1) el desarrollador escribe src/a.ts, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C1 (G1) el desarrollador escribe src/a.ts, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C2 (G1) el desarrollador: Bash printf > a.ts desde src/s\nt candidata  (allow)
+  PASS  QA-023-09 C2 (G1) el desarrollador: Bash printf > a.ts desde src/s\nt 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C2 (G1) el desarrollador: Bash printf > a.ts desde src/s\nt 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C3 (G1) coordinadora escribe docs/n.md, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C3 (G1) coordinadora escribe docs/n.md, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C3 (G1) coordinadora escribe docs/n.md, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C5 (G1) cierre de un REQ en verde, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C5 (G1) cierre de un REQ en verde, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C5 (G1) cierre de un REQ en verde, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C7 (G1) Edit literal sin estado, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C7 (G1) Edit literal sin estado, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C7 (G1) Edit literal sin estado, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  PASS  QA-023-09 C8 (G1) ls -la, cwd /tmp\nb candidata  (allow)
+  PASS  QA-023-09 C8 (G1) ls -la, cwd /tmp\nb 43b948a: control, decide igual  (allow)
+  PASS  QA-023-09 C8 (G1) ls -la, cwd /tmp\nb 9596e39: control, decide igual  (allow)
+  FAIL  QA-023-09 C4 (G2) coordinadora: Bash echo > n.md desde docs/a\nb candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'n.md': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede d>
+  PASS  QA-023-09 C4 (G2) coordinadora: Bash echo > n.md desde docs/a\nb 43b948a: deniega por el cwd desplazado: la reparación lo restituye  (deny)
+  PASS  QA-023-09 C4 (G2) coordinadora: Bash echo > n.md desde docs/a\nb 9596e39: control, decide igual  (allow)
+  FAIL  QA-023-09 C6 (G2) cierre de un REQ en verde, cwd docs/a\nb candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'b': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no puede deci>
+  PASS  QA-023-09 C6 (G2) cierre de un REQ en verde, cwd docs/a\nb 43b948a: deniega por el cwd desplazado: la reparación lo restituye  (deny)
+  PASS  QA-023-09 C6 (G2) cierre de un REQ en verde, cwd docs/a\nb 9596e39: control, decide igual  (allow)
+  FAIL  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer. Sin saber que archivo es, esta puerta no pue>
+  PASS  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) 43b948a: deniega por el cwd desplazado: la reparación lo restituye  (deny)
+  PASS  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) 9596e39: deniega: instancia de L8, movimiento declarado  (deny)
+  FAIL  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  FAIL  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  PASS  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'src/s' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  FAIL  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'src/s' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  PASS  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).>
+  FAIL  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).>
+  PASS  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).>
+  FAIL  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).>
+  PASS  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'app/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  FAIL  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'app/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  PASS  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'cfg/main.json' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  FAIL  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'cfg/main.json' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  PASS  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'cfg/main.json' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  FAIL  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'cfg/main.json' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desarrollador' — ni siquiera al depurar se parchea a mano (ver AGENTS.md §5).>
+  PASS  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_string esta vacio y el archivo ya existe: un old_string vacio solo describ>
+  FAIL  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el documento que quedaria escrito, porque su old_string esta vacio y el archivo ya existe: un old_string vacio solo describ>
+  PASS  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n candidata  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'docs/l-req.md' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro del proyecto, apunte adonde apunte y lo intente quien lo intente. Salida: escribe sobre el archivo al que apunta, por su>
+  FAIL  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n candidata por guard.sh  el motivo no cita «lleva un salto de linea, y no se sabe que archivo se escribiria»  <ARNES: 'docs/l-req.md' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro del proyecto, apunte adonde apunte y lo intente quien lo intente. Salida: escribe sobre el archivo al que apunta, por su>
+  PASS  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n candidata  esperado=deny got=allow  <>
+  PASS  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts candidata  el motivo no cita «lleva un salto de linea y no identifica ninguna herramienta»  <ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y la entrada del hook no trae un directorio de trabajo absoluto ('cwd') en el que anclarla. Sin saber que archivo es, esta puerta no puede decidir si es codigo de la>
+  FAIL  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts candidata por guard.sh  el motivo no cita «lleva un salto de linea y no identifica ninguna herramienta»  <ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y la entrada del hook no trae un directorio de trabajo absoluto ('cwd') en el que anclarla. Sin saber que archivo es, esta puerta no puede decidir si es codigo de la>
+  PASS  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts 43b948a: control, decide igual  (deny)
+  PASS  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts 9596e39: antes del regreso, deniega  (deny)
+  FAIL  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts candidata  esperado=deny got=allow  <>
+  FAIL  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts candidata por guard.sh  esperado=deny got=allow  <>
+  PASS  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts 43b948a: fail-before: permite  (allow)
+  PASS  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts 9596e39: permite: preexistente, de allow a deny declarado  (allow)
+  FAIL  QA-023-09 los motivos de F y T dicen su causa y cómo corregirla, y no nombran ninguna herramienta como salida  C10: no dice su causa C10: no dice como corregirlo N19: no dice su causa N19: no dice como corregirlo N24: no dice su causa N24: <ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta puerta no puede reconstruir el > N24: no dice como corregirlo N15: sin motivo T1: sin motivo T3: sin motivo
+  FAIL  QA-023-09 P1 (P1) arnes_parse_input conserva los seis campos con saltos de línea en cada uno  candidata: <Bash|a|1|qa|x|$'/tmp\nb\n\nf\ng\nls\n  x > y'|> en vez de <Bash|$'a\n1'|$'qa\nx'|$'/tmp\nb\n'|$'f\ng'|$'ls\n  x > y'|>
+  PASS  QA-023-09 P1 (P1) arnes_parse_input conserva los seis campos con saltos de línea en cada uno  43b948a (fail-before): los desplaza  <Bash|a|1|qa|x|$'/tmp\nb\n\nf\ng\nls\n  x > y'|>
+aviso: vuelta parcial (1 de 57 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 95 PASS, 72 FAIL
+rc=1

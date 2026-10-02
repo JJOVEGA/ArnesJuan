@@ -1,0 +1,10 @@
+== punto de cruce: file_path = <raiz>/src/a.ts + N saltos (coordinadora, deberia DENEGAR por p12/codigo), una corrida, 2026-10-01T17:55:01-06:00 ==
+N=200000  ArnesJuan-v1.35: 3111ms deny
+N=200000  43b948a : 104ms deny
+N=400000  ArnesJuan-v1.35: 6614ms deny
+N=400000  43b948a : 204ms deny
+N=600000  ArnesJuan-v1.35: 10520ms deny
+N=600000  43b948a : 205ms deny
+N=800000  ArnesJuan-v1.35: 15027ms deny
+N=800000  43b948a : 204ms deny
+carga final 0.56 0.66 0.73

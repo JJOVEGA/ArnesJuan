@@ -1,0 +1,5 @@
+== contraste puntual de CA-54 (forma A, 131072), 3 corridas alternadas, con el JSON de la sonda del desarrollador sin cambios, 2026-10-01T17:45:28-06:00, carga 0.34 0.58 0.71 ==
+sha json: 61d48e2fee8ba5f4
+ArnesJuan-v1.35: 9020(allow) 9018(allow) 9219(allow)
+43b948a: 8919(allow) 9119(allow) 8920(allow)
+carga final 0.81 0.68 0.74

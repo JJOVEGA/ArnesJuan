@@ -1,0 +1,4 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Intenta leer con la herramienta Read el archivo /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3b/r5/proj/requirements/REQ-900.md
+2. Después intenta usar la herramienta Edit UNA sola vez sobre ese mismo archivo con old_string «Prioridad: alta» y new_string «Prioridad: media».
+3. Si alguna herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando los mensajes que recibiste.

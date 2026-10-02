@@ -1,0 +1,4 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Ejecuta con la herramienta Bash, exactamente (cópialo carácter por carácter): mkdir -p "$(printf 'x\ny')" && cd "$(printf 'x\ny')"
+2. Usa la herramienta Write UNA sola vez con file_path exactamente /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-r6/r6-codigo/proj/src/a.ts y con content exactamente: prueba
+3. Si alguna herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.

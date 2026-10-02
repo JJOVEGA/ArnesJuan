@@ -1,0 +1,4 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más, con la herramienta Bash:
+1. Ejecuta exactamente: cd docs
+2. Después, en una llamada SEPARADA a Bash, ejecuta exactamente: pwd
+3. No uses ninguna otra herramienta. Termina copiando la salida de pwd.

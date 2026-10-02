@@ -1,0 +1,17 @@
+== coste de un campo con N saltos de linea (corregido: los LF llegan al JSON), guard.sh completo, una corrida por celda (ORIENTATIVO), 2026-10-01T17:36:11-06:00, carga 0.50 0.77 0.75 ==
+campo=file_path N=1000 bytes=2353 LF=1000 | cand: 104ms deny rc0 | 43b948a/hooks: 106ms deny rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=file_path N=10000 bytes=20353 LF=10000 | cand: 205ms deny rc0 | 43b948a/hooks: 105ms deny rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=file_path N=50000 bytes=100353 LF=50000 | cand: 806ms deny rc0 | 43b948a/hooks: 105ms deny rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=file_path N=100000 bytes=200353 LF=100000 | cand: 1508ms deny rc0 | 43b948a/hooks: 105ms deny rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=file_path N=200000 bytes=400353 LF=200000 | cand: 3210ms deny rc0 | 43b948a/hooks: 107ms deny rc0 | 9596e39/hooks: 106ms deny rc0 |
+campo=cwd N=1000 bytes=2353 LF=1000 | cand: 106ms deny rc0 | 43b948a/hooks: 106ms allow rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=cwd N=10000 bytes=20353 LF=10000 | cand: 205ms deny rc0 | 43b948a/hooks: 106ms allow rc0 | 9596e39/hooks: 106ms deny rc0 |
+campo=cwd N=50000 bytes=100353 LF=50000 | cand: 805ms deny rc0 | 43b948a/hooks: 105ms allow rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=cwd N=100000 bytes=200353 LF=100000 | cand: 1809ms deny rc0 | 43b948a/hooks: 306ms allow rc0 | 9596e39/hooks: 106ms deny rc0 |
+campo=cwd N=200000 bytes=400353 LF=200000 | cand: 3913ms deny rc0 | 43b948a/hooks: 807ms allow rc0 | 9596e39/hooks: 105ms deny rc0 |
+campo=agent_type N=1000 bytes=2398 LF=1000 | cand: 205ms allow rc0 | 43b948a/hooks: 106ms allow rc0 | 9596e39/hooks: 105ms allow rc0 |
+campo=agent_type N=10000 bytes=20398 LF=10000 | cand: 12523ms allow rc0 | 43b948a/hooks: 105ms allow rc0 | 9596e39/hooks: 105ms allow rc0 |
+campo=agent_type N=50000 bytes=100398 LF=50000 | cand: 70012ms TIMEOUT rc124 | 43b948a/hooks: 206ms allow rc0 | 9596e39/hooks: 105ms allow rc0 |
+campo=agent_type N=100000 bytes=200398 LF=100000 | cand: 70016ms TIMEOUT rc124 | 43b948a/hooks: 305ms allow rc0 | 9596e39/hooks: 305ms allow rc0 |
+campo=agent_type N=200000 bytes=400398 LF=200000 | cand: 70015ms TIMEOUT rc124 | 43b948a/hooks: 807ms allow rc0 | 9596e39/hooks: 806ms allow rc0 |
+carga final 1.21 0.99 0.85

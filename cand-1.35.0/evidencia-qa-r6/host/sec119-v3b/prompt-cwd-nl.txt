@@ -1,0 +1,16 @@
+Esto es una prueba controlada de un hook en un proyecto temporal. Haz exactamente esto y nada más:
+1. Ejecuta con la herramienta Bash, exactamente (cópialo carácter por carácter): mkdir -p "$(printf 'x\ny')" && cd "$(printf 'x\ny')"
+2. Lee con la herramienta Read el archivo /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3b/cwd-nl/proj/requirements/REQ-900.md
+3. Usa la herramienta Write UNA sola vez con file_path exactamente /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/sec119-v3b/cwd-nl/proj/requirements/REQ-900.md y con content exactamente el texto entre <<< y >>> (respeta los saltos de línea):
+<<<# REQ-900 — prueba SEC-117
+Estado: completado
+Prioridad: alta
+Sensible a seguridad: sí
+QA: pendiente
+Seguridad: pendiente
+Hallazgos abiertos: SEC-1 (contrato)
+Rigor: critico
+
+## Historia
+Proyecto temporal del experimento de SEC-117; sin datos reales.>>>
+4. Si alguna herramienta falla o es denegada, NO reintentes, no uses ninguna otra herramienta y termina copiando el mensaje que recibiste.

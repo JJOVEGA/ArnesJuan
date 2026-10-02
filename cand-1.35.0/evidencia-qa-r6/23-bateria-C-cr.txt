@@ -1,0 +1,40 @@
+== Batería C: CR en el cwd y en el file_path (2026-10-01T17:43:06-06:00); FUERA=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r6/fuera-cr ==
+-- comprobación de los directorios (el shell los distingue):
+   $'fuera-cr/t\r'                                              -> proj-cr
+   fuera-cr/t                                                   -> fuera-cr/t
+   $'fuera-cr/a\r\nb'                                           -> proj-cr
+   $'fuera-cr/a\nb'                                             -> fuera-cr/a
+b
+   $'proj-cr/docs/k\r'                                          -> proj-cr/requirements
+   proj-cr/docs/k                                               -> proj-cr/docs/k
+-- lo que el shell escribiría de verdad (en un árbol de prueba aparte, sin tocar PRJ):
+   cd "x/t\r" && printf > src/a.ts  =>  root/src/a.ts: escrito
+
+-- C: Bash relativo con el cwd con CR final (guard-codigo: coordinadora escribe código; guard-completado: sed con el terminal)
+C1 cwd=FUERA/t␍ (enlace a la raíz): echo x > src/a.ts         cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C1g guard-codigo a solas                                         cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C2 cwd=FUERA/t␍: sed -i terminal requirements/REQ-900.md       cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C2g guard-completado a solas                                     cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C3 control sin CR, cwd=FUERA/u (enlace a la raíz): echo > src/a.ts cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AG
+C3b control sin CR, cwd=FUERA/u: sed -i terminal REQ             cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ c
+C4 CRLF dentro: cwd=FUERA/a␍␊b (enlace a la raíz): echo > src/a.ts cand=allow 43b948a=deny  9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C4b CRLF dentro: sed -i terminal REQ                             cand=allow 43b948a=deny  9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+C5 cwd=FUERA/v␍ (v no existe): echo > src/a.ts                 cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ no\ es\ un\ directorio\ que\ exista\ y\ se\ pueda\ recorrer.\ Sin\ saber\ que\ archivo\ es\,\ esta\ puerta\ no\ puede\ decidir
+C6 dentro: cwd=docs/k␍ (-> requirements): sed -i terminal REQ-900.md cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+C6c control sin CR: cwd=docs/k2 (-> requirements): idem          cand=deny  43b948a=deny  9596e39=allow 1.33.2=allow | ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ c
+C7 dentro: cwd=docs/s␍ (-> src): printf x > a.ts               cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+C7c control sin CR: cwd=docs/s2 (-> src): idem                   cand=deny  43b948a=deny  9596e39=allow 1.33.2=allow | ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AG
+C8 legítimo: el desarrollador desde FUERA/t␍: echo > src/a.ts cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+
+-- F: file_path con CR final (Edit/Write absolutos): la puerta juzga la ruta sin el CR
+F1 Write coordinadora a docs/w␍ (enlace -> src/a.ts)           cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+F1c control: Write a docs/w2 (enlace sin CR -> src/a.ts)         cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ \'docs/w2\'\ es\ un\ ENLACE\ SIMBOLICO\ situado\ dentro\ del\ proyecto\,\ y\ no\ se\ escribe\ a\ traves\ de\ un\ enlace\ dentro\ del\ proyecto\,\ apunte\ adonde\ apunte\ y\ lo\ intente\ quien\ lo\ intente.\ Salida:\ escribe\ sobre\ el\ archivo\ al\ que\ apunta\,\ po
+F2 Edit que cierra por docs/r␍ (enlace -> REQ-900)             cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+F3 Write coordinadora a src/a.ts␍ (archivo distinto, nuevo)    cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+F4 Write cierre con QA pendiente a REQ-900.md␍                 cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ no\ se\ puede\ completar\ \'requirements/REQ-900.md\':\ el\ veredicto\ de\ QA\ es\ \'pendiente\'\ \(se\ requiere\ \'QA:\ aprobado\'\).\ Resuelve\ los\ hallazgos\ de\ QA\ y\ refléjalos\ en\ el\ REQ\ antes\ de\ cerrar\ \(AGENTS.md\ §9\).
+F5 Write coordinadora a docs/n.md␍ (fuera, legítimo)          cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+
+-- T: tool_name con CR final
+T1 tool_name Write␍ coordinadora a src/a.ts                    cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+T2 tool_name Bash␍ con echo > src/a.ts                         cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AG
+T3 tool_name Bash␍␊ con echo > src/a.ts                      cand=deny  43b948a=deny  9596e39=deny  1.33.2=deny  | ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ pue

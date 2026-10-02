@@ -1,0 +1,14 @@
+== Reproducción del fallo abierto por CR final en cwd (2026-10-01T17:59:14-06:00) ==
+-- Qué resuelve el shell (prueba real, árbol aparte):
+   cd "x/d<CR>" (enlace -> root) && printf > src/a.ts   =>  root/src/a.ts: ESCRITO-EN-CODIGO
+   x/d (dir normal, sin CR) tiene src/a.ts?  no
+
+-- guard-codigo: la coordinadora escribe código por Bash desde cwd='FUERA/d<CR>' (enlace a la raíz)
+R1 echo x > src/a.ts, cwd=FUERA/d<CR>                            cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+R1-ctl mismo caso, cwd=FUERA/d (sin CR, dir normal)              cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+
+-- guard-completado: la coordinadora cierra un REQ en rojo por Bash desde cwd='FUERA/d<CR>'
+R2 sed -i terminal requirements/REQ-900.md, cwd=FUERA/d<CR>      cand=allow 43b948a=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> | ''
+
+NOTA: 9596e39 ignora el cwd (ancla en la raíz, aún no existía CA-47 p1), por eso deniega 'por azar'.
+      43b948a y la CANDIDATA anclan en el cwd y ambas lo recortan igual: el defecto es del cwd anclado, no del delta de la sexta.

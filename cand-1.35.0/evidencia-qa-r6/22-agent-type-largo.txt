@@ -1,0 +1,16 @@
+== agent_type y tool_name largos: ¿el coste es del recorte de blancos (preexistente) o de la lectura entera? una corrida por celda (ORIENTATIVO), 2026-10-01T17:41:06-06:00 ==
+agent_type=desarrollador+10000 x esp | ArnesJuan-v1.35: 11622ms allow | 43b948a: 11525ms allow | 9596e39: 11723ms allow | 1.33.2: 11522ms allow |
+tr: when not truncating set1, string2 must be non-empty
+agent_type=desarrollador+10000 x lf | ArnesJuan-v1.35: 105ms allow | 43b948a: 104ms allow | 9596e39: 104ms allow | 1.33.2: 104ms allow |
+agent_type=desarrollador+3000 x esp | ArnesJuan-v1.35: 1107ms allow | 43b948a: 1106ms allow | 9596e39: 1106ms allow | 1.33.2: 1206ms allow |
+tr: when not truncating set1, string2 must be non-empty
+agent_type=desarrollador+3000 x lf | ArnesJuan-v1.35: 105ms allow | 43b948a: 106ms allow | 9596e39: 107ms allow | 1.33.2: 104ms allow |
+tool_name=Write+10000 LF | ArnesJuan-v1.35: 205ms deny | 43b948a: 105ms allow | 9596e39: 105ms allow |
+tool_name=Write+100000 LF | ArnesJuan-v1.35: 1808ms deny | 43b948a: 205ms allow | 9596e39: 305ms allow |
+== decision con agent_type 'desarrollador' + UN salto final / inicial, y 'qa-tester' + salto final (src/a.ts) ==
+agent_type=$'desarrollador\n'                                    cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+agent_type=$'\ndesarrollador'                                    cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+agent_type=$'qa-tester\n'                                        cand=deny  43b948a=allow 9596e39=allow 1.33.2=allow | ARNES:\ \'src/a.ts\'\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ editarlo\ \(intento\ de\ el\ subagente\ \'qa-tester\'\).\ Delega\ el\ cambio\ en\ \'desarrollador\'\ —\ ni\ siquiera\ al\ depurar\ se\ parchea\ a\ mano\ \(ver\ AGENTS.md\ §5\).
+agent_type=$'desarrollador\r'                                    cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+agent_type=\ desarrollador\                                      cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''
+agent_type=$'arnes-juan:desarrollador\n'                         cand=allow 43b948a=allow 9596e39=allow 1.33.2=allow | ''

@@ -1,0 +1,92 @@
+== 43b948a: FAIL de filas 'candidata' (sin 'por guard.sh')
+  FAIL  QA-023-09 N1 (E1) Edit que cierra un REQ critico, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N2 (E1) Edit que cierra, cwd <raíz>\n (salto final) candidata | esp=deny got=allow
+  FAIL  QA-023-09 N3 (E1) MultiEdit que cierra, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N16 (E1) Write que cierra, cwd <raíz>\n<raíz>/docs candidata | esp=deny got=allow
+  FAIL  QA-023-09 N4 (E2) Write de la coordinadora a src/a.ts, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N5 (E2) Write a src/a.ts, cwd <raíz>\n<raíz>/docs candidata | esp=deny got=allow
+  FAIL  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N7 (E3) CA-49 (i) enlace dentro de la raíz, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb candidata | deny con otro motivo
+  FAIL  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt candidata | deny con otro motivo
+  FAIL  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq candidata | deny con otro motivo
+  FAIL  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 C4 (G2) coordinadora: Bash echo > n.md desde docs/a\nb candidata | esp=allow got=deny
+  FAIL  QA-023-09 C6 (G2) cierre de un REQ en verde, cwd docs/a\nb candidata | esp=allow got=deny
+  FAIL  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) candidata | esp=allow got=deny
+  FAIL  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) candidata | deny con otro motivo
+  FAIL  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) candidata | deny con otro motivo
+  FAIL  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx candidata | deny con otro motivo
+  FAIL  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md candidata | esp=deny got=allow
+  FAIL  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> candidata | esp=deny got=allow
+  FAIL  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ candidata | esp=deny got=allow
+  FAIL  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts candidata | esp=deny got=allow
+== 9596e39: FAIL de filas 'candidata' (sin 'por guard.sh')
+  FAIL  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt candidata | esp=deny got=allow
+  FAIL  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq candidata | esp=deny got=allow
+  FAIL  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) candidata | esp=allow got=deny
+  FAIL  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) candidata | deny con otro motivo
+  FAIL  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) candidata | deny con otro motivo
+  FAIL  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx candidata | deny con otro motivo
+  FAIL  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md candidata | esp=deny got=allow
+  FAIL  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> candidata | esp=deny got=allow
+  FAIL  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ candidata | esp=deny got=allow
+  FAIL  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts candidata | esp=deny got=allow
+== 1.33.2: FAIL de filas 'candidata' (sin 'por guard.sh')
+  FAIL  QA-023-09 N6 (E3) SEC-117 no reconstruible, cwd /tmp\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N10 (E4) Bash printf > ../../src/a.ts desde docs/a\nb candidata | esp=deny got=allow
+  FAIL  QA-023-09 N11 (E4) Bash printf > a.ts desde src/s\nt candidata | esp=deny got=allow
+  FAIL  QA-023-09 N12 (E4) Bash sed -i con el terminal desde requirements/r\nq candidata | esp=deny got=allow
+  FAIL  QA-023-09 N13 (E5) agent_type qa-tester\ndesarrollador escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N17 (E5) agent_type desarrollador\nqa escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N14 (E5) agent_id a\n1 (qa-tester) escribe src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 C11 (G3) coordinadora: Bash echo > src/a.ts desde docs/a\nb (designa docs/a\nb/src/a.ts) candidata | esp=allow got=deny
+  FAIL  QA-023-09 C10 (F1) coordinadora escribe <raíz>/src/a.ts\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N18 (F1) coordinadora escribe <raíz>/src/s\nt/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 N19 (F1) Write con el terminal y QA pendiente a <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N20 (F1) Edit que cierra por <REQ>\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N21 (F2) coordinadora escribe <raíz>/app/a.ts\n (app/*.ts) candidata | deny con otro motivo
+  FAIL  QA-023-09 N22 (F2) coordinadora escribe <raíz>/cfg/main.json\n (exacto) candidata | deny con otro motivo
+  FAIL  QA-023-09 N23 (F2) coordinadora escribe <raíz>/cfg/main.json\nx candidata | deny con otro motivo
+  FAIL  QA-023-09 N24 (F2) Edit de creación sin terminal sobre <REQ>\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 N25 (F2) Edit que cierra por docs/l-req.md\n candidata | deny con otro motivo
+  FAIL  QA-023-09 N15 (F3) coordinadora escribe <raíz>/docs/x\n/../../src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 N26 (F3) Edit que cierra por <raíz>/docs/x\n/../../requirements/REQ-900.md candidata | esp=deny got=allow
+  FAIL  QA-023-09 N27 (F4) Write sin terminal a <REQ>\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 C9 (F4) coordinadora escribe <raíz>/docs/n.md\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 N28 (F4) O-16: <fuera>\n<REQ canónico> candidata | esp=deny got=allow
+  FAIL  QA-023-09 N29 (F4) el desarrollador escribe <raíz>/app/a.ts\n candidata | esp=deny got=allow
+  FAIL  QA-023-09 T1 (T1) coordinadora: Write\n a src/a.ts candidata | esp=deny got=allow
+  FAIL  QA-023-09 T2 (T1) coordinadora: Bash\n con echo x > src/a.ts candidata | deny con otro motivo
+  FAIL  QA-023-09 T3 (T1) coordinadora: Edit\n que cierra un REQ candidata | esp=deny got=allow
+  FAIL  QA-023-09 T4 (T1) el desarrollador: Write\n a src/a.ts candidata | esp=deny got=allow
