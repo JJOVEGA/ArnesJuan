@@ -1,0 +1,39 @@
+== Batería K — CR del texto de Bash y movimientos fuera de /tmp; proyecto en /var/tmp/arnes-qa-r7-198514/proj (2026-10-02T09:32:29-06:00) ==
+-- K. El CR final (o antes de un salto) del texto del comando: el destino se juzga sin él
+K1 coordinadora: printf x > k<CR> desde docs (docs/k<CR> -> src/a.ts)  cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+K2 coordinadora: printf x > k<CR><LF>true desde docs                   cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+K3 control: printf x > src/a.ts<CR> desde la raíz (sobredeniega)      cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+K4 control: printf x > k<CR>z desde docs (CR en medio: se juzga)       cand=deny  cd6afa6=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+K6 ABS: printf x > <raíz>/docs/k<CR> desde la raíz                   cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+K7 sed -i cierra por <raíz>/docs/r<CR> (-> REQ-900, rojo), CR final   cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+K8 tee docs/k<CR> (CR final)                                           cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+   efecto real del shell para K1 (árbol aparte):
+   src/a.ts tras (cd docs; printf INTRUSO > k<CR>) = INTRUSO
+-- Movimientos, fuera de /tmp, de las filas de las baterías A y B que tocan Bash absoluto o el cwd con CR
+A1 coordinadora echo x > src/a.ts desde F/d<CR>                        cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+A2 sed -i cierra REQ-900 relativo desde F/d<CR>                        cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'requirements/REQ-900.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ 
+B3f Bash printf x > ABS <raíz>/docs/n.md desde F/d<CR> (legítimo)    cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3h Bash sed -i cierra ABS REQ-900 desde F/d<CR>                       cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ quality\ gates\).\ Hazlo\ con\ Edit/Write\ para
+B3h2 Bash sed -i edita ABS REQ-901 SIN terminal desde F/d<CR>          cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+B3k Bash ABS por el enlace con CR: printf x > F/d<CR>/src/a.ts         cand=deny  cd6afa6=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+B3k2 sed -i cierra por F/d<CR>/requirements/REQ-900.md (ABS, CR en medio) cand=deny  cd6afa6=deny  9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2]
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ quality\ gates\).\ Hazlo\ con\ Edit/Write\ para
+B3p desarrollador Bash relativo con terminal: echo completado > docs/x.md cand=deny  cd6afa6=allow 9596e39=allow 1.33.2=allow [allow->deny vs 9596e39] [allow->deny vs 1.33.2] [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'docs/x.md\'\ y\ menciona\ \'completado\'\,\ y\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe:\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ l
+B3i ls -la desde F/d<CR>                                               cand=allow cd6afa6=allow 9596e39=allow 1.33.2=allow
+      motivo(cand): ''
+RS3 sin CR: echo x > src/a.ts desde F/d (dir normal, L8)               cand=allow cd6afa6=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''

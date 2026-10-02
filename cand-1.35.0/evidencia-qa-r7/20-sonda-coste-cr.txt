@@ -1,0 +1,63 @@
+== Sonda de coste del CR en campos grandes (2026-10-02T09:21:17-06:00); 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2 ==
+   campo | N bytes de relleno | árbol | ms | decisión
+   fp        |   20000 | CAND |    212 | deny
+   fp        |   20000 | CD6  |    110 | deny
+   fp-sin-cr |   20000 | CAND |    109 | deny
+   fp-sin-cr |   20000 | CD6  |    109 | deny
+   tool      |   20000 | CAND |    212 | deny
+   tool      |   20000 | CD6  |    113 | deny
+   cwd       |   20000 | CAND |    112 | deny
+   cwd       |   20000 | CD6  |    111 | deny
+   fp        |   50000 | CAND |    712 | deny
+   fp        |   50000 | CD6  |    210 | deny
+   fp-sin-cr |   50000 | CAND |    209 | deny
+   fp-sin-cr |   50000 | CD6  |    211 | deny
+   tool      |   50000 | CAND |    811 | deny
+   tool      |   50000 | CD6  |    211 | deny
+   cwd       |   50000 | CAND |    209 | deny
+   cwd       |   50000 | CD6  |    211 | deny
+   fp        |  100000 | CAND |   2715 | deny
+   fp        |  100000 | CD6  |    209 | deny
+   fp-sin-cr |  100000 | CAND |    311 | deny
+   fp-sin-cr |  100000 | CD6  |    310 | deny
+   tool      |  100000 | CAND |   2615 | deny
+   tool      |  100000 | CD6  |    312 | deny
+   cwd       |  100000 | CAND |    313 | deny
+   cwd       |  100000 | CD6  |    311 | deny
+== Sonda de coste, tramo alto (file_path con un CR final), 2026-10-02T09:21:58-06:00 ==
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/qa-lib-r7.sh: line 35: /home/juan/.local/bin/jq: Argument list too long
+   fp |  200000 | CAND |    111 ms | allow
+   fp |  200000 | CD6  |    111 ms | allow
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/qa-lib-r7.sh: line 35: /home/juan/.local/bin/jq: Argument list too long
+   fp |  300000 | CAND |    110 ms | allow
+   fp |  300000 | CD6  |    111 ms | allow
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/qa-lib-r7.sh: line 35: /home/juan/.local/bin/jq: Argument list too long
+   fp |  400000 | CAND |    111 ms | allow
+   fp |  400000 | CD6  |    111 ms | allow
+   ^^^ las tres filas anteriores son ERROR DEL INSTRUMENTO (el JSON no se construyó: 'Argument list too long' en jq --args; allow por entrada vacía). Se repiten abajo construyendo el JSON por archivo.
+== Sonda de coste, tramo alto, JSON construido por archivo (jq --rawfile), 2026-10-02T09:22:10-06:00 ==
+   (json: 200357 bytes; file_path con CR final: true)
+   fp |  200000 | CAND |   9725 ms | deny
+   fp |  200000 | CD6  |    209 ms | deny
+   (json: 300357 bytes; file_path con CR final: true)
+   fp |  300000 | CAND |  32874 ms | deny
+   fp |  300000 | CD6  |    312 ms | deny
+   (json: 400357 bytes; file_path con CR final: true)
+   fp |  400000 | CAND |  38969 ms | deny
+   fp |  400000 | CD6  |    310 ms | deny
+   (json: 600357 bytes)
+   fp |  600000 | CAND |  89345 ms | deny
+   fp |  600000 | CD6  |    411 ms | deny
+   Nota: un file_path de más de 4096 bytes (PATH_MAX de Linux) no lo puede abrir ninguna herramienta (ENAMETOOLONG):
+   prueba: escribir en un path de 5000 bytes -> /bin/bash: line 9: /tmp/<5000 a>: File name too long
+== Bash de la coordinadora (echo x > src/a.ts) con un tool_input.file_path grande y un CR final: el file_path no lo juzga nadie en Bash, pero la lectura de la entrada lo recorre; 2026-10-02T09:26:16-06:00 ==
+   bash+fp |  100000 | CAND |   2813 ms | deny
+   bash+fp |  100000 | CD6  |    310 ms | deny
+   bash+fp |  500000 | CAND |  63305 ms | deny
+   bash+fp |  500000 | CD6  |   5016 ms | deny
+   (con el cliente matando el hook a los 60 s, una corrida por encima de 60 000 ms no emite decisión: no deniega — SEC-115)
+== Referencia: el mismo caso bash+fp de 500 000 bytes con CR final en 9596e39 y 1.33.2, 2026-10-02T09:34:25-06:00 ==
+   bash+fp |  500000 | BASE  |   5220 ms | deny
+   bash+fp |  500000 | V1332 |   5318 ms | deny
+== y el control sin CR (mismo tamaño) en el candidato:
+   bash+fp-sin-cr |  500000 | CAND |   6321 ms | deny

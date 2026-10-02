@@ -1,0 +1,3 @@
+== Repetición: el caso R1 por guard.sh, 10 veces, y en paralelo 10 a la vez (idempotencia / carrera), 2026-10-02T09:38:00-06:00 ==
+   serie:    deny deny deny deny deny deny deny deny deny deny 
+   paralelo:      10 deny

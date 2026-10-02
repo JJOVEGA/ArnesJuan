@@ -1,0 +1,27 @@
+== guard-git por su cuenta frente a guard.sh: tool_name con LF (clase del 2026-10-01) y con CR (esta vuelta), 2026-10-02T09:33:46-06:00 ==
+G tool=$'Bash\n' agente=-  guard-git.sh solo: git reset --hard         cand=allow cd6afa6=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''
+G tool=$'Bash\n' agente=-  guard.sh:        git reset --hard           cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intento\ 
+G tool=$'Bash\n' agente=desarrollador  guard-git.sh solo: git reset --hard cand=allow cd6afa6=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''
+G tool=$'Bash\n' agente=desarrollador  guard.sh:        git reset --hard cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\n\'\,\ lleva\ un\ salto\ de\ linea\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ p
+G tool=$'Bash\r' agente=-  guard-git.sh solo: git reset --hard         cand=allow cd6afa6=deny  9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> <<deny->allow vs cd6afa6>>
+      motivo(cand): ''
+G tool=$'Bash\r' agente=-  guard.sh:        git reset --hard           cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ ni\ en\ que\ archivo:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no\ puede\ medir\ no\ deja\ pasar\ \(intent
+G tool=$'Bash\r' agente=desarrollador  guard-git.sh solo: git reset --hard cand=allow cd6afa6=deny  9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>> <<deny->allow vs cd6afa6>>
+      motivo(cand): ''
+G tool=$'Bash\r' agente=desarrollador  guard.sh:        git reset --hard cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ nombre\ de\ la\ herramienta\ de\ esta\ llamada\,\ \$\'Bash\\r\'\,\ lleva\ un\ retorno\ de\ carro\ y\ no\ identifica\ ninguna\ herramienta\,\ asi\ que\ esta\ puerta\ no\ puede\ saber\ si\ escribe\ en\ un\ REQ\ ni\ leer\ el\ documento\ que\ quedaria\ escrito:\ se\ trata\ como\ una\ escritura\ que\ no\ se\ puede\ determinar\,\ y\ una\ puerta\ que\ no
+G tool=Bash agente=-  guard-git.sh solo: git reset --hard              cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+G tool=Bash agente=-  guard.sh:        git reset --hard                cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+G tool=Bash agente=desarrollador  guard-git.sh solo: git reset --hard  cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+G tool=Bash agente=desarrollador  guard.sh:        git reset --hard    cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+-- hooks.json registra SOLO guard.sh para PreToolUse:
+[{"matcher":"Edit|Write|MultiEdit|Bash","hooks":[{"type":"command","command":"\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"}]}]

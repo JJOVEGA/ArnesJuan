@@ -1,0 +1,49 @@
+== Batería P: arnes_parse_input frente a jq, campo a campo (2026-10-02T09:37:37-06:00) ==
+P01-todo-normal                              cand=IGUAL a jq en los seis      cd6afa6=igual
+P02-LF-en-cada-campo                         cand=IGUAL a jq en los seis      cd6afa6=igual
+P03-LF-al-inicio                             cand=IGUAL a jq en los seis      cd6afa6=igual
+P04-LF-al-final                              cand=IGUAL a jq en los seis      cd6afa6=igual
+P05-solo-LF                                  cand=DIFIERE command:CR-transporte jq="\n" lib=""      cd6afa6=DIFIERE
+P06-LF-consecutivos                          cand=IGUAL a jq en los seis      cd6afa6=igual
+P07-vacios                                   cand=IGUAL a jq en los seis      cd6afa6=igual
+P08-ausentes                                 cand=IGUAL a jq en los seis      cd6afa6=igual
+P09-nulls                                    cand=IGUAL a jq en los seis      cd6afa6=igual
+P10-tool_input-null                          cand=IGUAL a jq en los seis      cd6afa6=igual
+P11-numeros                                  cand=IGUAL a jq en los seis      cd6afa6=igual
+P12-booleanos                                cand=IGUAL a jq en los seis      cd6afa6=igual
+P13-arrays-con-LF                            cand=IGUAL a jq en los seis      cd6afa6=igual
+P14-objetos-con-LF                           cand=IGUAL a jq en los seis      cd6afa6=igual
+P15-CR-solo                                  cand=DIFIERE cwd:CWD-CR-vaciado jq="/t\rm" lib=""      cd6afa6=igual
+P16-CR-final                                 cand=DIFIERE agent_id:CR-transporte jq="a\r" lib="a" agent_type:CR-transporte jq="q\r" lib="q" cwd:CWD-CR-vaciado jq="/t\r" lib="" command:CR-transporte jq="ls\r" lib="ls"      cd6afa6=DIFIERE
+P17-CRLF-dentro                              cand=DIFIERE tool_name:CR-transporte jq="W\r\nr" lib="W\nr" agent_id:CR-transporte jq="a\r\n1" lib="a\n1" agent_type:CR-transporte jq="q\r\na" lib="q\na" cwd:CWD-CR-vaciado jq="/t\r\nm" lib="" file_path:CR-transporte jq="/x\r\ny" lib="/x\ny" command:CR-transporte jq="l\r\ns" lib="l\ns"      cd6afa6=DIFIERE
+P18-CR-final-fp-cmd-vacio                    cand=IGUAL a jq en los seis      cd6afa6=DIFIERE
+P19-doble-CR-final                           cand=DIFIERE cwd:CWD-CR-vaciado jq="/t\r\r" lib="" command:CR-transporte jq="ls\r\r" lib="ls\r"      cd6afa6=DIFIERE
+P20-unicode                                  cand=IGUAL a jq en los seis      cd6afa6=igual
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 23: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 24: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 23: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 24: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 23: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 24: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 23: warning: command substitution: ignored null byte in input
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 24: warning: command substitution: ignored null byte in input
+P21-NUL                                      cand=DIFIERE tool_name:CR-transporte jq="Wr\u0000ite" lib="Write" cwd:CR-transporte jq="/t\u0000m" lib="/tm" file_path:CR-transporte jq="/x\u0000y" lib="/xy" command:CR-transporte jq="l\u0000s" lib="ls"      cd6afa6=DIFIERE
+P22-parece-contador                          cand=IGUAL a jq en los seis      cd6afa6=igual
+P23-tabs-espacios                            cand=IGUAL a jq en los seis      cd6afa6=igual
+P24-cmd-multilinea-LF-final                  cand=DIFIERE command:CR-transporte jq="echo a\necho b > c\n\n\n" lib="echo a\necho b > c"      cd6afa6=DIFIERE
+P25-fp-LF-final-cmd-vacio                    cand=IGUAL a jq en los seis      cd6afa6=igual
+P26-cwd-LF-todo-vacio-despues                cand=IGUAL a jq en los seis      cd6afa6=igual
+P27-backslash-n-literal                      cand=IGUAL a jq en los seis      cd6afa6=igual
+P28-claves-duplicadas                        cand=IGUAL a jq en los seis      cd6afa6=igual
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/bateria-P-parse.sh: line 80: /home/juan/.local/bin/jq: Argument list too long
+P29-texto-largo-1MB-una-linea                jq no lee la entrada (0 campos) | cand: "","","","","","",
+== entradas que jq no lee o que no son un objeto ==
+P30-truncada                                 jq no lee la entrada (0 campos) | cand: "","","","","","",
+P31-array                                    jq no lee la entrada (0 campos) | cand: "","","","","","",
+P32-cadena                                   jq no lee la entrada (0 campos) | cand: "","","","","","",
+P33-numero                                   jq no lee la entrada (0 campos) | cand: "","","","","","",
+P34-tool_input-cadena                        jq no lee la entrada (0 campos) | cand: "","","","","","",
+P35-dos-objetos                              jq no lee la entrada (12 campos) | cand: "Bash","","","","","ls\n0 0 0 0 0 0 0 0\nWrite\n\n\n\n/x/src/a.ts",
+P36-null                                     cand=IGUAL a jq en los seis      cd6afa6=igual
+
+# NOTA QA r7: P29 es ERROR DEL INSTRUMENTO (el JSON de 1 MB no se construyó: "Argument list too long" en jq --arg); no mide nada. P21 (NUL) y P35 (dos objetos) son preexistentes y fuera de esta reparación (NUL: bash no lo guarda; P35: SEC-120), igual que en r6.

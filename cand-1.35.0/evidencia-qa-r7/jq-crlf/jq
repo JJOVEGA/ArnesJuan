@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -o pipefail
+"/home/juan/.local/bin/jq" "$@" | sed 's/$/\r/'

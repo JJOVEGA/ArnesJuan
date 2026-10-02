@@ -1,0 +1,10 @@
+== Quality gates (AGENTS.md §7) sobre fa070b7, 2026-10-02T09:14:06-06:00 ==
+gate1 sintaxis hooks+tools rc=0
+gate2 hooks.json rc=0
+gate3 plugin+marketplace rc=0
+extra: sintaxis sección 44 rc=0
+extra: sintaxis run.sh rc=0
+-- gates del manifiesto .arnes/config.json:
+for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+jq -e . hooks/hooks.json >/dev/null
+jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null

@@ -1,0 +1,44 @@
+6 ediciones; copias en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/campos/nuevos; JSON en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/campos/ediciones
+== Prueba de los campos de QA r7 sobre una copia, 2026-10-02T09:41:46-06:00 ==
+-- (1) cada edición de cabecera sobre el REQ ACTUAL (Edit de la línea entera, agente qa-tester)
+   01-REQ-007.md.json       instalada: allow 
+   01-REQ-007.md.json       candidato: allow 
+   02-REQ-007.md.json       instalada: allow 
+   02-REQ-007.md.json       candidato: allow 
+   03-REQ-023.md.json       instalada: allow 
+   03-REQ-023.md.json       candidato: allow 
+   04-REQ-023.md.json       instalada: allow 
+   04-REQ-023.md.json       candidato: allow 
+   05-REQ-031.md.json       instalada: allow 
+   05-REQ-031.md.json       candidato: allow 
+   06-REQ-001.md.json       instalada: allow 
+   06-REQ-001.md.json       candidato: allow 
+-- (2) con los campos nuevos, un intento de CIERRE (Estado -> completado) en la copia
+   REQ-007.md   instalada: deny  :: ARNES: no se puede completar 'requirements/REQ-007.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+   REQ-007.md   candidato: deny  :: ARNES: no se puede completar 'requirements/REQ-007.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el REQ antes de cerrar (AGENTS.md §9).
+   REQ-023.md   instalada: allow 
+   REQ-023.md   candidato: allow 
+   REQ-031.md   instalada: allow 
+   REQ-031.md   candidato: allow 
+   REQ-001.md   instalada: allow 
+   REQ-001.md   candidato: allow 
+-- (3) lo que lee el lector de la puerta (tools/arnes-lectura.sh del candidato) de las copias:
+-- (2b) REQ-007 nuevo con QA y Seguridad forzados a aprobado (sólo en la copia), para ver la lectura de Hallazgos abiertos:
+   /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2: ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo').
+   /home/juan/dev/ArnesJuan-v1.35: ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no afecta a lo que alguien ve, decide o cobra ni a lo que el REQ afirma (requirements/README.md, seccion 'Clases de hallazgo').
+-- (3) lector de la puerta sobre la copia (tools/arnes-lectura.sh del candidato):
+Lectura del arnés sobre requirements/ — plugin 1.35.0
+
+Ningún valor anómalo: la máquina lee los 4 REQ como están escritos.
+
+RESUMEN
+  4 REQ leídos
+  rigor efectivo: critico 4 · estandar 0 · ligero 0
+  cola de aprobaciones (PENDING_APPROVAL.md): 0 pendiente(s) — no bloquea el cierre
+
+  El rigor efectivo es DERIVADO: `Sensible a seguridad: sí` impone `critico`
+  aunque no se declare `Rigor:`. Si un REQ que crees crítico sale `estandar`,
+  su campo de sensibilidad no se está leyendo como crees.
+-- (2c) copia de REQ-007 con SÓLO QA-023-14 y QA-023-15 en Hallazgos abiertos (y QA/Seguridad aprobado): ¿los lee como instrumento?
+   /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2: allow (los dos se leen como instrumento: no bloquean)
+   /home/juan/dev/ArnesJuan-v1.35: allow (los dos se leen como instrumento: no bloquean)

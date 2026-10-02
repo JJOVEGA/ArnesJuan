@@ -1,0 +1,12 @@
+== Árboles de comparación (QA r7, 2026-10-02T09:13:53-06:00) ==
+HEAD worktree: fa070b7375b95f1e819f5a2009c78f4409b34d04
+cd6afa6: cd6afa65d8e0078116a061cf376c66d13dedda0b hooks-tree=b12ee3dd8ac3e2500b74b2d7a893a34521e7af15 tests-tree=89f5cfbb8e01d720eec886fcf7975289b5ca0dd7
+  hooks verificados por oid: OK
+9596e39: 9596e39fca6c8eda6506ee1b26f4bdbd71918313 hooks-tree=5202b1754dc7f51ffdcd1d7fef5f82f91457964a tests-tree=cb88041799ea557aed03258426e92b1657112409
+  hooks verificados por oid: OK
+43b948a: 43b948a932c245e05373e82e61c88a45ec6409a0 hooks-tree=8acdb29a660b6eada04d2b3a4d592126555762b7 tests-tree=c1125578354473d43ad1752f2aa503c748b89c7e
+  hooks verificados por oid: OK
+CAND (worktree) hooks-tree HEAD=edff8ac527e21e92350ff79d0a5e9d2adba25cc7 = 3bc7d3c:hooks=edff8ac527e21e92350ff79d0a5e9d2adba25cc7
+  worktree hooks = HEAD por oid: OK
+1.33.2 cache: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2
+  1.33.2 cache hooks = tag v1.33.2 por oid: OK

@@ -1,0 +1,43 @@
+== Batería A — QA-023-13, la reproducción original antes y después (2026-10-02T09:18:38-06:00) ==
+-- 0. Qué hace el shell desde ese cwd (árbol aparte, efecto real):
+   cd "x/d<CR>" && printf > src/a.ts  =>  root/src/a.ts: ESCRITO-EN-CODIGO ; x/d/src/a.ts existe: no
+
+-- 1. guard-codigo (coordinadora, echo x > src/a.ts, cwd=FUERA/d<CR>)
+A1 guard-codigo.sh                                                     cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+A1g guard.sh                                                           cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+-- 2. guard-completado (sed -i que cierra REQ-900 en rojo, cwd=FUERA/d<CR>)
+A2 guard-completado.sh                                                 cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'\,\ y\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe:\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ c
+A2g guard.sh                                                           cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'requirements/REQ-900.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ 
+-- 3. el mismo caso por Edit con ruta relativa (R3) y por Write relativo de la coordinadora a src/a.ts
+A3 Edit relativo cierra REQ-900 [guard-completado]                     cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=allow [allow->deny vs 1.33.2] [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'requirements/REQ-900.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ 
+A3g idem guard.sh                                                      cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=allow [allow->deny vs 1.33.2] [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'requirements/REQ-900.md\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ 
+A4 Write relativo src/a.ts coordinadora [guard-codigo]                 cand=deny  cd6afa6=allow 9596e39=deny  1.33.2=deny  [allow->deny vs cd6afa6]
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+
+-- 4. QUÉ RUTA JUZGA LA PUERTA (biblioteca de cada árbol, misma entrada J1):
+   CAND: declare -- ARNES_CWD="" declare -- ARNES_CWD_CR="1" 
+   CAND: identidad de src/a.ts -> E=nodet  F(física)=''  C=es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ 
+   CD6: declare -- ARNES_CWD="/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/fuera-a/d" 
+   CD6: identidad de src/a.ts -> E=ok  F(física)=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/evidencia-qa-r7/fuera-a/d/src/a.ts  C=''
+
+-- 5. VARIANTE INVERSA (no decide sobre otra ruta, en la dirección contraria): FUERA2/d<CR> es un dir
+      normal fuera y FUERA2/d (el recortado) es un ENLACE a la raíz. El shell escribe FUERA, no código.
+   shell: FUERA2/d<CR>/src/a.ts = FUERA ; raíz/src/a.ts = x
+A5 coordinadora echo x > src/a.ts, cwd=FUERA2/d<CR> (designa algo FUERA) cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ no\ se\ pudo\ determinar\ a\ que\ archivo\ escribe\ \'src/a.ts\':\ es\ relativa\ y\ el\ directorio\ de\ trabajo\ de\ la\ entrada\ \(\'cwd\'\)\ contiene\ un\ retorno\ de\ carro\,\ que\ la\ lectura\ de\ la\ entrada\ no\ conserva\ con\ certeza\ \(el\ del\ final\ se\ confunde\ con\ el\ fin\ de\ linea\ de\ Windows\)\,\ asi\ que\ no\ se\ sabe\ en\ que\ director
+   (cd6afa6 deniega 'src/a.ts' juzgando <FUERA2>/d -> raíz: OTRA ruta; el candidato no la juzga: no determinable)
+
+-- 6. CONTROLES SIN CR, mismo proyecto
+A6 echo x > src/a.ts, cwd=raíz                                        cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/a.ts\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee
+A7 echo x > src/a.ts, cwd=FUERA/d (dir normal: designa FUERA/d/src/a.ts, L8) cand=allow cd6afa6=allow 9596e39=deny  1.33.2=deny  <<MOV deny->allow vs 9596e39>> <<MOV deny->allow vs 1.33.2>>
+      motivo(cand): ''
+A8 sed -i cierra REQ-900, cwd=raíz                                    cand=deny  cd6afa6=deny  9596e39=deny  1.33.2=deny 
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/REQ-900.md\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ quality\ gates\).\ Hazlo\ con\ Edit/Write\ para
+-- 7. sha de REQ-900 y src/a.ts sin cambio (las puertas no escriben): a4aaa0a4e7b7d325 x
