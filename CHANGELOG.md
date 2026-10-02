@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Séptima autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): 9a, reparar QA-023-13 en una vuelta excepcional acotada; 9b no autorizada, se prepara su decisión
+> Origen: Interno (commit local; esta autorización sólo permite push si las revisiones salen favorables) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Registro:** `PENDING_APPROVAL.md` § Resueltas, con la base comprobada (`452098e` en local, en `origin` y en el PR #59, en borrador) y el orden de la vuelta. La 9a pasa a resuelta y la 9b sigue pendiente. Las fichas 1 y 2 y P-119-A siguen sin aceptar.
+- **Windows/MSYS está disponible** (PortableGit: `bash` 5.3.15, MSYS 3.6.9, `jq` 1.8.2). No se instala nada.
+- **Contadores:** el de REQ-023 sigue agotado (3 de 3); no se reinicia ninguno.
+- **Avance (regla 6):** la vuelta queda autorizada por escrito antes de despacharla. Lo siguiente es el desarrollador.
+
 ## [GitHub] — 2026-10-01 · Cola: decisión 9 (QA-023-13 y QA-023-10) con pregunta, opciones, recomendación y consecuencias, agrupada con las fichas 1 y 2 y P-119-A; sin otra vuelta
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
