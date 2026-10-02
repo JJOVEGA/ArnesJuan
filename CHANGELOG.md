@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Octava autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): reparación agrupada de SEC-122, QA-023-14, P-023-13-A y F3
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Registro:** `PENDING_APPROVAL.md` § Resueltas. La decisión 10 y P-023-13-A pasan a resueltas. Siguen sin aceptar CA-54 (9b), la ficha 1, la ficha 2, F2/F5/F7 y SEC-120.
+- **Herramienta:** el bloque literal se insertó con un script de consola, no con la herramienta de edición (AGENTS.md §13). Se copiaba texto ajeno sin tocarlo, y la copia se verificó con `diff`.
+- **Contadores:** el de REQ-023 sigue agotado (3 de 3); no se reinicia ninguno.
+- **Avance (regla 6):** la intervención queda autorizada por escrito antes de despacharla. Lo siguiente es el desarrollador.
+
 ## [Interno] — 2026-10-02 · Séptima autorización: determinación de seguridad R-046 sobre `666d9f2` (código de `3bc7d3c`) — QA-023-13, QA-023-09, O-11 y el CR conformes; REQ-023, REQ-031 y REQ-001 `Seguridad: aprobado` sobre el código final; SEC-119 en mitigación; SEC-122 nuevo (`contrato` en REQ-007); decisiones 10 y P-023-13-A en la cola
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` y la coordinadora. Unos 327 k tokens en la comisión de seguridad (cifra del arnés).
 

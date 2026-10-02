@@ -301,7 +301,7 @@
   - **Por qué:** el incumplimiento es real, pero retener 1.35.0 por él dejaría a los proyectos con una base que, en esta medición de Windows, sí agotaba el tiempo en el caso máximo.
   - **Lo que (A) no hace:** no acepta que un timeout deje pasar la operación. Ese riesgo sigue en la ficha 1, sin aceptar.
 
-**Decisión 10 — PENDIENTE (añadida el 2026-10-02): SEC-122, registrado por seguridad en R-046.**
+**Decisión 10 — RESUELTA por el propietario el 2026-10-02 (octava autorización, § Resueltas): se reparan las dos caras de SEC-122, junto con QA-023-14 y P-023-13-A, en una intervención agrupada.** *Texto original, conservado:* SEC-122, registrado por seguridad en R-046.
 - **Qué es:** una exclusión de ciertas rutas de sistema en la identificación del destino deja sin aplicar parte de CA-47 y CA-49 en casos concretos.
   - Una cara es **preexistente**.
   - La otra es una **regresión frente a 1.33.2, introducida por `104ffd1`** (la reparación de SEC-119, quinta autorización), y sólo afecta a proyectos situados bajo esas rutas.
@@ -320,7 +320,7 @@
   - **(C) Retener la publicación** sin reparar.
 - **Además:** P-119-A no puede presentarse con el texto actual de F3 hasta que el analista lo corrija (R-046).
 
-**P-023-13-A — PENDIENTE (abierta por el analista el 2026-10-02; = QA-023-15, `instrumento`, preexistente en los cuatro árboles).** El texto del comando de `Bash` sigue perdiendo un CR en el transporte, y eso queda fuera de esta reparación, porque excluiste reescribir el analizador de `Bash`. Está declarado en CA-47 punto 11 como límite conocido, no protegido y **no aceptado**.
+**P-023-13-A — RESUELTA por el propietario el 2026-10-02 (octava autorización): se corrige el transporte del CR en el texto de los comandos de `Bash`, denegando explícitamente si no se puede preservar su significado.** *Texto original, conservado:* abierta por el analista el 2026-10-02; = QA-023-15, `instrumento`, preexistente en los cuatro árboles. El texto del comando de `Bash` sigue perdiendo un CR en el transporte, y eso queda fuera de esta reparación, porque excluiste reescribir el analizador de `Bash`. Está declarado en CA-47 punto 11 como límite conocido, no protegido y **no aceptado**.
 - **Opciones:**
   - **(A) Declararlo fuera de la promesa de 1.35.0.**
   - **(B) Repararlo** en una vuelta propia.
@@ -340,6 +340,96 @@
 - **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9b** (QA-023-10). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, y su vuelta terminó con QA no favorable por QA-023-13. La 9a (séptima autorización, 2026-10-02) abrió la vuelta que lo repara, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la séptima autorización (QA-023-13 y la preparación de la decisión 9b), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-02, octava autorización) — **Reparación agrupada de SEC-122 (ambas caras), QA-023-14, P-023-13-A / QA-023-15 y la corrección de F3**; intervención excepcional agrupada sin reiniciar contadores, con una pasada correctiva dentro del alcance; texto de plataformas autorizado
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-10-02 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo la reparación agrupada de **SEC-122, ambas caras; QA-023-14; P-023-13-A / QA-023-15; y la corrección contractual de F3 directamente relacionada**.
+>
+> El objetivo es preparar v1.35.0 para publicar, cerrando estos problemas de identificación de rutas y transporte de entradas, sin abrir una reparación general del arnés.
+>
+> **1. Base y conservación**
+>
+> Trabaja en `cand/1.35.0`, partiendo de la cabeza reportada `45368ce`, PR #59. Comprueba la cabeza real y las instrucciones del worktree antes de modificar.
+>
+> Conserva los cambios preexistentes de `docs/ESTADO.md`, `propuesta-v1.35.0/`, las evidencias y todas las corridas anteriores. No recuperes la optimización descartada de CA-54.
+>
+> **2. Reparación autorizada**
+>
+> - **SEC-122:** elimina la exclusión indiscriminada de `/dev/` y `/proc/`. Los destinos resolubles por nombres deben pasar por la identificación y las reglas de protección correspondientes, conservando las comprobaciones de existencia y enlaces. Una identidad dependiente del proceso que no pueda determinarse de forma fiable no recibe permiso por esa incertidumbre. Conserva los usos legítimos previstos de `/dev/null` y `/dev/stderr` sin convertir sus nombres en una excepción general.
+> - **QA-023-14:** elimina la sustitución superlineal introducida en `_arnes_repone_cr`. Puedes usar la detección en la lectura con `jq` propuesta, conservando íntegros los valores y las decisiones de protección. No sustituyas este coste por otra pasada superlineal.
+> - **P-023-13-A:** corrige el transporte del CR en el texto de comandos Bash. Si el análisis no puede preservar su significado, deniega explícitamente; nunca lo elimines silenciosamente para juzgar un comando distinto. No reescribas el analizador general de Bash.
+> - **Contrato:** el analista actualiza F3, CA-49, CA-66 punto 5 y las sedes directamente afectadas. F3 no debe desactivar las reglas de existencia, enlaces ni protección de destinos resolubles. Conserva el historial y declara los cambios de compatibilidad.
+>
+> **3. Autonomía y presupuesto**
+>
+> Autorizo una intervención excepcional agrupada, registrada sin reiniciar contadores: implementación, revisión de QA y, si aparecen defectos dentro de este mismo alcance, una pasada correctiva con su re-verificación de QA.
+>
+> No me pidas otra autorización por cada ajuste de código, fixture o texto directamente necesario para cumplir estas propiedades. Las decisiones técnicas ordinarias quedan delegadas dentro de este alcance.
+>
+> Después, seguridad revisa el delta cuando QA sea favorable. No abras más vueltas automáticamente ni incluyas defectos independientes. Si se agota este presupuesto, entrega el impedimento concreto y conserva el trabajo.
+>
+> **4. Validación proporcional**
+>
+> Reutiliza la evidencia vigente. Comprueba:
+>
+> - Las dos caras de SEC-122, con las dos puertas y controles legítimos.
+> - El caso de CR en comandos Bash y la conservación de las reparaciones de LF/CR ya acreditadas.
+> - Los casos relacionados de SEC-117 y SEC-119 que puedan verse afectados.
+> - El coste de QA-023-14 con los tamaños ya usados, bajo un procedimiento fijado antes y sin repetir hasta obtener una cifra favorable.
+> - Las secciones 41 a 44 y un banco completo sobre el código candidato final. Repite sólo lo necesario para verificar una corrección concreta o cumplir un gate vigente.
+>
+> Distingue decisión del hook, efecto en disco y comportamiento del host. No atribuyas al host lo que sólo se inyectó al hook.
+>
+> Mi entorno es VS Code con WSL. Conserva separadas las pruebas del CLI dentro de WSL y las de la extensión. Esta intervención no incluye una campaña nueva de plataformas ni instalar entornos. Si un control de seguridad impide una prueba, registra la limitación sin intentar rodearlo.
+>
+> **5. Plataformas y alcance de las conclusiones**
+>
+> Autorizo registrar el texto de plataformas propuesto, limitado a los casos realmente ejecutados:
+>
+> - Hook en Linux/WSL2.
+> - CLI 2.1.285 en WSL2 mediante `claude -p`.
+> - Hook en Windows/MSYS, en una máquina.
+> - Sin comprobación de la extensión de VS Code, del CLI en Windows ni de otros clientes.
+>
+> Esto describe dónde se ejecutaron los casos; no acredita toda la plataforma ni todos sus comportamientos.
+>
+> La reparación agrupada tampoco garantiza por sí sola que el candidato quede publicable. CA-54, SEC-115/118, el hueco C y las fronteras restantes conservan sus decisiones pendientes.
+>
+> **6. Decisiones que siguen sin autorizarse**
+>
+> Esta autorización no acepta:
+>
+> - El incumplimiento de los 5 segundos de CA-54.
+> - SEC-115 ni SEC-118.
+> - El hueco C de escrituras mediante intérpretes.
+> - F2, F5 ni F7 de P-119-A.
+> - SEC-120 ni otros defectos independientes.
+>
+> No subas umbrales, no reduzcas límites de entrada y no conviertas un timeout sin decisión en un riesgo aceptado. La reparación de QA-023-14 no acredita por sí sola el cumplimiento de CA-54.
+>
+> **7. Entrega y PR**
+>
+> Autorizo los commits de esta intervención. Cuando QA y seguridad sean favorables para el delta autorizado, actualiza el PR #59 mediante push sin force y observa una sola corrida de CI sobre la cabeza final. Conserva el resultado; no relances para buscar verde.
+>
+> Entrega un único resumen con:
+>
+> - Cabeza final y alcance real del cambio.
+> - Resultado antes/después de los tres problemas.
+> - Mediciones de coste y sus límites.
+> - Cobertura exacta de QA, seguridad y host.
+> - Una lista consolidada de decisiones pendientes para publicar, sin duplicados.
+>
+> Si un hallazgo ajeno al alcance impide alguna firma, explica esa dependencia sin repararlo ni ocultarlo. Las firmas del delta no deben presentarse como aprobación completa del candidato si quedan impedimentos.
+>
+> No cierres requisitos, fusiones, crees tags, publiques ni actualices instalaciones o consumidores. No toques los PR #54, #57 ni #45.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Base comprobada antes de editar (2026-10-02):** `cand/1.35.0` local = `origin` = PR #59 = `45368ce`, en borrador. En el árbol, sólo los cambios preexistentes: `docs/ESTADO.md` y `propuesta-v1.35.0/`.
+- **Contadores:** el de REQ-023 sigue agotado (3 de 3); no se reinicia ninguno y no se crea ningún REQ.
+- **Orden, en serie (todo es REQ-007):** desarrollador → analista → QA (Opus, §5), con como mucho una pasada correctiva y su re-verificación → seguridad con QA favorable → push y una sola corrida de CI.
+- **Resuelve:** la decisión 10 (SEC-122) y P-023-13-A, en reparación. **Siguen pendientes y sin aceptar:** CA-54 (9b), SEC-115/118 (ficha 1), C (ficha 2), F2/F5/F7 (P-119-A) y SEC-120.
 
 ### RESUELTA (propietario, 2026-10-02, séptima autorización) — **Decisión 9a: se repara QA-023-13** en una vuelta excepcional acotada, sin reiniciar contadores; **9b NO autorizada todavía** (QA-023-10: se prepara su decisión, con una comprobación acotada en Windows/MSYS si está disponible)
 
