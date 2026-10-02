@@ -278,11 +278,11 @@ fi
 seccion_nueva
 mkreq "$PROJ/requirements/REQ-740.md" "no" "aprobado" "n/a"
 check "paralelo/CA-05: un REQ SIN Archivos: cierra igual que en v1.31.0 -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-740.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-740.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-741.md" "no" "aprobado" "n/a"
 printf 'Archivos: /ruta/absoluta/mal, , ../fuera\n' >> "$PROJ/requirements/REQ-741.md"
 check "paralelo/CA-05: un Archivos: ilegible tampoco bloquea el cierre -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-741.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-741.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- CA-14: el COSTE. 60 REQ y 200 archivos declarados, con los binarios instrumentados
 # en el PATH para contar los procesos externos de verdad y no de memoria.

@@ -8,18 +8,18 @@ PISO_AUTONOMO_SECCION=22  # 8 preámbulo + 0 maquinaria compartida duplicada + 1
   seccion_nueva "Asterisco de nota al pie (una salvedad no es una firma):"
 mkreq "$PROJ/requirements/REQ-074.md" "sí" "aprobado" "aprobado*"
 check "'aprobado*' NO cierra un critico -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-074.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-074.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-075.md" "sí" "aprobado" "*aprobado"
 check "'*aprobado' tampoco -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-075.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-075.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 # Control positivo: el enfasis PAREADO si se retira, o el arreglo habria roto lo
 # que 1.21.0 vino a arreglar.
 mkreq "$PROJ/requirements/REQ-076.md" "sí" "aprobado" "*aprobado*"
 check "'*aprobado*' pareado si cierra -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-076.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-076.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-077.md" "**sí**" "aprobado" "pendiente"
 check "y '**sí**' sigue exigiendo auditoria -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-077.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-077.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- El parentesis es EVIDENCIA, y la evidencia no cambia el veredicto ---------
 # Medido en un proyecto real: 26 REQ paralizados porque su convencion es

@@ -15,16 +15,16 @@ check "A1 por guard.sh: edicion neutra -> allow" allow guard.sh \
 # CRITICO: el primer guardian permite y el SEGUNDO debe seguir juzgando.
 mkreq "$PROJ/requirements/REQ-030.md" "no" "pendiente" "n/a"
 check "guard.sh: el 2o guardian sigue corriendo tras el 1o -> deny" deny guard.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-030.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-030.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-031.md" "no" "aprobado" "n/a"
 check "guard.sh: cierre limpio -> allow" allow guard.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-031.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-031.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-032.md" "sí" "aprobado" "pendiente"
 check "guard.sh: sensible sin seguridad -> deny" deny guard.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-032.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-032.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-033.md" "no" "aprobado" "n/a" "SEC-9 (instrumento)"
 check "guard.sh: hallazgo de instrumento -> allow" allow guard.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-033.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-033.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 check "guard.sh: Bash escribe en src/ -> deny" deny guard.sh \
   "$(emite_bash "echo x > src/app.ts" "" "")"
 check "guard.sh: Bash cierra un REQ -> deny" deny guard.sh \

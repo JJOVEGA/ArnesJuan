@@ -79,6 +79,61 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+**Cada clave de control se escribe una sola vez, y como la escribe la plantilla.** Las claves de
+control son las seis cuya presencia o ausencia decide el cierre: `Estado`, `QA`, `Seguridad`,
+`Sensible a seguridad`, `Hallazgos abiertos` y `Rigor` (lista cerrada; en el código del arnés vive una
+sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
+*variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
+**ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que la puerta puede
+reconstruir: un `Write`, o un `Edit`/`MultiEdit` reconstruible según REQ-023 CA-13 del repositorio del
+arnés, que es la sede única de esa definición. **Una edición que la puerta no puede reconstruir no
+queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Tampoco pasa un
+`Edit`/`MultiEdit` de un REQ que la puerta no puede leer entero:** lo deniega REQ-007 CA-45 del mismo
+repositorio, que dice también cómo se juzga un `Write` sobre él. **Cuándo deniega, dicho entero
+para ese alcance:** cuando la cabecera que quedaría escrita es
+ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
+terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
+terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
+gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
+existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
+siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
+deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
+su limitación SEC-118 («Clases de hallazgo», abajo).
+
+**Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
+`<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
+extremos, `*`, `_` y `` ` ``) y tras quitar **como mucho un** marcador de lista inicial (`-` o `+`
+seguido de un blanco; o de 1 a 3 dígitos seguidos de `.` o `)` y de un blanco; los caracteres
+invisibles que lo precedan no impiden reconocerlo), tiene **las mismas
+letras ASCII**, sin distinguir mayúsculas, que una clave de control, y no es exactamente esa clave.
+Para comparar —nunca para leer— se descartan los espacios, los caracteres de control y todo carácter no
+ASCII. Ejemplos **no exhaustivos**: `HALLAZGOS ABIERTOS:`, `qa:`, `Hallazgos  abiertos:` (blanco doble),
+la clave con un BOM, un espacio de anchura cero o un espacio duro delante o dentro, `- Rigor:` y
+`1. QA:`. Una línea con exactamente la forma de una declaración (`- Estado: …`) se trata como tal.
+
+**Lo que no es una declaración, y por tanto no es variante:** una línea cuya clave, tras el marcador,
+contiene un signo ASCII visible que no es letra —`>`, comillas, paréntesis, corchetes, dígitos, `&`,
+`/`, `.`, etc.— o una comilla tipográfica (`«` `»` `“` `”` `‘` `’` `„` `‹` `›`, lista cerrada): es una
+cita, una mención o una referencia. Ejemplos **no exhaustivos**: `> Estado: completado`,
+`«Estado»: …`, `(QA): …`, `Q&A: …`.
+
+**Fuera, y sin promesa:** una letra cambiada por otra que se le parece (`Hallazgоs` con `о` cirílica,
+letras de ancho completo); una letra ASCII de más, de menos o distinta (`Hallazgo abierto:`, `Rigr:`);
+unos dos puntos que no son ASCII (`：`); las líneas con un signo visible de los de arriba, aunque lleven
+además un carácter invisible; un espacio duro en lugar del blanco que sigue al guion o al número del
+marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` como signo; y las claves de
+**más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
+para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
+ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
+**La edición que la puerta no puede reconstruir ya no está en esta lista.** Un `Edit`/`MultiEdit` cuyo
+`old_string` sólo coincide tras la normalización que aplica la herramienta —comillas tipográficas,
+`\uXXXX`— **se deniega**. La norma está en REQ-023 CA-13 del repositorio del arnés (ADR-015), que es la
+vía de SEC-117. Para editar un REQ, copia el `old_string` literal del archivo.
+
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
 siempre. Lo fija el analista en la cabecera del REQ.
@@ -155,12 +210,25 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
 **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
 del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
 `**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
+primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. **Aparte de esa
+regla, su limitación conocida y sin reparar (SEC-118 del repositorio del arnés):** el motivo cita los
+primeros 60 caracteres de cada línea repetida y viaja como un argumento de línea de órdenes, cuyo
+límite es de **bytes**; por encima, el hook sale **sin decisión** y no deniega. Medido a nivel de hook
+en Linux/WSL2, una corrida por punto —cifras operativas: mediciones, no umbrales—: con líneas **ASCII**
+de 60 caracteres o más, 1 601 deniegan (motivo de 121 061 bytes) y 1 801 salen sin decisión; con líneas
+**ASCII** cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión; con caracteres
+**multibyte** en la parte citada, bajo `C.UTF-8`, salen sin decisión 1 601 líneas con `ñ`, 1 001 con
+caracteres de 4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en
+Windows/MSYS no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
+Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
-carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee**, y ahí no
-hay promesa; ejemplos **no exhaustivos**: una continuación en la línea siguiente sin clave, una clave
-con un carácter invisible, un blanco de más o un homóglifo (`Hallazgos  abiertos:`, `Hallazgоs`),
-lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer `## `.
+carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
+una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
+invisible; definición y frontera en «Veredictos de validación», arriba—, la puerta **deniega el cierre**
+por cabecera ambigua, sin leer su valor. En lo demás no hay promesa; ejemplos **no exhaustivos**: una
+continuación en la línea siguiente sin clave, un homóglifo (`Hallazgоs`) y lo que queda fuera de esa
+frontera, lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer
+`## `.
 
 **Techo de tamaño: 16 384 bytes.** Si el valor —todo lo que va tras los dos puntos, incluido el
 blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
@@ -176,7 +244,9 @@ corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega po
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
 28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
-Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. Es una
+limitación aparte de la regla —SEC-115 del mismo repositorio— y no forma parte de lo que la regla
+promete.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|
@@ -583,13 +653,13 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 
 | ID | Título | Estado | Rigor | QA | Seguridad |
 |---|---|---|---|---|---|
-| [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar | `completado` | critico | aprobado | aprobado |
+| [REQ-001](REQ-001.md) | Dos bypass del enforcement en v1.30.2: cierre sustituyendo sólo el valor, y sustitución de comandos en heredoc sin citar. **Reabierto el 2026-09-30** (§9): CA-10, CA-11 y CA-12 versionados por **ADR-015** (SEC-117); sus firmas anteriores cubren sólo el contrato anterior | `en-revisión` | critico | pendiente | pendiente |
 | [REQ-002](REQ-002.md) | Veredicto fechado y no caduco: una firma no vale sobre código que cambió después | `completado` | critico | aprobado | aprobado |
 | [REQ-003](REQ-003.md) | Un solo lector y un solo vocabulario: `con-hallazgos` en Seguridad, aviso al escribir fuera del vocabulario, y el informe que lee como la puerta | `completado` | critico | aprobado | aprobado |
 | [REQ-004](REQ-004.md) | Rotación de UNA sección del documento: la historia se archiva, el contrato no se toca | `completado` | critico | aprobado | aprobado |
 | [REQ-005](REQ-005.md) | Git destructivo prohibido a los agentes: el trabajo de un subagente no es atómico para git | `completado` | critico | aprobado | aprobado |
 | [REQ-006](REQ-006.md) | Celdas del bloque derivado recortadas: un veredicto de 1 296 caracteres no cabe en una tabla | `completado` | critico | aprobado | aprobado |
-| [REQ-007](REQ-007.md) | Huecos preexistentes del lector de campos, del detector de Bash y de las dos puertas de runtime, medidos en la QA y en la auditoría de seguridad de REQ-001: clave decorada, cabecera fuera de alcance, destino entrecomillado, heredocs que ciegan el detector, la clase del hallazgo en forma cerrada, bytes de control en banda, la barra duplicada que desactiva las dos puertas, el manifiesto inválido que apaga el enforcement en silencio, el manifiesto fuera de su propia frontera y la reconstrucción sin techo | `en-progreso` | critico | pendiente | pendiente |
+| [REQ-007](REQ-007.md) | Huecos preexistentes del lector de campos, del detector de Bash y de las dos puertas de runtime, medidos en la QA y en la auditoría de seguridad de REQ-001: clave decorada, cabecera fuera de alcance, destino entrecomillado, heredocs que ciegan el detector, la clase del hallazgo en forma cerrada, bytes de control en banda, la barra duplicada que desactiva las dos puertas, el manifiesto inválido que apaga el enforcement en silencio, el manifiesto fuera de su propia frontera y la reconstrucción sin techo. **Versionado el 2026-09-30:** CA-46 (c) por ADR-015, y por **ADR-016** (quinta autorización) CA-45 a CA-50, CA-60 y CA-66 nuevo —las puertas juzgan el **archivo** que la escritura alcanzaría y no la forma de su ruta, y un REQ que la puerta no puede leer entero no se edita (SEC-119, O-11)—, en 1.35.0; **P-119-A** abierta (fronteras no nombradas por el propietario), sin bloquear la implementación. **Versionado el 2026-10-01** (sexta autorización): CA-47 gana la **integridad de la entrada** —cada campo se lee entero— y dos causas de «no determinable» (un `file_path` o un `tool_name` con salto de línea), CA-45 lo comprobado en el host, CA-54 la nota de su incumplimiento abierto (QA-023-10) y CA-66 sus casos. **Versionado el 2026-10-02** (séptima autorización, QA-023-13): el retorno de carro del `tool_name`, el `cwd` y el `file_path` se cuenta antes del transporte —un `cwd` con retorno de carro no ancla y la ruta relativa es no determinable; un `file_path` o un `tool_name` con retorno de carro, como con salto de línea—, el del texto de `Bash` queda declarado como límite sin proteger (**P-023-13-A**, abierta, sin bloquear la implementación) y CA-66 gana el bloque R | `en-progreso` | critico | pendiente | pendiente |
 | [REQ-008](REQ-008.md) | Informe de proyecto: avance medido, qué lo detiene y qué decide un humano, como evolución de `arnes-panel` y con el lector de la puerta | `pendiente` | critico | pendiente | pendiente |
 | [REQ-009](REQ-009.md) | Una sola regla para contar la cola de aprobaciones: la puerta dice 1 y el bloque derivado dice 4 sobre la misma entrada | `completado` | critico | aprobado | aprobado |
 | [REQ-010](REQ-010.md) | El acento no es parte del valor: `en-revision` y `en-revisión` son el mismo estado para la puerta, el informe y el bloque derivado | `completado` | critico | aprobado | aprobado |
@@ -605,10 +675,10 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 | [REQ-020](REQ-020.md) | ¿Esta prueba mide algo? Cuatro formas de estar verde sin haber medido — el caso vacío, el que no se ejecuta, el que sólo fija lo que hoy falla y el universo encogido en silencio. **Ventana 1.34.0**: depende de las sondas de REQ-021 | `pendiente` | critico | pendiente | pendiente |
 | [REQ-021](REQ-021.md) | `tests/util/` con las sondas de reloj y de procesos, escritas una vez: se reconstruyen en cada comisión y dos se rompieron a la primera, una dejando un proceso vivo 3 h 41 min. Alcance reducido el 2026-09-08 (la sonda de línea base queda fuera). **BLOQUEADO el 2026-09-08**: agotó las 3 vueltas dev↔QA sin cerrar `QA-021-10` (`contrato`), y el propietario lo movió a **1.34.0** | `bloqueado` | critico | con-hallazgos | preventiva |
 | [REQ-022](REQ-022.md) | Despacho en paralelo: tres dimensiones de colisión y la herramienta sólo ve una. Bloque de apertura de **1.34.0** | `pendiente` | critico | pendiente | pendiente |
-| [REQ-023](REQ-023.md) | El carácter que no se ve apaga el enforcement: la guarda nombra el CR cuando la propiedad es «una cabecera que no se puede medir». **Ventana 1.34.0** (salió de 1.33.0 el 2026-09-08, decisión del propietario): depende de las sondas de REQ-021 y del gate de SEC-048 | `borrador` | critico | pendiente | pendiente |
+| [REQ-023](REQ-023.md) | Una clave de control escrita de otra forma, o declarada dos veces, no se convierte en ausencia: la **cabecera ambigua no deja cerrar** (mitad 1 de SEC-047). **Ventana 1.35.0**, autorizada por el propietario el 2026-09-29; versionado por **ADR-014** (frontera por esqueleto ASCII de la clave y estructura de la declaración; **cambio de compatibilidad**: una clave repetida deniega aunque diga lo mismo; claves de más de 256 bytes, **limitación** no protegida). Ya no depende de las sondas de REQ-021 ni del gate de SEC-048. Tope dev↔QA agotado (3 de 3); vuelta excepcional agrupada de la tercera y la cuarta autorización (2026-09-29 y 2026-09-30): QA-023-06 y **CA-13** (SEC-117, **ADR-015**); en la de la quinta (2026-09-30), **CA-13 (iv)** remite a REQ-007 CA-45 y CA-47 (**ADR-016**) | `en-revisión` | critico | aprobado | aprobado |
 | [REQ-024](REQ-024.md) | La ausencia de un campo no se resuelve del lado que abre, y el mismo estado en el segundo lector: la cola que cuenta cero sobre lo que no pudo medir. **Ventana 1.34.0**: va después de REQ-023, con el que comparte nueve rutas | `borrador` | critico | pendiente | pendiente |
 | [REQ-025](REQ-025.md) | El arnés vigila también a quien orquesta: la sesión coordinadora acredita, decide y publica, y ninguna puerta la mide. **Ventana 1.35.0**; línea base = 20 errores de coordinación catalogados. Tras la **partición del 2026-09-21** conserva **la entrega 1** —las **seis reglas** del propietario en `AGENTS.md` §6, su gemela, las dos sedes de `PENDING_APPROVAL`, la entrada de `arnes-upgrade` **preparada, no publicada**, las referencias en los agentes y el **ADR-008**— y, desde el mismo día, una **entrega 1b `pendiente` dentro del propio REQ** (CA-01, CA-02, las preguntas 1, 2 y 4 de CA-09 (B), la regla del `git add -A` y la primera mitad de CA-10), **sin ventana asignada**: **aprobar la entrega 1 no completa REQ-025**. Vuelta **1 de 3** consumida (QA `con-hallazgos`, R-1) | `en-progreso` | critico | con-hallazgos | pendiente |
 | [REQ-028](REQ-028.md) | Las capacidades que REQ-025 difiere (**entregas 2+**): `tools/arnes-comprobar.sh` con par discriminante y denominador, su sección del banco, la **procedencia y la atribución** de la cifra que llega al `CHANGELOG.md`, las **columnas de instantes** del libro de comisiones y los umbrales de coste. Nace de la **partición de REQ-025** (2026-09-21) conservando los identificadores CA-03…CA-08, CA-12 y las mitades de CA-10, CA-11 y CA-13. `borrador` con **cuatro decisiones del propietario abiertas** (B-1…B-4) y **sin ventana asignada** | `borrador` | critico | pendiente | pendiente |
 | [REQ-029](REQ-029.md) | Fidelidad al encargo: detectar omisiones, sustituciones y decisiones de negocio no autorizadas antes de implementar — fuente identificable del pedido, «Correspondencia con el encargo» en la plantilla, comprobación de resolución antes de despachar, **un solo veredicto de QA**, sin bloqueo retroactivo, y la partición que no concede autoridad sobre el alcance. **Ventana 1.35.0**; decisión del propietario del 2026-09-23 sobre la propuesta `d4e7a4f`; integrado en `main` por el PR #53 (`11c5df2`) y cerrado administrativamente el 2026-09-27 sin acreditar conducta ni ahorro | `completado` | critico | aprobado | aprobado |
 | [REQ-030](REQ-030.md) | Las sondas de coste CA-03 y CA-08 (ii) de REQ-017 deciden sobre un **presupuesto fijo de 5 repeticiones** y dicen **INCONCLUSO** (rendimiento no acreditado, contado en el resumen) cuando no resuelven: los techos no se mueven. Versiona REQ-017 por **ADR-012**; autorizado por el propietario el 2026-09-26. **Ventana 1.35.0**; vuelta 4 y dos intervenciones documentales por excepción expresa del propietario (2026-09-26); integrado en `main` por el PR #55 (`c4d92c0`) y cerrado administrativamente el 2026-09-27 con QA-030-03, QA-030-05 y SEC-111 (`instrumento`) abiertos, sin acreditar rendimiento | `completado` | critico | aprobado (re-verificación documental, 0f7e668) | aprobado (R-043-B, 192d7b6) |
-| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12), techo de 16 384 bytes —deniega **si el hook alcanza a medirlo** en 60 s (SEC-114, remedio A)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | aprobado (vuelta 3 de 3) | aprobado (R-044-C) |
+| [REQ-031](REQ-031.md) | Ningún hallazgo bloqueante se ignora por su posición ni por su separador: sintaxis **cerrada** de `Hallazgos abiertos:` en `guard-completado` (A), y el mapa `Archivos:` comprobado desde la Definition of Ready antes de pedir paralelismo (D). **Ventana 1.35.0**; pedido del propietario del 2026-09-27. **P-1 resuelta (opción B)**: tras el paréntesis de un hallazgo sólo la coma o el fin del campo; versiona REQ-007 CA-41 por **ADR-013**. Vuelta 2: clave repetida deniega (SEC-112, CA-A12; su limitación conocida, aparte, es SEC-118: nota del 2026-09-29), techo de 16 384 bytes —deniega por encima; su limitación, SEC-115, va aparte (nota del 2026-09-30)— y acceso de coste constante (CA-A13/A14). **Vuelta 3 de 3 (última)**, autorizada por el propietario el 2026-09-28: el techo se mide **antes** de normalizar (SEC-113 remedio B, CA-A15), reproducción aislada de un hook sin decisión (CA-A16) e inventario de claves ignoradas (CA-A17); la parte de §13 / R-024 nació de una **atribución equivocada**: esa celda es de `rel/registro-1.33.0` (`1154417`), no de `main` (Preguntas abiertas) | `en-revisión` | critico | con-hallazgos (QA-023-06) | aprobado (R-044-C) |

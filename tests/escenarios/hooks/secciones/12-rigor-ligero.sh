@@ -14,17 +14,17 @@ seccion_nueva "Rigor ligero: salta veredictos, no puertas:"
 mkreq_r "REQ-090" "no" "pendiente" "n/a" "ligero"
 setgates '.quality_gates = ["false"]'
 check "ligero con quality gate ROJA -> deny (la plantilla promete gates)" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 setgates '.quality_gates = ["true"]'
 printf '## Pendientes\n### [2026-09-05] (qa) — decision humana\n- Contexto: x\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 check "ligero con aprobacion humana PENDIENTE -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 mkreq "$PROJ/requirements/REQ-091.md" "no" "pendiente" "n/a" "SEC-7 (usuario/dinero)"
 printf 'Rigor: ligero\n' >> "$PROJ/requirements/REQ-091.md"
 check "ligero con hallazgo usuario/dinero ABIERTO -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-091.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-091.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 # Control positivo de lo que SI salta: sin veredicto de QA, con todo lo demas verde.
 check "ligero SIN veredicto de QA y todo verde -> allow (eso si lo salta)" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 

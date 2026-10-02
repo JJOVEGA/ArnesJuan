@@ -36,18 +36,814 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-09-28] (coordinadora) — Decisión de publicación de 1.35.0: los asuntos que REQ-031 deja abiertos y no decide
+### [2026-09-27, puesta al día 2026-10-01] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118 y hueco C, pendientes; P-119-A pendiente; **decisión 9a resuelta (séptima autorización: QA-023-13 en reparación); 9b (QA-023-10) pendiente y no autorizada**; fichas 3 y 4 y decisiones 4 a 8 resueltas
 
-- **Contexto:** REQ-031 tiene `QA: aprobado` (vuelta 3 de 3, código `cdcad5d`) y `Seguridad: aprobado` (R-044-C; R-044-D no cambia la cobertura), PR #58 en borrador con CI verde sobre `19c5ca7`; los cambios posteriores son sólo registros y correcciones de referencias (comprobación de procedencia del 2026-09-28). Quedan decisiones que el propietario reservó para la publicación.
-- **Acción que impide (regla 2):** ninguna de REQ-031 hoy (abiertos sólo `instrumento`: SEC-115, QA-031-01); impide **publicar 1.35.0** hasta decidir. Mientras esta entrada esté aquí, ningún REQ puede marcarse `completado` (deliberado).
-- **Asuntos:**
-  1. **SEC-115 (`instrumento`, abierto, no aceptado):** el techo de `Hallazgos abiertos:` ya se mide antes de normalizar (remedio B implementado en la vuelta 3: 255 371 bytes → deny en 0,31 s), pero **otras vías siguen matando al hook por tamaño** y CA-A16 confirmó en el CLI que un hook sin decisión **deja pasar** la herramienta: `QA: pendiente (…)` con ≈ 255 KB de evidencia → 73,6 s (los demás campos no tienen techo antes de normalizar); `Write` de 2 MB → 80 s (`arnes_sin_cr_transporte`, código anterior). Realismo bajo (el REQ real más grande, 297 KB, tarda 1,7 s). Decidir: publicar con la promesa acotada (ya escrita: «deniega si el hook alcanza a medir; medido hasta 255 371 bytes por `Hallazgos abiertos:`») o exigir antes un REQ propio que aplique la propiedad «ninguna operación super-lineal corre antes de una comprobación de tamaño que deniegue». No es un límite global ni una arquitectura nueva; no se diseña aquí.
-  2. **Hueco C (escrituras por intérprete), no aceptado como aplazado:** `python3 -c`, `node -e`, `bash script.sh` escriben en `codigo_app.globs` sin que `guard-codigo` lo vea (medido el 2026-09-27); sin `PostToolUse` no hay detección posterior. Acciones fuera del control: cualquier escritura por intérprete o script desde cualquier agente. Mitigación **posible, no disponible** (REQ-011, sin implementar): la «puerta posterior»; y detectar un cambio después **no demuestra que se impidió ni deshace sus efectos**. Protección que sigue dependiendo de los agentes: `AGENTS.md` §5 y §13. Decidir antes del tag: declararlo en el CHANGELOG de la versión como limitación conocida sin fecha, o abrir el REQ de la puerta posterior antes de publicar. Registrarlo aquí no lo convierte en riesgo aceptado.
-  3. **SEC-047 y la celda de §13 — atribución corregida el 2026-09-28:** la celda que promete denegar con BOM, espacio de anchura cero o blanco de más en la clave y cita § R-024 (SEC-078/SEC-079) **no está en `main`** (cuya fila de §13 sólo cubre el retorno de carro interior, y el árbol la cumple): vive en `rel/registro-1.33.0` (`AGENTS.md:349`; commit `1154417`, 2026-09-09), igual que R-024 (`ef82d43`) y SEC-078/079. Los subagentes la citaron porque la sesión les carga el `AGENTS.md` de ese worktree. Lo medido sigue en pie (allow por ausencia con `Hallazgos  abiertos:`, ZWSP/NBSP, `HALLAZGOS ABIERTOS:`, `SENSIBLE A  SEGURIDAD: sí` con `Rigor: ligero`): es SEC-047 (definido en `main`, línea 3633; su cláusula de subida a `contrato` existe, pero su premisa no se cumple contra el §13 de `main`) y QA-031-01, abiertos; CA-A17 no encontró exposición actual en las 29 cabeceras. Decisiones: (a) si se corrige esa celda en `rel/registro-1.33.0` y en qué PR; (b) la clase de SEC-047 juzgada contra el `AGENTS.md` de `main`; (c) reconocer claves con blancos/mayúsculas (mecanismo, REQ propio). Nada se añade a `main` para corregirlo.
-- **Recomendación de la coordinadora:** (1) publicar con la promesa acotada y el REQ de la propiedad de tamaño después, a menos que prefieras cerrarlo antes; (2) decidir C **antes** del tag, y recomiendo abrir el REQ de la puerta posterior con ventana declarada en vez de sólo anotarlo; (3) tratar SEC-047/§13 como asunto de `rel/registro-1.33.0` y de la divergencia entre esa línea y `main` (123 y 101 commits desde `5e53f12`), que merece decisión propia.
-- **Espera:** decisión del propietario sobre los tres. **Trabajo que sigue mientras tanto:** ninguno de REQ-031.
+- **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2, P-119-A y la decisión 9b, y se complete la reparación de SEC-119 y O-11 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+
+**Ficha 1 — SEC-115 y SEC-118 (`instrumento`, abiertos, NO aceptados): un hook que no emite decisión —por tiempo (SEC-115) o por el tamaño de su propio motivo (SEC-118)— deja pasar el cierre entero.** *(SEC-118 añadido y fórmula de la limitación corregida el 2026-09-29, por R-045 §6.)*
+- **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
+- **Segunda vía, SEC-118** (R-045, 2026-09-29, severidad media, preexistente: medido igual en el candidato y en `713ac68`). `arnes_deny` pasa el motivo como un argumento de `jq`, y por encima de ~128 KiB el hook sale **sin decisión**. Que el cliente lo trate como permitir es **inferido**, no observado en el host (ver abajo). Medido a nivel de hook:
+  - `QA:` de ≈ 140 KB sin paréntesis final → **sin decisión en 0,5 s**, e igual con `Seguridad:`, con `Sensible a seguridad:` y con una línea de 140 KB que lleva un CR interior;
+  - REQ-031 CA-A12 con líneas **ASCII** de 60 caracteres o más: 1 601 repeticiones de `Hallazgos abiertos:` deniegan y 1 801 salen **sin decisión**. **El límite es de bytes:** con caracteres multibyte en los primeros 60 caracteres el umbral baja. QA midió el 2026-09-29, igual en `e7562e7` y en `713ac68`, que salen sin decisión 1 601 líneas con `ñ`, 1 001 con caracteres de 4 bytes y 2 501 cortas con `ñ` (QA-023-06).
+
+  Sin medir en Windows, donde el umbral podría bajar a unas 32 KiB. El motivo de REQ-023 tiene tope (20 líneas) y no está afectado.
+  - **Qué es observado y qué no, en SEC-118** (segunda autorización, punto 4; sin ensayos nuevos):
+    - **Observado directamente**, a nivel de hook, con la entrada JSON `PreToolUse` real alimentada a `guard.sh` en la candidata y en `713ac68` (R-045 §4): el hook termina **sin emitir decisión** en los casos citados, y el control con el mismo valor entre paréntesis (motivo de 314 bytes) deniega. Los recuentos de CA-A12 los midió el auditor (1 601 deniega, 1 801 permite) y los de 3 000 repeticiones, el desarrollador y QA.
+    - **Inferido, no observado:**
+      - que el host trate como permitir un hook que termina sin decisión en este caso concreto. Se apoya en el contrato de hooks y en CA-A16, que se observó en el CLI 2.1.272 por *timeout* y no por esta causa;
+      - el mecanismo exacto («Argument list too long» de `jq` con `MAX_ARG_STRLEN`), leído del código y del error;
+      - el umbral en Windows;
+      - los candidatos sin medir de R-045 §4.
+    - **Ningún caso de SEC-118 se ha ejecutado en el host real.**
+- **Protección efectiva hoy:** techo de 16 384 bytes para `Hallazgos abiertos:`, medido antes de normalizar (255 371 bytes → deny en 0,31 s por `Edit`); presupuesto de reconstrucción del `Edit`; el REQ real más grande (296 976 bytes) tarda 1,71 s por `Write`; la línea de control más larga de las 29 cabeceras mide 1 926 bytes.
+- **Qué depende de la disciplina del agente:** no escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`, ni un REQ de MB por `Write`. Sólo `Hallazgos abiertos:` tiene regla escrita (`requirements/README.md`).
+- **Alternativa — reparar antes de publicar:** para SEC-115, la propiedad «ninguna operación que crezca más que linealmente corre antes de una comprobación de tamaño que deniegue»: techo por campo de control antes de `arnes_norm_campo`, y techo del `content` de `Write` antes de `arnes_sin_cr_transporte`. Para SEC-118, un solo sitio: que el motivo no viaje como argumento de `jq` (por la entrada estándar, o acotado en bytes). Exige un REQ nuevo (hoy no tienen sede de remediación) y la vía completa. Retrasa el tag lo que dure ese ciclo.
+- **Alternativa — aplazar (propuesta, no decisión):** responsable propuesto `desarrollador` (mecanismo) y `analista-requerimientos` (REQ), para los dos; **fecha de revisión propuesta: 2026-10-29**; revisión **anticipada** si ocurre cualquiera de estas: un informe de un hook que sale sin decisión; una medición en Windows del umbral de SEC-118; una comisión que toque `arnes_deny`; una línea de control de más de 16 KB en este repositorio o en un informe de consumidor; un informe de consumidor de un hook muerto por tiempo; una medición en el editor o en Windows de que un timeout también deja pasar; o una comisión que toque `arnes_norm_campo`, `arnes_sin_cr_transporte` o los presupuestos de los hooks (el forzador ya escrito en R-044-C).
+- **Limitación para las notas si se publica sin reparar:** la puerta de cierre decide sólo si el hook alcanza a medir **y a emitir su decisión**. Un hook que agota el límite del cliente (60 s; comprobado en el CLI 2.1.272) no deniega, y lo agotan, medido, un veredicto de ≈ 255 KB o un `Write` de ≈ 2 MB (SEC-115). Tampoco deniega un hook cuyo motivo pasa de ~128 KiB **en bytes** (SEC-118): un veredicto de ≈ 140 KB sin paréntesis, o líneas repetidas de `Hallazgos abiertos:` en número suficiente (unas 1 800 si son ASCII, y menos con caracteres multibyte). **La versión no puede prometer** que ningún REQ se cierre sin QA ni seguridad en absoluto, ni que una clave repetida deniegue sin límite: sólo «si el hook alcanza a medir y a emitir su decisión».
+
+**Ficha 2 — hueco C (escrituras por intérprete o script), NO aceptado como aplazado.**
+- **Consecuencia reproducida.** 2026-09-27, `guard-codigo` de `a7a60c2` (sin cambios desde `v1.34.0` ni en el candidato), proyecto temporal en WSL2: desde la sesión coordinadora, `python3 -c "open('src/app.ts','w')…"`, `node -e "…writeFileSync…"` y `bash escribe.sh` → **allow**, y el archivo queda escrito (`src/app.ts = py`); `echo >`, `sed -i`, `dd of=` y `Edit` → deny. No hay `PostToolUse`: ninguna detección posterior. `docs/PENDIENTES.md` registra además tres instancias en un proyecto real el 2026-09-07.
+- **Protección efectiva hoy:** `Edit`/`Write`/`MultiEdit` sobre `codigo_app.globs` fuera del `desarrollador`, y las escrituras evidentes por `Bash` (`>`, `>>`, `tee`, `cp`, `mv`, `install`, `sed -i`, `perl -i`, `dd of=`).
+- **Qué depende de la disciplina del agente:** que ninguno use un intérprete, un script, un formateador o `patch`/`git apply` para escribir código protegido (`AGENTS.md` §5 y §13, que ya lo declaran).
+- **Alternativas — reparar antes de publicar:** (A1) ampliar el detector a `python -c`/`node -e` cuando el texto del comando nombra una ruta protegida: impediría las dos formas en línea medidas, **no** `bash script.sh` ni una ruta construida dentro del programa; crítico, vía completa, riesgo de falsos positivos (§13). (A2) REQ-011, la «puerta posterior» (`pendiente`, destino 1.33.0 vencido): **sólo una propuesta de detección** posterior; **no** es prevención, ni recuperación, ni mitigación disponible (no está implementada), y su tamaño es el de una versión propia.
+- **Alternativa — aplazar (propuesta, no decisión):** responsable propuesto `desarrollador` (`guard-codigo`) y `analista-requerimientos` (ventana de REQ-011); **fecha de revisión propuesta: 2026-10-15** — antes que SEC-115 porque C está **observado** en un proyecto real y SEC-115 no; revisión **anticipada** si ocurre cualquiera de estas: una nueva instancia observada, en este repositorio o en un consumidor, de código protegido escrito por intérprete o script desde un agente distinto del `desarrollador`; o una comisión que toque `guard-codigo` o el detector de escrituras compartido.
+- **Limitación para las notas si se publica sin reparar:** `guard-codigo` no ve escrituras hechas por intérpretes o scripts (`python`, `node`, `bash script.sh`), formateadores que reescriben archivos, `patch` ni `git apply`, y no hay detección posterior. **La versión no puede prometer** que sólo el `desarrollador` modifique código protegido: promete que las herramientas de edición y las escrituras evidentes por shell lo deniegan.
+
+**Ficha 3 — RESUELTA por el propietario el 2026-09-29 (tercera autorización): SEC-117 se REPARA antes de publicar; no se acepta aplazarlo.** *Texto original de la ficha, conservado:* QA-023-02 (`instrumento`, severidad crítica, preexistente; NO aceptado; añadida el 2026-09-29 al escalarla QA). Un `Edit` que el hook no encuentra literal y la herramienta sí, y que sustituye **sólo el valor** del estado, cierra un REQ sin ninguna puerta.
+- **Consecuencia reproducida.**
+  - **Lado del hook, ejecutado** por QA (2026-09-29, `docs/qa/REQ-023.md` § QA-023-02, evidencia `frontera-g-edit-normaliza.txt`). Sobre un REQ `critico` con `QA: pendiente`, `Seguridad: pendiente` y `SEC-1 (contrato)` abierto:
+    - `Edit` con `old_string` = `en-revisi\u00f3n` (barra invertida literal) y `new_string` = `completado` → **ALLOW** en el candidato `ace43c2`, en `713ac68`, en `v1.34.0` (`cc8972c`, medido en la vuelta 2 de QA) y en 1.33.2;
+    - `MultiEdit` con la misma edición → ALLOW;
+    - comillas rectas donde el archivo las tiene tipográficas → ALLOW;
+    - con una entrada bajo `## Pendientes` → ALLOW.
+  - **Lado de la herramienta:** QA leyó en el binario del CLI 2.1.284 que el `Edit` normaliza ‘ ’ “ ” y desescapa `\uXXXX`.
+  - **REPRODUCIDO EN EL HOST REAL el 2026-09-29** (segunda autorización, punto 3). Registro previo comiteado antes de ejecutar (`6c947ef`); resultado en `sec117-real/RESULTADO.md`, rama local de evidencia, `1c8c81c`. Claude Code **2.1.285**, `claude -p`, WSL2, `Edit` real del host, `guard.sh` del candidato sin cambios; el plugin 1.33.2 instalado no se cargó. Una ejecución por caso:
+    - **control positivo:** `old_string` literal → deny, el host bloquea y el archivo no cambia;
+    - **caso sospechoso:** comillas rectas donde el archivo tiene tipográficas → el hook sale sin decisión, el host aplica el `Edit` (su `tool_response.oldString` muestra las tipográficas del archivo: normalizó) y el REQ queda **`Estado: completado` con QA y seguridad pendientes, un `contrato` abierto y la cola ocupada**;
+    - **control legítimo:** se permite y se aplica.
+
+    **No ensayado en el host:** el escape `\uXXXX`, `MultiEdit`, el editor interactivo, Windows y otras versiones del CLI.
+  - **Propuesta mínima de reparación, no aplicada:** fallar cerrado en la vía de fragmentos. Cuando la puerta no puede reconstruir el documento de un REQ, deniega si la edición puede dejar el estado terminal (la «regla ancha» de la vía de `Bash`). No imitar la normalización del host. Sede: `hooks/guard-completado.sh`, con un REQ nuevo y la versión de REQ-001 CA-10/CA-11.
+- **Protección efectiva hoy:** ninguna mecánica en esa vía. La rama de fragmentos sólo sigue si el `new_string` contiene «estado: completado». Con la línea `Estado:` completa en el fragmento, juzga veredictos, clase, cola y quality gates (caso G3), pero **no** la regla de la cabecera ambigua de REQ-023: por esa vía la fila crítica de SEC-047 cierra aunque el agente escriba la línea entera (caso B6 de QA, vuelta 3, corregido el 2026-09-29).
+- **Qué depende de la disciplina del agente:** cerrar escribiendo la línea `Estado:` entera y con un `old_string` literal.
+- **No es regresión:** existe en `v1.33.2` y en `v1.34.0`. Publicar 1.35.0 no lo introduce ni lo agrava, y tampoco lo cierra.
+- **Alternativa — reparar antes de publicar:** un REQ nuevo (hoy no tiene sede; la premisa falsa de que «la herramienta falla y no escribe nada» vive también en REQ-001 CA-10/CA-11, `completado`) y la vía completa. Por ejemplo, que la reconstrucción del hook emule la búsqueda de la herramienta, o que deniegue cuando no pueda reconstruir y el fragmento pueda dejar el estado terminal. Retrasa el tag lo que dure ese ciclo.
+- **Alternativa — aplazar (propuesta, no decisión):**
+  - **Responsables propuestos:** `desarrollador` (mecanismo), `analista-requerimientos` (REQ, y qué hacer con REQ-001) y `auditor-seguridad` (registro y alcance).
+  - **Fecha de revisión propuesta: 2026-10-06**, la más temprana de las tres por su severidad.
+  - **Revisión anticipada** si ocurre cualquiera de estas: se observa un cierre por esa vía; cambia el respaldo del `Edit` del CLI; o una comisión toca la reconstrucción del `Edit` en `guard-completado`.
+- **Limitación para las notas si se publica sin reparar:** la puerta de cierre no juzga un cierre hecho con un `Edit` o `MultiEdit` cuyo `old_string` sólo coincide tras la normalización de la herramienta y cuyo `new_string` no contiene la línea `Estado:`. **La versión no puede prometer** que ningún cierre por `Edit` se salte las puertas.
+
+**Decisión 4 — RESUELTA por el propietario el 2026-09-29 (segunda autorización, § Resueltas): opción (A), corrección documental excepcional fuera del contador, que sigue agotado.** *Texto original de la decisión, conservado:* REQ-023 `bloqueado`: tope de vueltas dev↔QA agotado (3 de 3) con un hallazgo `contrato` de SÓLO TEXTO abierto (QA-023-05). Añadida el 2026-09-29.
+- **Qué ocurrió.** QA validó la conducta de CA-01…CA-12 en las tres vueltas sin un solo FAIL. El código ejecutable es el mismo desde `ad793ab`. Sobre `c4cc32c`: banco completo 1137 PASS · 0 FAIL · 12 SKIP, con 1 INCONCLUSO de REQ-017 CA-08 (ii) que se conserva; 37 de 37 decisiones coinciden con la propiedad escrita.
+  - Las vueltas 2 y 3 fueron sólo de texto: cerraron QA-023-01, QA-023-03 y QA-023-04.
+  - En la vuelta 3 el barrido encontró **QA-023-05**. `requirements/README.md` y su plantilla (líneas 89–98, sede heredada de la frontera) dicen «Cuándo deniega, dicho entero» y «se deniega toda edición…», pero no excluyen la vía (g): la del `Edit`/`MultiEdit` con `old_string` no literal que la herramienta aplica. Por esa vía la puerta permite (B2, B3, B4, B6), igual en `713ac68`, 1.33.2 y `v1.34.0`: es QA-023-02, preexistente.
+  - «Toda edición», sin acotar, aparece también en `SKILL.md`, ADR-014 y las notas, que sí declaran (g) en el mismo apartado.
+- **Acción que impide (regla 2):** **cerrar** REQ-023: `guard-completado` deniega con un `contrato` abierto, y QA no puede firmar `aprobado` sin el write-back (§9). Por consecuencia impide también **publicar** con ese texto heredado falso. **Parte afectada:** sólo esas sedes de texto; ni el código ni la conducta. **Evidencia:** `docs/qa/REQ-023.md` § «Vuelta 3 de 3» (§3 y §5). **Qué lo resuelve:** el write-back de texto y una reverificación de texto por QA, que ya no caben en el contador.
+- **Opciones** («Loop de error»):
+  - **(A) Autorizar una corrección documental fuera del contador,** acotada a QA-023-05 y a las condiciones de texto de R-045 §6, como la del 2026-09-28 con REQ-031.
+    - **Qué se toca en REQ-023:** el analista acota el «Cuándo deniega» del README y de la plantilla a las ediciones que la puerta reconstruye (`Write`, o `Edit`/`MultiEdit` con `old_string` literal), añade la vía (g) a «Fuera, y sin promesa» remitiendo a QA-023-02 / SEC-117, y acota «toda edición» en `SKILL.md`, ADR-014 y las notas.
+    - **Qué se toca por R-045 §6:** declarar SEC-118 en las notas; corregir la fórmula «si el hook alcanza a medir» por «si alcanza a medir y a emitir su decisión» en el cambio de compatibilidad 1 de las notas y en la entrada de REQ-031 de la guía; y citar SEC-117 en la guía. El barrido se hace por propiedad, con esta advertencia: la promesa de que la clave repetida deniega sin límite también está en texto de **REQ-031** ya publicado en `main`, en `AGENTS.md` §13 y su plantilla y en el README («Si hay más de una, deniega»), y SEC-118 la desmiente a partir de unas 1 700 repeticiones.
+    - QA reverifica sólo ese texto, y seguridad lo confirma de forma documental.
+    - **Qué no cambia:** ningún código y ninguna conducta.
+    - **Consecuencia:** una comisión corta de cada uno; después, la firma de seguridad sobre el árbol resultante.
+  - **(B) Cerrar con el residual declarado:** **no es posible**. El residual es `contrato` y la puerta no deja cerrar con uno abierto; rebajar su clase sería mover el hallazgo de sitio, y eso lo prohíbe §6.
+  - **(C) Mantener REQ-023 `bloqueado` y publicar 1.35.0 sin él,** retirando su código y sus textos del candidato. **Consecuencia:** SEC-047 mitad 1 no se publica, se rehace el candidato y se vuelve a validar.
+- **Recomendación de la coordinadora:** (A). El defecto es de texto, la conducta está validada tres veces sin fallos, y la corrección tiene alcance cerrado. Recibido (A), el trabajo sigue sin más autorizaciones.
+- **Trabajo que sigue mientras tanto** (no depende de esta decisión):
+  - la revisión de seguridad del código del candidato: es una revisión, **no** una firma `Seguridad: aprobado`, que exige `QA: aprobado`;
+  - el registro formal de QA-023-02 y del fail-open del motivo de CA-A12;
+  - el push, el PR en borrador y el CI.
+
+**Decisión 5 — RESUELTA por el propietario el 2026-09-29 (tercera autorización): se corrige QA-023-06 conservando las cifras medidas con sus condiciones, incluida la restricción ASCII, y separando la propiedad del control de las limitaciones SEC-115/118.** Es una forma propia del propietario, distinta de las opciones (A) y (B). *Texto original de la decisión, conservado:* QA-023-06 (`contrato`, sólo texto), abierto por la revisión de QA del delta documental. Añadida el 2026-09-29.
+- **Qué ocurrió.** La intervención excepcional autorizada cerró QA-023-05. QA confirmó ciertos, contra la evidencia en crudo:
+  - SEC-117 reproducido en la 2.1.285;
+  - la separación de SEC-118 entre observado, inferido y no medido;
+  - el fail-before local frente a los 18 SKIP del CI;
+  - las tres condiciones de la cláusula nueva de §13.
+
+  Pero **el mismo delta publicó cifras de SEC-118 como frontera medida** («1 601 líneas de 60 caracteres o más deniegan», «2 501 cortas deniegan», «umbral ≈ 1 700 / 2 900») cuando **sólo están medidas con líneas ASCII**, y el límite es de bytes. Con multibyte salen sin decisión 1 601, 1 001 y 2 501 líneas (QA, con la puerta real, igual en `e7562e7` y `713ac68`).
+  - **Sedes:** README y plantilla, `AGENTS.md` §13 y su gemela, REQ-031 CA-A12 (nota de versionado) y su Historial, REQ-023, ADR-013, ADR-014, la guía y las notas.
+  - **El origen es de la coordinadora:** su encargo pidió al analista escribir la propiedad «con lo medido».
+- **Acción que impide (regla 2):** **cerrar** REQ-023 y **REQ-031**, que tienen ahora `QA: con-hallazgos` con QA-023-06. La cola ya lo impedía. Impide también **publicar**, porque el texto heredado afirmaría algo falso. **Parte afectada:** sólo cifras de texto; ni código ni conducta. **Evidencia:** `docs/qa/REQ-023.md` § «Intervención documental excepcional», §5. **Qué lo resuelve:** una reescritura de esas cifras y la revisión de QA sobre el texto. La autorización de una sola intervención ya está consumida.
+- **Opciones:**
+  - **(A) Autorizar una segunda corrección documental fuera del contador, acotada a QA-023-06,** con la forma que menos riesgo de repetición tiene. Las sedes heredadas se quedan con la **propiedad sin cifras** («deniega si el hook alcanza a medir y a emitir su decisión; el límite es de bytes y lo medido está en el registro»), y las cifras viven **sólo** en R-045, con «medido con líneas ASCII».
+    - **Flujo:** analista, después QA sobre el texto, después la determinación de seguridad.
+    - **Consecuencia:** dos o tres comisiones cortas, sin código.
+  - **(B) Lo mismo, conservando cifras en las sedes** con la precisión de bytes y la salvedad ASCII. **Consecuencia:** más sedes que mantener en sincronía con el registro, y más superficie para el mismo tipo de defecto.
+  - **(C) Publicar con QA-023-06 abierto:** **no es posible**. Es `contrato`: la puerta no deja cerrar con uno abierto, y el texto heredado afirmaría algo falso.
+- **Recomendación de la coordinadora:** (A). Una cifra repetida en diez sedes se desfasa en cuanto cambia una medición, y eso es lo que acaba de pasar.
+- **Observaciones de QA sin identificador, que no bloquean** (detalle en la misma adenda, §5):
+  - **O-1:** la condición 2 de la cláusula de §13, leída literalmente, vacía la fila de `Bash`; promete de menos.
+  - **O-2:** con la línea `Estado:` entera pero decorada (`**Estado:** completado`), con punto final o entre comillas invertidas, la vía (g) pasa sin puertas. Es más ancho que lo que dice la cláusula.
+  - **O-3:** a nivel de hook, un `Edit` con `old_string` vacío que crea un REQ con `**Estado:** completado` sale allow, y el mismo documento por `Write` deniega. Es superficie de SEC-117 no medida en el host; debe registrarla el auditor.
+  - **O-4:** la cláusula remite las cifras al registro, pero la fila de hallazgos lleva cifras.
+  - **O-5:** la guía no manda migrar la cláusula nueva de §13, así que un proyecto que actualice no la recibe.
+  - **O-6:** la frase del README sobre `MultiEdit` promete de menos.
+
+  Si se autoriza (A), O-1, O-2, O-4, O-5 y O-6 son del mismo tipo (el texto de §13, del README y de la guía) y conviene que entren en la misma corrección, **sólo si el propietario lo autoriza expresamente**. O-2 y O-3 son superficie de SEC-117 y van a su registro, no a esta corrección.
+
+**Decisión 6 — RESUELTA por el propietario el 2026-09-30 (cuarta autorización): opción (A).** *Texto original, conservado:* P-SEC117: la reparación de SEC-117 que exige la propiedad choca con criterios vigentes de REQ-001 (`completado`) y REQ-007. Añadida el 2026-09-29, durante la vuelta excepcional de la tercera autorización.
+- **Pregunta.** ¿Autorizas que la reparación de SEC-117, dentro de esta misma vuelta excepcional, haga cuatro cosas?
+  1. Versionar **REQ-001 CA-10, CA-11 y CA-12** y **REQ-007 CA-46 (c)**. Con eso **REQ-001 se reabre** (§9) y queda `en-revisión` en el candidato, sin cerrarse.
+  2. Adaptar los casos del banco que fabrican un `old_string` no literal sobre `requirements/`.
+  3. Extender la revisión de QA y seguridad de la vuelta a esos dos REQ.
+  4. Lo que implica la condición «no reconstruible → deny».
+- **Por qué hace falta.** La propiedad que fijaste —«esa incertidumbre no puede convertirse en permiso silencioso»— obliga a denegar el `Edit`/`MultiEdit` sobre `requirements/` que el hook no puede reconstruir. Pero:
+  - **REQ-001 CA-11 contrata literalmente lo contrario:** ALLOW para `old_string` inexistente y `new_string` = `completado`, «la herramienta fallará entera». Es la premisa que el experimento real desmintió (SEC-117).
+  - CA-10 («el fallback sigue vivo») y CA-12 (un `Edit` sobre una ruta inexistente «cae al fragmento y no bloquea») van en el mismo sentido, y también REQ-007 CA-46 (c) («no elimina el fallback»).
+  - **El banco:** 111 llamadas a `emite_edit`, que fabrica `old_string:"x"`, en 20 secciones; unas 49 esperan allow y 55 deny, contadas por la coordinadora con `grep`. Las que apuntan a `requirements/` dejarían de medir las puertas que miden hoy, porque la regla nueva deniega antes, y habría que convertirlas en ediciones literales.
+  - La tercera autorización nombra sólo REQ-023 y REQ-031 como alcance de la revisión de QA.
+- **Opciones:**
+  - **(A) Sí, cumplir la propiedad.**
+    - **Contrato:** el analista versiona REQ-001 CA-10, CA-11 y CA-12 y REQ-007 CA-46 (c), con un ADR de fondo (SEC-117 supersede la premisa), y escribe el criterio nuevo en REQ-023 (su borrador de CA-13 está en REQ-023, «Preguntas abiertas», P-SEC117).
+    - **Código y banco:** el desarrollador implementa y convierte los casos afectados.
+    - **Revisión:** QA y seguridad revisan también REQ-001 y REQ-007.
+    - **Consecuencia:** es una vuelta mayor, con más riesgo de no cerrarla en su único intento, y REQ-001 queda reabierto en el candidato.
+  - **(B) Regla ancha sólo sobre el fragmento no reconstruible:** denegar si la edición menciona el estado terminal. **No cumple la propiedad.** El analista lo deriva leyendo, sin medirlo: un valor escrito con `\uXXXX` que el host desescapa, o retirar la línea `Estado` que gobierna para que gobierne otra terminal, siguen dando permiso silencioso. Además exige igual versionar CA-11.
+  - **(C) No reparar ahora:** ya lo rechazaste.
+- **Recomendación de la coordinadora:** (A), con el alcance escrito arriba y nada más. Es la única opción que cumple la propiedad. REQ-001 queda reabierto y **no** se cierra, porque cerrar requisitos no está autorizado.
+- **Acción que impide (regla 2):** **implementar** la reparación de SEC-117, porque su contrato no se puede escribir sin decidir esto. **Parte afectada:** SEC-117 y todo lo que depende de ella: la frontera (g), la condición 3 de la cláusula de §13, la fila nueva de §13, los comentarios de código de esa vía, la validación en el host, QA y seguridad. **Evidencia:** REQ-023, «Preguntas abiertas», P-SEC117; REQ-001 CA-10, CA-11 y CA-12; REQ-007 CA-46 (c); el recuento del banco. **Qué lo resuelve:** tu elección.
+- **Qué sigue mientras tanto:**
+  - La **corrección de texto de QA-023-06** ya está hecha por el analista, sin validar, en commit local. La vuelta agrupada no se parte, así que el desarrollador, QA y seguridad esperan a esta decisión.
+  - La coordinadora decide por su cuenta, sin necesitarte, que el principio «una frase condicional no acredita protección» se aplique también a REQ-031 CA-A13 (el techo) en la misma pasada del analista. Es una sede de REQ-031 afectada por el mismo principio y está dentro de la autorización.
+
+**Ficha 4 — RESUELTA por el propietario el 2026-09-30 (quinta autorización): SEC-119 se REPARA en esta frontera.** *Texto original, conservado:* QA-023-07 (`instrumento`, severidad alta, PREEXISTENTE; NO aceptado; añadida el 2026-09-30, escalada por QA como urgencia de seguridad). Una ruta con segmentos `..` que entra en `requirements/` o en el código protegido desde un directorio libre no la juzga ninguna puerta.
+- **Consecuencia medida a nivel de hook, no en el host** (QA, 2026-09-30, igual en el candidato `cd47f06`, en `df550fa` y en 1.33.2; `docs/qa/REQ-023.md`, adenda de la vuelta excepcional, §10):
+  - un `Edit` que cierra un REQ `critico` con QA pendiente, a través de una ruta con `..`, sale **allow**, sea literal o no literal;
+  - un `Write` de la coordinadora a `<raíz>/docs/../src/a.ts` sale **allow** en `guard-codigo`.
+- **Causa:** `arnes_ruta_relativa` y `arnes_norm_path` no resuelven los segmentos `..`.
+- **Protección efectiva hoy:** ninguna mecánica en esa vía. **Depende de la disciplina:** que ningún agente construya rutas con `..`.
+- **No es regresión:** 1.35.0 no lo introduce ni lo agrava; tampoco lo cierra.
+- **Qué impide:** nada de REQ-023 por su clase. Puede impedir **publicar**, si el propietario lo decide.
+- **Alternativas:**
+  - **reparar antes de publicar**, con una reparación en ciclo propio, que la autorización vigente no abre automáticamente;
+  - **aplazar**, con responsable propuesto `desarrollador` (lector de rutas) y `analista-requerimientos` (contrato), revisión propuesta el 2026-10-07 y revisión anticipada ante cualquier observación de una escritura por ruta con `..` en este repositorio o en un consumidor.
+- **Valoración de seguridad** (R-045-A, 2026-09-30):
+  - registrado como **SEC-119** (`instrumento`, alta), ampliado por propiedad: las puertas deciden por la **ruta escrita**, no por la canónica. A nivel de hook, en tres árboles, `docs/../requirements/`, `././requirements/` y un directorio enlazado evaden `guard-completado`, y lo mismo pasa con `guard-codigo` para `src/`;
+  - remedio de sede única: canonicalizar la ruta y usar `test -ef` en `arnes_ruta_relativa`, sin procesos nuevos;
+  - **recomienda reparar antes de publicar**, porque tiene el mismo efecto que SEC-117, un bypass total y silencioso, y alcanza además a `guard-codigo`;
+  - en contra: no está ensayado en el host, no hay exposición accidental observada, y retener 1.35.0 deja a los consumidores sin SEC-117 ni SEC-047;
+  - si se aplaza, la cláusula de §13 y las notas deben declarar SEC-119 como limitación de todas las filas.
+- **Recomendación de la coordinadora:** coincide con el auditor en que es la misma clase de efecto que SEC-117, y tú ya fijaste no publicar con un bypass total aplazado. Recomiendo **reparar antes de publicar**, con una autorización expresa, porque la vuelta vigente no lo cubre.
+
+**Decisión 7 — RESUELTA por el propietario el 2026-09-30 (quinta autorización): O-11 se corrige dentro de esta misma frontera.** *Texto original, conservado:* O-11 (QA, 2026-09-30): la vía del archivo ilegible (NUL en disco, SEC-002) queda fuera de CA-13. Con NUL en el disco, una edición no reconstruible que no escribe la palabra del estado terminal recibe permiso, y CA-13 (iv) lo excluye con la causa que da la tercera autorización («porque no encuentra literalmente el texto anterior»). Pero tu cuarta autorización reformula la propiedad **sin esa causa** («una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso»).
+- **Pregunta:** ¿la vía del archivo ilegible entra en la propiedad?
+- **Opciones:**
+  - **(A)** No: se queda como está, declarada en CA-13 (iv), con SEC-002 como sede. La **consecuencia** es un residuo estrecho: requiere un NUL ya escrito en el REQ.
+  - **(B)** Sí: se repara en ciclo propio (denegar toda edición de un REQ ilegible), fuera de esta vuelta.
+- **Recomendación de la coordinadora:** (B) como trabajo siguiente, fuera de esta vuelta, y declararlo mientras tanto. Es la misma clase de defecto, pero su causa, el disco ilegible, es distinta de la que reparó esta vuelta.
+- **Valoración de seguridad** (R-045-A): **(B)**. La propiedad de la cuarta autorización lo alcanza de lleno. Tiene un productor natural conocido: PowerShell 5.1 escribiendo en UTF-16LE. El remedio es denegar todo `Edit`/`MultiEdit` de un REQ que no se puede leer entero, dejando `Write` como salida. Si se elige (A), la cláusula de §13 tiene que llevar escrita la excepción antes de publicar.
+- **Qué sigue mientras tanto:** la determinación de seguridad.
+
+**Decisión 8 — RESUELTA por el propietario el 2026-10-01 (sexta autorización, § Resueltas): opción (A), con la condición de parada de QA-023-10 escrita por él.** *Texto original, conservado:* la vuelta excepcional de la quinta autorización termina con QA NO favorable. ¿Cómo sigue la reparación de SEC-119 y O-11?
+- **Qué ocurrió.** QA revisó el delta `104ffd1..43b948a` (`docs/qa/REQ-023.md` § «Vuelta excepcional de la quinta autorización»).
+  - **Conforme:** CA-45, CA-46 (b), (d) y (e), CA-47 a CA-50, la nota de CA-58, CA-60 y CA-66 puntos 1 a 5, 7 y 8, con el fail-before re-derivado contra `9596e39` y 1.33.2. Banco completo 1322 PASS · 0 FAIL · 12 SKIP, cuadre 1334; autoprueba 117/0; gates rc 0. QA-023-07 y QA-023-08 quedan **cerrados**.
+  - **Tres hallazgos nuevos, los tres `contrato` en REQ-007:**
+    - **QA-023-09 (alta a nivel de hook; regresión de `104ffd1`).** `arnes_parse_input` lee varios campos de una sola salida de `jq`, uno por línea, y el delta añadió el `cwd` delante de la ruta. Un `cwd` con salto de línea desplaza los campos, y las dos puertas juzgan otra ruta. Medido por inyección, por la ruta canónica: el cierre de un REQ `critico` con QA pendiente, la edición no reconstruible de SEC-117 y un `Write` de la coordinadora a código protegido salen **allow**, donde `9596e39` y 1.33.2 deniegan. Es un movimiento de deny a allow que CA-24 y CA-66 punto 5 no declaran. En REQ-023 QA lo registra como `instrumento`, porque la promesa que falla tiene su sede en REQ-007 CA-47.
+    - **QA-023-10 (media).** CA-54 exige menos de 5 s en el máximo de análisis de `Bash` (131 072 bytes). El candidato tarda de 9,5 a 12,1 s, en quince corridas: concluyente en WSL2. `9596e39` tardaba de 2,9 a 6,9 s y ya lo superaba en una de las tres formas. En el valor por defecto (65 536 bytes) el candidato también lo supera. No hay fallo en abierto medido: queda un margen de unas cinco veces hasta los 60 s.
+    - **QA-023-11 (media).** La validación en el host no ejecutaba ni declaraba R5 ni el `cwd` tras un `cd` (CA-45 y CA-66 punto 6).
+- **Lo que hizo después la coordinadora.** Es validación ya autorizada (quinta autorización, punto 5), no una reparación. Ejecutó en el host real los dos casos que faltaban, con registro previo `f209d06` y resultado `7a3cb6e` (rama local de evidencia, `sec119-v3b/`). CLI 2.1.285, una ejecución por caso:
+  - el `cwd` que recibe el hook **sigue** a un `cd` hecho en una llamada anterior de `Bash`;
+  - **QA-023-09 se manifiesta en el host.** Con un directorio cuyo nombre lleva un salto de línea, el `cwd` llega literal al hook. El hook no juzgó la ruta canónica que pidió la herramienta: juzgó un fragmento del `cwd`. Denegó **sólo** porque, con el nombre ensayado, ese destino desplazado no se podía determinar, y CA-47 hace que lo no determinable no pase. No se ensayó un nombre con el que sí se pueda determinar, así que **un permiso desde el host no está observado ni descartado**. El control sin salto de línea se juzgó por su ruta real;
+  - **R5 no llega al hook:** el `Read` previo falla con `EACCES` y no hay `Edit` que juzgar. CA-45 frente a un archivo sin permiso de lectura sigue verificado sólo a nivel de hook. Para ese caso, QA-023-11 pide que el analista lo declare como límite.
+- **Acción que impide (regla 2):**
+  - **publicar** 1.35.0. En la ficha 4 decidiste no publicar con un rodeo total aplazado, y QA-023-09 rodea las dos puertas por completo; 1.33.2 y `v1.34.0` no tienen ese rodeo;
+  - **cerrar** REQ-007, que suma tres `contrato` (ya no cerraba por QA-114, QA-116 y QA-117);
+  - la **determinación de seguridad** de esta vuelta: el auditor no firma sobre un árbol sin QA favorable (§6).
+
+  Por su clase, **no** impide cerrar REQ-023, REQ-031 ni REQ-001: QA mantiene su `QA: aprobado` sobre el código final, sin cubrir QA-023-09. Cerrarlos lo impide ya la cola.
+  - **Parte afectada:** las dos puertas, ante cualquier entrada cuyo `cwd` lleve un salto de línea (QA-023-09); el análisis de `Bash` en su máximo y en su defecto (QA-023-10); el texto de CA-45 y CA-66 (QA-023-11).
+  - **Evidencia:** `docs/qa/REQ-023.md` §9, con sus anexos `11-cwd-salto-de-linea.txt` y `30-ca54-coste.txt` (rama local de evidencia, `cand-1.35.0/evidencia-qa-sec119/`, `66de607`), y `sec119-v3b/RESULTADO.md` (`7a3cb6e`).
+  - **Qué lo resuelve:** tu decisión. La quinta autorización dice que una vuelta que termina con un bloqueo no abre otra automáticamente.
+- **Opciones:**
+  - **(A) Otra vuelta excepcional, acotada a los tres hallazgos y sin reiniciar contadores** (el de REQ-023 sigue en 3 de 3).
+    - **Desarrollador, QA-023-09:** se corrige en el código, sin cambio de contrato. Ningún salto de línea en el `cwd` puede desplazar un campo; la técnica la elige él. Lleva fail-before contra `43b948a` y control opuesto.
+    - **Desarrollador, QA-023-10:** optimizar la identificación por destino.
+    - **Analista:** declara R5 como límite en CA-45 y en el punto 6 de CA-66 (QA-023-11).
+    - **Después:** QA, y seguridad con QA favorable.
+    - **Consecuencia:** una vuelta más. QA-023-09 es un delta pequeño y localizado en un solo sitio; QA-023-10 es la parte con resultado incierto.
+  - **(B) Retirar del candidato la reparación de SEC-119 y O-11** (el código de los hooks vuelve a `9596e39` más SEC-117) y publicar con SEC-119 y O-11 declarados como limitación.
+    - **Consecuencia:** contradice tu decisión de la ficha 4. Además, vuelven a quedar abiertos los vectores alcanzables desde el host que la v3 mostró cerrados: el directorio enlazado por `Edit`, `..` por `Bash` y el REQ en UTF-16. Se nombra sólo porque es la alternativa a reparar.
+  - **(C) Esperar:** ni reparar ahora ni publicar.
+    - **Consecuencia:** 1.35.0 queda retenida, y SEC-047 y SEC-117 no llegan a los consumidores.
+- **Recomendación de la coordinadora:** **(A)**, con una condición de parada para QA-023-10. Si la optimización no deja el máximo por debajo de 5 s, el desarrollador para y la cifra vuelve a ti. La regla de CA-54 permite bajar el máximo sin ADR, pero el candidato tampoco cumple en el valor por defecto. Bajar de ahí cambia lo que se deniega por presupuesto en todos los proyectos, y eso no es una medición: es una decisión. QA-023-09 es una regresión de este mismo delta, tiene causa localizada y no cambia el contrato; la v3b muestra que se manifiesta en el host.
+- **Relación con P-119-A**, la pregunta abierta de REQ-007 sobre las fronteras F2, F3, F5 y F7, que también espera tu respuesta.
+  - Aceptar F7 declarada **no** cubre QA-023-09. F7 deja fuera lo que el host haga con la ruta, y que el `cwd` sea el directorio del comando. QA-023-09, en cambio, es una puerta que lee mal un campo que sí recibe, y CA-24 prohíbe ese movimiento sin excepción.
+  - La v3b además ya midió parte de F7: el `cwd` sigue al `cd`.
+- **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. Esta vuelta queda registrada en el candidato con un commit local, y la evidencia en la rama local de evidencia. **El push de `cand/1.35.0` y el CI sobre la cabeza actual no se han hecho:** `origin` y el PR #59 siguen en `9596e39`. No hacen falta para decidir.
+
+**Decisión 9 — 9a RESUELTA por el propietario el 2026-10-02 (séptima autorización, § Resueltas): se repara QA-023-13, y puede denegarse un `cwd` que contenga CR. 9b SIGUE PENDIENTE y NO está autorizada: «medir en Windows no sustituye el criterio vigente de menos de 5 segundos ni equivale a aceptar que un timeout deje pasar la operación». En esta vuelta se prepara su decisión.** *Texto original, conservado:* la vuelta de la sexta autorización termina con QA NO favorable por un hallazgo nuevo, QA-023-13; y QA-023-10 sigue abierto tras su parada. ¿Cómo sigue el candidato?
+- **Qué ocurrió.** La vuelta se hizo entera: desarrollador, analista, host y QA con Opus (`docs/qa/REQ-023.md` § «Vuelta excepcional de la sexta autorización»; evidencia en la rama local de evidencia, `0d3d0c9`).
+  - **QA-023-09, cerrado.** La entrada del hook se lee campo a campo y entera (`cd6afa6`). Un `file_path` o un `tool_name` con LF es no determinable (CA-47 puntos 12 y 13). En el host real, con un `cwd` con salto de línea, las dos puertas juzgan la ruta pedida y el control legítimo pasa (`sec119-r6/`, `3eb279d`).
+  - **QA-023-11, cerrado.** CA-45 incorpora la v3b: el `cwd` sigue al `cd`, y R5 queda como límite de la comprobación en el host.
+  - **QA-023-10, abierto.** La optimización no alcanzó los 5 s (6,5–9,5 s en 131 072), se detuvo como mandaste y salió del candidato. Queda conservada como parche en la evidencia (`3b947a1`). El árbol final cuesta lo mismo que `43b948a`: 8,6–10,3 s según el desarrollador y 9,0–9,2 s según QA, frente a 2,9–7,2 s de `9596e39`. QA verificó que la parada fue fiel.
+  - **QA-023-13, nuevo** (`contrato` en REQ-007, `instrumento` en REQ-023). `arnes_sin_cr_transporte` recorta el CR final de cada campo, porque el `jq` de Windows termina las líneas en CRLF. Un CR que forma parte del nombre del `cwd` desaparece, y la puerta ancla las rutas relativas de `Bash` en otro directorio que el shell.
+    - **Medido a nivel de hook en la cabeza actual** (`evidencia-qa-r6/27-repro-CR-cwd.txt`): desde un directorio cuyo nombre termina en CR y enlaza a la raíz, el shell escribe en `<raíz>/src/a.ts`. Pero `echo x > src/a.ts` de la coordinadora y un `sed -i` que cierra un REQ en rojo salen **allow**, donde `9596e39` y 1.33.2 deniegan.
+    - **De dónde viene:** nace con el anclaje en el `cwd` que introdujo la reparación de SEC-119 (`104ffd1`). No es del delta de esta vuelta.
+    - **Qué exige:** un directorio con ese nombre, enlazado a la zona protegida, y un `cd` a él. Es ofuscación deliberada, no descuido. Alcanzable desde el host: sin medir.
+    - **Qué desmiente:** CA-47 punto 11 («anclado en el `cwd` entero») y CA-66 punto 5 («ninguno nuevo de deny a allow»).
+- **Acción que impide (regla 2):**
+  - la **determinación de seguridad** del delta de SEC-119/O-11: el auditor no firma sin QA favorable (§6), y no ha firmado nada desde R-045-A (`8745b3f`);
+  - **publicar** 1.35.0: QA-023-13 es un rodeo frente a lo publicado, y en las fichas 3 y 4 decidiste no publicar con un rodeo total aplazado;
+  - **cerrar** REQ-007.
+
+  **No** impide cerrar REQ-023, REQ-031 ni REQ-001 por clase (`QA: aprobado` sobre `9c53232`), pero lo impide ya la cola.
+  - **Parte afectada:** las rutas relativas de `Bash`, en las dos puertas, cuando el `cwd` termina en CR (QA-023-13); y el coste del análisis de `Bash` (QA-023-10).
+  - **Evidencia:** la citada arriba.
+  - **Qué lo resuelve:** tu decisión. La sexta autorización no abre otra vuelta automáticamente.
+- **9a — QA-023-13. Opciones:**
+  - **(A) Reparar fallando cerrado, en una vuelta excepcional acotada, sin reiniciar contadores.** El analista añade en CA-47 la causa, como hizo con el punto 12: un `cwd` cuyo texto contiene un CR no ancla una relativa, que pasa a ser no determinable. Otra técnica que preserve el CR del contenido la elige el desarrollador, si existe sin procesos nuevos. Después, desarrollador, QA y seguridad.
+    - **Consecuencia:** una vuelta más, de delta pequeño. Una escritura relativa por `Bash` desde un directorio con CR en el nombre se deniega, y eso en la práctica no existe.
+  - **(B) Aceptar la frontera del CR y declararla.** El analista la escribe en CA-47 y la añade como séptimo movimiento de deny a allow en CA-66 punto 5. Después, QA del texto y seguridad.
+    - **Consecuencia:** 1.35.0 publicaría un rodeo frente a 1.33.2 que exige ofuscación deliberada. Es coherente con «barandilla, no jaula» (§13), pero no con la línea que mantuviste en SEC-117 y SEC-119.
+- **9b — QA-023-10. Opciones:**
+  - **(A) Publicar con CA-54 incumplido, como residual declarado.** Dueños: `desarrollador` y `analista-requerimientos`. Vencimiento: la versión siguiente. Forzador: un hook de `Bash` muerto por tiempo, o una medición en Windows. Las notas ya lo declaran.
+    - **Consecuencia:** el análisis de `Bash` en el máximo tarda unos 9 s en WSL2, frente a 3–7 s en 1.33.2. No hay fallo en abierto medido: hay más de cuatro veces de margen hasta los 60 s. **Pero en Windows/MSYS no está medido**, y allí cada sentencia de bash cuesta más. Si el factor pasara de unas seis veces, el hook moriría por tiempo y dejaría pasar, que es la clase de SEC-115.
+  - **(B) Incorporar la optimización conservada** (6,5–9,5 s) y decidir el diseño del trabajo por destino.
+    - **Consecuencia:** sigue sin cumplir los 5 s. Reintroduce un refactor de las funciones de identidad de SEC-119, con otra vuelta de QA y de seguridad.
+  - **(C) Bajar el máximo, y el defecto, por la regla de CA-54** hasta que cumpla.
+    - **Consecuencia:** cambia, en todos los proyectos, qué comandos de `Bash` se deniegan por presupuesto. Bajar el defecto no es una medición: es una decisión.
+- **Recomendación de la coordinadora:**
+  - **9a (A).** El defecto es de identidad, la misma clase que reparaste en SEC-119, y fallar cerrado cuesta un delta pequeño.
+  - **9b (A),** con una condición antes de publicar: medir el caso del máximo en Windows/MSYS. Si se acerca a los 60 s, la decisión vuelve a ti con esa cifra.
+  - Las dos caben en una sola vuelta excepcional.
+- **Junto a esta decisión siguen pendientes:** la ficha 1 (SEC-115/SEC-118), la ficha 2 (C) y P-119-A. Ninguna está aceptada. Aceptar F7 no cubre QA-023-09 ni QA-023-13.
+- **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. La coordinadora sólo completa lo que la sexta autorización ya cubre: push, CI sobre la cabeza final y actualización del PR #59 en borrador.
+
+**Decisión 9b, preparada el 2026-10-02 (séptima autorización, punto 4): QA-023-10, separando tres cosas. NO autorizada. Ningún residual aceptado.**
+1. **El incumplimiento de latencia medido.** CA-54 exige menos de 5 s en el máximo de análisis de `Bash` (131 072 bytes). El candidato no cumple en ninguna de las dos plataformas medidas:
+
+   | Plataforma | Candidato | `9596e39` | Fuente |
+   |---|---|---|---|
+   | WSL2 (Linux) | 8,6–10,3 s (desarrollador) y 9,0–9,2 s (QA) | 2,9–7,2 s | `evidencia-dev-r6/38-`, `evidencia-qa-r6/25-` |
+   | Windows/MSYS | **20,4–28,9 s**, en las 15 corridas | — (ver punto 2) | `sec-ca54-win/`, `c51c5c7` |
+
+   En WSL2, la base ya incumplía en una de las tres formas. **El incumplimiento está medido y es concluyente en las dos plataformas.**
+2. **El riesgo de agotar el tiempo límite y terminar sin decisión.** Es otra cosa, y es la clase de SEC-115 (ficha 1, no aceptada).
+   - **En WSL2:** ninguna corrida se acerca a los 60 s, ni en el candidato ni en la base.
+   - **En Windows/MSYS, en esta máquina y con una ejecución:** el candidato no llegó al límite (máximo 28,9 s, unas 2,1 veces de margen). **`9596e39` llegó al límite en las 15 corridas del caso máximo**, y un hook cortado así termina sin decisión.
+   - **Lectura:** en estas condiciones, el candidato está más lejos del límite que la base. La base equivale a lo publicado en esta vía, aunque 1.33.2 no se midió en Windows. Eso **no** demuestra que el riesgo no exista: un equipo más lento o más cargado podría llegar al límite, y un margen de 2,1 veces no es una garantía. Tampoco convierte la latencia en aceptable.
+3. **Las plataformas y condiciones realmente comprobadas.**
+   - **WSL2:** Linux 6.18, bash 5.3.9 y jq 1.8.2, en varias corridas de la sonda de QA, de desarrollador y de QA.
+   - **Windows:** 10.0.26200, PortableGit con bash 5.3.15, MSYS 3.6.9 y jq 1.8.2 nativo, con el hook invocado directamente, archivos en NTFS, una ejecución en una máquina y registro previo (`5510675`).
+   - **No comprobado:** el cliente de Claude Code ejecutándose en Windows, otras máquinas, otras versiones de MSYS o Git Bash, Cygwin, y Windows bajo carga.
+   - **Nada de esto valida Windows.**
+- **Opciones** (sustituyen a las de 9b de arriba, que se conservan como historia):
+  - **(A) Aceptar QA-023-10 como residual declarado de 1.35.0**: CA-54 incumplido, con la latencia de la tabla en las notas. Necesita que tú fijes el dueño, el forzador y el vencimiento. REQ-007 no se cierra.
+    - **Consecuencia:** el análisis de `Bash` es más lento que en `9596e39` en Linux (2–3 veces). En Windows, en esta máquina, el candidato termina con decisión donde la base agotaba el tiempo. El riesgo de la ficha 1 sigue sin aceptar y aparte.
+  - **(B) Retener la publicación hasta cumplir CA-54.**
+    - **Consecuencia:** hace falta otra vuelta de diseño. La optimización conservada no bastaba ni en WSL2 (6,5–9,5 s), y en Windows la distancia es de 4 a 6 veces. Es trabajo del tamaño de una versión propia, y mientras tanto los proyectos siguen con la versión publicada.
+  - **(C) Cambiar el contrato de CA-54**, por ejemplo bajando el máximo y el defecto o declarando la cifra por plataforma. **Es decisión exclusivamente tuya:** tu autorización me prohíbe reducir el máximo o subir umbrales.
+    - **Consecuencia:** cambia, en todos los proyectos, qué comandos se deniegan por presupuesto.
+- **Recomendación de la coordinadora:** **(A)**, si tú fijas sus condiciones.
+  - **Por qué:** el incumplimiento es real, pero retener 1.35.0 por él dejaría a los proyectos con una base que, en esta medición de Windows, sí agotaba el tiempo en el caso máximo.
+  - **Lo que (A) no hace:** no acepta que un timeout deje pasar la operación. Ese riesgo sigue en la ficha 1, sin aceptar.
+
+**Decisión 10 — PENDIENTE (añadida el 2026-10-02): SEC-122, registrado por seguridad en R-046.**
+- **Qué es:** una exclusión de ciertas rutas de sistema en la identificación del destino deja sin aplicar parte de CA-47 y CA-49 en casos concretos.
+  - Una cara es **preexistente**.
+  - La otra es una **regresión frente a 1.33.2, introducida por `104ffd1`** (la reparación de SEC-119, quinta autorización), y sólo afecta a proyectos situados bajo esas rutas.
+  - No la introduce la séptima autorización.
+  - Detalle y evidencia: `docs/seguridad/registro-seguridad.md` § R-046 y `cand-1.35.0/evidencia-seg-r7/` (`d7da950`).
+- **Acción que impide (regla 2):**
+  - **publicar**, a juicio del auditor, mientras no decidas;
+  - **cerrar** REQ-007 (es `contrato`).
+  - **Evidencia:** R-046.
+  - **Qué lo resuelve:** tu decisión.
+- **Opciones:**
+  - **(A) Una vuelta acotada** que repare SEC-122 por la propiedad que fija R-046, con QA-023-14 dentro. **Lo recomiendan el auditor y la coordinadora.**
+    - **Consecuencia:** otra vuelta corta: analista, desarrollador, QA y seguridad.
+  - **(B) Declararlo como séptimo movimiento** y corregir F3, CA-49, CA-66 y las notas.
+    - **Consecuencia:** 1.35.0 publicaría una regresión frente a 1.33.2, contra la línea que mantuviste en QA-023-09 y QA-023-13.
+  - **(C) Retener la publicación** sin reparar.
+- **Además:** P-119-A no puede presentarse con el texto actual de F3 hasta que el analista lo corrija (R-046).
+
+**P-023-13-A — PENDIENTE (abierta por el analista el 2026-10-02; = QA-023-15, `instrumento`, preexistente en los cuatro árboles).** El texto del comando de `Bash` sigue perdiendo un CR en el transporte, y eso queda fuera de esta reparación, porque excluiste reescribir el analizador de `Bash`. Está declarado en CA-47 punto 11 como límite conocido, no protegido y **no aceptado**.
+- **Opciones:**
+  - **(A) Declararlo fuera de la promesa de 1.35.0.**
+  - **(B) Repararlo** en una vuelta propia.
+  - **(C) Llevarlo con P-119-A.**
+- **Recomendación del analista:** (A), sin que eso acepte nada.
+- **Recomendación de la coordinadora:** decidirlo junto con la decisión 10. Si eliges una vuelta para SEC-122, que ésta valore si cabe dentro sin reescribir el analizador.
+
+**QA-023-14** (`instrumento`, introducido por `3bc7d3c`; R-046 coincide): va con la **ficha 1**, como regresión de coste del candidato. Si se abre la vuelta de la decisión 10, se repara en ella.
+
+**Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
+
+- **Recomendación de la coordinadora (propuesta, no decisión):**
+  - **SEC-115 y C:** aplazarlos con esas fechas y publicar sus limitaciones en las notas de 1.35.0. SEC-115 tiene realismo bajo y un margen medido de más de 30× sobre los REQ reales; C no tiene reparación que quepa en esta versión sin ser otra versión.
+  - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
+    - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
+    - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
+- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9b** (QA-023-10). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, y su vuelta terminó con QA no favorable por QA-023-13. La 9a (séptima autorización, 2026-10-02) abrió la vuelta que lo repara, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la séptima autorización (QA-023-13 y la preparación de la decisión 9b), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-02, séptima autorización) — **Decisión 9a: se repara QA-023-13** en una vuelta excepcional acotada, sin reiniciar contadores; **9b NO autorizada todavía** (QA-023-10: se prepara su decisión, con una comprobación acotada en Windows/MSYS si está disponible)
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-10-02 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Continuamos con el objetivo de preparar una versión publicable del arnés, sin ampliar esta intervención a otras reparaciones.
+>
+> **Autorizo la decisión 9a y una vuelta excepcional acotada**, sin reiniciar contadores. **No autorizo todavía 9b**: medir en Windows no sustituye el criterio vigente de menos de 5 segundos ni equivale a aceptar que un timeout deje pasar la operación.
+>
+> ### 1. Base y conservación
+>
+> Trabaja en `cand/1.35.0`, partiendo de la cabeza reportada `452098e`. Comprueba la cabeza real, el estado del PR #59 y las instrucciones del worktree antes de modificar.
+>
+> Conserva los cambios preexistentes de `docs/ESTADO.md`, `propuesta-v1.35.0/`, las evidencias y todas las corridas anteriores. No recuperes la optimización descartada de QA-023-10.
+>
+> ### 2. Reparar QA-023-13
+>
+> Corrige el tratamiento del `cwd` con retorno de carro antes de que cualquier lectura o normalización pueda recortarlo.
+>
+> La propiedad exigida es: **las puertas deben juzgar la ruta real de la operación o denegar explícitamente cuando no puedan determinarla; nunca juzgar otra ruta por haber modificado silenciosamente el directorio recibido.**
+>
+> Autorizo denegar un `cwd` que contenga CR con un motivo preciso. Conserva el tratamiento ya validado de LF y las denegaciones de `file_path` y nombre de herramienta que quedaron registradas en la vuelta anterior.
+>
+> Revisa los puntos de lectura y transporte de estos campos directamente relacionados con el defecto. No conviertas esto en una reescritura general del analizador de Bash.
+>
+> ### 3. Validación acotada
+>
+> Reutiliza la evidencia y los casos existentes. Comprueba:
+>
+> - El caso de QA-023-13 antes y después, tanto para `guard-completado` como para `guard-codigo`.
+> - Que siguen conformes los casos de LF de QA-023-09 y las reparaciones de SEC-117 y SEC-119 afectadas por este cambio.
+> - Una operación legítima, verificando la decisión y el archivo resultante.
+> - El caso CR en el host real, si el host permite construirlo. Si no, registra el impedimento y distingue expresamente la prueba directa del hook de la prueba del host.
+>
+> No repitas hasta obtener verde ni amplíes plataformas o matrices sin una necesidad concreta de esta reparación.
+>
+> ### 4. QA-023-10: preparar la decisión, sin cambiar el contrato
+>
+> No abras otra optimización en esta vuelta. Conserva el hallazgo y el criterio de menos de 5 segundos.
+>
+> Prepara una decisión breve con la evidencia existente que separe:
+>
+> 1. El incumplimiento de latencia medido.
+> 2. El riesgo de agotar el timeout y terminar sin decisión.
+> 3. Las plataformas y condiciones realmente comprobadas.
+>
+> Si Windows/MSYS está disponible, autorizo una comprobación acotada del caso máximo con procedimiento fijado antes de ejecutarla y todas las ejecuciones conservadas. Si no está disponible, declara esa ausencia; no instales otro entorno ni presentes Windows como validado.
+>
+> No reduzcas el máximo admitido, no subas umbrales y no aceptes residuales por mí. Una medición inferior a 60 segundos no satisface por sí sola CA-54.
+>
+> ### 5. Revisión y condición de parada
+>
+> El analista actualiza únicamente las sedes afectadas. El desarrollador repara y QA revisa el delta, conservando la cobertura anterior que siga siendo válida.
+>
+> Si QA es favorable para la reparación, despacha seguridad conforme a las reglas vigentes. Si QA-023-10 impide ese veredicto, entrega primero su decisión concreta: no lo ocultes, no lo conviertas en aprobado y no repitas el ciclo de implementación por ese motivo.
+>
+> No abras otra vuelta excepcional automáticamente. Si aparece un impedimento nuevo, identifica su causa, si lo introduce este cambio y qué decisión concreta requiere.
+>
+> ### 6. Entrega
+>
+> Autorizo commits locales de esta intervención. Actualiza el PR #59 mediante push sin force y observa una sola corrida sobre la cabeza final únicamente si la reparación obtiene las revisiones favorables requeridas. Conserva cualquier resultado sin relanzarlo.
+>
+> Entrega un resumen con:
+>
+> - Cabeza final y archivos modificados.
+> - QA-023-13 antes/después y cobertura real del host.
+> - Cobertura exacta de QA y seguridad.
+> - Decisión pendiente sobre QA-023-10.
+> - Impedimentos restantes para publicar, sin mezclarlos con lo ya resuelto.
+>
+> Esta autorización no acepta SEC-115, SEC-118, el hueco C ni P-119-A; tampoco autoriza fusionar, cerrar requisitos, crear tags, publicar o actualizar SENDA, Adelantos u otros consumidores.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Base comprobada antes de editar (2026-10-02):** `cand/1.35.0` local = `origin/cand/1.35.0` = PR #59 = `452098e`, en borrador. En el árbol, sólo los cambios preexistentes: `docs/ESTADO.md` y `propuesta-v1.35.0/`.
+- **Windows/MSYS está disponible y no se instala nada:** PortableGit en el perfil de Windows (`bash` 5.3.15, MSYS 3.6.9), `jq` 1.8.2 y `timeout`, accesibles desde WSL por interoperabilidad.
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)**. Ésta es la cuarta vuelta excepcional autorizada sobre esta entrega, y no reinicia nada. No se crea ningún REQ.
+- **Orden de la vuelta, en serie** porque todo es de REQ-007:
+  1. desarrollador;
+  2. host del caso CR y comprobación en Windows/MSYS, las dos de la coordinadora y con registro previo;
+  3. analista;
+  4. QA (Opus, §5);
+  5. seguridad, sólo si QA es favorable para la reparación.
+
+  Push y una sola corrida de CI, sólo si las revisiones salen favorables.
+
+### RESUELTA (propietario, 2026-10-01, sexta autorización) — **Decisión 8: opción A.** Vuelta excepcional agrupada para QA-023-09 (integridad de la entrada), QA-023-10 (coste de `Bash`, REQ-007 CA-54) y QA-023-11 (cobertura real en CA-45), sin reiniciar contadores y sin retirar la reparación de SEC-119/O-11
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-10-01 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo la opción A de la decisión 8: una vuelta excepcional agrupada para QA-023-09, QA-023-10 y QA-023-11. Conserva los contadores y registra esta excepción sin reiniciarlos.
+>
+> Objetivo: eliminar la regresión introducida por SEC-119/O-11, cumplir el coste contratado y completar la declaración de cobertura. No retirar la reparación ni abrir mejoras independientes.
+>
+> 1. Base y contexto
+>
+> Trabaja en `cand/1.35.0`. La cabeza local reportada es `8f4dda7`; el PR #59 sigue en `9596e39`. Verifica ambas y el árbol de trabajo antes de editar.
+>
+> Conserva los cambios preexistentes de `docs/ESTADO.md`, `propuesta-v1.35.0/` y la evidencia. No los descartes ni los incluyas indiscriminadamente. Utiliza las instrucciones del worktree correcto.
+>
+> 2. QA-023-09: integridad de la entrada
+>
+> Corrige la extracción de los datos para que un salto de línea dentro de `cwd` no desplace campos ni cambie la ruta que juzgan las puertas.
+>
+> La solución debe preservar los límites entre campos del formato de entrada; no basta con prohibir el nombre ensayado o sustituir caracteres silenciosamente.
+>
+> Añade pruebas que fallen con la reparación defectuosa y pasen después. Comprueba ambas puertas, la ruta realmente juzgada y el efecto en disco. Incluye un control legítimo.
+>
+> Reutiliza el caso del host real. No presentes su denegación anterior por ruta irresoluble como protección acreditada ni extiendas las conclusiones a hosts no ensayados.
+>
+> 3. QA-023-10: coste de Bash
+>
+> Autoriza esta instrucción la optimización interna necesaria para cumplir REQ-007 CA-54, conservando:
+> - Techo de menos de 5 segundos.
+> - Valor por defecto y máximo admitido.
+> - Cobertura de seguridad y decisiones del control.
+>
+> No subas el techo, reduzcas límites admitidos, omitas comprobaciones ni cambies el procedimiento de medición para obtener un PASS.
+>
+> Antes de medir, identifica el procedimiento y los casos exigidos por el contrato, reutilizando la evidencia existente. Registra todas las ejecuciones y compara el mismo trabajo antes y después.
+>
+> Si la optimización no consigue cumplir dentro de esta vuelta, detén esa reparación y presenta las cifras y el impedimento concreto. No sigas ensayando hasta obtener una lectura favorable. Continúa y conserva la validación independiente de QA-023-09 y QA-023-11.
+>
+> 4. QA-023-11: cobertura real
+>
+> El analista incorpora en CA-45 la evidencia ya obtenida:
+> - El cwd recibido por el hook sigue al cd observado.
+> - El caso de archivo ilegible falló antes de llegar al hook.
+>
+> Declara ese segundo caso como límite de la comprobación en el host. No lo conviertas en prueba de denegación del hook ni repitas el experimento sin una pregunta nueva imprescindible.
+>
+> 5. Ciclo completo de esta vuelta
+>
+> Agrupa la reparación del desarrollador, el write-back del analista y las pruebas dirigidas. QA revisa los tres puntos y las regresiones de los caminos afectados, reutilizando evidencia intacta.
+>
+> Si QA es favorable, despacha seguridad sobre el delta. Si no lo es, conserva los resultados parciales y entrega el bloqueo exacto; no abras otra vuelta automáticamente ni apruebes por agotamiento.
+>
+> Los ajustes internos necesarios para resolver estos tres hallazgos están autorizados. Sólo exige otra decisión un cambio de alcance, contrato o cobertura que exceda expresamente estos límites.
+>
+> 6. PR y resultado
+>
+> Autorizo commits, push sin force y actualización del PR #59 en borrador. Obtén el CI requerido sobre la cabeza final de esta entrega. Conserva todas las corridas, sin relanzar buscando verde.
+>
+> Entrega un único resumen:
+> - Estado de cada hallazgo.
+> - Antes/después de la ruta juzgada y del coste.
+> - Evidencia de host frente a pruebas directas del hook.
+> - Firmas y cobertura, SHA y CI.
+> - Impedimentos de publicación que permanezcan.
+>
+> Ficha 1 (SEC-115/SEC-118), ficha 2 (hueco C) y P-119-A siguen pendientes y sin aceptación. No uses una aceptación de F7 para cubrir QA-023-09.
+>
+> Sin fusión, cierre automático de requisitos, tag, publicación, cambios de modelos, workflow, ruleset ni consumidores. El resultado esperado es esta vuelta terminada y una decisión concreta sobre el candidato, no otra propuesta preliminar.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Base comprobada antes de editar (2026-10-01):** `cand/1.35.0` local = `8f4dda7`; `origin/cand/1.35.0` = PR #59 = `9596e39`, en borrador y ancestro de `8f4dda7`, así que el push no necesita force. En el árbol, sólo los cambios preexistentes: `docs/ESTADO.md` y `propuesta-v1.35.0/`.
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)**. Ésta es la tercera vuelta excepcional autorizada sobre esta entrega, después de la tercera/cuarta y de la quinta autorización. No reinicia ningún contador y no se crea otro REQ.
+- **Orden de la vuelta, en serie** porque las tres partes son de REQ-007 y comparten archivos: desarrollador (QA-023-09 y QA-023-10, con su parada) → validación en el host del caso reutilizado (coordinadora, con registro previo) → analista (write-back) → QA (lanzado con Opus, §5) → seguridad, sólo si QA es favorable.
+- **Siguen pendientes y sin aceptación:** ficha 1 (SEC-115/SEC-118), ficha 2 (C) y P-119-A. Una aceptación de F7 no cubre QA-023-09.
+
+### RESUELTA (propietario, 2026-09-30, quinta autorización) — **Reparación acotada de la identificación y lectura de archivos protegidos: SEC-119 y O-11** (SEC-120 sólo si comparte la causa); nueva vuelta excepcional agrupada, sin reiniciar contadores; resuelve la ficha 4 (reparar) y la decisión 7 (se corrige dentro de esta frontera)
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-30 a la sesión coordinadora del worktree `ArnesJuan-v1.35`). Un primer envío del mismo mensaje llegó cortado y el propietario lo reenvió completo; se transcribe el completo.
+
+> Autorizo una reparación acotada de la identificación y lectura de archivos protegidos: SEC-119 y su relación con O-11. El objetivo es terminar esta frontera de seguridad, conservando la reparación de SEC-117 y evitando otra revisión general.
+>
+> 1. Base y contexto
+>
+> Parte de `cand/1.35.0`, cabeza conocida `9596e39fca6c8eda6506ee1b26f4bdbd71918313`, PR #59. Verifica el estado y utiliza las instrucciones del worktree correcto. Conserva cambios ajenos y toda la evidencia anterior.
+>
+> SEC-117 está mitigado dentro de lo ensayado. No reabras su investigación; comprueba únicamente las regresiones que pueda introducir este cambio.
+>
+> 2. SEC-119: identificar el archivo protegido
+>
+> Propiedad exigida: las rutas equivalentes que apuntan al mismo archivo protegido no pueden recibir permisos distintos por su escritura.
+>
+> Reutiliza las reproducciones existentes de `..`, `././` y directorios enlazados. Distingue:
+> - Lo que recibe realmente el hook desde el host.
+> - Lo que sólo se ha inyectado directamente al hook.
+> - La ruta utilizada finalmente por la herramienta.
+>
+> Implementa una resolución de rutas coherente para `guard-completado` y `guard-codigo`, conforme a sus contratos. No basta con borrar segmentos del texto: considera el directorio de trabajo y los enlaces simbólicos.
+>
+> Preserva las operaciones legítimas fuera del ámbito protegido. Contempla archivos nuevos mediante su directorio padre existente, sin confundir «todavía no existe» con «no se pudo determinar el destino».
+>
+> No prometas resolver carreras de enlaces o cambios concurrentes si no existe un mecanismo que lo garantice; declara esa frontera.
+>
+> 3. O-11: lectura fallida
+>
+> Autorizo corregir el tratamiento del archivo ilegible dentro de esta misma frontera.
+>
+> Distingue archivo inexistente, archivo existente pero ilegible y error al resolver la ruta. Para una operación dentro del ámbito protegido, no poder leer o reconstruir lo necesario para juzgarla no puede convertirse en permiso silencioso.
+>
+> No supongas que, porque el hook no puede leer, la herramienta tampoco podrá escribir. Comprueba esa relación donde sea reproducible; si no lo es, declara el límite.
+>
+> El mensaje debe indicar la causa y cómo corregirla, sin recomendar otra herramienta para eludir la puerta.
+>
+> 4. SEC-120 y contratos afectados
+>
+> Lee primero la ficha existente de SEC-120 y resume causa, consecuencia y evidencia. Inclúyelo en esta reparación sólo si comparte directamente la causa de identificación o lectura del archivo. Si es independiente, consérvalo pendiente y no abras su reparación.
+>
+> Autorizo al analista a versionar los criterios existentes directamente afectados, con ADR si corresponde, y a reabrir los requisitos que lo exijan. No conserves una expectativa de allow basada en una premisa desmentida. Registra el cambio de compatibilidad y no cierres requisitos automáticamente.
+>
+> No crees otro REQ para eludir contadores. Antes de despachar, deja identificados los criterios, archivos y pruebas afectados, sin volver a pedirme autorización por las dependencias indispensables de esta frontera.
+>
+> 5. Validación y presupuesto
+>
+> Autorizo una nueva vuelta excepcional agrupada: analista para el contrato, desarrollador, QA y seguridad. Registra la excepción sin reiniciar los contadores anteriores.
+>
+> Prueba al menos:
+> - Ruta canónica y rutas equivalentes hacia el mismo archivo protegido.
+> - Enlace de directorio que conduce a un destino protegido.
+> - Operación legítima fuera del ámbito protegido.
+> - Creación legítima de un archivo nuevo.
+> - Archivo ilegible y error de resolución.
+> - Edición literal, rechazo de la edición no reconstruible de SEC-117 y reapertura legítima.
+>
+> Comprueba en el host real los casos alcanzables mediante sus herramientas, con control de denegación y verificación del archivo final. Separa esas pruebas de las realizadas sólo a nivel de hook. No atribuyas cobertura a Windows, MultiEdit u otros hosts no ejercidos.
+>
+> Adapta los fixtures afectados para que cada prueba siga llegando al control que pretende medir. No cambies expectativas indiscriminadamente a deny ni retires casos para obtener verde.
+>
+> QA revisa el delta y sus regresiones; seguridad después de QA favorable. Reutiliza evidencia intacta. Si esta vuelta termina con un bloqueo, entrega el impedimento preciso y no abras otra automáticamente.
+>
+> 6. Entrega y límites
+>
+> Autorizo commits, push sin force y actualización del PR #59 en borrador. Ejecuta las comprobaciones exigidas y observa el CI sobre la cabeza final. Conserva todas las corridas y no relances buscando verde.
+>
+> Actualiza notas, guía y comentarios únicamente para describir fielmente esta reparación, su compatibilidad y sus límites.
+>
+> Entrega un único resultado: antes/después, cobertura real por host, determinación de SEC-119/O-11/SEC-120, contratos afectados, firmas, SHA, CI y decisiones pendientes de publicación.
+>
+> SEC-115, SEC-118 y el hueco C siguen sin aceptación. No abras trabajo independiente sobre ellos, modelos, sondas, workflow, ruleset o consumidores.
+>
+> Sin fusión, cierres automáticos, tag ni publicación. El resultado buscado es esta frontera reparada y un candidato concreto; no otra propuesta preliminar ni una campaña nueva de mejoras.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Cabeza de partida comprobada:** `9596e39fca6c8eda6506ee1b26f4bdbd71918313` = `origin/cand/1.35.0` = PR #59, en borrador.
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)**. Ésta es una segunda vuelta excepcional, autorizada, que no reinicia ningún contador. No se crea otro REQ.
+- **Siguen abiertos y sin aceptar:** SEC-115, SEC-118 y C.
+
+### RESUELTA (propietario, 2026-09-30, cuarta autorización) — **Decisión 6 (P-SEC117): opción A.** Se amplía el alcance para corregir los contratos (REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46 (c), con ADR) y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117; se reabre REQ-001 según §9; QA y seguridad cubren también REQ-001 y REQ-007; todo dentro de la misma vuelta excepcional agrupada
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-30 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo la opción A de la decisión 6. Amplío expresamente el alcance para corregir los contratos y las pruebas que dependen de la premisa desmentida por la reproducción real de SEC-117.
+>
+> 1. Contrato
+>
+> El analista versiona REQ-001 CA-10, CA-11 y CA-12, y REQ-007 CA-46(c), con el ADR correspondiente y trazabilidad al experimento real. Completa el criterio de SEC-117 en REQ-023 sin duplicar la norma en varias sedes.
+>
+> Autorizo reabrir REQ-001 según §9. No lo cierres automáticamente al terminar ni atribuyas sus firmas anteriores al contrato modificado.
+>
+> La propiedad se mantiene: una edición sobre un REQ protegido que el hook no puede reconstruir no puede recibir permiso silencioso. No adoptes la opción B ni vuelvas a confiar únicamente en que new_string mencione el estado terminal.
+>
+> 2. Implementación y banco
+>
+> El desarrollador implementa la denegación acotada al supuesto anterior, con un mensaje que permita realizar una edición verificable. Preserva las operaciones legítimas reconstruibles y la reapertura.
+>
+> Autorizo adaptar las llamadas del banco afectadas por old_string ficticios:
+> - Las que prueban otras puertas deben usar ediciones literales válidas, para seguir llegando al control que pretenden medir.
+> - Las que prueban reconstrucción fallida deben conservar esa condición y comprobar la nueva denegación.
+> - No cambies masivamente expectativas a deny: una prueba que pasa porque la detuvo otra puerta no acredita su propósito original.
+> - No retires casos para obtener verde; justifica cualquier sustitución y conserva su cobertura.
+>
+> Usa el inventario de llamadas existente. No amplíes esta tarea a una limpieza general del banco.
+>
+> 3. Revisión agrupada
+>
+> Amplío la revisión de QA y seguridad a los criterios y caminos afectados de REQ-001 y REQ-007, además de REQ-023 y REQ-031. Reutiliza la evidencia de las partes intactas; no repitas la revisión completa de cada requisito.
+>
+> Esta ampliación forma parte de la vuelta excepcional agrupada ya autorizada: no reinicia contadores ni concede vueltas ilimitadas. Registra la ampliación y continúa el trabajo pendiente sin separar artificialmente nuevas rondas.
+>
+> Incluye en la misma entrega QA-023-06, la precisión de REQ-031 CA-A13 y los comentarios incorrectos ya autorizados. Mantén separadas la propiedad del control y las limitaciones SEC-115/118.
+>
+> 4. Validación y entrega
+>
+> Repite de forma acotada la comprobación con Edit real: caso que escapaba, denegación de control y edición legítima. Verifica también reapertura y los caminos compartidos afectados. Distingue argumentos, decisión y efecto en disco.
+>
+> Después de QA favorable, seguridad determina su aprobación y cobertura. Autorizo commits, push sin force y actualización del PR #59, con CI sobre la cabeza final. Conserva los resultados y no relances buscando verde.
+>
+> Si la vuelta termina con un bloqueo, entrega el hallazgo exacto y el delta pendiente; no apruebes por agotamiento ni abras otra reparación automáticamente.
+>
+> SEC-115, SEC-118 y el hueco C continúan abiertos y sin aceptación. Sin fusión, cierres automáticos, tag, publicación ni cambios en consumidores.
+>
+> El resultado esperado es la reparación completa de SEC-117 con sus contratos y pruebas coherentes, no otra propuesta previa. Continúa con esta autorización sin volver a solicitar aprobación por las dependencias enumeradas aquí.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Cabeza de partida:** `0e5df92`, local y sin push; el PR #59 está en `df550fa`.
+- **ADR-015 está libre** en todas las ramas: será el ADR que supersede la premisa «un `Edit` cuyo `old_string` no está literal falla y no escribe nada».
+- **Contadores:** el de REQ-023 sigue **agotado (3 de 3)** y no se reinicia. Esta ampliación es parte de la vuelta excepcional de la tercera autorización, no una vuelta nueva. REQ-001 se reabre por §9 sin contador nuevo, y sus firmas anteriores quedan acotadas al contrato anterior.
+- **Siguen abiertos y sin aceptar:** SEC-115, SEC-118 y C.
+
+### RESUELTA (propietario, 2026-09-29, tercera autorización) — **Reparación agrupada del candidato del PR #59: SEC-117, QA-023-06 y los comentarios de código que describen mal ese comportamiento**; vuelta excepcional agrupada desarrollador → QA → seguridad, más el write-back indispensable del analista, sin reiniciar el contador; **no se acepta publicar con SEC-117 aplazado**; resuelve la ficha 3 (reparar) y la decisión 5
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`; llegó completo):
+
+> Autorizo una reparación agrupada del candidato del PR #59: SEC-117, QA-023-06 y los comentarios que describen incorrectamente ese comportamiento. No acepto publicar con SEC-117 aplazado.
+>
+> Parte de `cand/1.35.0`, cabeza conocida `df550fa2e8e7ae7906b39ede8711143d2488936b`. Verifica el estado y trabaja con las instrucciones del worktree correcto, preservando cambios ajenos.
+>
+> 1. Reparar SEC-117
+>
+> La reproducción real ya permite implementar; no prepares otra investigación general.
+>
+> Propiedad exigida: cuando el hook no puede reconstruir una edición de un REQ protegido porque no encuentra literalmente el texto anterior, esa incertidumbre no puede convertirse en permiso silencioso.
+>
+> Define la condición de denegación de forma comprobable. No vuelvas a depender sólo de encontrar «estado: completado» en `new_string` ni intentes imitar toda la normalización del host.
+>
+> La denegación debe explicar cómo realizar una edición verificable. Conserva las ediciones legítimas y la reapertura cuando el hook pueda reconstruirlas. No autorices otra herramienta como atajo para eludir el control.
+>
+> Revisa los caminos que comparten esa reconstrucción, incluido MultiEdit si corresponde, sin ampliar el encargo a todas las herramientas o formas de escritura.
+>
+> 2. Corregir QA-023-06 y comentarios afectados
+>
+> Autorizo corregir las sedes de REQ-023 y REQ-031 afectadas:
+> - Expresa correctamente que el límite relevante es de bytes.
+> - Conserva las cifras medidas en la evidencia junto con sus condiciones, incluida la restricción ASCII.
+> - No extrapoles resultados a caracteres, hosts o tamaños no probados.
+> - Separa la propiedad del control de las limitaciones SEC-115/118; una frase condicional no acredita protección.
+>
+> Autorizo modificar los comentarios de código señalados cuando describan incorrectamente el comportamiento, además de la documentación correspondiente. No es autorización para otras refactorizaciones.
+>
+> Las seis observaciones menores quedan fuera, salvo que una sea inseparable de estas correcciones; en ese caso explica la dependencia y limita el cambio.
+>
+> 3. Presupuesto y gobernanza
+>
+> Autorizo expresamente una vuelta excepcional agrupada de desarrollador → QA → seguridad para esta reparación, más el write-back contractual indispensable del analista. Conserva el contador agotado y registra la excepción sin reiniciarlo ni crear otro REQ para eludirlo.
+>
+> Reutiliza las firmas y evidencias que sigan siendo aplicables. QA revisa el delta y sus efectos sobre REQ-023 y REQ-031; seguridad emite su determinación después de QA favorable.
+>
+> Si esta vuelta termina con un hallazgo bloqueante, entrega el impedimento exacto y lo pendiente. No abras otra vuelta ni apruebes por agotamiento.
+>
+> 4. Validación
+>
+> Reutiliza el experimento real de SEC-117 y sus precondiciones. En un proyecto temporal aislado verifica:
+> - El caso de comillas que antes escapaba ahora queda bloqueado y el archivo no cambia.
+> - El control positivo de denegación sigue bloqueando.
+> - Una edición legítima reconstruible sigue funcionando.
+> - La reapertura reconstruible sigue permitida.
+> - Los caminos afectados por el cambio tienen pruebas de regresión.
+>
+> Distingue argumentos recibidos, decisión del hook, tratamiento del host y efecto en disco. No presentes una emulación como ejecución real ni extiendas la conclusión a Windows o al editor sin evidencia.
+>
+> Ejecuta las comprobaciones necesarias del candidato. Conserva todas las corridas; un resultado posterior no borra uno anterior.
+>
+> 5. PR y entrega final
+>
+> Autorizo commits, push sin force y actualización del PR #59 en borrador. Obtén el CI requerido sobre la cabeza final y no lo relances buscando verde.
+>
+> Verifica que la copia íntegra de este encargo quede conservada en la sede de autorización. No reconstruyas el mensaje anterior que llegó cortado: este texto define el alcance autorizado ahora.
+>
+> Entrega un único resumen:
+> - SEC-117 antes/después, con evidencia real.
+> - QA-023-06 y comentarios corregidos.
+> - Compatibilidad y límites.
+> - Firmas y cobertura sobre el candidato.
+> - SHA, CI y decisiones de publicación todavía pendientes.
+>
+> SEC-115, SEC-118 y el hueco C siguen abiertos y sin aceptación mía. Sin nuevas reparaciones de esos asuntos, modelos, sondas, workflow, ruleset o consumidores.
+>
+> No fusiones, no cierres requisitos, no crees tags ni publiques. El objetivo es dejar esta reparación terminada y un candidato concreto para decidir la salida.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Cabeza de partida comprobada:** `df550fa2e8e7ae7906b39ede8711143d2488936b` = `origin/cand/1.35.0`.
+- **Sede de la reparación de SEC-117:** REQ-023. Hoy su frontera (g) lo declara fuera; el write-back del analista lo pasa dentro. **No se crea otro REQ**, como ordena el punto 3.
+- **Contador de REQ-023:** sigue **agotado (3 de 3)**. Ésta es una vuelta **excepcional** autorizada, no la cuarta vuelta del contador, y no lo reinicia.
+- **Entregas anteriores:** la autorización del 2026-09-29 que llegó truncada no se reconstruye; este texto define el alcance.
+- **Siguen abiertos y sin aceptar:** SEC-115, SEC-118 y el hueco C.
+
+### RESUELTA (propietario, 2026-09-29, segunda autorización) — **Candidato del PR #59: corrección documental excepcional fuera del contador (QA-023-05 y R-045 §6, con las promesas de REQ-031 afectadas) y reproducción real y aislada de SEC-117**; resuelve la decisión 4 con la opción (A); SEC-115, SEC-118, C y SEC-117 **NO** aceptados
+
+**Texto del propietario, literal e íntegro TAL COMO LLEGÓ** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`). **El mensaje llegó truncado:** termina en «Registra con precisión la cobertura de QA y», sin punto final. La coordinadora no reconstruye lo que falta; aplica lo que está completo y lo declara en su entrega.
+
+> Autorizo un encargo acotado sobre el candidato del PR #59: corregir las promesas documentales pendientes y comprobar SEC-117 en una sesión real. El objetivo es obtener evidencia suficiente para decidir la publicación, sin ampliar otra vez la reparación.
+>
+> 1. Base y contexto
+>
+> Parte de `cand/1.35.0`, cabeza conocida `45c2e5c5ce90c5eae15e817d65522f3ee6b788cd`. Comprueba el estado antes de actuar y conserva cambios ajenos, la propuesta original y el bloque derivado de ESTADO.
+>
+> Trabaja con las instrucciones del worktree correcto, sin heredar como normativa las de `rel/registro-1.33.0`.
+>
+> 2. Corrección documental excepcional
+>
+> Autorizo una intervención documental fuera del contador agotado, registrada expresamente y sin reiniciarlo.
+>
+> Agrupa QA-023-05 y las correcciones de texto señaladas por R-045, incluidas las promesas de REQ-031 afectadas. Describe la propiedad realmente comprobada y sus límites; no conviertas una denegación condicionada en garantía universal.
+>
+> El analista actualiza las sedes contractuales correspondientes; QA revisa el delta documental y seguridad emite su determinación después de QA favorable. Reutiliza las pruebas y revisiones cuyo contenido no cambió. No repitas el banco completo por rutina ni modifiques código para resolver este apartado.
+>
+> La corrección documental no acepta SEC-115, SEC-118, C ni SEC-117 como riesgos de publicación.
+>
+> 3. SEC-117: reproducción real y aislada
+>
+> Autorizo un experimento acotado en un proyecto temporal, sin datos reales ni archivos de consumidores.
+>
+> Antes de ejecutarlo, registra:
+> - Versión y host del CLI, plugin y hook utilizados.
+> - Entrada exacta del caso derivado de la evidencia existente.
+> - Precondiciones que deberían impedir el cierre.
+> - Resultado esperado y cómo observarás el efecto.
+>
+> Presupuesto: un caso positivo de denegación, el caso sospechoso y un control legítimo permitido. Una ejecución por caso. Si falla la instrumentación, admite una sola repetición diagnóstica, conservando y explicando el intento anterior.
+>
+> Observa por separado:
+> - Argumentos que recibe el hook.
+> - Decisión emitida y tratamiento por el entorno.
+> - Resultado de la herramienta y contenido final del archivo.
+>
+> Utiliza la herramienta Edit real del host comprobado. Una emulación, un script que edite el archivo o una lectura del binario no sustituyen esta prueba. No desactives las puertas para conseguir el resultado.
+>
+> Si no puedes ejecutar la prueba real, informa de la limitación; no la presentes como reproducida. Si el control de denegación no funciona, el ensayo no permite atribuir el resultado a SEC-117.
+>
+> No repares SEC-117 dentro de este encargo. Si se confirma, entrega causa acotada, superficie afectada y propuesta mínima de reparación. Si no se reproduce, limita la conclusión a las condiciones ensayadas.
+>
+> 4. Precisiones con evidencia existente
+>
+> Sin nuevos ensayos adicionales:
+> - Separa en SEC-118 lo observado directamente de lo inferido o emulado.
+> - Identifica qué archivos se escribieron con Python, por qué rol y bajo qué permisos. No des por resuelto el asunto sólo porque la cabecera de REQ-023 no cambió; tampoco declares infracción por el nombre de la herramienta.
+> - Contrasta los cambios de compatibilidad con la política de versiones del repositorio. Presenta una recomendación fundada sobre 1.35.0; no cambies nuevamente la versión por tu cuenta.
+> - Mantén diferenciados los fail-before locales y los SKIP de CI.
+>
+> 5. Registro y CI
+>
+> Autorizo commits de la corrección documental, push sin force y actualización del PR #59. Si cambia la cabeza, observa el CI requerido sobre la cabeza resultante una vez; no relances buscando verde.
+>
+> Conserva la evidencia del experimento por separado, sin incorporar binarios ni volcados de terceros. Registra con precisión la cobertura de QA y
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Intervención documental excepcional:** fuera del contador dev↔QA de REQ-023, que **sigue agotado (3 de 3) y no se reinicia**. Es una comisión de analista, una de QA sobre el delta documental y una determinación de seguridad **después** de un QA favorable. Sin código.
+- **Cabeza de partida comprobada:** `45c2e5c5ce90c5eae15e817d65522f3ee6b788cd` = `origin/cand/1.35.0`. CLI del host: **2.1.285**; QA leyó el binario de la 2.1.284.
+- **El experimento de SEC-117** lo ejecuta la coordinadora, con registro previo en la rama local de evidencia antes de correrlo. No es una medición de QA, como no lo fue CA-A16.
+
+### RESUELTA (propietario, 2026-09-29) — **SEC-047 (mitad 1 de REQ-023) y candidato v1.35.0**: implementación y preparación autorizadas, sin publicación; SEC-115 y hueco C **NO** aceptados
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-09-29 a la sesión coordinadora del worktree `ArnesJuan-v1.35`):
+
+> Autorizo avanzar con SEC-047 y preparar el candidato v1.35.0. Completa este encargo de punta a punta dentro del alcance siguiente, sin pedir nuevamente autorización para cada paso ya incluido.
+>
+> 1. Contexto y base
+>
+> Trabaja en `/home/juan/dev/ArnesJuan-v1.35`, desde la sesión nueva con las instrucciones de ese worktree. Comprueba rama, SHA y estado antes de editar.
+>
+> Usa `origin/main` como referencia, no la rama local main desfasada. Conserva el cambio preexistente de `docs/ESTADO.md` y la propuesta sin seguimiento; no los descartes ni los incluyas indiscriminadamente en commits.
+>
+> Lee `propuesta-v1.35.0/README.md` y `propuesta-v1.35.0/SEC-047.diff`. Conserva la propuesta original como antecedente.
+>
+> 2. Implementar SEC-047
+>
+> Autorizo implementar la mitad 1 de REQ-023 y versionar los criterios y sedes afectados. REQ-024 queda fuera.
+>
+> Acepto expresamente que una clave de control repetida deniegue el cierre aunque sus valores coincidan. Registra este cambio de compatibilidad.
+>
+> La corrección debe:
+> - Impedir que las variantes cubiertas se conviertan silenciosamente en ausencia y reduzcan el rigor u oculten un bloqueante.
+> - Respetar la estructura de una declaración: extraer letras ASCII no debe convertir una cita, ejemplo o explicación en campo de control.
+> - Mantener coherencia entre lectores, ausencias legítimas y reapertura de REQ.
+> - Evitar elegir silenciosamente entre declaraciones contradictorias.
+> - Conservar las fronteras de cobertura propuestas y declararlas sin prometer reconocimiento universal.
+>
+> Las claves de más de 256 bytes que queden fuera siguen siendo una limitación; no las presentes como protegidas por ese límite. No amplíes este encargo para resolver todo Unicode ni SEC-115.
+>
+> 3. Validar y preparar la entrega
+>
+> Recorre el ciclo correspondiente al cambio de hooks, reutilizando las reproducciones y el inventario existentes. Agrupa los hallazgos de cada revisión antes de reparar; no reinicies contadores ni repitas revisiones sin un delta o riesgo concreto.
+>
+> Verifica casos legítimos, variantes, duplicados, prosa, reapertura, CRLF y las fronteras relevantes. Ejecuta el banco completo y las comprobaciones exigidas sobre el candidato; no presentes el ±1 % del ensayo preliminar como rendimiento acreditado.
+>
+> Autorizo rama de trabajo, commits, push sin force y PR en borrador. Conserva los resultados de CI; no relances buscando verde.
+>
+> Si se agota el presupuesto vigente con un bloqueo real, entrega el impedimento exacto y lo pendiente. No apruebes por agotamiento.
+>
+> 4. Preparar v1.35.0
+>
+> Con la reparación validada, prepara el cambio de versión en los manifiestos correspondientes, las notas y la guía de actualización necesaria. Autorizo esos cambios como preparación del candidato, no su publicación.
+>
+> Describe el contenido realmente incluido desde v1.34.0. REQ-025 aporta sólo su entrega 1; no cierres el requisito completo ni incorpores trabajo de la rama antigua.
+>
+> Las notas deben explicar los cambios de compatibilidad y conservar los resultados históricos, los inconclusos y las limitaciones. No transformes un CI verde en acreditación de rendimiento, conducta o ahorro.
+>
+> Obtén el CI requerido sobre la cabeza final del candidato y deja identificada la cobertura de las firmas.
+>
+> 5. Riesgos pendientes
+>
+> Este encargo NO acepta el aplazamiento de SEC-115 ni del hueco C. Conserva sus decisiones pendientes y prepara sus fichas finales con consecuencia, protección efectiva, responsable propuesto, fecha de revisión y condición de revisión anticipada.
+>
+> Reutiliza la fecha propuesta de SEC-115, 2026-10-29. Para C propone una fecha concreta. Ninguna propuesta cuenta como aceptación mía.
+>
+> No repares esos dos asuntos dentro de SEC-047 ni detengas el trabajo independiente autorizado únicamente porque esperan mi decisión. Si una regla impide un cierre, deja ese cierre pendiente y continúa lo permitido.
+>
+> 6. Límites y resultado final
+>
+> Sin fusión, tag, publicación ni actualización de instalaciones o consumidores. PR #54 y #57 intactos. Sin reconciliar `rel/registro-1.33.0`, cambiar modelos, sondas, umbrales, workflow o ruleset.
+>
+> Entrega una sola propuesta de salida: reparación y compatibilidad verificadas, SHA y PR del candidato, firmas y CI, contenido de v1.35.0 y decisiones exactas que falten para publicarla.
+>
+> No propongas otra investigación general. El resultado buscado es un candidato concreto que yo pueda revisar y decidir.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Antecedente citado por la autorización** («Lee `propuesta-v1.35.0/README.md` y `propuesta-v1.35.0/SEC-047.diff`»): la propuesta se conserva sin seguimiento en el worktree, intacta, y su copia literal queda versionada en `docs/arnes/v1.35.0-propuesta-sec-047.md`, `docs/arnes/v1.35.0-propuesta-sec-047.diff` y `docs/arnes/v1.35.0-propuesta-sec-047-humo.txt` para poder citarla con commit. Sus cifras de coste (±1 %) son de un **ensayo preliminar** y **no** acreditan rendimiento.
+- **El encargo anterior** del que nace la propuesta está íntegro en `traspaso-v1.35.0/README.md`, rama `evidencia/prueba-despacho-2026-09-14`, commit `94e2d3b`.
+- **Cambio de compatibilidad aceptado expresamente:** una clave de control repetida deniega el cierre **aunque sus valores coincidan**.
+- **Contador:** REQ-023 no ha gastado ninguna vuelta dev↔QA (sólo trabajo de analista y una cata); el tope es 3 y no se reinicia.
+- **Rama del candidato:** `cand/1.35.0`, desde `origin/main` = `713ac68`. La rama local `main` (`cf2009e`) está desfasada y no se usa.
+- **El asunto 3** de la entrada pendiente de publicación (SEC-047/§13) queda resuelto por esta autorización; **SEC-115 y C siguen pendientes** en esa entrada, con sus fichas finales.
 
 ### RESUELTA (propietario, 2026-09-28) — **REQ-031: comprobación acotada de procedencia de instrucciones y referencias**; intervención documental excepcional sin reiniciar el contador
 

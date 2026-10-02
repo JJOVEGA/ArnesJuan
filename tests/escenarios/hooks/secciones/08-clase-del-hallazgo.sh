@@ -7,20 +7,20 @@ PISO_AUTONOMO_SECCION=23  # 8 preámbulo + 0 maquinaria compartida duplicada + 1
 
   seccion_nueva "Clase del hallazgo:"
 mkreq "$PROJ/requirements/REQ-020.md" "no" "aprobado" "n/a" "SEC-1 (instrumento)"
-check "hallazgo de instrumento -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-020.md" "" "" 'Estado: completado')"
+check "hallazgo de instrumento -> allow" allow guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-020.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-021.md" "no" "aprobado" "n/a" "SEC-2 (usuario/dinero)"
-check "hallazgo de usuario/dinero -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-021.md" "" "" 'Estado: completado')"
+check "hallazgo de usuario/dinero -> deny" deny guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-021.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-022.md" "no" "aprobado" "n/a" "SEC-3 (contrato)"
-check "hallazgo de contrato -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-022.md" "" "" 'Estado: completado')"
+check "hallazgo de contrato -> deny" deny guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-022.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-023.md" "no" "aprobado" "n/a" "SEC-4"
-check "hallazgo SIN clase -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-023.md" "" "" 'Estado: completado')"
+check "hallazgo SIN clase -> deny" deny guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-023.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-024.md" "no" "aprobado" "n/a" "SEC-5 (instrumento), SEC-6 (usuario/dinero)"
-check "mezcla: basta uno bloqueante -> deny" deny guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-024.md" "" "" 'Estado: completado')"
+check "mezcla: basta uno bloqueante -> deny" deny guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-024.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 mkreq "$PROJ/requirements/REQ-025.md" "no" "aprobado" "n/a" "(ninguno)"
-check "sin hallazgos abiertos -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-025.md" "" "" 'Estado: completado')"
+check "sin hallazgos abiertos -> allow" allow guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-025.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 # Compatibilidad: un REQ anterior a este campo no puede quedar bloqueado por el.
 mkreq "$PROJ/requirements/REQ-026.md" "no" "aprobado" "n/a"
-check "REQ antiguo sin el campo -> allow" allow guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-026.md" "" "" 'Estado: completado')"
+check "REQ antiguo sin el campo -> allow" allow guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-026.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- REQ-031 (ADR-013): gramatica CERRADA de `Hallazgos abiertos:` ---------------
 # Medido sobre 1.34.0 (evaluacion-2026-09-27): con `·` o `;` entre dos hallazgos la lista
