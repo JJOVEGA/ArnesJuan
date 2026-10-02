@@ -1,0 +1,208 @@
+diff --git a/hooks/guard-git.sh b/hooks/guard-git.sh
+index c0cba21..e1f2d73 100755
+--- a/hooks/guard-git.sh
++++ b/hooks/guard-git.sh
+@@ -164,8 +164,8 @@ arnes_git_alias_sub() {   # <subcomando> <primer argumento> -> ARNES_TOK (el arg
+ # ⚠️ "permitir" se dice con `return 0`, NUNCA con `exit 0`: este guardian corre en el
+ # mismo proceso que los otros dos y un `exit` los dejaria sin correr — fallo abierto.
+ arnes_guard_git() {
+-  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra=''
+-  local -a t reglas args palabras
++  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra='' nota_cr=''
++  local -a t reglas args palabras sincr
+ 
+   arnes_parse_input
+   [ "$ARNES_TOOL" = "Bash" ] || return 0
+@@ -223,6 +223,29 @@ arnes_guard_git() {
+   # trozos no son `git` y ninguna regla los alcanza.
+   limpio="${limpio//&/$'\n'}"
+ 
++  # UN RETORNO DE CARRO PEGADO A LAS PALABRAS DE UNA ORDEN DE GIT (P-122-A (1) y QA-023-16, pasada
++  # correctiva de la octava autorizacion). El comando llega con sus CR (`arnes_parse_input`) y esta
++  # puerta compara lo que git recibe: `git stash␍` no es `stash` y `git checkout .␍` no lleva `.`.
++  # Pero lo que git HAGA con ese argumento no lo decide la puerta: con su configuracion por defecto
++  # lo rechaza, y con `help.autocorrect` corrige el subcomando y ejecuta `git stash` (medido por QA,
++  # git 2.53.0). El analisis no puede preservar el significado, y la autorizacion manda denegar
++  # entonces: las ordenes se juzgan TAMBIEN sin sus CR, y basta que una de las dos lecturas case.
++  # La copia sin CR solo puede ANADIR denegaciones —se juzga ademas de la original, nunca en su
++  # lugar—. Lineal y sin procesos: se parte UNA vez por el CR con `IFS` y se une sin separador (la
++  # tecnica de `_arnes_desentrecomilla`); una sustitucion `${x//$'\r'/}` crece mas que linealmente
++  # con el numero de CR (QA-023-14).
++  case "$limpio" in
++    *$'\r'*)
++      reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
++      set -f; IFS=$'\r'
++      # shellcheck disable=SC2206  -- se quiere el troceado por IFS, con globbing apagado
++      sincr=($limpio)
++      IFS=''; limpio+=$'\n'"${sincr[*]}"; IFS=$' \t\n'
++      [ "$reponer_f" -eq 1 ] || set +f
++      nota_cr=" El comando lleva un retorno de carro pegado a sus palabras: git no recibe esta orden tal cual, y lo que haga con ella —rechazarla o, con 'help.autocorrect', corregirla y ejecutarla— depende de una configuracion que esta puerta no lee, asi que se juzga tambien sin el retorno de carro; una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 11). Escribe el comando sin retornos de carro."
++      ;;
++  esac
++
+   reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
+   set -f
+   while IFS= read -r seg; do
+@@ -303,7 +326,7 @@ arnes_guard_git() {
+         restore) if arnes_casa_token --staged ${args[@]+"${args[@]}"} && ! arnes_casa_token --worktree ${args[@]+"${args[@]}"}; then continue; fi ;;
+       esac
+       [ "$reponer_f" -eq 1 ] || set +f
+-      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas.$motivo_extra"
++      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas.$motivo_extra$nota_cr"
+     done
+   done <<< "$limpio"
+   [ "$reponer_f" -eq 1 ] || set +f
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 04a0828..f7eca5a 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -1096,12 +1096,15 @@ arnes_id_pertenece() {
+   local -n pats="ARNES_AMB_${amb}_P" ct="ARNES_AMB_${amb}_T" cf="ARNES_AMB_${amb}_F" cq="ARNES_AMB_${amb}_Q"
+   # Un ambito sin ningun patron no tiene «dentro»: ni siquiera un destino no determinable cae en el.
+   [ "${#pats[@]}" -gt 0 ] || return 1
+-  # Un descriptor del shell no es un archivo de ningun ambito (SEC-122, `_arnes_id_propio`).
+-  [ "$ARNES_ID_E" != desc ] || return 1
+-  [ "$ARNES_ID_E" = ok ] || return 2
++  # Un descriptor del shell (SEC-122, `_arnes_id_propio`) no es un archivo de ningun ambito, pero la
++  # RUTA por la que se llega a el se juzga por las tres vias de abajo, como la de cualquier otro enlace
++  # (QA-023-17, pasada correctiva de la octava autorizacion): `src/log -> /dev/stderr` esta en `src/*`
++  # por su lectura fisica y por la lexica, y salia «fuera» antes de mirarlas. Su destino —la ranura
++  # del descriptor— no aporta pertenencia: no entra en `fis` (`ARNES_ID_O` sigue siendo el enlace).
++  case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
+   if [ "$ARNES_ID_K" = 1 ]; then
+     _arnes_id_resuelve_enlace
+-    case "$ARNES_ID_E" in ok) ;; desc) return 1 ;; *) return 2 ;; esac
++    case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
+   fi
+   [ -z "$ARNES_ID_F" ]  || fis+=("$ARNES_ID_F")
+   [ -z "$ARNES_ID_F2" ] || fis+=("$ARNES_ID_F2")
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index bfbc3ca..992c736 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
+ ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                          # los controles de medición de las sondas de coste
+ ```
+-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1741 casos** (el número exacto lo cuadran
++Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1787 casos** (el número exacto lo cuadran
+ `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+ `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+ nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+@@ -304,7 +304,8 @@ Tres reglas nacidas de fallos reales:
+ | Integridad de la entrada (44) | los motivos del CR, y `arnes_parse_input` con un CR final en el `tool_name`, el `cwd` y el `file_path` (P2) | dicen su causa y cómo corregirla, sin herramientas como salida; el CR se **cuenta** antes del transporte (en cd6afa6, recortado) |
+ | Dependencia del proceso y CR del comando (45) | SEC-122, cara (a): un enlace corriente bajo `/dev/shm` hacia `requirements/` o `src/` —`Edit`, `Write`, `sed -i`, `echo >`, la edición no reconstruible— (S1–S6); y cara (b): un proyecto situado bajo `/dev/shm` —el enlace del último componente, el directorio enlazado y la existencia— (B1–B5) | **deny** donde designa un archivo protegido, como en cualquier otro sitio; contra **3bc7d3c** (fail-before) **allow**, y en la cara (b) **allow** lo que 9596e39 deniega; B3 y B5, lo legítimo que 3bc7d3c sobredenegaba, **allow**. Sólo en Linux; fuera, SKIP con motivo |
+ | Dependencia del proceso y CR del comando (45) | lo que depende del proceso que abre la ruta —`/proc/self/cwd` desde el `cwd` de la entrada o sin él, `/proc/self/root`, un enlace a `/proc/self/cwd`, `/dev/fd/9/a.ts`, un `Write` a `/dev/stderr`— (P1–P9) y lo legítimo bajo `/dev`: `/dev/null`, `/dev/stderr`, `/dev/stdout`, `/dev/fd/2`, `tee /dev/stderr` (N1–N6) | por `Bash`, el directorio de trabajo se resuelve desde el `cwd` de la entrada (P1 **deny**, P2 **allow**); lo que depende del proceso y no se puede determinar, **deny** con motivo; un descriptor del shell, **allow** sin excepción por nombre; por el host, un descriptor es **deny** (P9, de allow a deny, declarado) |
+-| Dependencia del proceso y CR del comando (45) | P-023-13-A: el CR final del comando y el que precede a un salto, por un enlace `docs/k␍` hacia `src/a.ts` y `docs/r␍` hacia un REQ en rojo (K1–K4); lo legítimo y los movimientos (K5–K8); el delimitador de heredoc con CR (H1–H6); y `guard-git` (G1–G3) | **deny** donde el shell escribe un archivo protegido (en 3bc7d3c y 9596e39, **allow**: el CR se perdía); K6 y G1 **allow** (de deny a allow, declarados: el shell escribe `app/a.ts␍`, y git rechaza `--hard␍`); el delimitador con CR **deny** con motivo |
++| Dependencia del proceso y CR del comando (45) | P-023-13-A: el CR final del comando y el que precede a un salto, por un enlace `docs/k␍` hacia `src/a.ts` y `docs/r␍` hacia un REQ en rojo (K1–K4); lo legítimo y los movimientos (K5–K8); el delimitador de heredoc con CR (H1–H6); y `guard-git` (G2–G3) | **deny** donde el shell escribe un archivo protegido (en 3bc7d3c y 9596e39, **allow**: el CR se perdía); K6 **allow** (de deny a allow, declarado: el shell escribe `app/a.ts␍`); el delimitador con CR **deny** con motivo |
++| Dependencia del proceso y CR del comando (45) | pasada correctiva: un CR pegado a las palabras de una orden de git prohibida —`reset --hard␍` (G1), `stash␍`, `checkout .␍`, `checkout -- .␍`, `restore .␍`, `checkout HEAD .␍`, `clean␍ -f`— y sus controles (C1–C9); y un enlace dentro de un ámbito protegido que lleva a un descriptor —`src/log`, `requirements/log` → `/dev/stderr`— con sus controles (C10–C13) | **deny** con motivo —la orden se juzga también sin el CR, porque con `help.autocorrect` git la corrige y la ejecuta—; contra **9220c71** (fail-before) **allow**; `clean␍ -f` **deny** también donde 9596e39 permitía (de allow a deny, declarado); el enlace a un descriptor dentro del ámbito, **deny** como en 9596e39 |
+ | Dependencia del proceso y CR del comando (45) | QA-023-14: `arnes_parse_input` con el CR final y el que precede a un salto en el `tool_name`, el `file_path` y el `command` (Q1), y con un `jq` que añade un CR a cada línea —emulación del de Windows, no Windows— (Q2, Q3) | los valores llegan **enteros** sin recorrerlos para reponer nada (en 3bc7d3c, los pierde); con la emulación, iguales y sin ningún CR de más |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+@@ -323,7 +324,7 @@ La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente s
+ de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás. Su
+ bloque R (QA-023-13) mide el retorno de carro, que el transporte de jq retira del final de un campo y
+ que por eso se cuenta antes; su árbol de fail-before es cd6afa6, no 43b948a.
+-La sección 45 (octava autorización) trae el mismo emisor y su árbol de fail-before es 3bc7d3c. Las filas
++La sección 45 (octava autorización) trae el mismo emisor y su árbol de fail-before es 3bc7d3c, salvo el bloque C (pasada correctiva), que lo cambia a 9220c71. Las filas
+ que dependen de `/dev/shm` o de `/proc` sólo se miden en Linux —donde se midió—; fuera salen SKIP con
+ motivo, y las que necesitan un enlace con un retorno de carro en el nombre, también si no se puede crear.
+ 
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index 1dcbbc5..d7f8b4f 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1653,7 +1653,10 @@ done
+ # la lectura de la entrada no recorre el valor para reponerlos—: 43 filas, cada una en la candidata,
+ # contra 3bc7d3c (fail-before) y contra 9596e39, y en la candidata por guard.sh las que juzga un
+ # guardián; y Q1–Q3, el análisis de la entrada. Ninguna sección existente cambia su número.
+-CASOS_ESPERADOS=1741
++# Y 1741 → 1787 por la pasada correctiva de la octava autorización (P-122-A (1), QA-023-16 y QA-023-17):
++# +46 en la sección 45, bloque C contra 9220c71 (fail-before) y 9596e39 —13 filas, 50 casos—, menos los
++# 4 de G1, que pasa al bloque C con su nuevo veredicto (deny).
++CASOS_ESPERADOS=1787
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh b/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
+index da51688..9297b99 100644
+--- a/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
++++ b/tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh
+@@ -15,8 +15,8 @@
+ # Cada fila juzgada por un guardián se comprueba además en la candidata por `guard.sh`. Las filas que
+ # dependen de /dev/shm o de /proc se miden sólo en Linux (donde se midió; F6), y fuera, SKIP y motivo.
+ # Esto NO es la validación en el host.
+-CASOS_ESPERADOS_SECCION=160
+-PISO_AUTONOMO_SECCION=76  # 20 preámbulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO45, mat45_reg y mat45, copia de mat44, líneas 21-44) + 32 bloque indivisible mayor (g45, juicio45, fila45 y fila45c, líneas 58-89)
++CASOS_ESPERADOS_SECCION=206
++PISO_AUTONOMO_SECCION=76  # 20 preámbulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO45, mat45_reg y mat45, copia de mat44, líneas 21-44) + 32 bloque indivisible mayor (g45, juicio45, fila45 y fila45c, líneas 62-93)
+ seccion_nueva "--- 45 · dependencia del proceso y CR del comando (SEC-122, P-023-13-A, QA-023-14; octava autorización) ---"
+ REPO45="${SEC_DIR%/}/../../../.."; MAT45_RUTAS='hooks'; MAT45_REG=''; MAT45_T0=0; MAT45_REF='-'
+ mat45_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT45_REG, UNA sola línea (la lee `sonda_lee`)
+@@ -47,6 +47,10 @@ if mat45 3bc7d3c "$RFB"; then RFB_OK=si
+ else RFB_MOT="3bc7d3c no se materializó (${MAT45_REG#*motivo=})"; RFB_MOT="${RFB_MOT%% corrida=*})"; fi
+ if mat45 9596e39 "$R95"; then R95_OK=si
+ else R95_MOT="9596e39 no se materializó (${MAT45_REG#*motivo=})"; R95_MOT="${R95_MOT%% corrida=*})"; fi
++RCC="$RAIZ/r922-$BASHPID"; RCC_OK=no; RCC_MOT=''   # 9220c71: el fail-before del bloque C (pasada correctiva)
++if mat45 9220c71 "$RCC"; then RCC_OK=si
++else RCC_MOT="9220c71 no se materializó (${MAT45_REG#*motivo=})"; RCC_MOT="${RCC_MOT%% corrida=*})"; fi
++FB45="$RFB"; FB45_OK="$RFB_OK"; FB45_MOT="$RFB_MOT"; FB45_NOM=3bc7d3c   # el bloque C lo cambia a 9220c71
+ v45() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
+ # ¿Se puede medir lo que depende de /dev/shm y de /proc? Sólo en Linux, donde se midió.
+ LNX45=no; LNX45_MOT='sólo se midió en Linux (F6 de REQ-007 CA-47); aquí no es Linux'
+@@ -77,8 +81,8 @@ fila45() {
+   if ! json_no_vacio "$nom candidata" "$json"; then FAIL=$((FAIL + 2 + g)); return 0; fi
+   g45 "$HOOKS_DIR" "$s" "$json"; juicio45 "$nom candidata" "$ec" "$cita"
+   if [ "$g" = 1 ]; then g45 "$HOOKS_DIR" guard.sh "$json"; juicio45 "$nom candidata por guard.sh" "$ec" "$cita"; fi
+-  if [ "$RFB_OK" = si ]; then g45 "$RFB/hooks" "$s" "$json"; juicio45 "$nom 3bc7d3c (fail-before o control)" "$efb" -
+-  else v45 SKIP "$nom 3bc7d3c  $RFB_MOT"; fi
++  if [ "$FB45_OK" = si ]; then g45 "$FB45/hooks" "$s" "$json"; juicio45 "$nom $FB45_NOM (fail-before o control)" "$efb" -
++  else v45 SKIP "$nom $FB45_NOM  $FB45_MOT"; fi
+   if [ "$R95_OK" = si ]; then g45 "$R95/hooks" "$s" "$json"; juicio45 "$nom 9596e39 (referencia de los movimientos)" "$e95" -
+   else v45 SKIP "$nom 9596e39  $R95_MOT"; fi
+ }
+@@ -156,8 +160,7 @@ fila45 "H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio)"
+ fila45 "H5 el desarrollador: H2 por guard-codigo (podía escribir)" guard-codigo.sh:solo allow allow allow - "$(j45 Bash "$P45" desarrollador "command=$H2")"
+ fila45 "H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ)" guard-completado.sh deny allow allow "$HCR45" "$(j45 Bash "$P45" desarrollador "command=$H2")"
+ 
+-# --- G: guard-git juzga el comando que recibe git (git rechaza el argumento con CR) ---------------
+-fila45 "G1 git reset --hard\\r (opción desconocida para git: de deny a allow, declarado)" guard-git.sh allow deny deny - "$(j45 Bash "$P45" - "command=git reset --hard$CR")"
++# --- G: guard-git juzga el comando que recibe git (con un CR pegado, también sin él: bloque C) ------
+ fila45 "G2 git reset --hard (control)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - 'command=git reset --hard')"
+ fila45 "G3 git reset --hard \\r (el CR es otro argumento: --hard se ve)" guard-git.sh deny deny deny "reset --hard" "$(j45 Bash "$P45" - "command=git reset --hard $CR")"
+ 
+@@ -176,6 +179,28 @@ fila45c "$LNX45" "$LNX45_MOT" "B4 coordinadora: echo x > docs/dsrc/a.ts (directo
+ fila45c "$LNX45" "$LNX45_MOT" "B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba)" guard.sh allow deny allow - "$(cierre45 "$PB45/requirements/REQ-901.md" "$PB45")"
+ P45="$PROJ"
+ 
++# --- C: pasada correctiva — P-122-A (1), QA-023-16 y QA-023-17; fail-before 9220c71 ---------------
++# Un CR pegado a las palabras de una orden de git: lo que git haga depende de su configuración
++# (`help.autocorrect`), y la orden se juzga también sin el CR. Y la ruta de un enlace a un descriptor
++# se juzga por las tres vías de CA-47, punto 6: dentro de un ámbito, deny.
++FB45="$RCC"; FB45_OK="$RCC_OK"; FB45_MOT="$RCC_MOT"; FB45_NOM=9220c71
++GCR45='lleva un retorno de carro pegado a sus palabras'
++fila45 "C1 git reset --hard\\r (G1: vuelve a deny)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git reset --hard$CR")"
++fila45 "C2 git stash\\r (P-122-A 1: con help.autocorrect git lo ejecuta)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git stash$CR")"
++fila45 "C3 git checkout .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout .$CR")"
++fila45 "C4 git checkout -- .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout -- .$CR")"
++fila45 "C5 git restore .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git restore .$CR")"
++fila45 "C6 git checkout HEAD .\\r (QA-023-16)" guard-git.sh deny allow deny "$GCR45" "$(j45 Bash "$P45" - "command=git checkout HEAD .$CR")"
++fila45 "C7 git clean\\r -f (CR en medio: de allow a deny, declarado)" guard-git.sh deny allow allow "$GCR45" "$(j45 Bash "$P45" - "command=git clean$CR -f")"
++fila45 "C8 git status\\r (control: no está en la lista)" guard-git.sh allow allow allow - "$(j45 Bash "$P45" - "command=git status$CR")"
++fila45 "C9 git stash list\\r (control: una lectura)" guard-git.sh allow allow allow - "$(j45 Bash "$P45" - "command=git stash list$CR")"
++if [ "$LNX45" = si ]; then ln -s /dev/stderr "$P45/src/log"; ln -s /dev/stderr "$R/log"; ln -s /dev/stderr "$P45/docs/err"; fi
++fila45c "$LNX45" "$LNX45_MOT" "C10 coordinadora: echo x > src/log (src/log -> /dev/stderr; QA-023-17)" guard-codigo.sh deny allow deny "$SRC45" "$(j45 Bash "$P45" - 'command=echo x > src/log')"
++fila45c "$LNX45" "$LNX45_MOT" "C11 sed -i que cierra por requirements/log (-> /dev/stderr; QA-023-17)" guard-completado.sh deny allow deny "menciona 'completado'" "$(j45 Bash "$P45" - "command=sed -i 's/x/completado/' requirements/log")"
++fila45c "$LNX45" "$LNX45_MOT" "C12 el desarrollador: echo x > src/log (control)" guard.sh allow allow allow - "$(j45 Bash "$P45" desarrollador 'command=echo x > src/log')"
++fila45c "$LNX45" "$LNX45_MOT" "C13 coordinadora: echo x > docs/err (-> /dev/stderr, fuera del ámbito: control)" guard.sh allow allow allow - "$(j45 Bash "$P45" - 'command=echo x > docs/err')"
++FB45="$RFB"; FB45_OK="$RFB_OK"; FB45_MOT="$RFB_MOT"; FB45_NOM=3bc7d3c
++
+ # --- Q: la lectura de la entrada conserva el CR del dato (QA-023-14), sin recorrer el valor --------
+ Q45_IN="$(jq -cn '{tool_name:"Bash\r",cwd:"/tmp",tool_input:{file_path:"a\r\nb\r",command:"ls\r\nx > y\r"}}')"
+ printf -v Q45_ESP '%q|' "Bash$CR" "a$CR${NL}b$CR" "ls$CR${NL}x > y$CR" 1 0 1
+@@ -203,4 +228,4 @@ Q45_IN="$(jq -cn '{tool_name:"Write",cwd:"/tmp",tool_input:{file_path:"/tmp/f",c
+ nom45="QA-023-14 Q3 sin CR en el dato, el jq que añade CR no deja ninguno (ningún falso positivo)"
+ q45 "$HOOKS_DIR" "$JQW45"
+ if [ "$Q45" = "$Q45_ESP" ]; then v45 PASS "$nom45  candidata"; else v45 FAIL "$nom45  candidata: <$Q45> en vez de <$Q45_ESP>"; fi
+-rm -rf "$RFB" "$R95" "$FUERA45" "$JQW45"; [ "$LNX45" != si ] || rm -rf "$SHM45"
++rm -rf "$RFB" "$R95" "$RCC" "$FUERA45" "$JQW45"; [ "$LNX45" != si ] || rm -rf "$SHM45"

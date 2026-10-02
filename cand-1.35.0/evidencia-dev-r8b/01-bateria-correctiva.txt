@@ -1,0 +1,55 @@
+== bateria-correctiva (2026-10-02T13:48:16-06:00); 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; git version 2.53.0 ==
+   sha256 lib.sh cand 565b3c89bd82cb70 · guard-git.sh cand f65edc844cac31b2
+-- guard-git: un retorno de carro pegado a las palabras de una orden de git --
+C1 git reset --hard + CR (G1) [guard-git.sh]                       cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+C2 git stash + CR (P-122-A 1) [guard-git.sh]                       cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ stash\ \'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'stash\'\).\ Como\ seguir:\ 
+C3 git checkout . + CR (QA-023-16) [guard-git.sh]                  cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ checkout\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'checkout\ .\'\).\ Como
+C4 git checkout -- . + CR (QA-023-16) [guard-git.sh]               cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ checkout\ --\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'checkout\ .\'\).\ C
+C5 git restore . + CR (QA-023-16) [guard-git.sh]                   cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ restore\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'restore\ .\'\).\ Como\ s
+C6 git checkout HEAD . + CR (QA-023-16) [guard-git.sh]             cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ checkout\ HEAD\ .\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'checkout\ .\'\).
+C7 git clean + CR en medio + -f (preexistente) [guard-git.sh]      cand=deny 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9596e39] OK
+      motivo(cand): ARNES:\ \'git\ clean\ -f\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'clean\ -f\'\).\ Como\ seg
+C8 git re + CR + set --hard (CR dentro de la palabra) [guard-git.sh] cand=deny 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  [allow->deny vs 9596e39] OK
+      motivo(cand): ARNES:\ \'git\ reset\ --hard\'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'reset\ --hard\'\).\ 
+C9 git stash + CR + LF + ls (CR antes de un salto) [guard-git.sh]  cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'git\ stash\ \'\ descarta\ o\ esconde\ trabajo\ que\ puede\ no\ ser\ tuyo:\ con\ varios\ agentes\ en\ vuelo\ el\ arbol\ contiene\ cambios\ intermedios\ de\ otros\,\ y\ esta\ orden\ los\ borra\ sin\ dejar\ rastro\ —\ git\ no\ puede\ devolver\ lo\ que\ nunca\ se\ comiteo.\ Lo\ prohibe\ el\ manifiesto\ \(git.prohibidos:\ \'stash\'\).\ Como\ seguir:\ 
+C10 git status + CR (control: no esta en la lista) [guard-git.sh]  cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+C11 git stash list + CR (control: lectura) [guard-git.sh]          cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+C12 git restore --staged + CR + . (control: ya denegaba) [guard-git.sh] cand=deny 9220c71=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): $'ARNES: \'git restore --staged\r .\' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: \'restore .'
+C13 git log + CR + LF + echo hecho (control) [guard.sh]            cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+C14 git commit -m con CR entrecomillado (control) [guard.sh]       cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+C15 printf x > docs/n.md + CR (control: no es git) [guard.sh]      cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+-- QA-023-17: un enlace del ultimo componente DENTRO de un ambito que lleva a un descriptor --
+D1 coordinadora: echo x > src/log (src/log -> /dev/stderr) [guard-codigo.sh] cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/log\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee\,
+D2 lo mismo por guard.sh [guard.sh]                                cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ el\ comando\ escribe\ en\ \'src/log\'\,\ que\ es\ código\ de\ la\ app\;\ sólo\ el\ agente\ \'desarrollador\'\ puede\ hacerlo\ \(intento\ de\ la\ sesión\ coordinadora\).\ Escribirlo\ por\ Bash\ no\ salta\ la\ regla:\ delega\ el\ cambio\ en\ \'desarrollador\'\ \(ver\ AGENTS.md\ §5\).\ Nota:\ la\ detección\ en\ Bash\ es\ parcial\ \(redirecciones\,\ tee\,
+D3 sed -i que cierra por requirements/log (-> /dev/stderr) [guard-completado.sh] cand=deny 9220c71=allow 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ este\ comando\ escribe\ en\ \'requirements/log\'\ y\ menciona\ \'completado\'.\ La\ transicion\ de\ estado\ de\ un\ REQ\ no\ puede\ juzgarse\ desde\ Bash:\ las\ puertas\ A2/A3\ necesitan\ el\ contenido\ resultante\ \(veredictos\ de\ QA\ y\ Seguridad\,\ cola\ de\ PENDING_APPROVAL.md\ y\ quality\ gates\).\ Hazlo\ con\ Edit/Write\ para\ que\ es
+D4 desarrollador: echo x > src/log (control) [guard.sh]            cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+D5 coordinadora: echo x > docs/err (-> /dev/stderr, fuera) [guard.sh] cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+D6 coordinadora: echo x > /dev/stderr (control) [guard.sh]         cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+D7 coordinadora: echo x > /dev/fd/2 (control) [guard.sh]           cand=allow 9220c71=allow 3bc7d3c=allow 9596e39=allow 1.33.2=allow  OK
+      motivo(cand): ''
+D8 coordinadora: Write src/log (Edit/Write: CA-49 (i)) [guard.sh]  cand=deny 9220c71=deny 3bc7d3c=deny 9596e39=deny 1.33.2=deny  OK
+      motivo(cand): ARNES:\ \'src/log\'\ es\ un\ ENLACE\ SIMBOLICO\ situado\ dentro\ del\ proyecto\,\ y\ no\ se\ escribe\ a\ traves\ de\ un\ enlace\ dentro\ del\ proyecto\,\ apunte\ adonde\ apunte\ y\ lo\ intente\ quien\ lo\ intente.\ Salida:\ escribe\ sobre\ el\ archivo\ al\ que\ apunta\,\ por\ su\ ruta\ \(SEC-004\,\ REQ-007\ CA-49\).
+-- Efecto, de verdad (arbol aparte): git con la configuracion por defecto y con help.autocorrect=immediate --
+   defecto: tras 'git stash'+CR -> f=CAMBIO stash=0
+   immediate: tras 'git stash'+CR -> f=a stash=1
+-- Efecto del descriptor: echo x > src/log escribe en stderr, no en un archivo de src/ --
+   src/: a.ts log  ; src/a.ts=original ; lo escrito fue a stderr: INTRUSO
