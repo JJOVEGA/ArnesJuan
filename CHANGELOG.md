@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Séptima autorización, write-back (analista): QA-023-13 en CA-47 (puntos 1, 7, 11, 12 y 13), CA-66 (bloque R, recuentos, movimientos y host no ejercido) y notas de CA-24 y CA-60; ADR-016, guía y notas; pregunta nueva P-023-13-A — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
+
+- **Sedes:**
+  - `requirements/REQ-007.md`: CA-47 puntos 1, 7, 11, 12 y 13; notas de CA-24 y CA-60; CA-66; notas; Preguntas abiertas; Trazabilidad; Historial;
+  - ADR-016, adenda del 2026-10-02;
+  - `skills/arnes-upgrade/SKILL.md`;
+  - la sección `[1.35.0]` de este archivo;
+  - `requirements/README.md`.
+
+  Contrastado con la evidencia del desarrollador (`8959544`).
+- **Lo que queda escrito:**
+  - el CR del nombre de herramienta, del `cwd` y del `file_path` se cuenta antes del transporte;
+  - un `cwd` con CR no ancla rutas relativas, que pasan a no determinables con motivo;
+  - movimientos: ninguno de deny a allow nuevo, y los de allow a deny declarados caso por caso;
+  - el caso CR **no se ejerció en el host** y su evidencia es sólo a nivel de hook.
+- **P-023-13-A, pregunta para el propietario:** el texto del comando de `Bash` sigue perdiendo un CR en el transporte. Es preexistente en los cuatro árboles, no es un movimiento y queda fuera de esta reparación, porque el propietario excluyó reescribir el analizador de `Bash`. Queda declarado como límite conocido, no protegido y **no aceptado**.
+- **Avance (regla 6):** el contrato de QA-023-13 queda escrito. Faltan la comprobación en Windows/MSYS (en curso), QA y, si QA es favorable, seguridad.
+
 ## [Interno] — 2026-10-02 · Séptima autorización, implementación (desarrollador): QA-023-13 reparado a nivel de hook — el CR se cuenta antes del transporte; un `cwd` con CR no ancla rutas relativas, que pasan a no determinables con motivo propio; el mismo tratamiento para el `file_path` y el nombre de herramienta; sección 44 (1501 → 1581) — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 343 k tokens (cifra del arnés para la comisión).
 
@@ -848,8 +867,10 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      protegida; una escritura por `Bash` a través de un enlace hacia una zona protegida; un
      `Edit`/`MultiEdit` sobre un REQ que la puerta no puede leer entero —un byte NUL, UTF-16, sin permiso de
      lectura—, **aunque no toque el estado**; y una escritura cuyo destino la puerta no puede determinar
-     —entre otras causas, un `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea, sea cual sea
-     la ruta y el agente, porque no está medido qué archivo escribiría la herramienta con ese argumento—.
+     —entre otras causas, un `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea o un retorno
+     de carro, sea cual sea la ruta y el agente, porque no está medido qué archivo escribiría la herramienta con
+     ese argumento, y una ruta relativa cuando el directorio de trabajo lleva un retorno de carro, también
+     fuera de las zonas protegidas—.
      Hasta `v1.34.0` las puertas decidían por la ruta escrita, y con el REQ ilegible sólo se denegaba la
      edición que mencionaba el estado terminal.
    - **La entrada del hook se lee campo a campo** (REQ-007 CA-47, punto 11): un salto de línea dentro del
@@ -859,6 +880,21 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      `cand-1.35.0/evidencia-dev-r6/20-bateria-qa02309-final.txt`): un salto dentro del agente o del nombre de
      la herramienta desplazaba los campos siguientes, y una escritura a código protegido salía permitida.
      Desde el host, sin medir.
+     - **El retorno de carro se cuenta antes de que la lectura lo recorte** (desde el 2026-10-02, séptima
+       autorización; REQ-007 CA-47, puntos 11 a 13, por QA-023-13). Un directorio de trabajo con un retorno de
+       carro no ancla: la ruta relativa que depende de él se deniega con motivo, también fuera de las zonas
+       protegidas, y lo que no depende de él —una ruta absoluta, un comando que no escribe— se juzga como
+       siempre. Una ruta o un nombre de herramienta con un retorno de carro se deniegan como con un salto de
+       línea. Medido a nivel de hook en 1.33.2, inyectando la entrada (rama local de evidencia,
+       `cand-1.35.0/evidencia-dev-r7/12-bateria-arbol-final.txt`): una escritura de la coordinadora por un
+       enlace cuyo nombre acaba en retorno de carro, `Edit␍` que cierra un REQ en rojo, o `Bash␍` con un
+       `file_path` en código protegido, salían permitidos. Desde el host, no ejercido.
+     - **Límite conocido, no protegido y no aceptado:** el texto de un comando de `Bash` sigue perdiendo en la
+       lectura su retorno de carro final y el que precede a un salto, y un destino cuyo nombre acaba así se
+       juzga sin él mientras el shell lo escribe con él. Medido a nivel de hook, una escritura de la
+       coordinadora a código protegido por un enlace con ese nombre sale permitida en este candidato y en
+       1.33.2 (`evidencia-dev-r7/14-sonda-command-cr-arbol-final.txt`). Preexistente; sede, REQ-007 CA-47,
+       punto 11; lo decide el propietario (REQ-007, P-023-13-A).
    - **Qué pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5): una ruta relativa que
      casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era
      otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta

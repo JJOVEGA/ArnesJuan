@@ -1147,11 +1147,15 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       UTF-16 como el que produce PowerShell 5.1 al redirigir, un archivo sin permiso de lectura—, **aunque no
       toque el estado**;
     - una escritura cuyo destino la puerta **no puede determinar**: un directorio que no se puede recorrer,
-      un bucle de enlaces, `..` sobre un directorio que todavía no existe, o un `Edit`/`Write`/`MultiEdit`
-      cuyo `file_path` lleva un salto de línea —sea cual sea la ruta y el agente: no está medido qué archivo
-      escribiría la herramienta con ese argumento—.
+      un bucle de enlaces, `..` sobre un directorio que todavía no existe, una ruta relativa cuando el
+      directorio de trabajo lleva un retorno de carro —también fuera de las zonas protegidas—, o un
+      `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea o un retorno de carro —sea cual sea
+      la ruta y el agente: no está medido qué archivo escribiría la herramienta con ese argumento—.
     - Y la entrada del hook se lee **campo a campo**: un salto de línea dentro del directorio de trabajo, del
-      agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa.
+      agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa. El retorno de carro del
+      directorio de trabajo, de la ruta y del nombre de la herramienta se cuenta antes de que la lectura lo
+      pueda recortar, así que tampoco hace juzgar otro directorio, otra ruta u otra herramienta: lo que no se
+      puede determinar se deniega.
   - **Lo que pasa a permitirse, y son sólo seis casos** (REQ-007 CA-66, punto 5, del arnés): una ruta
     relativa que casaba con una zona protegida sólo porque se leía desde la raíz cuando el directorio de
     trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde, porque se juzga entero; una
@@ -1163,8 +1167,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se
     resuelven.
   - **La salida:** cada motivo dice la causa y cómo corregirla —escribir por una ruta cuyos directorios
-    existan y se puedan recorrer y sin saltos de línea, o dejar el REQ legible entero: quitar el NUL, guardarlo
-    en UTF-8, devolverle el permiso de lectura—.
+    existan y se puedan recorrer, sin saltos de línea ni retornos de carro, y absoluta si es el directorio de
+    trabajo el que lleva el retorno de carro; o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8,
+    devolverle el permiso de lectura—.
   - **Sin eufemismo: las versiones anteriores pudieron dejar pasar escrituras protegidas por una ruta
     equivalente.** Reproducido en el CLI 2.1.285: por un directorio enlazado a `requirements/`, un REQ
     `critico` con todo en rojo quedó `completado`; por `Bash`, `..` creó código protegido desde la
@@ -1178,8 +1183,10 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     tenga un byte NUL ni esté en UTF-16: con esta versión no podrás editarlo hasta dejarlo legible.
   - **Lo que NO cubre** (ejemplos **no exhaustivos**; la sede es REQ-007 CA-47 del arnés): un cambio del
     sistema de archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de
-    `Bash`; enlaces duros y montajes; sistemas de archivos que no distinguen mayúsculas; y Windows/MSYS,
-    `MultiEdit` en el host y el editor interactivo, que no se han ejercido.
+    `Bash`; el retorno de carro del texto de un comando de `Bash` —el final, o el que precede a un salto—, que
+    la lectura de la entrada sigue retirando, de modo que un destino cuyo nombre acaba así se juzga sin él;
+    enlaces duros y montajes; sistemas de archivos que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit`
+    en el host y el editor interactivo, que no se han ejercido.
   - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («las puertas juzgan el archivo que la
     escritura alcanzaría…»), los **puntos 2 y 3 de la cláusula que sigue a la tabla de §13** y el párrafo de
     **`requirements/README.md` § «Veredictos de validación»** que remite a REQ-007 CA-45. Cada uno va **por

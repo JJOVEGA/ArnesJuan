@@ -165,3 +165,60 @@ de entrada, sin prohibir el nombre ensayado ni sustituir caracteres en silencio.
   (QA-023-10, abierto; cifras en la nota de CA-54 del 2026-10-01). La optimización intentada en la vuelta de
   este día no lo consiguió y quedó fuera del candidato. Lo decide el propietario.
 - (=) Sin procesos nuevos. Esta adenda no afirma que la reparación esté verificada.
+
+## Adenda — 2026-10-02 (séptima autorización): el retorno de carro de la entrada se cuenta antes del transporte, y un `cwd` que lo lleva no ancla
+
+**Esta adenda manda sobre la del 2026-10-01 en lo que toca; lo de arriba no se reescribe.** La norma vive en
+`requirements/REQ-007.md` **CA-47, puntos 1, 7 y 11 a 13** (versionado del 2026-10-02); aquí sólo la decisión
+y su porqué.
+
+**Causa.** QA-023-13 (`docs/qa/REQ-023.md` § «Vuelta excepcional de la sexta autorización», §7): el transporte
+de la entrada retira el retorno de carro que cierra un campo —lo añade el `jq` de Windows—, y en el flujo de
+bytes ese retorno de carro no se distingue de uno que forme parte del dato. Con un `cwd` acabado en retorno de
+carro y enlazado a la raíz, las puertas anclaban en otro directorio que el del shell, y una escritura de la
+coordinadora a código protegido y un cierre en rojo por `Bash` salían **allow** a nivel de hook, donde `9596e39`
+y 1.33.2 deniegan. La decisión 1 de la adenda anterior —leer cada campo entero; un `cwd` con saltos de línea
+ancla como cualquier otro— era falsa para el retorno de carro. **Decisión del propietario:** la séptima
+autorización (2026-10-02), literal en `PENDING_APPROVAL.md` § Resueltas, commit `3128d09`: las puertas juzgan
+la ruta real de la operación o deniegan explícitamente cuando no pueden determinarla, y nunca juzgan otra ruta
+por haber modificado en silencio el directorio recibido; autoriza denegar un `cwd` que contenga un retorno de
+carro, con un motivo preciso.
+
+**Decisión.**
+1. **El retorno de carro del `tool_name`, del `cwd` y del `file_path` se cuenta sobre el valor crudo, antes
+   del transporte**, en la misma lectura de la entrada, y lo que decide es esa cuenta.
+2. **Un `cwd` con un retorno de carro no ancla:** la ruta relativa que depende de él es no determinable, con su
+   motivo; lo que no depende de él se juzga como siempre. Un `cwd` con saltos de línea y sin retorno de carro
+   sigue anclando (decisión 1 de la adenda anterior, acotada).
+3. **Un `file_path` o un `tool_name` con un retorno de carro se tratan como los que llevan un salto de línea**
+   (decisiones 2 y 3 de la adenda anterior).
+
+**Alternativas descartadas.**
+- **Anclar en el valor reconstruido, reponiendo el retorno de carro que el transporte retiró.** No: la puerta
+  no conserva el valor con certeza —el retorno de carro final se confunde con el fin de línea del `jq` de
+  Windows—, y anclar sobre una reconstrucción es juzgar lo que la puerta supone que llegó; la séptima
+  autorización admite denegar con motivo.
+- **Denegar toda llamada cuyo `cwd` lleve un retorno de carro.** No: lo que no depende del `cwd` —una ruta
+  absoluta, un comando que no escribe— se puede juzgar, y la propiedad pide denegar lo que no se puede
+  determinar. Es la variante mínima, con la estructura de un `cwd` ausente o inexistente.
+- **Contar también el retorno de carro del texto de `Bash` en esta vuelta.** No: el propietario pidió no
+  convertir la reparación en una reescritura general del analizador de `Bash`. Queda como límite declarado y
+  como pregunta al propietario (REQ-007, P-023-13-A).
+
+**Consecuencias.**
+- (+) Un retorno de carro en el `cwd`, en el `file_path` o en el `tool_name` ya no hace que las puertas juzguen
+  otro directorio, otra ruta u otra herramienta.
+- (−) **Compatibilidad, además de la de arriba:** una ruta relativa cuyo `cwd` lleva un retorno de carro se
+  deniega con motivo, también fuera del ámbito protegido —la salida es la ruta absoluta o un directorio cuyo
+  nombre no lo lleve—, y un `file_path` o un `tool_name` con un retorno de carro se deniegan como con un salto.
+  La declarada está en REQ-007 CA-66 (versionado del 2026-10-02).
+- (=) **Los movimientos de `deny` a `allow` siguen siendo los seis de arriba.** Los de este día son de `allow`
+  a `deny`.
+- (−) **Límite conocido, no protegido y no aceptado:** el texto del comando de `Bash` conserva el transporte
+  —pierde su retorno de carro final y el que precede a un salto—, y un destino de `Bash` cuyo nombre acaba así
+  se juzga sin él mientras el shell lo escribe con él. Medido a nivel de hook, una escritura de la coordinadora
+  a código protegido por un enlace con ese nombre sale `allow` en el candidato y en 1.33.2. Preexistente. Sede:
+  REQ-007 CA-47, punto 11; decisión: P-023-13-A.
+- (=) Sin procesos nuevos: la cuenta va en la lectura de la entrada que ya existía. En Windows/MSYS, sin
+  medir. Desde el host, el caso del retorno de carro no se ha ejercido. Esta adenda no afirma que la
+  reparación esté verificada.
