@@ -1,0 +1,29 @@
+REQ-023  Seguridad                cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-031  Seguridad                cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-001  Seguridad                cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-007  Seguridad                cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-023  Hallazgos -SEC-119       cand=allow/aviso=no instalada=allow/aviso=no 
+REQ-007  Hallazgos SEC-122->123/124/125 cand=allow/aviso=no instalada=allow/aviso=no 
+== lector: tools/arnes-lectura.sh (candidato) sobre la copia ==
+rc lector: 0
+Ningún valor anómalo: la máquina lee los 4 REQ como están escritos.
+== cierre simulado: cola vacía, gates true ==
+REQ-023  tal cual                           cand=allow 
+REQ-023  tal cual                           instalada=allow 
+REQ-031  tal cual                           cand=allow 
+REQ-031  tal cual                           instalada=allow 
+REQ-001  tal cual                           cand=allow 
+REQ-001  tal cual                           instalada=allow 
+REQ-007  tal cual                           cand=deny ARNES: no se puede completar 'requirements/REQ-007.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+REQ-007  tal cual                           instalada=deny ARNES: no se puede completar 'requirements/REQ-007.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y refléjalos en el RE
+REQ-007  QA y Seg forzados                  cand=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no af
+REQ-007  QA y Seg forzados                  instalada=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'qa-114' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no af
+REQ-007  forzados + sólo SEC-124           cand=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'sec-124' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no a
+REQ-007  forzados + sólo SEC-124           instalada=deny ARNES: no se puede completar 'requirements/REQ-007.md': el hallazgo 'sec-124' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en realidad no a
+REQ-007  forzados + sólo SEC-123, SEC-125  cand=allow 
+REQ-007  forzados + sólo SEC-123, SEC-125  instalada=allow 
+== diff de cabecera propuesta frente al worktree (sólo líneas cambiadas) ==
+REQ-023: 4
+REQ-031: 2
+REQ-001: 2
+REQ-007: 4

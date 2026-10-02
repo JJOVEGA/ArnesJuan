@@ -1,0 +1,242 @@
+--- 45 · dependencia del proceso y CR del comando (SEC-122, P-023-13-A, QA-023-14; octava autorización) ---
+  SKIP  REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  PASS  REQ-007 octava N1 coordinadora: ls -la > /dev/null 2>&1 candidata  (allow)
+  PASS  REQ-007 octava N1 coordinadora: ls -la > /dev/null 2>&1 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N1 coordinadora: ls -la > /dev/null 2>&1 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava N2 coordinadora: echo hola > /dev/stderr candidata  (allow)
+  PASS  REQ-007 octava N2 coordinadora: echo hola > /dev/stderr 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N2 coordinadora: echo hola > /dev/stderr 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava N3 coordinadora: echo hola > /dev/stdout candidata  (allow)
+  PASS  REQ-007 octava N3 coordinadora: echo hola > /dev/stdout 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N3 coordinadora: echo hola > /dev/stdout 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava N4 coordinadora: echo hola > /dev/fd/2 candidata  (allow)
+  PASS  REQ-007 octava N4 coordinadora: echo hola > /dev/fd/2 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N4 coordinadora: echo hola > /dev/fd/2 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava N5 coordinadora: echo hola | tee /dev/stderr candidata  (allow)
+  PASS  REQ-007 octava N5 coordinadora: echo hola | tee /dev/stderr 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N5 coordinadora: echo hola | tee /dev/stderr 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava N6 coordinadora: Write /dev/null candidata  (allow)
+  PASS  REQ-007 octava N6 coordinadora: Write /dev/null 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava N6 coordinadora: Write /dev/null 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K1 coordinadora: printf x > k\r (CR final), cwd docs; k\r -> src/a.ts candidata  (deny)
+  PASS  REQ-007 octava K1 coordinadora: printf x > k\r (CR final), cwd docs; k\r -> src/a.ts candidata por guard.sh  (deny)
+  PASS  REQ-007 octava K1 coordinadora: printf x > k\r (CR final), cwd docs; k\r -> src/a.ts 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K1 coordinadora: printf x > k\r (CR final), cwd docs; k\r -> src/a.ts 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K2 coordinadora: printf x > k\r\ntrue (CR antes de un salto), cwd docs candidata  (deny)
+  PASS  REQ-007 octava K2 coordinadora: printf x > k\r\ntrue (CR antes de un salto), cwd docs candidata por guard.sh  (deny)
+  PASS  REQ-007 octava K2 coordinadora: printf x > k\r\ntrue (CR antes de un salto), cwd docs 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K2 coordinadora: printf x > k\r\ntrue (CR antes de un salto), cwd docs 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K3 sed -i que cierra por docs/r\r (enlace al REQ en rojo) candidata  (deny)
+  PASS  REQ-007 octava K3 sed -i que cierra por docs/r\r (enlace al REQ en rojo) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava K3 sed -i que cierra por docs/r\r (enlace al REQ en rojo) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K3 sed -i que cierra por docs/r\r (enlace al REQ en rojo) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K4 coordinadora: echo x | tee docs/k\r candidata  (deny)
+  PASS  REQ-007 octava K4 coordinadora: echo x | tee docs/k\r candidata por guard.sh  (deny)
+  PASS  REQ-007 octava K4 coordinadora: echo x | tee docs/k\r 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K4 coordinadora: echo x | tee docs/k\r 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K5 coordinadora: printf x > docs/n.md\r (escribe docs/n.md\r, fuera) candidata  (allow)
+  PASS  REQ-007 octava K5 coordinadora: printf x > docs/n.md\r (escribe docs/n.md\r, fuera) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K5 coordinadora: printf x > docs/n.md\r (escribe docs/n.md\r, fuera) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava K6 coordinadora: printf x > app/a.ts\r (no casa app/*.ts: de deny a allow, declarado) candidata  (allow)
+  PASS  REQ-007 octava K6 coordinadora: printf x > app/a.ts\r (no casa app/*.ts: de deny a allow, declarado) 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava K6 coordinadora: printf x > app/a.ts\r (no casa app/*.ts: de deny a allow, declarado) 9596e39 (referencia de los movimientos)  (deny)
+  PASS  REQ-007 octava K7 coordinadora: printf x > app/a.ts (control: casa app/*.ts) candidata  (deny)
+  PASS  REQ-007 octava K7 coordinadora: printf x > app/a.ts (control: casa app/*.ts) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava K7 coordinadora: printf x > app/a.ts (control: casa app/*.ts) 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava K7 coordinadora: printf x > app/a.ts (control: casa app/*.ts) 9596e39 (referencia de los movimientos)  (deny)
+  PASS  REQ-007 octava K8 coordinadora: echo hola\r\nls\r\n (comando CRLF sin escrituras) candidata  (allow)
+  PASS  REQ-007 octava K8 coordinadora: echo hola\r\nls\r\n (comando CRLF sin escrituras) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava K8 coordinadora: echo hola\r\nls\r\n (comando CRLF sin escrituras) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava H1 coordinadora: heredoc CRLF citado y después echo x > src/a.ts candidata  (deny)
+  PASS  REQ-007 octava H1 coordinadora: heredoc CRLF citado y después echo x > src/a.ts candidata por guard.sh  (deny)
+  PASS  REQ-007 octava H1 coordinadora: heredoc CRLF citado y después echo x > src/a.ts 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava H1 coordinadora: heredoc CRLF citado y después echo x > src/a.ts 9596e39 (referencia de los movimientos)  (deny)
+  PASS  REQ-007 octava H2 coordinadora: heredoc CRLF citado a docs/x.md (de allow a deny, declarado) candidata  (deny)
+  PASS  REQ-007 octava H2 coordinadora: heredoc CRLF citado a docs/x.md (de allow a deny, declarado) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava H2 coordinadora: heredoc CRLF citado a docs/x.md (de allow a deny, declarado) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava H2 coordinadora: heredoc CRLF citado a docs/x.md (de allow a deny, declarado) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava H3 coordinadora: delimitador que empieza por CR y comillas en el cuerpo (preexistente) candidata  (deny)
+  PASS  REQ-007 octava H3 coordinadora: delimitador que empieza por CR y comillas en el cuerpo (preexistente) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava H3 coordinadora: delimitador que empieza por CR y comillas en el cuerpo (preexistente) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava H3 coordinadora: delimitador que empieza por CR y comillas en el cuerpo (preexistente) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio) candidata  (allow)
+  PASS  REQ-007 octava H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava H4 coordinadora: heredoc con CR sólo en el cuerpo (delimitador limpio) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava H5 el desarrollador: H2 por guard-codigo (podía escribir) candidata  (allow)
+  PASS  REQ-007 octava H5 el desarrollador: H2 por guard-codigo (podía escribir) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava H5 el desarrollador: H2 por guard-codigo (podía escribir) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ) candidata  (deny)
+  PASS  REQ-007 octava H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ) 3bc7d3c (fail-before o control)  (allow)
+  PASS  REQ-007 octava H6 el desarrollador: H2 por guard-completado (sin análisis no se sabe si toca un REQ) 9596e39 (referencia de los movimientos)  (allow)
+  PASS  REQ-007 octava G1 git reset --hard\r (opción desconocida para git: de deny a allow, declarado) candidata  (allow)
+  PASS  REQ-007 octava G1 git reset --hard\r (opción desconocida para git: de deny a allow, declarado) candidata por guard.sh  (allow)
+  PASS  REQ-007 octava G1 git reset --hard\r (opción desconocida para git: de deny a allow, declarado) 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava G1 git reset --hard\r (opción desconocida para git: de deny a allow, declarado) 9596e39 (referencia de los movimientos)  (deny)
+  PASS  REQ-007 octava G2 git reset --hard (control) candidata  (deny)
+  PASS  REQ-007 octava G2 git reset --hard (control) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava G2 git reset --hard (control) 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava G2 git reset --hard (control) 9596e39 (referencia de los movimientos)  (deny)
+  PASS  REQ-007 octava G3 git reset --hard \r (el CR es otro argumento: --hard se ve) candidata  (deny)
+  PASS  REQ-007 octava G3 git reset --hard \r (el CR es otro argumento: --hard se ve) candidata por guard.sh  (deny)
+  PASS  REQ-007 octava G3 git reset --hard \r (el CR es otro argumento: --hard se ve) 3bc7d3c (fail-before o control)  (deny)
+  PASS  REQ-007 octava G3 git reset --hard \r (el CR es otro argumento: --hard se ve) 9596e39 (referencia de los movimientos)  (deny)
+  SKIP  REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+  SKIP  REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+  PASS  QA-023-14 Q1 arnes_parse_input conserva el CR final y el que precede a un salto, en tool_name, file_path y command  candidata
+  PASS  QA-023-14 Q1 arnes_parse_input conserva el CR final y el que precede a un salto, en tool_name, file_path y command  3bc7d3c (fail-before): los pierde  <$'Bash\r'|$'a\nb'|$'ls\nx > y'|1|0|1|>
+  PASS  QA-023-14 Q2 con un jq que añade CR a cada línea (emulación del de Windows), los valores llegan iguales  candidata
+  PASS  QA-023-14 Q3 sin CR en el dato, el jq que añade CR no deja ninguno (ningún falso positivo)  candidata
+ABORT: la sección 45-dependencia-del-proceso-y-cr-del-comando.sh declara 164 casos y ejecutó 160 (PASS 85 · FAIL 0 · SKIP 75).
+       O falta un caso por el camino, o alguien añadió uno y no actualizó
+       CASOS_ESPERADOS_SECCION en ese archivo. Las dos cosas hay que mirarlas.
+aviso: vuelta parcial (1 de 58 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 85 PASS, 0 FAIL, 75 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+       · REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S1 Edit /dev/shm/<enlace a requirements>/REQ-900.md cierra en rojo (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S2 coordinadora: Write /dev/shm/<enlace a src>/a.ts (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S3 sed -i que cierra por /dev/shm/<enlace>/REQ-900.md (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S4 coordinadora: echo x > /dev/shm/<enlace de archivo a src/a.ts> (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S5 SEC-117 no reconstruible por /dev/shm/<enlace>/REQ-920.md (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava S6 el desarrollador: echo x > /dev/shm/<enlace a src>/a.ts (control) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P1 coordinadora: echo x > /proc/self/cwd/src/a.ts, cwd <raíz> (el shell escribe src/a.ts) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P2 coordinadora: lo mismo con cwd <raíz>/docs (designa docs/src/a.ts) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P3 coordinadora: Write /proc/self/cwd/src/a.ts (escribe el host, cuyo cwd no se conoce) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P4 Edit /proc/self/root<raíz>/requirements/REQ-900.md cierra en rojo (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P5 coordinadora: echo x > <fuera>/pc/src/a.ts (pc -> /proc/self/cwd), cwd <raíz> (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P6 coordinadora: echo x > /dev/fd/9/a.ts (una ruta detrás de un descriptor) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P7 coordinadora: echo x > /proc/self/cwd/src/a.ts sin cwd en la entrada (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P8 el desarrollador: echo x > /proc/self/cwd/src/a.ts (control) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava P9 coordinadora: Write /dev/stderr (descriptor del proceso del host: de allow a deny, declarado) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B1 Edit por docs/enlace.md (enlace en el último componente) que cierra (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B2 coordinadora: Write por docs/a-enlace.ts (-> src/a.ts) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B3 Edit literal sin estado sobre un REQ que existe (3bc7d3c lo sobredenegaba) (3/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (1/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (2/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (3/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B4 coordinadora: echo x > docs/dsrc/a.ts (directorio enlazado) (4/4)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (1/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (2/3)  Linux sin /dev/shm escribible o sin /proc/self
+       · REQ-007 octava B5 cierre en verde de REQ-901 (3bc7d3c lo sobredenegaba) (3/3)  Linux sin /dev/shm escribible o sin /proc/self

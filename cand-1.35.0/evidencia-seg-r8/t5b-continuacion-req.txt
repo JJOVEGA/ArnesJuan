@@ -1,0 +1,3 @@
+C10 printf … 'Estado: completado' > \<LF>requirements/REQ-900.md cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+C11 echo x >> \<LF>src/a.ts                                cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+efecto: REQ-900 l2=Estado: completado ; src/a.ts=original|x|

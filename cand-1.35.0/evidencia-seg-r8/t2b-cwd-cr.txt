@@ -1,0 +1,4 @@
+k=4 Bash cwd=<raiz>/docs/w<CR>: echo > …src/a.ts         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+   efecto: original|INTRUSO-k4|
+k=5 Bash cwd=<raiz>/docs/w<CR>: echo > …src/a.ts         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+   efecto: original|INTRUSO-k5|

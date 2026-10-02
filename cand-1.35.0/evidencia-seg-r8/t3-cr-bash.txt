@@ -1,0 +1,50 @@
+== Destinos con CR (el shell trata el CR como carácter de palabra) ==
+K1 printf > docs/k<CR> (enlace a src/a.ts)                 cand=deny 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+K2 printf > docs/n.md<CR> fuera del ámbito (allow)        cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+K3 echo x<CR>> src/a.ts (CR antes del >)                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+K4 echo x <CR>> src/a.ts                                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+K5 echo x ><CR> src/a.ts (escribe en '<CR>')               cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+K6 echo > src/a.ts<CR> (src/* casa)                        cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+K7 echo > app/a.ts<CR> (app/*.ts no casa: K6 declarado)    cand=allow 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | 
+K8 tee src/a.ts<CR>                                        cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+K9 tee<CR> src/a.ts (orden inexistente)                    cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+K10 cp … src/a.ts<CR>                                    cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+K11 sed -i<CR> cierra REQ (sufijo de copia = CR)           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+K12 sed -i … REQ-900.md<CR>                              cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las
+K13 CRLF de varias líneas, 2ª escribe src/a.ts<CR>       cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+K14 ls<CR><LF> y luego echo > src/a.ts                     cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+K15 dos CR finales                                         cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). 
+K16 comando que es sólo un CR (allow)                     cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+K17 ls -la<CR> (allow)                                     cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+== Heredoc con CR en el delimitador (punto 17) y variantes de espacio/comillas ==
+H1 cat > src/a.ts <<'EOF'<CR> (coordinadora)               cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H2 <<EOF … cuerpo con EOF<CR>, tras EOF real             cand=allow 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | 
+H3 cat << EOF<CR> (espacio antes)                          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H4 cat <<-EOF<CR>                                          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H5 cat <<"EOF"<CR>                                         cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H6 cat <<\EOF<CR>                                          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H7 cat <<'EO<CR>F' (CR en medio)                           cand=deny 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H8 cat <<   EOF<CR> (varios espacios)                      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H9 cat <<<TAB>EOF<CR>                                      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+H10 cat <<EOF;<CR> (CR tras metacarácter)                 cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+H11 CR sólo en el cuerpo (allow)                          cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+H12 H1 por el desarrollador (guard-completado: deny a todos) cand=deny 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el an
+H13 here-string <<< x<CR> (no es heredoc)                  cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+H14 cat <<<EOF<CR> (here-string)                           cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+== guard-git: dos lecturas ==
+G1 git stash<CR>                                           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git stash ' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y es
+G2 git checkout .<CR>                                      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git checkout .' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, 
+G3 git restore .<CR><LF>                                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git restore .' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y
+G4 git reset --hard<CR>                                    cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros
+G5 git clean -f<CR>                                        cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git clean -f' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y
+G6 git status && git st<CR>ash                             cand=deny 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | ARNES: 'git stash ' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y es
+G7 git -c help.autocorrect=immediate stash<CR>             cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git stash ' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y es
+G8 git 'stash'<CR>                                         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G9 git "checkout" .<CR>                                    cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G10 git<CR> reset --hard                                   cand=deny 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros
+G11 echo git stash<CR> (no es git; sobredenegación?)      cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G12 git log<CR> (allow)                                    cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G13 git commit -m con CR (allow)                           cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G14 git stash list<CR> (allow)                             cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G15 git restore --staged a.txt<CR> (allow)                 cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+G16 git stash<CR> por el desarrollador (deny a todos)      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'git stash ' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y es

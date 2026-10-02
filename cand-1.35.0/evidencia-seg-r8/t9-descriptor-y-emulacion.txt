@@ -1,0 +1,20 @@
+== (1) QA-023-17 ==
+D1 echo > src/log (-> /dev/stderr), coordinadora           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/log', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Esc
+D2 echo completado > requirements/out (-> fd/1)            cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/out' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas
+D3 echo > docs/err (fuera del ámbito, allow)              cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+D4 D1 por el desarrollador (allow)                         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+D5 Write src/log (enlace dentro: CA-49 (i))                cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: 'src/log' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro del proyecto, apunte adonde apunte y
+== (2) Emulación del transporte de Windows (jq que añade CR a cada línea) ==
+comprobación del envoltorio: 0000000   x  \r  \n
+W1 printf > docs/k<CR> (enlace a src/a.ts)                 linux=deny  emul-win=deny 
+W2 printf > docs/n.md<CR> (allow)                          linux=allow  emul-win=allow 
+W3 heredoc delimitador con CR                              linux=deny  emul-win=deny 
+W4 git stash<CR>                                           linux=deny  emul-win=deny 
+W5 echo > src/a.ts (control)                               linux=deny  emul-win=deny 
+W6 ls -la (allow)                                          linux=allow  emul-win=allow 
+W7 Edit canónico cierra REQ rojo                          linux=deny  emul-win=deny 
+W8 Edit cierra REQ verde (allow)                           linux=allow  emul-win=allow 
+W9 Write src/a.ts coordinadora                             linux=deny  emul-win=deny 
+W10 cwd con CR, relativa                                   linux=deny  emul-win=deny 
+W11 = E1 (cuerpo 'EOF<CR>')                                linux=allow  emul-win=allow 
+W12 > /dev/stderr (allow)                                  linux=allow  emul-win=allow 

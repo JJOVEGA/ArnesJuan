@@ -1,0 +1,4 @@
+cand     big-w  200000B+CR     210 ms  rc=0  deny
+cand     big-b  200000B+CR     110 ms  rc=0  allow
+3bc7d3c  big-w  200000B+CR    9523 ms  rc=0  deny
+3bc7d3c  big-b  200000B+CR   10425 ms  rc=0  allow

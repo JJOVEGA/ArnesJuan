@@ -1,0 +1,30 @@
+proyecto=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/p4
+E1 heredoc: cuerpo con 'EOF<CR>', luego echo > src/a.ts, luego EOF cand=allow 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | 
+E2 heredoc <<-: cuerpo con '<TAB>EOF<CR>', luego echo > src/a.ts cand=allow 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | 
+E3 continuación '\<CR><LF>' entre > y el destino          cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+E4 continuación '\<CR><LF>' entre orden y argumentos      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E5 continuación '\<CR><LF>' en sed -i que cierra          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+E6 control: continuación limpia '\<LF>' (deny)            cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+E7 echo x 1<CR>>src/a.ts                                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E8 echo x ><CR>>src/a.ts (dos redirecciones)               cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E9 cuerpo citado 'EOF<CR>' y comillas que cruzan           cand=allow 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | 
+E10 if/then con CR al final de 'then'                      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E11 comentario con CR y orden siguiente                    cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E12 comillas abiertas con CR antes de LF                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+E13 subshell con CR: ( echo x > src/a.ts<CR> )             cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+E14 $( ) con CR                                            cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). E
+== Efecto real del shell (bash 5.3.9(1)-release), árbol aparte, cwd = su raíz ==
+E1 heredoc: cuerpo con 'EOF<CR>', luego echo > src/a.ts, l src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E2 heredoc <<-: cuerpo con '<TAB>EOF<CR>', luego echo > sr src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E3 continuación '\<CR><LF>' entre > y el destino          src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E4 continuación '\<CR><LF>' entre orden y argumentos      src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E5 continuación '\<CR><LF>' en sed -i que cierra          src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E6 control: continuación limpia '\<LF>' (deny)            src/a.ts=E6 | REQ-900 l2=Estado: en-revisión
+E7 echo x 1<CR>>src/a.ts                                   src/a.ts=E7 1~ | REQ-900 l2=Estado: en-revisión
+E8 echo x ><CR>>src/a.ts (dos redirecciones)               src/a.ts=E8 | REQ-900 l2=Estado: en-revisión
+E9 cuerpo citado 'EOF<CR>' y comillas que cruzan           src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E10 if/then con CR al final de 'then'                      src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E11 comentario con CR y orden siguiente                    src/a.ts=E11 | REQ-900 l2=Estado: en-revisión
+E12 comillas abiertas con CR antes de LF                   src/a.ts=a~|b | REQ-900 l2=Estado: en-revisión
+E13 subshell con CR: ( echo x > src/a.ts<CR> )             src/a.ts=original | REQ-900 l2=Estado: en-revisión
+E14 $( ) con CR                                            src/a.ts=original | REQ-900 l2=Estado: en-revisión

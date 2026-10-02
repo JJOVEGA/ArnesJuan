@@ -1,0 +1,8 @@
+k=4 Bash cwd=<raiz>/docs/w<CR>: echo > …src/a.ts         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+   efecto: original|INTRUSO-k4|
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/lib-sonda8.sh: line 58: cd: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/efe2b: No such file or directory
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/lib-sonda8.sh: line 58: cd: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/efe2b: No such file or directory
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/lib-sonda8.sh: line 58: cd: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/efe2b: No such file or directory
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/lib-sonda8.sh: line 58: cd: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-35/498ed6ee-03a0-4ce1-b63b-6612ed12e677/scratchpad/ev8/efe2b: No such file or directory
+k=5 Bash cwd=<raiz>/docs/w<CR>: echo > …src/a.ts         cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+   efecto: original|INTRUSO-k5|

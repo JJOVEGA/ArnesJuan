@@ -1,0 +1,25 @@
+== REQ-023 / SEC-047 mitad 1: claves de control ambiguas (verde por lo demás) ==
+N0 control verde, cierra                                   cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+N1 NBSP en 'Sensible a seguridad' + Rigor ligero           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/R2.md': su cabecera es AMBIGUA para esta puerta: linea 6: $'Sensible\302\240a seguridad: s\303\255' (varian
+N2 BOM delante de 'Hallazgos abiertos:' contrato           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/R3.md': su cabecera es AMBIGUA para esta puerta: linea 7: $'\357\273\277Hallazgos abiertos: SEC-1 (contrato
+N3 variante '- Estado: completado' añadida (sin cambiar gobernante) cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/R4.md': su cabecera es AMBIGUA para esta puerta: linea 2: $'Estado: en-revisi\303\263n' ('Estado:' declarad
+N4 QA repetida igual (ambigua)                             cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/R5.md': su cabecera es AMBIGUA para esta puerta: linea 4: 'QA: aprobado' ('QA:' declarada 2 veces en la cab
+== REQ-031: gramática y techo de 'Hallazgos abiertos:' ==
+H1 un contrato abierto                                     cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/H1.md': el hallazgo 'sec-1' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en 
+H2 instrumento; contrato                                   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/H2.md': el hallazgo 'sec-2' es de clase 'contrato' y bloquea el cierre. Resuelvelo — o reclasificalo si en 
+H3 texto tras el paréntesis (P-1 opción B)               cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/H3.md': la lista de 'Hallazgos abiertos:' no se puede interpretar, y una lista que la puerta no sabe leer n
+H4 hallazgo sin clase                                      cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/H4.md': el hallazgo 'sec-1' no declara su clase, y un hallazgo sin clase no cuenta como hallazgo. Clasifica
+H5 campo repetido                                          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/H5.md': la cabecera declara 'Hallazgos abiertos:' 2 veces (linea 7: 'Hallazgos abiertos: SEC-1 (instrumento
+H6 campo > techo de 16 384 bytes                           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se puede completar 'requirements/H6.md': el valor de 'Hallazgos abiertos:' mide 20021 bytes (contados en bytes, lo escrito tras los dos punt
+H7 sólo instrumento (control: cierra)                     cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+== REQ-001 (CA-10/11/12 versionados) y cola ==
+U1 old_string inexistente en REQ verde (CA-11 v.)          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/H7.md': esta puerta no puede reconstruir el documento que quedaria escrito, por
+U2 Edit sobre REQ inexistente, old no vacío (CA-12 v.)    cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=allow  | ARNES: no se permite la unica edicion de este Edit sobre 'requirements/NOEXISTE.md': esta puerta no puede reconstruir el documento que quedaria escrit
+U3 creación por Edit con old vacío, completado en rojo   cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede completar 'requirements/NUEVO.md': el veredicto de QA es 'pendiente' (se requiere 'QA: aprobado'). Resuelve los hallazgos de QA y r
+U4 cola ocupada, REQ verde                                 cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: no se puede marcar 'requirements/H7.md' como 'completado': hay 1 aprobación(es) pendiente(s) en PENDING_APPROVAL.md. El humano debe resolverlas
+U5 reabrir con cola ocupada (permitido)                    cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+== SEC-118 (sin cambio esperado): QA de 140 KB sin paréntesis final ==
+Q1 QA pendiente de 140 KB (SEC-118)                        cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+== SEC-120 (sin cambio esperado) ==
+X1 MultiEdit con edits cadena                              cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+X2 Edit de cierre + 10 001 niveles de anidamiento          cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 

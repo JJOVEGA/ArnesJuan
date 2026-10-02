@@ -1,0 +1,19 @@
+C1 echo x > \<LF>src/a.ts                                  cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+C2 echo x >\<LF>src/a.ts                                   cand=allow 3bc7d3c=allow 9596e39=allow v1.33.2=allow  | 
+C3 echo x \<LF>> src/a.ts                                  cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+C4 cp /etc/hostname \<LF>src/a.ts                          cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+C5 tee \<LF>src/a.ts < /dev/null                           cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+C6 sed -i 's/…/completado/' \<LF>requirements/REQ-900.md cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+C7 sed -i \<LF>'s/…/completado/' requirements/REQ-900.md cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+C8 echo x > src/\<LF>a.ts (corta el nombre)                cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/\', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Escri
+C9 control: echo x > src/a.ts en una línea                cand=deny 3bc7d3c=deny 9596e39=deny v1.33.2=deny  | ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Es
+== Efecto real del shell, árbol aparte ==
+C1 echo x > \<LF>src/a.ts                                  src/a.ts=C1| | REQ-900 l2=Estado: en-revisión
+C2 echo x >\<LF>src/a.ts                                   src/a.ts=C2| | REQ-900 l2=Estado: en-revisión
+C3 echo x \<LF>> src/a.ts                                  src/a.ts=C3| | REQ-900 l2=Estado: en-revisión
+C4 cp /etc/hostname \<LF>src/a.ts                          src/a.ts=sysvega-dev| | REQ-900 l2=Estado: en-revisión
+C5 tee \<LF>src/a.ts < /dev/null                           src/a.ts= | REQ-900 l2=Estado: en-revisión
+C6 sed -i 's/…/completado/' \<LF>requirements/REQ-900.md src/a.ts=original| | REQ-900 l2=Estado: completado
+C7 sed -i \<LF>'s/…/completado/' requirements/REQ-900.md src/a.ts=original| | REQ-900 l2=Estado: completado
+C8 echo x > src/\<LF>a.ts (corta el nombre)                src/a.ts=C8| | REQ-900 l2=Estado: en-revisión
+C9 control: echo x > src/a.ts en una línea                src/a.ts=C9| | REQ-900 l2=Estado: en-revisión

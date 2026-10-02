@@ -1,0 +1,83 @@
+== P1 coste del CR (2026-10-02T12:05:43-06:00); 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; loadavg 0.98 1.06 0.55 ==
+   sha256 lib.sh: CAND 31176f7febf28631 · FB3BC 4a9b05fab6ab92a0 · CD6 12d4762fadc84710
+   campo | N | arbol | ms | decision
+-- Bloque 1 --
+   fp             |   20000 | CAND  |    105 ms | deny
+   fp             |   20000 | FB3BC |    205 ms | deny
+   fp             |   20000 | CD6   |    106 ms | deny
+     (json 20333 bytes; algun campo con CR final: true)
+   fp-sin-cr      |   20000 | CAND  |    104 ms | deny
+   fp-sin-cr      |   20000 | FB3BC |    106 ms | deny
+   fp-sin-cr      |   20000 | CD6   |    106 ms | deny
+     (json 20331 bytes; algun campo con CR final: false)
+   tool           |   20000 | CAND  |    104 ms | deny
+   tool           |   20000 | FB3BC |    206 ms | deny
+   tool           |   20000 | CD6   |    105 ms | deny
+     (json 20337 bytes; algun campo con CR final: true)
+   cwd            |   20000 | CAND  |    105 ms | deny
+   cwd            |   20000 | FB3BC |    105 ms | deny
+   cwd            |   20000 | CD6   |    105 ms | deny
+     (json 20113 bytes; algun campo con CR final: true)
+   fp             |   50000 | CAND  |    105 ms | deny
+   fp             |   50000 | FB3BC |    706 ms | deny
+   fp             |   50000 | CD6   |    105 ms | deny
+     (json 50333 bytes; algun campo con CR final: true)
+   fp-sin-cr      |   50000 | CAND  |    104 ms | deny
+   fp-sin-cr      |   50000 | FB3BC |    206 ms | deny
+   fp-sin-cr      |   50000 | CD6   |    207 ms | deny
+     (json 50331 bytes; algun campo con CR final: false)
+   tool           |   50000 | CAND  |    104 ms | deny
+   tool           |   50000 | FB3BC |    706 ms | deny
+   tool           |   50000 | CD6   |    105 ms | deny
+     (json 50337 bytes; algun campo con CR final: true)
+   cwd            |   50000 | CAND  |    105 ms | deny
+   cwd            |   50000 | FB3BC |    105 ms | deny
+   cwd            |   50000 | CD6   |    205 ms | deny
+     (json 50113 bytes; algun campo con CR final: true)
+   fp             |  100000 | CAND  |    105 ms | deny
+   fp             |  100000 | FB3BC |   2409 ms | deny
+   fp             |  100000 | CD6   |    105 ms | deny
+     (json 100333 bytes; algun campo con CR final: true)
+   fp-sin-cr      |  100000 | CAND  |    105 ms | deny
+   fp-sin-cr      |  100000 | FB3BC |    305 ms | deny
+   fp-sin-cr      |  100000 | CD6   |    305 ms | deny
+     (json 100331 bytes; algun campo con CR final: false)
+   tool           |  100000 | CAND  |    105 ms | deny
+   tool           |  100000 | FB3BC |   2509 ms | deny
+   tool           |  100000 | CD6   |    305 ms | deny
+     (json 100337 bytes; algun campo con CR final: true)
+   cwd            |  100000 | CAND  |    105 ms | deny
+   cwd            |  100000 | FB3BC |    205 ms | deny
+   cwd            |  100000 | CD6   |    206 ms | deny
+     (json 100113 bytes; algun campo con CR final: true)
+-- Bloque 2 (file_path con CR final) --
+   fp             |  200000 | CAND  |    205 ms | deny
+   fp             |  200000 | FB3BC |   9319 ms | deny
+   fp             |  200000 | CD6   |    206 ms | deny
+     (json 200333 bytes; algun campo con CR final: true)
+   fp             |  300000 | CAND  |    205 ms | deny
+   fp             |  300000 | FB3BC |  20736 ms | deny
+   fp             |  300000 | CD6   |    205 ms | deny
+     (json 300333 bytes; algun campo con CR final: true)
+   fp             |  400000 | CAND  |    307 ms | deny
+   fp             |  400000 | FB3BC |  36862 ms | deny
+   fp             |  400000 | CD6   |    306 ms | deny
+     (json 400333 bytes; algun campo con CR final: true)
+   fp             |  600000 | CAND  |    405 ms | deny
+   fp             |  600000 | FB3BC |  83929 ms | deny
+   fp             |  600000 | CD6   |    405 ms | deny
+     (json 600333 bytes; algun campo con CR final: true)
+-- Bloque 3 (Bash de la coordinadora con tool_input.file_path grande) --
+   bash+fp        |  100000 | CAND  |    106 ms | deny
+   bash+fp        |  100000 | FB3BC |   2608 ms | deny
+   bash+fp        |  100000 | CD6   |    206 ms | deny
+     (json 100238 bytes; algun campo con CR final: true)
+   bash+fp        |  500000 | CAND  |    205 ms | deny
+   bash+fp        |  500000 | FB3BC |  64614 ms | deny
+   bash+fp        |  500000 | CD6   |   5013 ms | deny
+     (json 500238 bytes; algun campo con CR final: true)
+   bash+fp-sin-cr |  500000 | CAND  |    205 ms | deny
+   bash+fp-sin-cr |  500000 | FB3BC |   5313 ms | deny
+   bash+fp-sin-cr |  500000 | CD6   |   5013 ms | deny
+     (json 500236 bytes; algun campo con CR final: false)
+== fin 2026-10-02T12:09:51-06:00; loadavg 1.31 1.16 0.71 ==

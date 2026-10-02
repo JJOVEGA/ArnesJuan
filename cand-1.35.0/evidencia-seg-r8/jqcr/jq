@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+"/home/juan/.local/bin/jq" "$@" | sed 's/$/\r/'
+exit ${PIPESTATUS[0]}
