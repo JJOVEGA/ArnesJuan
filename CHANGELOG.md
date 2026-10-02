@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-01 · Sexta autorización: QA sobre `9c53232` NO favorable — QA-023-09 y QA-023-11 cerrados; QA-023-10 abierto con la parada verificada como fiel; QA-023-13 nuevo (un CR al final del `cwd` se recorta y las puertas anclan en otro directorio: deny→allow frente a `9596e39` y 1.33.2); seguridad no despachada; decisión 9 en la cola
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Unos 387 k tokens en la comisión de QA (cifra del arnés).
+
+- **QA** (`docs/qa/REQ-023.md` § «Vuelta excepcional de la sexta autorización»; evidencia en la rama local de evidencia, `cand-1.35.0/evidencia-qa-r6/`, `0d3d0c9`):
+  - **QA-023-09, cerrado.** Batería propia de 36 entradas hostiles contra la verdad de `jq`: 0 diferencias no declaradas. Sección 44: 167/0, con su fail-before demostrado. Los puntos 12 y 13 deniegan en las dos puertas. El host r6 se contrastó con los crudos.
+  - **QA-023-11, cerrado.** CA-45 incorpora la v3b con fidelidad.
+  - **QA-023-10, abierto (`contrato`), lo decide el propietario.** La parada fue fiel: procedimiento sin cambiar, corridas registradas y optimización fuera (`git diff 43b948a 9c53232 -- hooks`, 107 inserciones y 21 supresiones, sin restos). El árbol final cuesta 9,0–9,2 s en 131 072, lo mismo que `43b948a`.
+  - **QA-023-13, nuevo** (`contrato` en REQ-007, `instrumento` en REQ-023). `arnes_sin_cr_transporte` recorta un CR final del `cwd`. Desde un directorio cuyo nombre termina en CR y que enlaza a la raíz, el shell escribe en `<raíz>/src/a.ts`, mientras el hook ancla en otro directorio. Resultado: `echo x > src/a.ts` de la coordinadora y un `sed -i` que cierra un REQ en rojo salen allow, donde `9596e39` y 1.33.2 deniegan.
+    - CA-47 punto 11 («anclado en el `cwd` entero») y CA-66 punto 5 («ninguno nuevo de deny a allow») quedan desmentidos.
+    - Nace con el anclaje en el `cwd` de `104ffd1` (quinta autorización), no con el delta de la sexta.
+    - Exige ofuscación deliberada. Alcanzable desde el host: sin medir.
+  - **Otras comprobaciones:**
+    - gates rc 0;
+    - banco completo de QA: 1488 PASS, 1 FAIL de reloj (sección 38/2, REQ-021 CA-03 (c), calibración de `tests/util/`, no ejerce ningún hook), 12 SKIP, cuadre 1501;
+    - el FAIL de reloj de la sección 25 del desarrollador no se reprodujo; aislado tarda igual en los tres árboles;
+    - regresiones de las secciones 08, 41, 42 y 43: 420 PASS, igual que `43b948a`.
+  - **Campos:**
+    - **REQ-007:** `QA: pendiente`. QA-023-09 y QA-023-11 salen; quedan QA-023-10 y QA-023-13.
+    - **REQ-023:** `QA: aprobado` sobre `9c53232`. QA-023-09 sale y entra QA-023-13 (`instrumento`).
+    - **REQ-031 y REQ-001:** `QA: aprobado` extendido a `9c53232`.
+- **Coordinadora:**
+  - **Seguridad no despachada:** QA no fue favorable (§6 y sexta autorización, punto 5). No se abre otra vuelta.
+  - **Cola:** decisión 9.
+- **Avance (regla 6):** QA-023-09 y QA-023-11 quedan resueltos y verificados. Falta tu decisión sobre QA-023-13 y QA-023-10 (decisión 9), y sobre las fichas 1 y 2 y P-119-A.
+
 ## [GitHub] — 2026-10-01 · REQ-007: write-back de las dos decisiones de implementación de `cd6afa6` (punto 12 en toda llamada que no sea de `Bash`; movimientos del manifiesto ilegible) y tabla de CA-66 contrastada con el banco; validación de QA-023-09 en el host real hecha (evidencia `3eb279d`) — SIN VALIDAR
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (continuación de su comisión) y la coordinadora.
 
