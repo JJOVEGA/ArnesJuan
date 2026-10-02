@@ -272,6 +272,35 @@
 - **Junto a esta decisión siguen pendientes:** la ficha 1 (SEC-115/SEC-118), la ficha 2 (C) y P-119-A. Ninguna está aceptada. Aceptar F7 no cubre QA-023-09 ni QA-023-13.
 - **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. La coordinadora sólo completa lo que la sexta autorización ya cubre: push, CI sobre la cabeza final y actualización del PR #59 en borrador.
 
+**Decisión 9b, preparada el 2026-10-02 (séptima autorización, punto 4): QA-023-10, separando tres cosas. NO autorizada. Ningún residual aceptado.**
+1. **El incumplimiento de latencia medido.** CA-54 exige menos de 5 s en el máximo de análisis de `Bash` (131 072 bytes). El candidato no cumple en ninguna de las dos plataformas medidas:
+
+   | Plataforma | Candidato | `9596e39` | Fuente |
+   |---|---|---|---|
+   | WSL2 (Linux) | 8,6–10,3 s (desarrollador) y 9,0–9,2 s (QA) | 2,9–7,2 s | `evidencia-dev-r6/38-`, `evidencia-qa-r6/25-` |
+   | Windows/MSYS | **20,4–28,9 s**, en las 15 corridas | — (ver punto 2) | `sec-ca54-win/`, `c51c5c7` |
+
+   En WSL2, la base ya incumplía en una de las tres formas. **El incumplimiento está medido y es concluyente en las dos plataformas.**
+2. **El riesgo de agotar el tiempo límite y terminar sin decisión.** Es otra cosa, y es la clase de SEC-115 (ficha 1, no aceptada).
+   - **En WSL2:** ninguna corrida se acerca a los 60 s, ni en el candidato ni en la base.
+   - **En Windows/MSYS, en esta máquina y con una ejecución:** el candidato no llegó al límite (máximo 28,9 s, unas 2,1 veces de margen). **`9596e39` llegó al límite en las 15 corridas del caso máximo**, y un hook cortado así termina sin decisión.
+   - **Lectura:** en estas condiciones, el candidato está más lejos del límite que la base. La base equivale a lo publicado en esta vía, aunque 1.33.2 no se midió en Windows. Eso **no** demuestra que el riesgo no exista: un equipo más lento o más cargado podría llegar al límite, y un margen de 2,1 veces no es una garantía. Tampoco convierte la latencia en aceptable.
+3. **Las plataformas y condiciones realmente comprobadas.**
+   - **WSL2:** Linux 6.18, bash 5.3.9 y jq 1.8.2, en varias corridas de la sonda de QA, de desarrollador y de QA.
+   - **Windows:** 10.0.26200, PortableGit con bash 5.3.15, MSYS 3.6.9 y jq 1.8.2 nativo, con el hook invocado directamente, archivos en NTFS, una ejecución en una máquina y registro previo (`5510675`).
+   - **No comprobado:** el cliente de Claude Code ejecutándose en Windows, otras máquinas, otras versiones de MSYS o Git Bash, Cygwin, y Windows bajo carga.
+   - **Nada de esto valida Windows.**
+- **Opciones** (sustituyen a las de 9b de arriba, que se conservan como historia):
+  - **(A) Aceptar QA-023-10 como residual declarado de 1.35.0**: CA-54 incumplido, con la latencia de la tabla en las notas. Necesita que tú fijes el dueño, el forzador y el vencimiento. REQ-007 no se cierra.
+    - **Consecuencia:** el análisis de `Bash` es más lento que en `9596e39` en Linux (2–3 veces). En Windows, en esta máquina, el candidato termina con decisión donde la base agotaba el tiempo. El riesgo de la ficha 1 sigue sin aceptar y aparte.
+  - **(B) Retener la publicación hasta cumplir CA-54.**
+    - **Consecuencia:** hace falta otra vuelta de diseño. La optimización conservada no bastaba ni en WSL2 (6,5–9,5 s), y en Windows la distancia es de 4 a 6 veces. Es trabajo del tamaño de una versión propia, y mientras tanto los proyectos siguen con la versión publicada.
+  - **(C) Cambiar el contrato de CA-54**, por ejemplo bajando el máximo y el defecto o declarando la cifra por plataforma. **Es decisión exclusivamente tuya:** tu autorización me prohíbe reducir el máximo o subir umbrales.
+    - **Consecuencia:** cambia, en todos los proyectos, qué comandos se deniegan por presupuesto.
+- **Recomendación de la coordinadora:** **(A)**, si tú fijas sus condiciones.
+  - **Por qué:** el incumplimiento es real, pero retener 1.35.0 por él dejaría a los proyectos con una base que, en esta medición de Windows, sí agotaba el tiempo en el caso máximo.
+  - **Lo que (A) no hace:** no acepta que un timeout deje pasar la operación. Ese riesgo sigue en la ficha 1, sin aceptar.
+
 **Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
 
 - **Recomendación de la coordinadora (propuesta, no decisión):**

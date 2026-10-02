@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Séptima autorización: QA sobre `fa070b7` FAVORABLE para la reparación de QA-023-13 (cerrado a nivel de hook, sin regresión); QA-023-14 y QA-023-15 abiertos (`instrumento`); decisión 9b preparada con la comprobación en Windows/MSYS
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (lanzado con Opus, §5) y la coordinadora. Unos 434 k tokens en la comisión de QA (cifra del arnés).
+
+- **QA** (`docs/qa/REQ-023.md` § «Vuelta excepcional de la séptima autorización»; evidencia en `cand-1.35.0/evidencia-qa-r7/`, `c50a44e`):
+  - **QA-023-13, cerrado a nivel de hook.** Las dos puertas deniegan con motivo de CR, sin juzgar otra ruta, y lo denegado deja el disco igual.
+  - **Lo legítimo:** las operaciones legítimas con un `cwd` con CR pasan y escriben lo que deben.
+  - **Regresiones:** ninguna. Las secciones 08 y 41 a 44 dan 667/0, y se conservan los LF de QA-023-09, SEC-117, SEC-119/O-11 y CA-60.
+  - **Movimientos:** ningún deny→allow nuevo.
+  - **El caso CR no se ejerció en el host,** y ninguna sede lo atribuye al host.
+  - **Validación:** banco completo 1569 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO de rendimiento), cuadre 1581; gates rc 0; autoprueba 117/0.
+- **Hallazgos nuevos de QA, los dos `instrumento`:**
+  - **QA-023-14, introducido por `3bc7d3c`:** la reposición del CR crece más que linealmente con el tamaño del campo y corre antes de cualquier techo. Con entradas de cientos de KB, el hook se acerca o pasa al límite de tiempo, la clase de SEC-115. No hay efecto medido en el host.
+  - **QA-023-15, preexistente, igual a P-023-13-A:** la limitación declarada del CR en el texto de `Bash`, que alcanza también al cierre de un REQ.
+- **Campos de QA:**
+  - **REQ-007:** `QA: pendiente`; sale QA-023-13 y entran QA-023-14 y QA-023-15.
+  - **REQ-023:** `QA: aprobado` sobre `fa070b7`; sale QA-023-13.
+  - **REQ-031 y REQ-001:** `QA: aprobado` sobre `fa070b7`.
+- **Coordinadora, decisión 9b preparada:** latencia, riesgo de tiempo límite y condiciones comprobadas, separados. La comprobación en Windows/MSYS está en `sec-ca54-win/` (registro previo `5510675` y resultado `c51c5c7`): el candidato tarda 20,4–28,9 s y CA-54 no se cumple; no llegó a 60 s; `9596e39` llegó al límite en las 15 corridas. 9b sigue sin autorizar.
+- **Avance (regla 6):** QA favorable para la reparación. Sigue la determinación de seguridad sobre el delta.
+
 ## [Interno] — 2026-10-02 · Séptima autorización, write-back (analista): QA-023-13 en CA-47 (puntos 1, 7, 11, 12 y 13), CA-66 (bloque R, recuentos, movimientos y host no ejercido) y notas de CA-24 y CA-60; ADR-016, guía y notas; pregunta nueva P-023-13-A — SIN VALIDAR
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
 
