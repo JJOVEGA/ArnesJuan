@@ -57,11 +57,34 @@ arnes_preludio() {
 # un `tool_name` CON salto no se puedan juzgar como cualquier otro lo deciden CA-47 puntos 12 y 13
 # (`_arnes_id_calcula` y los guardianes), no esta lectura: aqui solo se lee, entero.
 #
+# EL RETORNO DE CARRO SE CUENTA ANTES DEL TRANSPORTE, PORQUE EL TRANSPORTE LO PUEDE BORRAR (QA-023-13).
+# `arnes_jq_str` retira el CR que precede a un salto de linea y el que cierra la salida: es el que
+# anade el jq de Windows a cada linea, y en el flujo de bytes es INDISTINGUIBLE de un CR que forme
+# parte del dato. En Linux un campo que termina en CR lo pierde: medido en cd6afa6, con
+# `"cwd": "<fuera>/d\r"` —un enlace a la raiz— la relativa de `Bash` se anclaba en `<fuera>/d`, otro
+# directorio que el del shell, y `echo x > src/a.ts` de la coordinadora y un `sed -i` que cerraba un
+# REQ en rojo salian allow (9596e39 y 1.33.2 deniegan). Lo que se lea despues del transporte no
+# puede saber si habia un CR. Por eso la MISMA llamada a jq, sobre el valor JSON crudo, declara en la
+# primera linea cuantos CR traen el `tool_name`, el `cwd` y el `file_path`, y con eso:
+#   * un `cwd` con un CR, en cualquier posicion, NO ANCLA: se vacia y queda marcado
+#     (`ARNES_CWD_CR`), y la ruta relativa que dependa de el es no determinable (`_arnes_id_calcula`,
+#     CA-47 punto 7). Las rutas absolutas no dependen de el y se juzgan como siempre;
+#   * el `file_path` y el `tool_name` con un CR quedan marcados (`ARNES_FP_CR`, `ARNES_TOOL_CR`) y se
+#     tratan como los que llevan un salto (CA-47 puntos 12 y 13, por coherencia): juzgar el valor
+#     recortado seria juzgar otra ruta, u otra herramienta;
+#   * en esos dos, si no llevan salto, se REPONE el CR final que el transporte retiro: sin salto, el
+#     unico CR que se pierde es el ultimo, y solo uno (`_arnes_repone_cr`). Asi el motivo cita lo que
+#     llego, y un campo hecho solo de CR no se lee como vacio. Con salto, el punto 12 o 13 decide
+#     primero, y el CR que precedia a un salto interno no se repone.
+# Los campos del agente no se marcan: `arnes_norm_ident` retira todo CR al comparar, por su propia
+# regla, y un `agent_id` que solo era un CR se lee vacio, que es la sesion coordinadora, el lado
+# estricto. El `command` tampoco: su transporte no se toca aqui (el analizador de `Bash` es otra cosa).
+#
 # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
 # salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
 arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
-  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp=''
+  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp=''
   if ! arnes_jq_str "$ARNES_INPUT" -r '[.tool_name // "",
                                         .agent_id // "",
                                         .agent_type // "",
@@ -69,13 +92,16 @@ arnes_parse_input() {
                                         .tool_input.file_path // "",
                                         .tool_input.command // ""]
                                        | map(tostring)
-                                       | (.[0:5] | map(indices("\n") | length | tostring) | join(" ")),
+                                       | ((.[0:5] | map(indices("\n") | length))
+                                          + ([.[0], .[3], .[4]] | map(indices("\r") | length))
+                                          | map(tostring) | join(" ")),
                                          .[]'; then
     ARNES_JQ=''
   fi
   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
+  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0
   if [ -n "$ARNES_JQ" ]; then
-    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp
+    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp
       _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
@@ -83,8 +109,34 @@ arnes_parse_input() {
       _arnes_lee_campo "$n_fp";   ARNES_FP="$ARNES_CAMPO"
       IFS= read -r -d '' ARNES_CMD; } <<< "$ARNES_JQ"
     ARNES_CMD="${ARNES_CMD%$'\n'}"
+    # Fail-closed: un contador que no sea exactamente 0 marca el campo.
+    [ "$r_cwd" = 0 ] || { ARNES_CWD_CR=1; ARNES_CWD=''; }
+    [ "$r_tool" = 0 ] || { ARNES_TOOL_CR=1; _arnes_repone_cr "$n_tool" "$r_tool" "$ARNES_TOOL"; ARNES_TOOL="$ARNES_CAMPO"; }
+    [ "$r_fp" = 0 ] || { ARNES_FP_CR=1; _arnes_repone_cr "$n_fp" "$r_fp" "$ARNES_FP"; ARNES_FP="$ARNES_CAMPO"; }
   fi
   ARNES_INPUT_LISTO=1
+}
+
+# La causa de que el `tool_name` no identifique ninguna herramienta (CA-47 punto 13), para el motivo
+# de los dos guardianes: el salto si lo hay —el motivo de siempre—, y si no, el retorno de carro.
+arnes_causa_herramienta() {   # -> ARNES_CAUSA_HERR
+  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then ARNES_CAUSA_HERR='lleva un salto de linea'
+  else ARNES_CAUSA_HERR='lleva un retorno de carro'; fi
+}
+
+# Repone el CR final que el transporte retiro de un campo SIN saltos de linea. Sin salto, el campo
+# ocupa una sola linea del flujo y lo unico que el transporte le puede quitar es UN retorno de carro:
+# el ultimo, que en Linux precede al separador (o cierra la salida). En Windows —por construccion, sin
+# medir alli— no le quita ninguno: el jq anade su propio CR antes de cada salto y es ese el que se
+# retira, asi que la cuenta de jq y la del valor leido coinciden y no se repone nada. Con salto el campo
+# no se repone: decide primero el punto 12 o 13 de CA-47. Lo que decide es la marca, que salio del valor
+# crudo; la reposicion hace que el motivo cite lo que llego, que un campo hecho solo de CR no quede
+# vacio, y que `Bash␍` no se tome por `Bash` en ninguna otra comparacion.
+_arnes_repone_cr() {   # <saltos del campo> <CR que conto jq en el valor crudo> <valor leido> -> ARNES_CAMPO
+  local quedan="${3//[!$'\r']/}"
+  ARNES_CAMPO="$3"
+  if [ "$1" = 0 ] && [ "${#quedan}" -lt "$2" ] 2>/dev/null; then ARNES_CAMPO+=$'\r'; fi
+  return 0
 }
 
 # Lee UN campo de `arnes_parse_input`: su primera linea y tantas mas como saltos declaro jq.
@@ -300,6 +352,13 @@ arnes_emitir_avisos() {
 # `Seguridad: pendiente` vigente (H-01, `docs/qa/1.32.1-hallazgos.md`; CA-02 de REQ-016
 # nombra esta clase). Lo que Windows añade es el CR que TERMINA cada línea, así que es
 # eso lo que se descuenta: pregunta cerrada, no un patrón que ensanchar.
+#
+# Y SU COSTE, QUE NO ES CERO (QA-023-13): en el flujo de bytes, un CR DEL DATO que
+# precede a un salto —el último carácter de un campo, que va seguido del separador, o el
+# de una línea interna— no se distingue del de transporte, y en Linux también se retira.
+# Para un texto que se lee por cabecera da igual; para un campo cuyo valor DESIGNA algo
+# —un directorio, una ruta, una herramienta— es leer otro. Quien lea campos así cuenta el
+# CR antes, en la misma llamada a jq y sobre el valor crudo (`arnes_parse_input`).
 #
 # La regla vive en `arnes_sin_cr_transporte` —una sola vez, sin forks—: tres copias de la
 # misma normalización se desfasan, y ésta ya se desfasó una vez contra `campos-req.awk`.
@@ -711,7 +770,8 @@ _arnes_id_calcula() {
   # linea, es no determinable (y se aplica el punto 7). La ruta se lee entera (punto 11), pero que
   # archivo escribira la herramienta con ese argumento —el nombre literal, con el salto, o uno
   # recortado— no esta medido, y juzgar solo la ruta entera daria permiso apoyandose en esa conducta.
-  # SOLO el `file_path`: ni el `cwd` (que solo ancla) ni los destinos de `Bash`, que el shell escribe
+  # SOLO el `file_path`: ni el `cwd` (que solo ancla: con un salto se admite, y con un retorno de
+  # carro no ancla, mas abajo) ni los destinos de `Bash`, que el shell escribe
   # tal como los deletrea el comando —y que ademas nunca llevan un salto: el detector trocea por
   # palabras y sus llamadores leen sus destinos de uno en uno, por lineas—.
   case "$p" in
@@ -720,6 +780,15 @@ _arnes_id_calcula() {
                             "escribe la ruta sin saltos de linea"; return 0
              fi ;;
   esac
+  # Lo mismo con un retorno de carro, por coherencia con el punto 12 (QA-023-13). Lo decide la cuenta
+  # que hizo jq sobre el valor crudo (`ARNES_FP_CR`, `arnes_parse_input`), no el texto que llega aqui:
+  # el transporte retira el CR del final, y hasta cd6afa6 la puerta juzgaba `<raiz>/docs/l` cuando la
+  # herramienta escribe en `<raiz>/docs/l␍` —un enlace a `src/a.ts`—, que es permitir otra ruta. Mismo
+  # alcance que el salto: el `file_path` de toda llamada que no sea de `Bash`.
+  if [ "${ARNES_FP_CR:-0}" = 1 ] && [ "${ARNES_TOOL:-}" != Bash ] && [ "$p" = "${ARNES_FP:-}" ]; then
+    _arnes_nodet "lleva un retorno de carro, y no se sabe que archivo se escribiria con esa ruta: el nombre literal, con el retorno de carro, o uno recortado" \
+                 "escribe la ruta sin retornos de carro"; return 0
+  fi
   if [ "${#p}" -gt "$ARNES_ID_MAX" ]; then
     _arnes_nodet "mide ${#p} caracteres, mas de los $ARNES_ID_MAX que el sistema abre" "acorta la ruta"; return 0
   fi
@@ -734,6 +803,13 @@ _arnes_id_calcula() {
     /*) abs="$p" ;;
     [A-Za-z]:[/\\]*) abs="${p//\\//}" ;;
     *)
+      # QA-023-13: un `cwd` con un retorno de carro no ancla. El transporte de la entrada retira el
+      # CR que lo cierra, y anclar en lo que queda era juzgar OTRO directorio que el del shell;
+      # `arnes_parse_input` lo detecta en el valor crudo y lo vacia. Se dice por que, no «falta».
+      if [ "${ARNES_CWD_CR:-0}" = 1 ]; then
+        _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria" \
+                     "escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro"; return 0
+      fi
       c="${ARNES_CWD:-}"
       case "$c" in
         /*) ;;

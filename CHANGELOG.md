@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-02 · Séptima autorización, implementación (desarrollador): QA-023-13 reparado a nivel de hook — el CR se cuenta antes del transporte; un `cwd` con CR no ancla rutas relativas, que pasan a no determinables con motivo propio; el mismo tratamiento para el `file_path` y el nombre de herramienta; sección 44 (1501 → 1581) — SIN VALIDAR
+> Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Unos 343 k tokens (cifra del arnés para la comisión).
+
+- **Técnica:** la misma llamada a `jq` de `arnes_parse_input` cuenta los CR del `tool_name`, el `cwd` y el `file_path` sobre el valor JSON crudo, antes de cualquier normalización. Sin procesos nuevos.
+- **Variante mínima, justificada:**
+  - un `cwd` con CR no ancla, y una ruta relativa pasa a ser no determinable (CA-47 punto 7);
+  - una ruta absoluta o un comando que no escribe siguen juzgándose;
+  - es la misma estructura que un `cwd` ausente o inexistente.
+- **Mismo tratamiento en los campos con la misma causa de transporte:** un CR en el `file_path` lo hace no determinable, y un nombre de herramienta con CR no identifica ninguna herramienta, en coherencia con los puntos 12 y 13. Los campos del agente no producen ningún movimiento por esta causa y no se tocan.
+- **Anotado y no tocado** (por instrucción: no reescribir el analizador de `Bash`): un vector de CR en el texto del comando de `Bash`. Es preexistente en los cuatro árboles y no es un movimiento. Evidencia: `evidencia-dev-r7/03-` y `14-`.
+- **Comprobado por el desarrollador:**
+  - el caso de QA-023-13 sale allow en `cd6afa6` y **deny con motivo de CR** con el arreglo, en las dos puertas;
+  - los controles legítimos no cambian;
+  - ningún movimiento de deny a allow nuevo frente a `9596e39`;
+  - sección 44: 247 casos; secciones 41 a 44, 600/0;
+  - banco completo: **1570 PASS, 0 FAIL, 11 SKIP**, cuadre 1581;
+  - autoprueba 117/0 y gates rc 0.
+- **sha256 (16 hex):** `lib.sh` 4a9b05fab6ab92a0, `guard-codigo.sh` 94ad57ff577d2964, `guard-completado.sh` 872916a33041f11d y `guard.sh` 2e7ec8cb189d025c (sin cambios).
+- **Avance (regla 6):** el código de QA-023-13 queda en el candidato. Faltan el host, la comprobación de QA-023-10 en Windows/MSYS, el write-back del analista, QA y seguridad.
+
 ## [Interno] — 2026-10-02 · Séptima autorización del propietario registrada (literal e íntegra, copia verificada con `diff`: 0 diferencias): 9a, reparar QA-023-13 en una vuelta excepcional acotada; 9b no autorizada, se prepara su decisión
 > Origen: Interno (commit local; esta autorización sólo permite push si las revisiones salen favorables) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

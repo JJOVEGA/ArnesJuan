@@ -1641,7 +1641,13 @@ done
 # contra 43b948a (fail-before) y contra 9596e39 (la referencia de los movimientos), y en la candidata por
 # guard.sh las 32 que juzga un guardián; los motivos de F y T; y P1, el análisis campo a campo, en la
 # candidata y en 43b948a. Ninguna sección existente cambia su número.
-CASOS_ESPERADOS=1501
+# Y 1501 → 1581 por QA-023-13 (séptima autorización): +80 en la sección 44, bloque R —el retorno de carro
+# de la entrada se cuenta antes del transporte: un `cwd` con CR no ancla, y un `file_path` o un
+# `tool_name` con CR se tratan como los que llevan un salto—: 23 filas, cada una en la candidata, contra
+# cd6afa6 (fail-before) y contra 9596e39, y en la candidata por guard.sh las 8 que juzga un guardián; los
+# motivos del CR; y P2, en la candidata y en cd6afa6. Las 167 de antes no cambian ni de nombre ni de
+# veredicto.
+CASOS_ESPERADOS=1581
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

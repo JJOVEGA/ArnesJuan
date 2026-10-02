@@ -307,10 +307,13 @@ arnes_guard_completado() {
   arnes_parse_input
   # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta,
   # y se trata como una escritura no determinable por Edit/Write/MultiEdit (punto 7): esta puerta la
-  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir.
-  if [[ "$ARNES_TOOL" == *$'\n'* ]]; then
-    arnes_cita_ruta "$ARNES_TOOL"
-    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, lleva un salto de linea y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
+  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir. Con un retorno
+  # de carro, igual (QA-023-13): el transporte retiraba el del final y `Edit␍` se leia como `Edit` aqui
+  # y como otra herramienta en la segunda llamada a jq, que juzgaba un `Write` vacio y dejaba pasar el
+  # cierre de un REQ en rojo.
+  if [[ "$ARNES_TOOL" == *$'\n'* ]] || [ "${ARNES_TOOL_CR:-0}" = 1 ]; then
+    arnes_cita_ruta "$ARNES_TOOL"; arnes_causa_herramienta
+    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, $ARNES_CAUSA_HERR y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
   fi
   # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
   # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un

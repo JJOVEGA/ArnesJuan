@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1334 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1581 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -298,6 +298,10 @@ Tres reglas nacidas de fallos reales:
 | Integridad de la entrada (44) | CA-47 punto 12: un `file_path` con salto de línea —el que ya se denegaba (F1, con C10), el que la lectura entera habría permitido (F2: `app/*.ts`, un patrón exacto, una creación, el enlace de CA-49 (i)), con `..` detrás (F3) y fuera del ámbito o legítimo (F4, con C9)— | **deny** con el motivo de no determinable (la ruta lleva un salto de línea; corrígela sin saltos), a todo agente en `guard-completado` |
 | Integridad de la entrada (44) | CA-47 punto 13: un `tool_name` con salto de línea (`Write␊`, `Bash␊`, `Edit␊`, y `Write␊` del `desarrollador`) (T1) | **deny**: no identifica ninguna herramienta; en 43b948a y 9596e39 `Write␊` y `Edit␊` **allow** y `Bash␊` **deny** |
 | Integridad de la entrada (44) | los motivos de F y T, y `arnes_parse_input` campo a campo con un salto en cada uno (P1) | dicen su causa y no nombran ninguna herramienta como salida; los seis campos **intactos** (en 43b948a, desplazados) |
+| Integridad de la entrada (44) | QA-023-13, el retorno de carro en el `cwd`: desde `<fuera>/d␍` —un enlace a la raíz, con `<fuera>/d` un directorio normal—, `echo x > src/a.ts` de la coordinadora, un `sed -i` y un `Edit` relativo que cierran un REQ en rojo; y el CR en medio (`e␍f`) y antes de un salto (`g␍␊h`) (R1–R5) | **deny**: el `cwd` con CR no ancla y el motivo lo dice; contra **cd6afa6** (fail-before) **allow** —anclaba en `<fuera>/d`—, salvo el CR en medio; contra **9596e39** **deny** |
+| Integridad de la entrada (44) | con el mismo `cwd` con CR, lo que no depende de él —escrituras y cierres por ruta absoluta, `ls -la`, el `desarrollador` escribiendo código (RC1–RC6)—; la escritura relativa fuera del ámbito (RM1); y las mismas operaciones desde un `cwd` sin CR (RS1–RS3) | RC como siempre en los tres árboles; RM1 **deny** (de allow a deny, declarado); RS como cd6afa6, y RS3 (L8) **deny** en 9596e39 |
+| Integridad de la entrada (44) | un `file_path` con CR —el enlace dentro de la raíz `docs/l␍`, un `Edit` que cierra `REQ-901.md␍` en rojo cuando `REQ-901.md` está en verde, una ruta fuera del ámbito y un `file_path` que sólo es un CR (RF1–RF4)— y un `tool_name` con CR —`Bash␍` con `ls` y un `file_path` en `src/`, `Edit␍` que cierra un REQ en rojo, `Write␍` del `desarrollador`, `Bash␍` con `echo x > src/a.ts` (RT1–RT4)— | **deny**, como los que llevan un salto; en cd6afa6 y 9596e39 **allow** (el CR final se recortaba y se juzgaba otra ruta u otra herramienta), salvo RT4, **deny** en los tres |
+| Integridad de la entrada (44) | los motivos del CR, y `arnes_parse_input` con un CR final en el `tool_name`, el `cwd` y el `file_path` (P2) | dicen su causa y cómo corregirla, sin herramientas como salida; el CR se **cuenta** antes del transporte (en cd6afa6, recortado) |
 
 **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
 que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
@@ -312,7 +316,9 @@ la raíz, así que las rutas relativas de los casos existentes siguen designando
 trae su propio emisor porque sus filas necesitan un `cwd` distinto de la raíz, o ninguno. Y es una
 prueba **a nivel de hook**: la validación en el host real (CA-66, punto 6) es de la coordinadora.
 La sección 44 también trae su propio emisor: pone en el `cwd` y en el agente su texto LITERAL, saltos
-de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás.
+de línea incluidos, porque lo que mide es que ningún contenido de un campo desplace a los demás. Su
+bloque R (QA-023-13) mide el retorno de carro, que el transporte de jq retira del final de un campo y
+que por eso se cuenta antes; su árbol de fail-before es cd6afa6, no 43b948a.
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

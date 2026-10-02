@@ -8,15 +8,18 @@
 # llevan entre paréntesis su fila de la tabla de CA-66 (E1-E5, G1-G3, F1-F4, T1, P1).
 #   N  lo que la candidata deniega (E, F, T); el motivo de la candidata se comprueba por lo que cita;
 #   C  lo legítimo con el MISMO `cwd` de varias líneas (G), y C9/C10, el salto final en un `file_path`;
-#   P  el análisis de la entrada, campo a campo.
-# TRES ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`); 43b948a, el árbol con la regresión (fail-before);
-# y 9596e39, la referencia de antes de la regresión, que es la que cuenta para los movimientos. Los dos,
-# materializados POR SHA (`mat44`, copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por
-# un guardián se comprueba además en la candidata POR `guard.sh` (CA-66, versionado, punto 3).
+#   P  el análisis de la entrada, campo a campo;
+#   R  el retorno de carro (QA-023-13): un `cwd` con CR no ancla, y un `file_path` o un `tool_name` con
+#      CR se tratan como los que llevan un salto; con sus controles (RC, RS), su movimiento (RM) y P2.
+# TRES ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`); el del fail-before —43b948a, el árbol con la
+# regresión, y en el bloque R cd6afa6, el de antes de reparar QA-023-13—; y 9596e39, la referencia de
+# antes de la regresión, que es la que cuenta para los movimientos. Materializados POR SHA (`mat44`,
+# copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por un guardián se comprueba además en
+# la candidata POR `guard.sh` (CA-66, versionado, punto 3).
 # Esto NO es la validación en el host: el efecto en disco lo comprueba la coordinadora.
-CASOS_ESPERADOS_SECCION=167
-PISO_AUTONOMO_SECCION=59  # 19 preámbulo (líneas 1-19, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 20-43) + 16 bloque indivisible mayor (fila44, líneas 89-104) · REQ-014 CA-18
-seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
+CASOS_ESPERADOS_SECCION=247
+PISO_AUTONOMO_SECCION=62  # 22 preámbulo (líneas 1-22, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 23-46) + 16 bloque indivisible mayor (fila44, líneas 97-112) · REQ-014 CA-18
+seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09 y QA-023-13; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
 REPO44="${SEC_DIR%/}/../../../.."; MAT44_RUTAS='hooks'; MAT44_REG=''; MAT44_T0=0; MAT44_REF='-'
 mat44_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT44_REG, UNA sola línea (la lee `sonda_lee`)
   local mot="${2//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
@@ -42,10 +45,15 @@ mat44() {
   mat44_reg ok - "$n" 6
 }
 R43A="$RAIZ/r43-$BASHPID"; R43A_OK=no; R43A_MOT=''; R95="$RAIZ/r95-$BASHPID"; R95_OK=no; R95_MOT=''
+RCD="$RAIZ/rcd-$BASHPID"; RCD_OK=no; RCD_MOT=''
 if mat44 43b948a "$R43A"; then R43A_OK=si
 else R43A_MOT="43b948a no se materializó (${MAT44_REG#*motivo=})"; R43A_MOT="${R43A_MOT%% corrida=*})"; fi
 if mat44 9596e39 "$R95"; then R95_OK=si
 else R95_MOT="9596e39 no se materializó (${MAT44_REG#*motivo=})"; R95_MOT="${R95_MOT%% corrida=*})"; fi
+if mat44 cd6afa6 "$RCD"; then RCD_OK=si
+else RCD_MOT="cd6afa6 no se materializó (${MAT44_REG#*motivo=})"; RCD_MOT="${RCD_MOT%% corrida=*})"; fi
+# El árbol del fail-before de cada bloque: 43b948a para QA-023-09; el bloque R lo cambia a cd6afa6.
+H44='QA-023-09'; FB44=43b948a; FB44_DIR="$R43A"; FB44_OK="$R43A_OK"; FB44_MOT="$R43A_MOT"
 v44() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
 
 # --- LA PUERTA REAL -------------------------------------------------------------------------
@@ -72,11 +80,11 @@ juicio44() {
   elif [ "$esp" = deny ] && [ "$cita" != - ] && [[ "$M44" != *"$cita"* ]]; then v44 FAIL "$nom  el motivo no cita «$cita»  <${M44:0:240}>"
   else v44 PASS "$nom  ($D44)"; fi
 }
-etq44() {   # <árbol> <candidata> <esperado en el árbol> -> ETQ44
+etq44() {   # <árbol: fb (el del fail-before) | 95> <candidata> <esperado en el árbol> -> ETQ44
   case "$1:$2:$3" in
-    43*:deny:allow)  ETQ44='fail-before: permite' ;;
-    43*:*:deny-otra) ETQ44='fail-before: deniega juzgando otra ruta' ;;
-    43*:allow:deny)  ETQ44='deniega por el cwd desplazado: la reparación lo restituye' ;;
+    fb:deny:allow)   ETQ44='fail-before: permite' ;;
+    fb:*:deny-otra)  ETQ44='fail-before: deniega juzgando otra ruta' ;;
+    fb:allow:deny)   ETQ44='deniega por el cwd desplazado: la reparación lo restituye' ;;
     95*:deny:allow)  ETQ44='permite: preexistente, de allow a deny declarado' ;;
     95*:deny:deny)   ETQ44='antes del regreso, deniega' ;;
     95*:allow:deny)  ETQ44='deniega: instancia de L8, movimiento declarado' ;;
@@ -84,20 +92,20 @@ etq44() {   # <árbol> <candidata> <esperado en el árbol> -> ETQ44
   esac
 }
 declare -A MC44=()
-# fila44 <id> <guardián> <candidata> <43b948a> <9596e39> <cita|-> <json>: un caso por árbol y, si el
-# guardián no es guard.sh, otro de la candidata por guard.sh.
+# fila44 <id> <guardián> <candidata> <fail-before> <9596e39> <cita|-> <json>: un caso por árbol y, si el
+# guardián no es guard.sh, otro de la candidata por guard.sh. El fail-before es el árbol de FB44.
 fila44() {
-  local id="$1" s="$2" ec="$3" e43="$4" e95="$5" cita="$6" json="$7" nom="QA-023-09 $1" c43
+  local id="$1" s="$2" ec="$3" e43="$4" e95="$5" cita="$6" json="$7" nom="$H44 $1" c43
   if ! json_no_vacio "$nom candidata" "$json"; then
-    json_no_vacio "$nom 43b948a" "$json"; json_no_vacio "$nom 9596e39" "$json"; FAIL=$((FAIL + 3))
+    json_no_vacio "$nom $FB44" "$json"; json_no_vacio "$nom 9596e39" "$json"; FAIL=$((FAIL + 3))
     [ "$s" = guard.sh ] || { json_no_vacio "$nom candidata por guard.sh" "$json"; FAIL=$((FAIL + 1)); }
     return 0
   fi
   g44 "$HOOKS_DIR" "$s" "$json"; MC44[$id]="$M44"; juicio44 "$nom candidata" "$ec" "$cita"
   if [ "$s" != guard.sh ]; then g44 "$HOOKS_DIR" guard.sh "$json"; juicio44 "$nom candidata por guard.sh" "$ec" "$cita"; fi
-  etq44 43 "$ec" "$e43"
-  if [ "$R43A_OK" = si ]; then g44 "$R43A/hooks" "$s" "$json"; c43=-; [ "$e43" != deny-otra ] || c43="$cita"; juicio44 "$nom 43b948a: $ETQ44" "$e43" "$c43"
-  else v44 SKIP "$nom 43b948a: $ETQ44  $R43A_MOT"; fi
+  etq44 fb "$ec" "$e43"
+  if [ "$FB44_OK" = si ]; then g44 "$FB44_DIR/hooks" "$s" "$json"; c43=-; [ "$e43" != deny-otra ] || c43="$cita"; juicio44 "$nom $FB44: $ETQ44" "$e43" "$c43"
+  else v44 SKIP "$nom $FB44: $ETQ44  $FB44_MOT"; fi
   etq44 95 "$ec" "$e95"
   if [ "$R95_OK" = si ]; then g44 "$R95/hooks" "$s" "$json"; juicio44 "$nom 9596e39: $ETQ44" "$e95" -
   else v44 SKIP "$nom 9596e39: $ETQ44  $R95_MOT"; fi
@@ -218,4 +226,72 @@ else
   if [ -n "$P44" ] && [ "$P44" != "$P44_ESP" ]; then v44 PASS "$nom44  43b948a (fail-before): los desplaza  <$P44>"
   else v44 FAIL "$nom44  43b948a (fail-before): no los desplaza, el caso no distingue  <$P44>"; fi
 fi
-rm -rf "$R43A" "$R95"
+
+# --- R: el retorno de carro en la entrada (QA-023-13; séptima autorización) ---------------------
+# El transporte de jq retira el CR que cierra un campo. Con `cwd` = `<fuera>/d␍`, un enlace a la raíz,
+# cd6afa6 anclaba en `<fuera>/d` —un directorio normal fuera— y permitía; el shell escribe en la raíz.
+# Un `cwd` con CR no ancla (la relativa es no determinable); un `file_path` o un `tool_name` con CR se
+# tratan como los que llevan un salto (CA-47 puntos 12 y 13). Fail-before: cd6afa6; referencia, 9596e39.
+H44='QA-023-13'; FB44=cd6afa6; FB44_DIR="$RCD"; FB44_OK="$RCD_OK"; FB44_MOT="$RCD_MOT"
+CR=$'\r'; FCR="$RAIZ/fuera44cr-$BASHPID"; mkdir -p "$FCR/d" "$FCR/g${NL}h"
+ln -s "$P" "$FCR/d$CR"; ln -s "$P" "$FCR/e${CR}f"; ln -s "$P" "$FCR/g$CR${NL}h"
+ln -s ../src/a.ts "$P/docs/l$CR"; cp "$R/REQ-900.md" "$R/REQ-901.md$CR"   # el REQ «con CR» va en rojo
+CRD44="('cwd') contiene un retorno de carro"; CRF44='lleva un retorno de carro, y no se sabe que archivo se escribiria'
+CRT44='lleva un retorno de carro y no identifica ninguna herramienta'
+fila44 "R1 coordinadora: echo x > src/a.ts desde <fuera>/d\\r (enlace a la raíz)" guard-codigo.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/d$CR" - 'command=echo x > src/a.ts')"
+fila44 "R2 sed -i que cierra un REQ en rojo desde <fuera>/d\\r"        guard-completado.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/d$CR" - "command=sed -i 's/en-revisión/completado/' requirements/REQ-900.md")"
+fila44 "R3 Edit relativo que cierra un REQ en rojo desde <fuera>/d\\r" guard-completado.sh deny allow deny "$CRD44" "$(cierre44 "$FCR/d$CR" requirements/REQ-900.md)"
+fila44 "R4 CR en medio: echo x > src/a.ts desde <fuera>/e\\rf"         guard.sh deny deny deny "$CRD44" "$(j44 Bash "$FCR/e${CR}f" - 'command=echo x > src/a.ts')"
+fila44 "R5 CR antes de un salto: echo x > src/a.ts desde <fuera>/g\\r\\nh" guard.sh deny allow deny "$CRD44" "$(j44 Bash "$FCR/g$CR${NL}h" - 'command=echo x > src/a.ts')"
+# Lo que no depende del `cwd` se juzga como siempre, con el mismo `cwd`; y la misma operación sin CR.
+fila44 "RC1 coordinadora: Write ABSOLUTO a docs/n.md desde <fuera>/d\\r" guard.sh allow allow allow - "$(j44 Write "$FCR/d$CR" - "file_path=$P/docs/n.md" content=x)"
+fila44 "RC2 cierre ABSOLUTO de un REQ en verde desde <fuera>/d\\r"      guard.sh allow allow allow - "$(cierre44 "$FCR/d$CR" "$R/REQ-901.md")"
+fila44 "RC3 ls -la desde <fuera>/d\\r"                                 guard.sh allow allow allow - "$(j44 Bash "$FCR/d$CR" - 'command=ls -la')"
+fila44 "RC4 coordinadora: Write ABSOLUTO a src/a.ts desde <fuera>/d\\r" guard.sh deny deny deny "$SRC44" "$(j44 Write "$FCR/d$CR" - "file_path=$P/src/a.ts" content=x)"
+fila44 "RC5 cierre ABSOLUTO de un REQ en rojo desde <fuera>/d\\r"       guard.sh deny deny deny "$QA44" "$(cierre44 "$FCR/d$CR")"
+fila44 "RC6 el desarrollador: echo x > src/a.ts desde <fuera>/d\\r"     guard.sh allow allow allow - "$(j44 Bash "$FCR/d$CR" desarrollador 'command=echo x > src/a.ts')"
+fila44 "RM1 coordinadora: echo x > n.md desde <fuera>/d\\r (de allow a deny, declarado)" guard.sh deny allow allow "$CRD44" "$(j44 Bash "$FCR/d$CR" - 'command=echo x > n.md')"
+fila44 "RS1 sin CR: echo x > src/a.ts desde <raíz>"                    guard.sh deny deny deny "'src/a.ts', que es código de la app" "$(j44 Bash "$P" - 'command=echo x > src/a.ts')"
+fila44 "RS2 sin CR: sed -i que cierra un REQ en rojo desde <raíz>"     guard.sh deny deny deny "'requirements/REQ-900.md' y menciona 'completado'" "$(j44 Bash "$P" - "command=sed -i 's/en-revisión/completado/' requirements/REQ-900.md")"
+fila44 "RS3 sin CR: echo x > src/a.ts desde <fuera>/d (designa <fuera>/d/src/a.ts: L8)" guard.sh allow allow deny - "$(j44 Bash "$FCR/d" - 'command=echo x > src/a.ts')"
+# El `file_path` con CR (punto 12, por coherencia): el valor recortado designaba otro archivo.
+fila44 "RF1 coordinadora: Write <raíz>/docs/l\\r (enlace dentro hacia src/a.ts)" guard-codigo.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$P/docs/l$CR" content=x)"
+fila44 "RF2 Edit que cierra <REQ-901.md\\r> (en rojo; REQ-901.md en verde)" guard-completado.sh deny allow allow "$CRF44" "$(cierre44 "$P" "$R/REQ-901.md$CR")"
+fila44 "RF3 coordinadora: Write <raíz>/docs/n.md\\r (fuera del ámbito)" guard.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$P/docs/n.md$CR" content=x)"
+fila44 "RF4 un file_path que solo es un retorno de carro"               guard.sh deny allow allow "$CRF44" "$(j44 Write "$P" - "file_path=$CR" content=x)"
+# El `tool_name` con CR (punto 13, por coherencia): recortado, se juzgaba otra herramienta.
+fila44 "RT1 coordinadora: Bash\\r con ls y file_path <raíz>/src/a.ts"   guard-codigo.sh deny allow allow "$CRT44" "$(j44 "Bash$CR" "$P" - 'command=ls' "file_path=$P/src/a.ts")"
+fila44 "RT2 coordinadora: Edit\\r que cierra un REQ en rojo"            guard-completado.sh deny allow allow "$CRT44" "$(j44 "Edit$CR" "$P" - "file_path=$R/REQ-900.md" 'old_string=Estado: en-revisión' 'new_string=Estado: completado')"
+fila44 "RT3 el desarrollador: Write\\r a src/a.ts"                      guard-completado.sh deny allow allow "$CRT44" "$(j44 "Write$CR" "$P" desarrollador "file_path=$P/src/a.ts" content=x)"
+fila44 "RT4 coordinadora: Bash\\r con echo x > src/a.ts (ya se denegaba)" guard.sh deny deny deny "$CRT44" "$(j44 "Bash$CR" "$P" - 'command=echo x > src/a.ts')"
+nom44="QA-023-13 los motivos del retorno de carro dicen su causa y cómo corregirla, y no nombran ninguna herramienta como salida"; mal44=''
+for id44 in "R1 coordinadora: echo x > src/a.ts desde <fuera>/d\\r (enlace a la raíz)" "R3 Edit relativo que cierra un REQ en rojo desde <fuera>/d\\r" \
+            "RF1 coordinadora: Write <raíz>/docs/l\\r (enlace dentro hacia src/a.ts)" "RF4 un file_path que solo es un retorno de carro" \
+            "RT1 coordinadora: Bash\\r con ls y file_path <raíz>/src/a.ts" "RT2 coordinadora: Edit\\r que cierra un REQ en rojo"; do
+  m44="${MC44[$id44]:-}"; [ -n "$m44" ] || { mal44+=" ${id44%% *}: sin motivo"; continue; }
+  r44="${m44#*retorno de carro}"   # la causa y lo que sigue, sin la cita
+  [ "$r44" != "$m44" ] || mal44+=" ${id44%% *}: no dice su causa"
+  grep -Eqi '(^|[^a-z])(bash|write|edit|multiedit|shell|consola|terminal|python)([^a-z]|$)' <<< "$r44" && mal44+=" ${id44%% *}: <${r44:0:120}>"
+  case "${id44%% *}" in
+    R1|R3) [[ "$m44" == *'Para corregirlo, escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro'* ]] || mal44+=" ${id44%% *}: no dice como corregirlo" ;;
+    RF*)   [[ "$m44" == *'Para corregirlo, escribe la ruta sin retornos de carro'* ]] || mal44+=" ${id44%% *}: no dice como corregirlo" ;;
+  esac
+done
+if [ -n "$mal44" ]; then v44 FAIL "$nom44 $mal44"; else v44 PASS "$nom44"; fi
+# P2: el CR se cuenta antes del transporte; el `cwd` con CR no ancla, y el CR final del `tool_name` y del
+# `file_path` llega (en cd6afa6, recortado).
+P44_IN="$(jq -cn '{tool_name:"Bash\r",cwd:"/tmp/d\r",tool_input:{file_path:"/tmp/f\r",command:"ls"}}')"
+printf -v P44_ESP '%q|' "Bash$CR" '' "/tmp/f$CR" ls 1 1 1
+p44cr() {   # <dir de hooks> -> P44
+  P44="$( . "$1/lib.sh" 2>/dev/null; ARNES_INPUT="$P44_IN"; ARNES_INPUT_LISTO=''; arnes_parse_input
+          printf '%q|' "$ARNES_TOOL" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "${ARNES_TOOL_CR-}" "${ARNES_CWD_CR-}" "${ARNES_FP_CR-}" )"
+}
+nom44="QA-023-13 P2 arnes_parse_input cuenta el retorno de carro antes del transporte"; p44cr "$HOOKS_DIR"
+if [ "$P44" = "$P44_ESP" ]; then v44 PASS "$nom44  candidata"; else v44 FAIL "$nom44  candidata: <$P44> en vez de <$P44_ESP>"; fi
+if [ "$RCD_OK" != si ]; then v44 SKIP "$nom44  cd6afa6 (fail-before)  $RCD_MOT"
+else
+  p44cr "$RCD/hooks"
+  if [ -n "$P44" ] && [ "$P44" != "$P44_ESP" ]; then v44 PASS "$nom44  cd6afa6 (fail-before): lo recorta  <$P44>"
+  else v44 FAIL "$nom44  cd6afa6 (fail-before): no lo recorta, el caso no distingue  <$P44>"; fi
+fi
+rm -rf "$R43A" "$R95" "$RCD" "$FCR"
