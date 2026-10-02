@@ -1,0 +1,5 @@
+cabecera: 2026-10-02T08:44:11-06:00 bash=5.3.15(1)-release jq=/c/Users/JVega/AppData/Local/Programs/bin/jq jq-1.8.2 timeout=/usr/bin/timeout uname=MINGW64_NT-10.0-26200 3.6.9-b4195d69.x86_64
+techo=131072 forma=A bytes=131018 destinos=8258 | 9596e39 ms: 60180(allow,rc124) 60138(allow,rc124) 60237(allow,rc124) 60157(allow,rc124) 60218(allow,rc124) | candidato ms: 20396(allow,rc0) 21395(allow,rc0) 21700(allow,rc0) 21564(allow,rc0) 20713(allow,rc0) | carga=0.00 0.00 0.00
+techo=131072 forma=B bytes=131028 destinos=7341 | 9596e39 ms: 60198(allow,rc124) 60201(allow,rc124) 60201(allow,rc124) 60194(allow,rc124) 60205(allow,rc124) | candidato ms: 21348(allow,rc0) 28917(allow,rc0) 22528(allow,rc0) 24028(allow,rc0) 25942(allow,rc0) | carga=0.00 0.00 0.00
+techo=131072 forma=C bytes=131034 destinos=5506 | 9596e39 ms: 60258(allow,rc124) 60264(allow,rc124) 60227(allow,rc124) 60239(allow,rc124) 60226(allow,rc124) | candidato ms: 27473(allow,rc0) 26063(allow,rc0) 23087(allow,rc0) 20976(allow,rc0) 21517(allow,rc0) | carga=1.37 1.11 0.58
+rc=0
