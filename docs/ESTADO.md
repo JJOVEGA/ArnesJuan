@@ -47,6 +47,16 @@
     - **Mediciones de QA de las dos lecturas del analista** (`docs/qa/REQ-023.md`, «Novena autorización, fase 2: mediciones…»; cabeza `244c4f1`, hooks iguales a `befc17a`; Linux/WSL2, bash 5.3.9, jq 1.8.2; hook directo y shell aparte; sin host). No hay hallazgos.
       - **(a)** Medida en parte: LC7 da allow, conforme con el contrato, y el shell no une. Ningún caso escrito discrimina el pliegue de `guard-git`, así que esa parte queda **no medida**.
       - **(b)** **No escrita en el contrato; no medida.**
+    - **Caso (b) añadido al contrato (2026-10-03, posterior a `c4ad408`; SIN VALIDAR):**
+      - **LC10** en CA-66: la continuación al final de la línea que abre un heredoc. LC10 sólo fija lo que ya exige el punto 19; el resto de la forma queda pendiente en **P-LC10-A** (REQ-007, «Preguntas abiertas»).
+      - **Opciones de P-LC10-A:** (A) denegar por la forma, como SEC-124, que es lo que recomienda el analista y exige cambiar el punto 19; (B) unir las líneas como el shell; (C) fijar sólo lo del punto 19.
+      - **Medición de QA** (`docs/qa/REQ-023.md`, «medición de LC10»; `c4ad408`, hooks iguales a `befc17a`; Linux/WSL2, bash 5.3.9, jq 1.8.2; hook directo y shell aparte; sin host):
+        - lo que LC10 ya fija sale `allow` hoy en los tres árboles, que es el fail-before;
+        - el analizador empieza el cuerpo una línea antes que el shell;
+        - nuevo **QA-023-23** (`instrumento`, preexistente en `9596e39` y `v1.33.2`): una orden de git prohibida o una escritura protegida en la línea siguiente pasan las cuatro puertas, y el shell las ejecuta.
+      - **QA-023-23 no se ha pasado** a `Hallazgos abiertos:` ni al registro de seguridad: lo decide el propietario.
+      - **La lectura (a)**, el pliegue de `guard-git` ante una barra escapada, queda **no medida y fuera de esta versión** por decisión del propietario (REQ-007, Historial).
+      - **El contrato de la fase 2 NO está completo** para implementar LC10 mientras P-LC10-A siga abierta. El resto (HC1–HC9, LC1–LC9) sí lo está.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -438,7 +448,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 13:20
+## Estado derivado — 2026-10-03 14:50
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -448,7 +458,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `244c4f1` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `c4ad408` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

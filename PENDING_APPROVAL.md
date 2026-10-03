@@ -513,6 +513,25 @@
   - Pregunta: «SEC-124 (B): para cumplir P1, P2 y «no se juzga ningún otro comando», el analista fija la denegación POR LA FORMA del caso de R-047 §3, a todo agente (también el desarrollador) y aunque lo que sigue sea inocuo (HC5, HC6). Lo publicado sólo denegaba cuando lo que seguía era una escritura protegida, así que esto deniega algo más que lo publicado. ¿Lo aceptas?». **Respuesta: «Sí, por la forma (Recomendado)»**.
   - Pregunta: «SEC-125: preservar el significado (P7) hace que un caso que lo publicado denegaba sólo porque el trozo previo a la continuación casaba con el ámbito pase a permitirse, porque el destino real, una vez unido, está fuera (LC8). Es un movimiento deny→allow nuevo, seguro por efecto. ¿Lo aceptas?». **Respuesta: «Sí, declarado (Recomendado)»**.
   - **Efecto:** la frontera de SEC-124 (por la forma y a todo agente) y la clase LC8 de SEC-125 (deny→allow declarado) quedan confirmadas por el propietario. Ya no son sólo una precisión del analista.
+- **Autorización del propietario, 2026-10-03, posterior a `c4ad408` (literal, la tarea del mensaje):**
+
+  > ## Tarea única — completar el contrato con el caso (b)
+  > Autorizo al analista a escribir UN caso en CA-66: la continuación de línea al
+  > final de la línea que abre un heredoc. Debe fijar el comportamiento esperado
+  > en las cuatro puertas, coherente con los puntos 18 y 19 de CA-47 y con la
+  > decisión registrada sobre SEC-124 (denegar por la forma, a todo agente). Sin
+  > cambiar ningún otro caso HC/LC ni ningún otro criterio. Actualiza sólo las
+  > sedes que ese caso obliga a tocar (ADR-016, notas e índice si procede).
+  >
+  > Después, QA mide ese caso sobre el código vigente sin modificarlo: hook
+  > directo y shell aparte, con cabeza, entorno y capa. Si contradice el
+  > contrato, se registra como hallazgo sin reparar ni ajustar el contrato.
+  >
+  > Commit local al terminar, marcado SIN VALIDAR, con trazabilidad en ESTADO y
+  > docs/qa/REQ-023.md. El caso (a), pliegue de guard-git ante barra escapada,
+  > queda registrado como no medido y fuera de esta versión.
+
+  **Lo que no hace, según el mismo mensaje:** no se despacha al desarrollador, no se implementan SEC-124 ni SEC-125, y no se tocan SEC-126, los no aceptados, `AGENTS.md` ni los contadores.
 
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 

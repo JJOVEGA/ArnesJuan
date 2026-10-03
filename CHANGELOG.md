@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: caso LC10 (continuación al final de la línea que abre un heredoc) añadido a CA-66 con la decisión P-LC10-A pendiente; medición de QA sobre el código vigente; QA-023-23 nuevo (`instrumento`, preexistente) — SIN VALIDAR
+> Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5) y la coordinadora. Unos 0,15 M tokens del analista y 0,13 M de QA (cifras del arnés).
+
+- **Autorización:** literal en `PENDING_APPROVAL.md`, en la entrada de la novena autorización.
+- **Analista** (`requirements/REQ-007.md`): fila **LC10** en CA-66, fase 2, y pregunta **P-LC10-A** en «Preguntas abiertas», con las opciones (A), (B) y (C) y la recomendación (A). Además, Correspondencia e Historial; la lectura (a) queda registrada como no medida y fuera de esta versión. No toca ningún otro caso ni criterio, ni ADR-016, notas o índice.
+- **QA** (`docs/qa/REQ-023.md`, «medición de LC10»; `c4ad408`; Linux/WSL2; hook directo y shell aparte; sin host; tres árboles):
+  - lo que LC10 ya fija sale `allow` hoy (fail-before);
+  - **QA-023-23** (`instrumento`, preexistente): el analizador empieza el cuerpo del heredoc una línea antes que el shell, y lo que el shell ejecuta en esa línea no lo ve ninguna puerta;
+  - QA-023-23 sin pasar a `Hallazgos abiertos:` ni al registro de seguridad: lo decide el propietario.
+- **Sin cambios:** código, banco, cabeceras, `AGENTS.md` y contadores. No se despachó al `desarrollador`.
+- **Avance (regla 6):** el contrato de la fase 2 está completo salvo LC10. Falta la decisión del propietario sobre P-LC10-A y sobre el registro de QA-023-23.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: mediciones de QA de las dos lecturas del analista (sin hallazgos; una medida en parte y otra no escrita en el contrato) y preparación de la implementación manual de SEC-124 y SEC-125 por el propietario
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 0,15 M tokens de QA (cifra del arnés).
 
