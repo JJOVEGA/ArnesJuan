@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: mediciones de QA de las dos lecturas del analista (sin hallazgos; una medida en parte y otra no escrita en el contrato) y preparación de la implementación manual de SEC-124 y SEC-125 por el propietario
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5) y la coordinadora. Unos 0,15 M tokens de QA (cifra del arnés).
+
+- **QA** (`docs/qa/REQ-023.md`, «Novena autorización, fase 2: mediciones de las lecturas (a) y (b) del analista»; cabeza `244c4f1`; Linux/WSL2; hook directo y shell aparte; sin host):
+  - **(a)** el caso escrito (LC7) da allow, conforme con el contrato, y el shell no une. Ningún caso escrito discrimina el pliegue de `guard-git`: esa parte queda **no medida**;
+  - **(b)** **no escrita en el contrato; no medida**;
+  - ningún hallazgo, tampoco independiente.
+- **`docs/ESTADO.md`:** estado «implementación manual pendiente», con las sedes de código y del banco por función y sección, el criterio al que responde cada una, y los comandos de las secciones aisladas, de las regresiones, del banco completo y de las gates.
+- **Sin cambios:** código, banco, contrato, `QA:`, `Seguridad:`, `AGENTS.md` y contadores. No se despachó al `desarrollador`.
+- **Avance (regla 6):** el propietario tiene lo necesario para implementar sin buscar. Falta su implementación, y después QA y seguridad de la fase 2.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2, contrato (analista): SEC-124 (opción B) y SEC-125 en REQ-007 — CA-47 puntos 18 y 19, CA-66 con casos por identificador de R-047, movimientos, validación por capa y coste; ADR-016, notas `[1.35.0]` y guía coherentes — PENDIENTE DE IMPLEMENTACIÓN Y DE VALIDACIÓN, SIN VALIDAR
 > Origen: Interno (commit local SIN VALIDAR, autorizado por el propietario el 2026-10-03; sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
 

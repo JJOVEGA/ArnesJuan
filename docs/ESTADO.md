@@ -10,13 +10,13 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0: octava autorización terminada, con su presupuesto agotado; SEC-124 (B), SEC-125 (reparar) y SEC-123 (corregir F3) decididos el 2026-10-03; plan propuesto completo; ejecución PENDIENTE de autorización (2026-10-03)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0: novena autorización — fase 1 (SEC-123) validada; fase 2 (SEC-124 y SEC-125) con el contrato comiteado SIN VALIDAR e IMPLEMENTACIÓN MANUAL PENDIENTE del propietario (2026-10-03)
 
 **Este bloque es el único vigente en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`). Todo lo que está debajo es historia.
 
 - **Cabezas (comprobadas el 2026-10-03):**
-  - `cand/1.35.0` local en `c0c8be2`, 8 commits por delante del remoto y **sin push**;
-  - `origin/cand/1.35.0` y el PR #59 (borrador) en `45368ce`. Su CI `37032468437` está en verde **para `45368ce`** y no acredita `c0c8be2`;
+  - `cand/1.35.0` local **por delante de `244c4f1`** (contrato de la fase 2, SIN VALIDAR), con un commit de trazabilidad encima, y **sin push**. Antes: `3f96e6b` (fase 1), `fff53f4` (traspaso) y `c0c8be2` (R-047);
+  - `origin/cand/1.35.0` y el PR #59 (borrador) en `45368ce`, según la última consulta de red del 2026-10-03. Su CI `37032468437` está en verde **para `45368ce`** y no acredita la cabeza local;
   - evidencia en la rama local `evidencia/prueba-despacho-2026-09-14`, en `af2eddd` (`cand-1.35.0/evidencia-seg-r8/`, de R-047).
 - **Intervención terminada: la octava autorización** (2026-10-02).
   - Hecho: SEC-122 (las dos caras), QA-023-14 y P-023-13-A en `9220c71`, con la pasada correctiva `befc17a`. QA favorable sobre `5669a2c` (re-verificación en `57129fb`). Seguridad R-047 sobre `57129fb`: lo reparado es conforme, a nivel de hook en Linux/WSL2.
@@ -29,7 +29,7 @@
 
   **No autoriza ejecutar.** No cambia criterios, estados, veredictos ni contadores (el de REQ-023 sigue en 3 de 3).
 - **Pendiente del propietario, sin aceptar:**
-  - la autorización de ejecución de esas tres decisiones;
+  - la implementación manual de SEC-124 y SEC-125 (abajo, en «Fase 2»); la autorización de ejecución ya la dio la novena;
   - 9b (QA-023-10, CA-54);
   - fichas 1 (SEC-115/SEC-118) y 2 (C);
   - P-119-A (F2, F5, F7 y el límite de F3);
@@ -44,8 +44,41 @@
     - **Impedimento:** un control de seguridad del proveedor detuvo el despacho al `desarrollador`. **No se implementó nada:** código y banco sin cambios.
     - **Lo que no se hizo para rodearlo:** no se reintentó, no se partió el encargo para mandar una parte sola, no se delegó y no se cambió de modelo ni de configuración.
     - **Lo que queda sin hacer:** el código y las pruebas de SEC-124 y SEC-125, su QA, su seguridad y su commit. SEC-124 y SEC-125 siguen `abierto`. La pasada correctiva de la fase 2 no se ha usado.
+    - **Mediciones de QA de las dos lecturas del analista** (`docs/qa/REQ-023.md`, «Novena autorización, fase 2: mediciones…»; cabeza `244c4f1`, hooks iguales a `befc17a`; Linux/WSL2, bash 5.3.9, jq 1.8.2; hook directo y shell aparte; sin host). No hay hallazgos.
+      - **(a)** Medida en parte: LC7 da allow, conforme con el contrato, y el shell no une. Ningún caso escrito discrimina el pliegue de `guard-git`, así que esa parte queda **no medida**.
+      - **(b)** **No escrita en el contrato; no medida.**
+    - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
+      - **Especificación:** `requirements/REQ-007.md`.
+        - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
+        - CA-66, «versionado de la fase 2», con la tabla **HC1–HC9 / LC1–LC9**, sus cuatro columnas, los movimientos, la validación por capa y el coste.
+        - La tabla de sedes del analista: «Sedes y pruebas del versionado del 2026-10-03, fase 2», l. ~2093.
+        - Fuente de los casos: R-047 §3 y §4, y `cand-1.35.0/evidencia-seg-r8/` en la rama de evidencia.
+      - **Sedes de código** (líneas en `244c4f1`, a confirmar al editar):
+
+        | Sede | Responde a |
+        |---|---|
+        | `hooks/lib.sh`, `arnes_bash_sin_texto` (l. 1659; bucle de heredocs; devuelve `ARNES_RC_CR` en l. 1745; la constante, en l. 1359) | CA-47 p. 18; CA-66 HC1–HC9 |
+        | `hooks/lib.sh`, `arnes_bash_escrituras` (l. 1766) | CA-47 p. 19; CA-66 LC1–LC9 |
+        | `hooks/guard-codigo.sh`, traducción de los códigos de `arnes_bash_escrituras` (l. 61–70) | CA-47 p. 18, el motivo con `SEC-124` |
+        | `hooks/guard-completado.sh`, la misma traducción (l. 332–343) | CA-47 p. 18, el motivo |
+        | `hooks/guard-git.sh`, `arnes_guard_git` (l. 166; el pliegue de SEC-009 en l. 210–213) | CA-47 p. 18 (la forma la deniega `guard.sh` aunque `guard-git` permita); p. 19 / P9, sólo como referencia que hay que comprobar |
+      - **Sedes del banco:**
+        - `tests/escenarios/hooks/secciones/45-dependencia-del-proceso-y-cr-del-comando.sh`, o una sección nueva; si es nueva, el campo `Archivos:` de REQ-007 lo actualiza el analista;
+        - `run.sh`, con `CASOS_ESPERADOS` (l. 1659, hoy 1787) y el `CASOS_ESPERADOS_SECCION` de la sección;
+        - `tests/escenarios/hooks/README.md`.
+
+        Todo ello responde a CA-66, fase 2.
+      - **Comandos** (desde la raíz del worktree):
+        - Sección 45 sola: `bash tests/escenarios/hooks/run.sh secciones/45-*.sh`
+        - Regresión de SEC-047 / SEC-119 / SEC-122: `bash tests/escenarios/hooks/run.sh secciones/08-*.sh secciones/41-*.sh secciones/33-acento-y-clave-2-*.sh secciones/43-*.sh secciones/45-*.sh`
+        - Regresión que añade el contrato (heredocs de REQ-001, REQ-005 CA-40/CA-41, escrituras por `Bash`, `guard-git`): `bash tests/escenarios/hooks/run.sh secciones/06-*.sh secciones/07-*.sh secciones/09-*.sh secciones/29-*.sh`
+        - Fail-before: los mismos selectores con `ARNES_HOOKS_DIR=<copia de los hooks de 3f96e6b>`; columnas `9596e39` y `v1.33.2` por la misma vía.
+        - Banco completo: `bash tests/escenarios/hooks/run.sh` · autoprueba: `bash tests/escenarios/hooks/autoprueba-corredor.sh`
+        - Gates de §7: `for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done` · `jq -e . hooks/hooks.json >/dev/null` · `jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null`
+      - **Después del código:** QA (Opus, §5), con la pasada correctiva de la fase 2 si hace falta; luego seguridad con QA favorable; luego el commit local. Esas comisiones de revisión sí las puede despachar la coordinadora, porque no producen código.
 - **Impedimento (2026-10-03, posterior a `fff53f4`; anterior a la novena autorización):** el propietario autorizó implementar SEC-124 (B), SEC-125 y la corrección de F3, con analista, desarrollador, QA y seguridad, una pasada correctiva como máximo y sin reiniciar contadores. Al iniciar la ejecución, un control de seguridad del proveedor detuvo la respuesta de la coordinadora. **No se ejecutó ningún paso, no se despachó a ningún agente y no cambió ningún archivo de código ni de contrato.** No se reintentó, no se delegó y no se cambió de modelo. SEC-123, SEC-124 y SEC-125 siguen `abierto`.
-- **Siguiente paso real:** que **una persona** revise las fuentes del traspaso y redacte, o decida no redactar, §3 y §7 del plan (`TRASPASO.md` §6 y §8). La coordinadora no las reintenta ni las delega. Después vendría la autorización de ejecución. Hasta entonces no se despacha a nadie y no se abre ninguna vuelta.
+- **Siguiente paso real (2026-10-03, manda sobre la frase de debajo):** que el propietario implemente SEC-124 y SEC-125 con la lista de «Fase 2» de arriba. El contrato sustituye a §3 y §7 del plan.
+- **Siguiente paso anterior (historia):** que **una persona** revise las fuentes del traspaso y redacte, o decida no redactar, §3 y §7 del plan (`TRASPASO.md` §6 y §8). La coordinadora no las reintenta ni las delega. Después vendría la autorización de ejecución. Hasta entonces no se despacha a nadie y no se abre ninguna vuelta.
 - **Conservado en un commit local del 2026-10-03, sin push:** este archivo, `PENDING_APPROVAL.md`, `CHANGELOG.md`, `propuesta-v1.35.0/plan-implementacion.md` y `propuesta-v1.35.0/TRASPASO.md`. Es historial local, **no** una copia remota: `origin` y el PR #59 siguen en `45368ce`. **Sin seguimiento:** los cinco archivos históricos de `propuesta-v1.35.0/` (`TRASPASO.md` §3).
 
 ## Historia — octava autorización terminada; SEC-124 impidió la determinación favorable (2026-10-02)
@@ -405,7 +438,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 13:09
+## Estado derivado — 2026-10-03 13:20
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -415,7 +448,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `3f96e6b` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `244c4f1` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
