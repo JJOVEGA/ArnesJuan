@@ -1656,7 +1656,7 @@ done
 # Y 1741 → 1787 por la pasada correctiva de la octava autorización (P-122-A (1), QA-023-16 y QA-023-17):
 # +46 en la sección 45, bloque C contra 9220c71 (fail-before) y 9596e39 —13 filas, 50 casos—, menos los
 # 4 de G1, que pasa al bloque C con su nuevo veredicto (deny).
-CASOS_ESPERADOS=1787
+CASOS_ESPERADOS=1852
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

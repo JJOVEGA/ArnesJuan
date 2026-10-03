@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: sección 46 del banco con las filas HC1–HC9 (SEC-124) y su fail-before contra 3f96e6b; sin código
+> Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · implementación manual del propietario, sin comisiones.
+
+- **Banco:** nueva `tests/escenarios/hooks/secciones/46-heredocs-y-continuaciones-de-linea.sh` (molde de la 45; cuatro árboles: candidata, `3f96e6b`, `9596e39`, `v1.33.2`), con HC1–HC9 según CA-66 fase 2; los casos reutilizan `t3` H2 y `t4` E1, E2 y E9 de la evidencia de R-047 §3 por copia. `CASOS_ESPERADOS` 1787 → 1852.
+- **Fail-before medido:** HC1–HC4, HC5a y HC6 fallan en la candidata (`allow`, esperado `deny`); los controles pasan. Es el estado previo al punto 18.
+- **Sin cambios:** `hooks/`, REQ-007, `AGENTS.md` y contadores. Faltan LC1–LC10 y el código.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: autorización del propietario de un despacho nuevo al desarrollador registrada y NO ejecutada (volvería a producir, reformulado, el despacho que detuvo un control del proveedor); la implementación sigue siendo manual
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
 
