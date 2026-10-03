@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Candidato 1.35.0: decisiones del propietario sobre SEC-124 (B), SEC-125 (reparar antes de publicar) y SEC-123 (corregir F3) registradas; continuidad corregida; traspaso para revisión humana; el plan sigue INCOMPLETO
+> Origen: Interno (commit local, sin push, autorizado por el propietario el 2026-10-03) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- **Decisiones:** `PENDING_APPROVAL.md` § Resueltas, entrada del 2026-10-03, con el texto literal del propietario. La decisión 11 queda resuelta (B), y SEC-123 y SEC-125 quedan anotados en la entrada pendiente con su «Espera» puesto al día. **No autorizan ejecutar**, y ningún hallazgo queda resuelto por documentarse.
+- **Continuidad:** `docs/ESTADO.md` tiene un único bloque manual vigente y conserva los anteriores como historia; el bloque derivado no se tocó.
+- **Plan:** `propuesta-v1.35.0/plan-implementacion.md` sigue **incompleto y sin autorizar implementación**. A §3 y §7 un control de seguridad del proveedor les interrumpió la redacción otra vez el 2026-10-03; no se reintentó ni se delegó.
+- **Traspaso:** `propuesta-v1.35.0/TRASPASO.md` reúne el estado, el trabajo sin comitear, las fuentes por sección, la cobertura, las preguntas para la revisión humana y las decisiones pendientes.
+- **Precisión:** que la propuesta histórica de SEC-047 del 2026-09-29 sigue igual no se afirma por las fechas de sus archivos. Se comparó con copias comiteadas: cuatro de los cinco archivos tienen contenido idéntico (`856d97d`, `e1df4b1`), y `evidencia/control-positivo-inventario.md` **no se verificó**, porque no hay referencia previa (`TRASPASO.md` §3). Esos cinco archivos siguen sin seguimiento.
+- **Sin cambios:** código, contratos, veredictos, estados, contadores. Un único commit local; sin push ni CI.
+- **Avance (regla 6):** el trabajo queda conservado y entregable a una persona revisora. Falta que esa persona redacte, o decida no redactar, §3 y §7. Este trabajo hacía falta porque, sin él, la continuidad contradecía la cola y las decisiones no tenían sede.
+
 ## [Interno] — 2026-10-02 · Octava autorización: determinación de seguridad R-047 sobre `57129fb` (código de `befc17a`) — SEC-122 y SEC-119 mitigados en el candidato; QA-023-14, QA-023-15 y los tres defectos de la pasada conformes; SEC-124 nuevo (`contrato`, introducido por `9220c71`) impide publicar con las notas actuales; sin push ni CI; decisión 11 en la cola
 > Origen: Interno (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` y la coordinadora. Unos 394 k tokens en la comisión de seguridad (cifra del arnés).
 

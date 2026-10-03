@@ -36,10 +36,10 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-10-01] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118 y hueco C, pendientes; P-119-A pendiente; **decisión 9a resuelta (séptima autorización: QA-023-13 en reparación); 9b (QA-023-10) pendiente y no autorizada**; fichas 3 y 4 y decisiones 4 a 8 resueltas
+### [2026-09-27, puesta al día 2026-10-03] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118, hueco C, P-119-A, SEC-120 y **9b (QA-023-10)** pendientes y no aceptados; **decisión 11 resuelta (opción B), SEC-125 «reparar antes de publicar» y SEC-123 «corregir F3» decididos el 2026-10-03, con la ejecución pendiente de autorización**; fichas 3 y 4 y decisiones 4 a 10 resueltas
 
 - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
-- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2, P-119-A y la decisión 9b, y se complete la reparación de SEC-119 y O-11 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha.
+- **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2, P-119-A y la decisión 9b, y se complete la reparación de SEC-119 y O-11 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha. *(Puesta al día 2026-10-03: la reparación de SEC-119 y O-11 está hecha y con seguridad conforme (R-047). Para **publicar** faltan ahora, además de las fichas 1 y 2, P-119-A y 9b: la ejecución, la validación y la revisión de SEC-124 (B) y SEC-125 y la corrección de F3 (SEC-123), decididas el 2026-10-03 y sin autorización de ejecución; la decisión sobre SEC-120; y una corrida de CI sobre la cabeza final.)*
 
 **Ficha 1 — SEC-115 y SEC-118 (`instrumento`, abiertos, NO aceptados): un hook que no emite decisión —por tiempo (SEC-115) o por el tamaño de su propio motivo (SEC-118)— deja pasar el cierre entero.** *(SEC-118 añadido y fórmula de la limitación corregida el 2026-09-29, por R-045 §6.)*
 - **Consecuencia reproducida.** R-044-C sobre `cdcad5d` (2026-09-28, WSL2/Linux): `QA: pendiente (…)` con ≈ 255 KB de evidencia → deny en **73,6 s**; `Write` de 2 025 113 bytes → **80,2 s** (1 012 650 bytes → 20,5 s). CA-A16 (Claude Code CLI 2.1.272, `claude -p`, WSL2, un intento más un control `deny`, 2026-09-28): un hook que agota su timeout sin decidir **deja pasar la herramienta**. El REQ se cerraría con QA y seguridad pendientes: dejan de correr **todas** las puertas del cierre. **No comprobado** en la sesión interactiva del editor ni en Windows.
@@ -330,7 +330,7 @@
 
 **QA-023-14** (`instrumento`, introducido por `3bc7d3c`; R-046 coincide): va con la **ficha 1**, como regresión de coste del candidato. Si se abre la vuelta de la decisión 10, se repara en ella.
 
-**Decisión 11 — PENDIENTE (añadida el 2026-10-02): SEC-124, registrado por seguridad en R-047 sobre el delta de la octava autorización.**
+**Decisión 11 — RESUELTA por el propietario el 2026-10-03 (§ Resueltas, entrada de esa fecha, texto literal): opción (B), con denegación por motivo explícito, sin eliminar caracteres ni juzgar un comando distinto, y aceptando la restricción de uso legítimo descrita en R-047 §3. La ejecución NO está autorizada todavía.** *Texto original, conservado:* **Decisión 11 — PENDIENTE (añadida el 2026-10-02): SEC-124, registrado por seguridad en R-047 sobre el delta de la octava autorización.**
 - **Qué es:** un movimiento de deny a allow introducido por `9220c71` y no declarado. Está en el tratamiento del CR en un heredoc.
   - Medido como seguro por efecto en bash de Linux.
   - Descansa en una premisa no escrita sobre el shell.
@@ -352,8 +352,10 @@
 
 **Junto a esta decisión, registrados en R-047 (`instrumento`, no impiden por sí solos):**
 - **SEC-123:** un límite ya declarado en F3 y en el punto 16 de CA-47, que está mal cuantificado y no dice que su consecuencia es un permiso. Es preexistente (1.33.2 también lo permite), y desde el host sólo se alcanza inyectando. P-119-A no puede presentarse sin corregir esos datos.
+  - **Decidido por el propietario el 2026-10-03 (§ Resueltas):** corregir la descripción de F3, separando lo medido de lo inferido y declarando la consecuencia. **No** acepta el riesgo, **no** da por reparado el mecanismo y **no** resuelve P-119-A. Ejecución pendiente de autorización.
 - **SEC-125:** preexistente y fuera del delta: una forma de escritura por `Bash` que el detector de escrituras no reconoce. No está declarada como límite.
   - **Opciones:** declararla en las notas (el mínimo que recomienda el auditor), o repararla en su propio vehículo.
+  - **Decidido por el propietario el 2026-10-03 (§ Resueltas):** **reparar antes de publicar**; «una continuación de línea no demuestra por sí sola intención de evadir controles». Ejecución pendiente de autorización; el plan propone hacerlo en la misma comisión que SEC-124.
 
 **Registrado, cerrado el 2026-09-30: QA-023-08** (`contrato`, baja, preexistente, contra REQ-007 CA-46 (b)). Lo cerró QA en la vuelta de la quinta autorización (`docs/qa/REQ-023.md` §9): CA-46 (b) está versionado y la puerta deniega todo `Edit`/`MultiEdit` sobre un REQ ilegible. *Texto original:* el criterio decía que con NUL en disco decide «la transición», y la puerta decidía si la edición menciona el estado terminal. Responsable: `analista-requerimientos` (write-back).
 
@@ -362,9 +364,93 @@
   - **QA-023-02 / SEC-117:** es de severidad crítica y de realismo no bajo, pero preexistente y ajeno al alcance de 1.35.0. **El auditor (R-045 §3) recomienda lo mismo que la coordinadora:** publicarlo declarado y abrir su REQ de reparación de inmediato, como parche propio, con revisión el 2026-10-06. Motivo: el defecto ya está en 1.33.2 y en `v1.34.0`, que son las versiones instaladas, así que retener 1.35.0 no protege a nadie y deja vivo el bypass por variante que 1.35.0 cierra dentro de su frontera.
     - **Condiciones del auditor:** notas correctas y ficha 1 corregida (ya hecho aquí). Además, conviene ejecutar el lado del CLI en una sesión real antes de reparar.
     - **REQ-001:** el auditor recomienda añadir `SEC-117 (instrumento)` a su `Hallazgos abiertos:` sin tocar su `Estado:`. REQ-001 se reabriría por §9 cuando el REQ de reparación versione CA-10/CA-11. QA pide que tu decisión sobre esta ficha lo resuelva de forma expresa. **Registrarlas aquí no las convierte en riesgos aceptados.**
-- **Espera:** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9b** (QA-023-10). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, y su vuelta terminó con QA no favorable por QA-023-13. La 9a (séptima autorización, 2026-10-02) abrió la vuelta que lo repara, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la séptima autorización (QA-023-13 y la preparación de la decisión 9b), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
+- **Espera (puesta al día 2026-10-03; manda sobre el párrafo histórico de debajo):**
+  - **Estado:** `cand/1.35.0` local en `c0c8be2`, **sin push**; `origin` y el PR #59 (borrador) en `45368ce`, con CI `37032468437` en verde **sólo para `45368ce`**. La intervención de la octava autorización **terminó**: implementación, QA, pasada correctiva, re-verificación y seguridad R-047. **Su presupuesto está agotado** y su push y su CI siguen sin hacer, condicionados a una determinación de seguridad favorable al delta que SEC-124 impidió.
+  - **Decidido el 2026-10-03 (§ Resueltas):** decisión 11 = (B); SEC-125 = reparar antes de publicar; SEC-123 = corregir la descripción de F3. **Ninguna de las tres autoriza ejecutar.**
+  - **Pendiente del propietario, sin aceptar:** la **autorización de ejecución** de esas tres (plan en `propuesta-v1.35.0/plan-implementacion.md`); la **decisión 9b** (QA-023-10, CA-54); las **fichas 1** (SEC-115/SEC-118) y **2** (C); **P-119-A** (F2, F5, F7 y el límite de F3); **SEC-120** (vence el 2026-10-29).
+  - **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. **Cerrar cualquier REQ** sigue impedido mientras esta entrada esté aquí.
+- **Espera (texto anterior, conservado como historia):** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9b** (QA-023-10). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, y su vuelta terminó con QA no favorable por QA-023-13. La 9a (séptima autorización, 2026-10-02) abrió la vuelta que lo repara, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la séptima autorización (QA-023-13 y la preparación de la decisión 9b), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`; es la fuente de estas decisiones, por declaración del propio mensaje):
+
+> Autorizo una única actualización documental para dejar coherente la continuidad de v1.35.0 y preparar la siguiente ejecución. No autoriza modificar código ni despachar todavía al desarrollador, QA o seguridad.
+>
+> **Base**
+>
+> Trabaja en `/home/juan/dev/ArnesJuan-v1.35`, rama `cand/1.35.0`, cabeza reportada `c0c8be2`. El PR #59 y el remoto siguen en `45368ce`; su CI no acredita la cabeza local.
+>
+> Conserva los cambios preexistentes. No cambies de rama ni uses instrucciones de otro worktree.
+>
+> **1. Registra estas decisiones; este mensaje es su fuente**
+>
+> Yo, Juan Vega, el 2026-10-03, confirmo:
+>
+> - **SEC-124: opción B.** Restaurar la denegación mediante un motivo explícito para el caso descrito en R-047 §3, sin eliminar silenciosamente caracteres ni juzgar un comando distinto. Acepto la restricción concreta de uso legítimo descrita en ese informe.
+> - **SEC-125: reparar antes de publicar.** Una continuación de línea no demuestra por sí sola intención de evadir controles.
+> - **SEC-123: corregir la descripción de F3**, separando lo medido de lo inferido y declarando la consecuencia. No acepto el riesgo ni doy por reparado el mecanismo.
+>
+> Conserva una copia literal de estas decisiones en la sede vigente de `PENDING_APPROVAL.md`, identificando este mensaje y su fecha. Referénciala desde el plan, sin reconstruir mensajes anteriores.
+>
+> Resuelve únicamente las preguntas que estas elecciones contestan. La ejecución, los demás riesgos y la publicación siguen pendientes.
+>
+> **2. Corrige la continuidad**
+>
+> Actualiza las partes manuales de `docs/ESTADO.md` y el cierre «Espera» de la cola:
+>
+> - cabeza local y remota;
+> - intervención terminada y presupuesto agotado;
+> - decisiones ya tomadas;
+> - siguiente paso real.
+>
+> Elimina las contradicciones entre bloques vigentes conservando el historial como historial. No edites manualmente el bloque derivado ni borres cambios ajenos.
+>
+> **3. Completa el plan al nivel necesario para encargar el trabajo**
+>
+> En `propuesta-v1.35.0/plan-implementacion.md`:
+>
+> - Sustituye el diseño técnico obligatorio por las propiedades que deben cumplirse, las restricciones y las dependencias. La técnica de implementación corresponde al desarrollador.
+> - Completa la validación prevista con resultados esperados, controles legítimos y referencias a los casos existentes de R-047. No hace falta copiar reproducciones ejecutables.
+> - Incluye ambas reparaciones en una misma comisión propuesta del desarrollador y la corrección documental de F3.
+> - Define los archivos y contratos afectados, la evidencia reutilizable, las condiciones de salida y la condición de parada.
+> - Propón el presupuesto de comisiones y pasadas correctivas sin reiniciar contadores.
+> - Distingue la comprobación pendiente en el CLI dentro de WSL de la integración con la extensión de VS Code.
+>
+> Conserva las propuestas históricas de SEC-047 del 29 de septiembre. Identifica su fecha y carácter histórico desde el plan; no las mezcles con el alcance actual ni las reescribas.
+>
+> Si el documento queda completo para decidir la ejecución, cambia su aviso a **«Plan propuesto completo; implementación pendiente de autorización»**. Si falta una parte esencial, conserva el aviso de incompleto y nombra el impedimento.
+>
+> **4. Límites**
+>
+> No aceptes CA-54, SEC-115/118, el hueco C, SEC-120 ni las fronteras restantes de P-119-A. No cambies criterios normativos, estados de requisitos, veredictos ni contadores en esta intervención.
+>
+> Reutiliza la evidencia existente: sin pruebas, mediciones, auditorías generales ni nuevas comisiones. Si las reglas vigentes exigen un rol específico para alguna edición, identifica esa dependencia sin asumir sus facultades.
+>
+> La pausa de seguridad de la sesión anterior sigue siendo un impedimento registrado. No intentes reproducir contenido bloqueado ni sortear controles. Completa sólo las partes permitidas y declara cualquier limitación restante.
+>
+> **Entrega**
+>
+> Un resumen breve con:
+> - documentos actualizados;
+> - decisiones registradas y fuente;
+> - orden de implementación;
+> - presupuesto propuesto;
+> - autorización concreta que faltaría para ejecutar.
+>
+> Sin commits, push, CI, fusión, cierre de requisitos, tags, publicación ni cambios en consumidores. No habilites conectores: no son necesarios para este encargo.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Base comprobada antes de editar (2026-10-03):** worktree `/home/juan/dev/ArnesJuan-v1.35`, rama `cand/1.35.0` en `c0c8be2`, 8 commits por delante de `origin/cand/1.35.0`. `origin` y el PR #59 (borrador) están en `45368ce`, comprobado con `git ls-remote` y `gh pr view`; su CI `37032468437` es de `45368ce` y **no acredita `c0c8be2`**. En el árbol, sólo lo preexistente: `M docs/ESTADO.md` y `?? propuesta-v1.35.0/`. Instrucciones: el `AGENTS.md` de este worktree.
+- **Qué resuelve, y sólo eso:**
+  - **Decisión 11 (SEC-124):** opción (B). Se elige entre las opciones de la entrada pendiente; R-047 §3 recomendaba (A) y objetaba a (B) que «juzgaría una estructura distinta de la que ejecuta el shell». La forma que fija el propietario —denegación con **motivo explícito**, **sin** eliminar caracteres **ni** juzgar un comando distinto— es la que responde a esa objeción, y el plan la escribe como propiedad.
+  - **SEC-125:** de las dos opciones de R-047 §4 (declarar en las notas, o reparar en su propio vehículo), **reparar antes de publicar**. Meter la reparación en la misma comisión que SEC-124 es una **propuesta** del plan, pedida en el punto 3 de este mensaje, no una autorización.
+  - **SEC-123:** corregir la descripción de F3 (CA-47 F3 y punto 16, adenda de ADR-016, notas, descripción de P-119-A). **No** acepta el riesgo, **no** da por reparado el mecanismo y **no** resuelve P-119-A, que sigue pendiente (F2, F5, F7 y el límite de F3).
+- **Qué NO resuelve:** la ejecución (ninguna comisión autorizada; el presupuesto de la octava autorización está agotado), CA-54 (9b), SEC-115/118 (ficha 1), el hueco C (ficha 2), P-119-A, SEC-120 y la publicación. **Ningún residual queda aceptado.**
+- **Qué no cambia esta entrada:** ningún criterio, estado, veredicto, campo `Hallazgos abiertos:` ni contador. SEC-123, SEC-124 y SEC-125 siguen `abierto` en REQ-007 hasta que se reparen o corrijan y se verifiquen. El de REQ-023 sigue agotado (3 de 3).
+- **Dependencias de rol para ejecutarlo:** el contrato y el write-back (§9) son del `analista-requerimientos`, porque §6 de este `AGENTS.md` no declara la vía proporcional; el código de `hooks/` es sólo del `desarrollador`; después QA (Opus, §5) y seguridad con QA favorable. Plan: `propuesta-v1.35.0/plan-implementacion.md`.
 
 ### RESUELTA (propietario, 2026-10-02, octava autorización) — **Reparación agrupada de SEC-122 (ambas caras), QA-023-14, P-023-13-A / QA-023-15 y la corrección de F3**; intervención excepcional agrupada sin reiniciar contadores, con una pasada correctiva dentro del alcance; texto de plataformas autorizado
 

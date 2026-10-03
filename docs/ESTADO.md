@@ -10,9 +10,83 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0 (PR #59): SEC-117 reparado, validado en el host real y con QA y seguridad aprobados; SIN publicar; esperando las fichas 1, 2 y 4 y la decisión 7 (2026-09-30)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0: octava autorización terminada, con su presupuesto agotado; SEC-124 (B), SEC-125 (reparar) y SEC-123 (corregir F3) decididos el 2026-10-03; plan propuesto completo; ejecución PENDIENTE de autorización (2026-10-03)
 
-**Este bloque manda en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`, base `origin/main` = `713ac68`). La rama local `main` está desfasada: no se usa. Los bloques de abajo son históricos.
+**Este bloque es el único vigente en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`). Todo lo que está debajo es historia.
+
+- **Cabezas (comprobadas el 2026-10-03):**
+  - `cand/1.35.0` local en `c0c8be2`, 8 commits por delante del remoto y **sin push**;
+  - `origin/cand/1.35.0` y el PR #59 (borrador) en `45368ce`. Su CI `37032468437` está en verde **para `45368ce`** y no acredita `c0c8be2`;
+  - evidencia en la rama local `evidencia/prueba-despacho-2026-09-14`, en `af2eddd` (`cand-1.35.0/evidencia-seg-r8/`, de R-047).
+- **Intervención terminada: la octava autorización** (2026-10-02).
+  - Hecho: SEC-122 (las dos caras), QA-023-14 y P-023-13-A en `9220c71`, con la pasada correctiva `befc17a`. QA favorable sobre `5669a2c` (re-verificación en `57129fb`). Seguridad R-047 sobre `57129fb`: lo reparado es conforme, a nivel de hook en Linux/WSL2.
+  - R-047 abrió SEC-123 (`instrumento`), SEC-124 (`contrato`, introducido por `9220c71`) y SEC-125 (`instrumento`, preexistente).
+  - **Su presupuesto está agotado.** El push y la corrida de CI que autorizaba no se hicieron, porque los condicionaba a una determinación de seguridad favorable al delta, y SEC-124 lo impidió.
+- **Decidido por el propietario el 2026-10-03** (`PENDING_APPROVAL.md` § Resueltas, entrada de esa fecha, texto literal):
+  - SEC-124: opción (B), denegación con motivo explícito;
+  - SEC-125: reparar antes de publicar;
+  - SEC-123: corregir la descripción de F3.
+
+  **No autoriza ejecutar.** No cambia criterios, estados, veredictos ni contadores (el de REQ-023 sigue en 3 de 3).
+- **Pendiente del propietario, sin aceptar:**
+  - la autorización de ejecución de esas tres decisiones;
+  - 9b (QA-023-10, CA-54);
+  - fichas 1 (SEC-115/SEC-118) y 2 (C);
+  - P-119-A (F2, F5, F7 y el límite de F3);
+  - SEC-120 (vence el 2026-10-29).
+- **Firmas vigentes:** REQ-023, REQ-031 y REQ-001 tienen QA y seguridad aprobados sobre el código de `befc17a`, en `en-revisión` y **sin cerrar**. REQ-007 está en `en-progreso`, con QA y seguridad pendientes.
+- **Plan:** `propuesta-v1.35.0/plan-implementacion.md` sigue **incompleto y no autoriza implementación**. Le faltan §3 (propiedades de diseño) y §7 (validación). El 2026-10-03, durante la actualización documental autorizada, un control de seguridad del proveedor volvió a interrumpir esa redacción; es la segunda vez, tras la sesión anterior. No se intentó reproducir ni rodear. El resto de `propuesta-v1.35.0/` (README, `SEC-047.diff` y `evidencia/`) es la propuesta **histórica** de SEC-047 del 2026-09-29.
+- **Traspaso (2026-10-03): `propuesta-v1.35.0/TRASPASO.md`.** Reúne el estado, las decisiones, el trabajo sin comitear, las fuentes por sección, la cobertura, las preguntas para la revisión humana de §3 y §7 y las decisiones de publicación pendientes. **Se retoma desde ahí.**
+- **Siguiente paso real:** que **una persona** revise las fuentes del traspaso y redacte, o decida no redactar, §3 y §7 del plan (`TRASPASO.md` §6 y §8). La coordinadora no las reintenta ni las delega. Después vendría la autorización de ejecución. Hasta entonces no se despacha a nadie y no se abre ninguna vuelta.
+- **Conservado en un commit local del 2026-10-03, sin push:** este archivo, `PENDING_APPROVAL.md`, `CHANGELOG.md`, `propuesta-v1.35.0/plan-implementacion.md` y `propuesta-v1.35.0/TRASPASO.md`. Es historial local, **no** una copia remota: `origin` y el PR #59 siguen en `45368ce`. **Sin seguimiento:** los cinco archivos históricos de `propuesta-v1.35.0/` (`TRASPASO.md` §3).
+
+## Historia — octava autorización terminada; SEC-124 impidió la determinación favorable (2026-10-02)
+
+**ACTUALIZACIÓN 2026-10-02 (octava autorización), historia; la sustituye el bloque vigente de arriba:**
+- **Rama:** `cand/1.35.0` local en `c0c8be2`, **sin push**. `origin` y el PR #59 siguen en `45368ce`.
+- **Hecho:** SEC-122 (las dos caras), QA-023-14 y P-023-13-A reparados (`9220c71`), con pasada correctiva (`befc17a`); QA favorable; seguridad R-047 conforme con las reparaciones.
+- **Impedimento:** SEC-124 (`contrato`), introducido por el delta. Decisión 11.
+- **Pendiente del propietario:** decisión 11; 9b (CA-54); fichas 1 y 2; P-119-A (con SEC-123); SEC-125; SEC-120.
+- **El presupuesto de la octava autorización está agotado.** No se abre nada sin decisión.
+
+**ACTUALIZACIÓN 2026-10-02 (séptima autorización), historia:**
+- **Estado de la rama:** `cand/1.35.0` = `origin` = PR #59 (borrador) en `45368ce`; CI `37032468437` en verde.
+- **QA-023-13:** reparado (`3bc7d3c`), con QA favorable y seguridad R-046 conforme. El caso CR no se ejerció en el host.
+- **Firmas:** REQ-023, REQ-031 y REQ-001 tienen QA y seguridad aprobados sobre el código final.
+- **SEC-122:** nuevo, `contrato` en REQ-007 (R-046).
+- **Pendiente del propietario:** la decisión 10 (SEC-122), la 9b (QA-023-10, con la medición de Windows/MSYS en `sec-ca54-win/`), P-023-13-A, las fichas 1 y 2 y P-119-A.
+- **No se abre ninguna vuelta sin decisión.**
+- **Evidencia:** rama local de evidencia, hasta `b91068e`.
+
+## Historia — la vuelta de la sexta autorización cerró QA-023-09 y QA-023-11, pero QA fue NO favorable por QA-023-13; QA-023-10 abierto; esperando la decisión 9, las fichas 1 y 2 y P-119-A (2026-10-01)
+
+*Cuando se escribió (2026-10-01), este bloque mandaba en la rama `cand/1.35.0`. Hoy es historia; las cabezas, el próximo paso y lo que estaba sin comitear que cita ya no son los vigentes.*
+
+- **Dónde está cada cosa:**
+  - `cand/1.35.0` = `origin/cand/1.35.0` = PR #59 (borrador), en `452098e`.
+  - Evidencia en la rama local `evidencia/prueba-despacho-2026-09-14`:
+    - `sec119-r6/` (`215f916` y `3eb279d`);
+    - `cand-1.35.0/evidencia-dev-r6/` (`3b947a1`), con el parche de la optimización retirada;
+    - `cand-1.35.0/evidencia-qa-r6/` (`0d3d0c9`);
+    - CI intermedio (`db565a4`).
+- **Sexta autorización (decisión 8):**
+  - **QA-023-09, cerrado:** lectura campo a campo (`cd6afa6`); CA-47 puntos 12 y 13; host r6 conforme.
+  - **QA-023-11, cerrado:** CA-45 con la v3b.
+  - **QA-023-10, abierto:** la optimización no llegó a 5 s, se detuvo y salió del candidato.
+  - **QA-023-13, nuevo y bloqueante:** un CR final del `cwd` se recorta y las puertas anclan en otro directorio, deny→allow frente a 1.33.2. Nace del anclaje de `104ffd1`.
+  - **Seguridad:** no despachada, porque QA no fue favorable.
+- **Próximo paso concreto:** la decisión del propietario sobre la **decisión 9**. Recomendado 9a (A), reparar fallando cerrado, y 9b (A), residual declarado con una medición en Windows/MSYS antes de publicar. **No se abre ninguna vuelta sin esa decisión.**
+- **Sin comitear, a propósito:** este archivo (bloque derivado y este bloque) y `propuesta-v1.35.0/`.
+
+## Historia — la vuelta de SEC-119/O-11 (quinta autorización) terminó con QA NO favorable (2026-10-01)
+
+- **Quinta autorización (SEC-119 y O-11):**
+  - **Hecho:** contrato (REQ-007 CA-45/CA-47, ADR-016), código (`104ffd1`), banco (sección 43, 1334 casos) y validación en el host (v3, `94c6191`).
+  - **QA sobre `43b948a`: NO favorable.** QA-023-09 es una regresión de `104ffd1`: un `cwd` con salto de línea desplaza los campos de la entrada, y las dos puertas juzgan otra ruta. Se manifiesta en el host (v3b); un permiso desde el host no está observado ni descartado. QA-023-10 es el coste de CA-54. QA-023-11 era la validación en el host incompleta; sus casos ya se ejecutaron, y queda declarar R5 como límite.
+  - **Seguridad:** no se pidió, porque QA no fue favorable.
+- **Resuelto:** el propietario eligió la opción (A) de la decisión 8 en la sexta autorización (2026-10-01).
+
+## Historia — candidato 1.35.0 (PR #59): SEC-117 reparado, validado en el host real y con QA y seguridad aprobados; SIN publicar; esperando las fichas 1, 2 y 4 y la decisión 7 (2026-09-30)
 
 - **Autorizaciones:** `PENDING_APPROVAL.md` § Resueltas, cuatro del 2026-09-29/30, literales. La segunda llegó truncada.
 - **Vuelta excepcional agrupada** (tercera y cuarta autorización): el contador de REQ-023 sigue agotado (3 de 3), no se reinició y no se creó otro REQ.
@@ -30,7 +104,7 @@
   Nada de esto está aceptado.
 - **Condiciones de publicación todavía pendientes:** las notas deben declarar SEC-119, SEC-120 y la tercera vía de SEC-115, o sus reparaciones, según se decida; el CI de la cabeza final; y la fusión, el tag y la publicación, que son decisión del propietario.
 
-## ⏸ RETOMAR AQUÍ — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
+## Historia (rama `feat/fidelidad-encargo`) — REQ-029 fidelidad al encargo: entrega implementada y firmada, SIN cerrar (2026-09-23)
 
 **Este bloque manda en esta rama (`feat/fidelidad-encargo`, local, sin push); el de REQ-025 de abajo es histórico de `main`.**
 Pedido íntegro del propietario: `PENDING_APPROVAL.md` §Resueltas (2026-09-23), única copia; REQ-029 §Trazabilidad remite a ella.
@@ -48,7 +122,7 @@ en sus secciones espejo; **0** archivos de mecanismo; gates §7 en verde; banco 
 SEC-106 (`instrumento`, coordinadora; revisión propuesta 2026-10-23), OBS-029-A (nota en REQ-029). Evidencia: rama de evidencia,
 `fidelidad-encargo/README.md`. Fuera de alcance y sin tocar: la demo, REQ-019, otras entregas de REQ-025, sondas, hooks, versión, consumidores.
 
-## ⏸ RETOMAR AQUÍ — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
+## Historia (`main`) — REQ-025 entrega 1 (coordinación orientada a entregas), 2026-09-21
 
 **Este bloque SUSTITUYE a los de más abajo, que quedan como históricos.** Rama `feat/req-025-coordinacion-entregas`
 (desde `main` = `v1.34.0`). **Estado: `bloqueado` con alcance** —acción impedida **cerrar** (marcar REQ-025 como
@@ -323,7 +397,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-09-30 10:32
+## Estado derivado — 2026-10-03 09:53
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -333,7 +407,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `8745b3f` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `c0c8be2` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
