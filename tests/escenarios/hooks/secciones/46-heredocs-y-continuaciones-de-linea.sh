@@ -15,7 +15,7 @@
 # se comprueba además en la candidata por `guard.sh`; las de LC10, por las cuatro puertas. Los casos se
 # construyen reutilizando la evidencia de R-047 por referencia a su identificador (CA-66, punto 3).
 # Esto NO es la validación en el host.
-CASOS_ESPERADOS_SECCION=65
+CASOS_ESPERADOS_SECCION=263
 PISO_AUTONOMO_SECCION=75  # 20 preambulo (líneas 1-20, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO46, mat46_reg y mat46, copia de mat45, líneas 21-44) + 31 bloque indivisible mayor (g46, juicio46 y fila46, líneas 59-89)
 seccion_nueva "--- 46 · heredocs y continuaciones de línea (SEC-124, SEC-125, LC10; novena autorización, fase 2) ---"
 REPO46="${SEC_DIR%/}/../../../.."; MAT46_RUTAS='hooks'; MAT46_REG=''; MAT46_T0=0; MAT46_REF='-'
@@ -133,6 +133,69 @@ fila46 "HC9.5 el desarrollador: H5 de la 45 por guard-codigo sólo (punto 17)" g
 fila46 "HC9.6 el desarrollador: H6 de la 45 por guard-completado (punto 17)" guard-completado.sh deny deny allow - "$HCR46" "$(j46 Bash "$P46" desarrollador "command=$H2_46")"
 
 # --- LC: SEC-125, el destino que escribe el shell y la Excepción nombrada LC10 (CA-47, punto 19) -------
-# (filas LC1-LC10: se añaden una a una)
+BS='\'   # una barra invertida
+NDL46='no se pudo determinar'
+# LC1: SEC-125 §4 t5, las tres formas de redireccion con la continuacion entre el operador y un destino en codigo protegido.
+LC1a="echo x > ${BS}${NL}src/a.ts"; LC1b="echo x >${BS}${NL}src/a.ts"; LC1c="echo x ${BS}${NL}> src/a.ts"
+fila46 "LC1a coordinadora: t5 C1 — echo x > \\<LF>src/a.ts (SEC-125)" guard-codigo.sh deny allow allow allow "$SRC46" "$(j46 Bash "$P46" - "command=$LC1a")"
+fila46 "LC1b coordinadora: t5 C2 — echo x >\\<LF>src/a.ts (SEC-125)" guard-codigo.sh deny allow allow allow "$SRC46" "$(j46 Bash "$P46" - "command=$LC1b")"
+fila46 "LC1c coordinadora: t5 C3 — echo x \\<LF>> src/a.ts (SEC-125)" guard-codigo.sh deny deny deny deny "$SRC46" "$(j46 Bash "$P46" - "command=$LC1c")"
+# LC2: §4 t5b, la escritura que cierra un REQ con la continuacion delante del destino (guard-completado).
+LC2="printf '%s${NL}' '# REQ-900' 'Estado: completado' > ${BS}${NL}requirements/REQ-900.md"
+fila46 "LC2 coordinadora: t5b C10 — cierre de un REQ con \\<LF> ante el destino (SEC-125)" guard-completado.sh deny allow allow allow "completado" "$(j46 Bash "$P46" - "command=$LC2")"
+# LC3: control §4 — la continuacion delante del operador: deny en los cuatro (el shell no la mueve).
+fila46 "LC3 coordinadora: t5 C3 control — \\<LF> delante del operador, deny en los cuatro" guard-codigo.sh deny deny deny deny "$SRC46" "$(j46 Bash "$P46" - "command=$LC1c")"
+# LC4: control — el desarrollador, la forma de LC1a.
+fila46 "LC4 el desarrollador: la forma de LC1a (control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" desarrollador "command=$LC1a")"
+# LC5: control — la forma de LC1a hacia un destino fuera de todo ambito (docs/).
+fila46 "LC5 coordinadora: la forma de LC1a hacia docs/ (control, fuera de ambito)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo x > ${BS}${NL}docs/x.md")"
+# LC6: control — una orden sin escrituras partida en dos lineas por una continuacion.
+fila46 "LC6 coordinadora: orden sin escrituras partida por \\<LF> (control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo hola ${BS}${NL}mundo")"
+# LC7: control — donde el shell NO une: barra+espacio, barra escapada, barra+CR, y dentro de comillas simples; la linea siguiente nombra codigo sin que el shell escriba.
+fila46 "LC7a coordinadora: barra + espacio ante el salto (no une; control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo a ${BS} ${NL}src/a.ts")"
+fila46 "LC7b coordinadora: barra escapada ante el salto (no une; control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo a ${BS}${BS}${NL}src/a.ts")"
+fila46 "LC7c coordinadora: barra + CR ante el salto (no une, punto 11; control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo a ${BS}${CR}${NL}src/a.ts")"
+fila46 "LC7d coordinadora: continuacion dentro de comillas simples (no une; control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=echo 'a ${BS}${NL}src/a.ts'")"
+# LC8: la clase de SEC-125 (punto 5): el fragmento anterior casa el ambito y, unido, el destino queda fuera -> allow en la candidata; deny en las tres referencias.
+fila46 "LC8 coordinadora: unido, el destino sale del ambito (src/..=fuera; movimiento declarado)" guard.sh allow deny deny deny - "$(j46 Bash "$P46" - "command=echo x > src/${BS}${NL}../docs/x.md")"
+# LC9: control §4 — la continuacion DENTRO de un destino que queda en el ambito unido o sin unir: deny en los cuatro.
+fila46 "LC9 coordinadora: t5 C8 — \\<LF> dentro del destino, queda en ambito (deny en los cuatro)" guard-codigo.sh deny deny deny deny "$SRC46" "$(j46 Bash "$P46" - "command=echo x > src/${BS}${NL}a.ts")"
+# --- LC10: la Excepcion nombrada, por las CUATRO puertas (CA-47 punto 19) -----------------------
+# Molde de cuatro puertas: cada subforma se ejerce por guard-codigo, guard-completado, guard-git y guard.sh.
+# La fila46 ya corre el guardian dado + guard.sh; se añaden guard-completado y guard-git como filas aparte con :solo.
+lc10cuatro() {   # <id> <candidata> <3f96e6b> <9596e39> <v1.33.2> <json>  -> deny/allow en las cuatro puertas
+  local id="$1" ec="$2" efb="$3" e95="$4" e133="$5" json="$6"
+  fila46 "$id · guard-codigo+guard.sh" guard-codigo.sh "$ec" "$efb" "$e95" "$e133" "${ec/deny/$S125}" "$json"
+  fila46 "$id · guard-completado" guard-completado.sh:solo "$ec" "$efb" "$e95" "$e133" "${ec/deny/$S125}" "$json"
+  fila46 "$id · guard-git" guard-git.sh:solo "$ec" "$efb" "$e95" "$e133" "${ec/deny/$S125}" "$json"
+}
+# subformas: la linea que abre un heredoc de delimitador limpio, sin CR, acabada en continuacion.
+H_a="cat <<EOF ${BS}${NL}> src/a.ts${NL}x${NL}EOF${NL}"                     # (a) escritura y destino partidos
+H_b="cat <<EOF ${BS}${NL}> requirements/REQ-900.md${NL}Estado: completado${NL}EOF${NL}"  # (b) cierre de REQ
+H_i="cat <<EOF ${BS}${NL}| true${NL}x${NL}EOF${NL}"                         # inocuo
+H_o="cat <<EOF ${BS}${NL}> docs/x.md${NL}x${NL}EOF${NL}"                    # fuera del ambito
+H_g="cat <<EOF ${BS}${NL}; git clean -f${NL}x${NL}EOF${NL}"                 # orden de git detras
+H_c="cat <<EOF > docs/x.md ${BS}${NL}EOF${NL}echo x > src/a.ts${NL}"        # la linea siguiente cierra el heredoc (LC10.8)
+lc10cuatro "LC10.1 (a) escritura y destino partidos, coordinadora" deny allow allow allow "$(j46 Bash "$P46" - "command=$H_a")"
+lc10cuatro "LC10.2 (b) cierre de un REQ, coordinadora" deny allow allow allow "$(j46 Bash "$P46" - "command=$H_b")"
+lc10cuatro "LC10.3 (b) emitida por el desarrollador" deny allow allow allow "$(j46 Bash "$P46" desarrollador "command=$H_b")"
+lc10cuatro "LC10.4 (a) emitida por el desarrollador (restriccion aceptada)" deny allow allow allow "$(j46 Bash "$P46" desarrollador "command=$H_a")"
+lc10cuatro "LC10.5 lo inocuo (tuberia a una orden que no escribe)" deny allow allow allow "$(j46 Bash "$P46" - "command=$H_i")"
+lc10cuatro "LC10.6 destino fuera del ambito (docs/)" deny allow allow allow "$(j46 Bash "$P46" - "command=$H_o")"
+lc10cuatro "LC10.7 orden de git prohibida en la linea siguiente (QA-023-23 cara git)" deny allow allow allow "$(j46 Bash "$P46" - "command=$H_g")"
+# LC10.8 no usa lc10cuatro: en las referencias guard-codigo y guard.sh YA denegaban (el falso positivo),
+# mientras guard-completado y guard-git daban allow. La candidata deniega las cuatro con el motivo de LC10.
+fila46 "LC10.8 · guard-codigo+guard.sh (ref: ya denegaban)" guard-codigo.sh deny deny deny deny "$S125" "$(j46 Bash "$P46" - "command=$H_c")"
+fila46 "LC10.8 · guard-completado" guard-completado.sh:solo deny allow allow allow "$S125" "$(j46 Bash "$P46" - "command=$H_c")"
+fila46 "LC10.8 · guard-git" guard-git.sh:solo deny allow allow allow "$S125" "$(j46 Bash "$P46" - "command=$H_c")"
+# LC10.9: la continuacion delante del operador, con operador y destino en la linea siguiente.
+H9="cat <<EOF ${BS}${NL}echo x > src/a.ts${NL}y${NL}EOF${NL}"
+lc10cuatro "LC10.9 continuacion antes del operador en esa linea (QA-023-23 cara escritura)" deny allow allow allow "$(j46 Bash "$P46" - "command=$H9")"
+# LC10.c1: controles — la misma orden SIN la continuacion: sus veredictos de hoy, iguales en los tres arboles.
+fila46 "LC10.c1a (a) en una linea (control)" guard-codigo.sh deny deny deny deny "$SRC46" "$(j46 Bash "$P46" - "command=cat <<EOF > src/a.ts${NL}x${NL}EOF${NL}")"
+fila46 "LC10.c1b (b) en una linea (control)" guard-completado.sh deny deny deny deny "completado" "$(j46 Bash "$P46" - "command=cat <<EOF > requirements/REQ-900.md${NL}Estado: completado${NL}EOF${NL}")"
+fila46 "LC10.c1g la orden de git de la fila 7 en la linea que abre (control)" guard-git.sh deny deny deny deny "clean" "$(j46 Bash "$P46" - "command=git clean -f ; cat <<EOF${NL}x${NL}EOF${NL}")"
+# LC10.c2: control de frontera — la linea que abre acaba en una barra que el shell NO trata como continuacion (barra escapada): no es LC10.
+fila46 "LC10.c2 frontera: barra escapada al abrir, no es LC10 (control)" guard.sh allow allow allow allow - "$(j46 Bash "$P46" - "command=cat <<EOF > docs/x.md ${BS}${BS}${NL}x${NL}EOF${NL}")"
 
 rm -rf "$RFB46" "$R95_46" "$R133"

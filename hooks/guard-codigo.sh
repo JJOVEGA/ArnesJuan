@@ -75,6 +75,11 @@ arnes_guard_codigo() {
       # de un retorno de carro y no es la ultima del comando. Se deniega la forma, sin retirar el CR ni
       # juzgar otro comando. Mismo destinatario que los dos de arriba: quien no es el agente de codigo.
       exceso=3; objetivo="(comando no analizable)"
+    elif [ "$rc" -eq "$ARNES_RC_LC10" ]; then
+      # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»): la linea que abre un heredoc acaba en
+      # una continuacion de linea. A TODO agente, el de codigo incluido: no pasa por la regla de destinatarios
+      # de abajo. Motivo unico de las cuatro puertas.
+      arnes_deny_lc10 guard-codigo
     else
       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
       #

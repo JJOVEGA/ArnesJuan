@@ -164,7 +164,7 @@ arnes_git_alias_sub() {   # <subcomando> <primer argumento> -> ARNES_TOK (el arg
 # ⚠️ "permitir" se dice con `return 0`, NUNCA con `exit 0`: este guardian corre en el
 # mismo proceso que los otros dos y un `exit` los dejaria sin correr — fallo abierto.
 arnes_guard_git() {
-  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra='' nota_cr=''
+  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra='' nota_cr='' rc
   local -a t reglas args palabras sincr
 
   arnes_parse_input
@@ -173,6 +173,15 @@ arnes_guard_git() {
   # Barato y PRIMERO: un `ls -la` o un `npm test` no llegan a leer el manifiesto ni
   # arrancan `jq`. El camino comun de Bash es el mas frecuente que hay y no puede pagar
   # un proceso por comando.
+  # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»; P-LC10-A = A): la linea que abre un heredoc
+  # acaba en una continuacion de linea. Se deniega en las CUATRO puertas, tambien aqui y aunque el comando no
+  # lleve ninguna orden de git ni el manifiesto encienda esta puerta: es la letra de la decision del
+  # propietario. Barato y PRIMERO: solo se analiza si el comando tiene a la vez un `<<` y una barra seguida de
+  # salto, asi que el camino comun paga dos comparaciones de texto y ningun proceso.
+  if [[ "$ARNES_CMD" == *'<<'* && "$ARNES_CMD" == *\\$'\n'* ]]; then
+    arnes_bash_sin_texto "$ARNES_CMD"; rc=$?
+    if [ "$rc" -eq "$ARNES_RC_LC10" ]; then arnes_deny_lc10 guard-git; fi
+  fi
   [[ "$ARNES_CMD" == *git* ]] || return 0
   arnes_parse_manifest
   # SEC-010 — UN MANIFIESTO ILEGIBLE NO PUEDE APAGAR ESTA PUERTA.

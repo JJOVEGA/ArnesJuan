@@ -303,6 +303,16 @@ arnes_deny() {
   exit 0
 }
 
+# Motivo UNICO de la Excepcion nombrada LC10 (SEC-125; REQ-007 CA-47, punto 19), compartido por las cuatro
+# puertas: texto fijo, sin interpolar el comando ni la linea (no hereda SEC-118) y sin nombrar ninguna
+# herramienta como salida. <puerta> es el nombre de quien deniega, para la lectura del motivo.
+arnes_deny_lc10() {   # <puerta>
+  local quien
+  if [ -n "${ARNES_AGENT_ID:-}" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+  else quien="la sesion coordinadora"; fi
+  arnes_deny "ARNES (SEC-125, LC10): la linea que abre un heredoc acaba en una continuacion de linea (una barra invertida seguida del salto). Para el shell esa orden sigue en la linea siguiente y el cuerpo del heredoc empieza despues de ella; esta puerta ($1) no une las dos lineas para juzgar el comando como si continuara ni mueve la frontera del cuerpo: deniega esta forma concreta, a cualquier agente (intento de $quien), sin alterar el texto del comando (REQ-007 CA-47, punto 19, Excepcion nombrada). Para corregirlo, escribe entera la linea que abre el heredoc, sin la continuacion al final."
+}
+
 # Aviso por stderr (no silencioso), sin bloquear.
 arnes_warn() { printf 'ARNES (hook): %s\n' "$1" >&2; }
 
@@ -1364,6 +1374,13 @@ ARNES_RC_CR=3
 # detras. No se retira en silencio ni se juzga otro comando: se deniega la forma. Como los dos de arriba,
 # nunca sale por la salida estandar y las puertas lo traducen a una denegacion con motivo que cita SEC-124.
 ARNES_RC_CUERPO_CR=4
+# Codigo de salida cuando NO analizo porque la linea que abre un heredoc de delimitador limpio acaba en una
+# continuacion de linea (SEC-125, LC10; REQ-007 CA-47, punto 19, «Excepcion nombrada»; P-LC10-A = A). Para el
+# shell la orden sigue en la linea siguiente y el cuerpo empieza despues de ella; el analizador empezaba el
+# cuerpo EN ella (QA-023-23). No se unen las lineas ni se mueve la frontera: se deniega la forma, a todo agente y
+# en las cuatro puertas, con el motivo unico de `arnes_deny_lc10`. Precede REQ-001 CA-53: si el comando supera
+# el presupuesto, sale `$ARNES_RC_EXCESO` y no este (QA-023-25).
+ARNES_RC_LC10=5
 
 # Techo efectivo, resuelto UNA vez por proceso y SOLO cuando hace falta.
 #
@@ -1634,6 +1651,40 @@ _arnes_expansiones() {   # <linea del cuerpo> -> acumula fragmentos en ARNES_EXP
   fi
 }
 
+# --- Continuaciones de linea (SEC-125; REQ-007 CA-47, punto 19) ----------------------------------
+# `_arnes_fin_linea <linea>`: lee una linea DE ORDEN (nunca de cuerpo de heredoc) y deja ARNES_CONT=1 si acaba
+# en una continuacion de linea EFECTIVA —una barra invertida que el shell no tiene citada ni escapada, seguida
+# del salto—, actualizando ARNES_SQ y ARNES_DQ, el estado de comillas simples y dobles que cruza de una linea a
+# la siguiente. La regla es la del shell (manual de bash, «Escape Character» y «Quoting») y no se redefine:
+# dentro de comillas simples nada se escapa y `\`+salto es literal; dentro de dobles la barra escapa al caracter
+# siguiente y `\`+salto SI es continuacion; una barra ya escapada (`\\`) no lo es; un caracter entre la barra y
+# el salto (un espacio, un retorno de carro) tampoco; y en un comentario (`#` al empezar una palabra, fuera de
+# comillas) nada lo es. Sin procesos. Recorre caracter a caracter SOLO las lineas que llevan comillas, barras o
+# almohadillas, y solo se llama cuando el comando entero contiene alguna barra seguida de salto (ver abajo):
+# el camino comun de `Bash` no paga nada.
+ARNES_SQ=0; ARNES_DQ=0; ARNES_CONT=0
+_arnes_fin_linea() {
+  local l="$1" i n c esc=0 com=0 prev=' '
+  ARNES_CONT=0
+  case "$l" in *[\'\"\\#]*) ;; *) return 0 ;; esac
+  n=${#l}
+  for ((i = 0; i < n; i++)); do
+    c="${l:i:1}"
+    if [ "$com" -eq 1 ]; then break; fi
+    if [ "$ARNES_SQ" -eq 1 ]; then [ "$c" != "'" ] || ARNES_SQ=0; prev="$c"; continue; fi
+    if [ "$esc" -eq 1 ]; then esc=0; prev="$c"; continue; fi
+    case "$c" in
+      \\) esc=1 ;;
+      \") if [ "$ARNES_DQ" -eq 1 ]; then ARNES_DQ=0; else ARNES_DQ=1; fi ;;
+      \') [ "$ARNES_DQ" -eq 1 ] || ARNES_SQ=1 ;;
+      \#) if [ "$ARNES_DQ" -eq 0 ]; then case "$prev" in ' '|$'\t'|';'|'|'|'&'|'(') com=1 ;; esac; fi ;;
+    esac
+    prev="$c"
+  done
+  if [ "$esc" -eq 1 ] && [ "$com" -eq 0 ]; then ARNES_CONT=1; fi
+  return 0
+}
+
 # EL COMANDO SIN SU TEXTO: descuenta los cuerpos literales de heredoc y lo
 # entrecomillado, y anade al final el interior EJECUTABLE de las expansiones que
 # viajan dentro de un heredoc sin citar. Es lo que miran los detectores que juzgan
@@ -1702,7 +1753,16 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
   #    arreglo— devuelve el falso positivo de 1.29.1 por otra puerta, y ademas mete en el
   #    analisis comillas que en el cuerpo son texto (ver `_arnes_desentrecomilla`).
   #    Las limitaciones de este recorte estan escritas en `_arnes_expansiones`.
-  if [[ "$limpio" == *'<<'* ]]; then
+  #
+  #    Y LAS CONTINUACIONES DE LINEA (SEC-125; CA-47, punto 19): un `\`+salto que el shell une se une aqui
+  #    tambien, SOLO entre lineas de orden y SOLO donde el shell lo une (`_arnes_fin_linea`), de modo que el
+  #    destino de una escritura partida en dos lineas se juzga entero, el que el shell escribe. Nunca se une
+  #    nada dentro de un cuerpo de heredoc, y la deteccion del heredoc sigue siendo por linea fisica, como
+  #    antes: el pliegue no mueve ninguna frontera. La unica forma que no se une es la que abre un heredoc y
+  #    acaba en continuacion (LC10): se deniega entera, despues del presupuesto.
+  local cont_hay=0 pend=0 lc10=0
+  case "$limpio" in *\\$'\n'*) cont_hay=1; ARNES_SQ=0; ARNES_DQ=0 ;; esac
+  if [[ "$limpio" == *'<<'* ]] || [ "$cont_hay" -eq 1 ]; then
     local linea delim='' dentro=0 citado=0 resto sinhs cr_delim=0 cuerpo_cr=0 pos=0
     local -a sin=()
     while IFS= read -r linea || [ -n "$linea" ]; do
@@ -1731,7 +1791,16 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
         fi
         continue
       fi
-      sin+=("$linea")
+      ARNES_CONT=0
+      if [ "$cont_hay" -eq 1 ]; then
+        _arnes_fin_linea "$linea"
+        # La linea anterior acabo en continuacion efectiva: esta es su continuacion, y se unen como las une el
+        # shell (fuera la barra y el salto). La deteccion del heredoc, abajo, sigue mirando la linea fisica.
+        if [ "$pend" -eq 1 ]; then sin[-1]="${sin[-1]%\\}$linea"; else sin+=("$linea"); fi
+        pend=$ARNES_CONT
+      else
+        sin+=("$linea")
+      fi
       sinhs="${linea//<<</ }"
       case "$sinhs" in
         *'(('*'<<'*) ;;                                  # `$((1<<n))` es aritmetica, no heredoc
@@ -1754,6 +1823,10 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
           *) delim='' ;;
         esac ;;
       esac
+      # LC10 (CA-47, punto 19, «Excepcion nombrada»): esta linea abre un heredoc y acaba en una continuacion
+      # efectiva. Se anota y se sigue analizando como hasta ahora (ni se une ni se mueve la frontera), para que
+      # el presupuesto se cuente igual que siempre y REQ-001 CA-53 mande si lo supera (QA-023-25).
+      if [ "$dentro" -eq 1 ]; then pend=0; if [ "$ARNES_CONT" -eq 1 ]; then lc10=1; fi; fi
     done <<< "$limpio"
     [ "$cr_delim" -eq 0 ] || return "$ARNES_RC_CR"
     [ "$cuerpo_cr" -eq 0 ] || return "$ARNES_RC_CUERPO_CR"
@@ -1766,6 +1839,8 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
     (( analizado + ${#limpio} > max_analisis )) && exceso=1
   fi
   [ "$exceso" -eq 0 ] || return "$ARNES_RC_EXCESO"
+  # LC10, despues del presupuesto (QA-023-25) y antes de analizar nada mas.
+  [ "$lc10" -eq 0 ] || return "$ARNES_RC_LC10"
   # El comando REAL se desentrecomilla de una pieza —igual que antes, para no cambiar su
   # conducta— y los fragmentos ejecutables del cuerpo se le añaden YA descontados, cada uno
   # por su cuenta. La frontera del heredoc no se cruza en ninguna direccion.
@@ -1787,7 +1862,8 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # llamadores lo miran (y hay caso de banco para cada uno). Lo mismo con
   # `$ARNES_RC_CR` (3): el delimitador de un heredoc con un retorno de carro. Y con
   # `$ARNES_RC_CUERPO_CR` (4): una linea del cuerpo que es el delimitador seguido de un
-  # retorno de carro y no es la ultima del comando (SEC-124).
+  # retorno de carro y no es la ultima del comando (SEC-124). Y con `$ARNES_RC_LC10` (5):
+  # la linea que abre un heredoc acaba en una continuacion de linea (SEC-125, LC10).
   local limpio i j n tok
   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
   # puede depender de como lo haya dejado el llamador.

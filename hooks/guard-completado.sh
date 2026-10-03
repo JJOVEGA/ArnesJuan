@@ -350,6 +350,8 @@ arnes_guard_completado() {
         arnes_parse_manifest
         arnes_deny "ARNES (SEC-124): dentro del cuerpo de un heredoc hay una linea que es su delimitador seguido de un retorno de carro, y no es la ultima del comando. Para bash esa linea no cierra el cuerpo, pero el retorno de carro es un dato del transporte y un shell que lo retire cerraria el cuerpo ahi y ejecutaria como orden lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; esta puerta no retira el retorno de carro ni juzga otro comando: deniega la forma a cualquier agente (REQ-007 CA-47, punto 18). Para corregirlo, escribe el comando sin retornos de carro —lineas terminadas solo en salto de linea— o usa en el cuerpo otra palabra que no sea el delimitador."
       fi
+      # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»): a todo agente, motivo unico.
+      if [ "$rc" -eq "$ARNES_RC_LC10" ]; then arnes_parse_manifest; arnes_deny_lc10 guard-completado; fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
