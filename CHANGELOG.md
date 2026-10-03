@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2, contrato (analista): SEC-124 (opción B) y SEC-125 en REQ-007 — CA-47 puntos 18 y 19, CA-66 con casos por identificador de R-047, movimientos, validación por capa y coste; ADR-016, notas `[1.35.0]` y guía coherentes — PENDIENTE DE IMPLEMENTACIÓN Y DE VALIDACIÓN, SIN VALIDAR
+> Origen: Interno (commit local SIN VALIDAR, autorizado por el propietario el 2026-10-03; sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
+
+- **Sedes:**
+  - `requirements/REQ-007.md`: CA-47, puntos 18 (SEC-124) y 19 (SEC-125) y remisiones en 11 y 17; nota de CA-24 del 2026-10-03; anotaciones en CA-66, octava autorización (punto 5, «La regla, no un inventario», y punto 7); CA-66, versionado de la fase 2 (filas HC1–HC9 y LC1–LC9, movimientos, capas, compatibilidad, regresión y coste); Notas / alcance y «Sedes y pruebas del versionado del 2026-10-03, fase 2»; Trazabilidad, con la «Correspondencia con el encargo» de la fase 2; Historial;
+  - ADR-016, precisión de SEC-124 y SEC-125 (decisiones 7 y 8);
+  - la sección `[1.35.0]` de este archivo y `skills/arnes-upgrade/SKILL.md` («Hacia 1.35.0»), con todo marcado pendiente;
+  - `requirements/README.md`, índice.
+- **Contenido** (fuente: `docs/seguridad/registro-seguridad.md` § R-047, §1, §3, §4 y §6; casos citados por identificador, sin copiar comandos ni condiciones de explotación):
+  - SEC-124: la forma se deniega por su estructura, sin alterar el texto ni juzgar lo que va detrás, con los destinatarios del punto 17 —`guard-completado` a todo agente— y un motivo que nombra SEC-124; restricción concreta, no regla general; Windows no medido;
+  - SEC-125: se juzga el destino que escribe el shell; ningún `deny` por la mera continuación; donde el shell no une, la puerta tampoco; el pliegue de `guard-git` es referencia, no plantilla; cobertura por capa;
+  - movimientos, cuando esté construido: la forma de SEC-124 deja de serlo, y se añade una clase de `deny` a `allow` por la propiedad de K6 (la de SEC-125); ocho clases en total.
+- **Precisión del analista**, anotada en la Correspondencia: R-047 §3 no fija los destinatarios; los fijan P1, P2 y «no se juzga ningún otro comando». Si el propietario lee la restricción aceptada más estrecha, es un conflicto que decide él.
+- **Sin cambios:** código, banco, `AGENTS.md`, plantillas, cabeceras de REQ (`Estado:`, veredictos, `Rigor:`, `Sensible a seguridad:`, `Hallazgos abiertos:`, `Archivos:`, `Versión destino:`) y contadores. SEC-124 y SEC-125 siguen `abierto`.
+- **Avance (regla 6):** el contrato de la fase 2 queda escrito. Falta la implementación del desarrollador, que depende de él.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 1 VALIDADA: SEC-123, corrección documental de F3 — QA favorable tras su única pasada correctiva (QA-023-18 cerrado); seguridad R-048 favorable; SEC-126 registrado (`instrumento`, comentario de código, sin encadenar); SEC-123 sigue abierto y sin aceptar
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5), `auditor-seguridad` y la coordinadora. Tokens según el arnés: unos 0,43 M del analista (write-back y pasada), 0,37 M de QA (revisión y re-verificación) y 0,16 M de seguridad.
 
@@ -1128,6 +1144,14 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
        líneas acabadas sólo en salto de línea. La lectura de la entrada ya no recorre el valor para reponer
        retornos de carro (QA-023-14): un `file_path` de 600 000 bytes con uno final pasa de 83 929 ms a 405 ms
        (`evidencia-dev-r8/10-`). Desde el host, no ejercido.
+       - **Pendiente de implementación y de validación (novena autorización, fase 2; REQ-007 CA-47, punto 18,
+         SEC-124):** un heredoc de delimitador limpio cuyo cuerpo tiene, antes de su última línea, una línea que
+         es su delimitador seguido de un retorno de carro pasa a **denegarse a todo agente**, con un motivo que
+         nombra SEC-124, aunque el shell la lea como cuerpo y no ejecute lo que va detrás. Es una restricción
+         concreta que el propietario aceptó (opción B de R-047 §3), no una regla sobre heredocs ni sobre retornos
+         de carro, y el texto del comando no se altera. La salida, la misma: líneas acabadas sólo en salto de
+         línea. Windows/MSYS, no medido. **Hasta que esté construido y validado, el candidato deja pasar esa
+         forma.**
    - **Ningún directorio queda fuera de la identificación, y lo que depende del proceso que abre la ruta no
      pasa por esa incertidumbre** (desde el 2026-10-02, octava autorización; REQ-007 CA-47, F3 y puntos 14 a
      16, por SEC-122). Hasta entonces todo destino bajo `/dev/` o `/proc/` se juzgaba sólo por su texto: un
@@ -1151,6 +1175,13 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      reparado—; y antes de la pasada correctiva de la octava autorización decía «ocho», con `git reset --hard␍`,
      y dejaba dos pendientes sin declarar: esa enumeración era falsa —QA midió además cuatro órdenes como
      `git checkout .␍` en `allow` sin declarar, QA-023-16—, y la pasada devuelve todas a `deny`.)*
+     **Pendiente de implementación y de validación (novena autorización, fase 2):** sobre el código actual del
+     candidato, esta frase **no es cierta**: pasa además, sin declarar, la forma de heredoc de SEC-124 (R-047 §3),
+     que el propietario decidió devolver a `deny`. Cuando esa reparación y la de SEC-125 estén construidas y
+     validadas, las clases serán **ocho**: estas siete y la de SEC-125 —un destino de `Bash` que hasta ahora se
+     juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el shell, está fuera de
+     las zonas protegidas—. Ninguna debilita una protección (REQ-007 CA-24, nota del 2026-10-03, y CA-66,
+     versionado de la fase 2, punto 5).
    - **Una orden de git con un retorno de carro se juzga también sin él** (desde la pasada correctiva de la
      octava autorización; REQ-007 CA-47, punto 11). Lo que git haga con ella depende de su configuración: QA
      midió con git 2.53.0 que, con `help.autocorrect`, `git stash␍` se corrige y se ejecuta. Por eso
@@ -1159,6 +1190,11 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      dentro de una zona protegida que lleva a un descriptor (`src/log` → `/dev/stderr`) se juzga por su ruta,
      como cualquier enlace (REQ-007 CA-47, punto 15). Medido a nivel de hook en Linux/WSL2; desde el host, no
      ejercido.
+   - **Una escritura cuyo destino va tras una continuación de línea se juzga por el destino que escribe el
+     shell** (novena autorización, fase 2; REQ-007 CA-47, punto 19, por SEC-125; R-047 §4). **Pendiente de
+     implementación y de validación:** hasta que esté construido y validado, el candidato —como 1.33.2 y
+     `v1.34.0`— deja pasar esa forma. La continuación se une sólo donde el shell la une, y su sola presencia no
+     deniega nada. Windows/MSYS, no medido.
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
      autorización—. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no su destino», queda

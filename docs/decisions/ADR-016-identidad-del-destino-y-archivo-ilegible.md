@@ -363,3 +363,36 @@ mecanismo»).
 - (=) **No cambia ninguna decisión de este ADR ni lo construido:** corrige la descripción de un límite que ya era
   sin promesa. **No lo repara, no lo mitiga y no lo acepta:** SEC-123 sigue abierto y F3 sigue pendiente en
   REQ-007, P-119-A.
+
+**Precisión de SEC-124 y SEC-125 (2026-10-03, novena autorización, fase 2) — PENDIENTE DE IMPLEMENTACIÓN Y DE
+VALIDACIÓN; manda sobre las consecuencias de esta adenda en lo que toca, y lo de arriba no se reescribe.** R-047 §3 y
+§4 (`docs/seguridad/registro-seguridad.md`) midieron dos cosas que la adenda no decía. **SEC-124:** desde `9220c71`,
+un heredoc de delimitador limpio cuyo cuerpo tiene una línea que es su delimitador seguido de un retorno de carro, con
+algo detrás, sale `allow` donde lo publicado deniega; así que la frase «a las seis clases de arriba se suma **una**»
+de la precisión de la pasada correctiva era falsa sobre `befc17a`. **SEC-125:** el detector de escrituras no une la
+continuación de línea entre el operador y su destino; preexistente, también en `v1.34.0`. La norma vive en
+`requirements/REQ-007.md` CA-47, puntos 18 y 19, y CA-66 (versionado de la fase 2); aquí, la decisión y su porqué.
+Decisiones del propietario: la novena autorización y sus decisiones sobre SEC-124 y SEC-125, literales en
+`PENDING_APPROVAL.md` § Resueltas, entradas del 2026-10-03 («SEC-124: opción B. Restaurar la denegación mediante un
+motivo explícito para el caso descrito en R-047 §3, sin eliminar silenciosamente caracteres ni juzgar un comando
+distinto. Acepto la restricción concreta de uso legítimo descrita en ese informe»; «SEC-125: reparar antes de
+publicar»).
+- **Decisión 7, nueva (SEC-124):** esa forma se deniega **por su estructura y con un motivo que nombra SEC-124**, con
+  los destinatarios de la decisión 5 —`guard-completado` a todo agente—, sin alterar el texto y sin juzgar lo que va
+  detrás. *Alternativas descartadas:* declararla como clase (opción A de R-047 §3, la recomendada por el auditor): el
+  propietario eligió B; volver a juzgar lo de detrás como si la línea cerrara el heredoc: es juzgar un comando
+  distinto, que el propietario excluye; retirar el retorno de carro: lo excluye la octava autorización.
+- **Decisión 8, nueva (SEC-125):** se juzga el destino que escribe el shell: la continuación se une **sólo donde el
+  shell la une**, y su sola presencia no deniega nada. *Alternativas descartadas:* declararlo como límite (el
+  propietario eligió reparar); denegar todo comando con una continuación (una continuación no demuestra intención de
+  evadir); copiar sin comprobar el pliegue de `guard-git`, que es referencia y no plantilla.
+- **Consecuencias que cambian, cuando esté construido:** la forma de SEC-124 deja de ser movimiento de `deny` a
+  `allow`; **se añade una clase**, la de SEC-125 —un destino que lo publicado juzgaba por su fragmento anterior a la
+  continuación y que, unido como lo une el shell, está fuera del ámbito—, por la misma propiedad que K6. Son ocho
+  clases, y cualquier otro movimiento de `deny` a `allow` es un hallazgo. **Compatibilidad, además:** se deniega a
+  todo agente la forma de SEC-124, también al `desarrollador` y también con algo inocuo detrás, que es la restricción
+  que el propietario acepta; y un destino tras una continuación de línea se juzga por el que escribe el shell.
+- (=) Sin procesos nuevos y en tiempo lineal (REQ-007 CA-66, fase 2, punto 9). Windows/MSYS no medido para este
+  delta; desde el host, no ejercido salvo lo que registre la validación por capa.
+- (=) **Esta precisión no afirma que nada esté reparado:** SEC-124 y SEC-125 siguen abiertos hasta que QA y seguridad
+  verifiquen lo construido.
