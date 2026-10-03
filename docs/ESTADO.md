@@ -56,7 +56,12 @@
         - nuevo **QA-023-23** (`instrumento`, preexistente en `9596e39` y `v1.33.2`): una orden de git prohibida o una escritura protegida en la línea siguiente pasan las cuatro puertas, y el shell las ejecuta.
       - **QA-023-23 no se ha pasado** a `Hallazgos abiertos:` ni al registro de seguridad: lo decide el propietario.
       - **La lectura (a)**, el pliegue de `guard-git` ante una barra escapada, queda **no medida y fuera de esta versión** por decisión del propietario (REQ-007, Historial).
-      - **El contrato de la fase 2 NO está completo** para implementar LC10 mientras P-LC10-A siga abierta. El resto (HC1–HC9, LC1–LC9) sí lo está.
+      - **Actualización (2026-10-03, posterior a `598792c`):**
+        - **P-LC10-A resuelta por el propietario: (A).** El punto 19 lleva la «Excepción nombrada — LC10»: denegación por la forma, a todo agente, en las cuatro puertas, con motivo `SEC-125` · `LC10`. El falso positivo queda cubierto, y (B) y (C) quedan rechazadas. LC10 se desglosa en LC10.1–LC10.9 y los controles LC10.c1 y LC10.c2, con columnas tomadas de la medición sobre `c4ad408`. El punto 18 no cambia.
+        - **QA-023-23 registrado:** en `Hallazgos abiertos:` de REQ-007 (por QA) y en `docs/seguridad/registro-seguridad.md`, R-049 (sólo registro, sin firma). Clase `instrumento`, preexistente, abierto y sin aceptar. La forma de LC10 lo cierra cuando esté implementada y validada; las demás formas siguen abiertas.
+        - **Revisión documental de QA: CON-HALLAZGOS.** QA-023-24 (`contrato`, baja): la razón que sostiene «LC10 no añade movimientos» es falsa, aunque la conclusión es cierta. QA-023-25 (`contrato`, baja): la regla del motivo de LC10 choca con REQ-001 CA-53 (presupuesto). Están sólo en `docs/qa/REQ-023.md`, no en la cabecera.
+        - **El contrato de la fase 2 está completo para implementar HC1–HC9, LC1–LC9 y LC10**, salvo **el motivo cuando LC10 coincide con un comando que supera el presupuesto** (QA-023-25), que depende de la pasada correctiva del analista.
+        - **La pasada correctiva de la fase 2 sigue sin gastar:** usarla en QA-023-24/25 o reservarla para el código lo decide el propietario.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -448,7 +453,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 14:50
+## Estado derivado — 2026-10-03 15:18
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -458,7 +463,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `c4ad408` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `598792c` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

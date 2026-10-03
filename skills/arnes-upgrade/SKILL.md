@@ -1167,7 +1167,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       salida es la misma, líneas acabadas sólo en salto de línea;
     - **(pendiente de implementación y de validación en el arnés)** una escritura cuyo destino va tras una
       continuación de línea se juzga por el destino que escribe el shell (SEC-125); una continuación, por sí sola,
-      no deniega nada.
+      no deniega nada, **salvo** al final de la línea que abre un heredoc: ese comando se deniega **a todo agente**,
+      sea cual sea lo que siga, porque el shell y la puerta no coinciden en dónde empieza el cuerpo (LC10, decisión
+      del propietario del arnés). La salida: escribir esa línea entera, sin la continuación al final.
     - Y la entrada del hook se lee **campo a campo**: un salto de línea dentro del directorio de trabajo, del
       agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa. El retorno de carro del
       directorio de trabajo, de la ruta y del nombre de la herramienta se cuenta antes de que la lectura lo

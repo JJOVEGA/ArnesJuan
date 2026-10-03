@@ -386,12 +386,31 @@ publicar»).
   shell la une**, y su sola presencia no deniega nada. *Alternativas descartadas:* declararlo como límite (el
   propietario eligió reparar); denegar todo comando con una continuación (una continuación no demuestra intención de
   evadir); copiar sin comprobar el pliegue de `guard-git`, que es referencia y no plantilla.
+- **Decisión 8, excepción nombrada (LC10; 2026-10-03, posterior a `598792c`, P-LC10-A = (A)):** cuando la línea que
+  abre un heredoc de delimitador limpio acaba en una continuación de línea, el shell empieza el cuerpo después de la
+  línea siguiente y el analizador en ella, y lo que el shell ejecuta ahí no lo ve ninguna puerta (QA-023-23,
+  preexistente). Esa forma —y sólo esa— se deniega **por su estructura**, como la decisión 7, **a todo agente y en
+  las cuatro puertas** (`guard-codigo`, `guard-completado`, `guard-git` y `guard.sh`), sea cual sea lo que siga, sin
+  alterar el texto y con un motivo que nombra SEC-125 y LC10; cubre también el caso en que la línea siguiente cierra
+  el heredoc para el analizador, que hoy se denegaba por la regla de escrituras sin que el shell la ejecutara. La
+  regla de la decisión 8 —su sola presencia no deniega nada— sigue en pie fuera de esa forma. Decisión del
+  propietario, literal en `PENDING_APPROVAL.md` § Resueltas, entrada de la novena autorización, «Decisiones del
+  propietario, 2026-10-03, posteriores a `598792c`», decisión 1 («… Acepto que eso restrinja un uso legítimo raro.
+  No se emula la unión de líneas del shell (B rechazada); no se deja QA-023-23 abierto en esta forma (C
+  rechazada)»); la norma, en `requirements/REQ-007.md` CA-47, punto 19, «Excepción nombrada», y CA-66 (fase 2),
+  LC10. *Alternativas descartadas:* (B) unir las líneas como el shell en la frontera del heredoc —es donde un pliegue
+  nuevo puede mover el cierre del cuerpo—; (C) prometer sólo lo que ya fijaba el punto 19 y dejar el resto abierto.
+  QA-023-23 sigue abierto y sin aceptar en cualquier otra forma que lo exhiba.
 - **Consecuencias que cambian, cuando esté construido:** la forma de SEC-124 deja de ser movimiento de `deny` a
   `allow`; **se añade una clase**, la de SEC-125 —un destino que lo publicado juzgaba por su fragmento anterior a la
   continuación y que, unido como lo une el shell, está fuera del ámbito—, por la misma propiedad que K6. Son ocho
   clases, y cualquier otro movimiento de `deny` a `allow` es un hallazgo. **Compatibilidad, además:** se deniega a
   todo agente la forma de SEC-124, también al `desarrollador` y también con algo inocuo detrás, que es la restricción
   que el propietario acepta; y un destino tras una continuación de línea se juzga por el que escribe el shell.
+  Y, por la excepción LC10, se deniega a todo agente y en las cuatro puertas el comando cuya línea que abre un
+  heredoc acaba en una continuación de línea, también con algo inocuo o fuera de todo ámbito detrás y también al
+  `desarrollador` —el «uso legítimo raro» que el propietario acepta—; no añade ningún movimiento de `deny` a
+  `allow`.
 - (=) Sin procesos nuevos y en tiempo lineal (REQ-007 CA-66, fase 2, punto 9). Windows/MSYS no medido para este
   delta; desde el host, no ejercido salvo lo que registre la validación por capa.
 - (=) **Esta precisión no afirma que nada esté reparado:** SEC-124 y SEC-125 siguen abiertos hasta que QA y seguridad

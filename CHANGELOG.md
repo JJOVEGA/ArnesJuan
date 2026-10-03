@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: contrato ajustado a P-LC10-A = (A) (LC10 denegada por la forma, a todo agente, en las cuatro puertas); QA-023-23 registrado (cabecera de REQ-007 y R-049); revisión documental de QA CON-HALLAZGOS (QA-023-24 y QA-023-25, `contrato`, baja) — SIN VALIDAR
+> Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5), `auditor-seguridad` (sólo registro) y la coordinadora. Unos 0,18 M tokens del analista, 0,20 M de QA y 0,08 M de seguridad (cifras del arnés).
+
+- **Decisiones del propietario**, literales en `PENDING_APPROVAL.md`: P-LC10-A = (A); QA-023-23 registrado como `instrumento` preexistente.
+- **Analista** (`requirements/REQ-007.md`; ADR-016; notas `[1.35.0]`; guía; índice):
+  - punto 19 con la «Excepción nombrada — LC10»;
+  - CA-66 LC10, con el desglose LC10.1–LC10.9 y los controles;
+  - P-LC10-A, resuelta.
+  - Precisión declarada: el contrato sigue la letra «a todo agente, en las cuatro puertas», también para `guard-codigo` frente al `desarrollador` y para `guard-git` sin orden de git. Sólo añade denegaciones.
+- **QA-023-23:**
+  - en `Hallazgos abiertos:` de REQ-007, anotado por QA tras probar la edición con la puerta real; `tools/arnes-lectura.sh` no ve anomalías;
+  - en el registro de seguridad, R-049, por el auditor: sólo registro, con severidad alta en la cara de git y media en la de escritura.
+- **QA, revisión documental** (`docs/qa/REQ-023.md`): CON-HALLAZGOS.
+  - **QA-023-24:** enumeración falsa del único deny actual de la forma.
+  - **QA-023-25:** la regla del motivo choca con REQ-001 CA-53.
+  - Las gates dan rc 0; las columnas de LC10 coinciden con la medición.
+- **Sin cambios:** código, banco, `AGENTS.md` y contadores. `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.
+- **Avance (regla 6):** el contrato de la fase 2 está completo para implementar, salvo el motivo de LC10 bajo presupuesto excedido (QA-023-25). Falta decidir si se gasta en esto la pasada correctiva de la fase 2.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: caso LC10 (continuación al final de la línea que abre un heredoc) añadido a CA-66 con la decisión P-LC10-A pendiente; medición de QA sobre el código vigente; QA-023-23 nuevo (`instrumento`, preexistente) — SIN VALIDAR
 > Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5) y la coordinadora. Unos 0,15 M tokens del analista y 0,13 M de QA (cifras del arnés).
 
@@ -1218,6 +1237,14 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      implementación y de validación:** hasta que esté construido y validado, el candidato —como 1.33.2 y
      `v1.34.0`— deja pasar esa forma. La continuación se une sólo donde el shell la une, y su sola presencia no
      deniega nada. Windows/MSYS, no medido.
+     **Con una excepción, también pendiente de implementación y de validación** (decisión del propietario del
+     2026-10-03 sobre P-LC10-A, opción A; REQ-007 CA-47, punto 19, «Excepción nombrada», y CA-66, LC10): cuando la
+     línea que abre un heredoc acaba en una continuación de línea, el comando pasa a **denegarse por la forma, a
+     todo agente y en las cuatro puertas**, sea cual sea lo que siga, con un motivo que nombra SEC-125 y LC10. Deja
+     de pasar también lo legítimo —lo inocuo, lo de fuera de las zonas protegidas y lo que emite el
+     `desarrollador`—, que es la restricción que el propietario acepta. La salida: escribir esa línea entera, sin la
+     continuación al final. Hasta que esté construido, el candidato —como 1.33.2— deja pasar esa forma, y el shell
+     ejecuta lo que va en la línea siguiente sin que lo vea ninguna puerta (QA-023-23, preexistente).
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
      autorización—. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no su destino», queda

@@ -9984,3 +9984,57 @@ El resto, como en R-047 §9. **Estado de seguridad aprobado** de REQ-023, REQ-03
 **Regresión a vigilar:** una sede, comentario o prueba que vuelva a dar el límite de F3 como un número de subidas en lugar de la salida de la entrada propia (no exhaustivo).
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-048**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-049** y **SEC-127**.
+
+## Revisión R-049 — **Novena autorización, fase 2: registro de QA-023-23** (continuación de línea al final de la línea que abre un heredoc). `cand/1.35.0` @ `598792c` + cambios del analista y de QA **sin comitear** — 2026-10-03 — **SÓLO REGISTRO: NO REVISIÓN, NO FIRMA**
+
+**Numeración.** Mismo método que en R-047 y R-048: ramas locales y remotas, etiquetas y los worktrees. `R-049` sólo aparecía como «próximo libre» en la línea de arriba. **No asigno número `SEC-`:** el hallazgo es de QA, la decisión del propietario y `Hallazgos abiertos:` lo nombran `QA-023-23`, y un segundo nombre para el mismo defecto sería una segunda transcripción que se desfasaría. Es su único identificador.
+
+**Pedido.** `PENDING_APPROVAL.md` § Resueltas, entrada de la novena autorización, «Decisiones del propietario, 2026-10-03, posteriores a `598792c` (literales)», decisión 2: se registra en el registro de seguridad «como hallazgo preexistente de clase instrumento. La forma de LC10 lo cierra; cualquier otra forma que lo exhiba sigue abierta y sin aceptar». Leído literal. **Alcance:** sólo este registro. No reviso el contrato ajustado por el analista, no mido y no cambio `Seguridad:` ni `Hallazgos abiertos:` de ningún REQ (este último lo anota QA).
+
+### QA-023-23 — `instrumento` (REQ-007) · **abierto** · **no aceptado** · severidad **alta** (cara de git) y **media** (cara de escritura) · **preexistente** · dueños `desarrollador`, `analista-requerimientos` y `auditor-seguridad`
+
+- **Propiedad del defecto:** cuando la línea que abre un heredoc acaba en una continuación de línea, el analizador empieza el cuerpo una línea antes que el shell, y lo que el shell ejecuta en esa línea no lo juzga ninguna de las cuatro puertas.
+- **Fuente:** la medición de QA, `docs/qa/REQ-023.md`, «Novena autorización, fase 2: medición de LC10» (cabeza `c4ad408`, código de hooks = `befc17a`), apartados «Resultados por subforma» y «Hallazgos». Capas: **hook directo** por puerta y **shell aparte** con efecto en disco; **Linux/WSL2**. **Host (CLI real): no ejercido. Windows/MSYS: no medido.** Esta entrada no añade medición.
+- **Efecto medido, por clase y sin la forma:** `allow` en las cuatro puertas con efecto en disco, en tres clases: escritura en código protegido, cierre de un REQ y una orden de git prohibida que el shell ejecuta. La misma orden en una sola línea se deniega (controles LC10.c1).
+- **Preexistente:** la misma conducta en el árbol vigente, en `9596e39` y en `v1.33.2` (`10eac80`), según QA. **No lo introduce este candidato.**
+- **Relación con SEC-125, sin fundirlos:** en las subformas en que la continuación cae además entre la escritura y su destino (LC10.1 a LC10.3) concurren las dos causas. QA dejó el dato de que un pliegue aplicado **después** de descontar los cuerpos no alcanza ese destino. La cara de git (LC10.7) y la continuación delante del operador (LC10.9) son sólo de QA-023-23. Cada hallazgo se cierra por su cuenta.
+- **Qué lo cierra en la forma de LC10:** la excepción nombrada que ya está escrita en el contrato y **no está implementada**. Contrato: `requirements/REQ-007.md`, CA-47 punto 19, «Excepción nombrada… — LC10», y CA-66, fila LC10 (LC10.1 a LC10.9 y los controles LC10.c1 y LC10.c2). Ambos en el árbol **sin comitear**: la forma se deniega a todo agente en las cuatro puertas. Ese cierre exige tres cosas:
+  1. que la forma quede **construida**;
+  2. que QA la **valide**;
+  3. que seguridad la audite en su turno.
+
+  Hasta entonces, la entrada sigue `abierto` **también en esa forma**. Leo «la forma de LC10 lo cierra» como el cierre de esa forma cuando esté construida, no como un cierre ya producido.
+- **Cualquier otra forma que lo exhiba sigue abierta y sin aceptar** (decisión 2). Un ejemplo **no exhaustivo** ya está en el disco: la composición que QA dejó sin construir en la misma medición («No construido», una inferencia sin medir). LC10 no la cubre y no la doy por medida.
+- **Dueños:**
+  - `desarrollador`: el bucle de heredocs de `arnes_bash_sin_texto` (`hooks/lib.sh`) y la denegación con su motivo en las cuatro puertas;
+  - `analista-requerimientos`: el contrato. LC10 ya está escrito; cualquier otra forma que aparezca necesita su propio contrato;
+  - `auditor-seguridad`: este registro y la auditoría de la implementación en su turno.
+- **Forzadores:**
+  - **para la forma de LC10:** la comisión que implemente la fase 2 de la novena autorización (CA-47 punto 19 y CA-66 LC10, junto a SEC-125) y, por encima de ella, la decisión de publicación de 1.35.0;
+  - **para las demás formas:** la próxima comisión que toque el bucle de heredocs de `arnes_bash_sin_texto`.
+- **Vencimiento propuesto:**
+  - **la forma de LC10:** antes de publicar 1.35.0, igual que SEC-125 («reparar antes de publicar», decisión 11 del mismo día);
+  - **las demás formas:** sin vencimiento propuesto. No aceptadas.
+- **¿Bloquea algún cierre?** No por su clase: `guard-completado` sólo bloquea el cierre con `usuario/dinero` y `contrato`. Lo que sí lo condiciona es el contrato: REQ-007 CA-47 punto 19 y CA-66 LC10 tienen que cumplirse para cerrar REQ-007. Eso no depende de la clase de este hallazgo.
+
+### Observaciones mías (no cambian la clase decidida)
+
+- **O-49-1 — Severidad.** Concurro con la que propone QA y la registro yo, porque la decisión no la fija:
+  - **alta en la cara de git:** una orden de git prohibida que el shell ejecuta borra trabajo sin seguimiento, y ese daño no se deshace;
+  - **media en la de escritura:** el mismo criterio que SEC-125, con efecto total y realismo bajo, porque es una forma deliberada.
+- **O-49-2 — Clase: concurro con `instrumento` para el defecto tal como está hoy.** Hasta la decisión 1, ningún criterio prometía esta forma (REQ-001 CA-16 a CA-28 no la tratan; el punto 19 la tenía entre «lo que no promete»). Dos matices para no leer de más:
+  1. **Desde la decisión 1, la forma de LC10 está contratada en REQ-007.** Si la implementación de la fase 2 no la deniega en las cuatro puertas, eso será un defecto **de contrato** de esa entrega y se registrará como tal. No es una reclasificación de QA-023-23.
+  2. **La fila de `guard-git` de `AGENTS.md` §13** enuncia la propiedad («ningún agente ejecuta git destructivo») y no declara esta forma entre sus límites. La cara de git la contradice con efecto medido. **No abro hallazgo:** la decisión fija la clase y el cierre en LC10 queda contratado. Pero mientras no esté implementada, esa fila promete más de lo medido, por el lado que abre. Si llegara a publicarse sin LC10 implementada, el mínimo es declararla como límite conocido en §13 y en las notas, como recomendé para SEC-125 (R-047 §4). **El dueño de esa decisión es la coordinadora con el propietario. Yo no toco `AGENTS.md`.**
+
+### Estado tras R-049
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`QA-023-23`** | **`instrumento`** (REQ-007) | **`abierto`**, no aceptado. Forma LC10 contratada (CA-47 p. 19, CA-66 LC10) y **sin implementar**; las demás formas, abiertas | `desarrollador` (mecanismo), `analista-requerimientos` (contrato) | No por su clase |
+| `SEC-125` | `instrumento` (REQ-007) | sin cambio: **`abierto`**, no aceptado. Comparte con QA-023-23 las subformas LC10.1 a LC10.3 | `desarrollador`, `analista-requerimientos` | No |
+
+El resto, como en R-048 §7. **Estado de seguridad aprobado** de REQ-023, REQ-031 y REQ-001: sin cambio. **REQ-007, sin firma.**
+
+**Regresión a vigilar** (no exhaustivo): que una sede presente QA-023-23 como cerrado antes de que la forma de LC10 esté construida, validada y auditada; o que su cierre en esa forma se extienda a las demás.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-049**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`; QA-023-23 se registra con su propio identificador); próximos libres **R-050** y **SEC-127**.

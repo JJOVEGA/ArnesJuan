@@ -532,6 +532,21 @@
   > queda registrado como no medido y fuera de esta versión.
 
   **Lo que no hace, según el mismo mensaje:** no se despacha al desarrollador, no se implementan SEC-124 ni SEC-125, y no se tocan SEC-126, los no aceptados, `AGENTS.md` ni los contadores.
+- **Decisiones del propietario, 2026-10-03, posteriores a `598792c` (literales):**
+
+  > 1. P-LC10-A: opción A. La forma de LC10 (continuación de línea al final de la
+  >    línea que abre un heredoc) se deniega por la forma, a todo agente, en las
+  >    cuatro puertas, igual que SEC-124. Acepto que eso restrinja un uso legítimo
+  >    raro. No se emula la unión de líneas del shell (B rechazada); no se deja
+  >    QA-023-23 abierto en esta forma (C rechazada).
+  > 2. QA-023-23: se registra en `Hallazgos abiertos:` de REQ-007 y en el registro
+  >    de seguridad como hallazgo preexistente de clase instrumento. La forma de
+  >    LC10 lo cierra; cualquier otra forma que lo exhiba sigue abierta y sin
+  >    aceptar.
+
+  **Tarea del mismo mensaje (literal):** «El analista ajusta el punto 19 de CA-47 y LC10 en CA-66 para reflejar A: denegación por la forma, a todo agente, con motivo que identifique SEC-125 y LC10, en guard-codigo, guard-completado, guard.sh y guard-git. El caso que hoy es "falso positivo" (la línea siguiente cierra el heredoc) queda cubierto por la misma denegación; declararlo. Sin tocar HC1–HC9 ni LC1–LC9 salvo referencias cruzadas. Actualiza ADR-016, notas, guía e índice sólo en lo que esta decisión obliga. Registra QA-023-23 donde indica la decisión 2, con su estado y la referencia a la medición de docs/qa/REQ-023.md. QA revisa la coherencia del contrato ajustado (documental; no hace falta volver a medir: la medición sobre c4ad408 sigue vigente como fail-before). Commit local al terminar, SIN VALIDAR, con trazabilidad en ESTADO.»
+
+  **Lo que añade la coordinadora, rotulado como suyo:** cada sede tiene su dueño según `AGENTS.md` §5. El analista escribe el contrato. QA anota su propio hallazgo QA-023-23 en `Hallazgos abiertos:` de REQ-007, como en las vueltas anteriores. El `auditor-seguridad`, que mantiene `docs/seguridad/`, lo anota en el registro de seguridad: sólo el registro, sin revisión ni firma.
 
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 
