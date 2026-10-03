@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: `Archivos:` de REQ-007 completado con la sección 46 del banco y `hooks/guard-git.sh`, antes de despachar QA
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- **`requirements/REQ-007.md`, cabecera `Archivos:`:**
+  - añadida `tests/escenarios/hooks/secciones/46-heredocs-y-continuaciones-de-linea.sh`, como exige el punto 1 del versionado de CA-66, fase 2, y por autorización del propietario;
+  - añadido también `hooks/guard-git.sh`, que el delta `7c6baea..5121638` modifica y que faltaba, para que `tools/arnes-paralelo.sh` no declare disjunto algo que lo toca.
+- **Sin cambios:** los demás campos, el código, `AGENTS.md` y los contadores.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: correcciones de texto QA-023-24 (a, b) y QA-023-25 aplicadas por el propietario; el delta de la fase 2 queda completo para QA y seguridad
 > Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · texto del propietario redactado con ayuda de Fable (Claude, claude.ai), según las decisiones registradas en `PENDING_APPROVAL.md` (correcciones aplicadas junto con el código; pasada correctiva de la fase 2 reservada y sin gastar). Sin comisiones.
 
