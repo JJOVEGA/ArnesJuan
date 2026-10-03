@@ -69,6 +69,13 @@
           - La precisión sobre `guard-codigo` y `guard-git` en LC10 se mantiene.
         - **IMPLEMENTACIÓN MANUAL EN CURSO (propietario): código de los puntos 18 y 19, filas HC/LC del banco, correcciones QA-023-24 y QA-023-25.** La lista de sedes y los comandos están más abajo, en «ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE». Después: QA (Opus), con la pasada de la fase 2 si hace falta; luego seguridad con QA favorable; luego el commit.
         - **2026-10-03, posterior a `093e81e`:** el propietario autorizó un despacho nuevo al `desarrollador`. **No se ejecutó:** sería volver a producir, reformulado, el despacho que ya detuvo un control del proveedor, y la instrucción de ese bloqueo lo prohíbe. **La implementación sigue siendo manual** (registro en `PENDING_APPROVAL.md`). No se despachó a nadie y no cambió el código.
+        - **Delta construido por el propietario** (`9467f02`, `10ac6c4`, `36a0d27` y `5121638`, SIN VALIDAR): la sección 46 (HC1–HC9, LC1–LC10), los puntos 18 y 19 con LC10, y el texto de QA-023-24/25. `Archivos:` de REQ-007 se completó en `ee9c3ce`.
+        - **IMPEDIMENTO (2026-10-03, sobre `ee9c3ce`): la validación de QA de la fase 2 la detuvo un control del proveedor** mientras QA leía el diff de `hooks/`.
+          - **No hay veredicto.** QA no ejecutó gates, sección 46, regresiones, banco, autoprueba, fail-before, shell aparte, coste ni la revisión del texto de QA-023-24/25, y no modificó ningún archivo.
+          - **Las cifras del propietario** (2038/0/12; 2050 casos) siguen sin repetir por QA y no acreditan nada.
+          - **No se reintentó ni se reformuló.** Seguridad **no se despacha**, porque no hay QA favorable (§6), y el write-back del analista depende de los dos veredictos.
+          - **SEC-124, SEC-125 y LC10 no se declaran reparados**, y QA-023-23/24/25 siguen como estaban. La pasada correctiva de la fase 2 sigue sin gastar.
+          - **Decide el propietario cómo se valida.** Volver a despachar esta validación a QA sería repetir la acción detenida.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -460,7 +467,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 15:29
+## Estado derivado — 2026-10-03 17:25
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -470,7 +477,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `7c6baea` — limpio
+**Repositorio:** `cand/1.35.0` @ `ee9c3ce` — limpio
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

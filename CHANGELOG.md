@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: la validación de QA del delta construido por el propietario la detuvo un control del proveedor; sin veredicto, sin seguridad, sin write-back
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5; detenido) y la coordinadora. Unos 0,12 M tokens de QA (cifra del arnés).
+
+- **QA, sobre `ee9c3ce`:** leyó la cola, el contrato y parte del diff de `hooks/`, y un control del proveedor lo detuvo. **No hay veredicto**: no ejecutó ninguna prueba ni gate y no modificó archivos.
+- **Consecuencias:**
+  - seguridad no se despacha (§6);
+  - el analista no hace el write-back;
+  - SEC-124, SEC-125 y LC10 no se declaran reparados;
+  - las cifras del propietario siguen sin acreditar.
+- **Sin reintentos ni reformulaciones.** El impedimento queda en `docs/ESTADO.md`. La pasada correctiva de la fase 2 sigue sin gastar.
+- **Avance (regla 6):** ninguno de validación. El propietario decide la vía.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: `Archivos:` de REQ-007 completado con la sección 46 del banco y `hooks/guard-git.sh`, antes de despachar QA
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
 
