@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: decisiones del propietario sobre QA-023-24 y QA-023-25 registradas; implementación manual en curso
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- **Decisiones**, literales en `PENDING_APPROVAL.md`:
+  - QA-023-25: precede REQ-001 CA-53, y el motivo SEC-125/LC10 sólo vale para las denegaciones del análisis;
+  - QA-023-24: el punto 5 de CA-66 y las notas se corrigen;
+  - las dos correcciones las aplica el propietario junto con el código;
+  - la pasada correctiva de la fase 2 se reserva para el código;
+  - la precisión sobre `guard-codigo` y `guard-git` en LC10 se mantiene.
+- **`docs/ESTADO.md`:** «implementación manual en curso: código de los puntos 18 y 19, filas HC/LC del banco, correcciones QA-023-24 y QA-023-25».
+- **Sin cambios:** REQ-007, código, banco, `AGENTS.md` y contadores.
+- **Avance (regla 6):** lo que tiene que entregar el propietario queda definido y registrado. Falta su implementación, y después QA y seguridad.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: contrato ajustado a P-LC10-A = (A) (LC10 denegada por la forma, a todo agente, en las cuatro puertas); QA-023-23 registrado (cabecera de REQ-007 y R-049); revisión documental de QA CON-HALLAZGOS (QA-023-24 y QA-023-25, `contrato`, baja) — SIN VALIDAR
 > Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5), `auditor-seguridad` (sólo registro) y la coordinadora. Unos 0,18 M tokens del analista, 0,20 M de QA y 0,08 M de seguridad (cifras del arnés).
 

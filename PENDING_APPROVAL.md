@@ -547,6 +547,26 @@
   **Tarea del mismo mensaje (literal):** «El analista ajusta el punto 19 de CA-47 y LC10 en CA-66 para reflejar A: denegación por la forma, a todo agente, con motivo que identifique SEC-125 y LC10, en guard-codigo, guard-completado, guard.sh y guard-git. El caso que hoy es "falso positivo" (la línea siguiente cierra el heredoc) queda cubierto por la misma denegación; declararlo. Sin tocar HC1–HC9 ni LC1–LC9 salvo referencias cruzadas. Actualiza ADR-016, notas, guía e índice sólo en lo que esta decisión obliga. Registra QA-023-23 donde indica la decisión 2, con su estado y la referencia a la medición de docs/qa/REQ-023.md. QA revisa la coherencia del contrato ajustado (documental; no hace falta volver a medir: la medición sobre c4ad408 sigue vigente como fail-before). Commit local al terminar, SIN VALIDAR, con trazabilidad en ESTADO.»
 
   **Lo que añade la coordinadora, rotulado como suyo:** cada sede tiene su dueño según `AGENTS.md` §5. El analista escribe el contrato. QA anota su propio hallazgo QA-023-23 en `Hallazgos abiertos:` de REQ-007, como en las vueltas anteriores. El `auditor-seguridad`, que mantiene `docs/seguridad/`, lo anota en el registro de seguridad: sólo el registro, sin revisión ni firma.
+- **Decisiones del propietario, 2026-10-03, posteriores a `3158bf9` (literales; registradas sin despachar a ningún agente):**
+
+  > 1. QA-023-25: precedencia de REQ-001 CA-53. Un comando que supera el
+  >    presupuesto se deniega sin analizar con el motivo de CA-53; el motivo
+  >    SEC-125/LC10 sólo aplica a denegaciones producidas por el análisis. El
+  >    texto del punto 19 y de LC10 se ajusta en ese sentido.
+  > 2. QA-023-24: corregir el punto 5 de CA-66 y las notas para reflejar que la
+  >    forma ya se denegaba hoy cuando la escritura o la orden de git están en
+  >    la propia línea, no sólo en LC10.8.
+  > 3. Ambas correcciones de texto las aplica el propietario en el tramo de
+  >    implementación manual, junto con el código. La única pasada correctiva de
+  >    la fase 2 se reserva para el código. QA verifica texto y código juntos.
+  > 4. La precisión declarada sobre guard-codigo y guard-git en LC10 se mantiene
+  >    tal como está.
+
+  **Lo que añade la coordinadora, rotulado como suyo:**
+  - **Quién edita:** con la decisión 3, las correcciones de texto de REQ-007 (puntos 19 y LC10, punto 5 de CA-66) y de las notas las hace el propietario, no el `analista-requerimientos`. Es una excepción expresa a quién transcribe por §9.
+  - **La pasada correctiva de la fase 2** queda sin gastar y reservada para el código.
+  - **QA-023-24 y QA-023-25** siguen abiertos hasta que QA verifique el texto y el código juntos. Siguen fuera de `Hallazgos abiertos:`, como el precedente de QA-023-18.
+  - **Nada cambia hoy** en REQ-007 ni en el código.
 
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 

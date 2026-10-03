@@ -61,7 +61,13 @@
         - **QA-023-23 registrado:** en `Hallazgos abiertos:` de REQ-007 (por QA) y en `docs/seguridad/registro-seguridad.md`, R-049 (sólo registro, sin firma). Clase `instrumento`, preexistente, abierto y sin aceptar. La forma de LC10 lo cierra cuando esté implementada y validada; las demás formas siguen abiertas.
         - **Revisión documental de QA: CON-HALLAZGOS.** QA-023-24 (`contrato`, baja): la razón que sostiene «LC10 no añade movimientos» es falsa, aunque la conclusión es cierta. QA-023-25 (`contrato`, baja): la regla del motivo de LC10 choca con REQ-001 CA-53 (presupuesto). Están sólo en `docs/qa/REQ-023.md`, no en la cabecera.
         - **El contrato de la fase 2 está completo para implementar HC1–HC9, LC1–LC9 y LC10**, salvo **el motivo cuando LC10 coincide con un comando que supera el presupuesto** (QA-023-25), que depende de la pasada correctiva del analista.
-        - **La pasada correctiva de la fase 2 sigue sin gastar:** usarla en QA-023-24/25 o reservarla para el código lo decide el propietario.
+        - **Decidido por el propietario (2026-10-03, posterior a `3158bf9`; literal en `PENDING_APPROVAL.md`):**
+          - QA-023-25: precede REQ-001 CA-53. Lo que supera el presupuesto se deniega sin analizar, con el motivo de CA-53; el motivo SEC-125/LC10, sólo para las denegaciones que produce el análisis.
+          - QA-023-24: el punto 5 de CA-66 y las notas se corrigen.
+          - Las dos correcciones las aplica el **propietario** junto con el código.
+          - **La pasada correctiva de la fase 2 se reserva para el código**, y QA verifica texto y código juntos.
+          - La precisión sobre `guard-codigo` y `guard-git` en LC10 se mantiene.
+        - **IMPLEMENTACIÓN MANUAL EN CURSO (propietario): código de los puntos 18 y 19, filas HC/LC del banco, correcciones QA-023-24 y QA-023-25.** La lista de sedes y los comandos están más abajo, en «ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE». Después: QA (Opus), con la pasada de la fase 2 si hace falta; luego seguridad con QA favorable; luego el commit.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -92,7 +98,7 @@
         - Gates de §7: `for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done` · `jq -e . hooks/hooks.json >/dev/null` · `jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null`
       - **Después del código:** QA (Opus, §5), con la pasada correctiva de la fase 2 si hace falta; luego seguridad con QA favorable; luego el commit local. Esas comisiones de revisión sí las puede despachar la coordinadora, porque no producen código.
 - **Impedimento (2026-10-03, posterior a `fff53f4`; anterior a la novena autorización):** el propietario autorizó implementar SEC-124 (B), SEC-125 y la corrección de F3, con analista, desarrollador, QA y seguridad, una pasada correctiva como máximo y sin reiniciar contadores. Al iniciar la ejecución, un control de seguridad del proveedor detuvo la respuesta de la coordinadora. **No se ejecutó ningún paso, no se despachó a ningún agente y no cambió ningún archivo de código ni de contrato.** No se reintentó, no se delegó y no se cambió de modelo. SEC-123, SEC-124 y SEC-125 siguen `abierto`.
-- **Siguiente paso real (2026-10-03, manda sobre la frase de debajo):** que el propietario implemente SEC-124 y SEC-125 con la lista de «Fase 2» de arriba. El contrato sustituye a §3 y §7 del plan.
+- **Siguiente paso real (2026-10-03, posterior a `3158bf9`):** la implementación manual del propietario, que está en curso: código de los puntos 18 y 19, filas HC/LC del banco y correcciones QA-023-24 y QA-023-25. Cuando la entregue, QA verifica texto y código juntos.
 - **Siguiente paso anterior (historia):** que **una persona** revise las fuentes del traspaso y redacte, o decida no redactar, §3 y §7 del plan (`TRASPASO.md` §6 y §8). La coordinadora no las reintenta ni las delega. Después vendría la autorización de ejecución. Hasta entonces no se despacha a nadie y no se abre ninguna vuelta.
 - **Conservado en un commit local del 2026-10-03, sin push:** este archivo, `PENDING_APPROVAL.md`, `CHANGELOG.md`, `propuesta-v1.35.0/plan-implementacion.md` y `propuesta-v1.35.0/TRASPASO.md`. Es historial local, **no** una copia remota: `origin` y el PR #59 siguen en `45368ce`. **Sin seguimiento:** los cinco archivos históricos de `propuesta-v1.35.0/` (`TRASPASO.md` §3).
 
@@ -453,7 +459,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 15:18
+## Estado derivado — 2026-10-03 15:19
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -463,7 +469,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `598792c` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `3158bf9` — limpio
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
