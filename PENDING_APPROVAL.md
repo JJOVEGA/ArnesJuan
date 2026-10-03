@@ -567,6 +567,21 @@
   - **La pasada correctiva de la fase 2** queda sin gastar y reservada para el código.
   - **QA-023-24 y QA-023-25** siguen abiertos hasta que QA verifique el texto y el código juntos. Siguen fuera de `Hallazgos abiertos:`, como el precedente de QA-023-18.
   - **Nada cambia hoy** en REQ-007 ni en el código.
+- **Decisión del propietario, 2026-10-03, posterior a `093e81e` (literal, la parte de la decisión):**
+
+  > Autorizo un despacho al desarrollador para implementar SEC-124 y SEC-125
+  > sobre el contrato ya comiteado. Es una autorización nueva sobre un estado
+  > distinto al del impedimento anterior: el contrato está completo en el
+  > repositorio y las decisiones P-LC10-A, QA-023-24 y QA-023-25 están
+  > registradas. Si un control del proveedor detiene este despacho, se registra
+  > en ESTADO y la implementación vuelve a manual, sin reintentos ni
+  > reformulaciones.
+
+  **Lo que hace la coordinadora, rotulado como suyo: el despacho NO se ejecuta.**
+  - El control del proveedor ya detuvo antes este mismo despacho al `desarrollador` para implementar SEC-124 y SEC-125, y la instrucción que acompaña a ese bloqueo prohíbe volver a producirlo, también reformulado.
+  - Un despacho nuevo con el mismo objetivo lo sería, aunque sólo remita a las sedes. Una autorización del propietario no levanta esa restricción.
+  - Por la propia regla de esta decisión («sin reintentos ni reformulaciones»), **la implementación sigue siendo manual**.
+  - No se despachó a nadie, y no cambian el código, REQ-007 ni los contadores. La pasada correctiva de la fase 2 sigue sin gastar.
 
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 

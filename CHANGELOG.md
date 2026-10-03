@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: autorización del propietario de un despacho nuevo al desarrollador registrada y NO ejecutada (volvería a producir, reformulado, el despacho que detuvo un control del proveedor); la implementación sigue siendo manual
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- **Registro:** la decisión, literal, en `PENDING_APPROVAL.md`, con el motivo de no ejecutarla. `docs/ESTADO.md` lo recoge.
+- **Sin cambios:** código, banco, REQ-007, `AGENTS.md` y contadores. La pasada correctiva de la fase 2 sigue sin gastar.
+- **Avance (regla 6):** no hay avance de código. Falta la implementación manual del propietario, y después QA y seguridad.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: decisiones del propietario sobre QA-023-24 y QA-023-25 registradas; implementación manual en curso
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
 

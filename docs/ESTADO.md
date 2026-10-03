@@ -68,6 +68,7 @@
           - **La pasada correctiva de la fase 2 se reserva para el código**, y QA verifica texto y código juntos.
           - La precisión sobre `guard-codigo` y `guard-git` en LC10 se mantiene.
         - **IMPLEMENTACIÓN MANUAL EN CURSO (propietario): código de los puntos 18 y 19, filas HC/LC del banco, correcciones QA-023-24 y QA-023-25.** La lista de sedes y los comandos están más abajo, en «ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE». Después: QA (Opus), con la pasada de la fase 2 si hace falta; luego seguridad con QA favorable; luego el commit.
+        - **2026-10-03, posterior a `093e81e`:** el propietario autorizó un despacho nuevo al `desarrollador`. **No se ejecutó:** sería volver a producir, reformulado, el despacho que ya detuvo un control del proveedor, y la instrucción de ese bloqueo lo prohíbe. **La implementación sigue siendo manual** (registro en `PENDING_APPROVAL.md`). No se despachó a nadie y no cambió el código.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -459,7 +460,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 15:19
+## Estado derivado — 2026-10-03 15:27
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -469,7 +470,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `3158bf9` — limpio
+**Repositorio:** `cand/1.35.0` @ `093e81e` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
