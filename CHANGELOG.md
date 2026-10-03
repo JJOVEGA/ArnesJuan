@@ -2,6 +2,43 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 1 VALIDADA: SEC-123, corrección documental de F3 — QA favorable tras su única pasada correctiva (QA-023-18 cerrado); seguridad R-048 favorable; SEC-126 registrado (`instrumento`, comentario de código, sin encadenar); SEC-123 sigue abierto y sin aceptar
+> Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos`, `qa-tester` (Opus, §5), `auditor-seguridad` y la coordinadora. Tokens según el arnés: unos 0,43 M del analista (write-back y pasada), 0,37 M de QA (revisión y re-verificación) y 0,16 M de seguridad.
+
+- **Autorización:** novena, registrada literal en `PENDING_APPROVAL.md` § Resueltas antes de despachar. El propietario aclaró que hay **una pasada correctiva por fase**; la de la fase 1 queda gastada en QA-023-18.
+- **QA** (`docs/qa/REQ-023.md`, «Novena autorización, fase 1»):
+  - la primera revisión salió con hallazgos: QA-023-18 (`contrato`, baja), por una generalización presentada como medida;
+  - la re-verificación es **favorable**;
+  - las tres gates de §7 dan rc 0;
+  - `QA:` de REQ-007 sigue `pendiente` por lo ajeno a esta fase.
+- **Seguridad** (`docs/seguridad/registro-seguridad.md`, R-048):
+  - **favorable**: las sedes son coherentes entre sí y con R-047 §2, el write-back exigido está hecho, nada se presenta como reparado, mitigado ni aceptado, y no hay detalle de explotación;
+  - P-119-A ya puede presentarse con sus cuatro datos;
+  - **SEC-126** (`instrumento`, baja): un comentario de `hooks/lib.sh` conserva la cifra antigua. Queda para la primera comisión que toque esa función; no se encadena ninguna reparación;
+  - `Seguridad:` de REQ-007 sigue `pendiente`.
+- **Sin cambios:** cabeceras de REQ, código, banco, `AGENTS.md` y plantillas. La entrada del analista de debajo, «SIN VALIDAR» cuando se escribió, queda validada por esta.
+- **Avance (regla 6):** la fase 1 está entregada y validada. Sigue la fase 2 (SEC-124 y SEC-125), con su propia pasada correctiva.
+
+## [Interno] — 2026-10-03 · Novena autorización, fase 1, write-back (analista): SEC-123 — la descripción de F3 y del punto 16 de REQ-007 CA-47 separa lo medido, lo inferido y lo no comprobado, pone el umbral por propiedad y declara su consecuencia; ADR-016, notas `[1.35.0]` y guía, coherentes; sin reparar ni aceptar el límite — SIN VALIDAR
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `analista-requerimientos`.
+
+- **Sedes:**
+  - `requirements/REQ-007.md`: CA-47 (F3, sede de la descripción, y punto 16, que remite a ella); marcador del versionado; P-119-A anotada sin cambiar pregunta, opciones ni recomendación; nota de Notas / alcance; Trazabilidad, con la «Correspondencia con el encargo» de la fase 1; Historial;
+  - ADR-016, precisión de SEC-123 en la adenda de la octava autorización;
+  - la sección `[1.35.0]` de este archivo: fronteras del cambio de compatibilidad 4 y limitación nueva SEC-123;
+  - `skills/arnes-upgrade/SKILL.md`, «Hacia 1.35.0», «Lo que NO cubre»;
+  - `requirements/README.md`, índice.
+- **Contenido** (fuente: `docs/seguridad/registro-seguridad.md` § R-047, §2 y §7; sin copiar condiciones de explotación ni pasos de reproducción):
+  - el umbral es la salida de la entrada de `/proc` del propio hook, no un número de niveles;
+  - lo no visto se juzga por el archivo al que llega el hook, y puede ser un permiso sobre un archivo protegido;
+  - medido a nivel de hook con la raíz a siete niveles, y el efecto en disco con un shell aparte, en Linux/WSL2;
+  - inferido: la raíz a cinco o más niveles y el alcance desde el host; sin comprobar: host, extensión de VS Code y Windows.
+- **Precisión de la coordinadora**, anotada en la Correspondencia: el resumen del pedido decía «una raíz de proyecto a cinco o más niveles» como medido; R-047 midió con siete y dedujo los cinco o más.
+- **Sin cambios:** código, banco, `AGENTS.md`, plantillas, `Estado:`, veredictos, `Rigor:`, `Sensible a seguridad:`, `Hallazgos abiertos:` y contadores. SEC-123 sigue `abierto`; F3 sigue pendiente en P-119-A.
+- **Declarado para el `desarrollador`:** el comentario de `_arnes_cd_resolucion` (`hooks/lib.sh`) conserva «cinco niveles».
+- **Pasada correctiva única de la fase 1 (QA-023-18, `contrato`, baja):** en F3, «Medido» se limita a la forma de `cwd` que no ancla que mide R-047 §2, y que las demás causas del punto 1 den el mismo permiso pasa a «Inferido» (por construcción); el Historial lo registra. Se aplican también tres observaciones de QA: el cinco o más se apoya en el mecanismo y en la medición, las notas de SEC-123 dan también el deny con una a tres y con siete o más subidas, y se une una frase partida en las «Fronteras». QA-023-18 no se añade a `Hallazgos abiertos:`.
+- **Avance (regla 6):** la corrección documental de la fase 1 queda escrita, con su pasada correctiva. Siguen la re-verificación de QA y la revisión de seguridad sobre la coherencia entre las sedes.
+
 ## [Interno] — 2026-10-03 · Candidato 1.35.0: decisiones del propietario sobre SEC-124 (B), SEC-125 (reparar antes de publicar) y SEC-123 (corregir F3) registradas; continuidad corregida; traspaso para revisión humana; el plan sigue INCOMPLETO
 > Origen: Interno (commit local, sin push, autorizado por el propietario el 2026-10-03) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
 
@@ -1136,9 +1173,11 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
    - **Fronteras, sin promesa** (lista no exhaustiva; la sede es REQ-007 CA-47): un cambio del sistema de
      archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de `Bash`; enlaces
      duros y montajes —**ningún** directorio, tampoco `/dev/` ni `/proc/`, queda fuera de la identificación—;
-     los límites de la detección de lo que depende del proceso (una cadena que sube con `..` por encima de la
-     entrada de `/proc` desde la que se resuelve; un sistema sin `/proc`); que el delimitador de un heredoc sea
-     el único sitio donde la puerta no sigue un retorno de carro, que es una declaración del desarrollador y no
+     los límites de la detección de lo que depende del proceso (una cadena que sale con `..` de la entrada de
+     `/proc` del propio hook se juzga por el archivo al que llega el hook, y **puede salir permitida sobre un
+     archivo protegido**: SEC-123, en las limitaciones de abajo, abierto y sin aceptar; un sistema sin `/proc`);
+     que el delimitador de un heredoc sea el único sitio donde la puerta no sigue un retorno de carro, que es
+     una declaración del desarrollador y no
      una medición exhaustiva; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
      editor interactivo y otras versiones del CLI, que no se han ejercido para esta regla. Las que la quinta
      autorización no nombra están planteadas al propietario (REQ-007, P-119-A).
@@ -1338,6 +1377,24 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     acepta.**
   - Vencimiento propuesto por el auditor: la decisión de publicación de 1.35.0. Una fecha propuesta no
     es una aceptación.
+- **SEC-123** (`instrumento`, baja, preexistente: 1.33.2 también lo permite): **abierto, no reparado, no
+  mitigado y NO aceptado.** Es un límite declarado de la detección de lo que depende del proceso —sede:
+  REQ-007 CA-47, F3, y su punto 16—, dentro de la pregunta P-119-A, pendiente del propietario.
+  - **Qué pasa:** por `Edit`, `Write` o `MultiEdit`, o por `Bash` sin un directorio de trabajo que ancle, una
+    ruta que pasa por el directorio de trabajo del proceso y después sale con `..` de la entrada de `/proc`
+    del propio hook se juzga por el archivo al que llega el hook, no por el que abre quien escribe. **La
+    consecuencia puede ser un permiso sobre un archivo protegido.**
+  - **Medido** (`docs/seguridad/registro-seguridad.md` § R-047, §2): a nivel de hook, con la raíz del
+    proyecto a siete niveles, permiso con cuatro, cinco y seis subidas —el cierre de un REQ en rojo y
+    escrituras de la coordinadora a código protegido—, y deny con una a tres y con siete o más; con un shell
+    aparte, el efecto en disco: el archivo protegido queda escrito. Linux/WSL2.
+  - **Inferido, no medido:** que haga falta la raíz del proyecto a cinco o más niveles, y que desde el host
+    sólo se alcance inyectando la entrada del hook o con un directorio de trabajo que no ancla.
+  - **Sin comprobar:** el host —ni el CLI ni la extensión de VS Code— y Windows.
+  - Hasta el 2026-10-03 estas notas lo describían sólo como «una cadena que sube con `..` por encima de la
+    entrada de `/proc` desde la que se resuelve», sin su consecuencia, y REQ-007 CA-47 ponía el umbral en
+    cinco niveles; medido con la raíz a siete, basta con cuatro subidas. **Documentarlo no lo repara ni lo
+    acepta.**
 - **La frontera de REQ-023**, descrita arriba.
 - **REQ-025:** la entrega 1b y OBS-H.
 - **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, frente a un plugin

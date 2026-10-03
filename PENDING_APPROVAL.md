@@ -373,6 +373,143 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-03, novena autorización) — **Intervención excepcional en dos fases: fase 1 SEC-123 (corrección documental de F3), fase 2 SEC-124 (B) y SEC-125 (código, contrato y pruebas)**; analista → desarrollador → QA → seguridad con QA favorable; como máximo una pasada correctiva y su re-verificación; sin reiniciar contadores ni crear otro REQ; commits locales de trabajo validado; sin push
+
+**Texto del propietario, literal e íntegro** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`, posterior al commit `fff53f4`):
+
+> Continuemos con la reparación defensiva de `JJOVEGA/ArnesJuan`, candidato v1.35.0.
+>
+> ## Base y comprobación inicial
+> Worktree `/home/juan/dev/ArnesJuan-v1.35`, rama `cand/1.35.0`, cabeza local
+> reportada `fff53f4` sobre `c0c8be2`. Antes de cualquier cambio: `git status`,
+> `git log -1`, confirma cabeza y rama, y conserva intactos los archivos sin
+> seguimiento de `propuesta-v1.35.0/` (README.md, SEC-047.diff, evidencia/).
+> No los añadas al índice.
+>
+> Instrucciones normativas: CLAUDE.md → AGENTS.md de ESTE worktree. No uses
+> `rel/registro-1.33.0` como normativa.
+>
+> Lee antes de despachar: PENDING_APPROVAL.md (decisiones del 3 de octubre),
+> docs/ESTADO.md (bloque vigente), propuesta-v1.35.0/TRASPASO.md y
+> plan-implementacion.md, docs/seguridad/registro-seguridad.md R-047 §2, §3 y §4,
+> requirements/REQ-007.md (CA-47 p.17, CA-66 p.5), ADR-016, notas [1.35.0] y los
+> criterios afectados de REQ-001, REQ-023 y REQ-031.
+>
+> ## Decisiones del propietario ya registradas (no reabrir)
+> - SEC-124: opción B. Denegación explícita del caso delimitado en R-047 §3.
+>   No se eliminan caracteres en silencio, no se modifica el comando, no se
+>   juzga ningún otro comando. Se acepta sólo la restricción concreta del uso
+>   legítimo allí descrito.
+> - SEC-125: reparar antes de publicar. Una continuación de línea por sí sola
+>   no demuestra intención de evadir.
+> - SEC-123: corregir la descripción de F3. El riesgo NO está aceptado y el
+>   mecanismo NO está reparado.
+>
+> ## Autorización: novena intervención, excepcional
+> Analista → desarrollador → QA → seguridad si QA es favorable. Como máximo una
+> pasada correctiva y su re-verificación. Regístrala como excepción en la sede
+> que exige el repositorio, sin reiniciar contadores ni crear otro REQ.
+>
+> El analista fija el comportamiento esperado y los criterios de aceptación; el
+> desarrollador elige la técnica. No se exige diseño exhaustivo previo, pero cada
+> cambio debe tener un resultado verificable. Resuelve sin consultarme los ajustes
+> ordinarios de código, pruebas, contrato y trazabilidad dentro del alcance.
+> Reutiliza firmas y evidencia vigentes; revisa sólo lo afectado y sus
+> dependencias.
+>
+> ## Alcance en dos fases secuenciales, con commit local por fase validada
+>
+> ### Fase 1 — SEC-123 (documental, independiente)
+> Corregir la descripción de F3 en REQ-007, ADR-016 y las notas [1.35.0]:
+> - separar lo medido de lo inferido; lo medido son cuatro componentes de subida
+>   desde una raíz de proyecto a cinco o más niveles de profundidad; permiso
+>   indebido y efecto en disco medidos en hook y shell, no ejercidos en el host;
+> - declarar la consecuencia operativa;
+> - mantener F3 dentro de P-119-A como pendiente; ninguna redacción puede leerse
+>   como "reparado", "mitigado" ni "riesgo aceptado".
+> Verificación: revisión de QA documental y seguridad sobre coherencia entre las
+> tres sedes. Commit local al validar. Esta fase se ejecuta completa antes de
+> empezar la fase 2 y no depende de ella.
+>
+> ### Fase 2 — SEC-124 y SEC-125 (código, contrato y pruebas)
+> Orden propuesto: SEC-124 y después SEC-125, porque SEC-125 debe preservar las
+> reglas de comillas, CR y heredocs que SEC-124 toca. Si el desarrollador
+> justifica invertirlo, que lo registre; en cualquier orden, la segunda
+> reparación corre la regresión de la primera.
+>
+> Propiedades SEC-124 (sede: analizador de heredocs en hooks/lib.sh; sección 45
+> del banco; REQ-007 CA-47 p.17 y CA-66 p.5; notas y referencias afectadas):
+> - P1. El caso delimitado en R-047 §3 recibe DENY con motivo explícito que
+>   identifica SEC-124.
+> - P2. El texto del comando no se altera, sanea ni reescribe en ningún camino.
+> - P3. Ningún otro caso de la sección 45 ni del banco cambia de decisión.
+> - P4. El contrato describe la denegación como restricción concreta de ese caso,
+>   no como regla general sobre heredocs ni CR.
+> - P5. Windows: no medido para este delta. Declararlo; no afirmar cobertura.
+>
+> Propiedades SEC-125 (sede: reconocimiento de destinos de escritura; evidencia
+> en R-047 §4; precedente en guard-git sólo como referencia a comprobar):
+> - P6. Un destino de escritura que sería denegado sin la continuación de línea
+>   descrita en R-047 §4 se deniega también con ella.
+> - P7. El significado del comando se preserva: no se elimina la continuación
+>   si eso cambia la semántica; no hay DENY por la mera presencia de una
+>   continuación.
+> - P8. Se preservan las reglas vigentes de comillas, CR y heredocs: regresión
+>   obligatoria de los casos SEC-047, SEC-119 y SEC-122 y de la sección 45.
+> - P9. No se copia la lógica de guard-git sin comprobar P7 y P8; si se reutiliza,
+>   registrar qué se comprobó.
+> - P10. Cobertura declarada por capa: hook directo, shell aparte, CLI real si
+>   está disponible, extensión no. Sin medición del host, decirlo.
+>
+> ## Manejo del contenido técnico sensible
+> - Los agentes referencian R-047 §3 y §4 por sección. No reproducen ni
+>   reescriben las condiciones de explotación en documentos nuevos.
+> - Los casos de prueba se construyen reutilizando la evidencia existente
+>   (rama evidencia/prueba-despacho-2026-09-14, cand-1.35.0/evidencia-seg-r8/,
+>   baterías t2–t5) por copia o referencia. No se redactan catálogos nuevos de
+>   variantes.
+> - Si un control del proveedor detiene una acción: no reintentar por vía
+>   indirecta, no delegar ese contenido, no cambiar de modelo ni de
+>   configuración. Registrar el impedimento en el bloque manual de
+>   docs/ESTADO.md y continuar con el siguiente elemento independiente de la
+>   lista: fase 1 completa; dentro de la fase 2, la reparación no bloqueada y
+>   sus pruebas; regresiones y banco sobre lo que sí cambió. No declarar
+>   reparado nada cuya validación quedó pendiente.
+>
+> ## Validación
+> Por reparación: pruebas aisladas del caso, controles legítimos (lo que debe
+> seguir permitido) y regresiones afectadas. Sobre la cabeza final: banco
+> completo y gates exigidos. Conservar todo FAIL con su cabeza y entorno; un
+> SKIP o INCONCLUSO no acredita. Distinguir hook directo, shell aparte, CLI
+> real y extensión.
+>
+> ## Límites
+> Fuera de alcance y sin aceptar: CA-54 / QA-023-10, SEC-115, SEC-118, hueco C,
+> SEC-120, F2/F5/F7 de P-119-A, coste de normalización en Windows, integración
+> VS Code. No subir umbrales ni reducir límites de entrada. No cambiar contrato
+> para acomodar un resultado. Defectos nuevos independientes: registrar sin
+> encadenar reparaciones. Nada en AGENTS.md.
+> Autorizo commits locales de trabajo validado. No autorizo push, CI remoto,
+> fusión, cierre de requisitos, tags, publicación ni cambios en SENDA, Adelantos
+> o demo-conciliador.
+>
+> ## Entrega
+> Un único resumen: cabeza final; cambios por fase con archivos; evidencia de
+> funcionamiento por capa; cobertura de QA y seguridad con firmas y su delta;
+> impedimentos registrados; pendientes concretos. Si el presupuesto o un control
+> impiden terminar, conserva el trabajo validado y di exactamente qué quedó
+> incompleto y por qué.
+
+**Lo que la coordinadora añade, rotulado como suyo:**
+- **Base comprobada antes de editar (2026-10-03):** `cand/1.35.0` en `fff53f4`. En el árbol: `M docs/ESTADO.md` (la línea del impedimento anterior y el bloque derivado) y, sin seguimiento, `propuesta-v1.35.0/README.md`, `SEC-047.diff` y `evidencia/`, que no se añaden al índice.
+- **Contadores:** no se reinicia ninguno y no se crea ningún REQ. El de REQ-023 sigue agotado (3 de 3). Todo el trabajo es de REQ-007.
+- **Orden, en serie:**
+  - **Fase 1:** analista (F3) → QA documental (Opus, §5) → seguridad documental → commit local.
+  - **Fase 2:** analista (contrato) → desarrollador → QA (Opus) → como mucho una pasada correctiva y su re-verificación → seguridad con QA favorable → commit local.
+- **Precisión que la coordinadora pasa al analista:** el resumen de la fase 1 («cuatro componentes de subida desde una raíz de proyecto a cinco o más niveles») no coincide palabra por palabra con R-047 §2. R-047 midió con la raíz a siete niveles, con permiso a cuatro, cinco y seis subidas, y declara que la exigencia de una raíz a cinco o más niveles se sigue de su análisis. Como el propio encargo pide separar lo medido de lo inferido, el analista escribe lo que R-047 midió y lo registra como precisión en la «Correspondencia con el encargo», sin cambiar el pedido.
+- **Resuelve:** la autorización de ejecución pendiente de las decisiones del 2026-10-03. **Siguen pendientes y sin aceptar:** CA-54 (9b), SEC-115/118 (ficha 1), C (ficha 2), F2/F5/F7 (P-119-A) y SEC-120.
+- **Aclaración del propietario, 2026-10-03, durante la fase 1** (pregunta de la coordinadora y respuesta elegida, literales). La revisión documental de QA de la fase 1 salió con hallazgos (QA-023-18, `contrato`, baja; `docs/qa/REQ-023.md`). Pregunta: «QA-023-18 (contrato, baja; F3 presenta como medida una generalización inferida) exige una pasada correctiva en la fase 1. Tu autorización dice «como máximo una pasada correctiva y su re-verificación». ¿Cómo se cuenta?». **Respuesta: «Una por fase (Recomendado)»**, cuya descripción decía: «La gasto ahora en QA-023-18 (analista corrige, QA re-verifica, seguridad documental, commit de la fase 1) y la fase 2 conserva su propia pasada». **Contador:** la fase 1 gasta su única pasada correctiva en QA-023-18, y la fase 2 conserva la suya.
+
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 
 **Texto del propietario, literal e íntegro** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`; es la fuente de estas decisiones, por declaración del propio mensaje):

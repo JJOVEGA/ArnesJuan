@@ -9877,3 +9877,110 @@ Decide el propietario.
 - un análisis de heredoc que deje de denegar el delimitador con CR.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-047**; último hallazgo **SEC-125** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-048** y **SEC-126**.
+
+---
+
+## Revisión R-048 — **Novena autorización, fase 1 (SEC-123): revisión documental de seguridad** sobre la coherencia entre las sedes. `cand/1.35.0` @ `fff53f4` + write-back del analista y su pasada correctiva, **sin comitear** — 2026-10-03 — **REVISIÓN DOCUMENTAL, NO FIRMA**
+
+**Numeración.** Mismo método que en R-047: ramas locales y remotas, etiquetas y los 18 worktrees. `R-048` y `SEC-126` sólo aparecían como «próximo libre» en la línea de arriba. Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «RESUELTA (propietario, 2026-10-03, novena autorización)», «Fase 1 — SEC-123» y la «Aclaración del propietario» (una pasada por fase); y la decisión sobre SEC-123 en «Decisión 11 (SEC-124)» del mismo día. Leídos literales.
+- **Orden:** QA favorable para la fase 1 (`docs/qa/REQ-023.md`, «Novena autorización, fase 1 (SEC-123): revisión documental» y «Re-verificación única de la fase 1»). No rehice su trabajo ni miré las quality gates.
+- **Delta revisado** (`git diff` sobre `fff53f4`): `requirements/REQ-007.md` (CA-47 F3 y punto 16, marcador, P-119-A, Notas, trazabilidad, Historial), ADR-016 («Precisión de SEC-123»), `CHANGELOG.md` (`[1.35.0]`: «Fronteras» del cambio 4 y limitación SEC-123; entrada `[Interno]`), `skills/arnes-upgrade/SKILL.md` («Hacia 1.35.0») y el índice de `requirements/README.md`. `git diff --quiet -- hooks tools tests templates AGENTS.md .github .arnes`: rc 0. La cabecera de REQ-007 no cambia.
+- **Método:** lectura del texto contra R-047 §2 y §7, y lectura del código de `_arnes_cd_resolucion` (`hooks/lib.sh` l. 684-701) para la observación sobre su comentario. **Sin medición nueva:** es revisión de texto.
+
+### 1. Coherencia entre las sedes y con R-047 §2
+
+| Dato | REQ-007 F3 (sede) | Punto 16 | P-119-A | ADR-016 | Notas `[1.35.0]` | Guía | Índice | Frente a R-047 §2 |
+|---|---|---|---|---|---|---|---|---|
+| Umbral por propiedad: la salida de la entrada de `/proc` del propio hook, no un número | sí | sí | sí | sí | sí | sí | — | **Conforme** con la remediación exigida |
+| Cifra medida (permiso con 4, 5 y 6; deny con 1-3 y con 7 o más) | sí | 4-6 | 4-6 | sí | sí | — | — | **Conforme** |
+| Profundidad: medida con la raíz a 7; «5 o más», inferido | sí | 7 | sí | sí | sí | — | — | **Conforme** (abajo, precisión de R-047) |
+| Consecuencia: se juzga por el archivo al que llega el hook; puede ser un permiso sobre un archivo protegido | sí | sí | sí | sí | sí | sí | sí | **Conforme** |
+| Medido / inferido / no comprobado, separados | sí | sí | sí | sí | sí | resumido | — | **Conforme** |
+| Preexistente frente a 1.33.2 | sí | — | — | sí | sí | — | — | **Conforme** |
+
+- **Medido, sólo lo que medí:** a nivel de hook, Linux/WSL2, con el efecto en disco aparte; por `Bash`, una sola forma de `cwd` que no ancla, sin nombrarla. La generalización a las demás causas de no anclaje va como **inferida por construcción** (QA-023-18, ya cerrado). Es lo que se lee en el código: la segunda lectura se hace desde la entrada propia siempre que el `cwd` no ancla.
+- **Precisión de R-047 §2, sin reescribirlo:** «hace falta la raíz del proyecto a cinco o más niveles» (§2, «Cómo se alcanza») es una **deducción** del mecanismo y de la medición a siete, no una medición a cinco ni a seis. La lectura del analista, y la de la coordinadora en la «Correspondencia», es la correcta. El código es coherente con esa deducción, **y eso no la convierte en medida**.
+- **Sin contradicción entre sedes.** El texto anterior («cinco niveles», «por encima de la entrada … desde la que se resuelve») sólo sobrevive en tres sitios: como «Antes:» citado en el Historial, en la viñeta de l. 305 de ADR-016, que la precisión declara superada, y en el comentario de `hooks/lib.sh` (§4).
+
+### 2. Write-back exigido por R-047 §2: **hecho**
+
+- **F3 y punto 16 de CA-47, la adenda de ADR-016 y las notas, con el umbral por propiedad y su consecuencia:** hechos. Además, la guía y el índice.
+- **Las cifras se declaran operativas y la frontera es la propiedad** («otra medición las corrige como cambio menor»). Cumple la regla de describir el control por propiedad, no por enumeración: no promete un número que envejezca hacia el lado que abre. Eso importa aquí, porque si la entrada propia fuera otra, el número de subidas cambiaría.
+- **P-119-A puede presentarse ya con los cuatro datos:**
+  - umbral: la salida de la entrada propia;
+  - consecuencia: permiso posible sobre un archivo protegido, que contradice la propiedad de la octava autorización;
+  - profundidad: medida a siete, cinco o más inferido;
+  - alcance desde el host: inferido y no ejercido (por `Edit`/`Write`, sólo inyectando; por `Bash`, sin `cwd` o con uno que no ancla).
+
+  Los cuatro están en la anotación de P-119-A y en F3.
+- **Trazabilidad §9:** fila del Historial con antes → después y causa (SEC-123, R-047 §2; QA-023-18), autorización citada, «Correspondencia con el encargo» con la precisión de la coordinadora rotulada como suya; cambio **menor** registrado como precisión de la adenda de ADR-016. Conforme.
+
+### 3. Ni reparado, ni mitigado, ni aceptado; ni condiciones de explotación nuevas
+
+- **Toda mención de reparar, mitigar o aceptar en las líneas añadidas es negativa**, y cada sede lo dice en su forma:
+  - F3: «no repara, no mitiga y no acepta»;
+  - ADR-016: «No lo repara, no lo mitiga y no lo acepta»;
+  - notas: «abierto, no reparado, no mitigado y NO aceptado»;
+  - guía: «abierto y sin aceptar»;
+  - índice: «sin repararlo ni aceptarlo».
+
+  F3 sigue pendiente dentro de P-119-A, que no cambia pregunta, opciones ni recomendación. **SEC-123 sigue `abierto` y sin aceptar.**
+- **Sin condiciones de explotación ni pasos de reproducción nuevos.** Las líneas añadidas dan la propiedad, las magnitudes que el propietario pidió registrar, la consecuencia y la cita a R-047 §2. No dan:
+  - ninguna ruta de ejemplo, ni `/proc/self`, `fdinfo` ni el PID;
+  - la causa de no anclaje medida;
+  - ningún destino ni secuencia.
+
+  Las condiciones de alcance («sólo inyectando», «un `cwd` que no ancla») **restringen** el riesgo, y R-047 las exigía como dato. El texto **anterior** ya situaba el límite en el mismo sitio; lo nuevo corrige su cifra y añade la consecuencia, que es justo lo que había que decir.
+
+### 4. SEC-126 — `instrumento` (REQ-007) · **abierto** · severidad **baja** · dueño `desarrollador` (`hooks/lib.sh`, comentario de `_arnes_cd_resolucion`)
+
+**El comentario del código que implementa el límite conserva la descripción que SEC-123 corrigió.**
+- **Dónde:** `hooks/lib.sh` l. 693-694: «LIMITE, declarado: una cadena que, tras llegar al directorio de trabajo, sube con `..` por encima de esa entrada (`/proc/<pid>/task/<pid>/fdinfo`: cinco niveles) sale de ella y no se ve».
+- **Por qué es defecto y no sólo texto viejo:**
+  - «cinco niveles» es la profundidad absoluta del directorio desde el que se resuelve, y puesto junto a «sube con `..` por encima de esa entrada» se lee como umbral. Es la fuente de la imprecisión que SEC-123 corrigió en el contrato: el umbral real, por propiedad, es la salida de `/proc/<pid>/`.
+  - El comentario se presenta como «LIMITE, declarado» y no dice la consecuencia.
+  - **Riesgo:** desvía por una unidad, **hacia el lado que abre**, a quien escriba una prueba o una reparación de SEC-123 guiándose por él. Es una regresión documental del control dentro del propio mecanismo.
+- **Por qué `instrumento` y baja:** no es contrato —REQ-007, «Notas / alcance», lo declara y dice que no se lea como norma—, no cambia ninguna conducta y no lo alcanza nadie desde fuera.
+- **No lo introduce esta fase:** existe desde `9220c71`, y la fase 1 lo hizo visible y lo declaró.
+- **Remediación, por propiedad:** el comentario describe el límite por la salida de la entrada propia de `/proc` y remite a REQ-007 CA-47, F3, como sede, **sin cifra propia**. La lista exhaustiva y las cifras viven en un sitio.
+- **Write-back (§9):** no hace falta uno nuevo. El contrato ya es el correcto, y la deriva va del código al REQ, que ya la declara.
+- **Forzador:** la primera comisión cuyo alcance incluya `_arnes_cd_resolucion`, previsiblemente la reparación de SEC-123 tras P-119-A. **No encadeno reparación:** meterlo en la fase 2 (SEC-124/125) sería ampliación de alcance, y lo decide la coordinadora con el propietario. Cualquier cambio en `hooks/` es crítico y pasa por QA y seguridad.
+- **Vencimiento propuesto:** junto a SEC-123. **No aceptado.** **No lo añado a `Hallazgos abiertos:` de REQ-007**, porque el encargo lo prohíbe. Al ser `instrumento`, no cambiaría ningún cierre. Lo añado en la próxima edición autorizada del campo.
+
+### 5. Observaciones (no hallazgos)
+
+- **O-48-1 — Para presentar P-119-A.** R-047 §2 decía que una raíz a cinco o más niveles «no es raro». Las sedes lo dan como inferido, que es correcto, pero no dicen que sea una profundidad corriente. Al presentar P-119-A conviene decirlo, para que el propietario no lea la profundidad como una condición exótica: lo que de verdad restringe el alcance es la vía de entrada (inyección o `cwd` que no ancla), no la profundidad. No toca la recomendación de P-119-A, que queda fuera de la fase 1.
+- **O-48-2 — Mi propio texto en `Hallazgos abiertos:` de REQ-007 (entrada SEC-123, escrita en R-047).** No separa lo medido de lo inferido como lo hace ya F3:
+  - pone «con la raíz del proyecto a cinco o más niveles» junto a «medido a nivel de hook»;
+  - dice «cuatro o más» sin el tope medido.
+
+  Además nombra la causa de no anclaje y la ruta, que las sedes nuevas evitan, aunque ese dato estaba ya en el repositorio. Es evidencia, no criterio («la evidencia no declara», REQ-031), y la puerta sólo lee la clase. **Dueño: `auditor-seguridad`.** Lo alineo con F3 en la próxima edición autorizada del campo. Hoy no, porque el encargo lo prohíbe.
+
+### 6. Firmas y cobertura
+
+- **No cambio `Seguridad:` ni `Hallazgos abiertos:` de REQ-007 ni de ningún REQ.** `Seguridad:` de REQ-007 sigue `pendiente` por lo ajeno a esta fase (QA pendiente, bloques B y C, QA-114/116/117, QA-023-10, SEC-124).
+- **Lo que acredita esta revisión:** que el write-back documental de SEC-123 exigido por R-047 §2 está hecho y es coherente en las cinco sedes y con R-047; que ninguna presenta el límite como reparado, mitigado o aceptado; y que no añaden condiciones de explotación.
+- **Lo que NO acredita:**
+  - el mecanismo, que sigue igual y sigue abierto;
+  - el host y Windows;
+  - las quality gates (son de QA);
+  - SEC-124/125 (fase 2), CA-54, SEC-115/118, el hueco C, SEC-120, F2/F5/F7 ni la recomendación de P-119-A.
+
+**Veredicto de la fase 1: FAVORABLE.** SEC-126 (`instrumento`, baja) queda registrado **fuera del delta**. No lo introduce la fase y no bloquea su commit.
+
+### 7. Estado tras R-048
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| `SEC-123` | `instrumento` (REQ-007) | **`abierto`**, no aceptado, mecanismo sin reparar. **Write-back documental hecho** (R-048 §2); P-119-A presentable con sus cuatro datos | `desarrollador` (mecanismo) | No |
+| **`SEC-126`** | **`instrumento`** (REQ-007) | **`abierto`**, no aceptado | `desarrollador` | No |
+| `SEC-124`, `SEC-125` | — | sin cambio (fase 2) | — | SEC-124: REQ-007 |
+
+El resto, como en R-047 §9. **Estado de seguridad aprobado** de REQ-023, REQ-031 y REQ-001: sin cambio. **De REQ-007, sin firma.**
+
+**Regresión a vigilar:** una sede, comentario o prueba que vuelva a dar el límite de F3 como un número de subidas en lugar de la salida de la entrada propia (no exhaustivo).
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-048**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-049** y **SEC-127**.

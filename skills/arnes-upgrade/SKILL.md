@@ -1206,7 +1206,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   - **Lo que NO cubre** (ejemplos **no exhaustivos**; la sede es REQ-007 CA-47 del arnés): un cambio del
     sistema de archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de
     `Bash`; enlaces duros y montajes; los límites de la detección de lo que depende del proceso —una cadena que
-    sube con `..` por encima de la entrada de `/proc` desde la que se resuelve, o un sistema sin `/proc`—;
+    sale con `..` de la entrada de `/proc` del propio hook, que se juzga por el archivo al que llega el hook y
+    **puede salir permitida sobre un archivo protegido** (medido a nivel de hook; desde el host, inferido y no
+    ejercido; SEC-123, abierto y sin aceptar; detalle en las notas de 1.35.0), o un sistema sin `/proc`—;
     que el delimitador de un heredoc sea el único sitio donde la puerta no sigue un retorno de carro, que es una
     declaración del arnés, no una medición exhaustiva; sistemas de archivos que no distinguen mayúsculas; y
     Windows/MSYS, `MultiEdit` en el host y el editor interactivo, que no se han ejercido para esta regla

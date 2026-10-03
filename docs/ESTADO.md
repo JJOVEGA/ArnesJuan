@@ -37,6 +37,10 @@
 - **Firmas vigentes:** REQ-023, REQ-031 y REQ-001 tienen QA y seguridad aprobados sobre el código de `befc17a`, en `en-revisión` y **sin cerrar**. REQ-007 está en `en-progreso`, con QA y seguridad pendientes.
 - **Plan:** `propuesta-v1.35.0/plan-implementacion.md` sigue **incompleto y no autoriza implementación**. Le faltan §3 (propiedades de diseño) y §7 (validación). El 2026-10-03, durante la actualización documental autorizada, un control de seguridad del proveedor volvió a interrumpir esa redacción; es la segunda vez, tras la sesión anterior. No se intentó reproducir ni rodear. El resto de `propuesta-v1.35.0/` (README, `SEC-047.diff` y `evidencia/`) es la propuesta **histórica** de SEC-047 del 2026-09-29.
 - **Traspaso (2026-10-03): `propuesta-v1.35.0/TRASPASO.md`.** Reúne el estado, las decisiones, el trabajo sin comitear, las fuentes por sección, la cobertura, las preguntas para la revisión humana de §3 y §7 y las decisiones de publicación pendientes. **Se retoma desde ahí.**
+- **Novena autorización (2026-10-03, en curso; registrada literal en `PENDING_APPROVAL.md` § Resueltas, con una pasada correctiva por fase):**
+  - **Fase 1, SEC-123 (F3):** validada, con QA favorable tras su única pasada (QA-023-18 cerrado) y seguridad R-048 favorable; queda en un commit local. SEC-123 sigue `abierto` y sin aceptar. Nuevo SEC-126 (`instrumento`, comentario de código), sin encadenar ninguna reparación.
+  - **Fase 2, SEC-124 (B) y SEC-125:** sigue.
+- **Impedimento (2026-10-03, posterior a `fff53f4`; anterior a la novena autorización):** el propietario autorizó implementar SEC-124 (B), SEC-125 y la corrección de F3, con analista, desarrollador, QA y seguridad, una pasada correctiva como máximo y sin reiniciar contadores. Al iniciar la ejecución, un control de seguridad del proveedor detuvo la respuesta de la coordinadora. **No se ejecutó ningún paso, no se despachó a ningún agente y no cambió ningún archivo de código ni de contrato.** No se reintentó, no se delegó y no se cambió de modelo. SEC-123, SEC-124 y SEC-125 siguen `abierto`.
 - **Siguiente paso real:** que **una persona** revise las fuentes del traspaso y redacte, o decida no redactar, §3 y §7 del plan (`TRASPASO.md` §6 y §8). La coordinadora no las reintenta ni las delega. Después vendría la autorización de ejecución. Hasta entonces no se despacha a nadie y no se abre ninguna vuelta.
 - **Conservado en un commit local del 2026-10-03, sin push:** este archivo, `PENDING_APPROVAL.md`, `CHANGELOG.md`, `propuesta-v1.35.0/plan-implementacion.md` y `propuesta-v1.35.0/TRASPASO.md`. Es historial local, **no** una copia remota: `origin` y el PR #59 siguen en `45368ce`. **Sin seguimiento:** los cinco archivos históricos de `propuesta-v1.35.0/` (`TRASPASO.md` §3).
 
@@ -397,7 +401,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 09:53
+## Estado derivado — 2026-10-03 11:03
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -407,7 +411,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `c0c8be2` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `fff53f4` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

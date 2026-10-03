@@ -339,3 +339,27 @@ QA-023-17 —el enlace dentro de un ámbito protegido hacia un descriptor salía
   palabra mal escrita, que es el límite de siempre de una lista que compara palabras.
 - (=) Sin procesos nuevos, desde el host no ejercido, y sin afirmar que la pasada esté verificada: falta la
   re-verificación de QA.
+
+**Precisión de SEC-123 (2026-10-03, novena autorización, fase 1) — manda sobre el primero de los «Límites
+declarados, sin promesa» de esta adenda en lo que toca; lo de arriba no se reescribe.** R-047 §2
+(`docs/seguridad/registro-seguridad.md`) midió que ese límite estaba mal descrito: REQ-007 CA-47 ponía el umbral en
+«cinco niveles» y ni allí ni aquí se decía su consecuencia. La sede de la descripción es REQ-007 CA-47, F3, y el
+punto 16 remite a ella; aquí, el resumen. Decisión del propietario: la novena autorización y su decisión sobre
+SEC-123, literales en `PENDING_APPROVAL.md` § Resueltas, entradas del 2026-10-03 («corregir la descripción de F3,
+separando lo medido de lo inferido y declarando la consecuencia. No acepto el riesgo ni doy por reparado el
+mecanismo»).
+- **Umbral, por propiedad:** el límite empieza cuando una cadena que pasa por el directorio de trabajo del proceso
+  **sale de la entrada de `/proc` del propio hook** —por `Edit`, `Write` o `MultiEdit`, o por `Bash` sin un `cwd`
+  que ancle—. No es un número de niveles.
+- **Consecuencia:** lo que no se ve se juzga por el archivo al que llega el hook, no por el que abre quien escribe,
+  y **puede ser un permiso sobre un archivo protegido**. En este rincón contradice la propiedad de la octava
+  autorización recogida arriba («Decisión del propietario»: lo dependiente del proceso que no pueda determinarse
+  no recibe permiso por esa incertidumbre).
+- **Medido**, a nivel de hook, con la raíz del proyecto a siete niveles: deny con una a tres subidas, permiso con
+  cuatro, cinco y seis, deny con siete o más; y el efecto en disco, con un shell aparte. Linux/WSL2. Preexistente:
+  1.33.2 también lo permite. **Inferido:** que haga falta la raíz a cinco o más niveles, y que desde el host sólo
+  se alcance inyectando la entrada o con un `cwd` que no ancla. **Sin comprobar:** el host —ni el CLI ni la
+  extensión de VS Code— y Windows.
+- (=) **No cambia ninguna decisión de este ADR ni lo construido:** corrige la descripción de un límite que ya era
+  sin promesa. **No lo repara, no lo mitiga y no lo acepta:** SEC-123 sigue abierto y F3 sigue pendiente en
+  REQ-007, P-119-A.
