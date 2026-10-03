@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: SEC-124 reparado (CA-47, punto 18, opción B): la forma HC se deniega con motivo que cita SEC-124; sección 46 HC1–HC9 en verde; banco entero sin regresión
+> Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · código del propietario redactado con ayuda de Fable (Claude, claude.ai) y probado por él en su árbol; Claude Code no despachó ningún agente.
+
+- **`hooks/lib.sh`:** nuevo código de retorno `ARNES_RC_CUERPO_CR=4` de `arnes_bash_sin_texto`: una línea del cuerpo de un heredoc que es el delimitador seguido de un retorno de carro y **no** es la última del comando devuelve 4 sin analizar y **sin alterar el comando**. Como última línea (HC7) se trata como cuerpo, igual que antes. `arnes_bash_escrituras` lo propaga como el 2 y el 3.
+- **`hooks/guard-codigo.sh`:** traduce el 4 (`exceso=3`) a una denegación con motivo que cita `SEC-124` y CA-47 punto 18, sólo a quien no es el agente de código (HC5b: `guard-codigo` solo permite al `desarrollador`).
+- **`hooks/guard-completado.sh`:** traduce el 4 a la misma denegación, para todo agente (HC5a).
+- **`guard-git`:** sin cambios; con código ≠ 0 sigue permitiendo y deja la denegación a las otras puertas, como con el CR del delimitador.
+- **Medido (Linux/WSL2, hook directo y `guard.sh`):** sección 46 **65 PASS, 0 FAIL** (antes del código: 53/12, el fail-before de HC1–HC4, HC5a y HC6). Banco entero **1840 casos: 1839 PASS, 1 FAIL, 12 SKIP**; el FAIL fue `REQ-021 CA-03 (c)` de la sección 38 (calibración de la sonda de procesos: 146.611 µs < 150.000 µs), que **pasó sola** a continuación (12 PASS, 0 FAIL, 1 SKIP): caso de reloj bajo carga del banco entero, ajeno al delta. Se conserva. Autoprueba y gates: pendientes de la corrida de QA.
+- **Sin medir:** host (CLI real, extensión) y Windows. **Sin cambios:** REQ-007, `AGENTS.md`, contadores. **Faltan:** punto 19 y LC1–LC10 (SEC-125), texto de QA-023-24/25, QA y seguridad.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: sección 46 del banco con las filas HC1–HC9 (SEC-124) y su fail-before contra 3f96e6b; sin código
 > Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · implementación manual del propietario, sin comisiones.
 

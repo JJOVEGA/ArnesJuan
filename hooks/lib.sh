@@ -1357,6 +1357,13 @@ ARNES_RC_EXCESO=2
 # puede seguir su significado (P-023-13-A, octava autorizacion; ver `arnes_bash_sin_texto`). Como el de
 # arriba, nunca sale por la salida estandar y los dos guardianes lo traducen a una denegacion con motivo.
 ARNES_RC_CR=3
+# Codigo de salida cuando NO analizo porque una linea DEL CUERPO de un heredoc es su delimitador seguido
+# de un retorno de carro y NO es la ultima linea del comando (SEC-124; REQ-007 CA-47, punto 18; novena
+# autorizacion, opcion B del propietario). Para bash esa linea no cierra el cuerpo; pero el retorno de
+# carro es un dato del transporte, y un shell que lo retire cerraria el cuerpo ahi y ejecutaria lo que va
+# detras. No se retira en silencio ni se juzga otro comando: se deniega la forma. Como los dos de arriba,
+# nunca sale por la salida estandar y las puertas lo traducen a una denegacion con motivo que cita SEC-124.
+ARNES_RC_CUERPO_CR=4
 
 # Techo efectivo, resuelto UNA vez por proceso y SOLO cuando hace falta.
 #
@@ -1696,12 +1703,18 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
   #    analisis comillas que en el cuerpo son texto (ver `_arnes_desentrecomilla`).
   #    Las limitaciones de este recorte estan escritas en `_arnes_expansiones`.
   if [[ "$limpio" == *'<<'* ]]; then
-    local linea delim='' dentro=0 citado=0 resto sinhs cr_delim=0
+    local linea delim='' dentro=0 citado=0 resto sinhs cr_delim=0 cuerpo_cr=0 pos=0
     local -a sin=()
     while IFS= read -r linea || [ -n "$linea" ]; do
+      pos=$(( pos + ${#linea} + 1 ))   # donde empieza la linea SIGUIENTE dentro de `$limpio`
       if [ "$dentro" -eq 1 ]; then
         resto="${linea#"${linea%%[![:blank:]]*}"}"     # `<<-` admite sangria delante del cierre
         if [ "$resto" = "$delim" ]; then dentro=0; continue; fi
+        # SEC-124 (CA-47, punto 18): la linea del cuerpo que es el delimitador seguido de un retorno de
+        # carro, con algo mas que blancos detras en el comando. Para bash no cierra el cuerpo; para un
+        # shell que retire el CR, si, y lo que sigue seria orden. No se decide cual: se deniega la forma.
+        # Como ultima linea del comando no hay nada detras que pudiera ejecutarse, y se trata como cuerpo.
+        if [ "$resto" = "$delim"$'\r' ] && [[ "${limpio:pos}" == *[![:space:]]* ]]; then cuerpo_cr=1; break; fi
         if [ "$citado" -eq 0 ]; then
           case "$linea" in
             *'$('*|*'`'*)
@@ -1743,6 +1756,7 @@ arnes_bash_sin_texto() {   # <comando> -> ARNES_SIN_TEXTO
       esac
     done <<< "$limpio"
     [ "$cr_delim" -eq 0 ] || return "$ARNES_RC_CR"
+    [ "$cuerpo_cr" -eq 0 ] || return "$ARNES_RC_CUERPO_CR"
     IFS=$'\n'; limpio="${sin[*]}"; IFS=$' \t\n'
   fi
   # Segundo sumando del presupuesto: el texto de comando que queda FUERA de los cuerpos
@@ -1771,7 +1785,9 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # motivo. Un `return 2` nunca sale por la salida estandar, asi que un llamador que
   # ignore el codigo ve una lista vacia: eso seria permitir, y por eso los dos
   # llamadores lo miran (y hay caso de banco para cada uno). Lo mismo con
-  # `$ARNES_RC_CR` (3): el delimitador de un heredoc con un retorno de carro.
+  # `$ARNES_RC_CR` (3): el delimitador de un heredoc con un retorno de carro. Y con
+  # `$ARNES_RC_CUERPO_CR` (4): una linea del cuerpo que es el delimitador seguido de un
+  # retorno de carro y no es la ultima del comando (SEC-124).
   local limpio i j n tok
   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
   # puede depender de como lo haya dejado el llamador.

@@ -344,6 +344,12 @@ arnes_guard_completado() {
         arnes_parse_manifest
         arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; no se analiza y no se permite a ningun agente. Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
       fi
+      # SEC-124 (REQ-007 CA-47, punto 18): una linea del cuerpo de un heredoc es el delimitador seguido de
+      # un retorno de carro y no es la ultima del comando. Alcanza a TODOS los agentes, como el CR de arriba.
+      if [ "$rc" -eq "$ARNES_RC_CUERPO_CR" ]; then
+        arnes_parse_manifest
+        arnes_deny "ARNES (SEC-124): dentro del cuerpo de un heredoc hay una linea que es su delimitador seguido de un retorno de carro, y no es la ultima del comando. Para bash esa linea no cierra el cuerpo, pero el retorno de carro es un dato del transporte y un shell que lo retire cerraria el cuerpo ahi y ejecutaria como orden lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; esta puerta no retira el retorno de carro ni juzga otro comando: deniega la forma a cualquier agente (REQ-007 CA-47, punto 18). Para corregirlo, escribe el comando sin retornos de carro —lineas terminadas solo en salto de linea— o usa en el cuerpo otra palabra que no sea el delimitador."
+      fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
