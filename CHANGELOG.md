@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: correcciones de texto QA-023-24 (a, b) y QA-023-25 aplicadas por el propietario; el delta de la fase 2 queda completo para QA y seguridad
+> Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · texto del propietario redactado con ayuda de Fable (Claude, claude.ai), según las decisiones registradas en `PENDING_APPROVAL.md` (correcciones aplicadas junto con el código; pasada correctiva de la fase 2 reservada y sin gastar). Sin comisiones.
+
+- **QA-023-25 (`requirements/REQ-007.md`, CA-47 punto 19, viñeta «El motivo»):** la regla del motivo queda acotada a las denegaciones **producidas por el análisis**; las causas que se deciden sin analizar preceden a la excepción y conservan su motivo: REQ-001 CA-53 (presupuesto) por decisión del propietario, con la entrada no determinable y el manifiesto ilegible como ejemplos no exhaustivos. Coincide con el código: en `arnes_bash_sin_texto`, `ARNES_RC_LC10` se devuelve después del presupuesto.
+- **QA-023-24 (a) (`REQ-007`, CA-66 fase 2, punto 5):** la conclusión «LC10 no añade movimientos» se apoya en la construcción, y LC10.8 pasa a ejemplo no exhaustivo de lo que lo publicado ya denegaba, junto con la escritura protegida o la orden de git prohibida en la propia línea que abre (sondas de QA).
+- **QA-023-24 (b) (notas `[1.35.0]` de este CHANGELOG):** el candidato deja pasar la forma «salvo donde una regla de siempre ya la deniega», con los mismos ejemplos.
+- **Sin cambios:** código, banco, `AGENTS.md`, contadores. Las frases «pendiente de implementación y de validación» de las notas y de REQ-007 quedan para el write-back del analista tras QA y seguridad, que es quien cambia el estado. QA-023-24 y QA-023-25 siguen abiertos hasta que QA verifique texto y código juntos.
+- **Estado del delta de la fase 2:** código de los puntos 18 y 19 (`10ac6c4`, `36a0d27`), sección 46 HC1–HC9 y LC1–LC10 (2050 casos, 0 FAIL en Linux/WSL2), y este texto. Listo para despachar QA (Opus) y, con QA favorable, seguridad.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: SEC-125 reparado (CA-47, punto 19) y la Excepción nombrada LC10 construida; sección 46 LC1–LC10 en verde; banco entero 2050 casos sin regresión
 > Origen: Interno (commit local SIN VALIDAR, sin push) · usuario: Juan · código del propietario redactado con ayuda de Fable (Claude, claude.ai), probado por él en su árbol y por Fable sobre un clon de `10ac6c4`; Claude Code no despachó ningún agente.
 
@@ -1290,7 +1299,9 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      todo agente y en las cuatro puertas**, sea cual sea lo que siga, con un motivo que nombra SEC-125 y LC10. Deja
      de pasar también lo legítimo —lo inocuo, lo de fuera de las zonas protegidas y lo que emite el
      `desarrollador`—, que es la restricción que el propietario acepta. La salida: escribir esa línea entera, sin la
-     continuación al final. Hasta que esté construido, el candidato —como 1.33.2— deja pasar esa forma, y el shell
+     continuación al final. Hasta que esté construido y validado, el candidato —como 1.33.2— deja pasar esa forma **salvo
+     donde una regla de siempre ya la deniega** —una escritura en código protegido o una orden de git prohibida en
+     la propia línea que abre, y LC10.8 por `guard-codigo`; ejemplos no exhaustivos (QA-023-24)—, y el shell
      ejecuta lo que va en la línea siguiente sin que lo vea ninguna puerta (QA-023-23, preexistente).
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
