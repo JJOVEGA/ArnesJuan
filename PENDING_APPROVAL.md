@@ -36,9 +36,128 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por las decisiones de publicación de v1.35.0 y está en § Resueltas. v1.35.0 está publicada; su cierre es la primera entrada de § Resueltas.)_
+> **Tres decisiones del contrato de 1.36.0, agrupadas** (analista-requerimientos, 2026-10-03; apertura de 1.36.0, `requirements/REQ-007.md`, «Preguntas abiertas», P-136-A a P-136-C). Ninguna impide implementar ni probar lo que no depende de ella, y cada una dice qué sigue. **Lo que sí impide la cola mientras tenga entradas:** marcar **cualquier** REQ como `completado` (`guard-completado`; `AGENTS.md` §6, «Mecanismo de gate»). Eso alcanza también a REQ-001, REQ-023 y REQ-031, que están en `en-revisión` con QA y seguridad aprobados. Cerrarlos no está autorizado hoy (nota de la coordinadora en «Decisiones de publicación de v1.35.0», § Resueltas), pero mientras estas fichas sigan aquí la máquina tampoco lo dejaría. **Y una cosa que no es ficha, pero que la coordinadora tiene que resolver antes de despachar la implementación:** el pedido «Encargo 2» no está en ninguna sede del repositorio. Hay que registrarlo literal en § Resueltas para que la «Correspondencia con el encargo (apertura de 1.36.0)» de REQ-007 pueda citarlo por ruta (`AGENTS.md` §6, regla 1).
+
+### [2026-10-03] (analista-requerimientos) — P-136-A: CA-54, ¿puede la optimización gastar procesos que v1.35.0 no gasta al analizar un comando grande?
+
+**Contexto.** El pedido fija el reloj de CA-54: menos de 5 s en el máximo declarado, en Linux/WSL2, sin cambiar veredictos, sin subir el umbral ni reducir la entrada. `requirements/README.md`, forma (d), exige que un criterio de coste contrate **todas** las vías por las que el coste se degrada. Si no, un arreglo que compra reloj con un proceso da verde en Linux.
+
+Hay dos caminos:
+- **El camino común** (un comando sin escrituras) ya lo gobierna REQ-007 CA-59, con línea base en v1.35.0: no cambia.
+- **El camino de un comando grande**, que es el que se optimiza, no tiene techo de procesos.
+
+En Windows/MSYS cada proceso cuesta de 1,2 a 6 s (`AGENTS.md` §2). Allí CA-54 ya mide de 20,4 a 28,9 s en el máximo (`sec-ca54-win/RESULTADO.md`), sin promesa en esta ventana.
+
+**Pregunta.** Al analizar un comando grande, ¿la optimización puede lanzar más procesos que v1.35.0?
+
+**Opciones.**
+- **(A) No: 0 procesos añadidos frente a v1.35.0**, medido con `tests/util/sonda-procesos.sh` sobre las entradas de las sondas de CA-54. Menos es conforme.
+  *Consecuencia:* la optimización tiene que hacerse dentro del proceso que ya existe. Se cierra la vía de comprar reloj con un proceso, que en Windows sumaría segundos. Puede costar más llegar a menos de 5 s.
+- **(B) Sí, con techo: hasta N procesos añadidos y sólo por encima de un tamaño de comando.** N y el tamaño se declaran y se miden en Linux. El camino común sigue en CA-59.
+  *Consecuencia:* el desarrollador tiene más técnicas a su alcance. En Windows, cada proceso añadido suma de 1,2 a 6 s en esos comandos, y esta ventana no lo mide.
+- **(C) No contratar procesos en CA-54; sólo el reloj.**
+  *Consecuencia:* CA-54 queda fuera de la forma (d), y se declara. Un arreglo que compre reloj con procesos pasa en Linux y empeora Windows sin que ningún criterio lo vea.
+
+**Recomendación del agente: (A).** Es la regla del stack («sin procesos donde se pueda») y la única que no traslada el coste a la plataforma que no se mide.
+
+**Qué trabajo sigue mientras no se decida.** Siguen implementar y medir una optimización que **no añade procesos**: es conforme con las tres opciones. Depende de esta decisión cualquier técnica que añada procesos.
+
+**Espera:** elección del propietario.
+
+### [2026-10-03] (analista-requerimientos) — P-136-B: CA-67 (SEC-118), ¿qué es «el tope» que se mide, y entran los avisos?
+
+**Contexto.** El pedido dice: «fail-closed cuando … el motivo excede el tope: emitir decisión siempre; medir el tope en bytes y ASCII/multibyte en Linux».
+
+Hoy, el motivo de una denegación viaja a `jq` como un argumento de línea de órdenes. Por encima del límite de bytes de un argumento, el hook sale sin decisión, y eso equivale a permitir. Lo medido en 1.35.0 está en `requirements/README.md` § «Clases de hallazgo» y en `docs/seguridad/registro-seguridad.md` § R-045, §4.
+
+La remediación registrada admite dos técnicas: acotar el motivo en bytes, o sacarlo de la línea de órdenes. Con la primera hay un número que es «el tope». Con la segunda no hay tope del motivo. El pedido no dice cuál de las dos lecturas es la suya.
+
+Además, la remediación nombra `arnes_emitir_avisos`: los avisos que no acompañan a una decisión. El pedido habla de «decisión».
+
+**Preguntas.** (1) ¿Qué es «el tope»? (2) ¿Entran los avisos?
+
+**Opciones para (1).**
+- **(A) Un límite en bytes que el arnés pone al motivo.**
+  Se declara la cifra. Se mide con contenido ASCII, de 2 y de 4 bytes, en el tope y por encima. El motivo emitido no pasa del tope, conserva la causa, dice que se acortó y no parte un carácter.
+  *Consecuencia:* el desarrollador queda obligado a acotar. La cifra pasa a ser contrato operativo.
+- **(B) No se acota el motivo: sale de la línea de órdenes.**
+  «El tope» es el límite de argumento medido en 1.35.0. Se mide que la decisión sale por encima de él, en ASCII y multibyte.
+  *Consecuencia:* el desarrollador queda obligado a no usar la línea de órdenes para el motivo. No hay cifra nueva.
+- **(C) Las dos valen; el criterio va por propiedad.**
+  La decisión se emite siempre. Si el desarrollador acota, rige además (A). En cualquier caso se mide en los puntos de 1.35.0, ASCII y multibyte. Es lo que hoy está escrito en REQ-007 CA-67.
+  *Consecuencia:* la técnica es del desarrollador. La medida cubre las dos lecturas.
+
+**Opciones para (2).**
+- **(i) Entran.** El aviso que el hook decide emitir también sale.
+  *Consecuencia:* se cierra todo lo que nombra la remediación de SEC-118, con un poco más de alcance que el pedido.
+- **(ii) No entran en 1.36.0.** Quedan declarados.
+  *Consecuencia:* el alcance es el del pedido. SEC-118 podría no cerrarse entero: eso lo decide el auditor.
+
+**Recomendación del agente: (C) para (1) y (i) para (2).** (C) no elige una técnica en nombre del desarrollador y satisface las dos lecturas del pedido. (i) evita que SEC-118 quede abierto por una parte que cuesta lo mismo reparar.
+
+**Qué trabajo sigue mientras no se decida.** Siguen implementar y probar que **toda denegación se emite** (CA-67, propiedad) y los casos de los puntos medidos en 1.35.0: valen igual con cualquier opción. Dependen de esta decisión la cifra del tope, si la hay, y los avisos.
+
+**Espera:** elección del propietario.
+
+### [2026-10-03] (analista-requerimientos) — P-136-C: CA-68 (SEC-115), ¿con qué mecanismo y con qué plazo se emite la decisión cuando el hook agota el tiempo?
+
+**Contexto.** El pedido dice: «fail-closed cuando el hook agota tiempo … emitir decisión siempre».
+
+Si el cliente mata el hook, nada que el hook haga deniega (SEC-030; REQ-031 CA-A16 lo observó en el cliente). Así que el hook sólo puede **decidir antes**.
+
+La remediación registrada (`docs/seguridad/registro-seguridad.md` § R-044-C, §2) es poner techos de tamaño antes de toda operación que crezca más que linealmente. Eso cubre las vías **identificadas**, y no un tiempo cualquiera. «Siempre» pide algo más, y hay tres formas de acercarse, con fronteras distintas.
+
+**Pregunta.** ¿Qué mecanismo se contrata, y si hay plazo, cuál?
+
+**Opciones.**
+- **(A) Sólo techos de tamaño.** Cada techo se declara en bytes y se mide con contenido ASCII y multibyte en el techo y un byte por encima. La promesa llega hasta lo medido.
+  *Consecuencia:* no hay reloj. «Siempre» queda acotado a las operaciones cubiertas, y una vía no identificada puede seguir muriendo sin decisión. Un valor legítimo por encima de un techo se deniega.
+- **(B) Techos de (A) más un plazo propio del hook.** El plazo se comprueba entre unidades de trabajo, sin procesos, y al vencer el hook emite `deny` con motivo. Es operativo y se baja con la medición; el agente propone **no más de 40 s a nivel de hook, en Linux/WSL2**.
+  *Consecuencia:* cubre también las vías no identificadas, salvo una sola operación que se bloquee por dentro. Un juicio legítimo que pase del plazo se deniega a todo agente, también al `desarrollador`. En Windows los juicios tardan varias veces más (CA-54 allí: de 20,4 a 28,9 s) y esta ventana no lo mide. Puede cambiar lo que mide REQ-017 CA-09 (sección 37/3, la pared de los 60 s): si cambia, se escala antes de entregar.
+- **(C) Techos de (A) más un vigilante en proceso aparte, que deniega al vencer el plazo.**
+  *Consecuencia:* cubre incluso la operación bloqueada. A cambio, añade un proceso a cada llamada, también a un `ls`, y en Windows eso son de 1,2 a 6 s por llamada. Choca con REQ-007 CA-59 (procesos del camino común), que habría que versionar.
+
+**Recomendación del agente: (B), con el plazo en 40 s.** Deja al menos 20 s para emitir la decisión aun con un proceso lento: el `jq` de la emisión, que en Windows cuesta de 1,2 a 6 s. Además, queda por encima del juicio legítimo más lento medido: 28,9 s, CA-54 en Windows sobre `3bc7d3c`. Y no añade procesos.
+
+**Qué trabajo sigue mientras no se decida.** Siguen implementar y probar los **techos de tamaño** para las vías medidas, T1 a T3 de CA-68, y reproducir cada vía en v1.35.0 (fail-before): son comunes a las tres opciones. Dependen de esta decisión el plazo, su valor y el vigilante.
+
+**Espera:** elección del propietario.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-03) — **Alcance de 1.36.0 y apertura de la ventana**: CA-54 / QA-023-10, SEC-120 y SEC-115/SEC-118, en ese orden; contrato del analista por propiedad y medida; sin implementación
+
+**Texto del propietario, literal** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.36`, «Encargo 2»; registrado aquí para que la «Correspondencia con el encargo» de REQ-007 pueda citarlo por su sede):
+
+> ## Encargo 2 — Apertura de v1.36.0 (coordinadora + analista; sin código)
+> Alcance decidido por el propietario, en este orden de prioridad:
+> 1. CA-54 / QA-023-10: el análisis de Bash en el máximo declarado (131072
+>    bytes) termina en menos de 5 s en Linux/WSL2, sin cambiar ningún veredicto
+>    del banco (2050 casos) y sin subir el umbral ni reducir la entrada. Es
+>    optimización de rendimiento; se mide con el banco y las sondas existentes.
+> 2. SEC-120 (vence 2026-10-29): fallo de jq al leer o trocear la entrada →
+>    deny en las herramientas que las puertas juzgan. Comprobación de código de
+>    salida, sin procesos nuevos.
+> 3. SEC-115 y SEC-118: fail-closed cuando el hook agota tiempo o el motivo
+>    excede el tope: emitir decisión siempre; medir el tope en bytes y ASCII/
+>    multibyte en Linux; Windows declarado no medido.
+> Fuera de alcance: hueco C, P-119-A (F2/F5/F7), SEC-123 mecanismo.
+>
+> El analista redacta el contrato de 1.36.0 POR PROPIEDAD Y MEDIDA: qué debe
+> cumplirse y cómo se mide, reutilizando el banco y las sondas que ya existen.
+> No enumera formas de comando ni variantes; cita los casos existentes por su
+> identificador. Un REQ nuevo solo si AGENTS.md §9 lo exige para CA-54; si no,
+> versionado de los criterios vigentes. Deja listas las decisiones que
+> necesite del propietario como fichas en la cola, no las toma.
+> Commit local con CHANGELOG. Sin push.
+>
+> ## Lo que NO haces en esta sesión
+> No despaches al desarrollador, QA ni seguridad: esta sesión abre, no
+> implementa. La implementación de CA-54 la autorizo aparte, sobre el contrato
+> que entregues. No toques hooks/, tools/ ni tests/. No AGENTS.md. No push,
+> versión, PR, fusión ni tag.
+
+**Lo que añade la coordinadora, rotulado como suyo:** el contrato está en `requirements/REQ-007.md` (nota de CA-54 del 2026-10-03, CA-47 punto 20, bloque L con CA-67 a CA-69) y en ADR-017 (`propuesta`). Las decisiones que necesita están en § Pendientes (P-136-A, P-136-B y P-136-C). **Esta entrada no autoriza implementar:** la implementación de CA-54 la autoriza el propietario aparte.
 
 ### RESUELTA (propietario, 2026-10-03) — **Publicación de v1.35.0 ejecutada**: `main` `3956a6f`, tag `v1.35.0`, PR #59, CI final run 37169938675 (success) sobre `c0f8493`
 
@@ -49,6 +168,7 @@ _(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por l
 > El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.
 
 **Lo que añade la coordinadora, rotulado como suyo:**
+- **Discrepancia detectada después (2026-10-03, durante el encargo 2):** en este host (WSL2), `~/.claude/plugins/installed_plugins.json` registra `arnes-juan` **1.33.2** (`10eac80`, `lastUpdated` 2026-09-11), tanto con alcance `user` como con alcance `project`, y el bloque derivado de `docs/ESTADO.md` dice lo mismo. El «Plugin instalado: 1.35.0» de arriba es el dato del mensaje del propietario y no coincide con este host. La actualización de la instalación estable (punto 5 de «Lo que el propietario hace a mano») **no está comprobada aquí**: queda para el propietario.
 - **Comprobado con `git` y `gh` (2026-10-03):** `git tag --points-at 3956a6f` da `v1.35.0`; `3956a6f` es la fusión de `713ac68` y `c0f8493`; el PR #59 está `MERGED` con `mergeCommit` `3956a6f` y `headRefOid` `c0f8493`; el run `37169938675` (`banco`) está `completed`/`success` con `headSha` `c0f8493`.
 - **Cierra** lo que quedaba de «Lo que el propietario hace a mano para publicar» en el bloque de 1.35.0 de `docs/ESTADO.md`, puntos 3 a 5 (push, CI, PR, fusión, tag e instalación estable). El punto 1 (`arnes_version`) se resolvió de otro modo: se conserva en `1.33.0` por decisión del propietario (`5d810f0`).
 - **No había entrada pendiente que mover:** la cola ya estaba vacía. Esta entrada sólo deja escrito el cierre. **No** autoriza cerrar ningún REQ, y no cambia veredictos, contratos ni contadores.

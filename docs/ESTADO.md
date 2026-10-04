@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-- **1.35.0 publicada el 2026-10-03:** `main` en `3956a6f` (fusión del PR #59), tag `v1.35.0` sobre esa fusión, CI final run `37169938675` (success) sobre `c0f8493`. Plugin instalado: **1.35.0**; gobierna el desarrollo de 1.36.0. Registro: `PENDING_APPROVAL.md` § Resueltas, «Publicación de v1.35.0 ejecutada», y la línea «PUBLICADA» de las notas `[1.35.0]`.
+- **1.35.0 publicada el 2026-10-03:** `main` en `3956a6f` (fusión del PR #59), tag `v1.35.0` sobre esa fusión, CI final run `37169938675` (success) sobre `c0f8493`. Plugin instalado según el propietario: **1.35.0**. **Pero en este host (WSL2), `installed_plugins.json` registra 1.33.2** (`10eac80`, `lastUpdated` 2026-09-11), y el bloque derivado dice lo mismo. Las puertas que gobiernan esta sesión son las de 1.33.2. La actualización de la instalación estable queda **sin comprobar aquí** y es del propietario. Registro: `PENDING_APPROVAL.md` § Resueltas, «Publicación de v1.35.0 ejecutada», y la línea «PUBLICADA» de las notas `[1.35.0]`.
 - **Cabeza de partida:** `cand/1.36.0` desde `origin/main` = `3956a6f`. Sin push.
 - **`arnes_version`** de `.arnes/config.json` sigue en `1.33.0` por decisión del propietario (`5d810f0`): es la migración del proyecto y la escribe `/arnes-upgrade`.
 - **Lectura del propietario, literal (2026-10-03):** «El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.»
@@ -24,7 +24,18 @@
   3. **SEC-115 y SEC-118:** fail-closed cuando el hook agota tiempo o el motivo excede el tope; emitir decisión siempre; medir el tope en bytes, ASCII y multibyte, en Linux; Windows declarado no medido.
   - **Fuera de alcance:** el hueco C, P-119-A (F2, F5, F7) y el mecanismo de SEC-123.
 - **Esta sesión abre y no implementa.** No se despacha al desarrollador, a QA ni a seguridad. La implementación de CA-54 la autoriza el propietario aparte, sobre el contrato.
-- **Próximo paso:** el contrato de 1.36.0 del `analista-requerimientos`, por propiedad y medida.
+- **Contrato de 1.36.0 escrito por el `analista-requerimientos` (2026-10-03), SIN VALIDAR** (ni QA ni seguridad lo han revisado; la coordinadora no juzga su contenido):
+  - **CA-54 / QA-023-10:** nota de CA-54 del 2026-10-03 en REQ-007. Versionado, no REQ nuevo: la propiedad y los números no cambian, y un REQ nuevo reiniciaría el contador. Medida: las dos sondas de CA-54 del árbol de evidencia, más el inventario caso a caso del banco de v1.35.0 contra los hooks de v1.35.0 y del candidato.
+  - **SEC-120:** REQ-007 CA-47 punto 20, medido en la sección 44 con fail-before contra v1.35.0 y 0 procesos añadidos.
+  - **SEC-118 y SEC-115:** REQ-007 CA-67 y CA-68, con CA-69 como evidencia común, y **ADR-017** (`propuesta`, cambio de fondo).
+- **Fichas en la cola (3), del propietario:** P-136-A (procesos en CA-54), P-136-B (qué es «el tope» de SEC-118 y si entran los avisos) y P-136-C (mecanismo y plazo de SEC-115). **Mientras estén en Pendientes, `guard-completado` impide marcar cualquier REQ como `completado`.** No impiden implementar ni probar lo que no dependa de ellas; cada ficha dice qué sigue.
+- **Avisos del analista, sin resolver:**
+  - SEC-118 y SEC-120 están en `Hallazgos abiertos:` de REQ-023, y SEC-115 en el de REQ-031, no en el de REQ-007. Moverlos lo decide el auditor;
+  - las sondas de CA-54 viven en el árbol de evidencia y cargan una biblioteca de un `/tmp` que ya no existe;
+  - el índice está desfasado en las filas de REQ-001 y REQ-031;
+  - CA-68 puede afectar a REQ-017 CA-09, y REQ-017 está `completado`;
+  - el fail-before de SEC-120 se vuelve a medir en v1.35.0.
+- **Próximo paso:** que el propietario resuelva las fichas y autorice, aparte, la implementación de CA-54.
 - **REQ y firmas:** sin cambios respecto al cierre de 1.35.0. REQ-023, REQ-031 y REQ-001 en `en-revisión` con QA y seguridad aprobados; REQ-007 en `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ cerrado. El contador dev↔QA de REQ-023 sigue en 3 de 3.
 
 ## Historia — candidato 1.35.0: notas finales escritas, SEC-126 corregido y P-119-A resuelta como límites declarados; falta lo manual del propietario: `arnes_version`, push, PR, CI, fusión y tag (2026-10-03)
@@ -535,7 +546,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 20:00
+## Estado derivado — 2026-10-03 20:42
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -545,9 +556,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `a5c5da8` — limpio
+**Repositorio:** `cand/1.36.0` @ `5f85bef` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
+**Aprobaciones pendientes:** 3
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

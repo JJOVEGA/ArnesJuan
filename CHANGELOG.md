@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Apertura de v1.36.0: contrato por propiedad y medida en REQ-007 (CA-54, CA-47 punto 20, CA-67 a CA-69) y ADR-017 en `propuesta`; tres fichas para el propietario en la cola; SIN VALIDAR y sin código
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (contrato, fichas, ADR; ~398 k tokens, 129 herramientas, ~24 min) y la coordinadora (registro). Encargo del propietario del 2026-10-03, «Encargo 2», ahora literal en `PENDING_APPROVAL.md` § Resueltas. Gobernado, en este host, por la instalación **1.33.2** (ver la corrección de abajo).
+
+- **REQ-007:**
+  - nota de CA-54 del 2026-10-03 (CA-54 / QA-023-10): < 5 s en 131 072 bytes en Linux/WSL2, sin cambiar veredictos, sin subir el umbral ni reducir la entrada, y la medida caso a caso con `inventario.sh`;
+  - CA-47 punto 20 (SEC-120);
+  - bloque L: CA-67 (SEC-118), CA-68 (SEC-115) y CA-69 (evidencia común);
+  - Notas / alcance de 1.36.0, P-136-A a P-136-C, Trazabilidad con «Correspondencia con el encargo» e Historial.
+  - Sin cambios: `Estado:`, `QA:`, `Seguridad:`, `Rigor:`, sensibilidad, `Hallazgos abiertos:` y contadores.
+- **ADR-017** (nuevo, `propuesta`): la puerta que no puede leer, terminar o emitir no deja pasar.
+- **Índice:** la fila de REQ-007.
+- **Cola:** tres fichas en Pendientes (P-136-A, P-136-B y P-136-C), así que hoy no se puede marcar ningún REQ como `completado`. En § Resueltas queda el pedido literal del «Encargo 2», que el analista señaló sin sede.
+- **Corrección a la entrada anterior (`5f85bef`):** decía «gobernado por la instalación estable 1.35.0» y «Plugin instalado: 1.35.0». En este host, `installed_plugins.json` registra **1.33.2** (`10eac80`). La discrepancia se anota en `PENDING_APPROVAL.md` y en `docs/ESTADO.md`; la entrada anterior no se reescribe.
+- **Comprobaciones de la coordinadora (mecánicas, no de contenido):** gates de §7 con rc 0; `tools/arnes-lectura.sh .` cuenta 3 pendientes; no se tocan `hooks/`, `tools/` ni `tests/`. **Nadie ha validado el contrato:** no se despachó a QA ni a seguridad, por instrucción del propietario.
+- **Avance (regla 6):** el contrato de 1.36.0 está escrito. Faltan las tres decisiones del propietario y su autorización de implementar CA-54.
+
 ## [GitHub] — 2026-10-03 · Registro de la publicación de v1.35.0: notas `[1.35.0]` de candidato a publicada, ESTADO abre el bloque de 1.36.0, la cola cierra la publicación; lectura del propietario sobre el impedimento del proveedor
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por encargo del propietario (mensaje del 2026-10-03 a la sesión del worktree `ArnesJuan-v1.36`, «Encargo 1»). Sin comisiones. Rama `cand/1.36.0`, desde `3956a6f`. Gobernado por la instalación estable **1.35.0**.
 
