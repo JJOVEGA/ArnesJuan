@@ -974,6 +974,320 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   `analista-requerimientos`. Si prefieres seguir con tu texto actual, conservarlo es una respuesta
   válida.
 
+- **`Hallazgos abiertos:` con gramática CERRADA (REQ-031, ADR-013): una lista que la puerta no puede
+  interpretar, el campo declarado dos veces o un valor por encima de su techo de tamaño ya no dejan
+  cerrar. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta nueva **llega con el plugin**,
+  sin migrar nada: está en `hooks/guard-completado.sh` y `hooks/lib.sh`, y no hay llave nueva en
+  `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: la puerta deniega con la regla nueva **desde que actualizas el plugin**,
+  pero tu `requirements/README.md` y tu `AGENTS.md` siguen **congelados**, y **no explicarán esa
+  regla** hasta que corras esta migración; migrar es **un acto tuyo**.
+  - **Lo que deja de cerrar, dicho entero.** La lista se separa **sólo** con comas fuera de todo
+    paréntesis, y cada hallazgo es `ID (clase)` o `ID (clase, evidencia)`; **tras el `)` que cierra un
+    hallazgo sólo cabe la coma o el fin del campo**. Ejemplos **no exhaustivos** de lo que ahora
+    deniega —la regla es la de la frase anterior—: un separador que no es la coma (`;`, `·`, `/`,
+    `y`); **texto o una nota detrás del paréntesis**, como `QA-006 (instrumento) — REQ-007`, que se
+    aceptaba **hasta `v1.34.0`**; dos paréntesis en un hallazgo, uno sin cerrar o uno sobrante; un
+    elemento vacío; un ID con blancos, con tilde o con marcado; y una ausencia mezclada con
+    hallazgos. La puerta **nombra el fragmento que no entendió** y no reescribe el campo. La forma
+    equivalente conserva la nota **dentro** del paréntesis: `QA-006 (instrumento, REQ-007)`. El campo
+    **declarado más de una vez** con su forma exacta **deniega**: no elige la primera ni la última y
+    no las fusiona. Un valor de **más de 16 384 bytes** —contados en bytes y **antes** de normalizar—
+    deniega sin interpretarse. **Aparte de esas reglas, sus limitaciones conocidas y sin reparar:**
+    - **SEC-115:** un hook que el cliente mata por tiempo no deniega. La denegación por tamaño está
+      medida hasta 255 371 bytes, que deniega a tiempo; por encima **no hay promesa**.
+    - **SEC-118:** el motivo del campo repetido cita cada línea en un argumento cuyo límite es de
+      **bytes**, y por encima el hook sale **sin decisión** y no deniega. Medido a nivel de hook en
+      Linux/WSL2, una corrida por punto: con líneas **ASCII** de 60 caracteres o más, 1 601 deniegan y
+      1 801 salen sin decisión; con líneas **ASCII** cortas, 2 501 deniegan y 3 000 no; con caracteres
+      **multibyte** en la parte citada salen sin decisión 1 601 líneas con `ñ`, 1 001 con caracteres de
+      4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en Windows
+      no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
+
+    Las dos son **límites declarados de 1.35.0, no aceptados como definitivos**, con su reparación
+    fail-closed decidida para 1.36.0: entrada «Lo que 1.35.0 publica sin reparar», al final de este apartado.
+
+    Y, como toda regla de la puerta de cierre, ésta juzga el documento que la puerta reconstruye. Lo
+    que no puede reconstruir se deniega antes de llegar a ella: es la entrada «Edición no
+    reconstruible», más abajo.
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ con un hallazgo bloqueante
+    abierto.** Hasta `v1.34.0`, `SEC-A (instrumento) · SEC-B (usuario/dinero)` y
+    `SEC-A (instrumento); SEC-B (contrato)` dejaban cerrar: la puerta sólo partía por comas y no leía
+    lo que seguía al primer paréntesis (ADR-013).
+  - **Qué hay que auditar: la pregunta es de ESTADO** —**cuáles de tus REQ en estado terminal tenían
+    en `Hallazgos abiertos:` un hallazgo `usuario/dinero` o `contrato` que la puerta anterior no
+    leyó**—. Ése no estaba autorizado a cerrar y se reabre (`AGENTS.md` §9). **Ningún comando responde
+    esa pregunta:** `tools/arnes-lectura.sh` de esta versión **no juzga la gramática del campo ni su
+    techo**; sólo nombra el campo **repetido**, por la vía de la entrada siguiente («Cabecera
+    ambigua»). Se hace a mano, REQ a REQ. Un REQ cerrado cuyo campo sólo usa una forma ya no admitida
+    **sin** esconder un bloqueante no se reabre por eso: la puerta juzga **la transición** a
+    `completado`, y la forma se corrige la próxima vez que ese REQ vaya a cerrarse.
+  - **Qué se migra de texto:** la **fila de `AGENTS.md` §13** que empieza «No completar con un
+    hallazgo `usuario/dinero` o `contrato` abierto» y la sección **«Clases de hallazgo»** de tu
+    `requirements/README.md` —la sintaxis cerrada, qué lee la puerta y qué no, y el techo—, cada una
+    **por separado** y con la misma identificación por contenido y título y la misma tabla de estados
+    de la primera entrada de este apartado. Se migra **el texto de esta versión**, que ya incluye el
+    ajuste de REQ-023 al párrafo «Qué lee la puerta, y qué no». Si prefieres seguir con tu texto
+    actual, conservarlo es una respuesta válida; la puerta decide igual. **Lo que no se migra:** la
+    casilla del campo `Archivos:` que gana la Definition of Ready del `analista-requerimientos` llega
+    **al actualizar el plugin**, por la misma separación de la primera entrada de este apartado.
+
+- **Cabecera ambigua (REQ-023, ADR-014): una clave de control escrita de otra forma, o declarada más
+  de una vez, ya no se lee como AUSENCIA — deja la cabecera ambigua, y una cabecera ambigua no deja
+  cerrar. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** Las claves de control son `Estado`, `QA`,
+  `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor`. La conducta nueva **llega con
+  el plugin**, sin migrar nada: está en `hooks/lib.sh` y `hooks/guard-completado.sh`, y no hay llave
+  nueva en `.arnes/config.json`.
+  - **Lo que deja de cerrar, dicho entero.** Una cabecera con una **variante** de una clave de control
+    —`HALLAZGOS ABIERTOS:`, `qa:`, un blanco de más, un BOM, un espacio de anchura cero o un espacio
+    duro delante o dentro de la clave, `- Rigor:`, `1. QA:`— **deniega el cierre**. Y una clave de
+    control **declarada dos veces deniega el cierre también con el MISMO valor**: `QA: aprobado` dos
+    veces cerraba hasta `v1.34.0` y ahora no cierra (cambio de compatibilidad aceptado expresamente
+    por el propietario, ADR-014); `Hallazgos abiertos` repetida con su forma exacta, cuando es la única
+    ambigüedad, la decide la regla de la entrada anterior, con su limitación SEC-118. La puerta cita las líneas,
+    con los caracteres invisibles escritos de forma legible. **Esta regla alcanza sólo a las ediciones
+    cuyo documento resultante la puerta reconstruye:** un `Write`, o un `Edit`/`MultiEdit`
+    reconstruible. La edición que la puerta no puede reconstruir la deniega otra regla: la entrada
+    «Edición no reconstruible», abajo. Dentro de ese alcance, **sólo
+    deniega** cuando la cabecera resultante es ambigua, **alguna** línea `Estado` —la exacta, una
+    repetida o una variante— dice el estado terminal y el `Estado` que gobierna en disco (la primera
+    declaración exacta; si no hay ninguna, nada lo decía) **no** lo decía. Por eso **reabrir** un REQ
+    cerrado no se bloquea, ni una edición tras la cual ninguna línea `Estado` dice el terminal; pero si
+    en disco el terminal está en una línea `Estado` que **no** es la que gobierna —una variante, o una
+    exacta que no es la primera— y la que gobierna no lo dice o no existe, se deniega toda edición **de
+    ese alcance** que conserve esa línea mientras la cabecera siga siendo ambigua, y no la que la
+    retira o la corrige (detalle en `requirements/REQ-023.md` CA-01 del arnés). La salida es de una
+    línea: **cada clave de control una sola vez, escrita como la plantilla** de
+    `requirements/README.md` (§ «Veredictos de validación»).
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ `critico` sin validación ni
+    auditoría.** Un BOM —el que añade PowerShell al redirigir— delante de `Sensible a seguridad: sí`,
+    con `Rigor: ligero`, cerraba un REQ con `QA: pendiente` y `Seguridad: pendiente`; y un carácter
+    invisible, o unas mayúsculas, delante de `Hallazgos abiertos:` hacían desaparecer un hallazgo
+    `contrato` que bloqueaba (SEC-047, R-012; QA-031-01).
+  - **Qué hay que auditar, y va antes que cualquier comando: la pregunta es de ESTADO** —**cuáles de
+    tus REQ en estado terminal NO cerrarían hoy**, leídos con el lector de esta versión—. **Ningún
+    comando la responde todavía**: se hace a mano, REQ a REQ, comprobando que su cabecera vigente
+    autorizaba el cierre; el que no lo autorizaba se reabre (`AGENTS.md` §9).
+  - **El barrido POR VÍA que sí puedes correr, y lo que NO encuentra** —ayuda a empezar por los
+    sospechosos y **no** sustituye a la pregunta de arriba—. Con el informe de **esta** versión (el de
+    tu versión instalada no las ve), antes o después de actualizar:
+    `bash <plugin 1.35.0>/tools/arnes-lectura.sh <tu proyecto>` nombra cada línea ambigua —el REQ, la
+    línea escapada, la clave y la consecuencia— por la vía de las anomalías y **sale ≠ 0** mientras
+    quede alguna, también en un archivo que el informe cuenta como nota. **Ese comando interroga UNA
+    vía, no la propiedad** —las variantes y repeticiones de las claves de control dentro de la
+    frontera declarada—, y **no hallar nada NO acredita ausencia de exposición**. Vías conocidas que
+    **no** encuentra (ejemplos **no exhaustivos**; el sitio único donde viven es
+    `docs/seguridad/registro-seguridad.md`, SEC-047, SEC-050 y, para los cierres del pasado, SEC-117): una letra sustituida por un
+    **homoglifo**; una letra ASCII **de más, de menos o cambiada**; unos **dos puntos que no son
+    ASCII**; una línea con un **signo de estructura** visible —también un espacio duro en lugar del
+    blanco que sigue al guion del marcador—; una clave de **más de 256 bytes**, que es una
+    **limitación**: se sigue leyendo como ausencia y ese límite **no** la protege; **comentar o
+    borrar** la línea de un campo (SEC-050, la semántica de la ausencia, que esta versión no cambia);
+    un REQ que **ya se cerró con una versión anterior** por un `Edit` cuyo `old_string` el hook no
+    encontraba literal y la herramienta sí —comillas tipográficas o `\uXXXX`—, que pudo no pasar por
+    ninguna puerta (SEC-117; desde esta versión esa vía se deniega, entrada «Edición no reconstruible»);
+    y lo que un lector de bash no ve (un byte NUL, un archivo en UTF-16). Si el informe no saca nada,
+    **no has terminado**: vuelve a la pregunta de estado.
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («una cabecera ambigua no deja
+    cerrar») y el párrafo de **`requirements/README.md` § «Veredictos de validación»** que define la
+    variante y su frontera, cada uno **por separado** y con la misma identificación por contenido y
+    título y la misma tabla de estados de la primera entrada de este apartado. **Las notas de las
+    versiones pasadas no cambian**: la regla de «última aparición» sigue siendo con la que **se leen**
+    los valores; lo nuevo es que, **al cerrar**, una clave de control repetida deniega, dentro del
+    alcance que esta entrada declara y con la limitación que la anterior nombra aparte.
+
+- **Edición no reconstruible (REQ-023 CA-13, ADR-015): un `Edit` o `MultiEdit` de `requirements/` que
+  la puerta no puede reconstruir se DENIEGA. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta
+  nueva **llega con el plugin**, sin migrar nada: está en `hooks/guard-completado.sh`, y no hay llave nueva
+  en `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: tu `AGENTS.md` y tu `requirements/README.md` siguen **congelados** hasta que
+  migres, y migrar es **un acto tuyo**.
+  - **Lo que deja de pasar.** Un `Edit`/`MultiEdit` dentro de `requirements/` cuyo `old_string` no está
+    **literal** en el archivo —por ejemplo, con comillas rectas donde el archivo tiene tipográficas, o con
+    un escape `\uXXXX`— se deniega **aunque no toque el estado**. Vale también al reabrir un REQ y en
+    archivos que no son REQ, como `requirements/README.md`. Hasta `v1.34.0` esa edición se juzgaba por su
+    fragmento y, si no escribía el estado terminal, pasaba.
+    - Lo que la puerta **sí** puede reconstruir se juzga como siempre: la edición literal, la creación de
+      un archivo con una sola edición de `old_string` vacío —que se juzga entera, como un `Write`— y la
+      reapertura literal.
+    - Qué cuenta exactamente como reconstruible está en `requirements/REQ-023.md` CA-13 del arnés; esta
+      guía no lo transcribe.
+  - **La salida:** el motivo dice qué edición falló y enseña el comienzo de su `old_string` con los
+    caracteres invisibles escritos de forma legible. Lee el archivo y repite la edición copiando el
+    `old_string` **literal** —comillas, guiones, espacios y acentos tal como están—.
+  - **Sin eufemismo: las versiones anteriores pudieron cerrar un REQ sin pasar por ninguna puerta.** Con
+    un `Edit` cuyo `old_string` el hook no encontraba literal y la herramienta sí, que sustituía sólo el
+    valor del estado, un REQ `critico` quedaba `completado` con QA y seguridad pendientes, un `contrato`
+    abierto y la cola ocupada (SEC-117). Está reproducido en el CLI 2.1.285, con comillas tipográficas.
+  - **Qué hay que auditar: la pregunta es de ESTADO,** y es la misma de la entrada anterior: **cuáles de
+    tus REQ en estado terminal no cerrarían hoy**. Un REQ que se cerró por esa vía no deja rastro que un
+    comando pueda encontrar: `tools/arnes-lectura.sh` **no** lo detecta. Se hace a mano, REQ a REQ,
+    comprobando que su cabecera vigente autorizaba el cierre; el que no lo autorizaba se reabre
+    (`AGENTS.md` §9).
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («un `Edit`/`MultiEdit` de
+    `requirements/` que la puerta no puede reconstruir se deniega»), la **cláusula que sigue a la tabla de
+    §13** —que separa la propiedad de cada fila de sus limitaciones y dice qué pasa con la edición no
+    reconstruible— y los párrafos de **`requirements/README.md` § «Veredictos de validación»** que remiten
+    a esta regla. Cada uno va **por separado**, con la misma identificación por contenido y título y la
+    misma tabla de estados de la primera entrada de este apartado. Si prefieres seguir con tu texto
+    actual, conservarlo es una respuesta válida; la puerta decide igual.
+
+- **Identidad del destino y archivo ilegible (REQ-007 CA-47 y CA-45, ADR-016): las puertas juzgan el
+  ARCHIVO que la escritura alcanzaría, no la forma de su ruta, y un REQ que la puerta no puede leer entero
+  no se edita. ES UN CAMBIO DE CONDUCTA Y DE COMPATIBILIDAD.** La conducta nueva **llega con el plugin**, sin
+  migrar nada: está en `hooks/lib.sh`, `hooks/guard-codigo.sh` y `hooks/guard-completado.sh`, y no hay llave
+  nueva en `.arnes/config.json`. Esta entrada **se prepara con la versión y NO declara que el cambio haya
+  llegado a tu proyecto**: tu `AGENTS.md` y tu `requirements/README.md` siguen **congelados** hasta que
+  migres, y migrar es **un acto tuyo**.
+  - **Lo que deja de pasar** (ejemplos **no exhaustivos**; la regla está en `requirements/REQ-007.md` CA-47 y
+    CA-45 del arnés, y esta guía no la transcribe):
+    - una escritura a código protegido o a `requirements/` por una **ruta equivalente** —con `..`, `./` o
+      `//`, relativa a otro directorio de trabajo, o a través de un directorio enlazado—, que hasta
+      `v1.34.0` se juzgaba por su texto;
+    - una escritura a través de un enlace situado **fuera** del proyecto que apunta a una zona protegida, y
+      una escritura por `Bash` a través de un enlace hacia una zona protegida;
+    - un `Edit`/`MultiEdit` sobre un REQ que la puerta **no puede leer entero** —un byte NUL, un archivo en
+      UTF-16 como el que produce PowerShell 5.1 al redirigir, un archivo sin permiso de lectura—, **aunque no
+      toque el estado**;
+    - una escritura cuyo destino la puerta **no puede determinar**: un directorio que no se puede recorrer,
+      un bucle de enlaces, `..` sobre un directorio que todavía no existe, una ruta relativa cuando el
+      directorio de trabajo lleva un retorno de carro —también fuera de las zonas protegidas—, o un
+      `Edit`/`Write`/`MultiEdit` cuyo `file_path` lleva un salto de línea o un retorno de carro —sea cual sea
+      la ruta y el agente: no está medido qué archivo escribiría la herramienta con ese argumento—.
+    - una escritura a una zona protegida a través de un enlace o un alias bajo `/dev/` o `/proc/` —un enlace en
+      `/dev/shm`, `/proc/self/root`, `/proc/self/cwd`—: **ningún directorio queda fuera** de la identificación, y
+      un proyecto situado bajo `/dev/` recibe las mismas reglas que en cualquier otro sitio;
+    - una ruta que **depende del proceso que la abre** y que la puerta no puede situar: por `Edit`, `Write` o
+      `MultiEdit`, toda ruta que pasa por el directorio de trabajo o por un descriptor del proceso del host
+      —`Write /dev/stderr` incluido—, **a todo agente**; por `Bash`, una ruta detrás de un descriptor, un
+      pseudoarchivo del proceso o `/proc/self/cwd/…` sin directorio de trabajo, a quien no es el agente de código.
+      `> /dev/null` y `> /dev/stderr` por `Bash` **siguen pasando**, sin excepción por su nombre;
+    - un comando de `Bash` con un heredoc cuyo delimitador lleva un retorno de carro —por ejemplo, el de un
+      script con fines de línea CRLF—, **a todo agente**: la puerta no puede saber dónde acaba el cuerpo.
+    - **(en el arnés: construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual
+      (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por
+      impedimento del proveedor)** un heredoc cuyo cuerpo tiene, antes de su última línea, una línea que es su
+      delimitador seguido de un retorno de carro, **a todo agente**, aunque el shell la lea como cuerpo: es una restricción concreta que decidió el propietario del arnés (SEC-124), y la
+      salida es la misma, líneas acabadas sólo en salto de línea;
+    - **(en el arnés: construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual
+      (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por
+      impedimento del proveedor)** una escritura cuyo destino va tras una continuación de línea se juzga por el destino que escribe el shell (SEC-125); una continuación, por sí sola,
+      no deniega nada, **salvo** al final de la línea que abre un heredoc: ese comando se deniega **a todo agente**,
+      sea cual sea lo que siga, porque el shell y la puerta no coinciden en dónde empieza el cuerpo (LC10, decisión
+      del propietario del arnés). La salida: escribir esa línea entera, sin la continuación al final.
+    - Y la entrada del hook se lee **campo a campo**: un salto de línea dentro del directorio de trabajo, del
+      agente o de la ruta ya no desplaza los demás campos ni hace juzgar otra cosa. El retorno de carro del
+      directorio de trabajo, de la ruta y del nombre de la herramienta se cuenta antes de que la lectura lo
+      pueda recortar, así que tampoco hace juzgar otro directorio, otra ruta u otra herramienta: lo que no se
+      puede determinar se deniega. **Y el texto de un comando de `Bash` llega con sus retornos de carro:** un
+      destino cuyo nombre acaba en uno se juzga con él, que es el nombre que escribe el shell.
+  - **Lo que pasa a permitirse: ocho clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, del arnés,
+    que lo enuncia como regla): una ruta relativa que casaba con una zona protegida sólo porque se leía desde la
+    raíz cuando el directorio de trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde,
+    porque se juzga entero; una ruta equivalente al manifiesto mientras está ilegible; tres rutas con `..` que
+    casaban con una zona protegida sólo por su texto y designan un archivo de fuera —por ejemplo,
+    `src/../README.md` por `Write` o por `Bash`—; y un destino de `Bash` cuyo nombre acaba en un retorno de
+    carro y que con él ya no casa con el patrón que casaba sin él —`app/a.ts␍` con `app/*.ts`—. Ninguno debilita
+    una protección: todos designan lo que de verdad escribe el shell. **(En el arnés, construido en `10ac6c4` y
+    `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma
+    del qa-tester ni del auditor-seguridad por impedimento del proveedor:** la forma de SEC-124, que sobre el
+    código anterior del candidato pasaba sin declarar, vuelve a denegarse; y con la reparación de SEC-125 se suma
+    una octava clase —un destino que se juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el
+    shell, está fuera de las zonas protegidas—, que tampoco debilita ninguna protección.)
+  - **Una orden de git con un retorno de carro se juzga también sin él:** `git stash␍`, `git reset --hard␍`,
+    `git checkout .␍` o `git clean␍ -f` se deniegan como sin el retorno de carro, porque lo que git haga con
+    ellos depende de una configuración que la puerta no lee —con `help.autocorrect`, `git stash␍` y
+    `git clean␍ -f` se corrigen y se ejecutan—. Si tus agentes escriben comandos con fines de línea CRLF,
+    conviértelos.
+  - **Lo que se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
+    del proyecto, sea cual sea su destino (entrada «Hacia 1.31.0»). Lo que esa entrada decía —«el arnés juzga
+    la ruta escrita, no su destino»— **queda superado**: los directorios enlazados y los enlaces de fuera se
+    resuelven.
+  - **La salida:** cada motivo dice la causa y cómo corregirla —escribir por una ruta cuyos directorios
+    existan y se puedan recorrer, sin saltos de línea ni retornos de carro, y absoluta si es el directorio de
+    trabajo el que lleva el retorno de carro; escribir la ruta del archivo por su nombre, sin pasar por la
+    entrada en `/proc` de un proceso ni por sus descriptores; escribir el comando con líneas acabadas sólo en
+    salto de línea; o dejar el REQ legible entero: quitar el NUL, guardarlo en UTF-8, devolverle el permiso de
+    lectura—.
+  - **Sin eufemismo: las versiones anteriores pudieron dejar pasar escrituras protegidas por una ruta
+    equivalente.** Reproducido en el CLI 2.1.285: por un directorio enlazado a `requirements/`, un REQ
+    `critico` con todo en rojo quedó `completado`; por `Bash`, `..` creó código protegido desde la
+    coordinadora y cerró un REQ (SEC-119). Y con un REQ en UTF-16LE, un `Edit` se aplicó sin que la puerta
+    pudiera leer el archivo (O-11).
+  - **Qué hay que auditar: la pregunta es de ESTADO,** la misma de las entradas anteriores: **cuáles de tus
+    REQ en estado terminal no cerrarían hoy**, y qué archivos protegidos cambiaron sin pasar por el agente
+    de código. Una escritura por esas vías no deja rastro que un comando pueda encontrar. Antes de
+    actualizar, además: `find . -type l -not -path './.git/*'` para ver los enlaces del proyecto —en
+    particular los directorios enlazados hacia zonas protegidas o desde ellas— y comprueba que ningún REQ
+    tenga un byte NUL ni esté en UTF-16: con esta versión no podrás editarlo hasta dejarlo legible. Si tus
+    agentes generan comandos con fines de línea CRLF y heredocs, con esta versión se denegarán: conviértelos a
+    líneas acabadas sólo en salto de línea.
+  - **Lo que NO cubre** (ejemplos **no exhaustivos**; la sede es REQ-007 CA-47 del arnés): un cambio del
+    sistema de archivos entre la decisión del hook y la escritura; un `cd` dentro del propio comando de
+    `Bash`; enlaces duros y montajes; los límites de la detección de lo que depende del proceso —una cadena que
+    sale con `..` de la entrada de `/proc` del propio hook, que se juzga por el archivo al que llega el hook y
+    **puede salir permitida sobre un archivo protegido** (medido a nivel de hook; desde el host, inferido y no
+    ejercido; SEC-123, abierto y sin aceptar; detalle en las notas de 1.35.0), o un sistema sin `/proc`—;
+    que el delimitador de un heredoc sea el único sitio donde la puerta no sigue un retorno de carro, que es una
+    declaración del arnés, no una medición exhaustiva; sistemas de archivos que no distinguen mayúsculas; y
+    Windows/MSYS, `MultiEdit` en el host y el editor interactivo, que no se han ejercido para esta regla
+    (plataformas en las notas de 1.35.0). El retorno de carro del texto de `Bash` ya **no** está en esta lista:
+    en esta versión llega a la puerta.
+  - **Qué se migra de texto:** la **fila nueva de `AGENTS.md` §13** («las puertas juzgan el archivo que la
+    escritura alcanzaría…»), los **puntos 2 y 3 de la cláusula que sigue a la tabla de §13** y el párrafo de
+    **`requirements/README.md` § «Veredictos de validación»** que remite a REQ-007 CA-45. Cada uno va **por
+    separado**, con la misma identificación por contenido y título y la misma tabla de estados de la primera
+    entrada de este apartado. Si prefieres seguir con tu texto actual, conservarlo es una respuesta válida;
+    la puerta decide igual.
+
+- **Lo que 1.35.0 publica sin reparar: límites declarados por el propietario del arnés el 2026-10-03, y lo que
+  sus corridas no acreditan.** Esta entrada **no migra nada**: dice lo que la versión que instalas **no**
+  protege, para que no lo des por cubierto. **«Límite declarado» no es «riesgo aceptado», y ninguna de estas
+  decisiones repara lo que decide.** Las condiciones medidas y sus fuentes están en las notas de 1.35.0, «Límites
+  declarados, con alcance y consecuencia», y lo que no se ha medido en el host ni en Windows/MSYS, en «Lo no
+  medido»; aquí va lo que necesita saber un proyecto que actualiza.
+  - **Un hook que no emite su decisión no deniega (SEC-115 y SEC-118).** La puerta de cierre decide sólo si el
+    hook alcanza a medir **y a emitir su decisión**. Lo impiden, medido, un veredicto de ≈ 255 KB o un `Write` de
+    ≈ 2 MB, que agotan los 60 s del cliente (SEC-115), y un motivo de más de ~128 KiB **en bytes** (SEC-118; sus
+    cifras, en la entrada de `Hallazgos abiertos:`, arriba). **Depende de la disciplina de tus agentes:** no
+    escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`,
+    ni un REQ de MB por `Write`; sólo `Hallazgos abiertos:` tiene techo. No aceptados como definitivos;
+    reparación fail-closed decidida para 1.36.0.
+  - **El análisis de un comando de `Bash` grande es lento (REQ-007 CA-54 del arnés, QA-023-10): aceptado con
+    alcance para 1.35.0.** En el máximo declarado (131 072 bytes) tarda 9,0–9,2 s en Linux/WSL2, frente al
+    criterio de < 5 s, y 20,4–28,9 s medidos en una máquina con Windows/MSYS; en el valor por defecto
+    (65 536 bytes) también supera el criterio en Linux/WSL2. Un comando de ese tamaño **se juzga, pero tarda**: no
+    es un fallo abierto. Un margen no es una garantía: en un equipo más lento o más cargado el hook podría agotar
+    el tiempo, y eso ya es SEC-115. No se sube el umbral ni se reduce la entrada; reparación en 1.36.0.
+  - **Un fallo de `jq` al leer o trocear la entrada del hook deja pasar (SEC-120).** Medido a nivel de hook con
+    entradas malformadas; desde el host, no alcanzable en lo observado y sin verificar. Reparación decidida para
+    1.36.0, antes del 2026-10-29: ese fallo → deny.
+  - **Las escrituras por intérprete o script no se detectan (hueco C).** `guard-codigo` no ve lo que escriben
+    `python`, `node`, `bash script.sh`, un formateador que reescribe archivos, `patch` ni `git apply`, y no hay
+    detección posterior. La versión promete que las herramientas de edición y las escrituras evidentes por shell
+    se deniegan, **no** que sólo el agente de código modifique código protegido: eso depende de que ningún agente
+    use esas vías. Su detección se evalúa en una versión posterior, **sin fecha**.
+  - **Fronteras de la identidad del destino (P-119-A: F2, F5 y F7; y SEC-123, con F3 corregida).** No se
+    promete: un `cd` dentro del propio comando de `Bash` y las expansiones del shell (F2); un enlace situado dentro
+    de una zona protegida que sale de la raíz del proyecto, escrito por la ruta directa a su destino (F5); que el
+    directorio de trabajo que recibe el hook sea el del comando (F7); ni el límite de la detección de lo que
+    depende del proceso, que puede salir permitido sobre un archivo protegido (SEC-123; «Lo que NO cubre», en la
+    entrada anterior). Abiertos y no aceptados como riesgo; la decisión no fija versión de reparación. Con ella, el
+    propietario del arnés resolvió la pregunta que los planteaba (P-119-A) **como límites declarados**, no como
+    riesgo aceptado. Si escribes una prueba o un informe sobre el límite de SEC-123, la sede es REQ-007 CA-47, F3,
+    del arnés, no un comentario del código. *(El comentario de `hooks/lib.sh` que lo daba como un número de niveles
+    —SEC-126— está corregido en esta versión: lo corrigió el propietario, es sólo un comentario y no cambia ninguna
+    conducta.)*
+  - **Ningún SKIP ni INCONCLUSO del banco acredita lo que mide**; se publican con su motivo. Los motivos no se
+    copian a las notas de 1.35.0: están en el log de cada corrida de CI y en `docs/qa/REQ-023.md` del arnés. Un
+    check verde de CI no acredita lo que en esa corrida salió SKIP o INCONCLUSO.
+  - **Firmas ausentes en el arnés.** Lo construido en la fase 2 de la novena autorización —la forma de heredoc de
+    SEC-124 y la continuación de línea de SEC-125, con su excepción LC10, en la entrada anterior— lo validó el
+    propietario del arnés por vía manual, **sin veredicto del `qa-tester` ni firma del `auditor-seguridad`**, por un
+    impedimento del proveedor que fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, **no
+    sobre los roles**. Así se publica. La corrección del comentario de SEC-126 tampoco lleva firma: así lo decidió
+    el propietario del arnés. Detalle en las notas de 1.35.0, «Firmas ausentes, y por qué».
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

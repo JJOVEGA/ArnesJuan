@@ -180,9 +180,11 @@ norm_ruta() {   # <elemento crudo> -> ARNES_RUTA
   # (`arnes_norm_path`). La barra duplicada fue la evasión más barata medida en todo el
   # arnés y no puede volver a desactivar una comprobación por otra puerta.
   arnes_norm_path "$p"; p="$ARNES_NORM"
-  # Segmentos `.` y `..`. Esto sí es propio: `hooks/lib.sh` no resuelve `..` porque sus
-  # puertas no lo necesitan. Es resolución de RUTAS, no lectura de campos: la regla que
-  # CA-02 protege —cómo se lee un campo de la cabecera— sigue viviendo una sola vez.
+  # Segmentos `.` y `..`. Esto sí es propio: las puertas de `hooks/lib.sh` resuelven el
+  # DESTINO de una escritura contra el sistema de archivos (identidad del destino, REQ-007
+  # CA-47); aquí se comparan rutas DECLARADAS, que se resuelven como texto y no cambian
+  # (CA-48 (h)). Es resolución de RUTAS, no lectura de campos: la regla que CA-02 protege
+  # —cómo se lee un campo de la cabecera— sigue viviendo una sola vez.
   rest="$p"
   while [ -n "$rest" ]; do
     seg="${rest%%/*}"

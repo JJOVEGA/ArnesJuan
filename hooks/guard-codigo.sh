@@ -28,10 +28,29 @@ DIR="${BASH_SOURCE[0]%/*}"
 # defecto que este arnés existe para impedir. `arnes_deny` sí termina el proceso,
 # y eso es correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_codigo() {
-  local objetivo="" via_bash=0 exceso=0 rel cand quien escrituras="" rc
+  local objetivo="" via_bash=0 exceso=0 cand quien escrituras="" rc nodet=0 nd_ruta='' nd_causa='' nd_arreglo=''
 
   arnes_parse_input
-  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta
+  # —leido entero, `Bash` seguido de un salto ya no es `Bash`—, y tratarlo como una herramienta que
+  # esta puerta no juzga lo dejaria pasar. Es una escritura no determinable (punto 7): solo el agente
+  # de codigo pasa. El agente de codigo lo dice el manifiesto; si no se puede leer, no pasa nadie.
+  # Con un retorno de carro, igual (QA-023-13): el transporte retiraba el del final y `Bash␍` con
+  # `ls` y un `file_path` en `src/` se juzgaba como `Bash`, sin mirar el `file_path`. El CR lo cuenta
+  # jq en el valor crudo (`ARNES_TOOL_CR`); el salto, si hay los dos, da el motivo de siempre.
+  if [[ "$ARNES_TOOL" == *$'\n'* ]] || [ "${ARNES_TOOL_CR:-0}" = 1 ]; then
+    arnes_parse_manifest
+    if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+      return 0
+    fi
+    if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+    else quien="la sesión coordinadora"; fi
+    arnes_cita_ruta "$ARNES_TOOL"; arnes_causa_herramienta
+    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, $ARNES_CAUSA_HERR y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe ni en que archivo: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar (intento de $quien; REQ-007 CA-47, punto 13)."
+  fi
+  # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
+  # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
+  # directorio enlazado, uno de fuera de la raiz— lo juzga la identidad del destino, abajo.
   arnes_deny_enlace
 
   if [ "$ARNES_TOOL" = "Bash" ]; then
@@ -46,6 +65,21 @@ arnes_guard_codigo() {
       # con las mismas reglas que cualquier otra escritura. Al agente de codigo no le
       # estorba, porque a el ya se le permitia escribir.
       exceso=1; objetivo="(comando no analizable)"
+    elif [ "$rc" -eq "$ARNES_RC_CR" ]; then
+      # P-023-13-A: el delimitador de un heredoc lleva un retorno de carro y el analizador no puede
+      # seguirlo como el shell (`arnes_bash_sin_texto`). Mismo destinatario que el presupuesto: solo
+      # se prohibe a quien no es el agente de codigo.
+      exceso=2; objetivo="(comando no analizable)"
+    elif [ "$rc" -eq "$ARNES_RC_CUERPO_CR" ]; then
+      # SEC-124 (REQ-007 CA-47, punto 18): una linea del cuerpo de un heredoc es el delimitador seguido
+      # de un retorno de carro y no es la ultima del comando. Se deniega la forma, sin retirar el CR ni
+      # juzgar otro comando. Mismo destinatario que los dos de arriba: quien no es el agente de codigo.
+      exceso=3; objetivo="(comando no analizable)"
+    elif [ "$rc" -eq "$ARNES_RC_LC10" ]; then
+      # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»): la linea que abre un heredoc acaba en
+      # una continuacion de linea. A TODO agente, el de codigo incluido: no pasa por la regla de destinatarios
+      # de abajo. Motivo unico de las cuatro puertas.
+      arnes_deny_lc10 guard-codigo
     else
       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
       #
@@ -75,19 +109,31 @@ arnes_guard_codigo() {
   # un comando que escribe, y ese analisis ya esta hecho aqui arriba.
   arnes_deny_manifiesto_roto "$escrituras"
 
-  # Los globs ya estan cargados por `arnes_parse_manifest`: `arnes_es_codigo_app` no
-  # arranca un segundo `jq` para preguntar lo mismo.
+  # ¿ES CODIGO DE LA APP? Se decide por la IDENTIDAD DEL DESTINO (REQ-007 CA-47, ADR-016), no
+  # por el texto de la ruta: `<raiz>/docs/../src/a.ts`, un directorio enlazado a `src/` o
+  # `a.ts` con `cwd` en `src/` son `src/a.ts`, y `src/a.ts` con `cwd` en `docs/` no lo es. Lo
+  # que no se puede determinar se trata como codigo: solo el agente de codigo pasa (punto 7).
+  # Los globs ya estan cargados por `arnes_parse_manifest`: no se arranca otro `jq`.
   if [ "$exceso" -eq 0 ]; then
     if [ "$via_bash" -eq 1 ]; then
       while IFS= read -r cand; do
         [ -n "$cand" ] || continue
-        arnes_ruta_relativa "$cand" "$ARNES_PROJ"; rel="$ARNES_REL"
-        if arnes_es_codigo_app "$rel" "$ARNES_MANIFEST"; then objetivo="$rel"; break; fi
+        arnes_identidad "$cand"; arnes_id_pertenece codigo; rc=$?
+        if [ "$rc" -eq 0 ]; then objetivo="$ARNES_ID_REL"; break; fi
+        # El primer no determinable se recuerda, pero se sigue buscando: un destino que SI es
+        # codigo da un motivo mas claro que uno que no se pudo situar.
+        if [ "$rc" -eq 2 ] && [ "$nodet" -eq 0 ]; then
+          nodet=1; nd_ruta="$cand"; nd_causa="$ARNES_ID_C"; nd_arreglo="$ARNES_ID_A"
+        fi
       done <<< "$escrituras"
     else
-      arnes_ruta_relativa "$ARNES_FP" "$ARNES_PROJ"; rel="$ARNES_REL"
-      arnes_es_codigo_app "$rel" "$ARNES_MANIFEST" && objetivo="$rel"
+      arnes_identidad "$ARNES_FP"; arnes_id_pertenece codigo; rc=$?
+      case "$rc" in
+        0) objetivo="$ARNES_ID_REL" ;;
+        2) nodet=1; nd_ruta="$ARNES_FP"; nd_causa="$ARNES_ID_C"; nd_arreglo="$ARNES_ID_A" ;;
+      esac
     fi
+    if [ -n "$objetivo" ]; then nodet=0; elif [ "$nodet" -eq 1 ]; then objetivo="$nd_ruta"; fi
   fi
 
   [ -n "$objetivo" ] || return 0   # no es código de app -> permitir
@@ -112,6 +158,18 @@ arnes_guard_codigo() {
     # el camino de la denegacion, que ya no es el camino comun (REQ-001, QA-016).
     arnes_techo_bash
     arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia, asi que no se analizo y no se permite (intento de $quien). No es un veredicto sobre lo que hace el comando: es que la puerta no puede medirlo, y una puerta que no puede medir no deja pasar. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: usa un heredoc CITADO (<<'EOF'), que se descuenta entero y no tiene este techo; escribe el contenido en un archivo de script y ejecutalo; o parte el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
+  fi
+  if [ "$exceso" -eq 2 ]; then
+    arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no lo analiza y no lo permite (intento de $quien). Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
+  fi
+  if [ "$exceso" -eq 3 ]; then
+    arnes_deny "ARNES (SEC-124): dentro del cuerpo de un heredoc hay una linea que es su delimitador seguido de un retorno de carro, y no es la ultima del comando. Para bash esa linea no cierra el cuerpo, pero el retorno de carro es un dato del transporte y un shell que lo retire cerraria el cuerpo ahi y ejecutaria como orden lo que va detras; esta puerta no retira el retorno de carro ni juzga otro comando, asi que deniega la forma (intento de $quien; REQ-007 CA-47, punto 18). Para corregirlo, escribe el comando sin retornos de carro —lineas terminadas solo en salto de linea— o usa en el cuerpo otra palabra que no sea el delimitador."
+  fi
+  if [ "$nodet" -eq 1 ]; then
+    # REQ-007 CA-47, punto 7: la ruta tal como llego (acotada), que no se pudo determinar, por
+    # que, y como corregirlo. Sin nombrar ninguna herramienta como salida.
+    arnes_cita_ruta "$nd_ruta"
+    arnes_deny "ARNES: no se pudo determinar a que archivo escribe $ARNES_CITA_RUTA: $nd_causa. Sin saber que archivo es, esta puerta no puede decidir si es codigo de la app, y una puerta que no puede medir no deja pasar (intento de $quien; REQ-007 CA-47). Para corregirlo, $nd_arreglo."
   fi
   if [ "$via_bash" -eq 1 ]; then
     arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' puede hacerlo (intento de $quien). Escribirlo por Bash no salta la regla: delega el cambio en '$ARNES_AGENTE_CODIGO' (ver AGENTS.md §5). Nota: la detección en Bash es parcial (redirecciones, tee, cp/mv/install, sed -i, dd) — si esto es un falso positivo, repórtalo."

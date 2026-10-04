@@ -3,7 +3,7 @@
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
 CASOS_ESPERADOS_SECCION=36
-PISO_AUTONOMO_SECCION=167  # 15 preámbulo + 0 maquinaria compartida duplicada + 152 bloque indivisible mayor · REQ-014 CA-18
+PISO_AUTONOMO_SECCION=175  # 15 preámbulo + 0 maquinaria compartida duplicada + 160 bloque indivisible mayor · REQ-014 CA-18
 
   # --- Los campos valen SOLO en la cabecera: la puerta -------------------------------
 # Medido: `Seguridad: aprobado (A-009, 2026-09-02)` a columna cero dentro de
@@ -15,18 +15,17 @@ PISO_AUTONOMO_SECCION=167  # 15 preámbulo + 0 maquinaria compartida duplicada +
 seccion_nueva "Campos solo en la cabecera (la historia no es un veredicto):"
 printf '# REQ-110\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: pendiente\n\n## Historial de cambios\n- 2026-09-01: se abrio la auditoria\nSeguridad: aprobado (A-009, 2026-09-02)\n' > "$PROJ/requirements/REQ-110.md"
 check "historia con 'Seguridad: aprobado (...)' a col. 0 NO cierra -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-110.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-110.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '# REQ-111\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: aprobado\n\n## Historial de cambios\nSeguridad: pendiente\n' > "$PROJ/requirements/REQ-111.md"
 check "control: la CABECERA si se lee (aprobado arriba, pendiente en historia) -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-111.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-111.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 printf '# REQ-112\nEstado: en-revisión\nSensible a seguridad: sí\nQA: aprobado\nSeguridad: pendiente\n\n## Historial\n- Seguridad: aprobado (A-009)\n' > "$PROJ/requirements/REQ-112.md"
 check "vineta '- Seguridad:' en historia tampoco cuenta -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-112.md" "" "" 'Estado: completado')"
-# Un fragmento de Edit no tiene `##`: se lee entero, como siempre.
+  "$(emite_edit_lit "$PROJ/requirements/REQ-112.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
+# Un Edit que aprueba QA y cierra a la vez: se lee la cabecera del documento resultante (REQ-023 CA-13 (v): antes, fragmento sin `##`).
 printf '# REQ-113\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-113.md"
-check "un fragmento sin '##' se lee entero: QA aprobado en el Edit -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-113.md" "" "" 'QA: aprobado
-Estado: completado')"
+check "un Edit que aprueba QA y cierra a la vez: se lee el documento resultante -> allow" allow guard-completado.sh \
+  "$(emite_edit_lit "$PROJ/requirements/REQ-113.md" "" "" $'Estado: en-revisión\nSensible a seguridad: no\nQA: pendiente' $'Estado: completado\nSensible a seguridad: no\nQA: aprobado')"
 # --- El bypass por MultiEdit (medido en 1.30.1) -------------------------------------
 # Un MultiEdit que cerraba el REQ y aprobaba SOLO la linea del historial pasaba: se
 # concatenaban los `new_string` y el `## ` se quedaba en el disco. El hook reconstruye
@@ -78,7 +77,7 @@ check "transicion por documento: control, sin replace_all solo la primera y la c
 printf '# REQ-123\r\nEstado: en-revisión\r\nSensible a seguridad: no\r\nQA: pendiente\r\nSeguridad: n/a\r\n' > "$PROJ/requirements/REQ-123.md"
 check "transicion por documento: SOLO el valor sobre un REQ CRLF -> deny" deny guard-completado.sh \
   "$(emite_edit_real "$PROJ/requirements/REQ-123.md" 'en-revisión' 'completado')"
-# --- El fallback sigue vivo: sin documento reconstruido se juzga el fragmento ---------
+# --- Write: trae el documento entero, y la transicion se lee de SU cabecera ------------
 mkreq "$PROJ/requirements/REQ-126.md" "no" "pendiente" "n/a"
 check "transicion por documento: Write con la cabecera completa -> deny" deny guard-completado.sh \
   "$(emite_write "$PROJ/requirements/REQ-126.md" $'# REQ-126\nEstado: completado\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n')"
@@ -104,16 +103,22 @@ printf '# REQ-132\nEstado: en-revisión\nSensible a seguridad: sí\nQA: pendient
 check "transicion por documento: control, el mismo Write sobre un REQ NO terminal -> deny" deny guard-completado.sh \
   "$(emite_write "$PROJ/requirements/REQ-132.md" $'# REQ-132\nEstado: completado\nSensible a seguridad: sí\nQA: pendiente\nSeguridad: pendiente\nHallazgos abiertos: X-1 (usuario/dinero)\n\n## Historia\nreescrito entero\n')"
 printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
+# --- Sin documento reconstruido ya NO hay respaldo por fragmentos: se DENIEGA ----------
+# REQ-001 CA-10, CA-11 y CA-12, versionados por ADR-015 (REQ-023 CA-13): el `old_string` que no
+# esta literal ya no se juzga por su fragmento, lleve o no el estado terminal. La premisa de
+# antes —«la herramienta fallara y no escribira nada»— es falsa (SEC-117, host real 2.1.285).
+# Estos casos miden la vía no reconstruible: conservan su condicion y comprueban la denegacion.
 mkreq "$PROJ/requirements/REQ-127.md" "no" "pendiente" "n/a"
-check "transicion por documento: old_string ausente + 'Estado: completado' en el fragmento -> deny" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'Estado: completado')"
-check "transicion por documento: old_string ausente y fragmento 'completado' a secas -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'completado')"
-# Un REQ que NO existe en disco: `disk` vacio no puede tumbar el hook con `set -u` ni dejar traza.
+check_motivo "transicion por documento: old_string ausente + 'Estado: completado' -> deny por no reconstruible (REQ-001 CA-10)" \
+  "no puede reconstruir el documento" guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'Estado: completado')"
+check_motivo "transicion por documento: old_string ausente y 'completado' a secas -> deny por no reconstruible (REQ-001 CA-11, era allow)" \
+  "no puede reconstruir el documento" guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-127.md" "" "" 'completado')"
+# Un REQ que NO existe en disco y un old_string que no es vacio (no es una creacion): deniega por no
+# reconstruible (REQ-001 CA-12 versionado), y `disk` vacio no tumba el hook con `set -u` ni deja traza.
 if [ -z "$FILTRO" ] || printf '%s' "transicion por documento: REQ inexistente en disco" | grep -qi -- "$FILTRO"; then
 salida="$(corre guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-999.md" 'en-revisión' 'completado')")"
-if ! printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"' && [ ! -s "$ERRLOG" ]; then
-  echo "  PASS  transicion por documento: REQ inexistente en disco -> allow y sin traza de bash"; PASS=$((PASS+1))
+if printf '%s' "$salida" | grep -Eq '"permissionDecision": *"deny"' && printf '%s' "$salida" | grep -q 'no puede reconstruir el documento' && [ ! -s "$ERRLOG" ]; then
+  echo "  PASS  transicion por documento: REQ inexistente en disco -> deny por no reconstruible (REQ-001 CA-12) y sin traza de bash"; PASS=$((PASS+1))
 else
   echo "  FAIL  transicion por documento: REQ inexistente en disco: salida=<$salida>"; diag; FAIL=$((FAIL+1))
 fi
@@ -163,6 +168,9 @@ check "QA: el valor con espacios de mas tras los dos puntos -> deny" deny guard-
 mkreq "$PROJ/requirements/REQ-141.md" "no" "pendiente" "n/a"
 check "QA: MultiEdit encadenado (edit1 crea lo que busca edit2) -> deny" deny guard-completado.sh \
   "$(emite_multiedit "$PROJ/requirements/REQ-141.md" 'en-revisión' 'PROVISIONAL' 'PROVISIONAL' 'completado')"
-check "QA: control, edit2 busca lo que edit1 destruyo: la herramienta fallaria -> allow" allow guard-completado.sh \
+# edit2 busca lo que edit1 destruyo: no se reconstruye, y desde REQ-023 CA-13 eso deniega (antes:
+# allow, «la herramienta fallaria» — la premisa que SEC-117 desmintio). El motivo nombra la edicion 2.
+check_motivo "QA: control, edit2 busca lo que edit1 destruyo: no reconstruible -> deny nombrando la edicion 2 (era allow)" \
+  "edicion 2 de 2 de este MultiEdit.*no puede reconstruir" guard-completado.sh \
   "$(emite_multiedit "$PROJ/requirements/REQ-141.md" 'en-revisión' 'PROVISIONAL' 'en-revisión' 'completado')"
 

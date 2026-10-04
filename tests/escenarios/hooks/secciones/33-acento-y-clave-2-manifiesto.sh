@@ -5,13 +5,18 @@
 CASOS_ESPERADOS_SECCION=45
 PISO_AUTONOMO_SECCION=157  # 8 preámbulo + 26 maquinaria compartida duplicada + 123 bloque indivisible mayor · REQ-014 CA-18
 
-seccion_nueva "La ruta escrita y el manifiesto roto (SEC-004, SEC-005, SEC-006):"
+seccion_nueva "El enlace en el ultimo componente y el manifiesto roto (SEC-004, SEC-005, SEC-006):"
 
-# ---------- SEC-004 (CA-49/CA-50): el arnes juzga LA RUTA ESCRITA, no su destino ----------
+# ---------- SEC-004 (CA-49 (i)/CA-50, versionados el 2026-09-30, ADR-016) ----------
+# Por Edit/Write/MultiEdit, un enlace en el ULTIMO componente situado dentro de la raiz se deniega
+# sea cual sea su destino. La premisa de 2026-09-05 —«el arnes juzga la ruta escrita, no su
+# destino»— la desmintio SEC-119 y queda superada: lo demas lo juzga la identidad del destino
+# (REQ-007 CA-47), cuyos casos, con su fail-before contra 9596e39, estan en la seccion 43.
 printf '# REQ-860\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' > "$PROJ/requirements/REQ-860.md"
 ln -sf "$PROJ/requirements/REQ-860.md" "$PROJ/docs/enlace.md"
+# El patron sigue al motivo nuevo de CA-49 (i): ya no afirma que se juzgue la ruta escrita.
 check_motivo "SEC-004 CA-49 Edit sobre un enlace a un REQ -> deny (salida fail-closed)" \
-  'ENLACE SIMBOLICO|ruta escrita, no su destino' guard-completado.sh \
+  'ENLACE SIMBOLICO situado dentro del proyecto' guard-completado.sh \
   "$(emite_write "$PROJ/docs/enlace.md" "# REQ-860
 Estado: completado
 QA: pendiente
@@ -39,18 +44,18 @@ if [ "$CRONO_RC" -ne 124 ] && printf '%s' "$SALIDA_HOOK" | grep -q '"deny"'; the
 else
   echo "  FAIL  SEC-004 CA-50b enlace roto: rc=$CRONO_RC ${CRONO_MS}ms, salida=<${SALIDA_HOOK:0:80}>"; diag; FAIL=$((FAIL+1))
 fi
-# CA-50 (c) — DESVIACION DECLARADA. El criterio pide `allow` para un enlace que apunta
-# FUERA del proyecto, porque esta escrito suponiendo la salida (a), la que RESUELVE el
-# destino. La salida elegida es fail-closed SIN resolver, y sin resolver no se puede saber
-# adonde apunta: el enlace esta DENTRO del proyecto y se deniega por lo que es, no por
-# adonde va. Lo que si se conserva del criterio es que el arnes NO SE SALE DE LA RAIZ.
+# CA-50 (c): un enlace SITUADO DENTRO del proyecto se deniega sea cual sea su destino —aqui
+# `/etc/hostname`—, por lo que es y no por adonde va (CA-49 (i)). La etiqueta «desviacion
+# declarada» que llevaba este caso estaba obsoleta desde la nota de CA-50 del 2026-09-06 y se
+# retira: el veredicto no cambia.
 ln -sf /etc/hostname "$PROJ/docs/enlace-fuera.md"
 check "SEC-004 CA-50c enlace que apunta FUERA -> deny, no allow" deny \
   guard-codigo.sh "$(emite_write "$PROJ/docs/enlace-fuera.md" 'hola')"
-# ...y el control que sostiene la desviacion: un enlace que esta FUERA del proyecto no es
-# asunto del arnes y no se juzga.
+# ...y el control de la raiz, ACOTADO (CA-50 (c) versionado, fila L3 de CA-66): un enlace situado
+# fuera de la raiz cuyo destino tambien esta fuera no toca el proyecto -> allow. Su pareja —un
+# enlace de fuera que lleva a un REQ o a codigo protegido— se deniega: fila I12, seccion 43.
 FUERA33="$(mktemp -d)"; printf 'x\n' > "$FUERA33/real.md"; ln -sf "$FUERA33/real.md" "$FUERA33/enlace.md"
-check "SEC-004 CA-50c control: un enlace FUERA del proyecto no se juzga -> allow" allow \
+check "SEC-004 CA-50c control: un enlace FUERA del proyecto hacia un archivo de fuera -> allow (L3)" allow \
   guard-codigo.sh "$(emite_write "$FUERA33/enlace.md" 'hola')"
 rm -rf "$FUERA33"
 # CA-50 (d): el camino comun de Bash no paga NADA por esto.

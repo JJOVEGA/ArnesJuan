@@ -8,7 +8,7 @@ PISO_AUTONOMO_SECCION=22  # 8 preámbulo + 0 maquinaria compartida duplicada + 1
   seccion_nueva "Arranque limpio — plantilla de PENDING_APPROVAL:"
 cp "$TPL_DIR/PENDING_APPROVAL.md.tpl" "$PROJ/PENDING_APPROVAL.md"
 check "PENDING recien copiado de la plantilla -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-001.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-001.md" "" "" '' 'Estado: completado')"
 printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 
 # --- El punto de entrada REAL: guard.sh ----------------------------------------

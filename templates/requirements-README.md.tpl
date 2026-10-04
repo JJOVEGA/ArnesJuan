@@ -79,6 +79,61 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+**Cada clave de control se escribe una sola vez, y como la escribe la plantilla.** Las claves de
+control son las seis cuya presencia o ausencia decide el cierre: `Estado`, `QA`, `Seguridad`,
+`Sensible a seguridad`, `Hallazgos abiertos` y `Rigor` (lista cerrada; en el código del arnés vive una
+sola vez). Si la cabecera escribe una de ellas **de otra forma** —una
+*variante*— o la declara **más de una vez**, **aunque las dos líneas digan lo mismo**, la cabecera es
+**ambigua** y la puerta **deniega el cierre** citando las líneas —las primeras, y cuántas más hay—, con
+los caracteres invisibles escritos de forma legible; `tools/arnes-lectura.sh` las nombra todas. No lee la variante como la clave ni elige entre dos declaraciones, y ningún lector
+cambia el valor que lee. **A qué ediciones alcanza esta regla:** a las que la puerta puede
+reconstruir: un `Write`, o un `Edit`/`MultiEdit` reconstruible según REQ-023 CA-13 del repositorio del
+arnés, que es la sede única de esa definición. **Una edición que la puerta no puede reconstruir no
+queda fuera ni pasa:** la deniega esa otra regla antes de llegar a ésta. **Tampoco pasa un
+`Edit`/`MultiEdit` de un REQ que la puerta no puede leer entero:** lo deniega REQ-007 CA-45 del mismo
+repositorio, que dice también cómo se juzga un `Write` sobre él. **Cuándo deniega, dicho entero
+para ese alcance:** cuando la cabecera que quedaría escrita es
+ambigua, **alguna** de sus líneas `Estado` —la exacta, una repetida o una variante— dice el estado
+terminal, y la línea `Estado` que gobierna en disco (la primera declaración exacta; si no hay ninguna,
+nada lo decía) **no** lo decía. Nada más: reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya
+es el terminal no se bloquea por esto, ni una edición tras la cual ninguna línea `Estado` dice el
+terminal. **Consecuencia:** si en disco el terminal está en una línea `Estado` que **no** es la que
+gobierna —una variante, o una declaración exacta que no es la primera— y la que gobierna no lo dice o no
+existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
+siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
+deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
+su limitación SEC-118 («Clases de hallazgo», abajo).
+
+**Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
+`<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
+extremos, `*`, `_` y `` ` ``) y tras quitar **como mucho un** marcador de lista inicial (`-` o `+`
+seguido de un blanco; o de 1 a 3 dígitos seguidos de `.` o `)` y de un blanco; los caracteres
+invisibles que lo precedan no impiden reconocerlo), tiene **las mismas
+letras ASCII**, sin distinguir mayúsculas, que una clave de control, y no es exactamente esa clave.
+Para comparar —nunca para leer— se descartan los espacios, los caracteres de control y todo carácter no
+ASCII. Ejemplos **no exhaustivos**: `HALLAZGOS ABIERTOS:`, `qa:`, `Hallazgos  abiertos:` (blanco doble),
+la clave con un BOM, un espacio de anchura cero o un espacio duro delante o dentro, `- Rigor:` y
+`1. QA:`. Una línea con exactamente la forma de una declaración (`- Estado: …`) se trata como tal.
+
+**Lo que no es una declaración, y por tanto no es variante:** una línea cuya clave, tras el marcador,
+contiene un signo ASCII visible que no es letra —`>`, comillas, paréntesis, corchetes, dígitos, `&`,
+`/`, `.`, etc.— o una comilla tipográfica (`«` `»` `“` `”` `‘` `’` `„` `‹` `›`, lista cerrada): es una
+cita, una mención o una referencia. Ejemplos **no exhaustivos**: `> Estado: completado`,
+`«Estado»: …`, `(QA): …`, `Q&A: …`.
+
+**Fuera, y sin promesa:** una letra cambiada por otra que se le parece (`Hallazgоs` con `о` cirílica,
+letras de ancho completo); una letra ASCII de más, de menos o distinta (`Hallazgo abierto:`, `Rigr:`);
+unos dos puntos que no son ASCII (`：`); las líneas con un signo visible de los de arriba, aunque lleven
+además un carácter invisible; un espacio duro en lugar del blanco que sigue al guion o al número del
+marcador (`-`+espacio duro+`Estado:`), que ya no forma marcador y deja el `-` como signo; y las claves de
+**más de 256 bytes**. Todo eso se sigue leyendo como hasta ahora: como si la línea no declarara el campo, que
+para ese campo es su **ausencia**. Las claves de más de 256 bytes son una **limitación**: se leen como
+ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valor se lee como siempre.
+**La edición que la puerta no puede reconstruir ya no está en esta lista.** Un `Edit`/`MultiEdit` cuyo
+`old_string` sólo coincide tras la normalización que aplica la herramienta —comillas tipográficas,
+`\uXXXX`— **se deniega**. La norma está en REQ-023 CA-13 del repositorio del arnés (ADR-015), que es la
+vía de SEC-117. Para editar un REQ, copia el `old_string` literal del archivo.
+
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
 siempre. Lo fija el analista en la cabecera del REQ.
@@ -155,12 +210,25 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
 **Qué lee la puerta, y qué no.** La puerta juzga **el valor de la única línea de la cabecera** —antes
 del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
 `**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
-primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. Dentro de esa
+primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. **Aparte de esa
+regla, su limitación conocida y sin reparar (SEC-118 del repositorio del arnés):** el motivo cita los
+primeros 60 caracteres de cada línea repetida y viaja como un argumento de línea de órdenes, cuyo
+límite es de **bytes**; por encima, el hook sale **sin decisión** y no deniega. Medido a nivel de hook
+en Linux/WSL2, una corrida por punto —cifras operativas: mediciones, no umbrales—: con líneas **ASCII**
+de 60 caracteres o más, 1 601 deniegan (motivo de 121 061 bytes) y 1 801 salen sin decisión; con líneas
+**ASCII** cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión; con caracteres
+**multibyte** en la parte citada, bajo `C.UTF-8`, salen sin decisión 1 601 líneas con `ñ`, 1 001 con
+caracteres de 4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en
+Windows/MSYS no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
+Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
-carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee**, y ahí no
-hay promesa; ejemplos **no exhaustivos**: una continuación en la línea siguiente sin clave, una clave
-con un carácter invisible, un blanco de más o un homóglifo (`Hallazgos  abiertos:`, `Hallazgоs`),
-lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer `## `.
+carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
+una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
+invisible; definición y frontera en «Veredictos de validación», arriba—, la puerta **deniega el cierre**
+por cabecera ambigua, sin leer su valor. En lo demás no hay promesa; ejemplos **no exhaustivos**: una
+continuación en la línea siguiente sin clave, un homóglifo (`Hallazgоs`) y lo que queda fuera de esa
+frontera, lo que va dentro de un comentario HTML de la cabecera y una línea igual debajo del primer
+`## `.
 
 **Techo de tamaño: 16 384 bytes.** Si el valor —todo lo que va tras los dos puntos, incluido el
 blanco que los sigue, contado en **bytes** y antes de normalizar— mide **más de 16 384 bytes**, la
@@ -176,7 +244,9 @@ corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega po
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
 28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
-Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. Es una
+limitación aparte de la regla —SEC-115 del mismo repositorio— y no forma parte de lo que la regla
+promete.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|

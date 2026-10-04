@@ -9,7 +9,12 @@
 #       requerimiento es lo que lleva esos veredictos a "aprobado" (ver AGENTS.md §9).
 #
 # Se dispara cuando una edición dentro de `requirements/` deja el `Estado:` del REQ en el
-# valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada.
+# valor terminal (`completado`). Si la transición no ocurre, el hook no hace nada — salvo
+# lo que no puede medir: un `Edit`/`MultiEdit` de `requirements/` cuyo documento resultante
+# no puede reconstruir se DENIEGA, toque o no el estado (REQ-023 CA-13, ADR-015), y también
+# el que cae sobre un archivo que no puede leer entero, y toda escritura cuyo destino no puede
+# determinar (REQ-007 CA-45 y CA-47, ADR-016). «Dentro de `requirements/`» es por la identidad
+# del destino, no por el texto de la ruta.
 set -uo pipefail
 # Directorio del propio script por expansión de parámetro. La forma habitual
 # —`$(cd "$(dirname ...)" && pwd)"`— son DOS forks anidados, y en esta
@@ -27,10 +32,16 @@ DIR="${BASH_SOURCE[0]%/*}"
 # "si" disfrazado.
 #
 # QUE LEE LA PUERTA (REQ-031 CA-A11.4): el valor de LA linea de cabecera cuya clave reconoce
-# el lector, que tiene que ser UNA sola (CA-A12). Lo que no alcanza a ver no lo lee
-# (ejemplos no exhaustivos: una continuacion sin clave, una clave con un caracter invisible o
-# un homoglifo —SEC-047/SEC-078—, un comentario HTML de la cabecera, una linea bajo el primer
-# `## `): ahi no hay promesa, y el README lo dice.
+# el lector, que tiene que ser UNA sola (CA-A12). Una VARIANTE de la clave —escrita de otra
+# forma: mayusculas, un blanco de mas, un caracter invisible, un marcador de lista— tampoco se
+# lee, pero ya no se resuelve como ausencia: deja la cabecera AMBIGUA y el cierre se deniega
+# antes de llegar aqui (REQ-023, SEC-047; frontera en `_arnes_clave_control`, lib.sh). Aqui
+# siempre llega un documento resultante: el `Edit`/`MultiEdit` cuyo documento la puerta no
+# puede reconstruir —un `old_string` que no esta LITERAL en el archivo— ya no se juzga por su
+# fragmento, se DENIEGA antes, toque o no el estado (REQ-023 CA-13, ADR-015; SEC-117). Lo
+# demas que no alcanza a ver no lo lee (ejemplos no exhaustivos: una continuacion sin clave,
+# un homoglifo y lo que queda fuera de esa frontera, un comentario HTML de la cabecera, una
+# linea bajo el primer `## `): ahi no hay promesa, y el README lo dice.
 #
 # Se llama SOLO en la transicion a `completado` (reabrir no pasa por aqui, CA-A08). Usa `$rel`
 # y lo que publica `arnes_campos_req`. "Permitir" es `return 0`; `arnes_deny` termina.
@@ -44,23 +55,31 @@ arnes_clase_hallazgo() {
         sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco \
         pend noasc id_txt frag_h elem_h
 
-  # CA-A12 (SEC-112): la clave REPETIDA no se resuelve eligiendo una. Para el resto de claves
-  # el lector deja ganar a la ultima; aqui eso escondia un `contrato` escrito mas arriba. Se
-  # juzga ANTES que el valor, sea cual sea el de cada linea.
+  # CA-A12 (SEC-112): la clave REPETIDA no se resuelve eligiendo una. Para LEER, el resto de
+  # claves deja ganar a la ultima; aqui eso escondia un `contrato` escrito mas arriba. Se
+  # juzga ANTES que el valor, sea cual sea el de cada linea. (Al cerrar, cualquier otra clave
+  # de control repetida ya denego antes, por cabecera ambigua: REQ-023. Esta repeticion, cuando
+  # es la unica ambiguedad, conserva esta puerta y este motivo.)
+  # APARTE, SU LIMITACION CONOCIDA Y SIN REPARAR, que no forma parte de la propiedad: SEC-118.
+  # Este motivo cita cada linea repetida sin tope y `arnes_deny` lo pasa a `jq` como UN
+  # argumento, cuyo limite es de BYTES (128 KiB en Linux): por encima `jq` no arranca, no se
+  # emite nada y el hook sale sin decision. Lo medido, con sus condiciones (ASCII y multibyte),
+  # esta en REQ-031 CA-A12 y en docs/seguridad/registro-seguridad.md, R-045 §4.
   if [ "${ARNES_HALL_N:-0}" -gt 1 ]; then
     arnes_deny "ARNES: no se puede completar '$rel': la cabecera declara 'Hallazgos abiertos:' $ARNES_HALL_N veces (${ARNES_HALL_LINEAS}), y la puerta no elige una: ni la primera ni la ultima, y no las fusiona. Deja UNA sola linea 'Hallazgos abiertos:' en la cabecera y conserva en ella todos los hallazgos, separados por comas (requirements/README.md, seccion 'Clases de hallazgo'). La puerta no reescribe el archivo."
   fi
 
   # CA-A13 (SEC-113): techo de tamaño, medido en BYTES sobre el valor tal como se escribio
-  # (tras los dos puntos, antes de normalizar). Por encima no se interpreta y deniega SI EL HOOK
-  # ALCANZA A MEDIRLO dentro del limite del cliente (60 s). Desde CA-A15 el lector
-  # (`arnes_campos_normaliza`, hooks/lib.sh) mide el techo ANTES de `arnes_norm_campo`, que es
-  # cuadratico, y por encima no normaliza: medido, 255 371 bytes deniega en 0,31 s por Edit y
-  # 1,6 s por Write. Por encima de lo medido no hay promesa (por Write, otra operacion anterior
-  # sobre el contenido crece mas que linealmente; residuo en docs/PENDIENTES.md), y un hook muerto
-  # no deniega. El numero vive en `ARNES_HALL_TECHO_BYTES` (hooks/lib.sh): es de CONTRATO,
-  # anunciado en requirements/README.md (mayor valor real medido al fijarlo: 6 672 bytes); se
-  # sube con la medicion, nunca se baja.
+  # (tras los dos puntos, antes de normalizar). Por encima no se interpreta y deniega. Desde
+  # CA-A15 el lector (`arnes_campos_normaliza`, hooks/lib.sh) mide el techo ANTES de
+  # `arnes_norm_campo`, que es cuadratico, y por encima no normaliza. El numero vive en
+  # `ARNES_HALL_TECHO_BYTES` (hooks/lib.sh): es de CONTRATO, anunciado en requirements/README.md
+  # (mayor valor real medido al fijarlo: 6 672 bytes); se sube con la medicion, nunca se baja.
+  # APARTE, SU LIMITACION CONOCIDA Y SIN REPARAR, que no forma parte de la propiedad: SEC-115.
+  # Un hook que el cliente mata por tiempo (60 s) no deniega. Medido, 255 371 bytes deniegan a
+  # tiempo: 0,31 s por Edit y 1,6 s por Write (Linux/WSL2, una corrida por punto). Por encima de
+  # lo medido no hay promesa (por Write, otra operacion anterior sobre el contenido crece mas que
+  # linealmente; residuo en docs/PENDIENTES.md), y en Windows/MSYS no esta medido.
   crudo_h="${ARNES_HALL_CRUDO:-}"; n_crudo=${#crudo_h}
   if [ "$n_crudo" -gt "$techo" ]; then
     arnes_deny "ARNES: no se puede completar '$rel': el valor de 'Hallazgos abiertos:' mide $n_crudo bytes (contados en bytes, lo escrito tras los dos puntos y antes de normalizar) y el techo es $techo bytes, asi que no se interpreta: una puerta que no puede medir no deja pasar. Acorta el campo: la evidencia larga va al registro del hallazgo (docs/qa/, docs/seguridad/) y en el parentesis queda la referencia (requirements/README.md, seccion 'Clases de hallazgo')."
@@ -231,6 +250,44 @@ arnes_clase_hallazgo() {
   return 0
 }
 
+# --- Una edicion que la puerta no puede RECONSTRUIR se DENIEGA (REQ-023 CA-13, ADR-015) ---
+# SEC-117, reproducido en el host real (CLI 2.1.285): un `Edit` cuyo `old_string` no esta LITERAL
+# en el archivo NO necesariamente falla —el `Edit` del host normaliza las comillas tipograficas
+# antes de aplicar la edicion—, asi que la herramienta puede escribir un documento que esta puerta
+# no ha simulado. Hasta df550fa esa via juzgaba el FRAGMENTO y permitia si no escribia
+# `estado: <terminal>`: un cierre podia no pasar por ninguna puerta. Ahora la incertidumbre no se
+# convierte en permiso: se deniega, sea cual sea el `new_string` y el agente, SIN buscar ninguna
+# cadena y SIN imitar la normalizacion del host (una emulacion parcial deja pasar lo que no emula,
+# y la del host cambia con la version del CLI).
+#
+# El motivo dice QUE edicion, enseña como mucho ARNES_NO_RECONS_CITA_BYTES bytes del comienzo de su
+# `old_string` —todo byte >= 0x80 y todo byte de control escapados con `%q` bajo `LC_ALL=C`, como
+# el motivo de CA-01 (iii)—, y explica como hacer una edicion verificable SIN proponer otra
+# herramienta. El texto fijo va en ASCII. Con la cita acotada el motivo mide unos pocos cientos de
+# bytes, lejos del limite de un argumento de `jq`: este motivo no hereda SEC-118. El 80 es
+# OPERATIVO (CA-13 (ii)): se cambia con entrada en el Historial. Sin procesos: expansion de
+# parametros y `printf -v`. Usa `$tool` y `$rel` del llamador; `arnes_deny` termina.
+ARNES_NO_RECONS_CITA_BYTES=80
+arnes_deny_no_reconstruible() {   # <n.o de la edicion> <total de ediciones> <old_string> <causa>
+  local LC_ALL=C n="$1" total="$2" q="$3" causa="$4" cual cita corte='' multi=''
+  if [ "$tool" = "MultiEdit" ]; then
+    cual="la edicion $n de $total de este MultiEdit"
+    multi=" En un MultiEdit, cada old_string se copia del texto que dejan las ediciones anteriores de la misma llamada."
+  else
+    cual="la unica edicion de este Edit"
+  fi
+  if [ "${#q}" -gt "$ARNES_NO_RECONS_CITA_BYTES" ]; then
+    corte=" (mide ${#q} bytes; se muestran los primeros $ARNES_NO_RECONS_CITA_BYTES)"
+    q="${q:0:$ARNES_NO_RECONS_CITA_BYTES}"
+  fi
+  case "$q" in
+    *[!" $ARNES_ESQ_LETRAS$ARNES_ESTRUCTURA_ASCII"]*) printf -v cita '%q' "$q" ;;
+    *) cita="'$q'" ;;
+  esac
+  [ -z "$corte" ] || cita+='...'
+  arnes_deny "ARNES: no se permite $cual sobre '$rel': esta puerta no puede reconstruir el documento que quedaria escrito, porque $causa. Sin ese documento no se puede saber si la edicion cierra el REQ, cambia un veredicto o no toca nada, y una puerta que no puede medir no deja pasar: la incertidumbre no se convierte en permiso (REQ-023 CA-13). El old_string de $cual es $cita$corte. Para hacer una edicion verificable: lee el archivo y repite la edicion con un old_string copiado LITERALMENTE de el, con las comillas, los guiones, los espacios y los acentos tal como estan escritos, sin retocarlos.$multi La puerta no reescribe el archivo."
+}
+
 # ⚠️ REGLA CRÍTICA DE ESTA FUNCIÓN: "permitir" se dice con `return 0`, NUNCA con
 # `exit 0`. Un `exit` aquí mataría el proceso entero y el otro guardián no llegaría
 # a correr — fallo abierto y en silencio, que es justo la familia de defecto que
@@ -238,16 +295,29 @@ arnes_clase_hallazgo() {
 # correcto: una denegación es final y no hay nada más que juzgar.
 arnes_guard_completado() {
   local tool fp bash_cmd req_dir estado_done pending_rel rel d escrituras nuevo
-  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc disk_medible acc c prof ci
+  local disk qa seg sens rigor hall h id clase pending abiertas tmp cmd out rc acc c prof ci
   local -a piezas=()
-  local modo resultante reconstruido np k old new ra done_norm est_antes est_despues
+  local modo resultante reconstruido np ne k old new ra causa done_norm est_antes est_despues
   local cita_desp est_citado cr_desp cr_linea
-  local seg_antes
+  local seg_antes amb intento v
+  local obj existe ilegible arreglo
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
-  # SEC-004: una escritura a traves de un enlace simbolico no se juzga, se deniega.
+  # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta,
+  # y se trata como una escritura no determinable por Edit/Write/MultiEdit (punto 7): esta puerta la
+  # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir. Con un retorno
+  # de carro, igual (QA-023-13): el transporte retiraba el del final y `Edit␍` se leia como `Edit` aqui
+  # y como otra herramienta en la segunda llamada a jq, que juzgaba un `Write` vacio y dejaba pasar el
+  # cierre de un REQ en rojo.
+  if [[ "$ARNES_TOOL" == *$'\n'* ]] || [ "${ARNES_TOOL_CR:-0}" = 1 ]; then
+    arnes_cita_ruta "$ARNES_TOOL"; arnes_causa_herramienta
+    arnes_deny "ARNES: el nombre de la herramienta de esta llamada, $ARNES_CITA_RUTA, $ARNES_CAUSA_HERR y no identifica ninguna herramienta, asi que esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito: se trata como una escritura que no se puede determinar, y una puerta que no puede medir no deja pasar; no se permite a ningun agente (REQ-007 CA-47, punto 13)."
+  fi
+  # SEC-004 (REQ-007 CA-49 (i)): por Edit/Write/MultiEdit, un enlace en el ULTIMO componente
+  # situado dentro de la raiz se deniega sea cual sea su destino. Cualquier otro enlace —un
+  # directorio enlazado, uno de fuera de la raiz— lo juzga la identidad del destino, abajo.
   arnes_deny_enlace
   tool="$ARNES_TOOL"; fp="$ARNES_FP"; bash_cmd="$ARNES_CMD"
 
@@ -267,6 +337,21 @@ arnes_guard_completado() {
         arnes_techo_bash
         arnes_deny "ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande para analizarlo con garantia; no se analizo y no se permite. Una puerta que no puede medir no deja pasar (AGENTS.md 1): sin analisis no se puede saber si el comando toca '$ARNES_REQ_DIR'. El presupuesto de analisis vigente es de $ARNES_TECHO bytes y este comando lo supera. Salidas: heredoc CITADO (<<'EOF'), un archivo de script, o partir el comando en trozos por debajo de $ARNES_TECHO bytes. El techo se puede SUBIR en .arnes/config.json con 'limites.bash_max_analisis' (bytes), hasta un maximo de $ARNES_BASH_MAX_MANIFIESTO bytes: por encima el analisis dejaria de responder antes de que el hook muera, y un hook muerto no deniega."
       fi
+      # P-023-13-A: un delimitador de heredoc con un retorno de carro, que el analizador no puede
+      # seguir como el shell. Como el presupuesto, alcanza a TODOS los agentes: sin analisis no se sabe
+      # si el comando toca un REQ.
+      if [ "$rc" -eq "$ARNES_RC_CR" ]; then
+        arnes_parse_manifest
+        arnes_deny "ARNES: el comando lleva un heredoc cuyo delimitador contiene un retorno de carro. Para el shell ese retorno de carro es parte del delimitador, y el analisis de esta puerta no puede seguirlo asi: no sabria donde acaba el cuerpo ni que escribe lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; no se analiza y no se permite a ningun agente. Una puerta que no puede medir no deja pasar, y el retorno de carro no se retira en silencio para juzgar otro comando (REQ-007 CA-47, punto 11). Para corregirlo, escribe el comando sin retornos de carro: lineas terminadas solo en salto de linea."
+      fi
+      # SEC-124 (REQ-007 CA-47, punto 18): una linea del cuerpo de un heredoc es el delimitador seguido de
+      # un retorno de carro y no es la ultima del comando. Alcanza a TODOS los agentes, como el CR de arriba.
+      if [ "$rc" -eq "$ARNES_RC_CUERPO_CR" ]; then
+        arnes_parse_manifest
+        arnes_deny "ARNES (SEC-124): dentro del cuerpo de un heredoc hay una linea que es su delimitador seguido de un retorno de carro, y no es la ultima del comando. Para bash esa linea no cierra el cuerpo, pero el retorno de carro es un dato del transporte y un shell que lo retire cerraria el cuerpo ahi y ejecutaria como orden lo que va detras, asi que no se puede saber si el comando toca '$ARNES_REQ_DIR'; esta puerta no retira el retorno de carro ni juzga otro comando: deniega la forma a cualquier agente (REQ-007 CA-47, punto 18). Para corregirlo, escribe el comando sin retornos de carro —lineas terminadas solo en salto de linea— o usa en el cuerpo otra palabra que no sea el delimitador."
+      fi
+      # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»): a todo agente, motivo unico.
+      if [ "$rc" -eq "$ARNES_RC_LC10" ]; then arnes_parse_manifest; arnes_deny_lc10 guard-completado; fi
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
@@ -294,30 +379,44 @@ arnes_guard_completado() {
   # del comando, no `estado:` seguido del valor—. Razón medida: la forma más natural
   # de cerrar un REQ por shell es `sed -i 's/en-revision/completado/' REQ-001.md`,
   # que sustituye el VALOR y no escribe nunca la palabra "Estado".
+  #
+  # «ESCRIBE EN requirements/» SE DECIDE POR LA IDENTIDAD DEL DESTINO (REQ-007 CA-47), no por su
+  # texto: el host no normaliza el comando, y `sed -i … docs/../requirements/REQ-X.md` cerro un REQ
+  # en el host real. Ningun atajo textual decide que un destino esta fuera —hasta 9596e39 todo lo
+  # que empezaba por `/tmp/` se saltaba, y un proyecto puede vivir bajo `/tmp`—. Un destino que no
+  # se puede determinar se trata como dentro, con la misma regla (CA-47, punto 7).
   if [ "$tool" = "Bash" ]; then
     while IFS= read -r d; do
       [ -n "$d" ] || continue
-      case "$d" in /dev/*|/tmp/*) continue ;; esac
-      case "$d" in
-        /*|[A-Za-z]:*) arnes_ruta_relativa "$d" "$ARNES_PROJ"; rel="$ARNES_REL" ;;
-        *)             arnes_norm_path "$d"; rel="${ARNES_NORM#./}" ;;
-      esac
-      case "$rel" in
-        "$req_dir"/*)
-          if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
-            arnes_deny "ARNES: este comando escribe en '$rel' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6)."
-          fi ;;
-      esac
+      arnes_identidad "$d"; arnes_id_pertenece req; rc=$?
+      [ "$rc" -ne 1 ] || continue
+      if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
+        if [ "$rc" -eq 2 ]; then
+          arnes_cita_ruta "$d"
+          arnes_deny "ARNES: este comando escribe en $ARNES_CITA_RUTA y menciona '$estado_done', y no se pudo determinar a que archivo escribe: $ARNES_ID_C. Podria ser un REQ de '$req_dir', y la transicion de estado de un REQ no puede juzgarse desde Bash; una puerta que no puede medir no deja pasar (REQ-007 CA-47). Para corregirlo, $ARNES_ID_A."
+        fi
+        arnes_deny "ARNES: este comando escribe en '$ARNES_ID_REL' y menciona '$estado_done'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2/A3 necesitan el contenido resultante (veredictos de QA y Seguridad, cola de $pending_rel y quality gates). Hazlo con Edit/Write para que este mismo hook lo evalue (AGENTS.md 6)."
+      fi
     done <<< "$escrituras"
     return 0
   fi
 
   # --- Via Edit/Write/MultiEdit ---
-  arnes_ruta_relativa "$fp" "$ARNES_PROJ"; rel="$ARNES_REL"
-  case "$rel" in
-    "$req_dir"/*) ;;          # dentro de requirements/ -> seguimos
-    *) return 0 ;;
+  # Dentro de `requirements_dir` POR IDENTIDAD (REQ-007 CA-47): la ruta equivalente se juzga como
+  # la canonica, y la edicion no reconstruible de SEC-117 se deniega tambien por ella (REQ-023
+  # CA-13). Un destino que no se puede determinar se DENIEGA a todo agente: no hay archivo que leer
+  # ni documento que reconstruir (CA-45 (iii), CA-47 punto 7).
+  arnes_identidad "$fp"; arnes_id_pertenece req; rc=$?
+  case "$rc" in
+    1) return 0 ;;
+    2) arnes_cita_ruta "$fp"
+       arnes_deny "ARNES: no se pudo determinar a que archivo escribe $ARNES_CITA_RUTA: $ARNES_ID_C. Sin saber que archivo es, esta puerta no puede leerlo ni reconstruir el documento que quedaria escrito, y una puerta que no puede medir no deja pasar: no se permite a ningun agente (REQ-007 CA-45 y CA-47). Para corregirlo, $ARNES_ID_A." ;;
   esac
+  rel="$ARNES_ID_REL"
+  # Lo que se lee es el archivo de la lectura FISICA —o el destino del enlace, ya resuelto—, nunca
+  # la ruta escrita tomada desde el directorio del proceso del hook (CA-47, punto 9). Y «no existe»
+  # lo dice la identidad, que resolvio el tramo existente (punto 8).
+  obj="$ARNES_ID_O"; existe="$ARNES_ID_X"
 
   # Lo que entra, por herramienta, en UNA llamada a jq. Piezas separadas por \001 —un
   # byte que ningun Markdown lleva; bash no puede guardar NUL en una variable—:
@@ -352,27 +451,42 @@ arnes_guard_completado() {
   fi
   modo="${piezas[1]:-W}"
 
-  # El REQ en disco, leido de forma que DICE si no pudo leerse entero (SEC-002, R-001).
-  # `read -d ''` se detiene en el primer NUL y devuelve el trozo: un NUL en la primera
-  # linea dejaba `disk` vacio, los veredictos se leian de un texto incompleto —y un campo
-  # vacio no exige nada—, y ademas el `old_string` no se encontraba, asi que la puerta
-  # caia a la via mas laxa. Bastaba una escritura previa en requirements/, que ninguna
-  # puerta restringe.
-  disk=''; disk_medible=1
-  if [ -f "$fp" ]; then
-    arnes_lee_archivo "$fp" || disk_medible=0
-    disk="$ARNES_TEXTO"
-  fi
-  if [ "$disk_medible" -eq 0 ]; then
-    # No se puede reconstruir el documento resultante ni leer los veredictos que hay en
-    # disco. Lo que decide sigue siendo LA TRANSICION: solo se deniega si la edicion trae
-    # el estado terminal —la regla ancha de la via Bash, por la misma razon: sustituir el
-    # VALOR es la forma mas natural de cerrar un REQ a mano y no escribe «Estado» en ninguna
-    # parte—. Una edicion que no lo menciona no queda bloqueada por el byte.
-    if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$ARNES_JQ"; then
-      arnes_deny "ARNES: no se puede tocar el estado de '$rel': el archivo en disco no se puede leer entero —un byte NUL lo trunca, o no hay permiso de lectura—, asi que no se pueden leer sus veredictos ni simular el documento resultante, y esta edicion menciona '$estado_done'. Una puerta que no puede medir no deja pasar (AGENTS.md 1). Quita el byte NUL del archivo y reintenta."
+  # --- El REQ en disco: INEXISTENTE, LEGIBLE o EXISTENTE PERO ILEGIBLE (REQ-007 CA-45) -------
+  # `read -d ''` se detiene en el primer NUL y devuelve el trozo (SEC-002, R-001), asi que se lee
+  # con `arnes_lee_archivo`, que DICE si no pudo leer el archivo entero.
+  #
+  # Hasta 9596e39, con el archivo ilegible solo se denegaba la edicion que MENCIONABA el estado
+  # terminal, con la premisa de que «lo que decide es la transicion». Era falso en las dos
+  # direcciones (QA-023-08): decidia la mencion, y una edicion que cierra sin escribir la palabra
+  # —`Estado: ado` y el `Edit` literal 'Estado: ' -> 'Estado: complet'— pasaba sin juzgarse
+  # (O-11). Y no poder leer el archivo no significa que la herramienta no pueda escribirlo: medido
+  # en el host (CLI 2.1.285), el `Edit` aplico una edicion sobre un REQ en UTF-16LE que este hook
+  # no podia leer. Ahora:
+  #   * un `Edit`/`MultiEdit` sobre un archivo ilegible NO se puede reconstruir: se DENIEGA, toque
+  #     o no el estado, sin buscar ninguna cadena y sin juzgar ninguna otra regla del cierre;
+  #   * un `Write` trae el documento entero y se juzga ENTERO, como posible transicion y sin tomar
+  #     NADA del disco: el estado anterior se desconoce, asi que se trata como si no dijera el
+  #     terminal, y veredictos, clase, rigor y sensibilidad salen solo del documento que llega.
+  # Frontera sin promesa: un error de lectura a mitad del archivo, que el shell no distingue del
+  # final, y un cambio del archivo entre esta lectura y la escritura (CA-47, F1).
+  disk=''; ilegible=''
+  if [ "$existe" = 1 ]; then
+    if arnes_lee_archivo "$obj"; then
+      disk="$ARNES_TEXTO"
+    elif [ ! -f "$obj" ]; then
+      ilegible="en esa ruta hay algo que no es un archivo regular (un directorio, un dispositivo o una tuberia)"
+      arreglo="deja en esa ruta un archivo regular de texto"
+    elif [ ! -r "$obj" ]; then
+      ilegible="el archivo no tiene permiso de lectura"
+      arreglo="devuelvele el permiso de lectura"
+    else
+      ilegible="el archivo contiene un byte NUL, que corta la lectura (lo lleva todo archivo en UTF-16 o UTF-32 con texto ASCII, por ejemplo las claves de la cabecera)"
+      arreglo="quita el byte NUL o guarda el archivo en UTF-8"
     fi
-    return 0
+  fi
+  if [ -n "$ilegible" ] && [ "$modo" != "W" ]; then
+    arnes_cita_ruta "$rel"
+    arnes_deny "ARNES: no se permite esta edicion de $ARNES_CITA_RUTA: el archivo existe pero no se puede leer entero como archivo de texto —$ilegible—, asi que esta puerta no puede reconstruir el documento que quedaria escrito ni leer sus veredictos. Sin ese documento no se puede saber si la edicion cierra el REQ, cambia un veredicto o no toca nada, y una puerta que no puede medir no deja pasar, toque o no el estado (REQ-007 CA-45). Para corregirlo, deja el archivo legible entero: $arreglo. La puerta no reescribe el archivo."
   fi
 
   # --- El documento RESULTANTE, no los fragmentos ----------------------------------
@@ -383,9 +497,12 @@ arnes_guard_completado() {
   # que se aplica cada edicion al texto en disco —lo mismo que hara la herramienta— y
   # los campos se leen de lo que quedara escrito.
   #
-  # Si algun `old_string` no esta en el texto, la herramienta fallara entera y no
-  # escribira nada: entonces se leen los fragmentos como hasta ahora (y el banco, que
-  # fabrica ediciones con `old_string:"x"`, sigue midiendo lo mismo).
+  # Si algun `old_string` no esta LITERAL en el texto que va resultando, la puerta no puede
+  # reconstruir el documento y DENIEGA (REQ-023 CA-13, ADR-015; `arnes_deny_no_reconstruible`,
+  # arriba). Hasta df550fa se juzgaban los fragmentos, con la premisa de que la herramienta
+  # fallaria y no escribiria nada; es falsa: el `Edit` del host normaliza las comillas
+  # tipograficas antes de aplicar la edicion, y escribia un documento que esta puerta no habia
+  # simulado (SEC-117, reproducido en el CLI 2.1.285). Ya no hay respaldo por fragmentos.
   # `Write` trae el documento COMPLETO: es su propio resultante, y por eso la transicion
   # tambien se lee de su cabecera. Medido con 1.30.2: un `Write` cuyo CUERPO citaba
   # `Estado: completado (...)` dentro de un criterio fue denegado, porque el `grep` miraba
@@ -409,10 +526,23 @@ arnes_guard_completado() {
   nuevo=''; resultante=''; reconstruido=0
   if [ "$modo" = "W" ]; then
     nuevo="${piezas[2]:-}"; resultante="$nuevo"
+  elif [ "$np" -eq 5 ] && [ -z "${piezas[2]}" ] && [ "$existe" != 1 ]; then
+    # (b) CREACION (REQ-023 CA-13 (i)): el archivo NO existe, la llamada trae UNA sola edicion
+    # (np = bandera + modo + una tripleta) y su `old_string` es vacio. El documento resultante
+    # es el `new_string`, y se juzga ENTERO, como el contenido de un `Write` sobre un archivo que
+    # no existe. Hasta df550fa se juzgaba como fragmento: `**Estado:** completado` con QA
+    # pendiente salia allow (O-3 de QA). «No existe» es el de la identidad (REQ-007 CA-47,
+    # punto 8): nada en la lectura fisica, con el tramo existente resuelto. Una ruta que existe y
+    # no es un archivo normal no es una creacion, y entonces no se reconstruye.
+    nuevo="${piezas[3]//$'\r\n'/$'\n'}"; resultante="$nuevo"; reconstruido=1
   else
+    # (a) LITERAL (REQ-023 CA-13 (i)): cada edicion, en su orden, con un `old_string` NO vacio
+    # que esta literal en el texto que va resultando. La primera que no lo cumple DENIEGA, y el
+    # motivo la nombra. Sin buscar cadenas en el `new_string` y sin imitar al host.
+    #
     # CRLF -> LF, y SOLO eso: los proyectos en Windows guardan CRLF y la herramienta casa
-    # el `old_string` con LF; si aqui no casara, se caeria a los fragmentos y el bypass
-    # volveria por la puerta de atras. Los lectores de campos descuentan el resto del CR.
+    # el `old_string` con LF; si aqui no casara, la edicion se denegaria por no reconstruible
+    # sobre un archivo legitimo. Los lectores de campos descuentan el resto del CR.
     #
     # POR QUE NO SE RETIRA TODO CR, que es lo que hacia hasta 1.32.1: el texto resultante
     # es lo que LEE el lector de cabecera, y ese lector escanea el rango `<!-- … -->` sobre
@@ -422,12 +552,23 @@ arnes_guard_completado() {
     # `Seguridad: pendiente` vigente (H-01, `docs/qa/1.32.1-hallazgos.md`; CA-02 de REQ-016
     # nombra esta clase). Un CR seguido de LF es un fin de linea y se normaliza; un CR
     # suelto en mitad de una linea NO lo es, y ya no se toca aqui. Pregunta cerrada.
-    resultante="${disk//$'\r\n'/$'\n'}"; reconstruido=1
+    resultante="${disk//$'\r\n'/$'\n'}"; reconstruido=1; ne=$(( (np - 2) / 3 ))
     # k arranca en 2: piezas[0] es la bandera de bytes de control y piezas[1] el modo.
     for ((k = 2; k + 2 < np; k += 3)); do
       old="${piezas[k]//$'\r\n'/$'\n'}"; new="${piezas[k+1]//$'\r\n'/$'\n'}"; ra="${piezas[k+2]}"
       nuevo+="$new"$'\n'
-      if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then reconstruido=0; continue; fi
+      if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then
+        if [ "$existe" != 1 ]; then
+          causa="el archivo no existe y esta llamada no es una creacion: crear un archivo es UNA sola edicion con old_string vacio y el documento entero como new_string"
+        elif [ -z "$old" ]; then
+          causa="su old_string esta vacio y el archivo ya existe: un old_string vacio solo describe la creacion de un archivo que no existe, no que texto se sustituye"
+        elif [ "$k" -gt 2 ]; then
+          causa="su old_string no esta LITERAL en el texto que dejan el archivo y las ediciones anteriores de la misma llamada"
+        else
+          causa="su old_string no esta LITERAL en el texto del archivo"
+        fi
+        arnes_deny_no_reconstruible "$(( (k - 2) / 3 + 1 ))" "$ne" "${piezas[k]}" "$causa"
+      fi
       # Sustitucion literal: patron y reemplazo entre comillas, asi `*`, `[` o `&` en
       # un veredicto no significan nada (patsub_replacement esta activo en bash 5.2+).
       case "$ra" in
@@ -438,16 +579,17 @@ arnes_guard_completado() {
   fi
 
   # --- Veredictos QA/Seguridad (anti-deriva) ---
-  # Reconstruido: los campos son los de la cabecera del documento que quedara en disco.
-  # Sin reconstruir: se prefiere el fragmento entrante y se respalda en disco (pre-edicion),
-  # porque QA/seguridad fijan su veredicto antes de la transicion a completado.
+  # Edit/MultiEdit reconstruido (o creacion): los campos son los de la cabecera del documento
+  # que quedara en disco. Write: se prefiere el contenido entrante y se respalda en disco
+  # (pre-edicion), porque QA/seguridad fijan su veredicto antes de la transicion a completado.
+  # (Un Edit/MultiEdit sin reconstruir ya no llega aqui: CA-13 lo denego arriba.)
   # Comparar el campo de cabecera, no buscar su nombre en el fragmento: el
   # lector acepta decoración y Edit puede sustituir sólo el valor. El crudo
   # incluye la evidencia: renovar la firma también requiere QA. Una firma
   # idéntica conservada al editar prosa no es una firma nueva.
   if [ "$reconstruido" -eq 1 ]; then arnes_campos_req "$resultante" ''
   else arnes_campos_req "$disk" "$nuevo"; fi
-  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"
+  qa="$ARNES_QA"; seg="$ARNES_SEG"; sens="$ARNES_SENS"; rigor="$ARNES_RIGOR"; amb="$ARNES_AMBIGUA"
 
   # --- Aviso al ESCRIBIR un veredicto fuera del vocabulario (NO deniega) ------------
   # Medido en un proyecto real: cuatro REQ llevaban SEMANAS con un `QA:` que la puerta no
@@ -497,86 +639,108 @@ arnes_guard_completado() {
 
   # ¿El cambio deja el REQ en `completado`? Normalizado: case-insensitive y espacios.
   arnes_norm_campo "$estado_done"; done_norm="$ARNES_CAMPO"
-  if [ "$reconstruido" -eq 1 ] || [ "$modo" = "W" ]; then
-    # HAY DOCUMENTO: la transicion se determina SOLO con el, nunca con el fragmento.
-    # Transicion = la cabecera en disco NO decia el estado terminal y la cabecera
-    # resultante SI lo dice.
-    #
-    # Dos fallos medidos contra 1.30.2, uno en cada sentido:
-    #  · Un `Edit` con `old_string: en-revisión` y `new_string: completado` —un fragmento
-    #    que no escribe en ninguna parte la palabra «Estado»— cerraba el REQ con QA
-    #    pendiente: el hook ya reconstruia el documento, pero ADEMAS exigia la palabra en
-    #    el FRAGMENTO y salia antes de llegar a las puertas. Y sustituir solo el VALOR es
-    #    la forma mas natural de cerrar un REQ a mano.
-    #  · Un `Write` cuyo CUERPO citaba `Estado: completado (...)` dentro de un criterio era
-    #    denegado, porque el `grep` miraba todo el contenido en vez de la cabecera.
-    #
-    # La regla que resuelve los dos es la misma que ya regia para MultiEdit: manda la
-    # cabecera del documento que quedara escrito. Por eso una linea de historia
-    # `Estado: completado (revertido)` no es una transicion, y reabrir un REQ ya cerrado
-    # tampoco.
-    arnes_estado_cabecera "$resultante"
-    est_despues="$ARNES_ESTADO"; cita_desp="$ARNES_ESTADO_CITA"; est_citado="$ARNES_ESTADO_CITADO"
-    cr_desp="$ARNES_ESTADO_CR"; cr_linea="$ARNES_ESTADO_CR_LINEA"
-    arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
-    # UN CR QUE NO TERMINA LA LINEA: tampoco se juzga, se DENIEGA. Es la MISMA regla que el
-    # rango sin cerrar, aplicada al caracter: la cabecera no se puede MEDIR (SEC-024,
-    # R-007). El motivo cita la linea con el CR escrito `\r`, porque un renderizador de
-    # HTML puede ESCONDER el bloque entero —trata `<!` seguido de algo que no sea `--` como
-    # bogus comment y lo consume hasta el primer `>`—, asi que decir «hay un CR» sin decir
-    # DONDE deja a la persona buscando texto que su editor no le muestra.
-    #
-    # Y AQUI NO SE EXIGE QUE EL ESTADO CAMBIE, a diferencia del rango sin cerrar, que si lo
-    # exige. No es una inconsistencia: el CR puede FABRICAR el propio estado terminal
-    # —`Estado: comple\rtado` se lee `completado` porque la normalizacion de la clave
-    # descuenta el CR—, asi que sobre una cabecera que no se puede medir el «ya estaba
-    # cerrado» puede ser un artefacto del mismo defecto que se esta midiendo, y usarlo como
-    # eximente seria preguntarle al defecto si hay defecto. La friccion queda acotada a los
-    # REQ que DECLARAN el estado terminal, y la salida es de una linea: retirar el CR (la
-    # edicion que lo retira no lleva CR y no se deniega). Reabrir un REQ nunca se bloquea.
-    if [ "$cr_desp" = "1" ] && [ "$est_despues" = "$done_norm" ]; then
-      arnes_deny "ARNES: no se puede completar '$rel': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «$cr_linea». Un CR suelto en mitad de una linea no es un fin de linea: es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros —un '<!'+CR+'--' que un renderizador de HTML esconde y esta puerta no lee como comentario, o un 'Seg'+CR+'uridad:' que se lee como la clave 'Seguridad'—, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta: un REQ guardado entero en CRLF cierra igual que en LF."
+  # HAY DOCUMENTO, SIEMPRE: el contenido del `Write`, la creacion o el documento reconstruido
+  # de un `Edit`/`MultiEdit`. Lo que no se puede reconstruir ya se denego arriba (REQ-023
+  # CA-13), y con ello desaparecio la via de fragmentos y sus dos guardas —rango abierto y CR
+  # interior leidos del FRAGMENTO—: las mismas reglas se aplican aqui sobre el documento.
+  # La transicion se determina SOLO con el documento, nunca con el fragmento.
+  # Transicion = la cabecera en disco NO decia el estado terminal y la cabecera
+  # resultante SI lo dice.
+  #
+  # Dos fallos medidos contra 1.30.2, uno en cada sentido:
+  #  · Un `Edit` con `old_string: en-revisión` y `new_string: completado` —un fragmento
+  #    que no escribe en ninguna parte la palabra «Estado»— cerraba el REQ con QA
+  #    pendiente: el hook ya reconstruia el documento, pero ADEMAS exigia la palabra en
+  #    el FRAGMENTO y salia antes de llegar a las puertas. Y sustituir solo el VALOR es
+  #    la forma mas natural de cerrar un REQ a mano.
+  #  · Un `Write` cuyo CUERPO citaba `Estado: completado (...)` dentro de un criterio era
+  #    denegado, porque el `grep` miraba todo el contenido en vez de la cabecera.
+  #
+  # La regla que resuelve los dos es la misma que ya regia para MultiEdit: manda la
+  # cabecera del documento que quedara escrito. Por eso una linea de historia
+  # `Estado: completado (revertido)` no es una transicion, y reabrir un REQ ya cerrado
+  # tampoco.
+  arnes_estado_cabecera "$resultante"
+  est_despues="$ARNES_ESTADO"; cita_desp="$ARNES_ESTADO_CITA"; est_citado="$ARNES_ESTADO_CITADO"
+  cr_desp="$ARNES_ESTADO_CR"; cr_linea="$ARNES_ESTADO_CR_LINEA"
+  arnes_estado_cabecera "$disk";       est_antes="$ARNES_ESTADO"
+  # UN CR QUE NO TERMINA LA LINEA: tampoco se juzga, se DENIEGA. Es la MISMA regla que el
+  # rango sin cerrar, aplicada al caracter: la cabecera no se puede MEDIR (SEC-024,
+  # R-007). El motivo cita la linea con el CR escrito `\r`, porque un renderizador de
+  # HTML puede ESCONDER el bloque entero —trata `<!` seguido de algo que no sea `--` como
+  # bogus comment y lo consume hasta el primer `>`—, asi que decir «hay un CR» sin decir
+  # DONDE deja a la persona buscando texto que su editor no le muestra.
+  #
+  # Y AQUI NO SE EXIGE QUE EL ESTADO CAMBIE, a diferencia del rango sin cerrar, que si lo
+  # exige. No es una inconsistencia: el CR puede FABRICAR el propio estado terminal
+  # —`Estado: comple\rtado` se lee `completado` porque la normalizacion de la clave
+  # descuenta el CR—, asi que sobre una cabecera que no se puede medir el «ya estaba
+  # cerrado» puede ser un artefacto del mismo defecto que se esta midiendo, y usarlo como
+  # eximente seria preguntarle al defecto si hay defecto. La friccion queda acotada a los
+  # REQ que DECLARAN el estado terminal, y la salida es de una linea: retirar el CR (la
+  # edicion que lo retira no lleva CR y no se deniega). Reabrir un REQ nunca se bloquea.
+  if [ "$cr_desp" = "1" ] && [ "$est_despues" = "$done_norm" ]; then
+    arnes_deny "ARNES: no se puede completar '$rel': su cabecera lleva un retorno de carro (CR) que NO termina la linea, en «$cr_linea». Un CR suelto en mitad de una linea no es un fin de linea: es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros —un '<!'+CR+'--' que un renderizador de HTML esconde y esta puerta no lee como comentario, o un 'Seg'+CR+'uridad:' que se lee como la clave 'Seguridad'—, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta: un REQ guardado entero en CRLF cierra igual que en LF."
+  fi
+  # UN RANGO DE COMENTARIO QUE ABRE Y NO CIERRA EN LA CABECERA: no se juzga, se DENIEGA.
+  #
+  # El interior de un `<!-- ... -->` no declara campo (arnes_sin_cita, lib.sh), y eso
+  # cierra el fail-open por el que un veredicto CITADO gobernaba. Pero si el rango no
+  # cierra, la cabecera deja de poder MEDIRSE: no se sabe cuantos veredictos se trago ni
+  # cual gobierna. Ahi la regla es la de siempre —una puerta que no puede medir no deja
+  # pasar— y, sobre todo, NUNCA se permite por AUSENCIA del campo que el rango se trago:
+  # un campo vacio significa «no lo declara», y eso es justo lo que la puerta perdona.
+  #
+  # Se exige que HAYA un intento de cierre, no cualquier edicion: el estado terminal
+  # leido de la cabecera, o —cuando el rango se trago la propia linea del estado— el que
+  # esa linea declaraba desde dentro de la cita. Denegar toda edicion de un REQ con un
+  # comentario mal cerrado seria friccion constante sobre algo que no cierra nada, y la
+  # friccion termina con alguien apagando el guard (AGENTS.md 13).
+  if [ "$cita_desp" = "1" ] && [ "$est_antes" != "$done_norm" ] &&
+     { [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]; }; then
+    arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera."
+  fi
+  # CABECERA AMBIGUA (REQ-023, ADR-014; SEC-047, QA-031-01): una VARIANTE de una clave de
+  # control —la clave escrita de otra forma, que el lector no lee como tal; frontera en
+  # `_arnes_clave_control`, lib.sh— o una clave de control declarada MAS DE UNA VEZ, aunque
+  # diga lo mismo. La puerta no lee la variante como la clave ni elige entre declaraciones, y
+  # sobre todo NO permite por la AUSENCIA que eso produciria: DENIEGA el cierre, sean cuales
+  # sean los veredictos, citando las lineas. Lo publica `arnes_campos_req` sobre la cabecera
+  # resultante (la del ultimo texto que leyo, que aqui es `resultante`, si no esta vacia).
+  #
+  # INTENTO DE CIERRE = la cabecera resultante es AMBIGUA, ALGUNA de sus lineas `Estado`
+  # —la exacta, una repetida o una variante— dice el estado terminal (un `ESTADO: completado`
+  # no se lee y esconderia la transicion), y el `Estado` que GOBIERNA en disco —la primera
+  # declaracion exacta; si no hay ninguna, nada lo decia— NO lo decia. No se juzga nada mas:
+  # reabrir o editar un REQ cuyo `Estado` que gobierna en disco ya es el terminal no se bloquea
+  # (mismo alcance que el rango sin cerrar), ni una edicion cuya cabecera resultante no dice el
+  # terminal en ninguna linea `Estado`. CONSECUENCIA (REQ-023 CA-01): si en disco el terminal
+  # esta en una linea `Estado` que NO es la que gobierna —una variante, o una exacta que no es la
+  # primera— y la que gobierna no lo dice o no existe, se deniega TODA edicion que conserve esa
+  # linea mientras la cabecera siga siendo ambigua; la que la retira, la corrige o deshace la
+  # ambiguedad no se deniega por esto. El `Estado` que gobierna ya esta normalizado (`est_despues`);
+  # los demas se normalizan SOLO aqui, SOLO si la cabecera es ambigua y SOLO hasta encontrar
+  # el terminal: es la unica lectura del valor de una variante, y solo puede denegar.
+  if [ -n "$resultante" ] && [ "$amb" = 1 ] && [ "$est_antes" != "$done_norm" ]; then
+    intento=0
+    if [ "$est_despues" = "$done_norm" ]; then
+      intento=1
+    else
+      for ((k = 0; k < ${#ARNES_ESTADO_OTROS[@]}; k++)); do
+        v="${ARNES_ESTADO_OTROS[k]}"
+        arnes_norm_campo "$v"; arnes_veredicto "$ARNES_CAMPO"
+        if [ "$ARNES_VEREDICTO" = "$done_norm" ]; then intento=1; break; fi
+      done
     fi
-    # UN RANGO DE COMENTARIO QUE ABRE Y NO CIERRA EN LA CABECERA: no se juzga, se DENIEGA.
-    #
-    # El interior de un `<!-- ... -->` no declara campo (arnes_sin_cita, lib.sh), y eso
-    # cierra el fail-open por el que un veredicto CITADO gobernaba. Pero si el rango no
-    # cierra, la cabecera deja de poder MEDIRSE: no se sabe cuantos veredictos se trago ni
-    # cual gobierna. Ahi la regla es la de siempre —una puerta que no puede medir no deja
-    # pasar— y, sobre todo, NUNCA se permite por AUSENCIA del campo que el rango se trago:
-    # un campo vacio significa «no lo declara», y eso es justo lo que la puerta perdona.
-    #
-    # Se exige que HAYA un intento de cierre, no cualquier edicion: el estado terminal
-    # leido de la cabecera, o —cuando el rango se trago la propia linea del estado— el que
-    # esa linea declaraba desde dentro de la cita. Denegar toda edicion de un REQ con un
-    # comentario mal cerrado seria friccion constante sobre algo que no cierra nada, y la
-    # friccion termina con alguien apagando el guard (AGENTS.md 13).
-    if [ "$cita_desp" = "1" ] && [ "$est_antes" != "$done_norm" ] &&
-       { [ "$est_despues" = "$done_norm" ] || [ "$est_citado" = "$done_norm" ]; }; then
-      arnes_deny "ARNES: no se puede completar '$rel': su cabecera ABRE un rango de comentario '<!--' que NO se cierra con '-->' antes del fin de la cabecera (el primer '## '). Lo que cae dentro de un comentario no declara campo, asi que con el rango abierto esta puerta no puede saber que veredictos se han quedado dentro ni cual gobierna — y no permite por AUSENCIA de un campo que un comentario se trago. Salida: cierra el comentario con '-->' dentro de la cabecera, o saca la nota fuera de ella. Un veredicto historico se documenta en el Historial de cambios, no en la cabecera."
-    fi
-    [ "$est_despues" = "$done_norm" ] || return 0
-    [ "$est_antes" != "$done_norm" ] || return 0
-  else
-    # NO hay documento: un `Edit`/`MultiEdit` cuyo `old_string` no esta en el archivo. La
-    # herramienta fallara entera y no escribira nada, pero se juzga el fragmento como
-    # siempre —el banco fabrica ediciones asi y tiene que seguir midiendo lo mismo—.
-    # Here-string en vez de `printf | grep`: la tuberia costaba un fork de mas.
-    grep -iqE "estado:[[:space:]]*${estado_done}([[:space:]]|$)" <<< "$nuevo" || return 0
-    # Y el mismo criterio sobre el FRAGMENTO: si la cabecera que se leyo —en disco o en lo
-    # entrante— dejo un rango de comentario abierto (`ARNES_CITA_ABIERTA`, lo publica
-    # `arnes_campos_req`), los campos que siguen a ese rango no se han leido y el cierre no
-    # se puede medir.
-    if [ "${ARNES_CITA_ABIERTA:-0}" = "1" ]; then
-      arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer ABRE un rango de comentario '<!--' que no se cierra con '-->' antes del primer '## ', asi que los campos que vienen detras no se han leido y el cierre no se puede medir. Una puerta que no puede medir no deja pasar. Salida: cierra el comentario dentro de la cabecera, o saca la nota fuera de ella."
-    fi
-    # Y el mismo criterio para el CR que no termina la linea (`ARNES_CR_INTERIOR`, lo
-    # publica `arnes_campos_req` por la misma via que el rango abierto): si la cabecera que
-    # esta puerta pudo leer —en disco o en lo entrante— lleva uno, no se puede medir.
-    if [ "${ARNES_CR_INTERIOR:-0}" = "1" ]; then
-      arnes_deny "ARNES: no se puede completar '$rel': la cabecera que esta puerta pudo leer lleva un retorno de carro (CR) que NO termina la linea, en «${ARNES_CR_INTERIOR_LINEA}». Un CR suelto en mitad de una linea es un caracter invisible que puede FABRICAR delimitadores para unos lectores y no para otros, asi que la cabecera no se puede MEDIR y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salida: retira ese CR. El CR que TERMINA una linea es transporte (CRLF de Windows) y no cuenta."
+    if [ "$intento" -eq 1 ]; then
+      arnes_ambigua_motivo
+      # El texto fijo va en ASCII: asi NINGUN byte >= 0x80 aparece crudo en el motivo, y el
+      # que lleve una linea citada sale escapado (REQ-023 CA-01 (iii)).
+      arnes_deny "ARNES: no se puede completar '$rel': su cabecera es AMBIGUA para esta puerta: $ARNES_AMBIGUA_MOTIVO. Una clave de control escrita de otra forma no se lee como esa clave, y declarada mas de una vez obligaria a elegir una; la puerta no elige, no lee la variante como la clave y no permite por la AUSENCIA que eso produciria (AGENTS.md 1). Salida: escribe cada clave de control (${ARNES_CLAVES_CONTROL//|/, }) una sola vez y como la escribe la plantilla de requirements/README.md, seccion 'Veredictos de validacion'. La puerta no reescribe el archivo."
     fi
   fi
+  [ "$est_despues" = "$done_norm" ] || return 0
+  [ "$est_antes" != "$done_norm" ] || return 0
 
   # --- Nivel de rigor: cuanta ceremonia exige ESTE requerimiento ---
   # `ligero` no pide veredictos: es para lo que no tiene logica —textos, etiquetas,

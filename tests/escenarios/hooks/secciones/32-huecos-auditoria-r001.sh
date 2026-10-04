@@ -2,7 +2,7 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=40
+CASOS_ESPERADOS_SECCION=41
 PISO_AUTONOMO_SECCION=58  # 9 preámbulo + 5 maquinaria compartida duplicada + 44 bloque indivisible mayor · REQ-014 CA-18
 
 # --- REQ-007: los huecos de la auditoria R-001 (SEC-001, SEC-002, SEC-003, SEC-006) ----
@@ -66,13 +66,28 @@ check "REQ-007 CA-44 control: tabuladores y saltos de linea legitimos no son un 
 # `read -d ''` se detiene en el primer NUL: los veredictos se leian de un texto incompleto
 # —y un campo vacio no exige nada— y ademas el `old_string` no se encontraba, asi que la
 # puerta caia a la via mas laxa. Bastaba una escritura previa en requirements/.
+# Versionado el 2026-09-30 (REQ-007 CA-45 (ii) y CA-46 (b)/(d), ADR-016; O-11): con el REQ
+# ilegible, un Edit/MultiEdit se DENIEGA toque o no el estado —ya no decide la mencion del
+# estado terminal—, y un Write se juzga entero. Los casos de la tabla de CA-66 viven en la 43.
 printf '# REQ-702 ' > "$PROJ/requirements/REQ-702.md"
 printf '\000' >> "$PROJ/requirements/REQ-702.md"
 printf ' nota\nEstado: en-revisión\nSensible a seguridad: no\nQA: pendiente\nSeguridad: n/a\n' >> "$PROJ/requirements/REQ-702.md"
 check_motivo "REQ-007 CA-45 SEC-002 un NUL en el REQ: el cierre deniega con motivo propio" \
   'no se puede leer entero' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-702.md" 'en-revisión' 'completado')"
-check "REQ-007 CA-46 control: sobre el REQ con NUL, una edicion que no toca el estado -> allow" allow \
-  guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-702.md" 'nota' 'otra anotacion')"
+# Antes: «CA-46 control: … una edicion que no toca el estado -> allow». Medía que el NUL no
+# bloqueara lo que no cerraba; CA-46 (b) versionado dice lo contrario (fila R1 de CA-66), y el
+# caso sigue midiendo la MISMA edicion sobre el MISMO archivo, ahora con su motivo propio.
+check_motivo "REQ-007 CA-46 (b) versionado: sobre el REQ con NUL, una edicion que no toca el estado -> deny (R1)" \
+  'no se puede leer entero.*byte NUL' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-702.md" 'nota' 'otra anotacion')"
+# Y su control nuevo (CA-66, punto 4; fila R6 (a)): un Write trae el documento entero, se juzga
+# entero y, sin el estado terminal, pasa. Lo que se bloquea es lo que no se puede reconstruir.
+check "REQ-007 CA-46 (d) control: sobre el REQ con NUL, un Write sin el estado terminal -> allow (R6 a)" allow \
+  guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-702.md" "# REQ-702
+Estado: en-revisión
+Sensible a seguridad: no
+QA: pendiente
+Seguridad: n/a
+")"
 check "REQ-007 CA-46 control: el mismo REQ SIN NUL y con QA pendiente -> deny (como siempre)" deny \
   guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-700.md" 'en-revisión' 'completado')"
 check "REQ-007 CA-46 control: el mismo REQ SIN NUL y con los veredictos completos -> allow" allow \

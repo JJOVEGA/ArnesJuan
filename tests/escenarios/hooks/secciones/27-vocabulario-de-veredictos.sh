@@ -11,23 +11,23 @@ PISO_AUTONOMO_SECCION=35  # 9 preámbulo + 4 maquinaria compartida duplicada + 2
 # --- Bloque A: `con-hallazgos` es un valor VALIDO de Seguridad, y no cierra ---
 mkreq_r "REQ-200" "no" "aprobado" "con-hallazgos" "critico"
 check "CA-02 critico con Seguridad: con-hallazgos -> deny (valido, pero no firma)" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-200.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-200.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 check "CA-03 escribir con-hallazgos sin cerrar -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-200.md" "" "" 'Seguridad: con-hallazgos')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-200.md" "" "" 'Seguridad: con-hallazgos' 'Seguridad: con-hallazgos')"
 # CA-08: la puerta de ORDEN del ciclo solo se dispara con `aprobado`. `con-hallazgos` no
 # es una firma, asi que puede escribirse con QA todavia pendiente.
 mkreq_r "REQ-201" "no" "pendiente" "con-hallazgos" "critico"
 check "CA-08 con-hallazgos con QA pendiente -> allow (no es una firma)" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-201.md" "" "" 'Seguridad: con-hallazgos')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-201.md" "" "" 'Seguridad: con-hallazgos' 'Seguridad: con-hallazgos')"
 # CA-06: no regresion. Ninguno de los otros valores cierra un REQ critico.
 for v in vetado preventiva pendiente n/a; do
   mkreq_r "REQ-202" "no" "aprobado" "$v" "critico"
   check "CA-06 critico con Seguridad: $v -> deny (como en 1.30.3)" deny guard-completado.sh \
-    "$(emite_edit "$PROJ/requirements/REQ-202.md" "" "" 'Estado: completado')"
+    "$(emite_edit_lit "$PROJ/requirements/REQ-202.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 done
 mkreq_r "REQ-203" "no" "pendiente" "con-hallazgos" "ligero"
 check "CA-07 ligero con con-hallazgos -> allow" allow guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-203.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-203.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- Bloque B: el aviso al ESCRIBIR un valor que la maquina no reconoce ---
 # No deniega: es una errata, no un ataque, y la puerta ya la atrapa al cerrar. Denegar
@@ -35,22 +35,22 @@ check "CA-07 ligero con con-hallazgos -> allow" allow guard-completado.sh \
 # apagando el guard.
 mkreq_r "REQ-210" "no" "pendiente" "n/a" "estandar"
 check_aviso "CA-09 escribir 'QA: aprobadisimo' -> avisa sin denegar" si 'QA:.*pendiente\|aprobado\|con-hallazgos' \
-  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-210.md" "" "" 'QA: aprobadísimo')"
+  guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-210.md" "" "" 'QA: pendiente' 'QA: aprobadísimo')"
 check_aviso "CA-10 escribir un valor del vocabulario -> sin aviso" no "" \
-  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-210.md" "" "" 'QA: aprobado')"
+  guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-210.md" "" "" 'QA: pendiente' 'QA: aprobado')"
 # CA-11: el aviso es por la ESCRITURA del campo, no por el estado del archivo. Si no,
 # cada edicion del REQ repetiria el mismo aviso hasta que alguien lo silencie.
 printf '# REQ-211\nEstado: en-revisión\nQA: aprobadísimo\nSeguridad: n/a\n\n## Historial de cambios\n| f | a | c |\n' > "$PROJ/requirements/REQ-211.md"
 check_aviso "CA-11 el REQ ya lo tenia en disco y la edicion no lo toca -> sin aviso" no "" \
-  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-211.md" "" "" '| 2026-09-05 | otra fila | causa |')"
+  guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-211.md" "" "" '| f | a | c |' $'| f | a | c |\n| 2026-09-05 | otra fila | causa |')"
 check_aviso "CA-12 'Seguridad: aprobado' dentro del historial -> sin aviso" no "" \
-  guard-completado.sh "$(emite_edit "$PROJ/requirements/REQ-211.md" "" "" '| 2026-09-05 | Seguridad: aprobado | causa |')"
+  guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-211.md" "" "" '| f | a | c |' $'| f | a | c |\n| 2026-09-05 | Seguridad: aprobado | causa |')"
 check_aviso "CA-15 el mismo texto FUERA de requirements/ -> sin aviso" no "" \
   guard-completado.sh "$(emite_edit "$PROJ/docs/notas.md" "" "" 'QA: loquesea')"
 # CA-13: el aviso no compite con la denegacion ni la sustituye.
 mkreq_r "REQ-212" "no" "aprobadísimo" "n/a" "estandar"
 check "CA-13 valor fuera del vocabulario Y cierre -> deny (manda la puerta)" deny guard-completado.sh \
-  "$(emite_edit "$PROJ/requirements/REQ-212.md" "" "" 'Estado: completado')"
+  "$(emite_edit_lit "$PROJ/requirements/REQ-212.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- Bloque C: el informe lee EXACTAMENTE lo que lee la puerta ---
 lec_proj() {

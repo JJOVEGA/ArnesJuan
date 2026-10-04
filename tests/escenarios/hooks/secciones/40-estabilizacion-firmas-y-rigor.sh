@@ -7,7 +7,7 @@ mkreq_r "REQ-940" "no" "aprobado" "pendiente" "critico (por suelo)"
 # El nombre lleva CERRADO a proposito: decia "matiz no rebaja critico" a secas, y
 # eso es la promesa absoluta que SEC-087 falsa. El caso ejerce `critico (por suelo)`
 # --cerrado--, asi que el nombre ahora dice exactamente lo que el caso prueba.
-check "D16: matiz CERRADO no rebaja critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
+check "D16: matiz CERRADO no rebaja critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: en-revisión' 'Estado: completado')"
 # QA-P48-01. ESTE CASO DECIA `allow` Y ERA EL FAIL-OPEN, no su prueba.
 # v1.33.1 enruto la forma con parentesis por el lector comun para TODOS los
 # valores; en `ligero` eso REGALO la exencion de QA --el unico nivel exento
@@ -16,9 +16,9 @@ check "D16: matiz CERRADO no rebaja critico" deny guard-completado.sh "$(emite_e
 # conserva: una prueba que fija la conducta defectuosa como esperada es
 # exactamente lo que impide que el banco la vea.
 mkreq_r "REQ-941" "no" "pendiente" "pendiente" "ligero (local)"
-check "QA-P48-01: matiz no regala la exencion de QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-941.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: matiz no regala la exencion de QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-941.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-942" "no" "aprobado" "pendiente" "inventado"
-check "D16: desconocido conserva derivacion heredada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-942.md" 'Estado: pendiente' 'Estado: completado')"
+check "D16: desconocido conserva derivacion heredada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-942.md" 'Estado: en-revisión' 'Estado: completado')"
 
 # --- QA-P48-01: un matiz BIEN FORMADO sube o mantiene el rigor; nunca lo baja --
 # EL ALCANCE ES LA MITAD DE LA PROPIEDAD, y omitirlo la vuelve FALSA. Esta linea
@@ -51,30 +51,30 @@ check "D16: desconocido conserva derivacion heredada" allow guard-completado.sh 
 # `critico (por suelo)` conserva la correccion de v1.33.1. Sin ellas, "apretar
 # de mas" y "arreglar" serian indistinguibles.
 mkreq_r "REQ-950" "no" "pendiente" "pendiente" "ligero"
-check "QA-P48-01: ligero limpio conserva su exencion" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-950.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: ligero limpio conserva su exencion" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-950.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-951" "no" "aprobado" "pendiente" "ligero (local)"
-check "QA-P48-01: matiz sube a estandar, no a critico" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-951.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: matiz sube a estandar, no a critico" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-951.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-952" "no" "pendiente" "pendiente" "ligero (D8, 2026-09-08)"
-check "QA-P48-01: matiz con fecha y coma exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-952.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: matiz con fecha y coma exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-952.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-953" "no" "pendiente" "pendiente" "ligero(sin espacio)"
-check "QA-P48-01: matiz pegado a la clave exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-953.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: matiz pegado a la clave exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-953.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-954" "no" "pendiente" "pendiente" "ligero ()"
-check "QA-P48-01: matiz vacio exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-954.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: matiz vacio exige QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-954.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-955" "no" "pendiente" "pendiente" "ligero (critico)"
-check "QA-P48-01: el texto del matiz no decide el nivel" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-955.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: el texto del matiz no decide el nivel" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-955.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-956" "no" "pendiente" "pendiente" "estandar (x)"
-check "QA-P48-01: estandar con matiz sigue pidiendo QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-956.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: estandar con matiz sigue pidiendo QA" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-956.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-957" "no" "aprobado" "pendiente" "estandar (x)"
-check "QA-P48-01: estandar con matiz cierra con QA" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-957.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: estandar con matiz cierra con QA" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-957.md" 'Estado: en-revisión' 'Estado: completado')"
 mkreq_r "REQ-958" "no" "aprobado" "aprobado" "critico (por suelo)"
-check "QA-P48-01: critico con matiz cierra con ambas firmas" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-958.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: critico con matiz cierra con ambas firmas" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-958.md" 'Estado: en-revisión' 'Estado: completado')"
 # El suelo de seguridad manda sobre el piso del matiz: sensible + matiz sigue
 # exigiendo la firma de seguridad, no solo la de QA.
 mkreq_r "REQ-959" "sí" "aprobado" "pendiente" "ligero (local)"
-check "QA-P48-01: sensible con matiz conserva el suelo critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-959.md" 'Estado: pendiente' 'Estado: completado')"
+check "QA-P48-01: sensible con matiz conserva el suelo critico" deny guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-959.md" 'Estado: en-revisión' 'Estado: completado')"
 # La denegacion tiene que NOMBRAR QA: un deny mudo sobre un REQ que se leia
 # `ligero` se lee como falso positivo y acaba con alguien apagando el guard.
-check_motivo "QA-P48-01: el diagnostico nombra el veredicto de QA" 'QA.*pendiente' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-941.md" 'Estado: pendiente' 'Estado: completado')"
+check_motivo "QA-P48-01: el diagnostico nombra el veredicto de QA" 'QA.*pendiente' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-941.md" 'Estado: en-revisión' 'Estado: completado')"
 
 mkreq_r "REQ-943" "no" "con-hallazgos" "pendiente" "estandar"
 sed -i 's/^Seguridad: pendiente/**Seguridad**: pendiente/' "$PROJ/requirements/REQ-943.md"
@@ -98,5 +98,5 @@ mkreq_r "REQ-946" "no" "aprobado" "pendiente" "estandar"
 check "SEC084: QA previo permite firma decorada" allow guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-946.md" 'Seguridad: pendiente' '`Seguridad`: aprobado')"
 mkreq_r "REQ-947" "no" "pendiente" "pendiente" "estandar"
 check "SEC084: nueva cabecera Write sin archivo" deny guard-completado.sh "$(emite_write "$PROJ/requirements/REQ-948.md" $'# REQ-948\nEstado: pendiente\nQA: pendiente\n**Seguridad**: aprobado\n')"
-check_motivo "D16: diagnostico nombra rigor critico" 'rigor efectivo.*critico' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: pendiente' 'Estado: completado')"
+check_motivo "D16: diagnostico nombra rigor critico" 'rigor efectivo.*critico' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-940.md" 'Estado: en-revisión' 'Estado: completado')"
 check_motivo "SEC084: diagnostico nombra el orden QA" 'QA.*con-hallazgos.*ciclo' guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-943.md" '**Seguridad**: pendiente' '**Seguridad**: aprobado')"

@@ -164,8 +164,8 @@ arnes_git_alias_sub() {   # <subcomando> <primer argumento> -> ARNES_TOK (el arg
 # ⚠️ "permitir" se dice con `return 0`, NUNCA con `exit 0`: este guardian corre en el
 # mismo proceso que los otros dos y un `exit` los dejaria sin correr — fallo abierto.
 arnes_guard_git() {
-  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra=''
-  local -a t reglas args palabras
+  local limpio seg sub regla i n k ok reponer_f a posicional vistos motivo_extra='' nota_cr='' rc
+  local -a t reglas args palabras sincr
 
   arnes_parse_input
   [ "$ARNES_TOOL" = "Bash" ] || return 0
@@ -173,6 +173,15 @@ arnes_guard_git() {
   # Barato y PRIMERO: un `ls -la` o un `npm test` no llegan a leer el manifiesto ni
   # arrancan `jq`. El camino comun de Bash es el mas frecuente que hay y no puede pagar
   # un proceso por comando.
+  # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»; P-LC10-A = A): la linea que abre un heredoc
+  # acaba en una continuacion de linea. Se deniega en las CUATRO puertas, tambien aqui y aunque el comando no
+  # lleve ninguna orden de git ni el manifiesto encienda esta puerta: es la letra de la decision del
+  # propietario. Barato y PRIMERO: solo se analiza si el comando tiene a la vez un `<<` y una barra seguida de
+  # salto, asi que el camino comun paga dos comparaciones de texto y ningun proceso.
+  if [[ "$ARNES_CMD" == *'<<'* && "$ARNES_CMD" == *\\$'\n'* ]]; then
+    arnes_bash_sin_texto "$ARNES_CMD"; rc=$?
+    if [ "$rc" -eq "$ARNES_RC_LC10" ]; then arnes_deny_lc10 guard-git; fi
+  fi
   [[ "$ARNES_CMD" == *git* ]] || return 0
   arnes_parse_manifest
   # SEC-010 — UN MANIFIESTO ILEGIBLE NO PUEDE APAGAR ESTA PUERTA.
@@ -222,6 +231,29 @@ arnes_guard_git() {
   # entero empezaba por `sleep`. Rompe de paso `2>&1` en dos trozos, y eso es inocuo: los
   # trozos no son `git` y ninguna regla los alcanza.
   limpio="${limpio//&/$'\n'}"
+
+  # UN RETORNO DE CARRO PEGADO A LAS PALABRAS DE UNA ORDEN DE GIT (P-122-A (1) y QA-023-16, pasada
+  # correctiva de la octava autorizacion). El comando llega con sus CR (`arnes_parse_input`) y esta
+  # puerta compara lo que git recibe: `git stash␍` no es `stash` y `git checkout .␍` no lleva `.`.
+  # Pero lo que git HAGA con ese argumento no lo decide la puerta: con su configuracion por defecto
+  # lo rechaza, y con `help.autocorrect` corrige el subcomando y ejecuta `git stash` (medido por QA,
+  # git 2.53.0). El analisis no puede preservar el significado, y la autorizacion manda denegar
+  # entonces: las ordenes se juzgan TAMBIEN sin sus CR, y basta que una de las dos lecturas case.
+  # La copia sin CR solo puede ANADIR denegaciones —se juzga ademas de la original, nunca en su
+  # lugar—. Lineal y sin procesos: se parte UNA vez por el CR con `IFS` y se une sin separador (la
+  # tecnica de `_arnes_desentrecomilla`); una sustitucion `${x//$'\r'/}` crece mas que linealmente
+  # con el numero de CR (QA-023-14).
+  case "$limpio" in
+    *$'\r'*)
+      reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
+      set -f; IFS=$'\r'
+      # shellcheck disable=SC2206  -- se quiere el troceado por IFS, con globbing apagado
+      sincr=($limpio)
+      IFS=''; limpio+=$'\n'"${sincr[*]}"; IFS=$' \t\n'
+      [ "$reponer_f" -eq 1 ] || set +f
+      nota_cr=" El comando lleva un retorno de carro pegado a sus palabras: git no recibe esta orden tal cual, y lo que haga con ella —rechazarla o, con 'help.autocorrect', corregirla y ejecutarla— depende de una configuracion que esta puerta no lee, asi que se juzga tambien sin el retorno de carro; una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 11). Escribe el comando sin retornos de carro."
+      ;;
+  esac
 
   reponer_f=0; case $- in *f*) reponer_f=1 ;; esac
   set -f
@@ -303,7 +335,7 @@ arnes_guard_git() {
         restore) if arnes_casa_token --staged ${args[@]+"${args[@]}"} && ! arnes_casa_token --worktree ${args[@]+"${args[@]}"}; then continue; fi ;;
       esac
       [ "$reponer_f" -eq 1 ] || set +f
-      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas.$motivo_extra"
+      arnes_deny "ARNES: 'git $sub ${args[*]}' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros, y esta orden los borra sin dejar rastro — git no puede devolver lo que nunca se comiteo. Lo prohibe el manifiesto (git.prohibidos: '$regla'). Como seguir: comitea lo que quieras conservar; si la limpieza hace falta de verdad, que la ejecute el humano fuera de la sesion. Para retirar la regla, edita .arnes/config.json a sabiendas.$motivo_extra$nota_cr"
     done
   done <<< "$limpio"
   [ "$reponer_f" -eq 1 ] || set +f
