@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: validación del delta por el propietario (vía manual): gates, sección 46, regresiones, fail-before, banco 2037/0/13, autoprueba 117/0, shell aparte y CI remoto (run 37163342218: success); SEC-124 y SEC-125 reparados en su alcance; sin firma de agente
+> Origen: Interno (commit local, sin push) · usuario: Juan · validación ejecutada por el propietario con una segunda medición de Fable (Claude, claude.ai) sobre un clon y el CI remoto; ningún agente del arnés despachado (impedimento del proveedor sobre la lectura del diff, registrado en `92ec1fa`).
+
+- **Decisión del propietario** (`PENDING_APPROVAL.md`, posterior a `92ec1fa`): validación manual, declarada sin firma del `qa-tester` ni del `auditor-seguridad`; `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.
+- **Registro completo** en `docs/qa/REQ-023.md`, «validación del delta construido por el propietario — vía manual»: informe íntegro del propietario, segunda medición y CI.
+- **Resultado:** puntos 18 y 19 de CA-47 y CA-66 fase 2 conformes a la medición en hook directo, `guard.sh` y shell aparte; SEC-124 y SEC-125 reparados en su alcance; QA-023-23 cerrado en la forma de LC10 y abierto en cualquier otra; QA-023-24/25 cerrados por esta validación. **No medido:** host y Windows/MSYS.
+- **Pendiente:** write-back de estado en REQ-007 y notas (de «pendiente de implementación y de validación» a «construido y validado por el propietario, sin firma de agente»), decisiones de publicación sobre los no aceptados, versión y PR.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: la validación de QA del delta construido por el propietario la detuvo un control del proveedor; sin veredicto, sin seguridad, sin write-back
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, §5; detenido) y la coordinadora. Unos 0,12 M tokens de QA (cifra del arnés).
 

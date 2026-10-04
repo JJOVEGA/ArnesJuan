@@ -583,6 +583,26 @@
   - Por la propia regla de esta decisión («sin reintentos ni reformulaciones»), **la implementación sigue siendo manual**.
   - No se despachó a nadie, y no cambian el código, REQ-007 ni los contadores. La pasada correctiva de la fase 2 sigue sin gastar.
 
+- **Decisión del propietario, 2026-10-03, posterior a `92ec1fa` (literal; registrada por el propietario):**
+
+  > 1. Validación del delta de la fase 2 por vía manual. Un control del proveedor
+  >    detuvo al qa-tester al leer el diff de hooks/; no se reintenta ni se
+  >    reformula. La validación la ejecuto yo con el protocolo de QA de CA-66
+  >    fase 2 (gates, sección 46, regresiones, fail-before, banco, autoprueba y
+  >    shell aparte), con una segunda medición de un revisor externo (Fable,
+  >    Claude en claude.ai) sobre un clon, y con el CI remoto sobre la misma
+  >    cabeza (run 37163342218: success). Registro en docs/qa/REQ-023.md.
+  > 2. Sin firma del qa-tester ni del auditor-seguridad, y así se declara.
+  >    QA: y Seguridad: de REQ-007 siguen pendiente. SEC-124 y SEC-125 se
+  >    declaran reparados en su alcance; QA-023-23 cerrado en la forma de LC10 y
+  >    abierto en cualquier otra; QA-023-24 y QA-023-25 cerrados por esta
+  >    validación.
+  > 3. El impedimento del proveedor de la novena autorización fue sobre el
+  >    contenido del despacho de SEC-124/125 y sobre la lectura de su diff; no
+  >    sobre los roles. Los encargos siguientes se redactan por propiedad y
+  >    medida.
+  > 4. La pasada correctiva de la fase 2 no se gastó.
+
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 
 **Texto del propietario, literal e íntegro** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`; es la fuente de estas decisiones, por declaración del propio mensaje):
