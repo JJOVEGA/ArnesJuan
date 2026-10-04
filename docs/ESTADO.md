@@ -10,7 +10,7 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0: novena autorización — fase 1 (SEC-123) validada; fase 2 (SEC-124 y SEC-125) con el contrato comiteado SIN VALIDAR e IMPLEMENTACIÓN MANUAL PENDIENTE del propietario (2026-10-03)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0: fase 2 construida y validada por el propietario (vía manual, sin firmas de QA ni de seguridad); decisiones de publicación tomadas y escritas; cola vacía; pendiente el tramo 3 (versión, push, PR, CI, fusión y tag) (2026-10-03)
 
 **Este bloque es el único vigente en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`). Todo lo que está debajo es historia.
 
@@ -88,6 +88,24 @@
           - **R-050:** sólo registro, sin firma.
           - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.** SEC-124 sigue en el campo como `contrato`, así que también impide cerrar REQ-007.
           - **Comprobado por la coordinadora:** `tools/arnes-lectura.sh .` no ve anomalías. Un cierre simulado en una copia con la puerta real deniega por `QA: pendiente` y, con los veredictos forzados, por el primer `contrato` de la lista: la puerta interpreta el campo.
+    - **Cierre, tramo 2 (2026-10-03, posterior a `52a1d39`): las decisiones de publicación del propietario**, literales en `PENDING_APPROVAL.md` § Resueltas:
+      - **CA-54 / QA-023-10:** aceptado con alcance; se repara en 1.36.0.
+      - **SEC-115/118:** límites declarados; fail-closed en 1.36.0.
+      - **SEC-120:** límite declarado; se repara en 1.36.0, antes del 2026-10-29.
+      - **Hueco C:** límite declarado, sin fecha.
+      - **P-119-A (F2, F5, F7) y SEC-123:** límites declarados, abiertos y no aceptados como riesgo.
+      - **SKIP e INCONCLUSO:** no acreditan.
+      - **«siete» → «ocho»**, corregido.
+      - **Las firmas de la fase 2:** ausentes y declaradas.
+      - **Escrito por el analista** en las notas `[1.35.0]` y en la guía. `requirements/README.md` no cambia.
+      - **La cola queda vacía:** la entrada pendiente pasó a § Resueltas, sin cambiar su texto. Cerrar requisitos sigue sin estar autorizado.
+      - **SEC-126 no se corrige:** está en `hooks/lib.sh` l. 704, ruta protegida. `guard-codigo` deniega la edición a la coordinadora y `AGENTS.md` §6 la manda al `desarrollador`, que no se despachó. No se intentó ningún rodeo. Queda para el propietario (manual) o para 1.36.0.
+      - **Pendiente, declarado por el analista y sin autorizar:**
+        - P-119-A sigue en «Preguntas abiertas» de REQ-007 y como «abierta» en su fila del índice, aunque el propietario ya la resolvió como límites declarados;
+        - el motivo caso por caso de los SKIP no está en ninguna sede: está sólo en el log del CI;
+        - una nota de historia de las notas menciona un «ocho» antiguo.
+      - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.**
+    - **Siguiente:** el tramo 3, del propietario: versión, push, PR, CI, fusión y tag.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -479,7 +497,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 18:26
+## Estado derivado — 2026-10-03 18:41
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -489,9 +507,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `ddd1241` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `52a1d39` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
+**Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

@@ -36,7 +36,51 @@
 
 ## Pendientes
 
-### [2026-09-27, puesta al día 2026-10-03] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118, hueco C, P-119-A, SEC-120 y **9b (QA-023-10)** pendientes y no aceptados; **decisión 11 resuelta (opción B), SEC-125 «reparar antes de publicar» y SEC-123 «corregir F3» decididos el 2026-10-03, con la ejecución pendiente de autorización**; fichas 3 y 4 y decisiones 4 a 10 resueltas
+_(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por las decisiones de publicación de v1.35.0 y está en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-03, posterior a `52a1d39`) — **Decisiones de publicación de v1.35.0**: CA-54 aceptado con alcance; SEC-115/118, SEC-120, hueco C, P-119-A (F2, F5, F7) y SEC-123 como límites declarados; SEC-126 si es sólo comentario; SKIP/INCONCLUSO no acreditan; «siete» → «ocho»; firmas de QA y seguridad de la fase 2 ausentes y declaradas. Resuelve las fichas 1 y 2, la decisión 9b, P-119-A y SEC-120 de la entrada que estaba pendiente (debajo)
+
+**Texto del propietario, literal** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`, sección «Decisiones del propietario para la publicación de v1.35.0»):
+
+> 1. CA-54 / QA-023-10 (decisión 9b) — ACEPTADO CON ALCANCE para v1.35.0. El
+>    análisis de Bash tarda 9,0–9,2 s en el máximo declarado (131072 bytes)
+>    frente al criterio de < 5 s; igual que 43b948a. No se sube el umbral ni se
+>    reduce la entrada. Consecuencia declarada: un comando de ese tamaño se
+>    juzga, pero tarda; no es un fallo abierto. Reparación: v1.36.0, foco
+>    principal.
+> 2. SEC-115 y SEC-118 — LÍMITES DECLARADOS en v1.35.0, no aceptados como
+>    definitivos: un hook que agota tiempo o un motivo demasiado grande pueden
+>    no emitir decisión; se declaran en notas y guía con sus condiciones
+>    medidas. Reparación (fail-closed): v1.36.0.
+> 3. SEC-120 — LÍMITE DECLARADO en v1.35.0; reparar en v1.36.0 antes de su
+>    vencimiento (2026-10-29): fallo de jq al leer o trocear la entrada → deny.
+> 4. Hueco C — LÍMITE DECLARADO del análisis estático: escrituras mediante
+>    intérpretes o scripts no se detectan. Permanece abierto; su detección se
+>    evalúa por propiedad en una versión posterior, sin fecha.
+> 5. P-119-A (F2, F5, F7) y SEC-123 — LÍMITES DECLARADOS, con F3 corregido
+>    (R-048). Permanecen abiertos y no aceptados como riesgo.
+> 6. SEC-126 — se corrige en este tramo si es sólo el comentario de
+>    hooks/lib.sh con la cifra antigua (edición de texto en un comentario, sin
+>    cambio de comportamiento); si requiere más, v1.36.0.
+> 7. Ningún SKIP ni INCONCLUSO del banco acredita lo que mide; se publican con
+>    su motivo.
+> 8. Autorizo la corrección de una palabra: «siete clases de casos, y sólo
+>    ésas» → «ocho clases» en las notas [1.35.0] y en la guía, para que
+>    coincida con la enumeración que sigue.
+> 9. Firmas de QA y seguridad del delta de la fase 2: ausentes por impedimento
+>    del proveedor; así se publica, declarado en notas y guía. El impedimento
+>    fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff,
+>    no sobre los roles.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Base:** `cand/1.35.0` en `52a1d39`.
+- **La cola queda vacía.** Estas decisiones resuelven lo último que seguía abierto en la entrada pendiente (fichas 1 y 2, 9b, P-119-A y SEC-120; lo demás ya estaba resuelto), así que esa entrada pasa a § Resueltas, debajo, sin cambiar su texto. Con la cola vacía, `guard-completado` deja de denegar el cierre de REQ **por la cola**. Las demás puertas siguen igual, y cerrar requisitos no está autorizado.
+- **SEC-126 (decisión 6):** es sólo el comentario de `hooks/lib.sh`, l. 704. **La coordinadora no lo edita:** `hooks/*` está en `codigo_app.globs` y `guard-codigo` deniega esa edición a quien no es el `desarrollador`. `AGENTS.md` §6 manda ese arreglo al `desarrollador` («la fila 1 no levanta el control de edición»), y este tramo no lo despacha. No se intentó ningún rodeo. Queda para el propietario (edición manual) o para v1.36.0.
+- **Contratos, `QA:`/`Seguridad:` y contadores:** sin cambios. «Aceptado con alcance» y «límite declarado» se escriben en las notas y la guía, no en los criterios.
+
+### RESUELTA (propietario, 2026-10-03, decisiones de publicación de v1.35.0; entrada de arriba) — [2026-09-27, puesta al día 2026-10-03] (coordinadora) — Decisión de publicación de 1.35.0: SEC-115/SEC-118, hueco C, P-119-A, SEC-120 y **9b (QA-023-10)** pendientes y no aceptados; **decisión 11 resuelta (opción B), SEC-125 «reparar antes de publicar» y SEC-123 «corregir F3» decididos el 2026-10-03, con la ejecución pendiente de autorización**; fichas 3 y 4 y decisiones 4 a 10 resueltas
 
 - **Contexto:** el 2026-09-29 el propietario autorizó implementar SEC-047 (mitad 1 de REQ-023) y preparar el candidato v1.35.0 (§ Resueltas, entrada de esa fecha, texto literal). **Esa autorización NO acepta el aplazamiento de SEC-115 ni del hueco C**: los dos siguen pendientes aquí, con sus fichas finales abajo. El antiguo asunto 3 (SEC-047 y la celda de §13) queda resuelto por esa autorización; los asuntos 1 y 2 de la redacción del 2026-09-28 se sustituyen por las fichas, sin perder nada de lo que decían.
 - **Acción que impide (regla 2):** **publicar** 1.35.0 —tag, publicación, actualización de la instalación estable— hasta que el propietario decida las fichas 1 y 2, P-119-A y la decisión 9b, y se complete la reparación de SEC-119 y O-11 (fichas 3 y 4 y decisiones 4 a 8 resueltas); y, mientras esta entrada esté aquí, **cerrar**: marcar **cualquier** REQ `completado` (`guard-completado`; deliberado). **No** impide **implementar** ni **probar** el candidato. **Parte afectada:** la publicación de 1.35.0 y el cierre de REQ-023 y REQ-031. **Evidencia:** la de cada ficha. **Qué lo resuelve:** la decisión del propietario sobre cada ficha. *(Puesta al día 2026-10-03: la reparación de SEC-119 y O-11 está hecha y con seguridad conforme (R-047). Para **publicar** faltan ahora, además de las fichas 1 y 2, P-119-A y 9b: la ejecución, la validación y la revisión de SEC-124 (B) y SEC-125 y la corrección de F3 (SEC-123), decididas el 2026-10-03 y sin autorización de ejecución; la decisión sobre SEC-120; y una corrida de CI sobre la cabeza final.)*
@@ -370,8 +414,6 @@
   - **Pendiente del propietario, sin aceptar:** la **autorización de ejecución** de esas tres (plan en `propuesta-v1.35.0/plan-implementacion.md`); la **decisión 9b** (QA-023-10, CA-54); las **fichas 1** (SEC-115/SEC-118) y **2** (C); **P-119-A** (F2, F5, F7 y el límite de F3); **SEC-120** (vence el 2026-10-29).
   - **Trabajo que sigue mientras tanto:** ninguno de implementación ni de revisión. **Cerrar cualquier REQ** sigue impedido mientras esta entrada esté aquí.
 - **Espera (texto anterior, conservado como historia):** decisión del propietario sobre las fichas 1 (SEC-115/SEC-118) y 2 (C), sobre **P-119-A** (REQ-007, «Preguntas abiertas») y sobre la **decisión 9b** (QA-023-10). La ficha 4 y la decisión 7 se resolvieron en la quinta autorización (2026-09-30). La decisión 8 (sexta autorización, 2026-10-01) cerró QA-023-09 y QA-023-11, y su vuelta terminó con QA no favorable por QA-023-13. La 9a (séptima autorización, 2026-10-02) abrió la vuelta que lo repara, en curso. La reparación de SEC-117 tiene QA favorable y seguridad aprobada (R-045-A, 2026-09-30), y SEC-117 quedó `mitigado`. La ficha 3 y la decisión 5 se resolvieron en la tercera autorización del 2026-09-29. La decisión 4 está resuelta y su corrección se hizo (`e7562e7`), con QA-023-05 cerrado. **Trabajo que sigue mientras tanto:** la vuelta de la séptima autorización (QA-023-13 y la preparación de la decisión 9b), que no depende de las fichas 1 y 2 ni de P-119-A. **Cerrar cualquier REQ queda pendiente** mientras esta entrada esté aquí.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-03, novena autorización) — **Intervención excepcional en dos fases: fase 1 SEC-123 (corrección documental de F3), fase 2 SEC-124 (B) y SEC-125 (código, contrato y pruebas)**; analista → desarrollador → QA → seguridad con QA favorable; como máximo una pasada correctiva y su re-verificación; sin reiniciar contadores ni crear otro REQ; commits locales de trabajo validado; sin push
 

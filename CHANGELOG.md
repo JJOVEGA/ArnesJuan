@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Cierre de v1.35.0, tramo 2: decisiones de publicación del propietario registradas y escritas en las notas y en la guía; «siete» → «ocho»; cola vacía; SEC-126 no corregido (ruta protegida)
+> Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. Unos 0,20 M tokens del analista (cifra del arnés).
+
+- **`PENDING_APPROVAL.md`:**
+  - las decisiones 1 a 9, literales;
+  - la entrada que estaba pendiente pasa a § Resueltas sin cambiar su texto, y la cola queda vacía.
+- **Notas `[1.35.0]` y guía** (analista):
+  - cada decisión con su alcance, consecuencia y versión de reparación;
+  - las entradas existentes se ajustan, sin duplicarlas;
+  - «siete» → «ocho».
+- **SEC-126:** no corregido. Es el comentario de `hooks/lib.sh` l. 704; `hooks/*` está protegido y la edición corresponde al `desarrollador` (`AGENTS.md` §6), que no se despachó. Queda declarado en las notas y en la guía.
+- **Sin cambios:** REQ-*, código, banco, `AGENTS.md` y contadores. `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.
+- **Avance (regla 6):** la publicación queda decidida y escrita. Sigue el tramo 3, del propietario.
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: write-back de estado tras la validación manual del propietario — puntos 18 y 19 «construidos y validados por el propietario por vía manual, sin firma del qa-tester ni del auditor-seguridad»; SEC-124 y SEC-125 reparados en su alcance; QA-023-23 cerrado en la forma de LC10; R-050 de sólo registro; `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. Unos 0,25 M tokens del analista (cifra del arnés).
 
@@ -1049,6 +1063,11 @@ el cambio de versión «como preparación del candidato, no su publicación» (`
 § Resueltas, entrada de esa fecha, punto 4, texto literal). Publicar 1.35.0 sigue impedido por la
 entrada pendiente de la cola —el propietario tiene que decidir las fichas de SEC-115 y del hueco C—,
 y por el CI de la cabeza final, que todavía no existe.
+*(Puesta al día del 2026-10-03: el propietario tomó las decisiones de publicación de lo que seguía pendiente
+—`PENDING_APPROVAL.md` § Resueltas, «Decisiones de publicación de v1.35.0», texto literal— y la cola quedó vacía.
+Están, con su alcance, su consecuencia y la versión en que se reparan, al principio de «Limitaciones que el
+candidato conserva». Ninguna de ellas repara lo que decide, y estas notas siguen sin publicar nada: la cabeza que se
+publique tendrá su propia corrida de CI.)*
 
 ### Alcance real, medido
 
@@ -1095,7 +1114,8 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
 - **REQ-031 está `en-revisión`.** Su cabecera lleva `QA: aprobado` (vuelta 3 de 3, sobre `cdcad5d`)
   y `Seguridad: aprobado` (R-044-C, sobre `d49f319`, cuyo código es el de `cdcad5d`).
   - **Su cierre queda pendiente** mientras la cola tenga la entrada de publicación: `guard-completado`
-    deniega cerrar cualquier REQ si hay una pendiente.
+    deniega cerrar cualquier REQ si hay una pendiente. *(Desde el 2026-10-03 la cola está vacía; cerrar
+    requisitos sigue sin estar autorizado, y estas notas no anticipan ese cierre.)*
   - Esas firmas valen para la cabeza sobre la que se emitieron. Después, el candidato modifica
     `hooks/lib.sh` y `hooks/guard-completado.sh` (REQ-023). Qué cubren sobre la cabeza que se
     publique se identifica en el PR del candidato.
@@ -1143,7 +1163,8 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
     contrasta la «Correspondencia con el encargo» antes de probar (REQ-029).
   - La Definition of Ready del `analista-requerimientos` gana la casilla del campo `Archivos:`
     (REQ-031).
-- La guía `arnes-upgrade`, § «Hacia 1.35.0», con seis entradas.
+- La guía `arnes-upgrade`, § «Hacia 1.35.0», con siete entradas: seis de migración y una, desde el 2026-10-03,
+  que no migra nada y dice lo que 1.35.0 publica sin reparar.
 
 **Sólo si el proyecto migra con `arnes-upgrade`.** Hasta entonces, su `AGENTS.md`, su
 `requirements/README.md` y su `PENDING_APPROVAL.md` siguen congelados, y migrar es un acto suyo:
@@ -1308,7 +1329,7 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      host— se deniega **a todo agente**, `Write /dev/stderr` incluido. `> /dev/null` y `> /dev/stderr` por
      `Bash` siguen pasando, sin excepción por su nombre. Medido a nivel de hook en Linux/WSL2; desde el host,
      no ejercido.
-   - **Qué pasa a permitirse: siete clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, que lo enuncia
+   - **Qué pasa a permitirse: ocho clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, que lo enuncia
      como regla: cualquier otro movimiento de `deny` a `allow` es un hallazgo): una ruta relativa que casaba con
      una zona protegida sólo porque se leía desde la raíz cuando el directorio de trabajo era otro; un `Write`
      que cierra un REQ ilegible con todo en verde, porque se juzga entero; una ruta equivalente al manifiesto
@@ -1374,7 +1395,9 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      una declaración del desarrollador y no
      una medición exhaustiva; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
      editor interactivo y otras versiones del CLI, que no se han ejercido para esta regla. Las que la quinta
-     autorización no nombra están planteadas al propietario (REQ-007, P-119-A).
+     autorización no nombra (REQ-007, P-119-A) —F2, F5 y F7, y el límite de F3, que es SEC-123— son, por
+     decisión del propietario del 2026-10-03, **límites declarados, abiertos y no aceptados como riesgo**: abajo,
+     en las limitaciones.
    - **Dónde se ejecutaron los casos** (texto autorizado por el propietario el 2026-10-02, octava autorización,
      punto 5, limitado a los casos realmente ejecutados):
      - hook en Linux/WSL2;
@@ -1387,6 +1410,8 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      Windows/MSYS sólo para la latencia de CA-54. La reparación agrupada tampoco garantiza por sí sola que el
      candidato quede publicable: CA-54, SEC-115 y SEC-118, el hueco C y las fronteras restantes conservan sus
      decisiones pendientes.
+     *(Desde el 2026-10-03 esas decisiones están tomadas, y ninguna repara lo que decide: «Decisiones de
+     publicación del propietario», al principio de las limitaciones.)*
    - **Lo que no afirman estas notas:** que la reparación esté verificada. Sus veredictos y la validación en
      el host que exige REQ-007 CA-66 se registran en sus sedes.
 
@@ -1448,13 +1473,53 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
 
 ### Limitaciones que el candidato conserva
 
-- **SEC-115** (`instrumento`): **abierto, con decisión pendiente del propietario y NO aceptado.** Un
-  hook que muere por tamaño deja pasar el cierre entero.
+**Decisiones de publicación del propietario (2026-10-03).** Fuente: `PENDING_APPROVAL.md` § Resueltas,
+«Decisiones de publicación de v1.35.0», texto literal. Resuelven las fichas 1 y 2, la decisión 9b, P-119-A y SEC-120
+de la entrada que estaba pendiente. **Ninguna repara lo que decide, y «límite declarado» no es «riesgo aceptado»:**
+lo que sigue se publica abierto, y sus condiciones medidas están en su entrada, más abajo.
+
+1. **CA-54 / QA-023-10 (decisión 9b): ACEPTADO CON ALCANCE para 1.35.0.**
+   - **Alcance:** el análisis de `Bash` tarda 9,0–9,2 s en el máximo declarado (131 072 bytes), frente al
+     criterio de < 5 s; igual que `43b948a`. No se sube el umbral ni se reduce la entrada.
+   - **Consecuencia declarada:** un comando de ese tamaño se juzga, pero tarda; no es un fallo abierto.
+   - **Reparación:** 1.36.0, como foco principal.
+2. **SEC-115 y SEC-118: LÍMITES DECLARADOS en 1.35.0, no aceptados como definitivos.**
+   - **Alcance:** un hook que agota tiempo (SEC-115) o cuyo motivo es demasiado grande (SEC-118) puede no
+     emitir decisión, y un hook que no emite su decisión no deniega.
+   - **Consecuencia:** la puerta de cierre decide sólo si el hook alcanza a medir **y a emitir su decisión**.
+   - **Reparación (fail-closed):** 1.36.0.
+3. **SEC-120: LÍMITE DECLARADO en 1.35.0.**
+   - **Alcance:** un fallo de `jq` al leer o trocear la entrada del hook deja pasar.
+   - **Reparación:** 1.36.0, antes de su vencimiento (2026-10-29): ese fallo → deny.
+4. **Hueco C: LÍMITE DECLARADO del análisis estático.**
+   - **Alcance:** las escrituras mediante intérpretes o scripts no se detectan.
+   - **Versión:** permanece abierto; su detección se evalúa por propiedad en una versión posterior, **sin
+     fecha**.
+5. **P-119-A (F2, F5, F7) y SEC-123: LÍMITES DECLARADOS, con F3 corregido (R-048).** Permanecen abiertos y **no
+   aceptados como riesgo**. La decisión no fija versión de reparación.
+6. **SEC-126: no corregido en esta versión.** El propietario decidió corregirlo en este tramo si era sólo el
+   comentario de `hooks/lib.sh` con la cifra antigua —edición de texto en un comentario, sin cambio de
+   comportamiento—, y si requería más, en 1.36.0. *(Nota de la coordinadora en la misma entrada:)* es sólo ese
+   comentario, pero `hooks/` es código protegido, su edición es del `desarrollador` y este tramo no se la despacha;
+   queda para el propietario (edición manual) o para 1.36.0.
+7. **SKIP e INCONCLUSO:** ninguno del banco acredita lo que mide; se publican con su motivo.
+8. **«siete» → «ocho»:** corrección de una palabra en «Qué pasa a permitirse», cambio de compatibilidad 4, para
+   que coincida con la enumeración que sigue. Hecha en estas notas y en la guía.
+9. **Firmas de QA y seguridad del delta de la fase 2: ausentes por impedimento del proveedor**, y así se publica.
+   El impedimento fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles.
+
+- **SEC-115** (`instrumento`): **abierto; límite declarado en 1.35.0, no aceptado como definitivo** (decisión 2,
+  arriba; reparación fail-closed en 1.36.0). Un hook que muere por tamaño deja pasar el cierre entero.
   - Lo reproducido: con `QA: pendiente (…)` y ≈ 255 KB de evidencia, el hook tarda 73,6 s en
     denegar, más que los 60 s del cliente; un `Write` de 2 025 113 bytes tarda 80,2 s (R-044-C,
     2026-09-28, WSL2). En el CLI 2.1.272, un hook que agota su timeout sin decidir **deja pasar la
     herramienta** (REQ-031 CA-A16). No está comprobado en la sesión interactiva del editor ni en
     Windows.
+  - **Una tercera vía medida** (`docs/seguridad/registro-seguridad.md` § R-045-A, §5): la búsqueda literal del
+    `old_string` al reconstruir un `Edit` crece más que linealmente. Con una racha de `a` en la cabecera y un
+    `old_string` de media racha, literal al final: 8 000 → 0,9 s; 16 000 → 1,3 s; 32 000 → 3,8 s (2,1 s en la
+    base con 32 000). No medido hasta 60 s, y no se extrapola. Y en Windows, la retirada del transporte CRLF de la
+    entrada, que QA señaló superlineal (R-047; sin cifra), es de la misma clase.
   - La protección efectiva hoy es el techo de 16 384 bytes de `Hallazgos abiertos:`. Para `QA:`,
     `Seguridad:`, `Rigor:`, `Sensible a seguridad:` y `Estado:`, y para el tamaño de un `Write`,
     depende de la disciplina del agente.
@@ -1462,10 +1527,10 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     que no alcanza a medir dentro del límite del cliente (SEC-115) no deniega, y tampoco uno que mide y
     decide a tiempo pero no llega a emitir su decisión (SEC-118, abajo): medir no basta. Es una
     limitación, y ninguna frase condicional sobre ella acredita protección.
-  - Ficha y fecha propuesta: `PENDING_APPROVAL.md` § Pendientes, ficha 1. Una fecha propuesta no es
-    una aceptación.
-- **El hueco C** (escrituras por intérprete o script): **abierto, con decisión pendiente del
-  propietario y NO aceptado.**
+  - Ficha: `PENDING_APPROVAL.md` § Resueltas, ficha 1 de la entrada que resolvieron las decisiones de
+    publicación. Declararlo no lo acepta como definitivo.
+- **El hueco C** (escrituras por intérprete o script): **abierto; límite declarado del análisis estático**
+  (decisión 4, arriba). Su detección se evalúa por propiedad en una versión posterior, sin fecha.
   - `guard-codigo` no ve escrituras hechas por intérpretes o scripts (`python`, `node`,
     `bash script.sh`), por formateadores que reescriben archivos, por `patch` ni por `git apply`, y no
     hay detección posterior. Reproducido el 2026-09-27 desde la sesión coordinadora: el archivo
@@ -1475,7 +1540,7 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     que las herramientas de edición y las escrituras evidentes por shell lo deniegan.
   - **La «puerta posterior» (REQ-011) no es prevención, ni recuperación, ni mitigación disponible.**
     Es sólo una propuesta de detección, `pendiente` y sin implementar.
-  - Ficha: `PENDING_APPROVAL.md` § Pendientes, ficha 2.
+  - Ficha: `PENDING_APPROVAL.md` § Resueltas, ficha 2 de la misma entrada.
 - **QA-023-02 / SEC-117** (`instrumento`, severidad crítica, preexistente en 1.33.2 y 1.34.0):
   **reparado en este candidato** por REQ-023 CA-13, que es el cambio de compatibilidad 3. El propietario
   ordenó repararlo antes de publicar (tercera autorización) y eligió cómo (cuarta autorización, ADR-015).
@@ -1516,22 +1581,35 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
   - **Lo que la reparación no cubre**, sea cual sea el resultado de su verificación: las escrituras que
     **ya** pasaron por esas vías con versiones anteriores —la puerta no detecta el pasado; queda la pregunta
     de estado de la guía—, y las fronteras de REQ-007 CA-47 (arriba, cambio 4).
-  - **SEC-120** (`instrumento`, baja): **abierto, no reparado y NO aceptado.** Un fallo de `jq` al leer o
-    trocear la entrada JSON del hook deja pasar; a nivel de hook, y no alcanzable desde el host en lo
-    observado. Es independiente de esta reparación y queda fuera de ella (`docs/seguridad/registro-seguridad.md`
-    § R-045-A, §4).
-  - **QA-023-10** (`contrato` en REQ-007, media): **abierto, con decisión pendiente del propietario y NO
-    aceptado.** Identificar cada destino encarece el análisis de un comando de `Bash` con muchos destinos, y en
-    el máximo de REQ-007 CA-54 (131 072 bytes) el peor caso no cumple su umbral de 5 s: de 9,1 a 13,8 s en el
-    árbol de la reparación, frente a 2,9–7,2 s antes de ella, que ya lo superaba en una de las tres formas
-    medidas (Linux/WSL2; QA el 2026-09-30 y el desarrollador el 2026-10-01). En el valor por defecto
-    (65 536 bytes) también se supera. Una optimización intentada no lo consiguió y quedó fuera del candidato.
-    No hay fallo en abierto medido: la corrida más lenta queda a más de cuatro veces de los 60 s en que muere
-    un hook. Windows/MSYS, sin medir. Sede: la nota de REQ-007 CA-54 del 2026-10-01.
+  - **SEC-120** (`instrumento`, baja): **abierto, no reparado; límite declarado en 1.35.0** (decisión 3,
+    arriba), a reparar en 1.36.0 antes de su vencimiento del 2026-10-29: un fallo de `jq` al leer o trocear la
+    entrada → deny. Hoy, un fallo de `jq` al leer o trocear la entrada JSON del hook deja pasar. Medido a nivel
+    de hook: un `MultiEdit` con `edits` como cadena o como número, y un `Edit` de cierre con QA pendiente y una
+    clave extra con 10 001 niveles de anidamiento, salen allow (con 9 000 niveles, deny). No alcanzable desde
+    el host en lo observado, sin verificar. Es independiente de la reparación de SEC-119 y queda fuera de ella
+    (`docs/seguridad/registro-seguridad.md` § R-045-A, §4).
+  - **QA-023-10** (`contrato` en REQ-007, media): **abierto; ACEPTADO CON ALCANCE para 1.35.0** (decisión 1,
+    arriba). No se sube el umbral ni se reduce la entrada, y se repara en 1.36.0, como foco principal.
+    Identificar cada destino encarece el análisis de un comando de `Bash` con muchos destinos, y en el máximo de
+    REQ-007 CA-54 (131 072 bytes) el peor caso no cumple su umbral de 5 s.
+    - **Medido sobre el árbol final**, que cuesta lo mismo que `43b948a`: en Linux/WSL2, 9,0–9,2 s (QA) y
+      8,6–10,3 s (desarrollador), frente a 2,9–7,2 s de `9596e39`, que ya lo superaba en una de las tres formas
+      medidas; en Windows/MSYS, 20,4–28,9 s en las 15 corridas (una máquina, una ejecución, el hook invocado
+      directamente). En el valor por defecto (65 536 bytes) también se supera (Linux/WSL2). Una optimización
+      intentada no lo consiguió y quedó fuera del candidato.
+    - **Consecuencia declarada por el propietario:** un comando de ese tamaño se juzga, pero tarda; no es un
+      fallo abierto. En Linux/WSL2 la corrida más lenta queda a más de cuatro veces de los 60 s en que muere un
+      hook; en Windows/MSYS, en esa máquina, a unas 2,1 veces, y allí `9596e39` agotó el tiempo en las 15
+      corridas del caso máximo. Un margen no es una garantía: en un equipo más lento o más cargado el hook podría
+      llegar al límite, y eso ya es la clase de SEC-115 (decisión 2).
+    - **No comprobado:** el cliente de Claude Code en Windows, otras máquinas, otras versiones de MSYS o Git
+      Bash, Cygwin y Windows bajo carga. Sede: la nota de REQ-007 CA-54 del 2026-10-01; las cifras de Windows,
+      la decisión 9b preparada (`PENDING_APPROVAL.md` § Resueltas).
 - **La mitad 2 de SEC-047 (REQ-024) no entra.** No cambia qué significa la ausencia de un campo, por
   ejemplo al comentar o borrar su línea.
 - **SEC-103 (OBS-H) y SEC-104** siguen abiertos.
-- **SEC-118** (`instrumento`, severidad media): **abierto, preexistente, no reparado y NO aceptado.**
+- **SEC-118** (`instrumento`, severidad media): **abierto, preexistente, no reparado; límite declarado en
+  1.35.0, no aceptado como definitivo** (decisión 2, arriba; reparación fail-closed en 1.36.0).
   Una denegación cuyo motivo supera el límite de un argumento de línea de órdenes no llega a emitirse:
   `arnes_deny` pasa el motivo a `jq` como argumento, por encima de 128 KiB (`MAX_ARG_STRLEN`, Linux)
   `jq` no arranca, y el hook sale sin decisión. Está expuesto **todo motivo que interpole contenido sin
@@ -1570,10 +1648,12 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     es la única ambigüedad cede el caso a CA-A12 y hereda el defecto. **Documentarlo no lo repara ni lo
     acepta.**
   - Vencimiento propuesto por el auditor: la decisión de publicación de 1.35.0. Una fecha propuesta no
-    es una aceptación.
+    es una aceptación. *(Esa decisión se tomó el 2026-10-03: límite declarado, no aceptado como definitivo,
+    con reparación fail-closed en 1.36.0.)*
 - **SEC-123** (`instrumento`, baja, preexistente: 1.33.2 también lo permite): **abierto, no reparado, no
   mitigado y NO aceptado.** Es un límite declarado de la detección de lo que depende del proceso —sede:
-  REQ-007 CA-47, F3, y su punto 16—, dentro de la pregunta P-119-A, pendiente del propietario.
+  REQ-007 CA-47, F3, y su punto 16—, dentro de P-119-A, que el propietario decidió el 2026-10-03: límite
+  declarado, con F3 corregido (R-048), abierto y no aceptado como riesgo (decisión 5, arriba).
   - **Qué pasa:** por `Edit`, `Write` o `MultiEdit`, o por `Bash` sin un directorio de trabajo que ancle, una
     ruta que pasa por el directorio de trabajo del proceso y después sale con `..` de la entrada de `/proc`
     del propio hook se juzga por el archivo al que llega el hook, no por el que abre quien escribe. **La
@@ -1589,6 +1669,45 @@ ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de 
     entrada de `/proc` desde la que se resuelve», sin su consecuencia, y REQ-007 CA-47 ponía el umbral en
     cinco niveles; medido con la raíz a siete, basta con cuatro subidas. **Documentarlo no lo repara ni lo
     acepta.**
+- **P-119-A — F2, F5 y F7** (REQ-007 CA-47, «Fronteras»): **límites declarados, abiertos y no aceptados como
+  riesgo** (decisión 5, arriba); la decisión no fija versión de reparación. La identidad del destino (cambio de
+  compatibilidad 4) **no promete**:
+  - **F2:** un `cd` dentro del propio comando de `Bash` y las expansiones del shell, que ya eran límite declarado
+    del detector de `Bash` (`AGENTS.md` §13);
+  - **F5:** un enlace situado dentro del ámbito protegido que sale de la raíz, escrito por la ruta directa a su
+    destino;
+  - **F7:** que el `cwd` de la entrada sea el directorio del comando. Lo único medido en el host es que el `cwd`
+    sigue a un `cd` hecho en una llamada anterior de `Bash` (REQ-007 CA-45). Declarar F7 no cubre QA-023-09 ni
+    QA-023-13, que se repararon.
+
+  **F3**, corregida por R-048, queda en enlaces duros y montajes y en los límites de la detección de lo que
+  depende del proceso, uno de los cuales es SEC-123 (arriba).
+- **SEC-126** (`instrumento` en REQ-007, baja): **abierto y no corregido en esta versión** (decisión 6, arriba).
+  El comentario del código que implementa el límite de SEC-123 (`hooks/lib.sh`, `_arnes_cd_resolucion`, l. 704
+  en `52a1d39`) conserva la descripción que SEC-123 corrigió: da el límite como un número de niveles, no como la
+  salida de la entrada propia de `/proc`, y no dice su consecuencia. No cambia ninguna conducta, pero desvía
+  hacia el lado que abre a quien escriba una prueba o una reparación de SEC-123 guiándose por él. **La sede del
+  límite es REQ-007 CA-47, F3, y no ese comentario.** Queda para el propietario (edición manual) o para 1.36.0
+  (`docs/seguridad/registro-seguridad.md` § R-048, §4).
+- **SKIP e INCONCLUSO del banco** (decisión 7, arriba): **ninguno acredita lo que mide, y se publican con su
+  motivo.** Un SKIP no es un PASS, y un INCONCLUSO no pone el banco en rojo pero tampoco acredita nada (REQ-030,
+  ADR-012). Las corridas del delta final, con su registro en `docs/qa/REQ-023.md` («validación del delta
+  construido por el propietario — vía manual»):
+  - el banco completo del propietario sobre `92ec1fa`, Linux/WSL2: **2037 PASS · 0 FAIL · 13 SKIP**, de ellos
+    **2 INCONCLUSO de rendimiento**, preexistentes;
+  - el CI run 37163342218 sobre `92ec1fa`, en su repetición: **2016 PASS · 0 FAIL · 34 SKIP**, con 2 INCONCLUSO
+    de rendimiento. Sus dos corridas rojas anteriores fallaron cada una en una sonda de tiempo distinta, y se
+    conservan;
+  - el motivo de cada caso lo imprime la corrida junto al caso. Por clase, ejemplos **no exhaustivos**: en el CI,
+    las filas R del fail-before de REQ-023 salen SKIP porque el runner no tiene instalada la 1.33.2 (REQ-023 CA-08,
+    «Materialización»), y por eso el CI no acredita el fail-before; un INCONCLUSO de rendimiento es una sonda de
+    tiempo que no resolvió dentro de su presupuesto (REQ-030).
+- **Firmas de QA y seguridad del delta de la fase 2** (decisión 9, arriba): **ausentes por impedimento del
+  proveedor, y así se publica.** Los puntos 18 y 19 de REQ-007 CA-47 (SEC-124 y SEC-125; `10ac6c4` y `36a0d27`)
+  están construidos y validados por el propietario por vía manual (`docs/qa/REQ-023.md`; CI run 37163342218),
+  **sin veredicto del `qa-tester` ni firma del `auditor-seguridad`**: `QA:` y `Seguridad:` de REQ-007 siguen en
+  `pendiente`. **El impedimento fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no
+  sobre los roles.** Ese delta no está medido en el host ni en Windows/MSYS.
 - **La frontera de REQ-023**, descrita arriba.
 - **REQ-025:** la entrega 1b y OBS-H.
 - **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, frente a un plugin

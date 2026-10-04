@@ -1004,6 +1004,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en Windows
       no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
 
+    Las dos son **límites declarados de 1.35.0, no aceptados como definitivos**, con su reparación
+    fail-closed decidida para 1.36.0: entrada «Lo que 1.35.0 publica sin reparar», al final de este apartado.
+
     Y, como toda regla de la puerta de cierre, ésta juzga el documento que la puerta reconstruye. Lo
     que no puede reconstruir se deniega antes de llegar a ella: es la entrada «Edición no
     reconstruible», más abajo.
@@ -1178,7 +1181,7 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       pueda recortar, así que tampoco hace juzgar otro directorio, otra ruta u otra herramienta: lo que no se
       puede determinar se deniega. **Y el texto de un comando de `Bash` llega con sus retornos de carro:** un
       destino cuyo nombre acaba en uno se juzga con él, que es el nombre que escribe el shell.
-  - **Lo que pasa a permitirse: siete clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, del arnés,
+  - **Lo que pasa a permitirse: ocho clases de casos, y sólo ésas** (REQ-007 CA-66, punto 5, del arnés,
     que lo enuncia como regla): una ruta relativa que casaba con una zona protegida sólo porque se leía desde la
     raíz cuando el directorio de trabajo era otro; un `Write` que cierra un REQ ilegible con todo en verde,
     porque se juzga entero; una ruta equivalente al manifiesto mientras está ilegible; tres rutas con `..` que
@@ -1236,6 +1239,50 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     separado**, con la misma identificación por contenido y título y la misma tabla de estados de la primera
     entrada de este apartado. Si prefieres seguir con tu texto actual, conservarlo es una respuesta válida;
     la puerta decide igual.
+
+- **Lo que 1.35.0 publica sin reparar: límites declarados por el propietario del arnés el 2026-10-03, y lo que
+  sus corridas no acreditan.** Esta entrada **no migra nada**: dice lo que la versión que instalas **no**
+  protege, para que no lo des por cubierto. **«Límite declarado» no es «riesgo aceptado», y ninguna de estas
+  decisiones repara lo que decide.** Las condiciones medidas y sus fuentes están en las notas de 1.35.0,
+  «Limitaciones que el candidato conserva»; aquí va lo que necesita saber un proyecto que actualiza.
+  - **Un hook que no emite su decisión no deniega (SEC-115 y SEC-118).** La puerta de cierre decide sólo si el
+    hook alcanza a medir **y a emitir su decisión**. Lo impiden, medido, un veredicto de ≈ 255 KB o un `Write` de
+    ≈ 2 MB, que agotan los 60 s del cliente (SEC-115), y un motivo de más de ~128 KiB **en bytes** (SEC-118; sus
+    cifras, en la entrada de `Hallazgos abiertos:`, arriba). **Depende de la disciplina de tus agentes:** no
+    escribir evidencia de cientos de KB en `QA:`, `Seguridad:`, `Rigor:`, `Sensible a seguridad:` ni `Estado:`,
+    ni un REQ de MB por `Write`; sólo `Hallazgos abiertos:` tiene techo. No aceptados como definitivos;
+    reparación fail-closed decidida para 1.36.0.
+  - **El análisis de un comando de `Bash` grande es lento (REQ-007 CA-54 del arnés, QA-023-10): aceptado con
+    alcance para 1.35.0.** En el máximo declarado (131 072 bytes) tarda 9,0–9,2 s en Linux/WSL2, frente al
+    criterio de < 5 s, y 20,4–28,9 s medidos en una máquina con Windows/MSYS; en el valor por defecto
+    (65 536 bytes) también supera el criterio en Linux/WSL2. Un comando de ese tamaño **se juzga, pero tarda**: no
+    es un fallo abierto. Un margen no es una garantía: en un equipo más lento o más cargado el hook podría agotar
+    el tiempo, y eso ya es SEC-115. No se sube el umbral ni se reduce la entrada; reparación en 1.36.0.
+  - **Un fallo de `jq` al leer o trocear la entrada del hook deja pasar (SEC-120).** Medido a nivel de hook con
+    entradas malformadas; desde el host, no alcanzable en lo observado y sin verificar. Reparación decidida para
+    1.36.0, antes del 2026-10-29: ese fallo → deny.
+  - **Las escrituras por intérprete o script no se detectan (hueco C).** `guard-codigo` no ve lo que escriben
+    `python`, `node`, `bash script.sh`, un formateador que reescribe archivos, `patch` ni `git apply`, y no hay
+    detección posterior. La versión promete que las herramientas de edición y las escrituras evidentes por shell
+    se deniegan, **no** que sólo el agente de código modifique código protegido: eso depende de que ningún agente
+    use esas vías. Su detección se evalúa en una versión posterior, **sin fecha**.
+  - **Fronteras de la identidad del destino (P-119-A: F2, F5 y F7; y SEC-123, con F3 corregida).** No se
+    promete: un `cd` dentro del propio comando de `Bash` y las expansiones del shell (F2); un enlace situado dentro
+    de una zona protegida que sale de la raíz del proyecto, escrito por la ruta directa a su destino (F5); que el
+    directorio de trabajo que recibe el hook sea el del comando (F7); ni el límite de la detección de lo que
+    depende del proceso, que puede salir permitido sobre un archivo protegido (SEC-123; «Lo que NO cubre», en la
+    entrada anterior). Abiertos y no aceptados como riesgo; la decisión no fija versión de reparación.
+  - **Un comentario del código del arnés conserva una cifra antigua (SEC-126).** El comentario de `hooks/lib.sh`
+    junto al límite de SEC-123 lo describe con un número de niveles. No cambia ninguna conducta; si escribes una
+    prueba o un informe sobre ese límite, la sede es REQ-007 CA-47, F3, del arnés, no el comentario. No se
+    corrige en esta versión.
+  - **Ningún SKIP ni INCONCLUSO del banco acredita lo que mide**; se publican con su motivo (notas de 1.35.0). Un
+    check verde de CI no acredita lo que en esa corrida salió SKIP o INCONCLUSO.
+  - **Firmas ausentes en el arnés.** Lo construido en la fase 2 de la novena autorización —la forma de heredoc de
+    SEC-124 y la continuación de línea de SEC-125, con su excepción LC10, en la entrada anterior— lo validó el
+    propietario del arnés por vía manual, **sin veredicto del `qa-tester` ni firma del `auditor-seguridad`**, por un
+    impedimento del proveedor que fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, **no
+    sobre los roles**. Así se publica.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
