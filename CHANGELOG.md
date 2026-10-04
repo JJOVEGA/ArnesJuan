@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Décima autorización, fase 0: P-136-A/B/C resueltas por el propietario; plantilla `templates/autorizacion.md`; ficha del campo derivado; índice de REQ-001 y REQ-031 al día; ADR-017 aceptada
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (registro literal de la décima autorización en `PENDING_APPROVAL.md` § Resueltas; fichas movidas allí sin cambiar su texto; línea de plan vigente en ESTADO) y `analista-requerimientos` (resto; ~202 k tokens). Hooks 1.35.0 vigentes, comprobado con la sonda LC10 tras el reinicio.
+
+- **Decisiones del propietario** (literales en la cola): P-136-A, 0 procesos añadidos; P-136-B, toda denegación decidida llega al cliente, entera o acotada, y los avisos entran; P-136-C, techos de tamaño más un plazo propio de 40 s, sin procesos; CA-68 / REQ-017 CA-09, se evalúa al construir SEC-115. La cola queda vacía.
+- **`templates/autorizacion.md`** (nuevo), con los cuatro bloques y la décima autorización como ejemplo. Se enlaza desde la guía («Hacia 1.36.0» de `skills/arnes-upgrade/SKILL.md`) y desde la cabecera de `PENDING_APPROVAL.md`. `templates/PENDING_APPROVAL.md.tpl` no se toca: cambiar su cabecera pediría una migración propia.
+- **REQ-007:**
+  - P-136-A/B/C pasan a resueltas;
+  - la nota de CA-54 recibe «Coste en procesos: 0 añadidos»;
+  - CA-67 se escribe por propiedad y recibe «Los avisos entran»;
+  - CA-68 recibe techos de tamaño y un plazo ≤ 40 s, medido a nivel de hook;
+  - CA-69 p. 3, Historial y Correspondencia.
+  - **ADR-017 pasa a `aceptada`.** Cabeceras y contadores sin cambios.
+- **Índice:** veredictos de REQ-001 y REQ-031 copiados de sus cabeceras. **`docs/PENDIENTES.md`:** ficha del campo derivado del plan vigente, sin implementar (es `hooks/`).
+- **Lecturas del analista que el propietario puede querer revisar** (no cambian CA-54):
+  - el plazo de 40 s se lee como techo operativo, que se puede bajar con medición;
+  - se mide con la emisión incluida.
+- **Comprobaciones mecánicas de la coordinadora:** gates de §7 con rc 0; cola en 0; sin rutas protegidas.
+- **Avance (regla 6):** fase 0 hecha. Sigue la fase 1 (desarrollador: sondas, línea base e inventario).
+
 ## [GitHub] — 2026-10-03 · Instalación estable actualizada a 1.35.0 en este host (WSL2), por petición expresa del propietario
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
 

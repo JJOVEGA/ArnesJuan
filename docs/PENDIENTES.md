@@ -2007,3 +2007,36 @@ ella. Mismo dueño, forzador y vencimiento; no se relanzó.
 - **Dueño:** `desarrollador` (implementación) y `analista-requerimientos` (REQ). **Forzador:** la
   próxima comisión que toque `arnes_norm_campo`, `arnes_sin_cr_transporte` o los presupuestos de los
   hooks. **Vencimiento:** la decisión de publicación de 1.35.0, junto con SEC-113.
+
+## Ficha de 1.36.0 — el bloque derivado de `docs/ESTADO.md` muestra el plan autorizado vigente (décima autorización, 2026-10-03)
+
+**Estado: pendiente, sin ventana de implementación en esta intervención.** No es una decisión que
+esperar y por eso no va bajo `## Pendientes` de `PENDING_APPROVAL.md`: la decisión ya está tomada
+—registrarla como ficha— y lo que falta es contrato y construcción.
+
+- **Origen, literal:** «El campo derivado queda como ficha de 1.36.0.» (`PENDING_APPROVAL.md`
+  § Resueltas, entrada «RESUELTA (propietario, 2026-10-03, décima autorización)», «Decisiones del
+  propietario»). En la misma decisión: «ESTADO lleva en su bloque manual «Plan autorizado vigente: <id>,
+  fase N de M, siguiente acción: …» mientras haya uno». La forma de esa línea vive en
+  `templates/autorizacion.md`.
+- **Qué propiedad tendría.** Mientras haya un plan autorizado vigente, el bloque derivado de
+  `docs/ESTADO.md` —entre los marcadores `ARNES:DERIVADO`— dice cuál es, en qué fase está y cuál es la
+  siguiente acción, **derivado del disco y no redactado**, como el resto del bloque. Y con la regla de
+  la casa para lo que no se puede leer: si la fuente no se puede leer entera, el bloque dice `sin datos`,
+  nunca un plan inventado ni «ninguno» (la misma regla que la cola: `sin datos`, nunca 0).
+- **De dónde se derivaría — y por qué esto es la parte que falta.** Hoy el plan vive como **prosa**: la
+  autorización, literal en `PENDING_APPROVAL.md` § Resueltas, y su avance sólo en los commits de cada
+  fase y en la línea manual de `docs/ESTADO.md`. **No hay ninguna fuente legible por máquina** de qué plan
+  está vigente ni de en qué fase va: derivar la línea manual sería redactarla, que es lo que el bloque
+  derivado existe para no hacer. Elegir y definir esa fuente —un campo o marcador en la entrada de la
+  autorización, u otra— es parte del contrato que esta ficha deja pendiente; no se elige aquí.
+- **Por qué no se implementa ahora.** La décima autorización limita esta intervención a CA-54: «No
+  SEC-120, SEC-115/118 ni nada fuera de CA-54 en esta intervención (se registran).» (misma entrada,
+  «Límites»). Mientras tanto la información la da la línea manual, que pone al día la coordinadora.
+- **Criticidad.** El bloque derivado lo escribe `hooks/estado-derivado.sh` (llamado desde
+  `hooks/stop.sh`): tocarlo es tocar `hooks/`, **crítico** en este proyecto (`AGENTS.md` §6, «Qué es
+  crítico EN ESTE PROYECTO») y gate humano («cualquier cambio en `hooks/`»). Ciclo completo: analista →
+  desarrollador → QA → seguridad.
+- **Dueños:** `analista-requerimientos` (contrato: la fuente legible, la propiedad y su medida) y
+  `desarrollador` (mecanismo). **Forzador:** una autorización del propietario que la despache.
+  **Ventana:** 1.36.0, por la decisión de arriba, sin intervención asignada todavía.

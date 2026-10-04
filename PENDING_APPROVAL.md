@@ -33,12 +33,94 @@
 > cuenta como una pendiente real e impide la acción de clase «cerrar» —**marcar cualquier REQ
 > como `completado`**, la transición de su campo `Estado:` a ese valor—, porque la regla que lo
 > impide, `guard-completado`, no distingue un ejemplo de una pendiente.
+>
+> **Autorizaciones por fases.** Una autorización del propietario se escribe con la plantilla
+> `templates/autorizacion.md` —sus cuatro bloques: plan autorizado, lo que decide la coordinadora
+> sola, cuándo parar y preguntar, y qué hacer si la sesión se corta— y se registra literal en
+> "Resueltas", citada con `> `: un encabezado `## ` sin citar cerraría la sección en la que cae. En
+> este proyecto la llevan todas desde la décima autorización del propietario (2026-10-03, en
+> "Resueltas").
 
 ## Pendientes
 
-> **Tres decisiones del contrato de 1.36.0, agrupadas** (analista-requerimientos, 2026-10-03; apertura de 1.36.0, `requirements/REQ-007.md`, «Preguntas abiertas», P-136-A a P-136-C). Ninguna impide implementar ni probar lo que no depende de ella, y cada una dice qué sigue. **Lo que sí impide la cola mientras tenga entradas:** marcar **cualquier** REQ como `completado` (`guard-completado`; `AGENTS.md` §6, «Mecanismo de gate»). Eso alcanza también a REQ-001, REQ-023 y REQ-031, que están en `en-revisión` con QA y seguridad aprobados. Cerrarlos no está autorizado hoy (nota de la coordinadora en «Decisiones de publicación de v1.35.0», § Resueltas), pero mientras estas fichas sigan aquí la máquina tampoco lo dejaría. **Y una cosa que no es ficha, pero que la coordinadora tiene que resolver antes de despachar la implementación:** el pedido «Encargo 2» no está en ninguna sede del repositorio. Hay que registrarlo literal en § Resueltas para que la «Correspondencia con el encargo (apertura de 1.36.0)» de REQ-007 pueda citarlo por ruta (`AGENTS.md` §6, regla 1).
+_(Vacía desde el 2026-10-03: la décima autorización resolvió las fichas P-136-A, P-136-B y P-136-C, que están en § Resueltas.)_
 
-### [2026-10-03] (analista-requerimientos) — P-136-A: CA-54, ¿puede la optimización gastar procesos que v1.35.0 no gasta al analizar un comando grande?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-03, décima autorización) — **Fichas P-136-A/B/C resueltas; plantilla de autorización; PLAN AUTORIZADO VIGENTE «décima autorización», CA-54 en fases 0 a 4**
+
+**Texto del propietario, literal** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.36`, tras reiniciar con 1.35.0):
+
+> `JJOVEGA/ArnesJuan`, worktree `/home/juan/dev/ArnesJuan-v1.36`, rama
+> `cand/1.36.0`, cabeza reportada `4b4138f`, hooks 1.35.0 ya vigentes tras el
+> reinicio. Décima autorización: fichas, plantilla de autorización y primera
+> intervención de CA-54.
+>
+> ## Decisiones del propietario (registrar literales; cierran las fichas)
+> - P-136-A: 0 procesos añadidos.
+> - P-136-B: criterio por propiedad: toda denegación decidida llega al cliente,
+>   entera o acotada, nunca perdida; el desarrollador elige la técnica; los
+>   avisos entran.
+> - P-136-C: techos de tamaño más plazo propio de 40 s, sin procesos.
+> - CA-68 / REQ-017 CA-09: se evalúa al construir SEC-115; si afecta, §9.
+> - Las paradas entre fases de un plan autorizado son un defecto de proceso.
+>   Desde esta autorización, toda autorización lleva los cuatro bloques de
+>   abajo, la plantilla se guarda en templates/autorizacion.md (referida desde
+>   la guía y la cola), y ESTADO lleva en su bloque manual «Plan autorizado
+>   vigente: <id>, fase N de M, siguiente acción: …» mientras haya uno. El
+>   campo derivado queda como ficha de 1.36.0.
+>
+> ## Plan autorizado (se ejecuta entero; cada fase termina en commit local y
+> ## la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: plantilla templates/autorizacion.md con los cuatro
+>   bloques y esta autorización como ejemplo; ficha del campo derivado;
+>   enlaces; filas de REQ-001 y REQ-031 del índice al día; registro de las
+>   decisiones. Línea de plan vigente en ESTADO.
+> Fase 1 — desarrollador: restaura las dos sondas de CA-54 sin cambiar su
+>   medición (solo la ruta de la biblioteca), registra el diff; toma la línea
+>   base sobre v1.35.0 (las 35 corridas); inventario.sh del banco con los hooks
+>   de v1.35.0 como referencia caso a caso. Sin optimizar todavía.
+> Fase 2 — desarrollador: optimiza arnes_bash_sin_texto y lo que haga falta
+>   para < 5 s con 131072 bytes en Linux/WSL2, con 0 procesos añadidos, sin
+>   cambiar umbral, máximo ni medición. Entrega: las 35 corridas, inventario
+>   idéntico caso a caso al de la fase 1, banco completo y autoprueba.
+> Fase 3 — QA (Opus): repite las 35 corridas, compara inventarios, banco y
+>   autoprueba, intenta romper la optimización. Una pasada correctiva como
+>   máximo, dentro del contador, y su re-verificación.
+> Fase 4 — seguridad, solo con QA favorable. Write-back del analista solo si
+>   hay deriva. Commit del trabajo validado.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, CHANGELOG, ESTADO, índices; ajustes del banco que no
+> cambian ningún veredicto ni contrato; la pasada correctiva prevista; orden
+> y presupuesto de cada despacho dentro del propuesto (~300–400k dev, 250–300k
+> QA, 150–200k seguridad); registrar defectos nuevos sin repararlos.
+>
+> ## Cuándo paras y me preguntas (solo esto)
+> Cambio de contrato o de alcance; aceptar o aplazar un riesgo; más pasadas
+> que la prevista; un veredicto del banco que cambia (inventario distinto);
+> un control del proveedor detiene algo (registra, sigue con lo
+> independiente); publicar, fusionar, etiquetar, cerrar un REQ.
+>
+> ## Si la sesión se corta
+> La siguiente lee este plan en la cola y en ESTADO y continúa desde la última
+> fase comiteada. No vuelve a pedir la autorización: ya está dada.
+>
+> ## Límites
+> No SEC-120, SEC-115/118 ni nada fuera de CA-54 en esta intervención (se
+> registran). No AGENTS.md ni contadores. No push, versión, PR, fusión ni tag.
+>
+> ## Entrega
+> Cabeza final por fase; línea base y resultado de las 35 corridas; inventario
+> caso a caso (idéntico o diferencias); veredictos de QA y seguridad con su
+> alcance; pendientes exactos.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Hooks 1.35.0 vigentes, comprobado tras el reinicio:** una sonda inofensiva con la forma LC10 (`cat` de un heredoc cuya línea de apertura acaba en continuación) la denegó `guard-git` con el motivo «ARNES (SEC-125, LC10)», que sólo existe desde 1.35.0. `installed_plugins.json`: 1.35.0 en los alcances `user` y `project`.
+- **`/arnes-upgrade` no hace falta en este repositorio:** el contenido que migran «Hacia 1.34.0» y «Hacia 1.35.0» ya está en `AGENTS.md`, `PENDING_APPROVAL.md` y `requirements/README.md`, que se desarrollaron aquí. Sólo difiere `arnes_version` (`1.33.0`), que se conserva por decisión del propietario (`5d810f0`). Correrlo tocaría `AGENTS.md`, excluido por esta autorización.
+- **Las tres fichas pasan debajo** sin cambiar su texto. **Qué trabajo sigue:** el plan de arriba, fase 0.
+
+### RESUELTA (propietario, 2026-10-03, décima autorización; entrada de arriba) — [2026-10-03] (analista-requerimientos) — P-136-A: CA-54, ¿puede la optimización gastar procesos que v1.35.0 no gasta al analizar un comando grande?
 
 **Contexto.** El pedido fija el reloj de CA-54: menos de 5 s en el máximo declarado, en Linux/WSL2, sin cambiar veredictos, sin subir el umbral ni reducir la entrada. `requirements/README.md`, forma (d), exige que un criterio de coste contrate **todas** las vías por las que el coste se degrada. Si no, un arreglo que compra reloj con un proceso da verde en Linux.
 
@@ -64,7 +146,7 @@ En Windows/MSYS cada proceso cuesta de 1,2 a 6 s (`AGENTS.md` §2). Allí CA-54 
 
 **Espera:** elección del propietario.
 
-### [2026-10-03] (analista-requerimientos) — P-136-B: CA-67 (SEC-118), ¿qué es «el tope» que se mide, y entran los avisos?
+### RESUELTA (propietario, 2026-10-03, décima autorización; entrada de arriba) — [2026-10-03] (analista-requerimientos) — P-136-B: CA-67 (SEC-118), ¿qué es «el tope» que se mide, y entran los avisos?
 
 **Contexto.** El pedido dice: «fail-closed cuando … el motivo excede el tope: emitir decisión siempre; medir el tope en bytes y ASCII/multibyte en Linux».
 
@@ -99,7 +181,7 @@ Además, la remediación nombra `arnes_emitir_avisos`: los avisos que no acompa�
 
 **Espera:** elección del propietario.
 
-### [2026-10-03] (analista-requerimientos) — P-136-C: CA-68 (SEC-115), ¿con qué mecanismo y con qué plazo se emite la decisión cuando el hook agota el tiempo?
+### RESUELTA (propietario, 2026-10-03, décima autorización; entrada de arriba) — [2026-10-03] (analista-requerimientos) — P-136-C: CA-68 (SEC-115), ¿con qué mecanismo y con qué plazo se emite la decisión cuando el hook agota el tiempo?
 
 **Contexto.** El pedido dice: «fail-closed cuando el hook agota tiempo … emitir decisión siempre».
 
@@ -122,8 +204,6 @@ La remediación registrada (`docs/seguridad/registro-seguridad.md` § R-044-C, �
 **Qué trabajo sigue mientras no se decida.** Siguen implementar y probar los **techos de tamaño** para las vías medidas, T1 a T3 de CA-68, y reproducir cada vía en v1.35.0 (fail-before): son comunes a las tres opciones. Dependen de esta decisión el plazo, su valor y el vigilante.
 
 **Espera:** elección del propietario.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-03) — **Alcance de 1.36.0 y apertura de la ventana**: CA-54 / QA-023-10, SEC-120 y SEC-115/SEC-118, en ese orden; contrato del analista por propiedad y medida; sin implementación
 

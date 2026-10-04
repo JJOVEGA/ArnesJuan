@@ -1288,6 +1288,20 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     sobre los roles**. Así se publica. La corrección del comentario de SEC-126 tampoco lleva firma: así lo decidió
     el propietario del arnés. Detalle en las notas de 1.35.0, «Firmas ausentes, y por qué».
 
+### Hacia 1.36.0
+
+- **Plantilla nueva: `templates/autorizacion.md`.** Es la forma de una autorización del propietario que
+  encarga un trabajo en varias fases para que se ejecute entero, sin parar entre fases: cuatro bloques
+  —«Plan autorizado» (las fases, cada una con su commit local, y la siguiente empieza sin pedir permiso),
+  «Lo que decide la coordinadora sola», «Cuándo paras y me preguntas (solo esto)» y «Si la sesión se
+  corta»—, la línea que `docs/ESTADO.md` lleva mientras haya un plan vigente («Plan autorizado vigente:
+  <id>, fase N de M, siguiente acción: …») y un ejemplo rotulado como tal.
+  **No migra nada por sí sola:** no es un archivo que `arnes-init` copie al proyecto ni que este
+  procedimiento clasifique —no tiene base en `.arnes/plantillas-origen/`—, y su presencia en el plugin
+  no cambia una coma de tu `AGENTS.md`, de tu `PENDING_APPROVAL.md` ni de tu `docs/ESTADO.md`. Usarla
+  es decisión del propietario de tu proyecto. Tampoco autoriza nada ni retira ninguna revisión, firma
+  ni aprobación humana que tus reglas exijan: decide cuándo se para y se pregunta, no qué se valida.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
