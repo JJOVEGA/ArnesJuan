@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Décima autorización, fase 2 (CA-54) PARADA: con el atajo de `guard-completado`, 0 de 35 corridas ≥ 5 s; sin él, 1 de 35 (5 213 ms). Ficha P-136-D para el propietario; código SIN COMITEAR y SIN VALIDAR
+> Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (optimización y medición; ≈ 586 k tokens en dos tramos, **por encima** del presupuesto orientativo de 300–400 k) y la coordinadora (decisiones de la parada y este registro).
+
+- **Optimización** (por propiedad: cada juicio da lo mismo y sólo baja el coste):
+  - el comando se analiza una vez por invocación;
+  - la fase de tokens corre en locale C cuando el texto es todo ASCII;
+  - las ramas raras de identidad y pertenencia salen a funciones propias;
+  - 0 procesos añadidos (`sonda-procesos.sh`), y uno menos en S1 con el recuento exacto complementario.
+  - stdout, rc y stderr son idénticos a v1.35.0 en las 10 entradas.
+- **Primera parada del desarrollador, resuelta por la coordinadora:**
+  - el inventario difería en una línea del caso aleatorio de la sección 41, con PASS en las dos corridas: la semilla va en el nombre del caso. Se decidió repetir con `ARNES_SEMILLA_41=23062`, y no llegó a hacerse por la segunda parada. **Defecto de instrumento registrado:** CA-69 2 (a) necesita fijar esa semilla;
+  - el atajo de `guard-completado` se retiró porque choca con el texto literal de CA-54 (c), «omitir destinos».
+- **Segunda parada:** sin el atajo, S1 B da 5 213 ms en 1 de 5 corridas. Es una condición de parada de la autorización, y la decide el propietario en **P-136-D** (opciones A, B y C; la coordinadora recomienda A). No se repitieron corridas buscando verde.
+- **Sin hacer:** el inventario con la semilla fijada, el banco del worktree, la autoprueba y los commits de código y de evidencia.
+- **Registro (§13):** dos ediciones de `hooks/` se hicieron por consola (`python3`), así que ninguna puerta las midió.
+- **Avance (regla 6):** CA-54 se puede alcanzar con margen sólo con el atajo; falta la decisión P-136-D. Las fases 3 y 4 no han empezado.
+
 ## [GitHub] — 2026-10-03 · Décima autorización, fase 1 (CA-54): sondas S1 y S2 restauradas (sólo rutas), línea base de las 35 corridas sobre v1.35.0 (30 de 35 pasan de 5 s) e inventario de referencia del banco de v1.35.0 (2050 casos); sin optimizar
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (medición y registro técnico, < 200 k tokens) y la coordinadora (este commit). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `4e8757e`, `cand-1.36.0/ca54/`.
 

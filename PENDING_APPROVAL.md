@@ -43,7 +43,37 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-03: la décima autorización resolvió las fichas P-136-A, P-136-B y P-136-C, que están en § Resueltas.)_
+
+### [2026-10-03] (coordinadora) — P-136-D: CA-54 sin el atajo de `guard-completado` deja 1 de 35 corridas en 5 213 ms; ¿se readmite el atajo aclarando CA-54 (c), se sigue optimizando o se acepta?
+
+**Contexto.** Décima autorización, fase 2 (CA-54), sobre `4b4f239` con el código **sin comitear** en el worktree. Las copias del parche están en el árbol de evidencia, `cand-1.36.0/ca54/`: `50-candidato-fase2-sin-atajo-sin-commit.patch`, y la variante con atajo en `con-atajo-retirado/`.
+- **Con el atajo:** 0 de 35 corridas ≥ 5 000 ms. El peor caso es 3 811 ms (S1 C).
+- **Sin el atajo:** 34 de 35. **S1 B, tercera corrida: 5 213 ms**; el resto de S1 está entre 3,8 y 4,3 s.
+- **En las dos variantes:**
+  - las decisiones, los rc, y los `bytes=` y `destinos=` son iguales a v1.35.0 en las 35 corridas;
+  - stdout, rc y stderr son idénticos byte a byte en 10 de 10 entradas;
+  - 0 procesos añadidos con `sonda-procesos.sh`, y uno menos en S1 con el recuento exacto complementario.
+- **Qué es el atajo:** la regla de `guard-completado` por `Bash` deniega sólo si un destino cae en `requirements/` **y** el estado terminal aparece en el comando. El atajo comprueba primero la segunda condición, sobre el **comando entero** y sin proceso, y si es falsa no recorre los destinos: la regla no podría denegar. Los destinos los sigue juzgando `guard-codigo` enteros.
+- **Por qué se retiró:** CA-54 (c) prohíbe «analizar menos de la entrada» y nombra «omitir destinos» como ejemplo no exhaustivo. La coordinadora no valida sobre una lectura discutible del texto.
+- **Medido por el desarrollador con el atajo:** 102 000 pares por locale contra `grep` real, 0 violaciones. Sin medir: los locales `en_US` y `tr_TR`, que no están instalados.
+- **No se repitieron corridas buscando verde.** Un FAIL no se desmiente repitiendo.
+
+**Pregunta.** ¿Cómo se cumple CA-54?
+
+**Opciones.**
+- **(A) Readmitir el atajo, aclarando CA-54 (c).** El `analista-requerimientos` versiona (c) con una nota: no es «analizar menos» evaluar primero una condición necesaria de una regla, **sobre la entrada entera**, cuando prueba que la decisión no puede cambiar. Sí sigue prohibido no juzgar destinos en la puerta que los juzga (`guard-codigo`).
+  - **Consecuencia:** margen de ≈ 1,2 s sobre el umbral. QA ataca expresamente la equivalencia (locales, mayúsculas no ASCII, el estado mencionado de formas que `grep` encuentra). Es un cambio de contrato menor con Historial, y sigue el plan sin más optimización.
+- **(B) Sin el atajo; el desarrollador optimiza más**, dentro de (c) y con 0 procesos.
+  - **Consecuencia:** no se sabe si cabe. Coste estimado de 150 a 300 k tokens más. Si no cabe, se vuelve a esta pregunta.
+- **(C) Sin el atajo y aceptar 34 de 35 con alcance**, como en 1.35.0.
+  - **Consecuencia:** CA-54 no se cumple. Sería aceptar un riesgo y cambiar el criterio («cada una de las 35»), y QA-023-10 sigue abierto.
+
+**Recomendación de la coordinadora: (A).** El atajo no deja ninguna parte de la entrada sin leer: lee todo el comando para decidir que la regla no puede denegar, y la puerta que juzga los destinos los sigue juzgando todos. Es la única opción con margen medido. La equivalencia ya tiene evidencia diferencial, y QA tiene que intentar romperla, empezando por los locales no medidos.
+
+**Qué trabajo sigue mientras no se decida.** **Ninguno del plan:** las fases 2 a 4 dependen de esta decisión. Fuera del plan no se abre nada. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar en esta intervención).
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
