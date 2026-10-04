@@ -2,6 +2,28 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Cierre de v1.35.0, tramo 3: notas finales de versión; P-119-A resuelta como límites declarados; SEC-126 corregido por el propietario (sólo un comentario, verificado) y registrado en R-051; falta `arnes_version` y lo manual de publicación
+> Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. El comentario de `hooks/lib.sh` es del propietario. Unos 0,27 M tokens del analista (cifra del arnés).
+
+- **Decisiones:** las 1 a 5 del tramo 3, literales en `PENDING_APPROVAL.md`.
+- **`hooks/lib.sh` (propietario, SEC-126):**
+  - el comentario de `_arnes_cd_resolucion`, por propiedad y sin cifra;
+  - verificado por la coordinadora: `git diff --stat hooks/` muestra un archivo, y `git diff hooks/ | grep '^[-+][^-+#]'` no muestra nada;
+  - las gates de §7 dan rc 0.
+- **Analista:**
+  - REQ-007: P-119-A resuelta como límites declarados, con F2, F5 y F7 abiertos y no aceptados; sin campos de cabecera;
+  - el índice;
+  - las notas `[1.35.0]`, reordenadas como notas finales (qué cambia, límites, lo no medido, firmas ausentes, «Hacia 1.36.0», historia);
+  - la guía;
+  - R-051, sólo registro: SEC-126 reparado.
+- **Comprobado por la coordinadora:**
+  - ningún campo de cabecera cambia;
+  - `tools/arnes-lectura.sh .` no ve anomalías;
+  - ningún identificador desaparece de las notas `[1.35.0]`;
+  - R-051 estaba libre en todas las ramas.
+- **Sin cambios:** `.arnes/config.json` (protegido; `arnes_version` lo sube el propietario), `tools/`, `tests/`, `AGENTS.md`, contadores y estados de REQ.
+- **Avance (regla 6):** el candidato queda listo en texto para publicar. Faltan los pasos manuales del propietario, en `docs/ESTADO.md`.
+
 ## [Interno] — 2026-10-03 · Cierre de v1.35.0, tramo 2: decisiones de publicación del propietario registradas y escritas en las notas y en la guía; «siete» → «ocho»; cola vacía; SEC-126 no corregido (ruta protegida)
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. Unos 0,20 M tokens del analista (cifra del arnés).
 
@@ -1058,40 +1080,51 @@ La entrada pendiente «Decisión de publicación de 1.35.0» suma la ficha 3, QA
 ## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
 
-**Estas notas preparan el candidato. No lo publican.** El propietario autorizó el 2026-09-29 preparar
-el cambio de versión «como preparación del candidato, no su publicación» (`PENDING_APPROVAL.md`
-§ Resueltas, entrada de esa fecha, punto 4, texto literal). Publicar 1.35.0 sigue impedido por la
-entrada pendiente de la cola —el propietario tiene que decidir las fichas de SEC-115 y del hueco C—,
-y por el CI de la cabeza final, que todavía no existe.
-*(Puesta al día del 2026-10-03: el propietario tomó las decisiones de publicación de lo que seguía pendiente
-—`PENDING_APPROVAL.md` § Resueltas, «Decisiones de publicación de v1.35.0», texto literal— y la cola quedó vacía.
-Están, con su alcance, su consecuencia y la versión en que se reparan, al principio de «Limitaciones que el
-candidato conserva». Ninguna de ellas repara lo que decide, y estas notas siguen sin publicar nada: la cabeza que se
-publique tendrá su propia corrida de CI.)*
+> Notas finales de versión, reordenadas el 2026-10-03 (cierre de v1.35.0, tramo 3) por `analista-requerimientos`, por encargo del propietario. Se reordena sin quitar ninguna promesa ni limitación declarada: lo que cambió de sitio dice adónde fue, y lo que se resumió conserva su contenido en otra frase.
 
-### Alcance real, medido
+**Notas finales de 1.35.0.** Recogen decisiones del propietario que están literales en `PENDING_APPROVAL.md`
+§ Resueltas:
+- la autorización del 2026-09-29, punto 4: preparar el cambio de versión «como preparación del candidato, no su
+  publicación»;
+- las «Decisiones de publicación de v1.35.0» del 2026-10-03, de la 1 a la 9;
+- el «Cierre de v1.35.0, tramo 3» del 2026-10-03, de la 1 a la 5.
 
-`git log --first-parent v1.34.0..78e3d2f` (78e3d2f es la cabeza anterior a este commit) da nueve
-entradas: cinco merges de `main` y cuatro commits de `cand/1.35.0`. En total son 90 commits.
-`git diff --stat v1.34.0..78e3d2f` da 50 archivos, 17 686 inserciones y 1 397 borrados; casi todo es
-requisitos, evidencia de QA, registro de seguridad y gobernanza. **El mecanismo cambia en tres
-archivos:** `hooks/guard-completado.sh`, `hooks/lib.sh` y `tools/arnes-lectura.sh`, con 551
-inserciones y 67 borrados. `hooks/hooks.json`, `.github/` y `.arnes/` **no cambian**.
+La cola de aprobaciones está vacía desde el 2026-10-03. **Salvo SEC-126 —un comentario que corrigió el
+propietario—, ninguna de las decisiones de publicación repara lo que decide.**
 
-| Commit | PR | Qué trae |
-|---|---|---|
-| `cfb1106` | #52 | REQ-025, **sólo la entrega 1**: coordinación orientada a entregas |
-| `c4d92c0` | #55 | REQ-030: sondas de coste de REQ-017 CA-03 y CA-08 (ii) con presupuesto fijo e INCONCLUSO visible |
-| `11c5df2` | #53 | REQ-029: fidelidad al encargo |
-| `a7a60c2` | #56 | Cierre administrativo de REQ-029 y REQ-030 |
-| `713ac68` | #58 | REQ-031: gramática cerrada de `Hallazgos abiertos:` y preparación del paralelismo |
-| `856d97d`…`78e3d2f` | — (rama `cand/1.35.0`) | Autorización del propietario y REQ-023, mitad 1 de SEC-047: contrato, implementación y versionado de CA-01 (i) |
+**Estas notas no publican nada.** Publicar —el tag, la publicación y la actualización de la instalación estable—
+es otro acto. La cabeza que se publique tendrá su propia corrida de CI, y estas notas no afirman su resultado por
+adelantado (en «Historia», abajo: «La certificación de una cabeza…»).
 
-**No entra nada de `rel/registro-1.33.0`.** Medido: esa rama tiene 0 commits en `v1.34.0..78e3d2f`, y
-su base común con el candidato (`5e53f12`) es anterior a `v1.34.0`. Tampoco entran la entrega 1b de
-REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
+**Cómo están ordenadas:**
+- **Qué cambia:** lo construido por requisito, qué recibe un consumidor, los cuatro cambios de compatibilidad y
+  la decisión de Semver.
+- **Límites declarados, con alcance y consecuencia:** las decisiones del propietario y cada límite con lo medido.
+- **Lo no medido: el host y Windows/MSYS.**
+- **Firmas ausentes, y por qué.**
+- **Hacia 1.36.0:** CA-54, SEC-115 y SEC-118, y SEC-120.
+- **Historia, conservada tal cual:** el alcance medido sobre `78e3d2f`, los resultados del CI anteriores y lo
+  que no hizo el commit de versión.
 
-### Por requisito: lo construido y lo que no
+### Qué cambia
+
+**Los cuatro cambios de compatibilidad, en una línea cada uno** (el detalle, en «Cambios de compatibilidad», abajo):
+1. `Hallazgos abiertos:` tiene gramática cerrada (REQ-031, ADR-013).
+2. La cabecera ambigua deniega el cierre (REQ-023, ADR-014; mitad 1 de SEC-047).
+3. Un `Edit`/`MultiEdit` de `requirements/` que la puerta no puede reconstruir se deniega (REQ-023 CA-13,
+   ADR-015; por SEC-117).
+4. Las dos puertas juzgan el archivo que la escritura alcanzaría, no la forma de su ruta, y un REQ que la puerta
+   no puede leer entero no se edita (REQ-007 CA-47 y CA-45, ADR-016; por SEC-119 y O-11). Las autorizaciones
+   sexta a novena le añaden la lectura íntegra de la entrada, el retorno de carro, lo que depende del proceso que
+   abre la ruta y las continuaciones de línea.
+
+**Sin cambiar ningún hook:** las seis reglas de coordinación (REQ-025, entrega 1), la fidelidad al encargo
+(REQ-029) y las sondas de coste con INCONCLUSO visible (REQ-030, sólo el banco).
+
+**Y un comentario del código, sin cambio de conducta:** el de `hooks/lib.sh` junto al límite de SEC-123,
+corregido por el propietario (SEC-126, reparado; en los límites, donde estaba declarado).
+
+#### Por requisito: lo construido y lo que no
 
 - **REQ-025 publica sólo su entrega 1, y el requisito sigue `en-revisión`.**
   - Construido: las seis reglas de la coordinadora en `AGENTS.md` §6, con «Loop de error» y
@@ -1141,10 +1174,14 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
   en las limitaciones de abajo). Desde el 2026-10-02, por la séptima autorización, el retorno de carro de la
   entrada se cuenta antes del transporte, y por la octava, F3 está corregida, CA-47 gana la dependencia del
   proceso y el retorno de carro del texto de `Bash`, y CA-66 la sección 45 (SEC-122, QA-023-14, P-023-13-A),
-  con su pasada correctiva (QA-023-16, QA-023-17).
+  con su pasada correctiva (QA-023-16, QA-023-17). Desde el 2026-10-03, por la novena autorización, F3 y el
+  punto 16 de CA-47 describen el límite SEC-123 (fase 1), y CA-47 gana los puntos 18 y 19 —SEC-124 y SEC-125,
+  con la excepción LC10— (fase 2: construida, y validada por el propietario por vía manual, sin firma del
+  `qa-tester` ni del `auditor-seguridad`; en «Firmas ausentes»). Y su pregunta abierta, P-119-A, está resuelta
+  como límites declarados (en los límites, abajo): el REQ ya no tiene preguntas abiertas.
   Estas notas no anticipan su estado ni sus firmas. REQ-023 CA-13 (iv) remite a él.
 
-### Qué recibe un consumidor al actualizar
+#### Qué recibe un consumidor al actualizar
 
 **Con el plugin, sin migrar nada.** Actúa desde que se actualiza:
 - `hooks/guard-completado.sh` y `hooks/lib.sh`: la gramática cerrada de `Hallazgos abiertos:`
@@ -1180,7 +1217,7 @@ REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
 **Un proyecto que actualiza el plugin y no migra tiene la puerta nueva con el texto viejo.** La puerta
 deniega formas que su `requirements/README.md` todavía no explica. La guía lo dice en cada entrada.
 
-### Cambios de compatibilidad
+#### Cambios de compatibilidad
 
 1. **REQ-031 (ADR-013): `Hallazgos abiertos:` tiene gramática cerrada.** La sede de la sintaxis es
    `requirements/README.md` § «Clases de hallazgo».
@@ -1348,7 +1385,10 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      declarar, vuelve a `deny`; y con la reparación de SEC-125 las clases son **ocho**: estas siete y la de SEC-125
      —un destino de `Bash` que hasta ahora se juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el shell, está fuera de
      las zonas protegidas—. Ninguna debilita una protección (REQ-007 CA-24, nota del 2026-10-03, y CA-66,
-     versionado de la fase 2, punto 5).
+     versionado de la fase 2, punto 5). *(Aclaración del 2026-10-03, por la decisión 3 del cierre, tramo 3: este
+     «ocho» no es el de la nota histórica de arriba, que no se toca. Aquél contaba una enumeración anterior, con
+     `git reset --hard␍`, que era falsa y que la pasada correctiva de la octava autorización devolvió a `deny`;
+     éste son las siete clases enumeradas en esta entrada más la de SEC-125.)*
    - **Una orden de git con un retorno de carro se juzga también sin él** (desde la pasada correctiva de la
      octava autorización; REQ-007 CA-47, punto 11). Lo que git haga con ella depende de su configuración: QA
      midió con git 2.53.0 que, con `help.autocorrect`, `git stash␍` se corrige y se ejecuta. Por eso
@@ -1396,87 +1436,50 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      una medición exhaustiva; sistemas que no distinguen mayúsculas; y Windows/MSYS, `MultiEdit` en el host, el
      editor interactivo y otras versiones del CLI, que no se han ejercido para esta regla. Las que la quinta
      autorización no nombra (REQ-007, P-119-A) —F2, F5 y F7, y el límite de F3, que es SEC-123— son, por
-     decisión del propietario del 2026-10-03, **límites declarados, abiertos y no aceptados como riesgo**: abajo,
-     en las limitaciones.
-   - **Dónde se ejecutaron los casos** (texto autorizado por el propietario el 2026-10-02, octava autorización,
-     punto 5, limitado a los casos realmente ejecutados):
-     - hook en Linux/WSL2;
-     - CLI 2.1.285 en WSL2 mediante `claude -p`;
-     - hook en Windows/MSYS, en una máquina;
-     - sin comprobación de la extensión de VS Code, del CLI en Windows ni de otros clientes.
-
-     Esto describe dónde se ejecutaron los casos; no acredita toda la plataforma ni todos sus comportamientos.
-     Lo reparado por la octava autorización sólo se ejerció a nivel de hook en Linux/WSL2, y el hook en
-     Windows/MSYS sólo para la latencia de CA-54. La reparación agrupada tampoco garantiza por sí sola que el
-     candidato quede publicable: CA-54, SEC-115 y SEC-118, el hueco C y las fronteras restantes conservan sus
-     decisiones pendientes.
-     *(Desde el 2026-10-03 esas decisiones están tomadas, y ninguna repara lo que decide: «Decisiones de
-     publicación del propietario», al principio de las limitaciones.)*
+     decisión del propietario del 2026-10-03, **límites declarados, abiertos y no aceptados como riesgo**, y con
+     ella P-119-A queda resuelta: abajo, en «Límites declarados».
+   - **Dónde se ejecutaron los casos:** el texto que autorizó el propietario está en «Lo no medido», abajo, sin
+     cambios.
    - **Lo que no afirman estas notas:** que la reparación esté verificada. Sus veredictos y la validación en
      el host que exige REQ-007 CA-66 se registran en sus sedes.
 
-### Resultados históricos, conservados tal cual
+#### Semver: `minor` por la convención de este arnés, y no `minor` puro en SemVer estricto
 
-CI `hooks-en-linux` sobre `main` desde `v1.34.0`. Los datos se leyeron con `gh run view --log` el
-2026-09-29, sin relanzar nada:
+El número `1.35.0` lo fijó el propietario en su autorización. **En SemVer estricto, esta versión no es
+`minor` pura:** cuatro cambios hacen que se deniegue lo que hasta `v1.34.0` se permitía sin esconder
+ningún bloqueante:
+- la nota tras el paréntesis en `Hallazgos abiertos:`;
+- la clave de control repetida con el mismo valor;
+- una edición legítima de `requirements/` cuyo `old_string` no está literal, aunque no toque el estado
+  (REQ-023 CA-13, que además cierra el fail-open de SEC-117);
+- un `Edit`/`MultiEdit` que no toca el estado sobre un REQ que la puerta no puede leer entero, y una
+  escritura cuyo destino la puerta no puede determinar (REQ-007 CA-45 y CA-47, que además cierran los
+  fail-open de O-11 y SEC-119); desde la octava autorización, también un heredoc legítimo cuyo delimitador
+  lleva un retorno de carro y una escritura por `Edit`/`Write`/`MultiEdit` a una ruta que depende del proceso
+  del host, como `Write /dev/stderr` (REQ-007 CA-47, puntos 14 y 17, que además cierran SEC-122 y QA-023-15).
 
-| Merge | PR | Run | Conclusión | Resultado |
-|---|---|---|---|---|
-| `cc8972c` (tag `v1.34.0`) | #51 | 35160309648 | success | publicación de 1.34.0 |
-| `cfb1106` REQ-025 entrega 1 | #52 | 35742539672 | **failure** | 903 PASS · **2 FAIL** · 7 SKIP: REQ-017 CA-03 (cociente 2,747× > techo 2,600×) y REQ-017 CA-08 (ii) (1,255× > 1,250×, con la sonda convergida) |
-| `c4d92c0` REQ-030 | #55 | 36343388823 | success | 904 PASS · 0 FAIL · 16 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
-| `11c5df2` REQ-029 | #53 | 36358331427 | success | 905 PASS · 0 FAIL · 15 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
-| `a7a60c2` cierre de REQ-029/030 | #56 | 36359910761 | success | 903 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)) |
-| `713ac68` REQ-031 | #58 | 36573224349 | success | 963 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)); autoprueba 117 · 0 |
+Esa regla, aplicada a la letra, pediría una versión mayor.
 
-- **El FAIL de `cfb1106` se conserva.** No se relanzó y no se tocó la sonda. El propietario autorizó
-  integrar el 2026-09-22 con la limitación de REQ-017 CA-08 (ii) declarada en el PR.
-- **Los INCONCLUSO se conservan.** REQ-017 CA-03 aparece desde `c4d92c0`. REQ-017 CA-08 (ii), en su
-  caso «un REQ real de 6 líneas», aparece en `a7a60c2` y en `713ac68`. Un INCONCLUSO no pone el banco
-  en rojo, y un check verde no lo acredita (REQ-030).
-- **Las cifras del desarrollador sobre REQ-023** salen de su entrada de este CHANGELOG: 2026-09-29,
-  «REQ-023 implementado…», commit `ad793ab`. Se midieron en WSL2 con bash 5.3.9:
-  - banco completo: 1137 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO ajeno, REQ-017 CA-03), cuadre 1149;
-  - autoprueba: 117 · 0;
-  - 0 de 29 cabeceras de `requirements/` ambiguas, con control positivo;
-  - las 35 filas R permiten en `713ac68` y en 1.33.2, y deniegan en la candidata.
+La convención de este arnés publica como `minor` o `patch` los cambios que cierran un fail-open de la
+puerta de cierre, aunque hagan denegar lo que antes cerraba. Por ejemplo, `QA-P48-01` salió como
+`patch` en 1.33.2. Aquí se deniegan además cuatro formas que no escondían nada, y para eso **no hay
+precedente escrito**. Por eso las cuatro incompatibilidades van **declaradas una por una**, arriba, en
+vez de quedar escondidas detrás del número. Si el propietario prefiere SemVer estricto, la versión
+sería `2.0.0`, y esa decisión es suya.
 
-  Una corrida intermedia dio 1 FAIL de reloj en la sección 25 (el heredoc de ~300 KB de
-  `guard-codigo`). Ese caso también falla contra `713ac68` en esa máquina, y se conserva en su
-  evidencia.
+Sube de `1.34.0` a `1.35.0` en los **tres** campos de distribución: `.claude-plugin/plugin.json`
+`.version`, y `.claude-plugin/marketplace.json` en `.metadata.version` y `.plugins[0].version`. Los tres
+**concuerdan**, comprobado con `jq`, y `source: "./"` queda intacto.
 
-  QA las re-derivó por su cuenta en sus tres vueltas, con el mismo código ejecutable
-  (`docs/qa/REQ-023.md`). En la vuelta 3, sobre `c4cc32c`: banco completo 1137 PASS · 0 FAIL ·
-  12 SKIP, con 1 INCONCLUSO de rendimiento distinto, REQ-017 CA-08 (ii), que se conserva; autoprueba
-  117 · 0. *(Corrige «QA no las ha validado», que prometía de menos: observación sin id de R-045 §6.)*
-- **El fail-before de REQ-023 se ejerció en local, y el CI no lo ejerce.** Son dos cosas distintas y
-  no se suman:
-  - **En local**, contra `713ac68` y contra la instalación estable 1.33.2: el desarrollador en su
-    entrega (`ad793ab`), y QA en sus tres vueltas —la sección 41 dio 169 de 169 con las dos bases
-    presentes, y en la vuelta 1 re-derivó además la tabla de CA-08 fila a fila, 79 decisiones y
-    0 inesperadas (`docs/qa/REQ-023.md` § «Vuelta 1 de 3», §4)—.
-  - **En el CI de `45c2e5c`** (run 36625681278, dato de la coordinadora): las 18 filas R del
-    fail-before salen **SKIP**, porque el runner no tiene instalada la 1.33.2 y REQ-023 CA-08
-    (Materialización) manda SKIP con el motivo, nunca PASS. Ese CI no acredita el fail-before, sea
-    cual sea su conclusión.
-- **Observación, no acreditación: el margen de REQ-017 CA-08 (ii).** Con la cabecera de 200 líneas,
-  en dos corridas pareadas en reposo, la candidata dio 1,08–1,13× y la base 0,97–1,05×; el techo es
-  1,25×. En la corrida del banco completo del desarrollador, con el banco en paralelo, dio PASS con un
-  máximo de 1,213×. Antes del prefiltro, sobre un árbol intermedio, había dado 1,09–1,24×, y una
-  corrida del banco completo con carga la dejó INCONCLUSA en [1,128×, 1,260×]. El margen es estrecho.
-  Sede: Historial de `requirements/REQ-023.md`, 2026-09-29.
-
-**La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** Esta
-cabeza todavía no tiene corrida de CI. La cabeza que se publique tendrá **la suya**, y estas notas
-**no** afirman su resultado por adelantado. **Ningún CI verde acredita rendimiento, conducta ni
-ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de SEC-047.
-
-### Limitaciones que el candidato conserva
+### Límites declarados, con alcance y consecuencia
 
 **Decisiones de publicación del propietario (2026-10-03).** Fuente: `PENDING_APPROVAL.md` § Resueltas,
 «Decisiones de publicación de v1.35.0», texto literal. Resuelven las fichas 1 y 2, la decisión 9b, P-119-A y SEC-120
 de la entrada que estaba pendiente. **Ninguna repara lo que decide, y «límite declarado» no es «riesgo aceptado»:**
-lo que sigue se publica abierto, y sus condiciones medidas están en su entrada, más abajo.
+lo que sigue se publica abierto, y sus condiciones medidas están en su entrada, más abajo. La única excepción es
+SEC-126 (decisión 6), que el propietario corrigió en el cierre, tramo 3. Las decisiones de ese tramo que tocan estas
+notas son la 1 (P-119-A), la 2 (motivos de los SKIP), la 3 (la nota histórica de «ocho») y la 4 (SEC-126); van
+anotadas en cada sitio.
 
 1. **CA-54 / QA-023-10 (decisión 9b): ACEPTADO CON ALCANCE para 1.35.0.**
    - **Alcance:** el análisis de `Bash` tarda 9,0–9,2 s en el máximo declarado (131 072 bytes), frente al
@@ -1496,15 +1499,21 @@ lo que sigue se publica abierto, y sus condiciones medidas están en su entrada,
    - **Versión:** permanece abierto; su detección se evalúa por propiedad en una versión posterior, **sin
      fecha**.
 5. **P-119-A (F2, F5, F7) y SEC-123: LÍMITES DECLARADOS, con F3 corregido (R-048).** Permanecen abiertos y **no
-   aceptados como riesgo**. La decisión no fija versión de reparación.
-6. **SEC-126: no corregido en esta versión.** El propietario decidió corregirlo en este tramo si era sólo el
-   comentario de `hooks/lib.sh` con la cifra antigua —edición de texto en un comentario, sin cambio de
-   comportamiento—, y si requería más, en 1.36.0. *(Nota de la coordinadora en la misma entrada:)* es sólo ese
-   comentario, pero `hooks/` es código protegido, su edición es del `desarrollador` y este tramo no se la despacha;
-   queda para el propietario (edición manual) o para 1.36.0.
-7. **SKIP e INCONCLUSO:** ninguno del banco acredita lo que mide; se publican con su motivo.
+   aceptados como riesgo**. La decisión no fija versión de reparación. Con ella, P-119-A deja de ser una pregunta
+   abierta de REQ-007: queda resuelta como límites declarados (decisión 1 del cierre, tramo 3).
+6. **SEC-126: REPARADO en 1.35.0** (decisión 4 del cierre, tramo 3). El propietario decidió corregirlo en este
+   tramo si era sólo el comentario de `hooks/lib.sh` con la cifra antigua —edición de texto en un comentario, sin
+   cambio de comportamiento—, y si requería más, en 1.36.0. *(Nota de la coordinadora en la entrada de las
+   decisiones de publicación:)* era sólo ese comentario, pero `hooks/` es código protegido y su edición es del
+   `desarrollador`, que no se despachó. **Lo corrigió el propietario** con una edición manual, y la coordinadora
+   verificó que el cambio de `hooks/` es sólo ese comentario (detalle en la entrada de SEC-126, abajo).
+7. **SKIP e INCONCLUSO:** ninguno del banco acredita lo que mide; se publican con su motivo. **Los motivos no se
+   copian a estas notas** (decisión 2 del cierre, tramo 3): viven en el log de cada corrida de CI y en
+   `docs/qa/REQ-023.md`.
 8. **«siete» → «ocho»:** corrección de una palabra en «Qué pasa a permitirse», cambio de compatibilidad 4, para
-   que coincida con la enumeración que sigue. Hecha en estas notas y en la guía.
+   que coincida con la enumeración que sigue. Hecha en estas notas y en la guía. La nota histórica de ese mismo
+   apartado que también dice «ocho» no se toca, y una aclaración entre paréntesis distingue los dos (decisión 3
+   del cierre, tramo 3).
 9. **Firmas de QA y seguridad del delta de la fase 2: ausentes por impedimento del proveedor**, y así se publica.
    El impedimento fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles.
 
@@ -1670,8 +1679,9 @@ lo que sigue se publica abierto, y sus condiciones medidas están en su entrada,
     cinco niveles; medido con la raíz a siete, basta con cuatro subidas. **Documentarlo no lo repara ni lo
     acepta.**
 - **P-119-A — F2, F5 y F7** (REQ-007 CA-47, «Fronteras»): **límites declarados, abiertos y no aceptados como
-  riesgo** (decisión 5, arriba); la decisión no fija versión de reparación. La identidad del destino (cambio de
-  compatibilidad 4) **no promete**:
+  riesgo** (decisión 5, arriba); la decisión no fija versión de reparación. Con ella, P-119-A deja de ser una
+  pregunta abierta de REQ-007 y queda resuelta como límites declarados (decisión 1 del cierre, tramo 3); eso no
+  cambia lo que sigue. La identidad del destino (cambio de compatibilidad 4) **no promete**:
   - **F2:** un `cd` dentro del propio comando de `Bash` y las expansiones del shell, que ya eran límite declarado
     del detector de `Bash` (`AGENTS.md` §13);
   - **F5:** un enlace situado dentro del ámbito protegido que sale de la raíz, escrito por la ruta directa a su
@@ -1682,13 +1692,22 @@ lo que sigue se publica abierto, y sus condiciones medidas están en su entrada,
 
   **F3**, corregida por R-048, queda en enlaces duros y montajes y en los límites de la detección de lo que
   depende del proceso, uno de los cuales es SEC-123 (arriba).
-- **SEC-126** (`instrumento` en REQ-007, baja): **abierto y no corregido en esta versión** (decisión 6, arriba).
-  El comentario del código que implementa el límite de SEC-123 (`hooks/lib.sh`, `_arnes_cd_resolucion`, l. 704
-  en `52a1d39`) conserva la descripción que SEC-123 corrigió: da el límite como un número de niveles, no como la
-  salida de la entrada propia de `/proc`, y no dice su consecuencia. No cambia ninguna conducta, pero desvía
-  hacia el lado que abre a quien escriba una prueba o una reparación de SEC-123 guiándose por él. **La sede del
-  límite es REQ-007 CA-47, F3, y no ese comentario.** Queda para el propietario (edición manual) o para 1.36.0
-  (`docs/seguridad/registro-seguridad.md` § R-048, §4).
+- **SEC-126** (`instrumento` en REQ-007, baja): **REPARADO en 1.35.0, corregido por el propietario** (decisión 6,
+  arriba, y decisión 4 del cierre, tramo 3). Es un comentario, sin cambio de conducta.
+  - **El defecto, como se registró** (`docs/seguridad/registro-seguridad.md` § R-048, §4): el comentario del código
+    que implementa el límite de SEC-123 (`hooks/lib.sh`, `_arnes_cd_resolucion`, l. 704 en `52a1d39`) conservaba la
+    descripción que SEC-123 corrigió. Daba el límite como un número de niveles, no como la salida de la entrada
+    propia de `/proc`, y no decía su consecuencia. No cambiaba ninguna conducta, pero desviaba hacia el lado que
+    abre a quien escribiera una prueba o una reparación de SEC-123 guiándose por él.
+  - **La corrección:** la hizo el propietario con una edición manual de `hooks/lib.sh`, porque `hooks/` es código
+    protegido. La coordinadora verificó el 2026-10-03, sobre `8522e4f` más esa edición:
+    - `git diff --stat hooks/` muestra un archivo, `hooks/lib.sh`, con 4 inserciones y 2 borrados;
+    - `git diff hooks/ | grep '^[-+][^-+#]'` no muestra nada, porque sólo hay líneas de comentario;
+    - las tres quality gates de `AGENTS.md` §7 dan rc 0.
+  - **Sin veredicto del `qa-tester` ni firma del `auditor-seguridad`:** el registro es de sólo registro
+    (`docs/seguridad/registro-seguridad.md` § R-051), y no es una determinación de seguridad.
+  - **La sede del límite sigue siendo REQ-007 CA-47, F3, y no ningún comentario del código.** SEC-123, el límite
+    que describe, sigue abierto y no aceptado (arriba).
 - **SKIP e INCONCLUSO del banco** (decisión 7, arriba): **ninguno acredita lo que mide, y se publican con su
   motivo.** Un SKIP no es un PASS, y un INCONCLUSO no pone el banco en rojo pero tampoco acredita nada (REQ-030,
   ADR-012). Las corridas del delta final, con su registro en `docs/qa/REQ-023.md` («validación del delta
@@ -1697,17 +1716,14 @@ lo que sigue se publica abierto, y sus condiciones medidas están en su entrada,
     **2 INCONCLUSO de rendimiento**, preexistentes;
   - el CI run 37163342218 sobre `92ec1fa`, en su repetición: **2016 PASS · 0 FAIL · 34 SKIP**, con 2 INCONCLUSO
     de rendimiento. Sus dos corridas rojas anteriores fallaron cada una en una sonda de tiempo distinta, y se
-    conservan;
-  - el motivo de cada caso lo imprime la corrida junto al caso. Por clase, ejemplos **no exhaustivos**: en el CI,
-    las filas R del fail-before de REQ-023 salen SKIP porque el runner no tiene instalada la 1.33.2 (REQ-023 CA-08,
-    «Materialización»), y por eso el CI no acredita el fail-before; un INCONCLUSO de rendimiento es una sonda de
-    tiempo que no resolvió dentro de su presupuesto (REQ-030).
+    conservan.
+
+  **Dónde está el motivo de cada SKIP y cada INCONCLUSO:** en el log de su corrida de CI, que lo imprime junto al
+  caso, y en `docs/qa/REQ-023.md`. Estas notas no los copian (decisión 2 del cierre, tramo 3), y su ausencia aquí
+  no los convierte en PASS. Una consecuencia que sí queda escrita, porque es una promesa y no un motivo: **el CI
+  no acredita el fail-before de REQ-023** («Historia», abajo, «El fail-before de REQ-023 se ejerció en local…»).
 - **Firmas de QA y seguridad del delta de la fase 2** (decisión 9, arriba): **ausentes por impedimento del
-  proveedor, y así se publica.** Los puntos 18 y 19 de REQ-007 CA-47 (SEC-124 y SEC-125; `10ac6c4` y `36a0d27`)
-  están construidos y validados por el propietario por vía manual (`docs/qa/REQ-023.md`; CI run 37163342218),
-  **sin veredicto del `qa-tester` ni firma del `auditor-seguridad`**: `QA:` y `Seguridad:` de REQ-007 siguen en
-  `pendiente`. **El impedimento fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no
-  sobre los roles.** Ese delta no está medido en el host ni en Windows/MSYS.
+  proveedor, y así se publica.** El detalle, en «Firmas ausentes, y por qué», abajo.
 - **La frontera de REQ-023**, descrita arriba.
 - **REQ-025:** la entrega 1b y OBS-H.
 - **`arnes_version` de `.arnes/config.json` de este repositorio sigue en `1.33.0`**, frente a un plugin
@@ -1715,35 +1731,209 @@ lo que sigue se publica abierto, y sus condiciones medidas están en su entrada,
   la toca, por la misma razón que entonces: ese campo representa la migración del proyecto, no la
   versión del plugin, y es el manifiesto que los hooks leen en runtime.
 
-### Semver: `minor` por la convención de este arnés, y no `minor` puro en SemVer estricto
+### Lo no medido: el host y Windows/MSYS
 
-El número `1.35.0` lo fijó el propietario en su autorización. **En SemVer estricto, esta versión no es
-`minor` pura:** cuatro cambios hacen que se deniegue lo que hasta `v1.34.0` se permitía sin esconder
-ningún bloqueante:
-- la nota tras el paréntesis en `Hallazgos abiertos:`;
-- la clave de control repetida con el mismo valor;
-- una edición legítima de `requirements/` cuyo `old_string` no está literal, aunque no toque el estado
-  (REQ-023 CA-13, que además cierra el fail-open de SEC-117);
-- un `Edit`/`MultiEdit` que no toca el estado sobre un REQ que la puerta no puede leer entero, y una
-  escritura cuyo destino la puerta no puede determinar (REQ-007 CA-45 y CA-47, que además cierran los
-  fail-open de O-11 y SEC-119); desde la octava autorización, también un heredoc legítimo cuyo delimitador
-  lleva un retorno de carro y una escritura por `Edit`/`Write`/`MultiEdit` a una ruta que depende del proceso
-  del host, como `Write /dev/stderr` (REQ-007 CA-47, puntos 14 y 17, que además cierran SEC-122 y QA-023-15).
+**La regla.** Una conducta de 1.35.0 está medida sólo en la capa y en la plataforma en que se ejecutó su caso:
+hook directo con la entrada inyectada, `guard.sh`, shell aparte con efecto en disco, o el CLI real (el host). Esa
+condición la lleva cada entrada de estas notas en su sitio, y cada sede en la suya (REQ-023 CA-13, REQ-007 CA-66,
+`docs/qa/REQ-023.md`). Las listas de abajo reúnen lo que estas notas declaran: son **no exhaustivas**, y que algo
+no aparezca en ellas **no lo hace medido**.
 
-Esa regla, aplicada a la letra, pediría una versión mayor.
+#### Dónde se ejecutaron los casos
 
-La convención de este arnés publica como `minor` o `patch` los cambios que cierran un fail-open de la
-puerta de cierre, aunque hagan denegar lo que antes cerraba. Por ejemplo, `QA-P48-01` salió como
-`patch` en 1.33.2. Aquí se deniegan además cuatro formas que no escondían nada, y para eso **no hay
-precedente escrito**. Por eso las cuatro incompatibilidades van **declaradas una por una**, arriba, en
-vez de quedar escondidas detrás del número. Si el propietario prefiere SemVer estricto, la versión
-sería `2.0.0`, y esa decisión es suya.
+Texto autorizado por el propietario el 2026-10-02, octava autorización, punto 5, limitado a los casos realmente
+ejecutados. *(Estaba en el cambio de compatibilidad 4; se movió aquí sin cambios el 2026-10-03.)*
+- hook en Linux/WSL2;
+- CLI 2.1.285 en WSL2 mediante `claude -p`;
+- hook en Windows/MSYS, en una máquina;
+- sin comprobación de la extensión de VS Code, del CLI en Windows ni de otros clientes.
 
-Sube de `1.34.0` a `1.35.0` en los **tres** campos de distribución: `.claude-plugin/plugin.json`
-`.version`, y `.claude-plugin/marketplace.json` en `.metadata.version` y `.plugins[0].version`. Los tres
-**concuerdan**, comprobado con `jq`, y `source: "./"` queda intacto.
+Esto describe dónde se ejecutaron los casos; no acredita toda la plataforma ni todos sus comportamientos.
+Lo reparado por la octava autorización sólo se ejerció a nivel de hook en Linux/WSL2, y el hook en
+Windows/MSYS sólo para la latencia de CA-54. La reparación agrupada tampoco garantiza por sí sola que el
+candidato quede publicable: CA-54, SEC-115 y SEC-118, el hueco C y las fronteras restantes conservan sus
+decisiones pendientes.
+*(Desde el 2026-10-03 esas decisiones están tomadas, y ninguna repara lo que decide: «Decisiones de
+publicación del propietario», al principio de «Límites declarados».)*
 
-### Lo que este commit NO hace
+#### El host
+
+**Lo ejercido en el host que citan estas notas:** casos sueltos, una ejecución por caso.
+- **CLI 2.1.285, `claude -p`, WSL2:**
+  - SEC-117 de punta a punta **antes** de su reparación, en la variante de las comillas;
+  - SEC-119 y O-11 con el hook **anterior** a su reparación;
+  - que el `cwd` sigue a un `cd` hecho en una llamada anterior de `Bash` (F7);
+  - que el host normaliza el `..`, el `./` y el `//` del `file_path` de `Edit`/`Write` antes del hook.
+- **CLI 2.1.272:** un hook que agota su timeout sin decidir deja pasar la herramienta (REQ-031 CA-A16).
+
+La validación en el host que exigen REQ-023 CA-13 (vii) y REQ-007 CA-66, con lo que ejerció de las
+reparaciones, se registra en sus sedes, y estas notas no la afirman.
+
+**No ejercido o no medido en el host** (ejemplos no exhaustivos):
+- **del cambio 4:**
+  - la lectura campo a campo de la entrada, en lo que estas notas citan: un salto de línea en el agente o en el
+    nombre de la herramienta;
+  - el retorno de carro del directorio de trabajo, de la ruta, del nombre de la herramienta y del texto de `Bash`;
+  - lo que depende del proceso que abre la ruta (SEC-122);
+  - la orden de git con retorno de carro y el enlace a un descriptor;
+  - el delta de la fase 2: SEC-124, SEC-125 y la excepción LC10;
+  - `MultiEdit` (el 2.1.285 no lo expone), el editor interactivo y la extensión de VS Code.
+- **SEC-117**, antes de su reparación: el escape `\uXXXX`, `MultiEdit`, el editor interactivo y otras versiones
+  del CLI. No se sabe desde qué versión del CLI existe ese respaldo.
+- **SEC-115:** no comprobado en la sesión interactiva del editor.
+- **SEC-118:** ningún caso se ha ejecutado en el host. Que el cliente trate como permitir un hook que termina sin
+  decisión **por esta causa** es inferido.
+- **SEC-120:** no alcanzable desde el host en lo observado, sin verificar.
+- **SEC-123:** sin comprobar ni en el CLI ni en la extensión de VS Code; su alcance desde el host es inferido.
+
+#### Windows/MSYS
+
+**Lo medido que citan estas notas:** el hook invocado directamente, en una máquina con Windows/MSYS y en una
+ejecución, para la latencia de REQ-007 CA-54; es el único uso del hook en Windows/MSYS que declara el texto de
+plataformas de arriba. Dio 20,4–28,9 s en las 15 corridas del máximo, y allí `9596e39` agotó el tiempo en las
+15 corridas del caso máximo (QA-023-10, en «Límites declarados»).
+
+**Sin medir** (ejemplos no exhaustivos):
+- todo lo demás de los cuatro cambios de compatibilidad, incluido el delta de la fase 2 (SEC-124, SEC-125 y LC10);
+- el cliente de Claude Code en Windows, otras máquinas, otras versiones de MSYS o Git Bash, Cygwin y Windows bajo
+  carga;
+- el umbral de SEC-118: si `jq` es un binario nativo, el límite de línea de órdenes de `CreateProcess` podría
+  bajarlo unas cuatro veces;
+- SEC-115, y la retirada del transporte CRLF de la entrada, que QA señaló superlineal (R-047; sin cifra) y es de
+  la misma clase;
+- SEC-123.
+
+### Firmas ausentes, y por qué
+
+**Lo que una firma cubre:** la cabeza sobre la que se emitió. Su cobertura sobre la cabeza que se publique se
+identifica en el PR del candidato («Por requisito», arriba). Las firmas de REQ-023, REQ-031 y REQ-001 viven en sus
+cabeceras y en sus registros; estas notas no las afirman ni las anticipan.
+
+- **El delta de la fase 2 de la novena autorización** (decisión 9 de publicación): **firmas de QA y de seguridad
+  ausentes por impedimento del proveedor, y así se publica.**
+  - Los puntos 18 y 19 de REQ-007 CA-47 (SEC-124 y SEC-125; `10ac6c4` y `36a0d27`) están construidos y
+    validados por el propietario por vía manual (`docs/qa/REQ-023.md`; CI run 37163342218), **sin veredicto del
+    `qa-tester` ni firma del `auditor-seguridad`**: `QA:` y `Seguridad:` de REQ-007 siguen en `pendiente`.
+  - **Por qué:** un control del proveedor detuvo al `qa-tester` cuando leía el diff de `hooks/`, y no se
+    reintentó ni se reformuló (`docs/seguridad/registro-seguridad.md` § R-050). **El impedimento fue sobre el
+    contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles.**
+  - Ese delta no está medido en el host ni en Windows/MSYS.
+- **REQ-007, entero:** sin firma de seguridad. R-045-A, R-046 y R-047 son determinaciones sobre partes, R-048 es
+  una revisión documental, y R-047 dejó escrito que la firma del REQ no procede; las razones están en su campo
+  `Seguridad:`.
+- **SEC-126:** **sin veredicto del `qa-tester` ni firma del `auditor-seguridad`.** Lo corrigió el propietario y lo
+  verificó la coordinadora con `git diff`. **Por qué:** así lo decidió el propietario, «solo registro, sin firma»
+  (decisión 4 del cierre, tramo 3).
+- **R-050 y R-051** del registro de seguridad son de **sólo registro**. Las escribió el `analista-requerimientos`
+  por instrucción expresa del propietario: no son revisión, determinación ni firma del `auditor-seguridad`.
+
+### Hacia 1.36.0
+
+**Lo que el propietario decidió reparar en 1.36.0** (decisiones de publicación 1, 2 y 3). Es su compromiso tal
+como lo escribió: estas notas no lo amplían ni lo convierten en plan.
+1. **CA-54 / QA-023-10, como foco principal.** El análisis de un comando de `Bash` en el máximo declarado (131 072
+   bytes) tarda 9,0–9,2 s en Linux/WSL2, frente al criterio de < 5 s. En 1.35.0 no se sube el umbral ni se reduce
+   la entrada. Las cifras de Windows/MSYS y la consecuencia, en «Límites declarados», QA-023-10.
+2. **SEC-115 y SEC-118, con reparación fail-closed.** Hoy, un hook que agota el tiempo o cuyo motivo es demasiado
+   grande puede no emitir decisión, y entonces no deniega. En 1.35.0 son límites declarados, no aceptados como
+   definitivos.
+3. **SEC-120, antes de su vencimiento del 2026-10-29.** Un fallo de `jq` al leer o trocear la entrada del hook
+   tiene que dar deny; hoy deja pasar.
+
+**Lo que no está en este apartado, y por qué:** el propietario no le fijó versión. El hueco C se evalúa por
+propiedad en una versión posterior, **sin fecha**. P-119-A (F2, F5 y F7) y SEC-123 son límites declarados **sin
+versión de reparación**. Que no estén aquí no los acepta como riesgo.
+
+### Historia, conservada tal cual
+
+Lo que sigue describe el candidato en fechas anteriores y no se reescribe. Cada cifra es de la cabeza que nombra,
+no de la que se publique.
+
+#### Alcance real, medido sobre `78e3d2f`
+
+*(Nota del 2026-10-03: estas cifras son de `78e3d2f`. Después, el candidato cambia también, como mínimo,
+`hooks/guard-codigo.sh` —cambio 4, «Qué recibe un consumidor»—. Lo que entra sobre la cabeza que se publique lo da
+su PR.)*
+
+`git log --first-parent v1.34.0..78e3d2f` (78e3d2f es la cabeza anterior a este commit) da nueve
+entradas: cinco merges de `main` y cuatro commits de `cand/1.35.0`. En total son 90 commits.
+`git diff --stat v1.34.0..78e3d2f` da 50 archivos, 17 686 inserciones y 1 397 borrados; casi todo es
+requisitos, evidencia de QA, registro de seguridad y gobernanza. **El mecanismo cambia en tres
+archivos:** `hooks/guard-completado.sh`, `hooks/lib.sh` y `tools/arnes-lectura.sh`, con 551
+inserciones y 67 borrados. `hooks/hooks.json`, `.github/` y `.arnes/` **no cambian**.
+
+| Commit | PR | Qué trae |
+|---|---|---|
+| `cfb1106` | #52 | REQ-025, **sólo la entrega 1**: coordinación orientada a entregas |
+| `c4d92c0` | #55 | REQ-030: sondas de coste de REQ-017 CA-03 y CA-08 (ii) con presupuesto fijo e INCONCLUSO visible |
+| `11c5df2` | #53 | REQ-029: fidelidad al encargo |
+| `a7a60c2` | #56 | Cierre administrativo de REQ-029 y REQ-030 |
+| `713ac68` | #58 | REQ-031: gramática cerrada de `Hallazgos abiertos:` y preparación del paralelismo |
+| `856d97d`…`78e3d2f` | — (rama `cand/1.35.0`) | Autorización del propietario y REQ-023, mitad 1 de SEC-047: contrato, implementación y versionado de CA-01 (i) |
+
+**No entra nada de `rel/registro-1.33.0`.** Medido: esa rama tiene 0 commits en `v1.34.0..78e3d2f`, y
+su base común con el candidato (`5e53f12`) es anterior a `v1.34.0`. Tampoco entran la entrega 1b de
+REQ-025, REQ-028, REQ-024 (la mitad 2 de SEC-047) ni REQ-011.
+
+#### Resultados históricos, conservados tal cual
+
+CI `hooks-en-linux` sobre `main` desde `v1.34.0`. Los datos se leyeron con `gh run view --log` el
+2026-09-29, sin relanzar nada:
+
+| Merge | PR | Run | Conclusión | Resultado |
+|---|---|---|---|---|
+| `cc8972c` (tag `v1.34.0`) | #51 | 35160309648 | success | publicación de 1.34.0 |
+| `cfb1106` REQ-025 entrega 1 | #52 | 35742539672 | **failure** | 903 PASS · **2 FAIL** · 7 SKIP: REQ-017 CA-03 (cociente 2,747× > techo 2,600×) y REQ-017 CA-08 (ii) (1,255× > 1,250×, con la sonda convergida) |
+| `c4d92c0` REQ-030 | #55 | 36343388823 | success | 904 PASS · 0 FAIL · 16 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
+| `11c5df2` REQ-029 | #53 | 36358331427 | success | 905 PASS · 0 FAIL · 15 SKIP (1 INCONCLUSO de rendimiento: REQ-017 CA-03) |
+| `a7a60c2` cierre de REQ-029/030 | #56 | 36359910761 | success | 903 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)) |
+| `713ac68` REQ-031 | #58 | 36573224349 | success | 963 PASS · 0 FAIL · 17 SKIP (2 INCONCLUSO de rendimiento: REQ-017 CA-03 y CA-08 (ii)); autoprueba 117 · 0 |
+
+- **El FAIL de `cfb1106` se conserva.** No se relanzó y no se tocó la sonda. El propietario autorizó
+  integrar el 2026-09-22 con la limitación de REQ-017 CA-08 (ii) declarada en el PR.
+- **Los INCONCLUSO se conservan.** REQ-017 CA-03 aparece desde `c4d92c0`. REQ-017 CA-08 (ii), en su
+  caso «un REQ real de 6 líneas», aparece en `a7a60c2` y en `713ac68`. Un INCONCLUSO no pone el banco
+  en rojo, y un check verde no lo acredita (REQ-030).
+- **Las cifras del desarrollador sobre REQ-023** salen de su entrada de este CHANGELOG: 2026-09-29,
+  «REQ-023 implementado…», commit `ad793ab`. Se midieron en WSL2 con bash 5.3.9:
+  - banco completo: 1137 PASS · 0 FAIL · 12 SKIP (1 INCONCLUSO ajeno, REQ-017 CA-03), cuadre 1149;
+  - autoprueba: 117 · 0;
+  - 0 de 29 cabeceras de `requirements/` ambiguas, con control positivo;
+  - las 35 filas R permiten en `713ac68` y en 1.33.2, y deniegan en la candidata.
+
+  Una corrida intermedia dio 1 FAIL de reloj en la sección 25 (el heredoc de ~300 KB de
+  `guard-codigo`). Ese caso también falla contra `713ac68` en esa máquina, y se conserva en su
+  evidencia.
+
+  QA las re-derivó por su cuenta en sus tres vueltas, con el mismo código ejecutable
+  (`docs/qa/REQ-023.md`). En la vuelta 3, sobre `c4cc32c`: banco completo 1137 PASS · 0 FAIL ·
+  12 SKIP, con 1 INCONCLUSO de rendimiento distinto, REQ-017 CA-08 (ii), que se conserva; autoprueba
+  117 · 0. *(Corrige «QA no las ha validado», que prometía de menos: observación sin id de R-045 §6.)*
+- **El fail-before de REQ-023 se ejerció en local, y el CI no lo ejerce.** Son dos cosas distintas y
+  no se suman:
+  - **En local**, contra `713ac68` y contra la instalación estable 1.33.2: el desarrollador en su
+    entrega (`ad793ab`), y QA en sus tres vueltas —la sección 41 dio 169 de 169 con las dos bases
+    presentes, y en la vuelta 1 re-derivó además la tabla de CA-08 fila a fila, 79 decisiones y
+    0 inesperadas (`docs/qa/REQ-023.md` § «Vuelta 1 de 3», §4)—.
+  - **En el CI de `45c2e5c`** (run 36625681278, dato de la coordinadora): las 18 filas R del
+    fail-before salen **SKIP**, porque el runner no tiene instalada la 1.33.2 y REQ-023 CA-08
+    (Materialización) manda SKIP con el motivo, nunca PASS. Ese CI no acredita el fail-before, sea
+    cual sea su conclusión.
+- **Observación, no acreditación: el margen de REQ-017 CA-08 (ii).** Con la cabecera de 200 líneas,
+  en dos corridas pareadas en reposo, la candidata dio 1,08–1,13× y la base 0,97–1,05×; el techo es
+  1,25×. En la corrida del banco completo del desarrollador, con el banco en paralelo, dio PASS con un
+  máximo de 1,213×. Antes del prefiltro, sobre un árbol intermedio, había dado 1,09–1,24×, y una
+  corrida del banco completo con carga la dejó INCONCLUSA en [1,128×, 1,260×]. El margen es estrecho.
+  Sede: Historial de `requirements/REQ-023.md`, 2026-09-29.
+
+**La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** Esta
+cabeza todavía no tiene corrida de CI. La cabeza que se publique tendrá **la suya**, y estas notas
+**no** afirman su resultado por adelantado. **Ningún CI verde acredita rendimiento, conducta ni
+ahorro.** Tampoco lo acredita el ±1 % del ensayo preliminar de la propuesta de SEC-047.
+*(«Esta cabeza» es la del commit de versión del 2026-09-29. Después hubo corridas sobre cabezas posteriores
+—por ejemplo, el run 37163342218 sobre `92ec1fa`, en «Límites declarados»—, y cada una certifica sólo la suya.)*
+
+#### Lo que el commit de versión del 2026-09-29 NO hace
 
 - No fusiona, no etiqueta, no publica, no empuja y no actualiza ninguna instalación.
 - No cierra ningún REQ ni ningún hallazgo, y no afirma ningún veredicto de REQ-023.

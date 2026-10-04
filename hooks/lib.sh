@@ -700,8 +700,10 @@ _arnes_ancla() {
 #     y por `Bash` sin un `cwd` que ancle, tampoco. Se resuelve desde DENTRO de la entrada en /proc del
 #     propio proceso: toda dependencia del directorio de trabajo aterriza en ella, y `_arnes_propio` la
 #     ve. Sin /proc no hay `/proc/self` por el que depender, y se resuelve desde donde se este.
-# LIMITE, declarado: una cadena que, tras llegar al directorio de trabajo, sube con `..` por encima de
-# esa entrada (`/proc/<pid>/task/<pid>/fdinfo`: cinco niveles) sale de ella y no se ve.
+# LIMITE, declarado (REQ-007 CA-47, F3 y punto 16; sede unica de la cifra y de la consecuencia): una
+# cadena que, tras llegar al directorio de trabajo, sube con `..` lo bastante para SALIR de la entrada
+# propia de /proc desde la que se resuelve deja de verse desde ella, y la puerta juzga el archivo al que
+# llega el hook, no el que abre quien escribe: la consecuencia es un permiso (SEC-123, P-119-A).
 # Vale igual en un subshell (lo usa `_arnes_id_resuelve_enlace`): `$BASHPID` es el suyo.
 # 1 = el `cwd` que ancla ya no se deja recorrer.
 _arnes_cd_resolucion() {

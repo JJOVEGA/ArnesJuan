@@ -10,7 +10,7 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0: fase 2 construida y validada por el propietario (vía manual, sin firmas de QA ni de seguridad); decisiones de publicación tomadas y escritas; cola vacía; pendiente el tramo 3 (versión, push, PR, CI, fusión y tag) (2026-10-03)
+## ⏸ RETOMAR AQUÍ — candidato 1.35.0: notas finales escritas, SEC-126 corregido y P-119-A resuelta como límites declarados; falta lo manual del propietario: `arnes_version`, push, PR, CI, fusión y tag (2026-10-03)
 
 **Este bloque es el único vigente en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`). Todo lo que está debajo es historia.
 
@@ -105,7 +105,18 @@
         - el motivo caso por caso de los SKIP no está en ninguna sede: está sólo en el log del CI;
         - una nota de historia de las notas menciona un «ocho» antiguo.
       - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.**
-    - **Siguiente:** el tramo 3, del propietario: versión, push, PR, CI, fusión y tag.
+    - **Cierre, tramo 3 (2026-10-03, posterior a `8522e4f`; decisiones literales en `PENDING_APPROVAL.md`):**
+      - **SEC-126:** corregido por el propietario en el comentario de `hooks/lib.sh`. La coordinadora verificó que el diff de `hooks/` es un solo archivo y sólo líneas de comentario, y las gates de §7 dan rc 0. Queda como «reparado» en las notas y en R-051 (sólo registro, sin firma). Que el texto nuevo cumpla la propiedad de R-048 §4 no lo comprobó ningún agente.
+      - **P-119-A:** resuelta como límites declarados en REQ-007 (sin campos de cabecera) y en el índice. F2, F5 y F7 siguen abiertos y no aceptados. REQ-007 ya no tiene preguntas abiertas.
+      - **Notas `[1.35.0]`:** son las notas finales, con «Qué cambia», «Límites declarados» (con alcance y consecuencia), «Lo no medido: el host y Windows/MSYS», «Firmas ausentes, y por qué», «Hacia 1.36.0» (CA-54, SEC-115/118, SEC-120, que vence el 2026-10-29) e «Historia». Los SKIP remiten al log del CI y a `docs/qa/REQ-023.md`. Ningún identificador de las notas anteriores desaparece (comprobación de la coordinadora).
+      - **La guía** está alineada con las notas.
+      - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.** No se ha cerrado ningún REQ.
+    - **LO QUE EL PROPIETARIO HACE A MANO PARA PUBLICAR:**
+      1. **`.arnes/config.json`, clave `arnes_version`:** `"1.33.0"` → `"1.35.0"` (l. 3). Es archivo protegido. `plugin.json` (`version`) y `marketplace.json` (`metadata.version`, `plugins[0].version`) ya están en `1.35.0`.
+      2. **En el mismo commit**, el párrafo de `arnes_version` de las notas `[1.35.0]` (`CHANGELOG.md`, «Límites declarados», el que dice «sigue en `1.33.0` … Este commit no la toca»), que dejaría de ser cierto.
+      3. **Push** de `cand/1.35.0` sin force y **una sola corrida de CI** sobre la cabeza final. Se conserva el resultado y no se relanza.
+      4. **Actualizar el PR #59**, quitarle el borrador, **fusionar** a `main` y crear el **tag `v1.35.0`**.
+      5. **Actualizar la instalación estable** del plugin y comprobarla. Después, si se quiere, la comprobación en VS Code (CLI dentro de WSL y, aparte, la extensión).
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -497,7 +508,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 18:41
+## Estado derivado — 2026-10-03 19:30
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -507,7 +518,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `52a1d39` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `8522e4f` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

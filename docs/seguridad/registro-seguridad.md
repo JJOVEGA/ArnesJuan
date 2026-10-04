@@ -10066,3 +10066,36 @@ El resto, como en R-048 §7. **Estado de seguridad aprobado** de REQ-023, REQ-03
 - **Estado de seguridad aprobado por REQ: sin cambio.** REQ-007 sigue sin firma.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-050**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-051** y **SEC-127**.
+
+## Revisión R-051 — **Cierre de v1.35.0, tramo 3: registro de SEC-126 «reparado» por el propietario.** `cand/1.35.0` @ `8522e4f` + la edición del propietario en `hooks/lib.sh`, **sin comitear** — 2026-10-03 — **SÓLO REGISTRO: NO REVISIÓN, NO DETERMINACIÓN, NO FIRMA**
+
+**Quién la escribe, y por qué.** La escribe el `analista-requerimientos`, no el `auditor-seguridad`, por instrucción expresa del propietario:
+- `PENDING_APPROVAL.md` § Resueltas, «RESUELTA (propietario, 2026-10-03, posterior a `8522e4f`) — Cierre de v1.35.0, tramo 3», decisión 4 (literal): «SEC-126: corregido por el propietario en hooks/lib.sh (edicion ya en el arbol). Pasa a «reparado» en el registro (solo registro, sin firma) y en las notas.»;
+- el pedido del mismo propietario, transmitido por la coordinadora en el encargo de este tramo: «Write-back de 1 a 4 en REQ-007, indice, notas [1.35.0], guia, registro (SEC-126) y ESTADO».
+
+Es el mismo precedente que R-050. **El `auditor-seguridad` no ha revisado, medido ni determinado nada de lo que aquí consta**, y esta entrada no habla por él: no es su veredicto ni una firma.
+
+**Numeración.** `R-051` figuraba como «próximo libre» en la línea final de R-050 y no aparece en ningún otro sitio de este archivo (búsqueda de texto). No se comprobaron ramas, etiquetas ni otros worktrees, porque esta comisión no tiene consola. No se asigna ningún `SEC-`: esta entrada no abre hallazgos.
+
+**Qué registra.**
+- **El hallazgo:** SEC-126 (`instrumento`, REQ-007, severidad baja), tal como lo registró R-048 §4. El comentario de `hooks/lib.sh` junto a `_arnes_cd_resolucion` conservaba la descripción del límite de SEC-123 que la fase 1 corrigió: un número de niveles en lugar de la salida de la entrada propia de `/proc`, y sin su consecuencia. El texto de R-048 §4 no se reescribe.
+- **La corrección:** la hizo el propietario con una edición manual del comentario, porque `hooks/` es código protegido y su edición es del `desarrollador`, que no se despachó (`AGENTS.md` §6). La remediación que R-048 §4 pedía, por propiedad, era describir el límite por la salida de la entrada propia de `/proc` y remitir a REQ-007 CA-47, F3, sin cifra propia. **Si el comentario nuevo cumple esa propiedad no lo comprueba esta entrada**: su autor no ha leído `hooks/`, por instrucción del encargo.
+- **La verificación, que es de la coordinadora** y está rotulada como suya en la misma entrada de `PENDING_APPROVAL.md` (2026-10-03):
+  - `git diff --stat hooks/` muestra un archivo, `hooks/lib.sh`, con 4 inserciones y 2 borrados;
+  - `git diff hooks/ | grep '^[-+][^-+#]'` no muestra nada (rc 1): sólo hay líneas de comentario;
+  - las tres gates de `AGENTS.md` §7 dan rc 0.
+
+### Estado tras R-051 (por decisión del propietario, sin determinación del auditor)
+
+| Hallazgo | Clase | Estado | Fuente |
+|---|---|---|---|
+| `SEC-126` | `instrumento` (REQ-007) | **reparado**: comentario corregido por el propietario, sin cambio de conducta; sólo registro, sin firma | decisión 4 del cierre de v1.35.0, tramo 3 |
+| `SEC-123` | `instrumento` (REQ-007) | sin cambio: **`abierto`**, límite declarado, no aceptado como riesgo (decisión 5 de publicación). Corregir el comentario no repara el mecanismo | decisiones de publicación de v1.35.0, decisión 5 |
+
+**Lo que esta entrada deja escrito para que no se lea de más:**
+- **«Reparado» es el estado que decidió el propietario, no una determinación de seguridad.** El dueño del hallazgo en R-048 §4 era el `desarrollador`; la corrección no pasó por él, ni por QA, ni por esta revisión.
+- **La sede del límite sigue siendo REQ-007 CA-47, F3**, y no ningún comentario del código. La «Regresión a vigilar» de R-048 §7 sigue en pie: una sede, comentario o prueba que vuelva a dar el límite de F3 como un número de subidas en lugar de la salida de la entrada propia (no exhaustivo).
+- SEC-126 no figuraba en `Hallazgos abiertos:` de REQ-007 (R-048 §4) y esta entrada no toca ese campo.
+- **Estado de seguridad aprobado por REQ: sin cambio.** REQ-007 sigue sin firma.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-051**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-052** y **SEC-127**.

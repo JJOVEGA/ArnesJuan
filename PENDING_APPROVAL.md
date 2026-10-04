@@ -40,6 +40,38 @@ _(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por l
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-03, posterior a `8522e4f`) — **Cierre de v1.35.0, tramo 3**: P-119-A resuelta como límites declarados; los motivos de los SKIP remiten al log del CI; la nota histórica de «ocho» no se toca; SEC-126 corregido por el propietario; versión 1.35.0
+
+**Texto del propietario, literal** (mensaje del 2026-10-03, sección «Decisiones del propietario (registrar literales)»):
+
+> 1. P-119-A en REQ-007 pasa de «Preguntas abiertas» a resuelta como limites
+>    declarados (decision 5 de publicacion); F2, F5 y F7 siguen abiertos y no
+>    aceptados como riesgo. Indice coherente.
+> 2. Los motivos de los SKIP no se copian a las notas: viven en el log del CI y
+>    en docs/qa/REQ-023.md; las notas remiten alli.
+> 3. La nota historica del CHANGELOG con «ocho» no se toca; si hace falta, una
+>    aclaracion entre parentesis en la nota nueva.
+> 4. SEC-126: corregido por el propietario en hooks/lib.sh (edicion ya en el
+>    arbol). Pasa a «reparado» en el registro (solo registro, sin firma) y en
+>    las notas. La coordinadora verifica que el diff de hooks/ es SOLO ese
+>    comentario: `git diff --stat hooks/` debe mostrar un archivo y
+>    `git diff hooks/ | grep '^[-+][^-+#]'` no debe mostrar nada (solo lineas
+>    de comentario). Si muestra algo mas, para y avisa.
+> 5. Version: arnes_version 1.35.0 en .arnes/config.json; version 1.35.0 en
+>    .claude-plugin/plugin.json y marketplace.json. Como esos archivos estan
+>    protegidos, los edita el propietario si guard-codigo lo deniega; la
+>    coordinadora indica los tres cambios exactos (archivo, clave, valor).
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Base:** `8522e4f`, más la edición del propietario en `hooks/lib.sh` sin comitear.
+- **Decisión 4, verificada el 2026-10-03:**
+  - `git diff --stat hooks/` muestra un archivo, `hooks/lib.sh`, con 4 inserciones y 2 borrados;
+  - `git diff hooks/ | grep '^[-+][^-+#]'` no muestra nada (rc 1): sólo hay líneas de comentario;
+  - las tres gates de §7 dan rc 0.
+- **Decisión 5:**
+  - `.claude-plugin/plugin.json` (`version`) y `.claude-plugin/marketplace.json` (`metadata.version` y `plugins[0].version`) **ya están en `1.35.0`**;
+  - **sólo falta** `.arnes/config.json`, clave `arnes_version`: `"1.33.0"` → `"1.35.0"`, l. 3. Está en `codigo_app.globs` y lo edita el propietario. La coordinadora no lo intenta.
+
 ### RESUELTA (propietario, 2026-10-03, posterior a `52a1d39`) — **Decisiones de publicación de v1.35.0**: CA-54 aceptado con alcance; SEC-115/118, SEC-120, hueco C, P-119-A (F2, F5, F7) y SEC-123 como límites declarados; SEC-126 si es sólo comentario; SKIP/INCONCLUSO no acreditan; «siete» → «ocho»; firmas de QA y seguridad de la fase 2 ausentes y declaradas. Resuelve las fichas 1 y 2, la decisión 9b, P-119-A y SEC-120 de la entrada que estaba pendiente (debajo)
 
 **Texto del propietario, literal** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`, sección «Decisiones del propietario para la publicación de v1.35.0»):
