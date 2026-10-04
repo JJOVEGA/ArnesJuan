@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Notas `[1.35.0]`: la prueba en el host del CLI 2.1.285 dentro de WSL2 queda en «Lo no medido» › «El host»
+> Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por decisión expresa del propietario. Sin comisiones.
+
+- **Notas `[1.35.0]`:**
+  - línea nueva en «Lo ejercido en el host», con el texto aprobado por el propietario;
+  - la viñeta «no ejercido» del delta de la fase 2 se acota a sus formas que deniegan, para no contradecir la línea nueva.
+- **Guía:** sin cambio. No decía «host no ejercido» para la fase 2.
+- **Evidencia:** copiada a la rama de evidencia (`cand-1.35.0/host-a51dc5b/ (nombre del directorio de la sesión; la cabeza probada es `5d810f0`)`), con su propio commit local.
+- **Sin cambios:** REQ-007, código y banco.
+
 ## [Interno] — 2026-10-03 · Prueba en el host (CLI 2.1.285 dentro de WSL2) sobre `5d810f0`: heredoc normal a `docs/` y escritura partida con continuación hacia `docs/`, permitidos y escritos; `echo x > src/algo` de la coordinadora, denegado con su motivo y sin escribir
 > Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, a petición del propietario. Sin comisiones.
 
@@ -1773,7 +1783,8 @@ publicación del propietario», al principio de «Límites declarados».)*
   - SEC-117 de punta a punta **antes** de su reparación, en la variante de las comillas;
   - SEC-119 y O-11 con el hook **anterior** a su reparación;
   - que el `cwd` sigue a un `cd` hecho en una llamada anterior de `Bash` (F7);
-  - que el host normaliza el `..`, el `./` y el `//` del `file_path` de `Edit`/`Write` antes del hook.
+  - que el host normaliza el `..`, el `./` y el `//` del `file_path` de `Edit`/`Write` antes del hook;
+  - CLI 2.1.285 dentro de WSL2: un heredoc normal y una escritura partida con continuación hacia `docs/` pasan, y una escritura de la coordinadora en código protegido se deniega con su motivo (2026-10-03). Las formas HC/LC que deniegan, el panel de la extensión y Windows/MSYS no se ejercieron en el host.
 - **CLI 2.1.272:** un hook que agota su timeout sin decidir deja pasar la herramienta (REQ-031 CA-A16).
 
 La validación en el host que exigen REQ-023 CA-13 (vii) y REQ-007 CA-66, con lo que ejerció de las
@@ -1786,7 +1797,7 @@ reparaciones, se registra en sus sedes, y estas notas no la afirman.
   - el retorno de carro del directorio de trabajo, de la ruta, del nombre de la herramienta y del texto de `Bash`;
   - lo que depende del proceso que abre la ruta (SEC-122);
   - la orden de git con retorno de carro y el enlace a un descriptor;
-  - el delta de la fase 2: SEC-124, SEC-125 y la excepción LC10;
+  - el delta de la fase 2: SEC-124, SEC-125 y la excepción LC10, en sus formas que deniegan (los dos controles legítimos citados arriba sí se ejercieron);
   - `MultiEdit` (el 2.1.285 no lo expone), el editor interactivo y la extensión de VS Code.
 - **SEC-117**, antes de su reparación: el escape `\uXXXX`, `MultiEdit`, el editor interactivo y otras versiones
   del CLI. No se sabe desde qué versión del CLI existe ese respaldo.

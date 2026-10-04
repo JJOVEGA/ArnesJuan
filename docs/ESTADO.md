@@ -118,7 +118,7 @@
       - **(3) `echo x > src/algo`:** **deny**, con el motivo «el comando escribe en 'src/algo', que es código de la app; sólo el agente 'desarrollador'…»; el host lo bloqueó y `src/algo` no existe.
       - **Evidencia:** en el scratchpad de la sesión, `host-a51dc5b/` (PREREGISTRO, RESULTADO, logs de la sonda y `stream.jsonl`). **No está en la rama de evidencia.**
       - **No ejercido:** el **panel de la extensión** (lo hace el propietario), Windows/MSYS, `MultiEdit` y las formas HC/LC que deniegan.
-      - **Las notas `[1.35.0]` («Lo no medido») todavía dicen «host no ejercido»** para la fase 2. Si se quiere reflejar esta prueba, hace falta una línea (ver el informe a Juan).
+      - **Notas `[1.35.0]` actualizadas** en «Lo no medido» › «El host», con la línea de esta prueba, por decisión del propietario. La guía no lo decía para la fase 2 y no cambia. La evidencia está copiada a la rama de evidencia, `cand-1.35.0/host-a51dc5b/ (nombre del directorio de la sesión; la cabeza probada es `5d810f0`)`.
     - **LO QUE EL PROPIETARIO HACE A MANO PARA PUBLICAR:**
       1. **`.arnes/config.json`, clave `arnes_version`:** `"1.33.0"` → `"1.35.0"` (l. 3). Es archivo protegido. `plugin.json` (`version`) y `marketplace.json` (`metadata.version`, `plugins[0].version`) ya están en `1.35.0`.
       2. **En el mismo commit**, el párrafo de `arnes_version` de las notas `[1.35.0]` (`CHANGELOG.md`, «Límites declarados», el que dice «sigue en `1.33.0` … Este commit no la toca»), que dejaría de ser cierto.
@@ -516,7 +516,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 19:31
+## Estado derivado — 2026-10-03 20:00
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -526,7 +526,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `a51dc5b` — limpio
+**Repositorio:** `cand/1.35.0` @ `a5c5da8` — limpio
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
