@@ -21,7 +21,7 @@ CHANGELOG — ArnesJuan
   - `tools/arnes-lectura.sh .` no ve anomalías;
   - ningún identificador desaparece de las notas `[1.35.0]`;
   - R-051 estaba libre en todas las ramas.
-- **Sin cambios:** `.arnes/config.json` (protegido; `arnes_version` lo sube el propietario), `tools/`, `tests/`, `AGENTS.md`, contadores y estados de REQ.
+- **Sin cambios:** `.arnes/config.json` (protegido; `arnes_version` NO se sube con la version del plugin: es la migracion del proyecto y la escribe `/arnes-upgrade` cuando el plan quede aplicado entero, como declaran las notas de 1.34.0 y 1.35.0; decision del propietario), `tools/`, `tests/`, `AGENTS.md`, contadores y estados de REQ.
 - **Avance (regla 6):** el candidato queda listo en texto para publicar. Faltan los pasos manuales del propietario, en `docs/ESTADO.md`.
 
 ## [Interno] — 2026-10-03 · Cierre de v1.35.0, tramo 2: decisiones de publicación del propietario registradas y escritas en las notas y en la guía; «siete» → «ocho»; cola vacía; SEC-126 no corregido (ruta protegida)
