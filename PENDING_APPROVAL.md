@@ -36,9 +36,23 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por las decisiones de publicación de v1.35.0 y está en § Resueltas.)_
+_(Vacía desde el 2026-10-03: la última entrada pendiente quedó resuelta por las decisiones de publicación de v1.35.0 y está en § Resueltas. v1.35.0 está publicada; su cierre es la primera entrada de § Resueltas.)_
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-03) — **Publicación de v1.35.0 ejecutada**: `main` `3956a6f`, tag `v1.35.0`, PR #59, CI final run 37169938675 (success) sobre `c0f8493`
+
+**Datos del propietario** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.36`, «Encargo 1»): publicada el 2026-10-03; `main` `3956a6f`; tag `v1.35.0`; PR #59; CI final run 37169938675 (success) sobre `c0f8493`. Plugin instalado: 1.35.0.
+
+**Lectura del propietario, literal** (mismo mensaje):
+
+> El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Comprobado con `git` y `gh` (2026-10-03):** `git tag --points-at 3956a6f` da `v1.35.0`; `3956a6f` es la fusión de `713ac68` y `c0f8493`; el PR #59 está `MERGED` con `mergeCommit` `3956a6f` y `headRefOid` `c0f8493`; el run `37169938675` (`banco`) está `completed`/`success` con `headSha` `c0f8493`.
+- **Cierra** lo que quedaba de «Lo que el propietario hace a mano para publicar» en el bloque de 1.35.0 de `docs/ESTADO.md`, puntos 3 a 5 (push, CI, PR, fusión, tag e instalación estable). El punto 1 (`arnes_version`) se resolvió de otro modo: se conserva en `1.33.0` por decisión del propietario (`5d810f0`).
+- **No había entrada pendiente que mover:** la cola ya estaba vacía. Esta entrada sólo deja escrito el cierre. **No** autoriza cerrar ningún REQ, y no cambia veredictos, contratos ni contadores.
+- **Qué trabajo sigue:** la apertura de 1.36.0 (contrato del analista), autorizada en el mismo mensaje. La implementación de CA-54 la autoriza el propietario aparte.
 
 ### RESUELTA (propietario, 2026-10-03, posterior a `8522e4f`) — **Cierre de v1.35.0, tramo 3**: P-119-A resuelta como límites declarados; los motivos de los SKIP remiten al log del CI; la nota histórica de «ocho» no se toca; SEC-126 corregido por el propietario; versión 1.35.0
 

@@ -10,7 +10,26 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — candidato 1.35.0: notas finales escritas, SEC-126 corregido y P-119-A resuelta como límites declarados; falta lo manual del propietario: `arnes_version`, push, PR, CI, fusión y tag (2026-10-03)
+## ⏸ RETOMAR AQUÍ — ventana 1.36.0 abierta; 1.35.0 publicada (2026-10-03)
+
+**Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
+
+- **1.35.0 publicada el 2026-10-03:** `main` en `3956a6f` (fusión del PR #59), tag `v1.35.0` sobre esa fusión, CI final run `37169938675` (success) sobre `c0f8493`. Plugin instalado: **1.35.0**; gobierna el desarrollo de 1.36.0. Registro: `PENDING_APPROVAL.md` § Resueltas, «Publicación de v1.35.0 ejecutada», y la línea «PUBLICADA» de las notas `[1.35.0]`.
+- **Cabeza de partida:** `cand/1.36.0` desde `origin/main` = `3956a6f`. Sin push.
+- **`arnes_version`** de `.arnes/config.json` sigue en `1.33.0` por decisión del propietario (`5d810f0`): es la migración del proyecto y la escribe `/arnes-upgrade`.
+- **Lectura del propietario, literal (2026-10-03):** «El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.»
+- **Alcance de 1.36.0, decidido por el propietario el 2026-10-03, en este orden de prioridad:**
+  1. **CA-54 / QA-023-10:** el análisis de `Bash` en el máximo declarado (131 072 bytes) termina en menos de 5 s en Linux/WSL2, sin cambiar ningún veredicto del banco (2050 casos) y sin subir el umbral ni reducir la entrada. Es optimización de rendimiento; se mide con el banco y las sondas existentes.
+  2. **SEC-120** (vence el 2026-10-29): un fallo de `jq` al leer o trocear la entrada da deny en las herramientas que las puertas juzgan. Comprobación de código de salida, sin procesos nuevos.
+  3. **SEC-115 y SEC-118:** fail-closed cuando el hook agota tiempo o el motivo excede el tope; emitir decisión siempre; medir el tope en bytes, ASCII y multibyte, en Linux; Windows declarado no medido.
+  - **Fuera de alcance:** el hueco C, P-119-A (F2, F5, F7) y el mecanismo de SEC-123.
+- **Esta sesión abre y no implementa.** No se despacha al desarrollador, a QA ni a seguridad. La implementación de CA-54 la autoriza el propietario aparte, sobre el contrato.
+- **Próximo paso:** el contrato de 1.36.0 del `analista-requerimientos`, por propiedad y medida.
+- **REQ y firmas:** sin cambios respecto al cierre de 1.35.0. REQ-023, REQ-031 y REQ-001 en `en-revisión` con QA y seguridad aprobados; REQ-007 en `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ cerrado. El contador dev↔QA de REQ-023 sigue en 3 de 3.
+
+## Historia — candidato 1.35.0: notas finales escritas, SEC-126 corregido y P-119-A resuelta como límites declarados; falta lo manual del propietario: `arnes_version`, push, PR, CI, fusión y tag (2026-10-03)
+
+*(Historia desde el 2026-10-03: 1.35.0 está publicada y lo sustituye el bloque de 1.36.0, arriba. El texto siguiente no se reescribe.)*
 
 **Este bloque es el único vigente en la rama `cand/1.35.0`** (worktree `/home/juan/dev/ArnesJuan-v1.35`). Todo lo que está debajo es historia.
 

@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Registro de la publicación de v1.35.0: notas `[1.35.0]` de candidato a publicada, ESTADO abre el bloque de 1.36.0, la cola cierra la publicación; lectura del propietario sobre el impedimento del proveedor
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por encargo del propietario (mensaje del 2026-10-03 a la sesión del worktree `ArnesJuan-v1.36`, «Encargo 1»). Sin comisiones. Rama `cand/1.36.0`, desde `3956a6f`. Gobernado por la instalación estable **1.35.0**.
+
+- **Datos de la publicación, comprobados por la coordinadora con `git` y `gh`:** `main` en `3956a6f` (fusión del PR #59, `state: MERGED`, `mergedAt` 2026-10-04T02:08:55Z = 2026-10-03 en Costa Rica); tag `v1.35.0` sobre `3956a6f`; CI final run `37169938675` (`banco`), `conclusion: success`, `headSha` `c0f8493`, que es la cabeza del PR.
+- **Notas `[1.35.0]`:** la fecha del encabezado pasa a 2026-10-03 y se añade la línea «PUBLICADA» con esos datos. El contenido de las notas no se reescribe.
+- **`docs/ESTADO.md`:** bloque vigente nuevo de 1.36.0 (1.35.0 publicada, cabeza de partida, alcance decidido, próximo paso); el bloque de 1.35.0 pasa a «Historia» sin cambiar su texto, salvo el encabezado y una línea que dice que ya no es vigente.
+- **`PENDING_APPROVAL.md`:** entrada resuelta «Publicación de v1.35.0 ejecutada». La cola ya estaba vacía antes de este commit (desde las decisiones de publicación del 2026-10-03): no había una entrada pendiente de publicación que mover, así que el cierre se registra como entrada nueva en § Resueltas. La cola sigue vacía.
+- **Índice (`requirements/README.md`):** en la fila de REQ-025, «la entrada de `arnes-upgrade` **preparada, no publicada**» gana «(publicada con v1.35.0 el 2026-10-03)». Sin otro cambio: README, guía de `arnes-upgrade` y `docs/gobernanza/` no declaraban «candidato» ni «1.33.2 estable» como vigente (búsqueda de la coordinadora).
+- **Lectura del propietario, literal:** «El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.» Registrada en `PENDING_APPROVAL.md` (entrada de la publicación) y en el bloque de 1.36.0 de `docs/ESTADO.md`.
+- **Sin cambios:** código, banco, contratos, veredictos, contadores, `AGENTS.md`. `.arnes/config.json` conserva `arnes_version: "1.33.0"`, por la decisión del propietario registrada en `5d810f0`.
+- **Avance (regla 6):** la publicación de 1.35.0 queda registrada y la ventana 1.36.0 abierta en el tablero; falta el contrato de 1.36.0 (encargo 2, analista).
+
 ## [Interno] — 2026-10-03 · Notas `[1.35.0]`: la prueba en el host del CLI 2.1.285 dentro de WSL2 queda en «Lo no medido» › «El host»
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por decisión expresa del propietario. Sin comisiones.
 
@@ -1097,8 +1109,10 @@ La entrada pendiente «Decisión de publicación de 1.35.0» suma la ficha 3, QA
 - **Clasificación de la coordinadora (regla 3):** QA-023-01, -03 y -04 son defectos de esta entrega y se reparan en la vuelta 2 de 3, con write-back del analista y comentarios del desarrollador. QA-023-02 es preexistente e independiente del alcance de REQ-023: es una urgencia de seguridad y se escala por la regla 4, **no** se repara aquí. El margen de CA-08 (ii) no se optimiza sin proponerlo antes.
 - **Avance (regla 6):** validación hecha; falta el write-back de los tres `contrato`, la reverificación de QA, la auditoría y la decisión del propietario sobre QA-023-02.
 
-## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
+## [1.35.0] — 2026-10-03 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
+
+> **PUBLICADA el 2026-10-03.** `main` en `3956a6f` (fusión del PR #59, `cand/1.35.0`), tag `v1.35.0` sobre esa fusión. CI final: run `37169938675` (`banco`), **success**, sobre `c0f8493`, la cabeza fusionada. Preparada como candidato el 2026-09-29 (fecha anterior de este encabezado). Registro de la publicación añadido el 2026-10-03 por la coordinadora, por encargo del propietario; el texto de las notas de abajo no se reescribe, y donde dice «candidato» o «la cabeza que se publique» se lee en el tiempo en que se escribió.
 
 > Notas finales de versión, reordenadas el 2026-10-03 (cierre de v1.35.0, tramo 3) por `analista-requerimientos`, por encargo del propietario. Se reordena sin quitar ninguna promesa ni limitación declarada: lo que cambió de sitio dice adónde fue, y lo que se resumió conserva su contenido en otra frase.
 
