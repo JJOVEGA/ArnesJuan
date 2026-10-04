@@ -111,6 +111,14 @@
       - **Notas `[1.35.0]`:** son las notas finales, con «Qué cambia», «Límites declarados» (con alcance y consecuencia), «Lo no medido: el host y Windows/MSYS», «Firmas ausentes, y por qué», «Hacia 1.36.0» (CA-54, SEC-115/118, SEC-120, que vence el 2026-10-29) e «Historia». Los SKIP remiten al log del CI y a `docs/qa/REQ-023.md`. Ningún identificador de las notas anteriores desaparece (comprobación de la coordinadora).
       - **La guía** está alineada con las notas.
       - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.** No se ha cerrado ningún REQ.
+    - **Prueba en el host, CLI dentro de WSL2 (2026-10-03, cabeza `5d810f0`, hooks idénticos a `a51dc5b`; la ejecutó la coordinadora con registro previo):**
+      - **Entorno:** Claude Code **2.1.285**, `claude -p`, con la sonda de `sec119-r6` delante de `guard.sh` del worktree. No se cargó `arnes-juan` 1.33.2. Sesión de la coordinadora.
+      - **(1) Heredoc normal a `docs/`:** allow; `docs/nota.md` escrito.
+      - **(2) Escritura partida con `\` y salto hacia `docs/`:** el hook la recibió con la barra y el salto; allow; `docs/partida.md` escrito.
+      - **(3) `echo x > src/algo`:** **deny**, con el motivo «el comando escribe en 'src/algo', que es código de la app; sólo el agente 'desarrollador'…»; el host lo bloqueó y `src/algo` no existe.
+      - **Evidencia:** en el scratchpad de la sesión, `host-a51dc5b/` (PREREGISTRO, RESULTADO, logs de la sonda y `stream.jsonl`). **No está en la rama de evidencia.**
+      - **No ejercido:** el **panel de la extensión** (lo hace el propietario), Windows/MSYS, `MultiEdit` y las formas HC/LC que deniegan.
+      - **Las notas `[1.35.0]` («Lo no medido») todavía dicen «host no ejercido»** para la fase 2. Si se quiere reflejar esta prueba, hace falta una línea (ver el informe a Juan).
     - **LO QUE EL PROPIETARIO HACE A MANO PARA PUBLICAR:**
       1. **`.arnes/config.json`, clave `arnes_version`:** `"1.33.0"` → `"1.35.0"` (l. 3). Es archivo protegido. `plugin.json` (`version`) y `marketplace.json` (`metadata.version`, `plugins[0].version`) ya están en `1.35.0`.
       2. **En el mismo commit**, el párrafo de `arnes_version` de las notas `[1.35.0]` (`CHANGELOG.md`, «Límites declarados», el que dice «sigue en `1.33.0` … Este commit no la toca»), que dejaría de ser cierto.
@@ -508,7 +516,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 19:30
+## Estado derivado — 2026-10-03 19:31
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -518,7 +526,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `8522e4f` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.35.0` @ `a51dc5b` — limpio
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

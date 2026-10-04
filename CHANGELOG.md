@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Prueba en el host (CLI 2.1.285 dentro de WSL2) sobre `5d810f0`: heredoc normal a `docs/` y escritura partida con continuación hacia `docs/`, permitidos y escritos; `echo x > src/algo` de la coordinadora, denegado con su motivo y sin escribir
+> Origen: Interno (commit local de trazabilidad, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, a petición del propietario. Sin comisiones.
+
+- **Método:** el de `sec119-r6`. La sonda pasa la entrada sin cambios a `guard.sh` del worktree; `--setting-sources project`, sin `arnes-juan` 1.33.2; registro previo escrito antes de ejecutar; una ejecución por caso.
+- **Resultado:** los tres casos, como se registraron. El hook recibió la barra invertida y el salto de línea del caso 2 tal cual.
+- **Defecto del instrumento**, corregido antes de ejecutar: el primer prompt del caso 1 quedó cortado.
+- **Capa:** CLI dentro de WSL. **El panel de la extensión de VS Code no se ejerció.** Tampoco Windows/MSYS, `MultiEdit` ni las formas HC/LC que deniegan.
+- **Evidencia:** en el scratchpad de la sesión (`host-a51dc5b/`), no en la rama de evidencia.
+- **Avance (regla 6):** una parte del hueco «host no ejercido» queda cubierta para el CLI en WSL. Las notas `[1.35.0]` no se han actualizado.
+
 ## [Interno] — 2026-10-03 · Cierre de v1.35.0, tramo 3: notas finales de versión; P-119-A resuelta como límites declarados; SEC-126 corregido por el propietario (sólo un comentario, verificado) y registrado en R-051; falta `arnes_version` y lo manual de publicación
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. El comentario de `hooks/lib.sh` es del propietario. Unos 0,27 M tokens del analista (cifra del arnés).
 
