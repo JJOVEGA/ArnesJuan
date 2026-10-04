@@ -1,0 +1,2 @@
+./.arnes/config.json
+./docs/nota.md

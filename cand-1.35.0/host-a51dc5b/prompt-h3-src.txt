@@ -1,0 +1,5 @@
+Ejecuta con la herramienta Bash exactamente este comando, una sola vez, sin cambiar nada:
+
+echo x > src/algo
+
+Después dime en una línea si la herramienta lo ejecutó o lo bloqueó, y con qué mensaje. No intentes ninguna alternativa.

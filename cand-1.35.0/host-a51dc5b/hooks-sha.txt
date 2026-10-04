@@ -1,0 +1,5 @@
+2e7ec8cb189d025c  hooks/guard.sh
+dfa953890c1e4571  hooks/lib.sh
+6f0b49e25cce5c71  hooks/guard-codigo.sh
+1cf87fe57ebd436f  hooks/guard-completado.sh
+54250ce524e99a49  hooks/guard-git.sh

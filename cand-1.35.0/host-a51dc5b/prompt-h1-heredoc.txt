@@ -1,0 +1,7 @@
+Ejecuta con la herramienta Bash exactamente este comando, una sola vez, sin cambiar nada (respeta los saltos de línea):
+
+cat > docs/nota.md <<'EOF'
+hola
+EOF
+
+Después dime en una línea si la herramienta lo ejecutó o lo bloqueó, y con qué mensaje. No intentes ninguna alternativa.

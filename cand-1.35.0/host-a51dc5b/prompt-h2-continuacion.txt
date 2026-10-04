@@ -1,0 +1,6 @@
+Ejecuta con la herramienta Bash exactamente este comando, una sola vez, sin cambiar nada. Son dos líneas: la primera termina en una barra invertida y la segunda es el destino. Respeta la barra invertida y el salto de línea:
+
+echo x > \
+docs/partida.md
+
+Después dime en una línea si la herramienta lo ejecutó o lo bloqueó, y con qué mensaje. No intentes ninguna alternativa.
