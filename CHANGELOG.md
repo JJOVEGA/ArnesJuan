@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Instalación estable actualizada a 1.35.0 en este host (WSL2), por petición expresa del propietario
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- `claude plugin marketplace update arnes-juan`, y después `claude plugin update arnes-juan@arnes-juan` con los alcances `user` y `project` (`/mnt/c/Users/JVega`). Resultado: **1.33.2 → 1.35.0**, `gitCommitSha` `3956a6f`.
+- **Verificado:** `installed_plugins.json` muestra 1.35.0 en los dos alcances, y `plugin.json` de la caché también dice 1.35.0. Cada `hooks/*.sh`, `hooks/*.awk` y `hooks/hooks.json` de la caché es idéntico (`cmp`) al de `git show v1.35.0:`.
+- **Rige desde el próximo reinicio de Claude Code.** La sesión que abrió 1.36.0 corrió con los hooks de 1.33.2.
+- Cierra la discrepancia anotada en `8a7064e`: `docs/ESTADO.md` y `PENDING_APPROVAL.md` quedan al día.
+- **Avance (regla 6):** la instalación estable es 1.35.0. Siguen faltando las fichas P-136-A, P-136-B y P-136-C.
+
 ## [GitHub] — 2026-10-03 · Apertura de v1.36.0: contrato por propiedad y medida en REQ-007 (CA-54, CA-47 punto 20, CA-67 a CA-69) y ADR-017 en `propuesta`; tres fichas para el propietario en la cola; SIN VALIDAR y sin código
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (contrato, fichas, ADR; ~398 k tokens, 129 herramientas, ~24 min) y la coordinadora (registro). Encargo del propietario del 2026-10-03, «Encargo 2», ahora literal en `PENDING_APPROVAL.md` § Resueltas. Gobernado, en este host, por la instalación **1.33.2** (ver la corrección de abajo).
 
