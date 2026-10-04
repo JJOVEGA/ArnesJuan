@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-03 · Décima autorización, fase 1 (CA-54): sondas S1 y S2 restauradas (sólo rutas), línea base de las 35 corridas sobre v1.35.0 (30 de 35 pasan de 5 s) e inventario de referencia del banco de v1.35.0 (2050 casos); sin optimizar
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (medición y registro técnico, < 200 k tokens) y la coordinadora (este commit). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `4e8757e`, `cand-1.36.0/ca54/`.
+
+- **Sondas:** 9 líneas cambiadas, todas rutas (`source` y `Q`/`CAND`/`BASE`/`T43` de cada `qa-lib.sh`). El diff se registró antes de medir. Las 10 entradas son idénticas por sha256 a las de `cand-1.35.0/`. El desarrollador cambió también las rutas de los árboles, además de la de la biblioteca: lo autoriza la nota de CA-54, y sin ellas las sondas no corren.
+- **Línea base** (a nivel de hook, Linux/WSL2, carga entre 0,40 y 1,95; mín/mediana/máx en ms, v1.35.0):
+  - S1 A: 8 118 / 9 621 / 11 023;
+  - S1 B: 7 717 / 8 319 / 8 419;
+  - S1 C: 7 415 / 8 117 / 9 521;
+  - S2 original: 2 208 / 2 208 / 2 309;
+  - controles de S2: ≈ 5,2–6,4 s.
+  - Decisiones esperadas en las 35 corridas (S1 allow, S2 deny, rc 0); procesos 3 (S1) y 4 (S2).
+  - **30 de las 35 corridas pasan de 5 000 ms.** Detalle en `docs/arnes/v1.36.0-ca54-fase1.md`.
+- **Inventario de referencia:** banco de v1.35.0 con sus hooks, desde el worktree `/home/juan/dev/ArnesJuan-v1.35.0-base` (`3956a6f`). Resultado: 2038 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO). `22-inventario-v1.35.0.txt` tiene 2050 líneas, sha256 `f35c9c04f348148a608ba821bdd744c827fc48d9a5b8c433edf7569ea527c436`.
+- **Defectos registrados, sin reparar:**
+  - **(i) instrumento:** `tests/util/sonda-procesos.sh` sólo cuenta los binarios de su lista, no los subshells ni las `$( )` de bash, así que no puede acreditar por sí sola «0 procesos añadidos» (P-136-A). La propiedad sigue en pie, y la fase 2 la cumple sin añadir forks de ninguna clase.
+  - **(ii)** REQ-017 CA-08 (ii), «6 líneas» y «200 líneas», alternan entre PASS e INCONCLUSO de una corrida a otra; por CA-69 2 (c), no acreditan.
+  - **(iii)** en S2, `BASE` y `T43` apuntan a la misma ruta, y la columna `43b948a` sale vacía. Sólo cambia el rótulo.
+  - **(iv)** una corrida inválida del banco, por invocación: `ARNES_HOOKS_DIR` sin `tools/` hermano. Se conserva rotulada `20-INVALIDA-` y no es un veredicto.
+- **Avance (regla 6):** línea base e inventario de referencia tomados. Sigue la fase 2 (optimización).
+
 ## [GitHub] — 2026-10-03 · Décima autorización, fase 0: P-136-A/B/C resueltas por el propietario; plantilla `templates/autorizacion.md`; ficha del campo derivado; índice de REQ-001 y REQ-031 al día; ADR-017 aceptada
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (registro literal de la décima autorización en `PENDING_APPROVAL.md` § Resueltas; fichas movidas allí sin cambiar su texto; línea de plan vigente en ESTADO) y `analista-requerimientos` (resto; ~202 k tokens). Hooks 1.35.0 vigentes, comprobado con la sonda LC10 tras el reinicio.
 
