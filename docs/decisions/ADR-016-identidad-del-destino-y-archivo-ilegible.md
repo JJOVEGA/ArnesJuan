@@ -364,8 +364,11 @@ mecanismo»).
   sin promesa. **No lo repara, no lo mitiga y no lo acepta:** SEC-123 sigue abierto y F3 sigue pendiente en
   REQ-007, P-119-A.
 
-**Precisión de SEC-124 y SEC-125 (2026-10-03, novena autorización, fase 2) — PENDIENTE DE IMPLEMENTACIÓN Y DE
-VALIDACIÓN; manda sobre las consecuencias de esta adenda en lo que toca, y lo de arriba no se reescribe.** R-047 §3 y
+**Precisión de SEC-124 y SEC-125 (2026-10-03, novena autorización, fase 2) — construido en `10ac6c4` y `36a0d27`;
+validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni
+del auditor-seguridad por impedimento del proveedor; manda sobre las consecuencias de esta adenda en lo que toca, y
+lo de arriba no se reescribe.** *(Hasta el write-back de estado del 2026-10-03, posterior a `ddd1241`, el título
+decía «PENDIENTE DE IMPLEMENTACIÓN Y DE VALIDACIÓN».)* R-047 §3 y
 §4 (`docs/seguridad/registro-seguridad.md`) midieron dos cosas que la adenda no decía. **SEC-124:** desde `9220c71`,
 un heredoc de delimitador limpio cuyo cuerpo tiene una línea que es su delimitador seguido de un retorno de carro, con
 algo detrás, sale `allow` donde lo publicado deniega; así que la frase «a las seis clases de arriba se suma **una**»
@@ -400,8 +403,8 @@ publicar»).
   rechazada)»); la norma, en `requirements/REQ-007.md` CA-47, punto 19, «Excepción nombrada», y CA-66 (fase 2),
   LC10. *Alternativas descartadas:* (B) unir las líneas como el shell en la frontera del heredoc —es donde un pliegue
   nuevo puede mover el cierre del cuerpo—; (C) prometer sólo lo que ya fijaba el punto 19 y dejar el resto abierto.
-  QA-023-23 sigue abierto y sin aceptar en cualquier otra forma que lo exhiba.
-- **Consecuencias que cambian, cuando esté construido:** la forma de SEC-124 deja de ser movimiento de `deny` a
+  QA-023-23 queda cerrado en la forma de LC10 y sigue abierto y sin aceptar en cualquier otra forma que lo exhiba.
+- **Consecuencias que cambian, con lo construido** *(antes: «cuando esté construido»)*: la forma de SEC-124 deja de ser movimiento de `deny` a
   `allow`; **se añade una clase**, la de SEC-125 —un destino que lo publicado juzgaba por su fragmento anterior a la
   continuación y que, unido como lo une el shell, está fuera del ámbito—, por la misma propiedad que K6. Son ocho
   clases, y cualquier otro movimiento de `deny` a `allow` es un hallazgo. **Compatibilidad, además:** se deniega a
@@ -413,5 +416,11 @@ publicar»).
   `allow`.
 - (=) Sin procesos nuevos y en tiempo lineal (REQ-007 CA-66, fase 2, punto 9). Windows/MSYS no medido para este
   delta; desde el host, no ejercido salvo lo que registre la validación por capa.
-- (=) **Esta precisión no afirma que nada esté reparado:** SEC-124 y SEC-125 siguen abiertos hasta que QA y seguridad
-  verifiquen lo construido.
+- (=) **Estado de lo construido** (write-back del 2026-10-03, posterior a `ddd1241`): construido en `10ac6c4` y
+  `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del
+  qa-tester ni del auditor-seguridad por impedimento del proveedor. Por decisión del propietario (`PENDING_APPROVAL.md`
+  § Resueltas, entrada de la novena autorización, «Decisión del propietario, 2026-10-03, posterior a `92ec1fa`»),
+  SEC-124 y SEC-125 quedan reparados en su alcance (validación manual del propietario), y QA-023-23, cerrado en la
+  forma de LC10 y abierto en cualquier otra. `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`. Desde el host y en
+  Windows/MSYS, no ejercido. *(Antes: «Esta precisión no afirma que nada esté reparado: SEC-124 y SEC-125 siguen
+  abiertos hasta que QA y seguridad verifiquen lo construido».)*

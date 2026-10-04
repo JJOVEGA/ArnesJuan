@@ -603,6 +603,28 @@
   >    medida.
   > 4. La pasada correctiva de la fase 2 no se gastó.
 
+  **Encargo del propietario, 2026-10-03, posterior a `ddd1241` (literal, la parte del despacho):**
+
+  > ## Despacho: analista-requerimientos (sólo texto)
+  > Write-back de estado en REQ-007, ADR-016, notas [1.35.0] del CHANGELOG, guía
+  > (skills/arnes-upgrade/SKILL.md) e índice (requirements/README.md):
+  > - Puntos 18 y 19 de CA-47 y CA-66 fase 2: de «pendiente de implementación y
+  >   de validación» a «construido en 10ac6c4 y 36a0d27; validado por el
+  >   propietario por vía manual (docs/qa/REQ-023.md, CI run 37163342218); sin
+  >   firma del qa-tester ni del auditor-seguridad por impedimento del
+  >   proveedor». Ni más ni menos que eso: no «aprobado», no «validado por QA».
+  > - Hallazgos abiertos de REQ-007: SEC-124 y SEC-125 pasan a «reparado en su
+  >   alcance (validación manual del propietario)»; QA-023-23 «cerrado en la
+  >   forma de LC10; abierto en cualquier otra»; QA-023-24 y QA-023-25 cerrados
+  >   por esa validación. QA: y Seguridad: de REQ-007 siguen `pendiente`.
+  > - Registro de seguridad: entrada de sólo registro (R-050) que remite a la
+  >   validación manual, sin firma del auditor.
+  > - Las frases «Hasta que esté construido y validado, el candidato deja pasar
+  >   esa forma» de las notas pasan a describir el estado construido.
+  > Nada de nuevos hallazgos ni cambios de contrato. Commit local con CHANGELOG.
+
+  **Lo que añade la coordinadora, rotulado como suyo:** por esta instrucción expresa del propietario, la entrada R-050 la escribe el `analista-requerimientos`, aunque `docs/seguridad/` es sede del `auditor-seguridad` (`AGENTS.md` §5). La entrada es **sólo de registro** y no lleva firma. Lo mismo vale para el cambio de estado de SEC-124 y SEC-125 en `Hallazgos abiertos:`.
+
 ### RESUELTA (propietario, 2026-10-03) — **Decisión 11 (SEC-124): opción B; SEC-125: reparar antes de publicar; SEC-123: corregir la descripción de F3**; autoriza sólo una actualización documental de continuidad y plan; **no autoriza implementación ni despachos**
 
 **Texto del propietario, literal e íntegro** (mensaje del 2026-10-03 a la sesión coordinadora del worktree `ArnesJuan-v1.35`; es la fuente de estas decisiones, por declaración del propio mensaje):

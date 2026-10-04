@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-03 · Novena autorización, fase 2: write-back de estado tras la validación manual del propietario — puntos 18 y 19 «construidos y validados por el propietario por vía manual, sin firma del qa-tester ni del auditor-seguridad»; SEC-124 y SEC-125 reparados en su alcance; QA-023-23 cerrado en la forma de LC10; R-050 de sólo registro; `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`
+> Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (sólo texto, sin leer `hooks/` ni `tests/`) y la coordinadora. Unos 0,25 M tokens del analista (cifra del arnés).
+
+- **Fuente:** `PENDING_APPROVAL.md`, la decisión del propietario posterior a `92ec1fa` y su encargo posterior a `ddd1241`, literales.
+- **Sedes:**
+  - `requirements/REQ-007.md`: puntos 18 y 19, CA-24, CA-66, Notas, `Hallazgos abiertos:`, Correspondencia e Historial;
+  - ADR-016;
+  - las notas `[1.35.0]`;
+  - `skills/arnes-upgrade/SKILL.md`;
+  - `requirements/README.md`;
+  - `docs/seguridad/registro-seguridad.md` (R-050, sólo registro, escrita por el analista por instrucción expresa del propietario).
+- **Comprobado por la coordinadora:**
+  - `tools/arnes-lectura.sh .` no ve anomalías;
+  - un cierre simulado de REQ-007 en una copia con la puerta real deniega por `QA: pendiente` y, con los veredictos forzados, por el primer `contrato` (QA-114): la lista se interpreta;
+  - R-050 sólo aparecía como «próximo libre».
+- **Abierto, declarado por el analista:** el título «siete clases de casos, y sólo ésas» de las notas y de la guía no se cambió, aunque la anotación siguiente dice «son ocho». Es un cambio de una palabra que necesita autorización.
+- **Sin cambios:** código, banco, `AGENTS.md`, contadores y los demás campos de cabecera.
+- **Avance (regla 6):** el estado del delta de la fase 2 queda escrito en todas sus sedes. Para publicar falta lo que sigue pendiente (ESTADO).
+
 ## [Interno] — 2026-10-03 · Novena autorización, fase 2: validación del delta por el propietario (vía manual): gates, sección 46, regresiones, fail-before, banco 2037/0/13, autoprueba 117/0, shell aparte y CI remoto (run 37163342218: success); SEC-124 y SEC-125 reparados en su alcance; sin firma de agente
 > Origen: Interno (commit local, sin push) · usuario: Juan · validación ejecutada por el propietario con una segunda medición de Fable (Claude, claude.ai) sobre un clon y el CI remoto; ningún agente del arnés despachado (impedimento del proveedor sobre la lectura del diff, registrado en `92ec1fa`).
 
@@ -1270,14 +1289,15 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
        líneas acabadas sólo en salto de línea. La lectura de la entrada ya no recorre el valor para reponer
        retornos de carro (QA-023-14): un `file_path` de 600 000 bytes con uno final pasa de 83 929 ms a 405 ms
        (`evidencia-dev-r8/10-`). Desde el host, no ejercido.
-       - **Pendiente de implementación y de validación (novena autorización, fase 2; REQ-007 CA-47, punto 18,
-         SEC-124):** un heredoc de delimitador limpio cuyo cuerpo tiene, antes de su última línea, una línea que
-         es su delimitador seguido de un retorno de carro pasa a **denegarse a todo agente**, con un motivo que
+       - **Novena autorización, fase 2; REQ-007 CA-47, punto 18, SEC-124 — construido en `10ac6c4` y `36a0d27`;
+         validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del
+         qa-tester ni del auditor-seguridad por impedimento del proveedor:** un heredoc de delimitador limpio cuyo
+         cuerpo tiene, antes de su última línea, una línea que es su delimitador seguido de un retorno de carro pasa a **denegarse a todo agente**, con un motivo que
          nombra SEC-124, aunque el shell la lea como cuerpo y no ejecute lo que va detrás. Es una restricción
          concreta que el propietario aceptó (opción B de R-047 §3), no una regla sobre heredocs ni sobre retornos
          de carro, y el texto del comando no se altera. La salida, la misma: líneas acabadas sólo en salto de
-         línea. Windows/MSYS, no medido. **Hasta que esté construido y validado, el candidato deja pasar esa
-         forma.**
+         línea. **El candidato deniega esa forma**, medido a nivel de hook, por `guard.sh` y con un shell aparte en
+         Linux; desde el host, no ejercido; Windows/MSYS, no medido.
    - **Ningún directorio queda fuera de la identificación, y lo que depende del proceso que abre la ruta no
      pasa por esa incertidumbre** (desde el 2026-10-02, octava autorización; REQ-007 CA-47, F3 y puntos 14 a
      16, por SEC-122). Hasta entonces todo destino bajo `/dev/` o `/proc/` se juzgaba sólo por su texto: un
@@ -1301,11 +1321,11 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      reparado—; y antes de la pasada correctiva de la octava autorización decía «ocho», con `git reset --hard␍`,
      y dejaba dos pendientes sin declarar: esa enumeración era falsa —QA midió además cuatro órdenes como
      `git checkout .␍` en `allow` sin declarar, QA-023-16—, y la pasada devuelve todas a `deny`.)*
-     **Pendiente de implementación y de validación (novena autorización, fase 2):** sobre el código actual del
-     candidato, esta frase **no es cierta**: pasa además, sin declarar, la forma de heredoc de SEC-124 (R-047 §3),
-     que el propietario decidió devolver a `deny`. Cuando esa reparación y la de SEC-125 estén construidas y
-     validadas, las clases serán **ocho**: estas siete y la de SEC-125 —un destino de `Bash` que hasta ahora se
-     juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el shell, está fuera de
+     **Novena autorización, fase 2 — construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual
+     (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por impedimento del
+     proveedor:** la forma de heredoc de SEC-124 (R-047 §3), que sobre el código anterior del candidato pasaba sin
+     declarar, vuelve a `deny`; y con la reparación de SEC-125 las clases son **ocho**: estas siete y la de SEC-125
+     —un destino de `Bash` que hasta ahora se juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el shell, está fuera de
      las zonas protegidas—. Ninguna debilita una protección (REQ-007 CA-24, nota del 2026-10-03, y CA-66,
      versionado de la fase 2, punto 5).
    - **Una orden de git con un retorno de carro se juzga también sin él** (desde la pasada correctiva de la
@@ -1317,20 +1337,22 @@ deniega formas que su `requirements/README.md` todavía no explica. La guía lo 
      como cualquier enlace (REQ-007 CA-47, punto 15). Medido a nivel de hook en Linux/WSL2; desde el host, no
      ejercido.
    - **Una escritura cuyo destino va tras una continuación de línea se juzga por el destino que escribe el
-     shell** (novena autorización, fase 2; REQ-007 CA-47, punto 19, por SEC-125; R-047 §4). **Pendiente de
-     implementación y de validación:** hasta que esté construido y validado, el candidato —como 1.33.2 y
-     `v1.34.0`— deja pasar esa forma. La continuación se une sólo donde el shell la une, y su sola presencia no
-     deniega nada. Windows/MSYS, no medido.
-     **Con una excepción, también pendiente de implementación y de validación** (decisión del propietario del
+     shell** (novena autorización, fase 2; REQ-007 CA-47, punto 19, por SEC-125; R-047 §4). **Construido en
+     `10ac6c4` y `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218);
+     sin firma del qa-tester ni del auditor-seguridad por impedimento del proveedor:** el candidato juzga así esa
+     forma, que 1.33.2 y `v1.34.0` dejan pasar. La continuación se une sólo donde el shell la une, y
+     su sola presencia no deniega nada. Desde el host, no ejercido; Windows/MSYS, no medido.
+     **Con una excepción, en el mismo estado** (decisión del propietario del
      2026-10-03 sobre P-LC10-A, opción A; REQ-007 CA-47, punto 19, «Excepción nombrada», y CA-66, LC10): cuando la
      línea que abre un heredoc acaba en una continuación de línea, el comando pasa a **denegarse por la forma, a
      todo agente y en las cuatro puertas**, sea cual sea lo que siga, con un motivo que nombra SEC-125 y LC10. Deja
      de pasar también lo legítimo —lo inocuo, lo de fuera de las zonas protegidas y lo que emite el
      `desarrollador`—, que es la restricción que el propietario acepta. La salida: escribir esa línea entera, sin la
-     continuación al final. Hasta que esté construido y validado, el candidato —como 1.33.2— deja pasar esa forma **salvo
-     donde una regla de siempre ya la deniega** —una escritura en código protegido o una orden de git prohibida en
-     la propia línea que abre, y LC10.8 por `guard-codigo`; ejemplos no exhaustivos (QA-023-24)—, y el shell
-     ejecuta lo que va en la línea siguiente sin que lo vea ninguna puerta (QA-023-23, preexistente).
+     continuación al final. 1.33.2 deja pasar esa forma **salvo donde una regla de siempre ya la deniega** —una
+     escritura en código protegido o una orden de git prohibida en la propia línea que abre, y LC10.8 por
+     `guard-codigo`; ejemplos no exhaustivos (QA-023-24)—, y el shell ejecuta lo que va en la línea siguiente sin
+     que lo vea ninguna puerta (QA-023-23, preexistente). El candidato la deniega: QA-023-23 queda cerrado en esa
+     forma y abierto en cualquier otra.
    - **Qué se conserva:** por `Edit`/`Write`/`MultiEdit` no se escribe a través de un enlace situado dentro
      del proyecto, sea cual sea su destino —también en un proyecto situado bajo `/dev/`, desde la octava
      autorización—. La premisa de REQ-007 CA-49, «el arnés juzga la ruta escrita, no su destino», queda

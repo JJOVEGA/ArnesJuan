@@ -76,6 +76,18 @@
           - **No se reintentó ni se reformuló.** Seguridad **no se despacha**, porque no hay QA favorable (§6), y el write-back del analista depende de los dos veredictos.
           - **SEC-124, SEC-125 y LC10 no se declaran reparados**, y QA-023-23/24/25 siguen como estaban. La pasada correctiva de la fase 2 sigue sin gastar.
           - **Decide el propietario cómo se valida.** Volver a despachar esta validación a QA sería repetir la acción detenida.
+        - **Resuelto por el propietario (posterior a `92ec1fa`, literal en `PENDING_APPROVAL.md`):**
+          - **Validación por vía manual:** la del propietario (`docs/qa/REQ-023.md`, «validación del delta construido por el propietario — vía manual»), con una segunda medición externa y el CI run 37163342218 (success). Todo en `ddd1241`.
+          - **Sin firma del qa-tester ni del auditor-seguridad.**
+        - **Write-back de estado (analista, posterior a `ddd1241`):**
+          - **Puntos 18 y 19 y CA-66 fase 2:** «construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por impedimento del proveedor». Lo mismo en ADR-016, las notas, la guía y el índice.
+          - **`Hallazgos abiertos:` de REQ-007:**
+            - SEC-124 (`contrato`) y SEC-125 (`instrumento`): «reparado en su alcance (validación manual del propietario)»;
+            - QA-023-23: «cerrado en la forma de LC10; abierto en cualquier otra»;
+            - QA-023-24 y QA-023-25: cerrados; nunca estuvieron en el campo.
+          - **R-050:** sólo registro, sin firma.
+          - **`QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.** SEC-124 sigue en el campo como `contrato`, así que también impide cerrar REQ-007.
+          - **Comprobado por la coordinadora:** `tools/arnes-lectura.sh .` no ve anomalías. Un cierre simulado en una copia con la puerta real deniega por `QA: pendiente` y, con los veredictos forzados, por el primer `contrato` de la lista: la puerta interpreta el campo.
     - **ESTADO: IMPLEMENTACIÓN MANUAL PENDIENTE (la escribe el propietario).** La coordinadora no despacha al desarrollador. Lo que sigue sólo ahorra búsqueda: no es diseño ni código.
       - **Especificación:** `requirements/REQ-007.md`.
         - CA-47 **punto 18** (SEC-124) y **punto 19** (SEC-125).
@@ -467,7 +479,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-03 17:26
+## Estado derivado — 2026-10-03 18:26
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -477,7 +489,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.35.0` @ `92ec1fa` — limpio
+**Repositorio:** `cand/1.35.0` @ `ddd1241` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.33.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

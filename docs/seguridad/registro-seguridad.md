@@ -10038,3 +10038,31 @@ El resto, como en R-048 §7. **Estado de seguridad aprobado** de REQ-023, REQ-03
 **Regresión a vigilar** (no exhaustivo): que una sede presente QA-023-23 como cerrado antes de que la forma de LC10 esté construida, validada y auditada; o que su cierre en esa forma se extienda a las demás.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-049**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`; QA-023-23 se registra con su propio identificador); próximos libres **R-050** y **SEC-127**.
+
+## Revisión R-050 — **Novena autorización, fase 2: registro de la validación manual del propietario** (SEC-124, SEC-125, QA-023-23, QA-023-24 y QA-023-25). `cand/1.35.0` @ `ddd1241` — 2026-10-03 — **SÓLO REGISTRO: NO REVISIÓN, NO DETERMINACIÓN, NO FIRMA**
+
+**Quién la escribe, y por qué.** La escribe el `analista-requerimientos`, no el `auditor-seguridad`, por instrucción expresa del propietario: `PENDING_APPROVAL.md` § Resueltas, entrada de la novena autorización, «Encargo del propietario, 2026-10-03, posterior a `ddd1241` (literal, la parte del despacho)»: «Registro de seguridad: entrada de sólo registro (R-050) que remite a la validación manual, sin firma del auditor». La coordinadora lo anota, en la misma entrada, como excepción a la sede de `docs/seguridad/` (`AGENTS.md` §5). **El `auditor-seguridad` no ha revisado, medido ni determinado nada de lo que aquí consta**, y esta entrada no habla por él: no es su veredicto ni una firma, y no sustituye la auditoría de la implementación, que no ha ocurrido.
+
+**Numeración.** `R-050` figuraba como «próximo libre» en la línea final de R-049 y no aparece en ningún otro sitio del árbol de trabajo (búsqueda de texto en el worktree). No se comprobaron ramas, etiquetas ni otros worktrees, porque esta comisión no tiene consola. No se asigna ningún `SEC-`: esta entrada no abre hallazgos.
+
+**Qué registra.** La decisión del propietario, literal en la misma entrada de `PENDING_APPROVAL.md`, «Decisión del propietario, 2026-10-03, posterior a `92ec1fa` (literal; registrada por el propietario)», puntos 1 y 2:
+- la validación del delta de la fase 2 (`7c6baea..92ec1fa`: código de los puntos 18 y 19 de CA-47 de REQ-007 en `10ac6c4` y `36a0d27`, sección 46 del banco, texto de QA-023-24 y QA-023-25) la ejecutó **el propietario por vía manual**, con el protocolo de QA de CA-66 fase 2, una segunda medición de un revisor externo sobre un clon y el CI remoto sobre la misma cabeza (run 37163342218: success). Un control del proveedor detuvo al `qa-tester` cuando leía el diff de `hooks/`; no se reintentó ni se reformuló;
+- la validación no lleva firma del `qa-tester` ni del `auditor-seguridad`, y así se declara. `QA:` y `Seguridad:` de REQ-007 siguen `pendiente`.
+
+**Dónde está la evidencia** (esta entrada no la copia ni la juzga): `docs/qa/REQ-023.md` § «Novena autorización, fase 2: validación del delta construido por el propietario — vía manual, cabeza `92ec1fa`, 2026-10-03». Capas que dice cubrir: hook directo, `guard.sh` y shell aparte, en Linux/WSL2 y en un contenedor Linux. **No medido, según el mismo registro:** host (CLI real, extensión de VS Code) y Windows/MSYS.
+
+### Estado tras R-050 (por decisión del propietario, sin determinación del auditor)
+
+| Hallazgo | Clase | Estado | Fuente |
+|---|---|---|---|
+| `SEC-124` | `contrato` (REQ-007) | **reparado en su alcance (validación manual del propietario)**; sigue en `Hallazgos abiertos:` de REQ-007 con ese estado y su clase | decisión del propietario, punto 2 |
+| `SEC-125` | `instrumento` (REQ-007) | **reparado en su alcance (validación manual del propietario)**; ídem | ídem |
+| `QA-023-23` | `instrumento` (REQ-007) | **cerrado en la forma de LC10; abierto en cualquier otra**, sin aceptar | ídem |
+| `QA-023-24`, `QA-023-25` | `contrato` (hallazgos de QA de la revisión documental) | **cerrados por esa validación**; no estaban en `Hallazgos abiertos:` | ídem |
+
+**Lo que esta entrada deja escrito para que no se lea de más:**
+- **Ningún estado de esta tabla es una determinación de seguridad.** Se registran como los decidió el propietario. El texto de SEC-124 y SEC-125 en R-047 y el de QA-023-23 en R-049 no se reescriben.
+- **R-049 contaba con una auditoría que no ha ocurrido.** Su apartado «Qué lo cierra en la forma de LC10» pedía tres cosas: construida, validada por QA y auditada por seguridad. Su «Regresión a vigilar» nombraba que una sede presentara QA-023-23 como cerrado antes de eso. Este cierre en la forma de LC10 lo decide el propietario sin veredicto del `qa-tester` y sin auditoría, y así queda escrito. Si eso cambia el juicio de R-049, lo determina el `auditor-seguridad` en su turno, no esta entrada.
+- **Estado de seguridad aprobado por REQ: sin cambio.** REQ-007 sigue sin firma.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-050**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-051** y **SEC-127**.

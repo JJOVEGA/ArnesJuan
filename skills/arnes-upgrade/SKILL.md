@@ -1161,12 +1161,14 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
       `> /dev/null` y `> /dev/stderr` por `Bash` **siguen pasando**, sin excepción por su nombre;
     - un comando de `Bash` con un heredoc cuyo delimitador lleva un retorno de carro —por ejemplo, el de un
       script con fines de línea CRLF—, **a todo agente**: la puerta no puede saber dónde acaba el cuerpo.
-    - **(pendiente de implementación y de validación en el arnés)** un heredoc cuyo cuerpo tiene, antes de su
-      última línea, una línea que es su delimitador seguido de un retorno de carro, **a todo agente**, aunque el
-      shell la lea como cuerpo: es una restricción concreta que decidió el propietario del arnés (SEC-124), y la
+    - **(en el arnés: construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual
+      (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por
+      impedimento del proveedor)** un heredoc cuyo cuerpo tiene, antes de su última línea, una línea que es su
+      delimitador seguido de un retorno de carro, **a todo agente**, aunque el shell la lea como cuerpo: es una restricción concreta que decidió el propietario del arnés (SEC-124), y la
       salida es la misma, líneas acabadas sólo en salto de línea;
-    - **(pendiente de implementación y de validación en el arnés)** una escritura cuyo destino va tras una
-      continuación de línea se juzga por el destino que escribe el shell (SEC-125); una continuación, por sí sola,
+    - **(en el arnés: construido en `10ac6c4` y `36a0d27`; validado por el propietario por vía manual
+      (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma del qa-tester ni del auditor-seguridad por
+      impedimento del proveedor)** una escritura cuyo destino va tras una continuación de línea se juzga por el destino que escribe el shell (SEC-125); una continuación, por sí sola,
       no deniega nada, **salvo** al final de la línea que abre un heredoc: ese comando se deniega **a todo agente**,
       sea cual sea lo que siga, porque el shell y la puerta no coinciden en dónde empieza el cuerpo (LC10, decisión
       del propietario del arnés). La salida: escribir esa línea entera, sin la continuación al final.
@@ -1183,10 +1185,11 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     casaban con una zona protegida sólo por su texto y designan un archivo de fuera —por ejemplo,
     `src/../README.md` por `Write` o por `Bash`—; y un destino de `Bash` cuyo nombre acaba en un retorno de
     carro y que con él ya no casa con el patrón que casaba sin él —`app/a.ts␍` con `app/*.ts`—. Ninguno debilita
-    una protección: todos designan lo que de verdad escribe el shell. **(Pendiente de implementación y de
-    validación en el arnés:** sobre el código actual del candidato pasa además, sin declarar, la forma de
-    SEC-124, que vuelve a denegarse; y cuando la reparación de SEC-125 esté construida, se suma una octava clase
-    —un destino que se juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el
+    una protección: todos designan lo que de verdad escribe el shell. **(En el arnés, construido en `10ac6c4` y
+    `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma
+    del qa-tester ni del auditor-seguridad por impedimento del proveedor:** la forma de SEC-124, que sobre el
+    código anterior del candidato pasaba sin declarar, vuelve a denegarse; y con la reparación de SEC-125 se suma
+    una octava clase —un destino que se juzgaba por su fragmento anterior a una continuación de línea y que, unido como lo une el
     shell, está fuera de las zonas protegidas—, que tampoco debilita ninguna protección.)
   - **Una orden de git con un retorno de carro se juzga también sin él:** `git stash␍`, `git reset --hard␍`,
     `git checkout .␍` o `git clean␍ -f` se deniegan como sin el retorno de carro, porque lo que git haga con
