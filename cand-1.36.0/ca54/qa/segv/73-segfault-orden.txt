@@ -1,0 +1,29 @@
+profundo primero + src/a.ts (coordinadora)   guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + src/a.ts (coordinadora)   guard.sh             candidato rc=139 decision=sin-salida
+profundo primero + cierre de REQ (coord.)    guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (coord.)    guard.sh             candidato rc=139 decision=sin-salida
+profundo primero + cierre de REQ (desarr.)   guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (desarr.)   guard.sh             candidato rc=139 decision=sin-salida
+profundo primero + src/a.ts (coordinadora)   guard-codigo.sh      v1.35.0   rc=0   decision=deny
+profundo primero + src/a.ts (coordinadora)   guard-codigo.sh      candidato rc=139 decision=sin-salida
+profundo primero + cierre de REQ (coord.)    guard-codigo.sh      v1.35.0   rc=0   decision=sin-salida
+profundo primero + cierre de REQ (coord.)    guard-codigo.sh      candidato rc=139 decision=sin-salida
+profundo primero + cierre de REQ (desarr.)   guard-codigo.sh      v1.35.0   rc=0   decision=sin-salida
+profundo primero + cierre de REQ (desarr.)   guard-codigo.sh      candidato rc=139 decision=sin-salida
+profundo primero + src/a.ts (coordinadora)   guard-completado.sh  v1.35.0   rc=0   decision=sin-salida
+profundo primero + src/a.ts (coordinadora)   guard-completado.sh  candidato rc=0   decision=sin-salida
+profundo primero + cierre de REQ (coord.)    guard-completado.sh  v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (coord.)    guard-completado.sh  candidato rc=139 decision=sin-salida
+profundo primero + cierre de REQ (desarr.)   guard-completado.sh  v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (desarr.)   guard-completado.sh  candidato rc=139 decision=sin-salida
+umbral n=1100 + cierre                       guard.sh             v1.35.0   rc=0   decision=deny
+umbral n=1100 + cierre                       guard.sh             candidato rc=0   decision=deny
+umbral n=1200 + cierre                       guard.sh             v1.35.0   rc=0   decision=deny
+umbral n=1200 + cierre                       guard.sh             candidato rc=0   decision=deny
+umbral n=1300 + cierre                       guard.sh             v1.35.0   rc=0   decision=deny
+umbral n=1300 + cierre                       guard.sh             candidato rc=0   decision=deny
+umbral n=1400 + cierre                       guard.sh             v1.35.0   rc=0   decision=deny
+umbral n=1400 + cierre                       guard.sh             candidato rc=0   decision=deny
+dobles barras (1300 niveles) primero + src/a.ts guard.sh             v1.35.0   rc=0   decision=deny
+dobles barras (1300 niveles) primero + src/a.ts guard.sh             candidato rc=0   decision=deny
+ulimit -s = 8192 KiB

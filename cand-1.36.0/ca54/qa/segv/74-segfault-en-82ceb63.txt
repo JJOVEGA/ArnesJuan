@@ -1,0 +1,7 @@
+# 74-: las tres primeras filas de 72-segfault-orden.sh con C = hooks de 82ceb63 (git archive en el scratchpad, sha256 lib.sh d43d374b…): antes de la pasada correctiva NO hay SIGSEGV.
+profundo primero + src/a.ts (coordinadora)   guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + src/a.ts (coordinadora)   guard.sh             82ceb63   rc=0   decision=deny
+profundo primero + cierre de REQ (coord.)    guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (coord.)    guard.sh             82ceb63   rc=0   decision=deny
+profundo primero + cierre de REQ (desarr.)   guard.sh             v1.35.0   rc=0   decision=deny
+profundo primero + cierre de REQ (desarr.)   guard.sh             82ceb63   rc=0   decision=deny

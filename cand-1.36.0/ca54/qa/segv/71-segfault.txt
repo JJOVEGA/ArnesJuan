@@ -1,0 +1,49 @@
+n=100   cmd=codigo  bytes=237   v1.35.0   rc=0   decision=deny       ms=106
+n=100   cmd=codigo  bytes=237   candidato rc=0   decision=deny       ms=105
+n=100   cmd=cierre  bytes=278   v1.35.0   rc=0   decision=deny       ms=108
+n=100   cmd=cierre  bytes=278   candidato rc=0   decision=deny       ms=107
+n=100   cmd=solo    bytes=218   v1.35.0   rc=0   decision=sin-salida ms=106
+n=100   cmd=solo    bytes=218   candidato rc=0   decision=sin-salida ms=107
+n=300   cmd=codigo  bytes=637   v1.35.0   rc=0   decision=deny       ms=105
+n=300   cmd=codigo  bytes=637   candidato rc=0   decision=deny       ms=106
+n=300   cmd=cierre  bytes=678   v1.35.0   rc=0   decision=deny       ms=206
+n=300   cmd=cierre  bytes=678   candidato rc=0   decision=deny       ms=206
+n=300   cmd=solo    bytes=618   v1.35.0   rc=0   decision=sin-salida ms=206
+n=300   cmd=solo    bytes=618   candidato rc=0   decision=sin-salida ms=206
+n=500   cmd=codigo  bytes=1037  v1.35.0   rc=0   decision=deny       ms=106
+n=500   cmd=codigo  bytes=1037  candidato rc=0   decision=deny       ms=105
+n=500   cmd=cierre  bytes=1078  v1.35.0   rc=0   decision=deny       ms=307
+n=500   cmd=cierre  bytes=1078  candidato rc=0   decision=deny       ms=406
+n=500   cmd=solo    bytes=1018  v1.35.0   rc=0   decision=sin-salida ms=305
+n=500   cmd=solo    bytes=1018  candidato rc=0   decision=sin-salida ms=305
+n=700   cmd=codigo  bytes=1437  v1.35.0   rc=0   decision=deny       ms=105
+n=700   cmd=codigo  bytes=1437  candidato rc=0   decision=deny       ms=107
+n=700   cmd=cierre  bytes=1478  v1.35.0   rc=0   decision=deny       ms=506
+n=700   cmd=cierre  bytes=1478  candidato rc=0   decision=deny       ms=506
+n=700   cmd=solo    bytes=1418  v1.35.0   rc=0   decision=sin-salida ms=507
+n=700   cmd=solo    bytes=1418  candidato rc=0   decision=sin-salida ms=607
+n=1000  cmd=codigo  bytes=2037  v1.35.0   rc=0   decision=deny       ms=105
+n=1000  cmd=codigo  bytes=2037  candidato rc=0   decision=deny       ms=106
+n=1000  cmd=cierre  bytes=2078  v1.35.0   rc=0   decision=deny       ms=806
+n=1000  cmd=cierre  bytes=2078  candidato rc=0   decision=deny       ms=1007
+n=1000  cmd=solo    bytes=2018  v1.35.0   rc=0   decision=sin-salida ms=1008
+n=1000  cmd=solo    bytes=2018  candidato rc=0   decision=sin-salida ms=1408
+n=1500  cmd=codigo  bytes=3037  v1.35.0   rc=0   decision=deny       ms=105
+n=1500  cmd=codigo  bytes=3037  candidato rc=0   decision=deny       ms=105
+n=1500  cmd=cierre  bytes=3078  v1.35.0   rc=0   decision=deny       ms=1608
+n=1500  cmd=cierre  bytes=3078  candidato rc=139 decision=sin-salida ms=1007
+n=1500  cmd=solo    bytes=3018  v1.35.0   rc=0   decision=sin-salida ms=1608
+n=1500  cmd=solo    bytes=3018  candidato rc=139 decision=sin-salida ms=1007
+n=1990  cmd=codigo  bytes=4017  v1.35.0   rc=0   decision=deny       ms=106
+n=1990  cmd=codigo  bytes=4017  candidato rc=0   decision=deny       ms=106
+n=1990  cmd=cierre  bytes=4058  v1.35.0   rc=0   decision=deny       ms=2709
+n=1990  cmd=cierre  bytes=4058  candidato rc=139 decision=sin-salida ms=1407
+n=1990  cmd=solo    bytes=3998  v1.35.0   rc=0   decision=sin-salida ms=3110
+n=1990  cmd=solo    bytes=3998  candidato rc=139 decision=sin-salida ms=1308
+guardian=guard-codigo.sh v1.35.0 rc=0 decision=deny
+guardian=guard-codigo.sh candidato rc=0 decision=deny
+guardian=guard-completado.sh v1.35.0 rc=0 decision=sin-salida
+guardian=guard-completado.sh candidato rc=0 decision=sin-salida
+guardian=guard-git.sh v1.35.0 rc=0 decision=sin-salida
+guardian=guard-git.sh candidato rc=0 decision=sin-salida
+ulimit -s = 8192 KiB; bash 5.3.9(1)-release
