@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · SEC-120, fase 1 hecha por el desarrollador en `6759a8e` (SIN VALIDAR): 28 casos que fallan en `82ceb63` y en v1.35.0, controles en verde; PR-136-2 registrado; ESTADO a la fase 2
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Sección 44:** de 247 a 319 casos, y `CASOS_ESPERADOS` pasa de 2050 a 2122. Hay filas L1–L6 (V3 y una entrada truncada, por `Edit`, `Write`, `MultiEdit` y `Bash`) y T1–T4 (V1 y V2: la forma de `edits` que `jq` no puede trocear). Cada una falla con `allow` en los dos árboles. Los controles K, I y P3 pasan.
+- **Banco con la semilla fijada:** 2083 PASS, 28 FAIL (los de SEC-120) y 11 SKIP. Autoprueba 117/0; gates rc 0. **El banco queda en rojo a propósito hasta la fase 2.**
+- **Evidencia:** `cand-1.36.0/sec120/`, commit `c6a8e7f` del árbol de evidencia.
+- **PR-136-2** (`instrumento`, `docs/PENDIENTES.md`): una edición por consola (`sed -i`) en la sección 44.
+- **Avance (regla 6):** SEC-120 está medido como fallo en abierto en los dos árboles; sigue la reparación.
+
 ## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 1: casos del banco de REQ-007 CA-47 punto 20 y fail-before medido, sin reparar — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase1.md`; evidencia `cand-1.36.0/sec120/`, commit `c6a8e7f` del árbol de evidencia).
 

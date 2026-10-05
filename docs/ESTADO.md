@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-> **Plan autorizado vigente: intervención 2 de 1.36.0, SEC-120 (por delegación del propietario del 2026-10-05), fase 1 de 4, siguiente acción: el desarrollador escribe los casos de CA-47 punto 20 en la sección 44 y mide el fail-before sobre `82ceb63` y v1.35.0.** El plan está literal en `PENDING_APPROVAL.md` § Resueltas («Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola»). **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: intervención 2 de 1.36.0, SEC-120 (por delegación del propietario del 2026-10-05), fase 2 de 4 (fase 1 en `6759a8e`: 28 casos de SEC-120 que fallan en `82ceb63` y en v1.35.0, controles en verde; el banco queda en rojo a propósito), siguiente acción: el desarrollador repara con la comprobación del código de salida de `jq`, sin procesos añadidos, y entrega los casos en verde, el inventario, el banco, la autoprueba y las gates.** El plan está literal en `PENDING_APPROVAL.md` § Resueltas («Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola»). **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -550,7 +550,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-05 16:25
+## Estado derivado — 2026-10-05 16:43
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -560,9 +560,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `643385b` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `6759a8e` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
+**Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
