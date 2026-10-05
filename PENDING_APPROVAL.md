@@ -43,7 +43,39 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-05: P-136-D resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-05] (coordinadora) — P-136-E: la pasada correctiva de QA-007-01 cumple los tiempos, pero el inventario cambia en 3 casos de calibración del reloj (PASS → FAIL) que no ejecutan los hooks; ¿cómo se trata?
+
+**Contexto.** Décima autorización, pasada correctiva 1 de 1, sobre `488cd8e`, con el código **sin comitear** (copia: `cand-1.36.0/ca54/50-pasada-correctiva-sin-commit.patch`, sha256 `d9d62a06…`, en el árbol de evidencia, sin commit allí).
+- **Tiempos, medidos por el desarrollador:**
+  - 35 de 35 corridas de S1/S2 por debajo de 5 s (máx. 4 011 ms);
+  - 45 de 45 corridas de los casos M, N y MR de QA por debajo de 5 s (máx. 4 713 ms);
+  - decisiones idénticas a v1.35.0 y 0 procesos añadidos.
+- **Inventario con `ARNES_SEMILLA_41=23062`** frente a `22-` (`42-diff-inventarios.txt`; el banco dio 2036/3/11):
+  - **3 casos PASS → FAIL:** REQ-021 CA-03 «calibración de `sonda-reloj.sh`» (`a=2487`, banda [1600, 2400]), REQ-021 CA-10 (el juez) y REQ-021 CA-10.2. Los dos últimos heredan esa calibración;
+  - 1 caso de CA-69 2 (c) (REQ-017 CA-08 (ii), 6 líneas: INCONCLUSO → PASS), que no acredita.
+- **Comprobado por la coordinadora leyendo el disco, sin ejecutar nada:**
+  - la calibración la hace `tests/util/sonda-reloj.sh --calibrar` sobre un sujeto propio de bash, y la juzga `sonda_juzga_calibracion` (`run.sh` l. 1105);
+  - `grep` de `HOOKS_DIR`, `guard.sh` y `lib.sh` en `sonda-reloj.sh` y `sonda-procesos.sh` no devuelve nada: **esa calibración no ejecuta los hooks**, así que el cambio de código no puede alterarla;
+  - el propio `sonda-reloj.sh` documenta calibraciones fuera de banda con la máquina en reposo (l. ~67).
+- **No se repitió nada:** ni la corrida, ni el banco del worktree, ni la autoprueba. Repetir hasta el verde no desmiente un FAIL.
+
+**Pregunta.** La regla de parada «un veredicto del banco que cambia» se disparó en casos que no dependen del código cambiado. ¿Cómo se cierra la pasada?
+
+**Opciones.**
+- **(A) Declararlos `instrumento`, no atribuibles al cambio, con la prueba estática de arriba, y seguir.** El desarrollador comitea y corre el banco del worktree, la autoprueba y las gates. Después, **QA re-verifica con su propio inventario**, una observación independiente y no una repetición del desarrollador. Si QA ve un cambio de veredicto en un caso que **sí** ejecuta hooks, se para.
+  - **Consecuencia:** queda registrado un hallazgo `instrumento` (la calibración del reloj es sensible a la carga), con dueño, sin reparar en esta intervención. El inventario del desarrollador no acredita «idéntico»; lo acredita el de QA.
+- **(B) Una sola repetición del inventario, declarada antes de correrla, con el resultado aceptado sea cual sea.** Si los 3 casos vuelven a PASS, se sigue como en (A). Si siguen en FAIL, se vuelve a parar.
+  - **Consecuencia:** unos 3 minutos de banco. Se parece a repetir buscando el verde, aunque el resultado esté comprometido de antemano.
+- **(C) Caracterizar el instrumento:** correr la sección 38 contra los hooks de **v1.35.0**, N veces y con una carga parecida, para medir cuántas veces falla la calibración sin el cambio. Después, (A).
+  - **Consecuencia:** es la evidencia más fuerte de que no es regresión. Cuesta de 30 a 60 minutos de banco y una comisión corta.
+
+**Recomendación de la coordinadora: (A).** La prueba estática es concluyente para estos tres casos: un instrumento que no ejecuta los hooks no puede cambiar porque los hooks cambien. La re-verificación de QA, que ya está en el plan, vuelve a observar el inventario entero sin que nadie elija la corrida.
+
+**Qué trabajo sigue mientras no se decida.** **Ninguno del plan.** La pasada correctiva, la re-verificación de QA y la fase 4 dependen de esta decisión. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar).
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 

@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 PARADA: los tiempos cumplen (35/35 y 45/45 por debajo de 5 s), pero el inventario cambia en 3 casos de calibración del reloj que no ejecutan los hooks; ficha P-136-E; código SIN COMITEAR
+> Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (pasada correctiva; tramo de ~60 k tokens, ~655 k acumulados en la comisión) y la coordinadora (comprobación estática y este registro).
+
+- **Pasada correctiva** (por propiedad; no omite ningún destino):
+  - la pertenencia a `requirements/` se juzga en la misma llamada que la de código, y `guard-completado` reutiliza sólo los destinos «fuera»;
+  - la fase de tokens corre en locale C también con locale UTF-8;
+  - memo de lectura física de un nivel inexistente;
+  - lectura léxica de `D/B` derivada de la de `D`.
+  - El atajo de P-136-D se queda donde estaba. Todas las ediciones se hicieron con Edit.
+- **Tiempos** (a nivel de hook, Linux/WSL2):
+  - S1/S2: 35 de 35 por debajo de 5 s (máx. 4 011 ms);
+  - casos de QA M, N y MR: 45 de 45 por debajo de 5 s (máx. 4 713 ms);
+  - decisiones idénticas a v1.35.0 y 0 procesos añadidos (medida del contrato y recuento complementario).
+- **Inventario:** 3 casos PASS → FAIL, de la calibración de `sonda-reloj.sh` (REQ-021 CA-03, CA-10 y CA-10.2), más 1 caso de CA-69 2 (c). La coordinadora comprobó en el disco que esa calibración **no ejecuta los hooks**. Aun así, la regla de la autorización («un veredicto del banco que cambia») manda parar. No se repitió nada.
+- **Sin hacer:** el banco del worktree, la autoprueba, las gates (sólo `bash -n`), el registro técnico y los commits del código y de la evidencia.
+- **Avance (regla 6):** QA-007-01 está reparado en tiempos según el desarrollador, pero sin validar; falta la decisión P-136-E.
+
 ## [GitHub] — 2026-10-05 · Décima autorización, fase 3: QA (Opus) CON HALLAZGOS sobre `82ceb63` — QA-007-01 (`contrato`, media): la propiedad de CA-54 no se cumple con comandos propios en el máximo (hasta 5 814 ms); las 35 corridas, procesos, inventario, banco, autoprueba y equivalencia del atajo, conformes
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; ~312 k tokens; registro `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` gana QA-007-01, y `QA:` sigue `pendiente` con la referencia en su paréntesis; evidencia `cand-1.36.0/ca54/qa/`, commit `1209970`) y la coordinadora (este registro).
 

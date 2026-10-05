@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-> **Plan autorizado vigente: décima autorización (2026-10-03), fase 3 de 4, pasada correctiva 1 de 1 (la única del plan), siguiente acción: el desarrollador repara **QA-007-01** (`contrato`): con 131 072 bytes, un comando que menciona el estado terminal o que lleva un solo carácter no ASCII tarda hasta 5,8 s (8 de 30 corridas ≥ 5 s). Después, QA re-verifica. Si sigue sin cumplirse, se para y se pregunta al propietario (no hay más pasadas). Con QA favorable, seguridad (fase 4).** El plan está literal en `PENDING_APPROVAL.md` § Resueltas, en la entrada «décima autorización». Cada fase termina en un commit local y la siguiente empieza sin pedir permiso. **Si la sesión se corta, se continúa desde la última fase comiteada, sin volver a pedir la autorización.** Hooks 1.35.0 vigentes tras el reinicio (comprobado con la sonda LC10). `/arnes-upgrade` no hace falta (`PENDING_APPROVAL.md`, misma entrada).
+> **Plan autorizado vigente: décima autorización (2026-10-03), fase 3 de 4, pasada correctiva 1 de 1 PARADA por una condición de la autorización (inventario distinto), siguiente acción: el propietario decide **P-136-E** (`PENDING_APPROVAL.md` § Pendientes). La pasada cumple los tiempos (35/35 por debajo de 5 s, máx. 4 011 ms; M/N/MR 45/45, máx. 4 713 ms), pero el inventario cambia en 3 casos de calibración del reloj (REQ-021 CA-03, CA-10 y CA-10.2), que no ejecutan los hooks. El código de la pasada está sin comitear en el worktree (copia `50-pasada-correctiva-sin-commit.patch`).** El plan está literal en `PENDING_APPROVAL.md` § Resueltas, en la entrada «décima autorización». Cada fase termina en un commit local y la siguiente empieza sin pedir permiso. **Si la sesión se corta, se continúa desde la última fase comiteada, sin volver a pedir la autorización.** Hooks 1.35.0 vigentes tras el reinicio (comprobado con la sonda LC10). `/arnes-upgrade` no hace falta (`PENDING_APPROVAL.md`, misma entrada).
 
 - **1.35.0 publicada el 2026-10-03:** `main` en `3956a6f` (fusión del PR #59), tag `v1.35.0` sobre esa fusión, CI final run `37169938675` (success) sobre `c0f8493`. Plugin instalado según el propietario: **1.35.0**. **Pero en este host (WSL2), `installed_plugins.json` registra 1.33.2** (`10eac80`, `lastUpdated` 2026-09-11), y el bloque derivado dice lo mismo. Las puertas que gobiernan esta sesión son las de 1.33.2. **Actualizada después, por petición expresa del propietario (2026-10-03):** `claude plugin marketplace update arnes-juan` + `claude plugin update arnes-juan@arnes-juan` (alcances `user` y `project`) → **1.35.0**, `gitCommitSha` `3956a6f`; cada archivo de `hooks/` comparado con `git show v1.35.0:` es idéntico. **Rige desde el próximo reinicio de Claude Code:** esta sesión sigue con los hooks de 1.33.2 ya cargados. Registro: `PENDING_APPROVAL.md` § Resueltas, «Publicación de v1.35.0 ejecutada», y la línea «PUBLICADA» de las notas `[1.35.0]`.
 - **Cabeza de partida:** `cand/1.36.0` desde `origin/main` = `3956a6f`. Sin push.
@@ -548,7 +548,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-05 11:44
+## Estado derivado — 2026-10-05 12:36
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -558,7 +558,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `7dbfeca` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `488cd8e` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
