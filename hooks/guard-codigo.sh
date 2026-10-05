@@ -58,7 +58,8 @@ arnes_guard_codigo() {
     via_bash=1
     # El codigo de salida NO se ignora: `$ARNES_RC_EXCESO` significa "no analice",
     # y una lista vacia por no haber analizado no puede leerse como "no escribe nada".
-    escrituras="$(arnes_bash_escrituras "$ARNES_CMD")"; rc=$?
+    # Analizado una vez por invocacion: `guard-completado` reutiliza este resultado (`arnes_escrituras_de`).
+    arnes_escrituras_de "$ARNES_CMD"; rc=$?; escrituras="$ARNES_ESCRITURAS"
     if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
       # Fail-closed CON destinatario: el guardian solo prohibe a quien no es el agente
       # de codigo, asi que el rechazo por tamano se decide abajo, en el mismo sitio y

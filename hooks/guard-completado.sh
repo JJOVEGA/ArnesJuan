@@ -329,7 +329,8 @@ arnes_guard_completado() {
       # Igual que en `guard-codigo`: un `$ARNES_RC_EXCESO` no es "no escribe nada".
       # Aqui la denegacion alcanza a TODOS los agentes, porque la regla que este
       # guardian aplica tambien alcanza a todos: nadie cierra un REQ desde la shell.
-      escrituras="$(arnes_bash_escrituras "$bash_cmd")"; rc=$?
+      # El mismo analisis que `guard-codigo` en esta invocacion, reutilizado si ya se hizo (`arnes_escrituras_de`).
+      arnes_escrituras_de "$bash_cmd"; rc=$?; escrituras="$ARNES_ESCRITURAS"
       if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
         arnes_parse_manifest
         # Igual que en `guard-codigo`: el techo se resuelve aqui porque el detector corrio
@@ -386,6 +387,17 @@ arnes_guard_completado() {
   # que empezaba por `/tmp/` se saltaba, y un proyecto puede vivir bajo `/tmp`—. Un destino que no
   # se puede determinar se trata como dentro, con la misma regla (CA-47, punto 7).
   if [ "$tool" = "Bash" ]; then
+    # EL RECORRIDO DE DESTINOS, SOLO SI EL COMANDO PUEDE MENCIONAR EL ESTADO TERMINAL (CA-54, nota del
+    # 2026-10-03, «Decision del propietario sobre la implementacion de CA-54», P-136-D). Abajo se deniega
+    # solo si un destino cae en `req_dir` Y `grep` encuentra el estado terminal en el comando, y esa
+    # busqueda es la misma para todos los destinos. Si es SEGURO que no lo encuentra
+    # (`arnes_estado_ausente`, que lee el comando entero y solo afirma cuando puede probarlo), ningun
+    # destino puede denegar y se sale por el mismo `return 0` del final del bucle. COLOCACION, que es parte
+    # de la decision: el atajo omite SOLO este recorrido. El analisis del comando y todas las denegaciones
+    # que esta puerta emite sin mirar destinos —presupuesto (`ARNES_RC_EXCESO`), CR del delimitador
+    # (`ARNES_RC_CR`), SEC-124 (`ARNES_RC_CUERPO_CR`), LC10 (`ARNES_RC_LC10`) y el manifiesto roto— ya
+    # se han emitido arriba, en el orden de v1.35.0; no se mueve ninguna por debajo de esta linea.
+    arnes_estado_ausente "$bash_cmd" "$estado_done" && return 0
     while IFS= read -r d; do
       [ -n "$d" ] || continue
       arnes_identidad "$d"; arnes_id_pertenece req; rc=$?

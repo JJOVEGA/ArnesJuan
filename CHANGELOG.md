@@ -2,6 +2,31 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, fase 2 (CA-54): análisis de `Bash` en el máximo por debajo de 5 s (35/35, máx. 3 711 ms) con las mismas decisiones e inventario idéntico; atajo de `guard-completado` readmitido por P-136-D — **SIN VALIDAR por QA**
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico; presupuesto superado, aceptado por el propietario en P-136-D). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `cb3cb80`, `cand-1.36.0/ca54/`. Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`.
+
+- **Código (`hooks/lib.sh`, `guard-codigo.sh`, `guard-completado.sh`), por propiedad.** Cada juicio da el de v1.35.0 y sólo cambia lo que tarda:
+  - el comando se analiza una vez por invocación (`arnes_escrituras_de`);
+  - la fase de tokens del detector se resuelve en locale C sólo sobre texto ASCII y escribe los destinos de una vez;
+  - identidad y pertenencia recorren menos sentencias por destino: las ramas de «no determinable» van aparte y no se copian en cada llamada;
+  - el atajo de `guard-completado` (`arnes_estado_ausente`) omite sólo el recorrido de destinos cuando es seguro que el comando entero no menciona el estado terminal.
+- **Colocación del atajo (P-136-D):** análisis, `ARNES_RC_EXCESO`, `ARNES_RC_CR`, `ARNES_RC_CUERPO_CR`, `ARNES_RC_LC10` y manifiesto roto salen antes (líneas 333–366), en el orden de v1.35.0; el atajo está en la 400. Detalle en el registro, § 2.
+- **Medida** (Linux/WSL2, a nivel de hook, carga 1,11–1,52), mediana del candidato frente a v1.35.0:
+  - S1: A 3 009 frente a 8 620 ms, B 3 411 frente a 8 418, C 3 610 frente a 8 118;
+  - S2: original 1 908 frente a 2 408,5, controles 3 111–3 410 frente a 5 413–5 564;
+  - **0 de 35 corridas llegan a 5 000 ms** (en v1.35.0 eran 30);
+  - salida completa idéntica en las 10 entradas.
+- **Procesos:**
+  - `sonda-procesos.sh` da la misma cuenta en los dos árboles: 0 procesos añadidos;
+  - el recuento exacto en un espacio de PID propio da uno menos en S1 e igual en S2.
+- **Inventario** (CA-69 2 (a), `ARNES_SEMILLA_41=23062`): idéntico a la referencia, 2050 líneas, `f35c9c04…`, diff vacío.
+  - Banco del worktree: 2038 PASS, 0 FAIL, 12 SKIP. Autoprueba: 117/0. Gates de §7: rc 0.
+- **Registrado, sin reparar:**
+  - la semilla volátil de la sección 41 en el nombre del caso (instrumento);
+  - las dos ediciones de `hooks/` hechas por consola el 2026-10-03 (PR-136-1). Esta vuelta se editó con las herramientas de edición.
+- **Sin medir:** Windows/MSYS, el host, el CI, los locales en_US/tr_TR y entradas de QA con el estado mencionado.
+- **Avance (regla 6):** CA-54 construido y medido por el desarrollador. Falta la validación de QA, con los ataques de P-136-D punto 4, y después la de seguridad.
+
 ## [GitHub] — 2026-10-05 · P-136-D resuelta por el propietario: opción (A) con condición de equivalencia; CA-54 (c) aclarada con su texto literal; semilla de la sección 41 fijada en la invocación; fichas F-136-1 a F-136-3 y hallazgo de proceso PR-136-1 (`instrumento`)
 > Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (decisión literal en la cola, ficha a § Resueltas, ESTADO, índice) y `analista-requerimientos` (REQ-007 y `docs/PENDIENTES.md`; ~147 k tokens).
 
