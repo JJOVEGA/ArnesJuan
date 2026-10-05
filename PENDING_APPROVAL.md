@@ -43,8 +43,51 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-05: P-136-D resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-03] (coordinadora) — P-136-D: CA-54 sin el atajo de `guard-completado` deja 1 de 35 corridas en 5 213 ms; ¿se readmite el atajo aclarando CA-54 (c), se sigue optimizando o se acepta?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-05) — **P-136-D: opción (A) con condición de equivalencia**; semilla de la sección 41 fijada; fichas de instrumento; el plan de la décima autorización continúa desde la fase 2
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-D: opción (A), con una condición de equivalencia que es parte de la
+> decisión, no una sugerencia:
+>
+> 1. El atajo de guard-completado puede omitir el RECORRIDO DE DESTINOS cuando
+>    el comando entero no menciona el estado terminal. No puede omitir el
+>    análisis del comando ni ninguna denegación por forma que guard-completado
+>    emite sin mirar destinos: presupuesto (ARNES_RC_EXCESO), CR del
+>    delimitador (ARNES_RC_CR), SEC-124 (ARNES_RC_CUERPO_CR) y LC10
+>    (ARNES_RC_LC10). Esas salen antes del atajo, exactamente como en v1.35.0.
+> 2. Prueba: inventario del banco caso a caso idéntico al de referencia
+>    (2050 líneas, f35c9c04…), con la semilla de la sección 41 fijada. Si
+>    difiere en una sola línea, el atajo está mal colocado y se corrige; no se
+>    cambia el veredicto.
+> 3. Contrato: el analista aclara CA-54 (c) así: «comprobar primero una
+>    condición necesaria de una regla, leyendo la entrada entera, no es
+>    analizar menos, siempre que ninguna denegación que no dependa de esa
+>    condición deje de emitirse». Ni más ni menos.
+> 4. QA ataca la equivalencia: las filas HC5a, HC9.6 y LC10.1–LC10.9 por
+>    guard-completado explícitamente, los locales en_US y tr_TR, y un comando
+>    que mencione el estado terminal con destino fuera de requirements/.
+> 5. Presupuesto: acepto el exceso del desarrollador (586k) como registrado;
+>    la pasada correctiva de esta intervención sigue siendo una.
+>
+> Defectos registrados: la semilla de la sección 41 se fija ahora (ajuste del
+> banco sin cambio de veredicto: lo decides tú). sonda-procesos y la columna
+> vacía de S2 quedan como fichas. Las dos ediciones de hooks/ por consola:
+> registrarlo como hallazgo de proceso (instrumento), sin reparar en esta
+> intervención.
+>
+> Continúa el plan desde la fase 2 con lo de arriba; no me preguntes hasta QA.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Semilla de la sección 41 (decisión que el propietario delega en la coordinadora):** se fija **en la invocación** de las comparaciones de inventario (`ARNES_SEMILLA_41` igual a la semilla que registra la referencia, `23062` en `22-inventario-v1.35.0.txt`), y la precisión se escribe en CA-69 2 (a). **El banco no cambia:** fijar el valor por defecto dentro de la sección 41 quitaría el sorteo de entradas, que es lo que ese caso ejerce, y eso sí cambiaría lo que mide.
+- **Orden:** primero el analista, con la aclaración de (c), la precisión de CA-69 2 (a) y las fichas; después el desarrollador, que cierra la fase 2. Van en serie porque son el mismo REQ.
+- **Qué trabajo sigue:** el plan, fase 2. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-03] (coordinadora) — P-136-D: CA-54 sin el atajo de `guard-completado` deja 1 de 35 corridas en 5 213 ms; ¿se readmite el atajo aclarando CA-54 (c), se sigue optimizando o se acepta?
 
 **Contexto.** Décima autorización, fase 2 (CA-54), sobre `4b4f239` con el código **sin comitear** en el worktree. Las copias del parche están en el árbol de evidencia, `cand-1.36.0/ca54/`: `50-candidato-fase2-sin-atajo-sin-commit.patch`, y la variante con atajo en `con-atajo-retirado/`.
 - **Con el atajo:** 0 de 35 corridas ≥ 5 000 ms. El peor caso es 3 811 ms (S1 C).
@@ -73,9 +116,6 @@
 **Qué trabajo sigue mientras no se decida.** **Ninguno del plan:** las fases 2 a 4 dependen de esta decisión. Fuera del plan no se abre nada. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar en esta intervención).
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-03, décima autorización) — **Fichas P-136-A/B/C resueltas; plantilla de autorización; PLAN AUTORIZADO VIGENTE «décima autorización», CA-54 en fases 0 a 4**
 

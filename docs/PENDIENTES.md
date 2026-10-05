@@ -2040,3 +2040,81 @@ esperar y por eso no va bajo `## Pendientes` de `PENDING_APPROVAL.md`: la decisi
 - **Dueños:** `analista-requerimientos` (contrato: la fuente legible, la propiedad y su medida) y
   `desarrollador` (mecanismo). **Forzador:** una autorización del propietario que la despache.
   **Ventana:** 1.36.0, por la decisión de arriba, sin intervención asignada todavía.
+
+## Fichas y hallazgo de proceso de la fase 2 de CA-54 (P-136-D, 2026-10-05)
+
+**Estado de las cuatro: registradas, sin reparar y sin ventana de reparación en esta intervención.**
+**Origen común, literal** (decisión del propietario sobre P-136-D, `PENDING_APPROVAL.md` § Resueltas, entrada
+«RESUELTA (propietario, 2026-10-05) — P-136-D: opción (A) con condición de equivalencia», «Defectos
+registrados»): «Defectos registrados: la semilla de la sección 41 se fija ahora (ajuste del banco sin cambio de
+veredicto: lo decides tú). sonda-procesos y la columna vacía de S2 quedan como fichas. Las dos ediciones de
+hooks/ por consola: registrarlo como hallazgo de proceso (instrumento), sin reparar en esta intervención.»
+La décima autorización ya mandaba registrar sin reparar lo que salga fuera de CA-54 («Límites»: «nada fuera de
+CA-54 en esta intervención (se registran)»). Evidencia: `docs/arnes/v1.36.0-ca54-fase1.md` y el árbol de evidencia
+`/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/ca54/` (rama `evidencia/prueba-despacho-2026-09-14`).
+
+### F-136-1 — `tests/util/sonda-procesos.sh` no ve subshells ni `$( )`: por sí sola no acredita «0 procesos añadidos»
+
+- **Qué se observó.** La sonda cuenta los binarios de su lista invocados por `PATH`; **no cuenta subshells ni
+  `$( )` de bash**, que también son `fork` (`docs/arnes/v1.36.0-ca54-fase1.md`, «Anomalías y observaciones», 4;
+  salida de la línea base en `ca54/12-procesos.txt`). En la fase 2 el desarrollador añadió un recuento exacto
+  complementario, en un espacio de PID propio —`ca54/forks-pidns.sh`, salida en `ca54/35-procesos-pidns.txt`, que
+  se declara a sí misma «EVIDENCIA COMPLEMENTARIA (no la del contrato)»—.
+- **Consecuencia.** El techo de P-136-A («0 procesos añadidos», REQ-007, nota de CA-54 del 2026-10-03, «Coste en
+  procesos») se mide por contrato con esta sonda; un proceso que la optimización añadiera como subshell o
+  sustitución de órdenes **no lo vería**. Con ella sola, lo que no ve queda **no acreditado**, y no medido como 0.
+  Hoy el recuento complementario cubre ese hueco **para las entradas de S1 y S2**, sin ser el instrumento del
+  contrato.
+- **Dueño propuesto:** `desarrollador` (instrumento) y `analista-requerimientos`, si se decide que el contrato de
+  CA-54 o de CA-59 nombre otro instrumento o los dos. Cambiar la sonda o el instrumento del contrato **dentro** de
+  esta ventana sería cambiar el procedimiento de medición de CA-54 (prohibido por su (d)): por eso no se toca aquí.
+
+### F-136-2 — Sonda S2 de CA-54: `BASE` y `T43` apuntan a la misma ruta y la columna `43b948a` sale vacía (rótulo)
+
+- **Qué se observó.** Al restaurar S2 con sólo las rutas cambiadas, `T43` apunta a los hooks de v1.35.0, la misma
+  ruta que `BASE`; la sonda elige la columna comparando la ruta, así que las dos corridas de v1.35.0 de cada vuelta
+  caen en `9596e39 ms:` (10 valores) y `43b948a ms:` sale **vacía** (`docs/arnes/v1.36.0-ca54-fase1.md`, sección 1 y
+  «Anomalías y observaciones», 2; salida en `ca54/11-s2-reloj.txt`; diff de las sondas en
+  `ca54/00-diff-sondas-frente-a-originales.txt`).
+- **Consecuencia.** Es **de rótulo: no cambia la medida** —se mide lo mismo, tres invocaciones por vuelta,
+  alternadas—, pero quien lea `11-s2-reloj.txt` tiene que saber que `9596e39 ms:` son 10 corridas de v1.35.0 y que
+  la columna vacía no es una corrida perdida. Arreglar el rótulo es un cambio que no es ruta, y la nota de CA-54
+  sólo admite cambiar rutas: no se hace en esta ventana.
+- **Dueño propuesto:** `desarrollador` (la sonda vive en el árbol de evidencia, no en `tests/`), en la ventana que
+  vuelva a usar S2 con otra regla de instrumento.
+
+### F-136-3 — El nombre del caso aleatorio de la sección 41 incluye la semilla: comparar inventarios exige fijarla
+
+- **Qué se observó.** El caso «REQ-023 CA-03 (reservada) entrada al azar …» de la sección 41 lleva en su nombre el
+  carácter sorteado y `ARNES_SEMILLA_41=<n>`, así que dos corridas con semillas distintas dan una línea distinta en
+  el inventario aunque las dos sean PASS (`ca54/con-atajo-retirado/42-diff-inventarios.txt`: `23062` frente a
+  `29528`, la única línea distinta; la referencia, `ca54/22-inventario-v1.35.0.txt`, línea 1490).
+- **Consecuencia.** Una comparación caso a caso (REQ-007 CA-69, punto 2 (a)) da una diferencia que no es un cambio
+  de veredicto. **Ya resuelto para esta ventana por la coordinadora**, con la delegación del propietario: la
+  semilla se fija **en la invocación** al valor de la referencia (`23062`), y el banco no cambia (REQ-007 CA-69,
+  punto 2 (a)). La ficha existe **por si se quiere que el banco no lo exija** —por ejemplo, que la identidad del
+  caso no incluya la semilla, o que `inventario.sh` la normalice—, sin quitar el sorteo, que es lo que el caso
+  ejerce.
+- **Dueño propuesto:** `desarrollador` (banco e inventario; REQ-014 CA-12 es la sede del oráculo de
+  `inventario.sh`), con el `analista-requerimientos` si cambia qué es la identidad de un caso.
+
+### PR-136-1 — Hallazgo de proceso, clase `instrumento`: dos ediciones de `hooks/` hechas por consola en la fase 2 de CA-54
+
+- **Clase:** `instrumento` (decisión del propietario, arriba). **No** se añade a `Hallazgos abiertos:` de ningún REQ:
+  eso es del `qa-tester` o del `auditor-seguridad`.
+- **Qué se observó.** En la fase 2 de CA-54, el `desarrollador` hizo dos ediciones de `hooks/` por consola
+  (`python3`): la conexión inicial de las dos puertas y la sustitución de un bloque de unas 100 líneas. **Ninguna
+  puerta las midió.** Registro: `CHANGELOG.md`, entrada «Décima autorización, fase 2 (CA-54) PARADA» (commit
+  `800032e`), «Registro (§13)». El código sigue sin comitear en el worktree; el parche está en
+  `ca54/50-candidato-fase2-sin-atajo-sin-commit.patch` y la variante con atajo en `ca54/con-atajo-retirado/`.
+- **Regla que toca.** `AGENTS.md` §13, «La invariante manda sobre cualquier preferencia de herramienta»: para tocar
+  un archivo que alguna invariante protege se usan las herramientas de edición; si hace falta la consola, se dice
+  **por qué** y se asume que ninguna puerta lo va a medir. Un intérprete está **fuera a propósito** del detector de
+  `Bash` (§13, «`Bash` sólo está cubierto en parte»).
+- **Consecuencia.** El detector de escrituras de `guard-codigo` no ve lo que escribe un intérprete, así que ninguna
+  puerta juzgó esas dos escrituras: que el autor fuera el `desarrollador`, el único autorizado sobre `hooks/`, no lo
+  comprobó ninguna puerta, sólo el registro. No cambia lo que el código hace —eso
+  lo juzgan el inventario, el banco y QA—, pero sí lo que el proceso puede acreditar de cómo se escribió.
+- **Dueño propuesto:** la coordinadora (despacho: que el encargo del `desarrollador` pida las herramientas de
+  edición sobre `hooks/`, o el motivo si usa la consola) y el `desarrollador` (conducta). **Reparación:** ninguna en
+  esta intervención, por decisión del propietario.

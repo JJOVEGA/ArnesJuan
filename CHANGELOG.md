@@ -2,6 +2,30 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · P-136-D resuelta por el propietario: opción (A) con condición de equivalencia; CA-54 (c) aclarada con su texto literal; semilla de la sección 41 fijada en la invocación; fichas F-136-1 a F-136-3 y hallazgo de proceso PR-136-1 (`instrumento`)
+> Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (decisión literal en la cola, ficha a § Resueltas, ESTADO, índice) y `analista-requerimientos` (REQ-007 y `docs/PENDIENTES.md`; ~147 k tokens).
+
+- **Decisión del propietario, literal** en `PENDING_APPROVAL.md` § Resueltas:
+  - el atajo puede omitir **el recorrido de destinos** cuando el comando entero no menciona el estado terminal, nunca el análisis ni las denegaciones por forma (presupuesto, CR del delimitador, SEC-124, LC10), que salen antes, como en v1.35.0;
+  - prueba: inventario idéntico al de referencia, con la semilla fijada;
+  - QA ataca la equivalencia;
+  - acepta el exceso de presupuesto del desarrollador (586 k), y la pasada correctiva sigue siendo una.
+  - La cola queda vacía.
+- **REQ-007:**
+  - CA-54 (c) gana la aclaración del propietario, palabra por palabra;
+  - los puntos 1 y 2 de la decisión quedan citados como decisión sobre la implementación;
+  - CA-69 2 (a): la comparación fija `ARNES_SEMILLA_41` al valor de la referencia (`23062`), y el banco no cambia;
+  - Historial y Correspondencia. Cabecera sin cambios.
+  - **Tensión anotada por el analista:** (c) sigue nombrando «omitir destinos» como ejemplo prohibido. La aclaración y la decisión acotan la excepción, y sólo se entiende leyéndolas juntas.
+- **`docs/PENDIENTES.md`:**
+  - F-136-1: `sonda-procesos.sh` no ve subshells;
+  - F-136-2: la columna vacía de S2;
+  - F-136-3: la semilla va en el nombre del caso;
+  - PR-136-1 (`instrumento`): dos ediciones de `hooks/` por consola, sin reparar.
+- **Semilla (decide la coordinadora por delegación):** se fija en la invocación y no en el banco. Fijarla dentro de la sección 41 quitaría el sorteo de entradas que ese caso ejerce.
+- **Índice:** la fila de REQ-007 pasa a decir P-136-A a P-136-D resueltas y ADR-017 aceptada.
+- **Avance (regla 6):** contrato listo para cerrar la fase 2. Sigue el desarrollador: readmitir el atajo detrás de las denegaciones por forma, 35 corridas, inventario, banco, autoprueba y commit.
+
 ## [GitHub] — 2026-10-03 · Décima autorización, fase 2 (CA-54) PARADA: con el atajo de `guard-completado`, 0 de 35 corridas ≥ 5 s; sin él, 1 de 35 (5 213 ms). Ficha P-136-D para el propietario; código SIN COMITEAR y SIN VALIDAR
 > Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (optimización y medición; ≈ 586 k tokens en dos tramos, **por encima** del presupuesto orientativo de 300–400 k) y la coordinadora (decisiones de la parada y este registro).
 
