@@ -418,12 +418,20 @@ cuando deben.
 
 **Este es el plan de versión vigente de 1.36.0.** Lo escribe la coordinadora con las decisiones del propietario, literales en `PENDING_APPROVAL.md` § Resueltas: «Alcance de 1.36.0», la décima autorización y P-136-A a P-136-F. Cada intervención lleva su propia autorización con la forma de `templates/autorizacion.md`. El contrato vive en `requirements/REQ-007.md`.
 
-| Intervención | Qué | Estado |
+**Orden final de 1.36.0** (ajuste de alcance del propietario, 2026-10-05, posterior a `d2880c1`; literal en la cola). Nada más entra; lo nuevo se registra como ficha.
+
+| Paso | Qué | Estado |
 |---|---|---|
-| **1** | **CA-54 / QA-023-10** (rendimiento del análisis de `Bash` en el máximo) | **Cerrada** (décima autorización): candidato `82ceb63`. QA con hallazgos, QA-007-01 como límite declarado. Seguridad R-052 con hallazgos: SEC-127 → P-136-G |
-| **2** | **SEC-120**, sola (fallo de `jq` al leer o trocear la entrada → deny; REQ-007 CA-47 punto 20). **Vence el 2026-10-29** | **Abierta el 2026-10-05**, por delegación del propietario (plan en `PENDING_APPROVAL.md` § Resueltas) |
-| **2b** | **Segunda pasada de CA-54:** las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código) y la recursión sin tope de la lectura léxica (ficha de QA-007-02). **El banco recibe primero el caso de destinos profundos con su fail-before.** M0 y MD (límite declarado «sin cifra sobre `82ceb63`») se miden en anfitrión sano antes de cualquier optimización (decisión del propietario, 2026-10-05). **Incluye SEC-127 (P-136-G, opción A):** la asignación de locale del atajo no puede persistir en ningún bash. Se hace sin subshell, con `local LC_ALL=C` o guardando y restaurando el valor. QA lo verifica con un caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado. Seguridad lo reclasifica al cerrar. La premisa de versión de bash no se declara como límite. Si la 2b se retrasa más allá de la publicación, esto va solo antes de publicar | Después de la 2 (P-136-F, punto 6) |
-| **3** | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | Después de la 2b |
+| — | **CA-54 / QA-023-10** (intervención 1) | **Cerrada:** candidato `82ceb63`. QA-007-01 es límite declarado, y la medición de seguridad sobre la recursión (R-052, hasta 2 040 niveles, `deny` y rc 0) es la evidencia |
+| 1 | **SEC-120** (REQ-007 CA-47 p. 20; vence el 2026-10-29): write-back del analista con las decisiones del propietario sobre la fase 2 | Pendiente: los créditos de uso |
+| 2 | SEC-120: QA (Opus, comisión nueva) sobre `aba1c9b` | — |
+| 3 | SEC-120: seguridad, con QA favorable | — |
+| 4 | SEC-120: commit validado | — |
+| 5 | **SEC-127, sola** (intervención corta), con las cuatro condiciones de P-136-G: sin subshell (`local LC_ALL=C` o guardar y restaurar); caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado; seguridad lo reclasifica al cerrarlo; la versión de bash no se declara como límite | — |
+| 6 | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | — |
+| 7 | **Cierre y publicación** de 1.36.0: fusionar, etiquetar y publicar son decisión del propietario mientras SEC-127 no esté cerrado | — |
+
+**Sale a 1.37 como ficha:** la **2b de CA-54**: las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código, M0 y MD medidos en anfitrión sano antes de optimizar) y la recursión sin tope de la lectura léxica (F-136-5, con el caso de banco de destinos profundos primero).
 
 **Fuera de 1.36.0, por decisión del propietario:** el hueco C, P-119-A (F2, F5 y F7) y el mecanismo de SEC-123.
 

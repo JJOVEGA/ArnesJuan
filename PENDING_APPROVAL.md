@@ -47,6 +47,26 @@ _(Vacía desde el 2026-10-05: P-136-G resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-05, posterior a `d2880c1`) — **Ajuste de alcance de 1.36.0**: SEC-127 se repara sola, entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 como ficha; orden final de 1.36.0 en siete pasos; nada más entra
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Ajuste de alcance (decisión del propietario; sustituye d2880c1 en la
+> ubicación de SEC-127):
+> - SEC-127 se repara SOLO, como intervención corta, con las mismas cuatro
+>   condiciones ya registradas. Va después del commit validado de SEC-120 y
+>   antes de SEC-115/118.
+> - La 2b de CA-54 sale de 1.36.0 y pasa a 1.37 como ficha. CA-54 queda
+>   cerrado con QA-007-01 como límite declarado y la medición de seguridad
+>   sobre la recursión (hasta 2040 niveles) como evidencia.
+> - Orden final de 1.36.0: 1) write-back SEC-120, 2) QA, 3) seguridad,
+>   4) commit validado, 5) SEC-127, 6) SEC-115/118, 7) cierre y publicación.
+>   Nada más entra; lo nuevo se registra como ficha.
+> Registra el ajuste en la cola, en docs/PLAN.md y en ESTADO, y confírmame el
+> orden.
+
+**Lo que añade la coordinadora, rotulado como suyo:** sustituye la ubicación de SEC-127 de P-136-G, que la ponía dentro de la 2b. Sus cuatro condiciones siguen tal cual. Va en `docs/PLAN.md` § 1.36.0 (la 2b pasa a una fila «sale a 1.37») y en ESTADO. Las fichas F-136-5 (recursión) y la de M0/MD quedan con destino 1.37 en `docs/PENDIENTES.md`. La cola sigue vacía.
+
 ### RESUELTA (propietario, 2026-10-05) — **P-136-G (SEC-127): opción (A), dentro de la 2b de CA-54** (o sola antes de publicar si la 2b se retrasa); sin subshell; QA con caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé; seguridad reclasifica al cerrar; la premisa de versión de bash NO se declara como límite
 
 **Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

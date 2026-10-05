@@ -2186,3 +2186,8 @@ ninguna mata al hook.»
 - **Qué:** el `desarrollador` usó `sed -i` sobre `tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh` para renombrar `$GJ` a `$GJ120` en cinco filas, contra la instrucción del encargo de editar sólo con Edit/Write. Lo declaró él mismo (`docs/arnes/v1.36.0-sec120-fase1.md`; commit `6759a8e`).
 - **Consecuencia:** ninguna puerta mide una edición por consola (`AGENTS.md` §13). El resultado es el previsto y lo revisará QA en la fase 3. Es la misma clase que PR-136-1.
 - **Sin reparar** en esta intervención.
+
+### F-136-6 — 1.37: la 2b de CA-54 (ajuste de alcance del propietario, 2026-10-05)
+- **Qué:** la segunda pasada de CA-54 sale de 1.36.0 y pasa a 1.37 como ficha. Cubre las formas de QA-007-01 que quedaron fuera del criterio (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código; M0 y MD se miden en anfitrión sano antes de optimizar) y la recursión de F-136-5, con el caso de banco de destinos profundos y su fail-before primero.
+- **Origen:** `PENDING_APPROVAL.md` § Resueltas, «Ajuste de alcance de 1.36.0». **F-136-5 queda con destino 1.37** por la misma decisión.
+- **En 1.36.0:** CA-54 se cierra con QA-007-01 como límite declarado y la medición de seguridad de R-052 (hasta 2 040 niveles) como evidencia.

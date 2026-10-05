@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Ajuste de alcance de 1.36.0 por el propietario: SEC-127 sola entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 (F-136-6); orden final en siete pasos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; sustituye la ubicación de SEC-127 de `d2880c1`, y sus condiciones no cambian.
+- **`docs/PLAN.md` § 1.36.0:** la tabla del orden final (1 write-back de SEC-120 · 2 QA · 3 seguridad · 4 commit validado · 5 SEC-127 · 6 SEC-115/118 · 7 cierre y publicación). La 2b sale a 1.37.
+- **`docs/PENDIENTES.md`:** F-136-6 (la 2b en 1.37); F-136-5 pasa a tener destino 1.37.
+- **ESTADO:** el orden final.
+- **Avance (regla 6):** el alcance de 1.36.0 queda cerrado; el plan espera a que vuelvan los créditos.
+
 ## [Interno] — 2026-10-05 · P-136-G (SEC-127) resuelta por el propietario: se repara dentro de la 2b de CA-54, sin subshell; la premisa de versión de bash no se declara como límite
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
