@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, re-verificación de QA sobre `dee5932`: CON HALLAZGOS — QA-007-02 (`contrato`, alta), nuevo e introducido por la pasada: un destino con unos 1 500 niveles mata el hook por SIGSEGV y abre las dos puertas; QA-007-01 sigue abierto; ficha P-136-F; plan PARADO
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; registro en `docs/qa/REQ-007.md`; `Hallazgos abiertos:` de REQ-007 con QA-007-01 y QA-007-02, y `QA:` sigue `pendiente`; evidencia `a6f5b32`) y la coordinadora (ficha y registro).
+
+- **QA-007-02:**
+  - en la lectura léxica, `_arnes_lectura_lexica` recurre por segmento sin tope;
+  - con un destino de `..` y unos 1 500 niveles (≈ 3 KB, por debajo de `ARNES_ID_MAX`), el hook termina con rc 139 y sin decisión;
+  - la coordinadora escribe entonces en `src/a.ts` y un REQ se cierra por `sed -i`, cuando v1.35.0 y `82ceb63` lo deniegan;
+  - el banco no tiene ningún caso de destinos profundos;
+  - **no hay exposición fuera del worktree** (commits locales sin push; instalación estable 1.35.0).
+- **QA-007-01:** sigue abierto. El anfitrión se degradó durante la medición (v1.35.0 hasta 4 veces más lento que por la mañana), y QA registró los FAIL con su carga, sin repetirlos. M0 y MD son formas que la pasada no ataca por construcción.
+- **Conforme:** 0 procesos añadidos; inventario sólo con CA-69 2 (c); banco 2037/0/13; autoprueba 117/0; gates rc 0.
+- **Control del proveedor:** detuvo a QA al construir los locales GB18030 y BIG5. No se reintentó, y el ataque de equivalencia sobre `dee5932` quedó sin ejecutar.
+- **Fase 4:** no se despachó, porque no hay QA favorable. **P-136-F** está en la cola (opciones A, B y C; la coordinadora recomienda C: revertir ahora a `82ceb63` y hacer la segunda pasada como intervención nueva).
+- **Avance (regla 6):** la pasada redujo tiempos pero abrió un fallo en abierto; el candidato necesita la decisión P-136-F.
+
 ## [Interno] — 2026-10-05 · Décima autorización: pasada correctiva de QA-007-01 comiteada por el desarrollador en `dee5932` (SIN VALIDAR); decisión de la coordinadora sobre el SKIP de REQ-017 CA-09; ESTADO a la re-verificación de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

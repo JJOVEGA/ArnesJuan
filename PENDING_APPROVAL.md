@@ -43,7 +43,44 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-05: P-136-E resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-05] (coordinadora) — P-136-F: la pasada correctiva única introdujo un fallo en abierto (QA-007-02, `contrato`, alta) y no cerró QA-007-01; el plan está parado. ¿Se revierte la pasada, se autoriza otra o ambas cosas?
+
+**Contexto.** Re-verificación de QA (Opus) sobre `dee5932` (cabeza validada `787d04d`; registro en `docs/qa/REQ-007.md`, «Re-verificación de la pasada correctiva (QA-007-01)»; evidencia `cand-1.36.0/ca54/qa/`, commit `a6f5b32`).
+- **QA-007-02 (`contrato`, alta, NUEVO, lo introduce la pasada):**
+  - un destino de `Bash` con `..` y unos 1 500 niveles (≈ 3 KB, por debajo de `ARNES_ID_MAX`) hace que el hook muera por **SIGSEGV** (rc 139, sin decisión): `_arnes_lectura_lexica` recurre por segmento, sin tope;
+  - con ese destino delante, la coordinadora escribe en `src/a.ts` y un REQ se cierra por `sed -i`. **v1.35.0 y `82ceb63` lo deniegan;**
+  - umbral entre 1 400 y 1 500 niveles con `ulimit -s` de 8 MiB;
+  - el banco no tiene ningún caso con destinos profundos. Reproducción mínima en `qa/segv/70-` a `74-`.
+  - **Exposición:** ninguna fuera de este worktree. El código está sólo en commits locales de `cand/1.36.0`, sin push, y la instalación estable es 1.35.0.
+- **QA-007-01 (`contrato`, media) sigue abierto,** aunque **el anfitrión se degradó durante la medición** desde las 14:26: v1.35.0 tardó hasta 4 veces más que por la mañana y el testigo de bash puro osciló entre 190 y 1 341 ms. QA registró los FAIL con su carga y no los repitió.
+  - Con esa degradación, 9 de 35 corridas de «Medida» llegan a 5 s, y 38 de 45 en M, N y MR.
+  - **Dos formas que la pasada no ataca por construcción:** M0 (proyecto sin globs de código) y MD (el desarrollador con su primer destino en código).
+- **Conforme:**
+  - 0 procesos añadidos;
+  - inventario con sólo dos líneas de CA-69 2 (c); ningún caso que ejecute hooks cambia entre PASS y FAIL;
+  - banco 2037/0/13; autoprueba 117/0; gates rc 0.
+- **Control del proveedor:** detuvo a QA al construir los locales GB18030 y BIG5. Lo marcó como un `bash -c` que ejecuta `rm`, y el comando no contenía ningún `rm`. **No se reintentó.** Por eso queda **sin ejecutar el ataque de equivalencia sobre `dee5932`** (preparado en `qa/eq/eq3.sh`).
+- **La fase 4 (seguridad) no se despachó:** no hay QA favorable.
+- **Presupuesto del plan:** la única pasada correctiva está gastada (AGENTS.md §6, regla 5; el contador no se reinicia).
+
+**Pregunta.** ¿Qué se hace con el candidato y con CA-54?
+
+**Opciones.**
+- **(A) Revertir la pasada correctiva y volver al código de `82ceb63`, que no tiene QA-007-02.** QA-007-01 queda abierto con alcance, como límite declarado: las 35 corridas de «Medida» cumplen, M y N no. La fase 4 se hace sobre `82ceb63`.
+  - **Consecuencia:** es lo más seguro y lo más barato. La reversión la hace el `desarrollador` (`hooks/` está protegido) y QA comprueba que el árbol queda igual a `82ceb63`. CA-54 queda acreditado sólo para el instrumento, no para la propiedad.
+- **(B) Autorizar una segunda pasada correctiva.** Se excede el plan y el contador sigue sin reiniciarse.
+  - Repararía QA-007-02 por propiedad: ningún destino por debajo de `ARNES_ID_MAX` puede dejar el hook sin decisión, y se añade un caso de banco con destinos profundos, con su fail-before contra `dee5932`. También cubriría M0 y MD.
+  - Después, QA re-verifica **en un anfitrión sano**, incluido el ataque de equivalencia, sin GB18030/BIG5 si el proveedor vuelve a bloquear su construcción.
+  - **Consecuencia:** coste estimado de 200 a 400 k tokens para el desarrollador y de 250 a 300 k para QA. Puede volver a quedar corta.
+- **(C) (A) ahora y (B) después, como intervención nueva:** el candidato queda seguro hoy, y la segunda pasada parte de `82ceb63` con su propia autorización y su plan.
+
+**Recomendación de la coordinadora: (C).** QA-007-02 es un fallo en abierto de alta severidad, y el árbol del candidato no debe quedarse con él mientras se decide lo demás. Revertir cuesta poco y devuelve el candidato a un código cuyas decisiones están verificadas: 6 148 ejecuciones idénticas a v1.35.0. La segunda pasada merece su propio plan, con el caso de banco de destinos profundos por delante y una medición en un anfitrión sano.
+
+**Qué trabajo sigue mientras no se decida.** **Ninguno del plan.** Fuera del plan no se abre nada. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar).
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
