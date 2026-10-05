@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · SEC-120, paso 1: write-back del analista en REQ-007 CA-47 punto 20 con las tres decisiones del propietario
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora. Uso: cuenta del plan Team, por indicación del propietario.
+
+- **Punto 20:**
+  - «Coste» sobre el camino común: normal +0, ilegible +1, que es el coste de decidir;
+  - «Qué es no poder leer la entrada»: todo lo que no sea exactamente un objeto JSON;
+  - límite declarado: sin `CLAUDE_PROJECT_DIR`, una entrada ilegible deja el hook inerte, como en v1.35.0.
+  - Historial, Correspondencia y la fila del índice.
+- **Precisiones del analista, conformes con la decisión según la coordinadora:**
+  - el +1 del troceo fallido también es «coste de decidir»;
+  - el límite sin `CLAUDE_PROJECT_DIR` se acota a las entradas ilegibles.
+- **Avance (regla 6):** el contrato refleja lo construido; sigue QA (paso 2).
+
 ## [Interno] — 2026-10-05 · Ajuste de alcance de 1.36.0 por el propietario: SEC-127 sola entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 (F-136-6); orden final en siete pasos
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
