@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, fase 3: QA (Opus) CON HALLAZGOS sobre `82ceb63` — QA-007-01 (`contrato`, media): la propiedad de CA-54 no se cumple con comandos propios en el máximo (hasta 5 814 ms); las 35 corridas, procesos, inventario, banco, autoprueba y equivalencia del atajo, conformes
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; ~312 k tokens; registro `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` gana QA-007-01, y `QA:` sigue `pendiente` con la referencia en su paréntesis; evidencia `cand-1.36.0/ca54/qa/`, commit `1209970`) y la coordinadora (este registro).
+
+- **Conforme:**
+  - las 35 corridas, con un máximo de 4 513 ms y decisiones, rc, `bytes=` y `destinos=` iguales a v1.35.0;
+  - 0 procesos añadidos;
+  - inventario: 2049 de 2050 casos idénticos. La diferencia es «REQ-017 CA-08 (ii), 200 líneas», que sale INCONCLUSO y queda no acreditado por CA-69 2 (c);
+  - banco 2038/0/12; autoprueba 117/0; gates rc 0;
+  - **equivalencia del atajo:** 6 148 ejecuciones idénticas byte a byte frente a v1.35.0, incluidas HC5a, HC9.6 y LC10.1–LC10.9 por `guard-completado`, los locales en_US y tr_TR construidos con `localedef`, y el estado terminal con el destino dentro y fuera de `requirements/`. Las denegaciones por forma salen antes del atajo.
+- **QA-007-01:** en el máximo, un comando que menciona el estado terminal con todos los destinos fuera (M), o con un solo carácter no ASCII (N), tarda 5 s o más en 8 de 30 corridas (máx. 5 814 ms). La decisión es idéntica y no hay fallo en abierto. QA-023-10 sigue abierto.
+- **Decisión de la coordinadora** (dentro de la décima autorización): se usa la **única pasada correctiva** del plan, sin reiniciar contadores.
+- **No medido:** Windows/MSYS, el host, el CI, otros locales y un `grep` que no sea GNU.
+- **Avance (regla 6):** CA-54 se cumple en las 35 corridas del instrumento, pero no en la propiedad. Sigue la pasada correctiva del desarrollador y su re-verificación por QA.
+
 ## [Interno] — 2026-10-05 · Décima autorización: fase 2 cerrada por el desarrollador en `82ceb63` (SIN VALIDAR); ESTADO pasa a la fase 3 (QA)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
