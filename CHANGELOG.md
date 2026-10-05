@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Revert del código de `dee5932` por P-136-F; `hooks/` = `82ceb63`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Qué:** se revierte sólo el código (`hooks/lib.sh`, `hooks/guard-codigo.sh`, `hooks/guard-completado.sh`) de la pasada correctiva de QA-007-01 (`dee5932`).
+  - Se hizo con `git revert --no-commit`.
+  - El registro técnico y este CHANGELOG se conservan como historia: se devolvieron a HEAD tras el conflicto del revert.
+  - `git diff 82ceb63 -- hooks/` queda vacío.
+- **Por qué:** QA-007-02. La lectura léxica por directorio de `dee5932` recurre una vez por segmento, sin tope; con unos 1 500 niveles de `..`, el hook muere por SIGSEGV y abre las dos puertas. Lo decidió el propietario en P-136-F (C): el candidato de CA-54 es `82ceb63`.
+- **Humo:** gates de §7 rc 0; sección 46 del banco, 263 PASS y 0 FAIL. El banco completo de `82ceb63` lo validó QA.
+- **No se repara la recursión** (intervención 2b). Nota en `docs/arnes/v1.36.0-ca54-fase2.md`, «Revertida por P-136-F (2026-10-05)».
+
 ## [GitHub] — 2026-10-05 · P-136-F resuelta por el propietario: opción (C). El candidato de CA-54 es `82ceb63` y se revierte `dee5932`; QA-007-02 queda cerrado por reversión, con ficha; QA-007-01 queda como límite declarado; segunda pasada como intervención 2b, después de SEC-120
 > Origen: GitHub (commit local, sin push; **sin código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
