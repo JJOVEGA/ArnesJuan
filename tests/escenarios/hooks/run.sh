@@ -1656,7 +1656,14 @@ done
 # Y 1741 → 1787 por la pasada correctiva de la octava autorización (P-122-A (1), QA-023-16 y QA-023-17):
 # +46 en la sección 45, bloque C contra 9220c71 (fail-before) y 9596e39 —13 filas, 50 casos—, menos los
 # 4 de G1, que pasa al bloque C con su nuevo veredicto (deny).
-CASOS_ESPERADOS=2050
+# Y 2050 → 2122 por SEC-120 (REQ-007 CA-47 punto 20; 1.36.0, intervención 2, fase 1, sin reparar): +72 en
+# la sección 44 (247 → 319), bloque SEC-120 —los vectores V1–V4 de R-045-A §4 por propiedad: L, una entrada
+# que jq no puede leer, por guard.sh y por cada guardián que juzga la herramienta; T, unas ediciones que no
+# se pueden trocear; K, los controles de la puerta que no las necesita y de V4; I, los modos inertes; y P3—,
+# cada caso en la candidata y en v1.35.0 (3956a6f, la línea base de CA-69 punto 1). Hasta la reparación,
+# las 28 columnas de la candidata de L y T salen FAIL a propósito: es el fail-before. Las 247 de antes no
+# cambian ni de nombre ni de veredicto.
+CASOS_ESPERADOS=2122
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

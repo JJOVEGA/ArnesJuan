@@ -17,7 +17,7 @@
 # copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por un guardián se comprueba además en
 # la candidata POR `guard.sh` (CA-66, versionado, punto 3).
 # Esto NO es la validación en el host: el efecto en disco lo comprueba la coordinadora.
-CASOS_ESPERADOS_SECCION=247
+CASOS_ESPERADOS_SECCION=319
 PISO_AUTONOMO_SECCION=62  # 22 preámbulo (líneas 1-22, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 23-46) + 16 bloque indivisible mayor (fila44, líneas 97-112) · REQ-014 CA-18
 seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09 y QA-023-13; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
 REPO44="${SEC_DIR%/}/../../../.."; MAT44_RUTAS='hooks'; MAT44_REG=''; MAT44_T0=0; MAT44_REF='-'
@@ -294,4 +294,92 @@ else
   if [ -n "$P44" ] && [ "$P44" != "$P44_ESP" ]; then v44 PASS "$nom44  cd6afa6 (fail-before): lo recorta  <$P44>"
   else v44 FAIL "$nom44  cd6afa6 (fail-before): no lo recorta, el caso no distingue  <$P44>"; fi
 fi
-rm -rf "$R43A" "$R95" "$RCD" "$FCR"
+
+# --- SEC-120: una entrada que `jq` no puede leer o trocear no pasa (REQ-007 CA-47 punto 20; CA-69) -----
+# Los vectores de R-045-A §4, por su descripción: V1 y V2, un `MultiEdit` con las ediciones como cadena o
+# como número; V3, un `Edit` que cierra un REQ `critico` en rojo con una clave extra de 10001 niveles (jq:
+# «Exceeds depth limit for parsing»); V4 (control), el mismo con 9000 niveles. Por propiedad:
+#   L  jq no puede LEER la entrada -> deny a TODO agente, por guard.sh y por cada guardián que juzga la
+#      herramienta (las del `matcher` de hooks/hooks.json); L6, otra causa: la entrada truncada;
+#   T  la lee pero no puede TROCEAR las ediciones que guard-completado necesita -> esa puerta deniega. En
+#      T3 y T4 falla el troceo de jq, y `ARNES_JQ` conserva la lectura anterior (la otra mitad de §4);
+#   K  la puerta que no necesita esa parte decide como siempre, y V4 deniega por el veredicto;
+#   I  los modos inertes —sin jq, sin manifiesto— no cambian; P3, `arnes_parse_input` tras una lectura buena.
+# DOS ÁRBOLES por caso: la CANDIDATA y v1.35.0 (3956a6f, la línea base de CA-69 punto 1, por SHA con `mat44`);
+# sin ella, SKIP y motivo, nunca PASS. El texto del motivo propio de L lo fija la reparación: aquí sólo se
+# exige que no interpole la clave anidada (CA-67). A nivel de hook en Linux/WSL2; el host no se ejerce.
+RV135="$RAIZ/rv135-$BASHPID"; RV135_OK=no; RV135_MOT=''
+if mat44 3956a6f "$RV135"; then RV135_OK=si
+else RV135_MOT="v1.35.0 no se materializó (${MAT44_REG#*motivo=})"; RV135_MOT="${RV135_MOT%% corrida=*})"; fi
+printf -v A120 '%10001s' ''; printf -v B120 '%10001s' ''; HONDO120="${A120// /[}${B120// /]}"
+printf -v A120 '%9000s' ''; printf -v B120 '%9000s' ''; MEDIO120="${A120// /[}${B120// /]}"
+# fila120 <id> <candidata> <v1.35.0> <cita|-> <json> <guardianes…>: por guardián, un caso en cada árbol.
+fila120() {
+  local id="$1" ec="$2" ev="$3" cita="$4" json="$5" s nom; shift 5
+  case "$ec:$ev" in deny:allow) ETQ44='fail-before: permite' ;; *) ETQ44='control, decide igual' ;; esac
+  for s in "$@"; do
+    nom="SEC-120 $id por $s"
+    json_no_vacio "$nom candidata" "$json" || { json_no_vacio "$nom v1.35.0" "$json"; FAIL=$((FAIL + 2)); continue; }
+    g44 "$HOOKS_DIR" "$s" "$json"
+    if [ "$D44" = deny ] && [[ "$M44" == *'[[[[[[[[[[[[[[[['* ]]; then v44 FAIL "$nom candidata  el motivo interpola la clave anidada  <${M44:0:120}>"
+    else juicio44 "$nom candidata" "$ec" "$cita"; fi
+    if [ "$RV135_OK" = si ]; then g44 "$RV135/hooks" "$s" "$json"; juicio44 "$nom v1.35.0: $ETQ44" "$ev" -
+    else v44 SKIP "$nom v1.35.0: $ETQ44  $RV135_MOT"; fi
+  done
+}
+E120="$(cierre44 "$P")"; ED120="$(j44 Edit "$P" desarrollador "file_path=$R/REQ-900.md" 'old_string=Estado: en-revisión' 'new_string=Estado: completado')"
+W120="$(j44 Write "$P" desarrollador "file_path=$P/src/a.ts" content=x)"; B120="$(j44 Bash "$P" desarrollador 'command=ls -la')"
+M120="$(jq -cn --arg c "$P" --arg f "$P/docs/n.md" '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:$c,tool_input:{file_path:$f,edits:[{old_string:"a",new_string:"b"}]}}')"
+me120() {   # <file_path> <edits, en JSON> [agente, en jq] -> un MultiEdit con esas ediciones
+  local x='{}'; [ -z "${3:-}" ] || x="$3"
+  jq -cn --arg c "$P" --arg f "$1" --argjson e "$2" '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:$c,tool_input:{file_path:$f,edits:$e}} + '"$x"
+}
+V1_120="$(me120 "$R/REQ-900.md" '"[{\"old_string\":\"Estado: en-revisión\",\"new_string\":\"Estado: completado\"}]"')"
+T6_120="$(j44 Bash "$P" - 'command=echo x > src/a.ts')"; GJ120='guard.sh guard-codigo.sh guard-completado.sh'
+fila120 "L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles" deny allow - "${E120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L2 (V3) el mismo cierre del desarrollador"                         deny allow - "${ED120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L3 (V3 por Write) el desarrollador escribe src/a.ts"              deny allow - "${W120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L4 (V3 por MultiEdit) la coordinadora edita docs/n.md"            deny allow - "${M120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L5 (V3 por Bash) ls -la del desarrollador"                        deny allow - "${B120%?},\"x\":$HONDO120}" guard-git.sh $GJ120
+fila120 "L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final" deny allow - \
+  "${T6_120%?}" guard-git.sh $GJ120
+fila120 "T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena" deny allow - "$V1_120" guard.sh guard-completado.sh
+fila120 "T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número" deny allow - "$(me120 "$R/REQ-900.md" 1)" guard.sh guard-completado.sh
+fila120 "T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto" deny allow - \
+  "$(me120 "$R/REQ-900.md" '{"old_string":"Estado: en-revisión","new_string":"Estado: completado"}')" guard.sh guard-completado.sh
+fila120 "T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas" deny allow - "$(me120 "$R/REQ-900.md" '["Estado: completado"]')" guard.sh guard-completado.sh
+fila120 "K1 (V1) la puerta de código no necesita las ediciones: REQ-900 no es código" allow allow - "$V1_120" guard-codigo.sh
+fila120 "K2 MultiEdit de la coordinadora a src/a.ts con las ediciones como cadena" deny deny "$SRC44" "$(me120 "$P/src/a.ts" '"x"')" guard-codigo.sh
+fila120 "K3 MultiEdit del desarrollador a src/a.ts con las ediciones como cadena" allow allow - \
+  "$(me120 "$P/src/a.ts" '"x"' '{agent_id:"a1",agent_type:"desarrollador"}')" guard.sh
+fila120 "K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto" deny deny "$QA44" "${E120%?},\"x\":$MEDIO120}" guard.sh guard-completado.sh
+# I: V3 en modo inerte —sin jq en el PATH, o en un proyecto sin manifiesto—: sin decisión, y sin jq con aviso.
+VAC120="$RAIZ/vac120-$BASHPID"; Q120="$RAIZ/q120-$BASHPID"; mkdir -p "$VAC120" "$Q120/requirements"; cp "$R/REQ-900.md" "$Q120/requirements/"
+VQ120="$(cierre44 "$Q120" "$Q120/requirements/REQ-900.md")"; VQ120="${VQ120%?},\"x\":$HONDO120}"
+for arb120 in candidata v1.35.0; do
+  h120="$HOOKS_DIR"; [ "$arb120" = candidata ] || h120="$RV135/hooks"
+  for modo120 in 'sin jq' 'sin manifiesto'; do
+    nom120="SEC-120 I ($modo120) V3 por guard.sh $arb120: inerte, como siempre"
+    if [ "$arb120" != candidata ] && [ "$RV135_OK" != si ]; then v44 SKIP "$nom120  $RV135_MOT"; continue; fi
+    if [ "$modo120" = 'sin jq' ]; then o120="$(printf '%s' "${E120%?},\"x\":$HONDO120}" | CLAUDE_PROJECT_DIR="$PROJ" PATH="$VAC120" "$BASH" "$h120/guard.sh" 2>&1)"
+    else o120="$(printf '%s' "$VQ120" | CLAUDE_PROJECT_DIR="$Q120" "$BASH" "$h120/guard.sh" 2>&1)"; fi
+    if [[ "$o120" == *'"permissionDecision"'* ]]; then v44 FAIL "$nom120  decidió: <${o120:0:160}>"
+    elif [ "$modo120" = 'sin jq' ] && [[ "$o120" != *'jq no encontrado'* ]]; then v44 FAIL "$nom120  sin el aviso de jq: <${o120:0:160}>"
+    else v44 PASS "$nom120  (sin decisión)"; fi
+  done
+done
+# P3: tras una lectura buena, otra que jq no puede leer no deja en ninguna variable el valor de la primera.
+P120_BUENA="$(j44 Bash /tmp/c120 qa-tester file_path=/tmp/f120 'command=ls /tmp/k120')"
+p120() {   # <dir de hooks> -> P120: vacío si ninguna variable conserva la lectura anterior
+  P120="$( . "$1/lib.sh" 2>/dev/null; local -a a b; local i
+    ARNES_INPUT="$P120_BUENA"; ARNES_INPUT_LISTO=''; arnes_parse_input
+    a=("$ARNES_TOOL" "$ARNES_AGENT_ID" "$ARNES_AGENT_TYPE" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "$ARNES_JQ")
+    ARNES_INPUT="${E120%?},\"x\":$HONDO120}"; ARNES_INPUT_LISTO=''; arnes_parse_input 2>/dev/null
+    b=("$ARNES_TOOL" "$ARNES_AGENT_ID" "$ARNES_AGENT_TYPE" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "$ARNES_JQ")
+    for i in 0 1 2 3 4 5 6; do [ -n "${a[i]}" ] || printf 'vacia-%s ' "$i"; [ "${a[i]}" != "${b[i]}" ] || printf 'conserva-%s ' "$i"; done )"
+}
+nom120="SEC-120 P3 arnes_parse_input: ninguna variable conserva la lectura anterior si jq no puede leer"
+p120 "$HOOKS_DIR"; if [ -z "$P120" ]; then v44 PASS "$nom120  candidata"; else v44 FAIL "$nom120  candidata: $P120"; fi
+if [ "$RV135_OK" != si ]; then v44 SKIP "$nom120  v1.35.0 (control, R-046)  $RV135_MOT"
+else p120 "$RV135/hooks"; if [ -z "$P120" ]; then v44 PASS "$nom120  v1.35.0 (control, R-046)"; else v44 FAIL "$nom120  v1.35.0 (control, R-046): $P120"; fi; fi
+rm -rf "$R43A" "$R95" "$RCD" "$FCR" "$RV135" "$VAC120" "$Q120"

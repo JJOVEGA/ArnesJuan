@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 1: casos del banco de REQ-007 CA-47 punto 20 y fail-before medido, sin reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase1.md`; evidencia `cand-1.36.0/sec120/`, commit `c6a8e7f` del árbol de evidencia).
+
+- **Casos:** 72 nuevos en la sección 44 (247 → 319; `CASOS_ESPERADOS` 2050 → 2122), con los vectores V1–V4 de R-045-A §4 por propiedad:
+  - L: una entrada que `jq` no puede leer (V3 por las cuatro herramientas del `matcher`, coordinadora y `desarrollador`, más una entrada truncada), por `guard.sh` y por cada guardián.
+  - T: unas ediciones de `MultiEdit` que no se pueden trocear (V1, V2, objeto y lista de cadenas).
+  - Controles K (la puerta que no las necesita y V4), I (sin `jq`, sin manifiesto) y P3.
+  - Cada caso, en la candidata y en v1.35.0 (`3956a6f`, por SHA).
+- **Fail-before:** con `ARNES_HOOKS_DIR` en los hooks de `82ceb63` y en los de v1.35.0, la sección da 291 PASS y 28 FAIL.
+  - Los 28 FAIL son las columnas de la candidata de L y T.
+  - Los controles pasan en los dos árboles.
+  - Ningún vector deniega ya, así que no hay parada de contrato.
+- **Resto del banco:**
+  - Banco completo: 2083/28/11 con la semilla 23062. Sin SEC-120, su inventario es igual al de `82ceb63` salvo un caso de reloj no acreditado (CA-69 2 (c)).
+  - Autoprueba 117/0, con la sección 44 en 385 de 400 líneas, y gates rc 0.
+  - El banco queda en rojo a propósito hasta la fase 2.
+- **Sin cambios** en `hooks/`, `tools/`, `requirements/`, ESTADO ni la cola.
+- **Avance (regla 6):** la medida de CA-47 punto 20 existe y falla donde debe; falta la reparación (fase 2).
+
 ## [GitHub] — 2026-10-05 · Décima autorización, fase 4: seguridad R-052 sobre `82ceb63`, con hallazgos y sin veto (SEC-127, `contrato`, baja → P-136-G); cierre de la intervención 1 (CA-54); apertura de la intervención 2 (SEC-120) por delegación del propietario
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-052 en `docs/seguridad/registro-seguridad.md`; REQ-007: `Hallazgos abiertos:` gana SEC-127 y `Seguridad:` sigue `pendiente` con la referencia; evidencia `cand-1.36.0/ca54/seg-R052/`; ~252 k tokens) y la coordinadora (ficha, plan de SEC-120, ESTADO y PLAN).
 
