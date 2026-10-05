@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · QA corrige su propio recuento de QA-007-01: 10 de 30, no 8 de 30 (error de suma, no de medición)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; ~69 k tokens) y la coordinadora (registro).
+
+- **Recuento:** M-B 2, N-A 2, N-B 4 y N-C 2 corridas de 5 000 ms o más, en `qa/21-casos-propios-tiempo.txt` sobre `82ceb63`. Coincide con la precisión del analista.
+- **Dónde se corrigió:** en `docs/qa/REQ-007.md` (tres sitios, con «antes: 8 de 30» y una nota fechada de QA) y en el texto de QA-007-01 en `Hallazgos abiertos:` de REQ-007. No cambian la clase (`contrato`), ni `QA:`, ni ninguna medición.
+- **La red:** retomar la comisión de QA anterior seguía devolviendo el 403 de Zscaler después de que el propietario resolviera la red; una comisión nueva conectó a la primera.
+- **Avance (regla 6):** el registro de QA ya es correcto; sigue la fase 4 (seguridad sobre `82ceb63`).
+
 ## [Interno] — 2026-10-05 · Decisiones del propietario: M0 y MD como límite «sin cifra sobre `82ceb63`», que se miden en la 2b; QA-007-01 sigue como `contrato`; el 403 de Zscaler es del anfitrión
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
