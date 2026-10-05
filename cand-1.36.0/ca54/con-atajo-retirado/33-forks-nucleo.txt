@@ -1,0 +1,12 @@
+== EVIDENCIA COMPLEMENTARIA (no la del contrato): procesos creados por invocacion segun el contador del nucleo (/proc/stat 'processes'), minimo de R=3 repeticiones; incluye el bash que arranca el hook; inicio 2026-10-03T22:51:49-06:00; carga 1.18 1.12 0.88 ==
+ca54-65536-A | v1.35.0 min=32 (todas: 32 33 64) | candidato min=11 (todas: 18 12 11) | carga=1.14 1.11 0.88
+ca54-65536-B | v1.35.0 min=18 (todas: 26 35 18) | candidato min=11 (todas: 19 18 11) | carga=1.11 1.11 0.89
+ca54-65536-C | v1.35.0 min=25 (todas: 25 27 44) | candidato min=11 (todas: 11 11 17) | carga=1.08 1.10 0.89
+ca54-131072-A | v1.35.0 min=53 (todas: 53 56 58) | candidato min=20 (todas: 30 27 20) | carga=1.19 1.12 0.91
+ca54-131072-B | v1.35.0 min=49 (todas: 49 60 59) | candidato min=24 (todas: 24 26 24) | carga=1.11 1.11 0.91
+ca54-131072-C | v1.35.0 min=46 (todas: 46 52 61) | candidato min=20 (todas: 30 20 30) | carga=1.21 1.13 0.93
+ca54x-original | v1.35.0 min=16 (todas: 19 16 18) | candidato min=17 (todas: 19 20 17) | carga=1.17 1.12 0.93
+ca54x-control-A | v1.35.0 min=38 (todas: 41 38 40) | candidato min=25 (todas: 25 25 28) | carga=1.12 1.11 0.93
+ca54x-control-B | v1.35.0 min=33 (todas: 33 39 51) | candidato min=22 (todas: 25 22 31) | carga=1.17 1.12 0.94
+ca54x-control-C | v1.35.0 min=33 (todas: 33 38 40) | candidato min=20 (todas: 39 20 33) | carga=1.18 1.12 0.94
+rc=0 fin 2026-10-03T22:55:37-06:00

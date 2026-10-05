@@ -1,0 +1,6 @@
+Resumen de las comparaciones diferenciales (fase 2, 2026-10-03T23:07:02-06:00); arneses en este directorio:
+- identidad y pertenencia (dif.sh): escenarios=33 lineas_por_arbol=7001 escenarios_con_diferencias=0
+- detector de escrituras (esc-corre.sh sobre esc-corpus.sh): 4054 comandos IDENTICOS (rc 0/3/4/5); entradas grandes de S1/S2 + no ASCII + > maximo, techo por defecto y 131072: IDENTICOS (rc 0 y 2)
+- hook entero (hook-dif.sh): casos=2130 diferencias=0 (710 comandos x coordinadora, desarrollador, qa-tester; stdout, rc y stderr)
+- arnes_estado_ausente frente a grep real (ausente.sh): 102000 pares por locale, violaciones=0 en C.UTF-8, C, POSIX (en_US.UTF-8 y tr_TR.UTF-8 no instalados en este host: esas dos corridas cayeron a C y no prueban esos locales)
+- control del instrumento: un defecto plantado (dirref) da 22 escenarios con diferencias

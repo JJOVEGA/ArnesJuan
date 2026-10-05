@@ -1,0 +1,12 @@
+== Salidas completas, v1.35.0 frente al candidato (hooks sha256 lib.sh 206a7e19b2ac6690); inicio 2026-10-03T22:50:34-06:00; carga 1.01 1.06 0.84 ==
+ca54-65536-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-65536-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-65536-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54x-original | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-A | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-B | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-C | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+rc=0 fin 2026-10-03T22:51:49-06:00

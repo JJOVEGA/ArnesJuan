@@ -1,0 +1,4 @@
+1490c1490
+< PASS	REQ-023 CA-03 (reservada) entrada al azar U+0008 = $'\b', semilla ARNES_SEMILLA_41=23062 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+---
+> PASS	REQ-023 CA-03 (reservada) entrada al azar U+EC576 = $'\363\254\225\266', semilla ARNES_SEMILLA_41=29528 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
