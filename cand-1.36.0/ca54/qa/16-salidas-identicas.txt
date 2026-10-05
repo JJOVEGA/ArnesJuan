@@ -1,0 +1,21 @@
+== salidas completas (stdout, rc, stderr) v1.35.0 vs candidato; copia de ../salidas-identicas.sh con rutas de qa/ y entradas propias; 2026-10-05T10:48:40-06:00
+ca54-65536-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-65536-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-65536-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54-131072-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+ca54x-original | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-A | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-B | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+ca54x-control-C | IDENTICAS | stdout+rc sha256 0aba70f1f88122e5 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: el co
+propio-M-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-M-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-M-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-N-A | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-N-B | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-N-C | IDENTICAS | stdout+rc sha256 93ff7811a209e2a8 | stderr 0 bytes | rc=0 
+propio-MR-A | IDENTICAS | stdout+rc sha256 754887c172a5f253 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: este 
+propio-MR-B | IDENTICAS | stdout+rc sha256 754887c172a5f253 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: este 
+propio-MR-C | IDENTICAS | stdout+rc sha256 754887c172a5f253 | stderr 0 bytes | {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"ARNES: este 
+rc=0

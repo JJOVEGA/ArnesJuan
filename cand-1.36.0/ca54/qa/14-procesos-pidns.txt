@@ -1,0 +1,19 @@
+== COMPLEMENTARIA, no la del contrato (copia de ../forks-pidns.sh con rutas de qa/ y las entradas propias de QA añadidas; diff en la cabecera de 00-diff-sondas-qa.txt no aplica: ver este archivo). Inicio 2026-10-05T10:48:27-06:00
+ca54-65536-A | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-65536-B | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-65536-C | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-131072-A | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54-131072-B | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54-131072-C | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54x-original | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-A | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-B | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-C | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+propio-M-A | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-M-B | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-M-C | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-N-A | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-N-B | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-N-C | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+propio-MR-A | v1.35.0 procesos: 9 9 | candidato procesos: 8 8
+rc=0 fin 2026-10-05T11:00:40-06:00

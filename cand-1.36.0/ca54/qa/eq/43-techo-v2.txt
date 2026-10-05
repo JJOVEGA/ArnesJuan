@@ -1,0 +1,870 @@
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=-                    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=-            guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=-                    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=60000 u=[: completado; ] a=desarrollador        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=-                    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: xxxxxxxxxx; ] a=desarrollador        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=-            guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=-                    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=66000 u=[: completado; ] a=desarrollador        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=-                   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=-           guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=-                   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=131000 u=[: completado; ] a=desarrollador       guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=-                   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: xxxxxxxxxx; ] a=desarrollador       guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=-           guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=-                   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=none n=140000 u=[: completado; ] a=desarrollador       guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=100000 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=131072 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=60000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=-          guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=-                  guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=66000 u=[: completado; ] a=desarrollador      guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=131000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=200000 n=140000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=60000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: xxxxxxxxxx; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=-         guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=-                 guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=66000 u=[: completado; ] a=desarrollador     guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=-                guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=-        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=-                guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=131000 u=[: completado; ] a=desarrollador    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=-                guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: xxxxxxxxxx; ] a=desarrollador    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=-        guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: ñññññññññ; ] a=desarrollador guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=-                guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=0131072 n=140000 u=[: completado; ] a=desarrollador    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=-    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: xxxxxxxxxx; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: ñññññññññ; ] a=desar guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=-    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=60000 u=[: completado; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=-    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: xxxxxxxxxx; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: ñññññññññ; ] a=desar guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=-    guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=66000 u=[: completado; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=-   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: xxxxxxxxxx; ] a=des guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: ñññññññññ; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=-   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard.sh             LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard-completado.sh  LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard.sh             LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=131000 u=[: completado; ] a=des guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=-   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: xxxxxxxxxx; ] a=des guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=- guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: ñññññññññ; ] a=desa guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard-codigo.sh      LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=-   guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard-codigo.sh      LANG=C.UTF-8           v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     techo=99999999999999999999 n=140000 u=[: completado; ] a=des guard-codigo.sh      LANG=tr_TR.UTF-8       v1.35.0=allow/rc0 cand=allow/rc0 motivo=
+IGUAL     manifiesto roto n=70000                                      guard.sh             LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     manifiesto roto n=70000                                      guard-completado.sh  LANG=C.UTF-8           v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     manifiesto roto n=70000                                      guard.sh             LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+IGUAL     manifiesto roto n=70000                                      guard-completado.sh  LANG=tr_TR.UTF-8       v1.35.0=deny/rc0 cand=deny/rc0 motivo=ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera
+RESUMEN bloque=techo IGUAL=868 DIFIERE=0 locales=[LANG=C.UTF-8 LANG=tr_TR.UTF-8]
+FIN

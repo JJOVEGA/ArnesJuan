@@ -1,0 +1,9 @@
+en_US.UTF-8 rc=0
+tr_TR.UTF-8 rc=0
+tr_TR.ISO-8859-9 rc=0
+en_US.UTF-8: charmap=UTF-8 bash ${x^^} de "i"= I \n bash ${x,,} de "I"= i \n grep -i i ~ I: 1 grep -i I ~ i: 1
+tr_TR.UTF-8: charmap=UTF-8 bash ${x^^} de "i"= 304 260 \n bash ${x,,} de "I"= 304 261 \n grep -i i ~ I: 0 grep -i I ~ i: 0
+tr_TR.ISO-8859-9: charmap=ISO-8859-9 bash ${x^^} de "i"= 335 \n bash ${x,,} de "I"= 375 \n grep -i i ~ I: 0 grep -i I ~ i: 0
+en_US.UTF-8: ${x,,}=i ${y^^}=I
+tr_TR.UTF-8: ${x,,}=Ä± ${y^^}=Ä°
+tr_TR.ISO-8859-9: ${x,,}=ý ${y^^}=Ý

@@ -1,0 +1,5 @@
+== gates AGENTS.md §7, 2026-10-05T10:47:27-06:00, worktree 7dbfeca
+bash -n hooks/*.sh tools/*.sh rc=0
+hooks.json rc=0
+plugin+marketplace rc=0
+manifiesto quality_gates: ["for f in hooks/*.sh tools/*.sh; do bash -n \"$f\" || exit 1; done","jq -e . hooks/hooks.json >/dev/null","jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null"]
