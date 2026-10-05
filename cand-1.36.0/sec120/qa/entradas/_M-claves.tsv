@@ -1,0 +1,13 @@
+37a625	null
+d75171	[]
+e3dd48	[null]
+c676ed	[[]]
+35dba5	[1]
+a21caf	[{}]
+c52c54	[{old_string:"Estado: en-revisión",new_string:"Estado: completado"},5]
+09049b	[{old_string:"Estado: en-revisión",new_string:{a:1}}]
+a6400d	[{old_string:["Estado: en-revisión"],new_string:"Estado: completado"}]
+9a19fc	[{old_string:"Estado: en-revisión",new_string:"Estado: completado",replace_all:1}]
+eb90c0	{"0":{old_string:"Estado: en-revisión",new_string:"Estado: completado"}}
+b326b5	true
+68934a	false

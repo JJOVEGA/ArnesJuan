@@ -1,0 +1,1 @@
+{"hook_event_name":"PreToolUse","cwd":{},"tool_name":"Write","tool_input":{"file_path":"src/a.ts","content":"x"},"agent_id":"a1","agent_type":"desarrollador"}

@@ -1,0 +1,15 @@
+2026-10-05T17:26:10-06:00
+Linux sysvega-dev 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+af362fdd0e3c04c1c561938c2d787c0f7ab60cf5
+1
+4a641cac9d1a2afeec87f5f6547528d19b9f423ce97b37912985f45ffa2acb39  /home/juan/dev/ArnesJuan-v1.36/hooks/estado-derivado.sh
+ca2499cb6bba3e7a9fb04191f7517ef74d65a20c24172c464ed5b028b971b23c  /home/juan/dev/ArnesJuan-v1.36/hooks/guard-codigo.sh
+03328fe523cba5a39bd2134e01414b892b284ecc484fb56bcf455a18d993e809  /home/juan/dev/ArnesJuan-v1.36/hooks/guard-completado.sh
+20df0a4a0ee68371b5b595daf2eefc0b9e89e890e19f964247c738c40f262a6a  /home/juan/dev/ArnesJuan-v1.36/hooks/guard-git.sh
+2e7ec8cb189d025c089bfc103a0a6d5d1fcb8aab41175293ac44e7796e7de7c5  /home/juan/dev/ArnesJuan-v1.36/hooks/guard.sh
+a764e0c449acef004b31e54ab707453dc85808f8e869dadf19046c3c5565d500  /home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh
+dd9e6dcf62c79336bd749f5b19b697a9b00509337882811de0d877b3b58e902a  /home/juan/dev/ArnesJuan-v1.36/hooks/rotar-artefactos.sh
+0570ec9dd0edf14523e812bb53a247d967c261b9eaf781a6c80f5d1d36c532ca  /home/juan/dev/ArnesJuan-v1.36/hooks/stop.sh
+f52870a38576991beb2c6c7db428c1347009966c77d5916451cbb852aaf18897  /home/juan/dev/ArnesJuan-v1.36/hooks/campos-req.awk

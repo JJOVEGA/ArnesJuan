@@ -1,0 +1,12 @@
+X01-edit-file_path-lista-vacia.json nada(rc0) deny(rc0)  ARNES: el campo 'file_path' de esta llamada no es texto, asi
+X02-bash-command-lista-vacia.json  nada(rc0) deny(rc0)  ARNES: el campo 'command' de esta llamada no es texto, asi q
+X03-edit-tool_input-lista-vacia.json nada(rc0) deny(rc0)  ARNES: la entrada de esta llamada no se pudo leer: jq no la 
+X04-write-content-lista-vacia.json nada(rc0) deny(rc0)  ARNES: no se juzga esta edicion de 'requirements/REQ-900.md'
+X05-write-file_path-false.json     nada(rc0) nada(rc0)  
+X06-bash-command-false.json        nada(rc0) nada(rc0)  
+X07-bash-ls.json                   nada(rc0) nada(rc0)  
+X08-bash-escribe-src.json          deny(rc0) deny(rc0)  ARNES: el comando escribe en 'src/a.ts', que es código de l
+X10-solo-salto.json                nada(rc0) deny(rc0)  ARNES: la entrada de esta llamada no se pudo leer: jq no la 
+X11-ls-NUL-escritura.json          nada(rc0) nada(rc0)  
+X12-escritura-NUL.json             deny(rc0) deny(rc0)  ARNES: el comando escribe en 'src/a.ts', que es código de l
+X13-solo-NUL.json                  nada(rc0) nada(rc0)  

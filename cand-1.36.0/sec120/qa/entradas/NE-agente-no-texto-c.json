@@ -1,0 +1,1 @@
+{"hook_event_name":"PreToolUse","cwd":"/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/qa/proyecto","tool_name":"Write","tool_input":{"file_path":"src/a.ts","content":"x"},"agent_id":5,"agent_type":["desarrollador"]}

@@ -1,0 +1,20 @@
+X14 escape en clave (CLAUDE_PROJECT_DIR fijado): v135=deny cand=deny
+== Sin CLAUDE_PROJECT_DIR (proyecto del cwd de la entrada); v1.35.0 | candidato
+I02-solo-blancos.json                    nada | nada
+I03-null.json                            nada | nada
+I09-dos-objetos.json                     nada | nada
+I10-objeto-y-basura.json                 nada | deny
+I14-objeto-y-null.json                   deny | deny
+I16-truncada.json                        nada | nada
+I17-utf8-invalido.json                   nada | nada
+I25-coma-final.json                      nada | nada
+I26-comillas-simples.json                nada | nada
+I29-comentario.json                      nada | nada
+N7-edit-tool_input-5-c.json              nada | deny
+N3-bash-command-5-c.json                 nada | deny
+M1-req-35dba5-c.json                     nada | deny
+F00-cierre-rojo-c.json                   deny | deny
+F13-cierre-verde-c.json                  nada | nada
+== Variables heredadas del entorno (no son la entrada): ARNES_INPUT_LISTO=1 exportado, entrada V3-like truncada
+cand: nada ; rc=1
+v135: nada

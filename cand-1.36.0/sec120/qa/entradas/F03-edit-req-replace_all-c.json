@@ -1,0 +1,1 @@
+{"hook_event_name":"PreToolUse","cwd":"/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/qa/proyecto","tool_name":"Edit","tool_input":{"file_path":"/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/qa/proyecto/requirements/REQ-901.md","old_string":"nota","new_string":"otra nota","replace_all":true}}

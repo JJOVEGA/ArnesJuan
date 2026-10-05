@@ -1,0 +1,1 @@
+{"hook_event_name":"PreToolUse","cwd":"/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/qa/proyecto","tool_name":"MultiEdit","tool_input":{"file_path":"/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/qa/proyecto/requirements/REQ-900.md","edits":true},"agent_id":"a1","agent_type":"desarrollador"}
