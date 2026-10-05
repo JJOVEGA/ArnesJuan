@@ -1,0 +1,26 @@
+SEC-120 (REQ-007 CA-47 punto 20), intervención 2 de 1.36.0, fase 1: casos del banco y fail-before, SIN reparar.
+Worktree /home/juan/dev/ArnesJuan-v1.36 (cand/1.36.0, cabeza 28ba332 + los casos de esta fase); hooks/ == 82ceb63.
+Base v1.35.0: /home/juan/dev/ArnesJuan-v1.35.0-base (3956a6f; hooks/ y tools/ sin cambios frente a 3956a6f).
+El banco materializa además v1.35.0 por SHA (3956a6f, mat44) para la columna «v1.35.0» de cada caso.
+
+cd /home/juan/dev/ArnesJuan-v1.36
+# 00-entorno.txt: fecha, uname, bash, jq, cabezas y la verificación de los árboles de hooks
+
+# Fail-before, sección 44, con los hooks de cada árbol
+ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.36/hooks       bash tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh > 10-s44-hooks-82ceb63.txt
+ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.35.0-base/hooks bash tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh > 11-s44-hooks-v1.35.0.txt
+bash tests/escenarios/hooks/inventario.sh 10-s44-hooks-82ceb63.txt  > 20-inv-s44-82ceb63.txt
+bash tests/escenarios/hooks/inventario.sh 11-s44-hooks-v1.35.0.txt > 21-inv-s44-v1.35.0.txt
+diff 20-inv-s44-82ceb63.txt 21-inv-s44-v1.35.0.txt > 22-diff-inv.txt          # vacío
+
+# Banco completo con los hooks del worktree (cuadre total 2122)
+bash tests/escenarios/hooks/run.sh > 30-banco-completo-candidata.txt          # sin semilla fijada
+bash tests/escenarios/hooks/inventario.sh 30-banco-completo-candidata.txt > 31-inv-banco-candidata.txt
+ARNES_SEMILLA_41=23062 bash tests/escenarios/hooks/run.sh > 32-banco-completo-candidata-semilla23062.txt
+bash tests/escenarios/hooks/inventario.sh 32-banco-completo-candidata-semilla23062.txt > 33-inv-banco-candidata-semilla23062.txt
+grep -v 'SEC-120' 33-inv-banco-candidata-semilla23062.txt > 34-inv-sin-sec120.txt
+diff ../ca54/fase2-82ceb63/41-inventario-candidato.txt 34-inv-sin-sec120.txt > 35-diff-sin-sec120-vs-82ceb63.txt
+
+# Autoprueba del corredor y quality gates de AGENTS.md §7
+bash tests/escenarios/hooks/autoprueba-corredor.sh > 40-autoprueba.txt
+for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done; jq -e . hooks/hooks.json; jq -e . .claude-plugin/plugin.json; jq -e . .claude-plugin/marketplace.json   # 41-gates.txt
