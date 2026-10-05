@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, fase 4: seguridad R-052 sobre `82ceb63`, con hallazgos y sin veto (SEC-127, `contrato`, baja → P-136-G); cierre de la intervención 1 (CA-54); apertura de la intervención 2 (SEC-120) por delegación del propietario
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-052 en `docs/seguridad/registro-seguridad.md`; REQ-007: `Hallazgos abiertos:` gana SEC-127 y `Seguridad:` sigue `pendiente` con la referencia; evidencia `cand-1.36.0/ca54/seg-R052/`; ~252 k tokens) y la coordinadora (ficha, plan de SEC-120, ESTADO y PLAN).
+
+- **R-052:** el delta de CA-54 no convierte ningún `deny` de v1.35.0 en `allow` ni en «sin decisión», salvo SEC-127.
+  - El atajo equivale a la regla (muestra propia de 200 ejecuciones más las 3 600 de QA).
+  - El análisis compartido no reutiliza nada de otra entrada (O-52-1: la memoria no tiene clave de manifiesto).
+  - **Sin recursión:** hasta 2 040 niveles con tres tamaños de pila, `82ceb63` da `deny` y rc 0, y `dee5932` da SIGSEGV.
+  - QA-007-01 encaja como límite; el delta reduce la exposición a SEC-115.
+  - Observaciones O-52-1 a O-52-3.
+- **SEC-127 (`contrato`, baja, lo introduce `82ceb63`):** con bash 5.0 o anterior en modo POSIX, la asignación `LC_ALL=C` del atajo persistiría y un cierre con estado no ASCII pasaría. Simulado, no reproducido. **P-136-G** está en la cola (recomendación: repararlo dentro de la 2b). Impide cerrar REQ-007; la publicación de 1.36.0 vuelve al propietario mientras siga abierto.
+- **Intervención 1 cerrada** con QA y seguridad «con hallazgos» y sus límites declarados. No se cierra ningún REQ.
+- **Intervención 2, SEC-120, abierta:** plan de cuatro fases y bloques calcados de la décima, en `PENDING_APPROVAL.md` § Resueltas. `docs/PLAN.md` y ESTADO al día.
+- **Gasto real de la intervención 1** (dato para calibrar): desarrollador ≈ 682 k, QA ≈ 494 k (425 k más la corrección de 69 k), analista ≈ 954 k en cinco comisiones y seguridad ≈ 252 k. Lo propuesto era 300–400 k, 250–300 k y 150–200 k. El plan de SEC-120 ya usa rangos calibrados.
+- **Avance (regla 6):** CA-54 está cerrado como intervención; empieza SEC-120, fase 1 (casos y fail-before).
+
 ## [GitHub] — 2026-10-05 · QA corrige su propio recuento de QA-007-01: 10 de 30, no 8 de 30 (error de suma, no de medición)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; ~69 k tokens) y la coordinadora (registro).
 

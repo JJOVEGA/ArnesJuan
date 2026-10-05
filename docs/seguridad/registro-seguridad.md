@@ -10099,3 +10099,188 @@ Es el mismo precedente que R-050. **El `auditor-seguridad` no ha revisado, medid
 - **Estado de seguridad aprobado por REQ: sin cambio.** REQ-007 sigue sin firma.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-051**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-052** y **SEC-127**.
+
+## Revisión R-052 — **Décima autorización, fase 4: determinación de seguridad del delta de CA-54** (`hooks/`, `v1.35.0`..`82ceb63`). `cand/1.36.0` @ `643385b`, con el código de `82ceb63` — 2026-10-05 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** Mismo método que en R-047 y R-048: `git grep` de `R-052` y `SEC-127` en todas las ramas locales y remotas y en las etiquetas, y búsqueda en los worktrees. Sólo aparecían como «próximo libre». Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, P-136-F, punto 5 (literal): «Fase 4: seguridad sobre 82ceb63 con el veredicto de QA "con hallazgos: QA-007-01 declarado como límite". Commit validado.». Y P-136-D, puntos 1 a 4. Leídos literales.
+- **Orden:** QA se pronunció antes sobre este código: `docs/qa/REQ-007.md`, «Décima autorización, fase 3: CA-54», veredicto «con hallazgos: QA-007-01 declarado como límite». No miré las quality gates ni rehíce su trabajo.
+- **Delta revisado:** `git diff v1.35.0 82ceb63 -- hooks/`: `guard-codigo.sh`, `guard-completado.sh` y `lib.sh`, con +411 y −173 líneas. **`hooks/` de la cabeza es el de `82ceb63`:** `git diff --quiet 82ceb63 HEAD -- hooks/` da rc 0, y `cmp` de los tres archivos contra un `git archive` de `82ceb63` también (`lib.sh` sha256 `d43d374b…`).
+- **Ningún control del proveedor me detuvo.** Leí el diff entero.
+- **Contrato:** REQ-007, la nota de CA-54 del 2026-10-03 con sus tres añadidos de P-136-D y P-136-F, y CA-69.
+- **Método:**
+  - lectura del delta frente a v1.35.0, función por función;
+  - un detector de autollamadas, con control positivo sobre `dee5932`;
+  - tres corridas propias a nivel de hook, rotuladas abajo.
+
+  **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/ca54/seg-R052/` (`90-` a `94-`), sin commit allí. Plataforma: Linux/WSL2, bash 5.3.9 y GNU grep 3.12. En este anfitrión sólo hay un bash.
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 en `allow` o en «sin decisión»?
+
+**Respuesta: no en bash 5.1 o posterior, ni en ningún bash fuera del modo POSIX. Sí, por derivación, en bash 5.0 o anterior en modo POSIX: es SEC-127 (§4).**
+
+**1.1 El atajo de `guard-completado` (`hooks/guard-completado.sh:400`) equivale a la regla.**
+- **El bucle sólo deniega si `grep` encuentra el estado terminal** (líneas 401–412, `grep -iqE` en la 405). Las funciones que recorre —`arnes_identidad`, `arnes_id_pertenece` y sus auxiliares, también las nuevas del delta— no llaman a `arnes_deny` ni hacen `exit`. Lo leí, y QA llegó a lo mismo.
+- **La misma entrada en los dos lados:** el atajo lee `$bash_cmd`, el texto crudo del comando, que es lo que recibe `grep`.
+- **El atajo sólo afirma «ausente» con tres condiciones a la vez** (`lib.sh:2135`):
+  1. el estado es `[A-Za-z0-9_-]+`;
+  2. el texto es todo ASCII;
+  3. el texto en minúsculas ASCII no **contiene** el estado en minúsculas.
+- **Por qué no hay falso «ausente»:**
+  - Con texto y estado ASCII, `grep -i` en cualquier juego de caracteres compatible con ASCII sólo puede casar una letra con su pareja de mayúscula o minúscula ASCII. El plegado de Unicode de `ſ`, `K` (Kelvin) o `İ` necesita un byte que no es ASCII, y ese texto se descarta en la condición 2.
+  - En `tr_TR`, `grep -i` **no** iguala `i` con `I`: ahí el atajo es más estricto que `grep` y le deja la decisión.
+  - «Contener» es condición necesaria para casar, y el atajo nunca la usa como suficiente.
+  - Las mayúsculas se tratan en los dos lados: ambos se pasan a minúsculas en locale C.
+  - Un estado con un acento, un punto o vacío devuelve 1: decide `grep`, como siempre.
+- **Colocación:** después de las cuatro denegaciones por forma (presupuesto, CR del delimitador, SEC-124 y LC10, líneas 334–355) y de `arnes_deny_manifiesto_roto` (366), y antes del bucle. Cumple los puntos 1 y 3 de P-136-D: el atajo comprueba una condición necesaria leyendo la entrada entera, y ninguna denegación que no dependa de ella deja de emitirse.
+- **Medido:**
+  - QA: 3 600 ejecuciones del bloque `estado`, con los locales construidos y su control positivo, y 0 diferencias.
+  - **Mi muestra** (`92-`/`93-`): 200 ejecuciones, todas iguales a v1.35.0 en stdout, stderr y rc.
+    - Estados: `completado`, `COMPLETADO`, `Fin_2-x`, `terminé` e `i`.
+    - Diez formas de mención, entre ellas mayúsculas, prefijo, texto no ASCII, `..`, ninguna mención y los plegados `İ ı K ſ`.
+    - Por `guard.sh` y por `guard-completado.sh`, como coordinadora y como desarrollador.
+    - 116 `deny` y 84 `allow` en v1.35.0: la muestra separa las dos decisiones.
+
+**1.2 El análisis compartido (`arnes_escrituras_de`, `lib.sh:2159`) no reutiliza nada calculado con otra entrada.**
+- **La memoria vive en un proceso, y cada proceso juzga una sola llamada.** Se vacía al cargar `lib.sh` (2158), y `hooks.json` registra un solo comando, `guard.sh`, que se arranca una vez por llamada.
+- **Sólo la usan las dos puertas** (`guard-codigo.sh:62` y `guard-completado.sh:333`). Las dos juzgan la misma entrada JSON, así que tienen el mismo `cwd`, el mismo manifiesto y el mismo agente.
+- **El análisis no depende del `cwd` ni del agente.** Depende del texto, con su clave exacta, y del techo. El techo sale del mismo manifiesto, y la reutilización se limita a los casos en que repetir no escribiría nada en stderr.
+- **Repetirlo daría lo mismo:** v1.35.0 también lo corría en un subshell, con el mismo estado del padre.
+- **Medido por QA:** 868 ejecuciones del bloque `techo`, con seis manifiestos (también el que excede y uno roto), stderr incluido, y 0 diferencias.
+- **Frontera de la memoria:** no tiene clave de manifiesto, y eso es correcto mientras un proceso juzgue una sola llamada (O-52-1).
+
+**1.3 El cambio de locale y su restauración.**
+- **En la fase de tokens no queda nada:** `LC_ALL=C _arnes_escrituras_texto` (`lib.sh:2021`) corre **dentro** de la sustitución de comandos de `arnes_escrituras_de` (2168). Nada de ese subshell llega al proceso que juzga.
+- **En el atajo, sí corre en el proceso que juzga:** `LC_ALL=C _arnes_estado_ausente_c` (`lib.sh:2133`). Medí en bash 5.3.9 que la asignación **se restaura**, con y sin modo POSIX: `${#x}` sobre `ñandú` da 5 antes y después, y `LC_ALL` queda sin definir.
+- **Pero en bash 5.0 y anteriores, en modo POSIX, persiste.** Lo dice `/usr/share/doc/bash/NEWS`, bash-5.1, punto «o»: «Bash posix mode now treats assignment statements preceding shell function [calls] the same as in its default mode, since POSIX … no longer requires those assignments to persist after the function returns». Ésa es la única vía por la que el delta deja un estado que altere un juicio posterior: **SEC-127**.
+- **v1.35.0 no tenía esa forma en el proceso padre.** Busqué asignaciones temporales delante de una llamada en los dos `lib.sh`: sólo hay `IFS= read`, que es un builtin regular y no persiste.
+
+**1.4 El resto del delta: equivalente por lectura, con la medición de QA.**
+- **Previas de `_arnes_id_calcula`:** la condición de entrada cubre las cinco que puede disparar; las del salto y del CR exigen las dos `ARNES_TOOL != Bash` y `p = ARNES_FP`.
+- **Ancla relativa:** el atajo de `cwd` sólo pasa si `ARNES_CWD` es igual a `ARNES_CWD_VISTO`, que sólo guarda un `cwd` ya comprobado.
+- **Rutas limpias:** `_arnes_id_texto` sólo se salta en una ruta que no lleva `//`, `/./`, `/../` ni `\`. Es la misma condición del camino rápido de `_arnes_lectura_lexica` (748), y los pasos que se saltan sólo actúan sobre esas formas.
+- **Lectura física:**
+  - `_arnes_lf_memo` (886) publica lo mismo que la rama de memoria de `_arnes_lectura_fisica`.
+  - `[[ -e $cur ]] && cd -P` (814) es equivalente porque `stat` es condición necesaria de `chdir`.
+- **Lo demás:** `_arnes_propio` en línea, `_arnes_ambito` con `ARNES_AMB_NT` (fijado en el único final de la función), `_arnes_id_ln` (idempotente), la vía (c), `_arnes_id_v`, el techo y la emisión acumulada (mismo orden; `printf` es builtin, sin límite de argumentos).
+- **`set -u`:** las variables nuevas que se leen sin valor por defecto están inicializadas (`ARNES_RAICES_LISTAS` en la 608, `ARNES_ESCR_*` en la 2158).
+- **Medido por QA:** 1 216 ejecuciones de `identidad` y 464 de `s46`, con 0 diferencias; y el inventario de CA-69 2 (a), con 2 049 de 2 050 casos iguales y 1 INCONCLUSO no acreditado.
+
+### 2. Recursión, bucles sin tope y pila
+
+**Respuesta: el delta no introduce recursión ni bucles sin tope, y `82ceb63` no tiene la recursión de F-136-5. Lo confirmo leyendo el código y midiendo.**
+- **Lectura, con control positivo.** Un detector de funciones que se llaman a sí mismas (awk sobre `lib.sh`):
+  - sobre `dee5932` encuentra `_arnes_lectura_lexica` en la línea 764, el bloque «POR DIRECTORIO» de F-136-5;
+  - sobre `82ceb63` y sobre v1.35.0, ninguna.
+- **Recursión mutua: no hay.** Las funciones nuevas forman un grafo sin ciclos (`_arnes_id_calcula` → previas, ancla, texto, `lf_memo`, lectura física, dos lecturas → `_arnes_nodet`). `arnes_identidad`, `_arnes_id_calcula` y `arnes_id_pertenece` sólo se llaman desde las puertas y desde `lib.sh` 2276, 2324 y 2329, que están fuera de la identidad.
+- **Bucles:**
+  - `_arnes_lectura_lexica` itera sobre los segmentos ya partidos;
+  - `_arnes_lf_resto` recorre una cadena que acorta en cada vuelta;
+  - en `_arnes_lectura_fisica`, el bucle exterior da como mucho dos pasadas (`rc=2` sólo en la primera), y el interior es el de v1.35.0 sin cambio de terminación.
+- **Medición del auditor, a nivel de hook** (`90-`/`91-`). Dos escrituras por `guard.sh`: primero un destino profundo, y después una escritura protegida que v1.35.0 deniega.
+  - **Entradas:** tres formas con `..` y con `//`, hasta 2 040 niveles y 4 089 caracteres, el máximo por debajo de `ARNES_ID_MAX` (4 096). Detrás, `src/a.ts` como coordinadora, o el cierre de un REQ por `sed -i` como desarrollador.
+  - **Pila:** 8 192, 1 024 y 256 KiB.
+
+  | Árbol | Filas | Resultado |
+  |---|---|---|
+  | **`82ceb63`** | 15 | `deny`, rc 0, en las 15, también con 256 KiB de pila |
+  | v1.35.0 | 15 | `deny` en las 15 |
+  | `dee5932` (control positivo) | 15 | **SIGSEGV, rc 139, sin decisión** en 10 de las 12 filas con `..`: todas menos las dos de 300 niveles con 8 192 KiB, y también a 300 niveles con 1 024 KiB de pila; las 3 con `//` deciden |
+
+  Que el resultado no dependa de la pila es la firma de que no hay recursión por segmento.
+- **Lo que esto da para F-136-5:** en estas formas, `82ceb63` ya cumple la propiedad del punto 2 de P-136-F: «toda ruta por debajo del límite de entrada recibe una decisión; ninguna mata al hook». **Es una muestra, no la acreditación de esa propiedad,** que sigue exigiendo su caso en el banco con fail-before antes de cualquier intervención que toque la lectura léxica.
+
+### 3. QA-007-01 frente a la política de la casa y a SEC-115
+
+**Respuesta: encaja, y no añado ningún hallazgo.**
+- **Es un incumplimiento declarado de un contrato de rendimiento, no un fallo en abierto.**
+  - Las 90 corridas de M, N y MR tienen la decisión, el rc, el stdout y el stderr de v1.35.0.
+  - El umbral de 5 s es de CA-54. El borde de seguridad es otro: el hook que muere a los 60 s, SEC-115, que CA-68 vigila con un plazo de 40 s.
+- **El delta reduce la exposición a SEC-115:** en las mismas formas, v1.35.0 tardó entre 7,7 y 9,4 s (con un extremo de 22,5 s) y el candidato entre 4,0 y 5,8 s (QA §2). El margen medido hasta los 60 s es de 54 s o más en Linux/WSL2.
+- **Dónde está la exposición real:** en Windows/MSYS, sin medir en esta ventana (20,4 a 28,9 s sobre `3bc7d3c`). Es preexistente, está declarada y el delta no la agrava (P-136-A: 0 procesos añadidos, medido por QA).
+- **Conforme con la política:**
+  - «Límite declarado» no es «riesgo aceptado» ni repara nada, y la nota de CA-54 lo dice con esas palabras.
+  - QA-007-01 sigue en `Hallazgos abiertos:` como `contrato`, así que sigue impidiendo **cerrar** REQ-007.
+  - La relación con SEC-115 está escrita con su límite: «un margen no es una garantía».
+- **Lo que no determino:** M0 y MD no tienen cifra sobre `82ceb63`. La nota lo dice así y lo remite a la intervención 2b.
+
+### 4. SEC-127 — `contrato` (REQ-007) · **abierto** · severidad **baja** · **introducido por `82ceb63`** · dueños `desarrollador` (`arnes_estado_ausente`, `hooks/lib.sh`) y `analista-requerimientos` (nota de CA-54 y CA-69 punto 3, si se decide declarar la premisa)
+
+**El atajo de `guard-completado` cambia el locale del proceso que juzga con una asignación temporal delante de una llamada de función. En bash 5.0 o anterior, en modo POSIX, esa asignación no se deshace, y el recorrido de destinos corre después en locale C.**
+- **Dónde:** `hooks/lib.sh:2133`, `{ LC_ALL=C _arnes_estado_ausente_c "$1" "$2"; } 2>/dev/null`, llamada desde `hooks/guard-completado.sh:400` en el proceso que juzga, y no en un subshell.
+- **Mecanismo, derivado:** el punto «o» de bash-5.1 en NEWS (§1.3). En esas versiones y en ese modo, la asignación persiste al volver de la función. Cuando el atajo responde 1, el recorrido de las líneas 401–412 corre con `LC_ALL=C`, y `grep -i` deja de plegar las mayúsculas que no son ASCII.
+- **Consecuencia, simulada** (`94-`). Es una simulación del estado que dejaría la persistencia, **no una reproducción de la fuga**:
+  - manifiesto con el estado terminal `terminé`;
+  - comando `sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md`;
+  - con `LANG=C.UTF-8`, `deny` en v1.35.0 y en `82ceb63`; con el entorno en `LC_ALL=C`, `allow` en los dos.
+
+  El lector de campos pasa el valor a minúsculas (`arnes_norm_campo`, `${v,,}`), así que esa escritura cerraría el REQ desde la shell, que es lo que la vía `Bash` de `guard-completado` existe para impedir. Frente a v1.35.0 en el mismo entorno, es un movimiento de `deny` a `allow` que CA-69, punto 3, prohíbe («CA-54 no mueve nada»).
+- **Condiciones, todas a la vez:**
+  - bash 5.0 o anterior, por ejemplo el de Ubuntu 20.04;
+  - el hook arranca en modo POSIX (`POSIXLY_CORRECT` o `SHELLOPTS` con `posix` en el entorno);
+  - un comando con algún byte que no es ASCII, para que el atajo responda 1 y no salga antes;
+  - una mención del estado que sólo casa con plegado Unicode. En la práctica es un estado terminal que no es ASCII escrito con otras mayúsculas, o un plegado exótico de una letra ASCII del estado (`ſ`, `K`). El valor por defecto, `completado`, no tiene letras con esos plegados.
+- **No reproducido:** este anfitrión sólo tiene bash 5.3.9, y no hay contenedores. **Tampoco sé si v1.35.0 decide bien en ese modo** con bash 5.0: no usa sustitución de procesos, que es la incompatibilidad conocida, pero no lo he medido. Si v1.35.0 tampoco deniega allí, el movimiento no existe, y este hallazgo **se cierra por medición, no por lectura**.
+- **Por qué `contrato` y baja:** tiene la forma de SEC-124. El commit del candidato introduce un movimiento de `deny` a `allow` que descansa en una premisa no declarada, aquí la versión y el modo del intérprete. El contrato de CA-54 promete «la misma decisión que v1.35.0» en Linux sin nombrar esa premisa. Severidad baja por la conjunción de condiciones y porque la vía `Bash` de `guard-completado` es, por §13, una barandilla contra el descuido.
+- **Remediación, por propiedad:** ningún cambio de locale que hagan el análisis o el atajo sobrevive a la llamada que lo hizo, en ninguna versión ni modo del intérprete que el arnés admita, con 0 procesos añadidos (P-136-A). El mecanismo es del `desarrollador`. Ejemplos **no exhaustivos**:
+  - salir del modo POSIX al entrar en el hook;
+  - no apoyar la restauración en la asignación delante de una función en el proceso que juzga.
+
+  **Alternativa, que decide el propietario:** declarar la premisa (bash 5.1 o posterior, o hook fuera de modo POSIX) como límite en la nota de CA-54 y en CA-69. Eso no repara nada.
+- **Fail-before:** no se puede materializar en este anfitrión. Por CA-69, punto 1, el caso sale SKIP con su motivo y nunca PASS, salvo que se mida en un anfitrión con bash 5.0.
+- **Write-back (§9):** hace falta, sea cual sea la vía. Un NFR o un criterio que diga la propiedad de arriba, o la premisa declarada. En este repositorio lo transcribe el `analista-requerimientos` (§6 no declara la vía proporcional).
+- **Forzador:** la intervención 2b de CA-54, que ya va a tocar el atajo y la fase de tokens, o antes, si el propietario lo decide. **No encadeno reparación.**
+- **Vencimiento propuesto:** antes de publicar 1.36.0. **No aceptado.**
+
+### 5. Observaciones (no hallazgos)
+
+- **O-52-1 — La memoria de `arnes_escrituras_de` no tiene clave de manifiesto.** Es correcto mientras cada proceso juzgue una sola llamada, que es como lo arranca `hooks.json`. Si en el futuro un consumidor llamara a esa función con dos manifiestos en el mismo proceso, tendría que vaciar la memoria. Regresión a vigilar.
+- **O-52-2 — `2>/dev/null` sobre la fase de tokens en ASCII** (`lib.sh:2021`). Si un error de ejecución de bash ocurriera ahí, su diagnóstico se perdería. La decisión no cambia: rc y stdout son los de siempre, y QA comparó stderr byte a byte. Pierde observabilidad, no protección.
+- **O-52-3 — Preexistente, fuera del delta.** La detección ancha del estado terminal depende del locale del proceso. Con el usuario en locale C, v1.35.0 tampoco deniega `TERMINÉ` frente a `terminé` (filas de `94-`). No lo registro como hallazgo, porque §13 declara esa vía como barandilla. Lo anoto para que el analista decida si su frontera debe nombrarlo.
+
+### 6. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta: CON HALLAZGOS, SIN VETO.** Las cuatro propiedades del encargo se cumplen en bash 5.1 o posterior y fuera del modo POSIX: análisis una vez por invocación, fase de tokens en C sólo con texto ASCII, ramas raras fuera de las funciones calientes, y atajo que omite sólo el recorrido y sale después de toda denegación por forma. La única excepción es SEC-127.
+- **SEC-127:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007. Está en su `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre (§6 y §13).
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por la delegación del propietario y vuelve a él (§4 y política de autoalojamiento), como ya pasa con QA-007-01.
+    - **No impide** implementar, probar ni el commit de registro de `82ceb63` (P-136-F, punto 5).
+  - **(ii) Qué parte afecta:** la vía `Bash` de `guard-completado`, sólo en el intérprete y modo descritos.
+  - **(iii) Evidencia:** `hooks/lib.sh:2133`, `hooks/guard-completado.sh:400–412`, el punto «o» de bash-5.1 en NEWS, y `seg-R052/94-simulacion-locale-c.txt`.
+  - **(iv) Qué lo resuelve:** la remediación medida con su write-back; la premisa declarada por decisión del propietario con su write-back; o la medición que demuestre que v1.35.0 tampoco deniega en ese modo.
+- **QA-007-01:** sin cambio de clase ni de alcance. Sigue siendo el que decidió el propietario en P-136-F.
+
+### 7. Firmas y cobertura
+
+- **`Seguridad:` de REQ-007 sigue en `pendiente`.** Añado sólo la referencia a R-052 dentro de su paréntesis. **`Hallazgos abiertos:` de REQ-007** recibe SEC-127.
+- **Lo que acredita esta revisión:**
+  - que el delta no convierte ningún `deny` en `allow` ni en «sin decisión» en bash 5.1 o posterior, ni fuera del modo POSIX;
+  - que `82ceb63` no tiene recursión, con lectura y medición propia hasta el máximo de `ARNES_ID_MAX`;
+  - que QA-007-01, como límite declarado, encaja con la política de la casa.
+- **Lo que NO acredita:**
+  - las quality gates, que son de QA;
+  - el anfitrión, `claude -p`;
+  - Windows/MSYS;
+  - bash anterior a 5.1, que no he medido;
+  - los locales GB18030 y BIG5, que sólo he razonado: con texto todo ASCII cada byte es un carácter, y con texto que no es ASCII se decide en el locale del proceso, como en v1.35.0;
+  - el tiempo de M0 y MD sobre `82ceb63`;
+  - SEC-120, SEC-115 y SEC-118, más allá de la relación del §3.
+
+### 8. Estado tras R-052
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-127`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, no reproducido (derivado + consecuencia simulada) | `desarrollador`; `analista-requerimientos` si se declara la premisa | **REQ-007** |
+| `QA-007-01` | `contrato` (REQ-007) | sin cambio: límite declarado por P-136-F | `desarrollador` (2b) | REQ-007 |
+| F-136-5 / QA-007-02 | `instrumento` (ficha) | sin cambio: fuera del candidato; `82ceb63` sin la recursión (§2) | `desarrollador` | No |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una asignación temporal de una variable especial (`LC_*`, `LANG`, `IFS`) delante de una llamada de función en el proceso que juzga;
+- una memoria sin clave que cruce de una llamada a otra o de un manifiesto a otro;
+- una lectura de rutas que recurra por segmento (F-136-5).
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-052**; último hallazgo **SEC-127** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-053** y **SEC-128**.

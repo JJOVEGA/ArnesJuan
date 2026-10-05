@@ -43,9 +43,77 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-05: P-136-F resuelta por el propietario, en § Resueltas.)_
+### [2026-10-05] (coordinadora) — P-136-G: SEC-127 (`contrato`, baja; R-052). Con bash 5.0 o anterior en modo POSIX, el atajo de `guard-completado` podría dejar el recorrido de destinos en locale C y un cierre con estado no ASCII pasaría. ¿Se repara, se declara la premisa como límite o se mide?
+
+**Contexto.** Fase 4 de la décima autorización, R-052 (`docs/seguridad/registro-seguridad.md`), sobre el código de `82ceb63`. **Determinación: con hallazgos, sin veto.**
+- **Conforme:**
+  - el atajo equivale a la regla, con la muestra del auditor (200 ejecuciones) y las 3 600 de QA;
+  - el análisis compartido no reutiliza nada de otra entrada;
+  - no hay recursión: hasta 2 040 niveles, `deny` y rc 0 con pilas de 8 192, 1 024 y 256 KiB;
+  - QA-007-01 encaja como límite: decisión idéntica, y el delta **reduce** la exposición a SEC-115.
+- **SEC-127:**
+  - el atajo pone `LC_ALL=C` delante de una llamada a función en el proceso que juzga;
+  - en bash 5.1 o posterior esa asignación se restaura (medido en 5.3.9, con y sin modo POSIX);
+  - en **bash 5.0 o anterior en modo POSIX** persiste (NEWS de bash-5.1, punto «o»). El recorrido de destinos correría entonces en locale C, donde GNU `grep -i` no casa `TERMINÉ` con `terminé`, mientras el lector pasa el valor a minúsculas: ese cierre pasaría.
+  - **No reproducido:** sólo hay bash 5.3.9 en este anfitrión. Se simuló con el entorno en `LC_ALL=C` (`deny` → `allow`; `seg-R052/94-`).
+  - v1.35.0 no tenía esa forma.
+- **Alcance (§6, regla 2):**
+  - impide **cerrar** REQ-007 (clase `contrato`);
+  - **publicar** 1.36.0 no puede hacerse por delegación mientras siga abierto: vuelve al propietario. El auditor no lo veta;
+  - no impide implementar, probar ni SEC-120.
+
+**Pregunta.** ¿Qué se hace con SEC-127?
+
+**Opciones.**
+- **(A) Repararlo** en una intervención acotada:
+  - el `desarrollador` hace que la asignación de locale no pueda persistir en ningún bash (por ejemplo, en un subshell o con `local`, sin procesos añadidos en el camino común);
+  - QA la verifica, con un caso de banco que fije el locale del proceso tras el atajo;
+  - seguridad la cierra.
+  - **Consecuencia:** coste pequeño, de una intervención corta; puede ir junto a la 2b o antes de publicar.
+- **(B) Declarar la premisa como límite:** el hook requiere bash 5.1 o posterior, o no arrancar en modo POSIX. El analista la escribe en el contrato y en la guía.
+  - **Consecuencia:** cero código; un consumidor con bash 5.0 en modo POSIX quedaría expuesto. El hallazgo sigue `contrato` hasta que el auditor lo reclasifique.
+- **(C) Medirlo primero** en un bash 5.0 en modo POSIX (contenedor o compilación local). Si v1.35.0 tampoco deniega en ese modo, el hallazgo se cierra.
+  - **Consecuencia:** coste de montar ese bash; la medición decide entre (A) y el cierre.
+
+**Recomendación de la coordinadora: (A), dentro de la intervención 2b,** que ya toca este código. Es la reparación barata y elimina la dependencia de la versión de bash. Si la 2b se retrasa más allá de la publicación, (A) va sola antes de publicar.
+
+**Qué trabajo sigue mientras no se decida:** **SEC-120 (intervención 2), que no depende de esta decisión**, ya está autorizada por delegación y vence el 2026-10-29. Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario.
 
 ## Resueltas
+
+### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-05) — **Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola** (REQ-007 CA-47 punto 20; vence el 2026-10-29)
+
+**Fuente de la delegación:** decisión del propietario del 2026-10-05, posterior a `39e68bb`, punto 3 (literal en esta sección): «Cuando conecte: recuento de QA (10 de 30), fase 4 sobre 82ceb63, commit validado, y apertura de SEC-120 sin pedirme la autorización». También P-136-F, punto 7: «Al cerrar CA-54, abre SEC-120 sola, como dice el plan de versión». La forma es la de `templates/autorizacion.md`. **Los bloques los redacta la coordinadora calcando la décima autorización:** no añaden facultades ni quitan ninguna parada que la décima tenía.
+
+**Propiedad (contrato vigente, REQ-007 CA-47 punto 20; no se cambia):** si `jq` no puede leer la entrada, el hook deniega a todo agente. Si no puede trocear la parte de `tool_input` que una puerta necesita, deniega esa puerta. Ninguna variable conserva el valor de una lectura anterior. Los modos inertes (sin `jq` o sin manifiesto) siguen como están. Se cumple con la comprobación del código de salida, **sin procesos nuevos**. Medida: casos de banco en la sección 44 a nivel de hook en Linux/WSL2, con los vectores V1–V4 de R-045-A §4 y fail-before contra el código del candidato (`82ceb63`) y contra v1.35.0.
+
+> ## Plan autorizado (se ejecuta entero; cada fase termina en commit local y la siguiente empieza sin pedir permiso)
+> Fase 1 — desarrollador: casos de banco de CA-47 punto 20 en la sección 44 (vectores V1–V4 de R-045-A §4), con fail-before medido sobre el código de `82ceb63` y sobre v1.35.0. Sin reparar todavía.
+> Fase 2 — desarrollador: reparación por comprobación del código de salida de `jq`, con 0 procesos añadidos (`sonda-procesos.sh` más recuento exacto). Entrega: casos en verde, inventario CA-69 2 frente a `22-` con la semilla de la sección 41 fijada (sólo admite los movimientos de `allow` o «sin decisión» a `deny` que declara CA-69 3 para el punto 20, y los casos de CA-69 2 (c) e INS-136-1), banco completo, autoprueba y gates.
+> Fase 3 — QA (Opus): repite los casos, el fail-before, el inventario, el banco y la autoprueba, e intenta romper la reparación. Una pasada correctiva como máximo, dentro del contador, y su re-verificación.
+> Fase 4 — seguridad, sólo con QA favorable. Write-back del analista sólo si hay deriva. Commit del trabajo validado.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, CHANGELOG, ESTADO e índices; ajustes del banco que no cambian ningún veredicto ni contrato; la pasada correctiva prevista; el orden y el presupuesto de cada despacho dentro del propuesto (calibrado con la intervención 1: desarrollador 300–500 k, QA 250–400 k, seguridad 150–250 k); registrar defectos nuevos sin repararlos.
+>
+> ## Cuándo paras y me preguntas (solo esto)
+> - un cambio de contrato o de alcance;
+> - aceptar o aplazar un riesgo;
+> - más pasadas que la prevista;
+> - un veredicto del banco que cambia: un caso que ejecuta hooks o lee archivos del delta y pasa entre PASS y FAIL, fuera de los movimientos que declara CA-69 3. Un caso de calibración de sonda que cambia se registra y se sigue;
+> - **el fail-before no falla** sobre `82ceb63` ni sobre v1.35.0 (sería una pregunta de contrato: R-046 dice que `arnes_parse_input` ya vacía sus campos);
+> - un control del proveedor detiene algo (se registra y se sigue con lo independiente);
+> - publicar, fusionar, etiquetar o cerrar un REQ.
+>
+> ## Si la sesión se corta
+> La siguiente lee este plan en la cola y en ESTADO, y continúa desde la última fase comiteada. No vuelve a pedir la autorización: ya está dada.
+>
+> ## Límites
+> Nada fuera de SEC-120 en esta intervención: ni SEC-127 (P-136-G), ni la 2b, ni SEC-115/118; se registran. No `AGENTS.md` ni contadores. No push, versión, PR, fusión ni tag.
+
+**Lo que añade la coordinadora:** la base es el código del candidato (`hooks/` = `82ceb63`). P-136-G (SEC-127) sigue pendiente en la cola y no depende de este plan.
 
 ### RESUELTA (propietario, 2026-10-05, posterior a `39e68bb`) — **M0 y MD como límite declarado «sin cifra sobre 82ceb63»; QA-007-01 sigue como `contrato`; impedimento de red del anfitrión; al conectar, se sigue sin pedir autorización hasta abrir SEC-120**
 
