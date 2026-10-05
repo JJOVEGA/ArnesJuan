@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Décima autorización: fase 2 cerrada por el desarrollador en `82ceb63` (SIN VALIDAR); ESTADO pasa a la fase 3 (QA)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Resultado de la fase 2 según el desarrollador:**
+  - 35 de 35 corridas por debajo de 5 000 ms (máx. 3 711 ms);
+  - decisiones, rc y salidas idénticas a v1.35.0;
+  - 0 procesos añadidos;
+  - inventario idéntico a la referencia (`f35c9c04…`, semilla 23062);
+  - banco 2038/0/12; autoprueba 117/0; gates rc 0.
+  - El atajo va en la línea 400 de `guard-completado.sh`, después de todas las denegaciones por forma (líneas 334–355).
+  - Nada de esto lo ha validado QA todavía.
+- **Avance (regla 6):** construido y medido por el desarrollador; falta la validación de QA (fase 3).
+
 ## [GitHub] — 2026-10-05 · Décima autorización, fase 2 (CA-54): análisis de `Bash` en el máximo por debajo de 5 s (35/35, máx. 3 711 ms) con las mismas decisiones e inventario idéntico; atajo de `guard-completado` readmitido por P-136-D — **SIN VALIDAR por QA**
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico; presupuesto superado, aceptado por el propietario en P-136-D). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `cb3cb80`, `cand-1.36.0/ca54/`. Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`.
 
