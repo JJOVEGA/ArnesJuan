@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · P-136-F resuelta por el propietario: opción (C). El candidato de CA-54 es `82ceb63` y se revierte `dee5932`; QA-007-02 queda cerrado por reversión, con ficha; QA-007-01 queda como límite declarado; segunda pasada como intervención 2b, después de SEC-120
+> Origen: GitHub (commit local, sin push; **sin código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas; la cola queda vacía.
+- **Alcance de la reversión, comprobado:** entre `82ceb63` y `dee5932^` no cambia `hooks/`, `tools/` ni `tests/`.
+- **«El plan de versión» no existía como documento:** la coordinadora lo escribe en `docs/PLAN.md` § 1.36.0, en el commit del cierre.
+- **Avance (regla 6):** el camino de cierre de CA-54 queda decidido. Siguen la reversión, el write-back y la seguridad.
+
 ## [GitHub] — 2026-10-05 · Décima autorización, re-verificación de QA sobre `dee5932`: CON HALLAZGOS — QA-007-02 (`contrato`, alta), nuevo e introducido por la pasada: un destino con unos 1 500 niveles mata el hook por SIGSEGV y abre las dos puertas; QA-007-01 sigue abierto; ficha P-136-F; plan PARADO
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; registro en `docs/qa/REQ-007.md`; `Hallazgos abiertos:` de REQ-007 con QA-007-01 y QA-007-02, y `QA:` sigue `pendiente`; evidencia `a6f5b32`) y la coordinadora (ficha y registro).
 

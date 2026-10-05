@@ -43,8 +43,50 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-05: P-136-F resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-05] (coordinadora) — P-136-F: la pasada correctiva única introdujo un fallo en abierto (QA-007-02, `contrato`, alta) y no cerró QA-007-01; el plan está parado. ¿Se revierte la pasada, se autoriza otra o ambas cosas?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-05) — **P-136-F: opción (C)**: el candidato de CA-54 es `82ceb63` (se revierte `dee5932`); QA-007-02 cerrado por reversión con ficha de la recursión; QA-007-01 como límite declarado; fase 4 sobre `82ceb63`; segunda pasada como intervención 2b después de SEC-120
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-F: opción (C), así:
+>
+> 1. El candidato de CA-54 es 82ceb63. Revierte el código de dee5932 (git
+>    revert, conservando el registro de la pasada y de QA-007-02 como historia).
+>    Comprueba que tras el revert hooks/ es byte a byte igual a 82ceb63.
+> 2. QA-007-02 queda CERRADO POR REVERSIÓN en el candidato, y abre una ficha
+>    de 1.36.0 (instrumento, alta): «la lectura léxica de rutas es recursiva
+>    por segmento y sin tope». Antes de cualquier intervención que la toque,
+>    el banco recibe primero el caso de destinos profundos (≈1500 niveles,
+>    < 3 KB) con fail-before, y la propiedad es: toda ruta por debajo del
+>    límite de entrada recibe una decisión; ninguna mata al hook.
+> 3. QA-007-01 queda como LÍMITE DECLARADO del candidato: CA-54 se cumple en
+>    su medición (las 35 corridas), y las formas que QA añadió (sus casos M/N,
+>    un proyecto sin globs de código, el desarrollador con primer destino en
+>    código) quedan fuera del criterio y escritas en las notas. La medición
+>    en anfitrión degradado se registra como tal, no se repite.
+> 4. El bloqueo del proveedor sobre QA (locales GB18030/BIG5, leído como rm
+>    sin haberlo) se registra; no se reintenta. El ataque de equivalencia
+>    sobre 82ceb63 vale el que ya se hizo; el que faltaba era sobre dee5932,
+>    que ya no existe.
+> 5. Fase 4: seguridad sobre 82ceb63 con el veredicto de QA «con hallazgos:
+>    QA-007-01 declarado como límite». Commit validado.
+> 6. Segunda pasada de CA-54 (cubrir QA-007-01 y la recursión): intervención
+>    nueva, DESPUÉS de SEC-120, que tiene fecha. Se registra en el plan de
+>    versión como intervención 2b.
+> 7. Al cerrar CA-54, abre SEC-120 sola, como dice el plan de versión.
+>
+> Presupuesto: registra el gasto real (dev 673k, QA 425k, analista 750k) frente
+> al propuesto; es dato para calibrar el siguiente, no un reproche.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Alcance de la reversión, comprobado:** `git diff --stat 82ceb63 dee5932^ -- hooks tools tests` está vacío. Entre `82ceb63` y la pasada sólo hubo registro, así que revertir el código de `dee5932` devuelve `hooks/` a `82ceb63`. `dee5932` toca `hooks/guard-codigo.sh`, `hooks/guard-completado.sh` y `hooks/lib.sh`, más `docs/arnes/v1.36.0-ca54-fase2.md` y `CHANGELOG.md`, que se conservan como historia. La reversión la hace el `desarrollador`, porque `hooks/` está protegido.
+- **«El plan de versión» no existía como documento.** La sección `## 1.36.0` de `docs/PLAN.md` era una planificación antigua («el working set explícito»). La coordinadora escribe allí, fechado, el plan vigente de 1.36.0 según las decisiones del propietario (2026-10-03 y esta): intervención 1 CA-54, intervención 2 SEC-120 sola, intervención 2b la segunda pasada de CA-54, intervención 3 SEC-115/SEC-118. Lo antiguo queda debajo como historia.
+- **Qué trabajo sigue:** la reversión (desarrollador); el write-back del analista (QA-007-02 cerrado por reversión, QA-007-01 como límite declarado en CA-54, la ficha de la recursión); la seguridad sobre `82ceb63`; el commit validado; y abrir SEC-120 con su autorización en la forma de `templates/autorizacion.md`. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-F: la pasada correctiva única introdujo un fallo en abierto (QA-007-02, `contrato`, alta) y no cerró QA-007-01; el plan está parado. ¿Se revierte la pasada, se autoriza otra o ambas cosas?
 
 **Contexto.** Re-verificación de QA (Opus) sobre `dee5932` (cabeza validada `787d04d`; registro en `docs/qa/REQ-007.md`, «Re-verificación de la pasada correctiva (QA-007-01)»; evidencia `cand-1.36.0/ca54/qa/`, commit `a6f5b32`).
 - **QA-007-02 (`contrato`, alta, NUEVO, lo introduce la pasada):**
@@ -80,9 +122,6 @@
 **Qué trabajo sigue mientras no se decida.** **Ninguno del plan.** Fuera del plan no se abre nada. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar).
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-05) — **P-136-E: opción (A)**; los tres casos de calibración son hallazgo `instrumento`, no atribuible al cambio; regla de parada afinada («un veredicto del banco que cambia» = un caso que ejecuta hooks o lee archivos del delta); ficha nueva de REQ-021
 
