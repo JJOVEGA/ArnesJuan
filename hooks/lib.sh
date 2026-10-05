@@ -91,33 +91,50 @@ arnes_preludio() {
 # trata el CR como el shell —un caracter de palabra— y DENIEGA donde no puede seguir su significado
 # (`arnes_bash_sin_texto`, `ARNES_RC_CR`).
 #
+# UNA ENTRADA QUE JQ NO PUEDE LEER NO PASA (SEC-120, REQ-007 CA-47 punto 20). Hasta 82ceb63 el codigo
+# de salida de esta llamada no decidia nada: con la entrada ilegible —un JSON roto, una anidacion por
+# encima del limite de jq— los campos quedaban vacios, `ARNES_TOOL` no era ninguna herramienta y las
+# puertas salian con permiso. Ahora la lectura MARCA `ARNES_INPUT_ILEGIBLE` y cada guardian, justo
+# despues de leer, deniega a todo agente (`arnes_deny_entrada_ilegible`). Es ilegible, ademas de lo que
+# hace fallar a jq, lo que no es exactamente UN objeto: `null`, un numero, dos objetos seguidos o nada.
+# Ninguno trae una herramienta que juzgar, y repartir dos objetos entre unos campos que esperan uno
+# juzgaria una mezcla. Lo exige la misma llamada (`[inputs]` con `-n`): sin procesos nuevos.
+#
+# Y un `file_path` o un `command` que llega pero NO ES TEXTO —un numero, una lista— se marca
+# (`ARNES_FP_NOTXT`, `ARNES_CMD_NOTXT`, la misma llamada): leido con `tostring` se juzgaria un texto que
+# nadie escribio, y la puerta que necesita ese campo lo deniega (`arnes_campo_no_texto`).
+#
 # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
-# salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
+# salida anterior de jq.
 arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
-  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' out
-  ARNES_JQ=''
-  if out="$(jq -r '[.tool_name // "",
+  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' t_fp='' t_cmd='' out
+  ARNES_JQ=''; ARNES_INPUT_ILEGIBLE=1
+  if out="$(jq -nr '[inputs] | if length == 1 and (.[0] | type) == "object" then .[0] else error("entrada") end
+                   | [.tool_name // "",
                     .agent_id // "",
                     .agent_type // "",
                     (.cwd // "" | if type == "string" then . else "" end),
                     .tool_input.file_path // "",
                     .tool_input.command // ""]
+                   | ([.[4], .[5]] | map(if type == "string" then 0 else 1 end)) as $notxt
                    | map(tostring)
                    | ((.[0:5] | map(indices("\n") | length))
                       + ([.[0], .[3], .[4]] | map(indices("\r") | length))
+                      + $notxt
                       | map(tostring) | join(" ")),
-                     .[]' <<< "$ARNES_INPUT")"; then
+                     .[]' <<< "$ARNES_INPUT")" && [ -n "$out" ]; then
     # La primera linea solo lleva digitos y espacios: un CR al final es el de transporte (arriba).
     case "${out%%$'\n'*}" in
       *$'\r') arnes_sin_cr_transporte "$out"; ARNES_JQ="$ARNES_SIN_CR" ;;
       *)      ARNES_JQ="$out" ;;
     esac
+    ARNES_INPUT_ILEGIBLE=0
   fi
   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
-  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0
+  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0; ARNES_FP_NOTXT=0; ARNES_CMD_NOTXT=0
   if [ -n "$ARNES_JQ" ]; then
-    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp
+    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp t_fp t_cmd
       _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
@@ -129,8 +146,34 @@ arnes_parse_input() {
     [ "$r_cwd" = 0 ] || { ARNES_CWD_CR=1; ARNES_CWD=''; }
     [ "$r_tool" = 0 ] || ARNES_TOOL_CR=1
     [ "$r_fp" = 0 ] || ARNES_FP_CR=1
+    [ "$t_fp" = 0 ] || ARNES_FP_NOTXT=1
+    [ "$t_cmd" = 0 ] || ARNES_CMD_NOTXT=1
   fi
   ARNES_INPUT_LISTO=1
+}
+
+# SEC-120 (REQ-007 CA-47 punto 20): la entrada que `arnes_parse_input` no pudo leer se deniega a TODO
+# agente —el agente tambien viene en ella, asi que no hay a quien exceptuar—. Cada guardian lo llama
+# justo despues de leer. El motivo no cita la entrada: no se sabe que lleva ni cuanto mide (CA-67).
+arnes_deny_entrada_ilegible() {
+  [ "${ARNES_INPUT_ILEGIBLE:-0}" = 1 ] || return 0
+  arnes_deny "ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objeto JSON del que sacar sus campos (por ejemplo, no es JSON valido, anida por encima del limite de jq o trae mas de un objeto). Sin leerla ninguna puerta sabe que herramienta es, quien la pide ni que escribiria, asi que no se permite a ningun agente: una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 20)."
+}
+
+# SEC-120: ¿llego como algo que no es texto el campo de `tool_input` que juzga esta herramienta?
+# `command` en `Bash`, `file_path` en `Edit`/`Write`/`MultiEdit`; cualquier otra herramienta no lo usa.
+arnes_campo_no_texto() {
+  case "$ARNES_TOOL" in
+    Bash)                [ "${ARNES_CMD_NOTXT:-0}" = 1 ] ;;
+    Edit|Write|MultiEdit) [ "${ARNES_FP_NOTXT:-0}" = 1 ] ;;
+    *)                   return 1 ;;
+  esac
+}
+
+# El motivo de una puerta que necesita ese campo y no lo tiene como texto. <lo que no puede saber> <a quien>
+arnes_deny_no_texto() {
+  local campo=file_path; [ "$ARNES_TOOL" = Bash ] && campo=command
+  arnes_deny "ARNES: el campo '$campo' de esta llamada no es texto, asi que $1; leerlo como texto seria juzgar algo que nadie escribio, y una puerta que no puede medir no deja pasar (${2}REQ-007 CA-47, punto 20). Para corregirlo, envia '$campo' como una cadena."
 }
 
 # La causa de que el `tool_name` no identifique ninguna herramienta (CA-47 punto 13), para el motivo

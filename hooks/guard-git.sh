@@ -168,7 +168,11 @@ arnes_guard_git() {
   local -a t reglas args palabras sincr
 
   arnes_parse_input
+  arnes_deny_entrada_ilegible   # SEC-120: a todo agente
   [ "$ARNES_TOOL" = "Bash" ] || return 0
+  if arnes_campo_no_texto; then
+    arnes_deny_no_texto "esta puerta no puede saber que orden de git se ejecutaria" "no se permite a ningun agente; "
+  fi
   [ -n "$ARNES_CMD" ] || return 0
   # Barato y PRIMERO: un `ls -la` o un `npm test` no llegan a leer el manifiesto ni
   # arrancan `jq`. El camino comun de Bash es el mas frecuente que hay y no puede pagar

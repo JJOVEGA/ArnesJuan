@@ -1660,9 +1660,9 @@ done
 # la sección 44 (247 → 319), bloque SEC-120 —los vectores V1–V4 de R-045-A §4 por propiedad: L, una entrada
 # que jq no puede leer, por guard.sh y por cada guardián que juzga la herramienta; T, unas ediciones que no
 # se pueden trocear; K, los controles de la puerta que no las necesita y de V4; I, los modos inertes; y P3—,
-# cada caso en la candidata y en v1.35.0 (3956a6f, la línea base de CA-69 punto 1). Hasta la reparación,
-# las 28 columnas de la candidata de L y T salen FAIL a propósito: es el fail-before. Las 247 de antes no
-# cambian ni de nombre ni de veredicto.
+# cada caso en la candidata y en v1.35.0 (3956a6f, la línea base de CA-69 punto 1). Con los hooks de 82ceb63
+# o de v1.35.0 las 28 columnas de la candidata de L y T salen FAIL: es el fail-before; con la reparación
+# (fase 2) pasan, y el total no cambia. Las 247 de antes no cambian ni de nombre ni de veredicto.
 CASOS_ESPERADOS=2122
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre

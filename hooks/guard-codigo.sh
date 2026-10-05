@@ -31,6 +31,19 @@ arnes_guard_codigo() {
   local objetivo="" via_bash=0 exceso=0 cand quien escrituras="" rc nodet=0 nd_ruta='' nd_causa='' nd_arreglo=''
 
   arnes_parse_input
+  arnes_deny_entrada_ilegible   # SEC-120: a todo agente
+  # SEC-120 (REQ-007 CA-47, punto 20): el `file_path` o el `command` que esta puerta juzga no es texto.
+  # Como con un `tool_name` que no identifica ninguna herramienta (abajo), solo pasa el agente de codigo,
+  # al que esta puerta no le juzga el destino; el manifiesto se lee solo en este camino.
+  if arnes_campo_no_texto; then
+    arnes_parse_manifest
+    if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+      return 0
+    fi
+    if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+    else quien="la sesión coordinadora"; fi
+    arnes_deny_no_texto "esta puerta no puede saber si escribe codigo de la app ni en que archivo" "intento de $quien; "
+  fi
   # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta
   # —leido entero, `Bash` seguido de un salto ya no es `Bash`—, y tratarlo como una herramienta que
   # esta puerta no juzga lo dejaria pasar. Es una escritura no determinable (punto 7): solo el agente

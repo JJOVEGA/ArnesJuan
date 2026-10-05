@@ -306,8 +306,8 @@ fi
 #   K  la puerta que no necesita esa parte decide como siempre, y V4 deniega por el veredicto;
 #   I  los modos inertes —sin jq, sin manifiesto— no cambian; P3, `arnes_parse_input` tras una lectura buena.
 # DOS ÁRBOLES por caso: la CANDIDATA y v1.35.0 (3956a6f, la línea base de CA-69 punto 1, por SHA con `mat44`);
-# sin ella, SKIP y motivo, nunca PASS. El texto del motivo propio de L lo fija la reparación: aquí sólo se
-# exige que no interpole la clave anidada (CA-67). A nivel de hook en Linux/WSL2; el host no se ejerce.
+# sin ella, SKIP y motivo, nunca PASS. L y T citan su motivo propio (IL120, TR120), y el de L no puede
+# interpolar la clave anidada (CA-67). A nivel de hook en Linux/WSL2; el host no se ejerce.
 RV135="$RAIZ/rv135-$BASHPID"; RV135_OK=no; RV135_MOT=''
 if mat44 3956a6f "$RV135"; then RV135_OK=si
 else RV135_MOT="v1.35.0 no se materializó (${MAT44_REG#*motivo=})"; RV135_MOT="${RV135_MOT%% corrida=*})"; fi
@@ -335,19 +335,19 @@ me120() {   # <file_path> <edits, en JSON> [agente, en jq] -> un MultiEdit con e
   jq -cn --arg c "$P" --arg f "$1" --argjson e "$2" '{hook_event_name:"PreToolUse",tool_name:"MultiEdit",cwd:$c,tool_input:{file_path:$f,edits:$e}} + '"$x"
 }
 V1_120="$(me120 "$R/REQ-900.md" '"[{\"old_string\":\"Estado: en-revisión\",\"new_string\":\"Estado: completado\"}]"')"
-T6_120="$(j44 Bash "$P" - 'command=echo x > src/a.ts')"; GJ120='guard.sh guard-codigo.sh guard-completado.sh'
-fila120 "L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles" deny allow - "${E120%?},\"x\":$HONDO120}" $GJ120
-fila120 "L2 (V3) el mismo cierre del desarrollador"                         deny allow - "${ED120%?},\"x\":$HONDO120}" $GJ120
-fila120 "L3 (V3 por Write) el desarrollador escribe src/a.ts"              deny allow - "${W120%?},\"x\":$HONDO120}" $GJ120
-fila120 "L4 (V3 por MultiEdit) la coordinadora edita docs/n.md"            deny allow - "${M120%?},\"x\":$HONDO120}" $GJ120
-fila120 "L5 (V3 por Bash) ls -la del desarrollador"                        deny allow - "${B120%?},\"x\":$HONDO120}" guard-git.sh $GJ120
-fila120 "L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final" deny allow - \
+T6_120="$(j44 Bash "$P" - 'command=echo x > src/a.ts')"; GJ120='guard.sh guard-codigo.sh guard-completado.sh'; IL120='la entrada de esta llamada no se pudo leer'; TR120="'requirements/REQ-900.md': su tool_input no tiene la forma"
+fila120 "L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles" deny allow "$IL120" "${E120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L2 (V3) el mismo cierre del desarrollador"                         deny allow "$IL120" "${ED120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L3 (V3 por Write) el desarrollador escribe src/a.ts"              deny allow "$IL120" "${W120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L4 (V3 por MultiEdit) la coordinadora edita docs/n.md"            deny allow "$IL120" "${M120%?},\"x\":$HONDO120}" $GJ120
+fila120 "L5 (V3 por Bash) ls -la del desarrollador"                        deny allow "$IL120" "${B120%?},\"x\":$HONDO120}" guard-git.sh $GJ120
+fila120 "L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final" deny allow "$IL120" \
   "${T6_120%?}" guard-git.sh $GJ120
-fila120 "T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena" deny allow - "$V1_120" guard.sh guard-completado.sh
-fila120 "T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número" deny allow - "$(me120 "$R/REQ-900.md" 1)" guard.sh guard-completado.sh
-fila120 "T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto" deny allow - \
+fila120 "T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena" deny allow "$TR120" "$V1_120" guard.sh guard-completado.sh
+fila120 "T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número" deny allow "$TR120" "$(me120 "$R/REQ-900.md" 1)" guard.sh guard-completado.sh
+fila120 "T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto" deny allow "$TR120" \
   "$(me120 "$R/REQ-900.md" '{"old_string":"Estado: en-revisión","new_string":"Estado: completado"}')" guard.sh guard-completado.sh
-fila120 "T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas" deny allow - "$(me120 "$R/REQ-900.md" '["Estado: completado"]')" guard.sh guard-completado.sh
+fila120 "T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas" deny allow "$TR120" "$(me120 "$R/REQ-900.md" '["Estado: completado"]')" guard.sh guard-completado.sh
 fila120 "K1 (V1) la puerta de código no necesita las ediciones: REQ-900 no es código" allow allow - "$V1_120" guard-codigo.sh
 fila120 "K2 MultiEdit de la coordinadora a src/a.ts con las ediciones como cadena" deny deny "$SRC44" "$(me120 "$P/src/a.ts" '"x"')" guard-codigo.sh
 fila120 "K3 MultiEdit del desarrollador a src/a.ts con las ediciones como cadena" allow allow - \
@@ -370,16 +370,16 @@ for arb120 in candidata v1.35.0; do
 done
 # P3: tras una lectura buena, otra que jq no puede leer no deja en ninguna variable el valor de la primera.
 P120_BUENA="$(j44 Bash /tmp/c120 qa-tester file_path=/tmp/f120 'command=ls /tmp/k120')"
-p120() {   # <dir de hooks> -> P120: vacío si ninguna variable conserva la lectura anterior
+p120() {   # <dir de hooks> -> P120: «fin» si ninguna variable conserva la lectura anterior (sin «fin», no midió)
   P120="$( . "$1/lib.sh" 2>/dev/null; local -a a b; local i
     ARNES_INPUT="$P120_BUENA"; ARNES_INPUT_LISTO=''; arnes_parse_input
     a=("$ARNES_TOOL" "$ARNES_AGENT_ID" "$ARNES_AGENT_TYPE" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "$ARNES_JQ")
     ARNES_INPUT="${E120%?},\"x\":$HONDO120}"; ARNES_INPUT_LISTO=''; arnes_parse_input 2>/dev/null
     b=("$ARNES_TOOL" "$ARNES_AGENT_ID" "$ARNES_AGENT_TYPE" "${ARNES_CWD-}" "$ARNES_FP" "$ARNES_CMD" "$ARNES_JQ")
-    for i in 0 1 2 3 4 5 6; do [ -n "${a[i]}" ] || printf 'vacia-%s ' "$i"; [ "${a[i]}" != "${b[i]}" ] || printf 'conserva-%s ' "$i"; done )"
+    for i in 0 1 2 3 4 5 6; do [ -n "${a[i]}" ] || printf 'vacia-%s ' "$i"; [ "${a[i]}" != "${b[i]}" ] || printf 'conserva-%s ' "$i"; done; printf fin )"
 }
 nom120="SEC-120 P3 arnes_parse_input: ninguna variable conserva la lectura anterior si jq no puede leer"
-p120 "$HOOKS_DIR"; if [ -z "$P120" ]; then v44 PASS "$nom120  candidata"; else v44 FAIL "$nom120  candidata: $P120"; fi
+p120 "$HOOKS_DIR"; if [ "$P120" = fin ]; then v44 PASS "$nom120  candidata"; else v44 FAIL "$nom120  candidata: <$P120>"; fi
 if [ "$RV135_OK" != si ]; then v44 SKIP "$nom120  v1.35.0 (control, R-046)  $RV135_MOT"
-else p120 "$RV135/hooks"; if [ -z "$P120" ]; then v44 PASS "$nom120  v1.35.0 (control, R-046)"; else v44 FAIL "$nom120  v1.35.0 (control, R-046): $P120"; fi; fi
+else p120 "$RV135/hooks"; if [ "$P120" = fin ]; then v44 PASS "$nom120  v1.35.0 (control, R-046)"; else v44 FAIL "$nom120  v1.35.0 (control, R-046): <$P120>"; fi; fi
 rm -rf "$R43A" "$R95" "$RCD" "$FCR" "$RV135" "$VAC120" "$Q120"

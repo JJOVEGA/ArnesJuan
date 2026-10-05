@@ -305,6 +305,12 @@ arnes_guard_completado() {
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
   arnes_parse_input
+  arnes_deny_entrada_ilegible   # SEC-120: a todo agente
+  # SEC-120 (REQ-007 CA-47, punto 20): sin el `file_path` o el `command` como texto esta puerta no sabe
+  # si la escritura cae en un REQ, y su regla alcanza a todos los agentes.
+  if arnes_campo_no_texto; then
+    arnes_deny_no_texto "esta puerta no puede saber si escribe en un REQ ni leer el documento que quedaria escrito" "no se permite a ningun agente; "
+  fi
   # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta,
   # y se trata como una escritura no determinable por Edit/Write/MultiEdit (punto 7): esta puerta la
   # deniega a TODO agente, porque no hay archivo que leer ni documento que reconstruir. Con un retorno
@@ -446,16 +452,30 @@ arnes_guard_completado() {
   # Se excluyen tabulador (09), salto de linea (0A) y retorno de carro (0D): el Markdown
   # normal —una tabla, un bloque de codigo, un archivo CRLF— los lleva y no puede volverse
   # un falso positivo.
-  arnes_jq_str "$ARNES_INPUT" -r '
+  #
+  # SEC-120 (REQ-007 CA-47, punto 20): LAS PIEZAS QUE NO SE PUEDEN TROCEAR NO SE JUZGAN. Hasta 82ceb63
+  # unas ediciones que no eran una lista (cadena, numero) salian de jq como ninguna edicion, y la puerta
+  # juzgaba el REQ en disco como si no cambiara; y si jq fallaba al trocear —una lista de cadenas, un
+  # objeto—, su codigo de salida no se miraba y `ARNES_JQ` conservaba la lectura ANTERIOR, que se
+  # troceaba como si fuera esta edicion. Ahora el filtro exige la forma —las ediciones, una lista de
+  # objetos; el contenido y las cadenas de una edicion, texto o ausentes— y un fallo de jq deniega con
+  # su motivo, sin citar la entrada. La misma llamada: sin procesos nuevos.
+  if ! arnes_jq_str "$ARNES_INPUT" -r '
+    def texto: if . == null then "" elif type == "string" then . else error("no-texto") end;
     (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
      then "!" else "-" end) as $ctl |
-    (if   .tool_name == "Write" then ["W", (.tool_input.content // "")]
-     elif .tool_name == "Edit"  then ["E", (.tool_input.old_string // ""), (.tool_input.new_string // ""),
+    (if   .tool_name == "Write" then ["W", (.tool_input.content | texto)]
+     elif .tool_name == "Edit"  then ["E", (.tool_input.old_string | texto), (.tool_input.new_string | texto),
                                       (if .tool_input.replace_all == true then "1" else "0" end)]
-     elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits[]? |
-                                      (.old_string // ""), (.new_string // ""),
-                                      (if .replace_all == true then "1" else "0" end)]
-     else ["W", ""] end) | [$ctl] + . | join("\u0001")'
+     elif .tool_name == "MultiEdit" then ["E"] + [.tool_input.edits
+                                      | if type == "array" then .[] else error("no-lista") end
+                                      | if type == "object" then . else error("no-objeto") end
+                                      | (.old_string | texto), (.new_string | texto),
+                                        (if .replace_all == true then "1" else "0" end)]
+     else ["W", ""] end) | [$ctl] + . | join("\u0001")'; then
+    ARNES_JQ=''
+    arnes_deny "ARNES: no se juzga esta edicion de '$rel': su tool_input no tiene la forma que esta puerta necesita para reconstruir el documento que quedaria escrito (las ediciones tienen que ser una lista de objetos, y el contenido y las cadenas de cada edicion, texto). Sin reconstruirlo no se puede saber si cierra el REQ ni con que veredictos, asi que no se permite a ningun agente: una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 20). Para corregirlo, envia la edicion con esa forma."
+  fi
   piezas=()
   IFS=$'\001' read -r -d '' -a piezas <<< "$ARNES_JQ" || true
   if [ "${piezas[0]:-!}" = "!" ]; then

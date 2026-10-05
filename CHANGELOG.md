@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 2: una entrada que `jq` no puede leer o trocear no pasa (REQ-007 CA-47 punto 20) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase2.md`; evidencia `cand-1.36.0/sec120/`, commit `2d50c55` del árbol de evidencia).
+
+- **Reparación**, con el código de salida de las llamadas a `jq` que ya existían:
+  - Una entrada que `jq` no puede leer, o que no es exactamente un objeto, se deniega a todo agente.
+  - Unas ediciones o un valor de `tool_input` que la puerta no puede trocear como texto los deniega esa puerta, con su motivo.
+  - El troceo de `guard-completado` ya no reutiliza la lectura anterior.
+  - Los modos inertes no cambian.
+- **Casos:** los 28 de SEC-120 pasan; con los hooks de `82ceb63` y de v1.35.0 siguen fallando. Las filas L y T exigen ya el motivo propio, y P3 tiene un testigo de fin. Sin casos nuevos (2122).
+- **CA-69 2 (a):** el banco de v1.35.0 con estos hooks da 2037/0/13. Su inventario difiere sólo en un caso de reloj no acreditado (2 (c)), sin movimientos de decisión.
+- **Resto:** banco del worktree 2108/0/14 (3 INCONCLUSO de reloj); autoprueba 117/0; gates rc 0.
+- **Procesos:** las entradas normales, iguales a `82ceb63` (0 añadidos). Las de SEC-120, +1: el `jq` que emite el `deny`.
+- **Frontera para el analista:** sin `CLAUDE_PROJECT_DIR` y con la entrada ilegible, el hook sigue inerte.
+- **Avance (regla 6):** la reparación está construida y medida; falta la fase 3 (QA).
+
 ## [Interno] — 2026-10-05 · SEC-120, fase 1 hecha por el desarrollador en `6759a8e` (SIN VALIDAR): 28 casos que fallan en `82ceb63` y en v1.35.0, controles en verde; PR-136-2 registrado; ESTADO a la fase 2
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
