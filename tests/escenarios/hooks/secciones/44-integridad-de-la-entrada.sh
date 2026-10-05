@@ -17,7 +17,7 @@
 # copia de `mat43`); sin ellos, SKIP y motivo. Cada fila juzgada por un guardián se comprueba además en
 # la candidata POR `guard.sh` (CA-66, versionado, punto 3).
 # Esto NO es la validación en el host: el efecto en disco lo comprueba la coordinadora.
-CASOS_ESPERADOS_SECCION=319
+CASOS_ESPERADOS_SECCION=363
 PISO_AUTONOMO_SECCION=62  # 22 preámbulo (líneas 1-22, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO44, mat44_reg y mat44, copia de mat43, líneas 23-46) + 16 bloque indivisible mayor (fila44, líneas 97-112) · REQ-014 CA-18
 seccion_nueva "--- 44 · integridad de la entrada del hook (QA-023-09 y QA-023-13; REQ-007 CA-47 puntos 11-13, CA-24 y CA-66) ---"
 REPO44="${SEC_DIR%/}/../../../.."; MAT44_RUTAS='hooks'; MAT44_REG=''; MAT44_T0=0; MAT44_REF='-'
@@ -61,7 +61,7 @@ v44() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((
 D44=''; M44=''
 g44() {
   local h="$1" s="$2" json="$3" out; D44=''; M44=''; [ -n "$json" ] || return 1
-  out="$(printf '%s' "$json" | CLAUDE_PROJECT_DIR="$PROJ" bash "$h/$s" 2>>"$ERRLOG")"
+  out="$(if [[ "$json" == @/* ]]; then cat -- "${json#@}"; else printf '%s' "$json"; fi | CLAUDE_PROJECT_DIR="$PROJ" bash "$h/$s" 2>>"$ERRLOG")"   # `@/ruta`: la entrada es ese archivo (NUL, vacía)
   case "$out" in *'"permissionDecision":"deny"'*) D44=deny ;; *) D44=allow ;; esac
   M44="$(jq -r '.hookSpecificOutput.permissionDecisionReason // empty' <<< "$out" 2>/dev/null)"
 }
@@ -353,6 +353,17 @@ fila120 "K2 MultiEdit de la coordinadora a src/a.ts con las ediciones como caden
 fila120 "K3 MultiEdit del desarrollador a src/a.ts con las ediciones como cadena" allow allow - \
   "$(me120 "$P/src/a.ts" '"x"' '{agent_id:"a1",agent_type:"desarrollador"}')" guard.sh
 fila120 "K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto" deny deny "$QA44" "${E120%?},\"x\":$MEDIO120}" guard.sh guard-completado.sh
+# Pasada correctiva (QA-007-03 y QA-007-04): la entrada vacía o con un NUL —leída de un archivo: una variable no
+# guarda NUL— es ilegible; y `false` en `file_path` o en `command` no es texto. Fail-before también contra aba1c9b.
+F120="$RAIZ/f120-$BASHPID"; mkdir -p "$F120"; : > "$F120/vacia"; printf '\0%s' "$B120" > "$F120/nul-objeto"; printf '%s\0%s' "$B120" "$T6_120" > "$F120/objeto-nul-escritura"
+fila120 "L7 (QA-007-03) entrada vacía, 0 bytes"                            deny allow "$IL120" "@$F120/vacia" guard-git.sh $GJ120
+fila120 "L8 (QA-007-03) un NUL y detrás el ls -la del desarrollador"        deny allow "$IL120" "@$F120/nul-objeto" guard-git.sh $GJ120
+fila120 "L9 (QA-007-03) el ls -la del desarrollador, un NUL y una escritura a src/a.ts" deny allow "$IL120" "@$F120/objeto-nul-escritura" guard-git.sh $GJ120
+NT120="de esta llamada no es texto"; jf120() { jq -cn --arg c "$P" "{hook_event_name:\"PreToolUse\",cwd:\$c} + $1"; }; FD120="$(jf120 '{agent_id:"a1",agent_type:"desarrollador",tool_name:"Edit",tool_input:{file_path:false,old_string:"a",new_string:"b"}}')"
+fila120 "F1 (QA-007-04) Write de la coordinadora con file_path false"       deny allow "'file_path' $NT120" "$(jf120 '{tool_name:"Write",tool_input:{file_path:false,content:"x"}}')" $GJ120
+fila120 "F2 (QA-007-04) Bash de la coordinadora con command false"           deny allow "'command' $NT120" "$(jf120 '{tool_name:"Bash",tool_input:{command:false}}')" guard-git.sh $GJ120
+fila120 "F3 (QA-007-04) Edit del desarrollador con file_path false"         deny allow "'file_path' $NT120" "$FD120" guard.sh guard-completado.sh
+fila120 "K5 (QA-007-04) la puerta de código no juzga el destino del desarrollador: F3" allow allow - "$FD120" guard-codigo.sh
 # I: V3 en modo inerte —sin jq en el PATH, o en un proyecto sin manifiesto—: sin decisión, y sin jq con aviso.
 VAC120="$RAIZ/vac120-$BASHPID"; Q120="$RAIZ/q120-$BASHPID"; mkdir -p "$VAC120" "$Q120/requirements"; cp "$R/REQ-900.md" "$Q120/requirements/"
 VQ120="$(cierre44 "$Q120" "$Q120/requirements/REQ-900.md")"; VQ120="${VQ120%?},\"x\":$HONDO120}"
@@ -382,4 +393,4 @@ nom120="SEC-120 P3 arnes_parse_input: ninguna variable conserva la lectura anter
 p120 "$HOOKS_DIR"; if [ "$P120" = fin ]; then v44 PASS "$nom120  candidata"; else v44 FAIL "$nom120  candidata: <$P120>"; fi
 if [ "$RV135_OK" != si ]; then v44 SKIP "$nom120  v1.35.0 (control, R-046)  $RV135_MOT"
 else p120 "$RV135/hooks"; if [ "$P120" = fin ]; then v44 PASS "$nom120  v1.35.0 (control, R-046)"; else v44 FAIL "$nom120  v1.35.0 (control, R-046): <$P120>"; fi; fi
-rm -rf "$R43A" "$R95" "$RCD" "$FCR" "$RV135" "$VAC120" "$Q120"
+rm -rf "$R43A" "$R95" "$RCD" "$FCR" "$RV135" "$VAC120" "$Q120" "$F120"

@@ -21,10 +21,19 @@ arnes_read_stdin() { cat; }
 
 # Lee stdin y localiza proyecto y manifiesto. Devuelve 1 si no hay nada que
 # vigilar (sin input, sin proyecto, o proyecto que no usa el arnes -> INERTE).
+#
+# `arnes_preludio guardian` (los guardianes de PreToolUse; SEC-120, QA-007-03, REQ-007 CA-47 punto 20):
+# una entrada VACIA, o con un byte NUL en cualquier sitio, es ilegible —ningun JSON lleva un NUL crudo— y
+# no deja el hook inerte: sigue hasta localizar el proyecto, y si lo hay y usa el arnes, `arnes_parse_input`
+# la marca ilegible y el guardian deniega. `read -d ''` se detiene en el primer NUL y devuelve 0 solo si lo
+# encontro: asi se sabe, sin procesos, que habia algo detras. Sin `CLAUDE_PROJECT_DIR` y sin proyecto que
+# sacar de la entrada, sigue inerte (limite declarado de CA-47 punto 20). Los hooks de parada no pasan
+# `guardian` y conservan la conducta de siempre.
 arnes_preludio() {
   arnes_require_jq || return 1
-  IFS= read -r -d '' ARNES_INPUT || true
-  [ -n "${ARNES_INPUT:-}" ] || return 1
+  ARNES_INPUT_NUL=0
+  if IFS= read -r -d '' ARNES_INPUT; then ARNES_INPUT_NUL=1; fi
+  [ -n "${ARNES_INPUT:-}" ] || [ "${1:-}" = guardian ] || return 1
   arnes_project_dir "$ARNES_INPUT"
   [ -n "$ARNES_PROJ" ] || return 1
   ARNES_MANIFEST="$ARNES_PROJ/.arnes/config.json"
@@ -110,13 +119,17 @@ arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
   local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' t_fp='' t_cmd='' out
   ARNES_JQ=''; ARNES_INPUT_ILEGIBLE=1
-  if out="$(jq -nr '[inputs] | if length == 1 and (.[0] | type) == "object" then .[0] else error("entrada") end
+  # Una entrada vacia, o con un NUL (lo detecta `arnes_preludio`): ilegible sin preguntar a jq, que en el
+  # segundo caso solo veria lo de delante (QA-007-03). `file_path` y `command` se leen con `null` -> "" y no
+  # con `// ""`, que tambien trata `false` como ausente y lo dejaba pasar por texto vacio (QA-007-04).
+  if [ "${ARNES_INPUT_NUL:-0}" = 0 ] && [ -n "${ARNES_INPUT:-}" ] &&
+     out="$(jq -nr '[inputs] | if length == 1 and (.[0] | type) == "object" then .[0] else error("entrada") end
                    | [.tool_name // "",
                     .agent_id // "",
                     .agent_type // "",
                     (.cwd // "" | if type == "string" then . else "" end),
-                    .tool_input.file_path // "",
-                    .tool_input.command // ""]
+                    (.tool_input.file_path | if . == null then "" else . end),
+                    (.tool_input.command | if . == null then "" else . end)]
                    | ([.[4], .[5]] | map(if type == "string" then 0 else 1 end)) as $notxt
                    | map(tostring)
                    | ((.[0:5] | map(indices("\n") | length))

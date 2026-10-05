@@ -193,7 +193,7 @@ arnes_guard_codigo() {
 
 # Ejecutado directamente (no `source`): hace su propio preludio y corre.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio || exit 0
+  arnes_preludio guardian || exit 0
   arnes_guard_codigo
   exit 0
 fi

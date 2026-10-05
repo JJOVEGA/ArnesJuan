@@ -349,7 +349,7 @@ arnes_guard_git() {
 # Ejecutado directamente (no `source`): hace su propio preludio y corre. Produccion y
 # banco ejecutan LA MISMA funcion, no dos copias que puedan desfasarse.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio || exit 0
+  arnes_preludio guardian || exit 0
   arnes_guard_git
   exit 0
 fi

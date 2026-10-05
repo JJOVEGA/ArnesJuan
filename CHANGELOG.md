@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · SEC-120, pasada correctiva única: QA-007-03 (entrada vacía o con NUL) y QA-007-04 (`false` en `file_path` o en `command`) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro `docs/arnes/v1.36.0-sec120-fase2.md`, «Pasada correctiva (QA-007-03/04)»; evidencia `cand-1.36.0/sec120/correctiva/`, commit `1be81c3` del árbol de evidencia).
+
+- **QA-007-03:** la entrada vacía, la que empieza por NUL y la que trae algo detrás del objeto, NUL incluido, son ilegibles y van a `deny` a todo agente.
+  - El preludio de los guardianes detecta el NUL con el código de `read`, sin procesos.
+  - Sin `CLAUDE_PROJECT_DIR` y sin proyecto, el hook sigue inerte.
+  - Los hooks de parada no cambian.
+- **QA-007-04:** `false` en `file_path` o en `command` se deniega como `true`, porque `null` → `""` sustituye a `// ""`.
+- **Casos:** +44 en la sección 44 (2122 → 2166). Con `aba1c9b` fallan 21 y con v1.35.0, 49: los 21 nuevos y los 28 originales.
+- **Resto:**
+  - CA-69 2 (a): el inventario sale idéntico a `22-`.
+  - Banco 2154/0/12; autoprueba 117/0; gates rc 0.
+  - Procesos de las entradas normales: iguales a `aba1c9b`.
+- **Avance (regla 6):** los dos hallazgos están reparados; falta la re-verificación de QA. QA-007-05 sigue pendiente del propietario.
+
 ## [GitHub] — 2026-10-05 · SEC-120, paso 2: QA (Opus) CON HALLAZGOS sobre `aba1c9b`: la reparación funciona (0 de `deny` a `allow`, sin falsos positivos, +0/+1 procesos), y hay tres `contrato` de severidad baja. Pasada correctiva para QA-007-03/04; P-136-H para QA-007-05
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; registro en `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `7a967e2`) y la coordinadora.
 

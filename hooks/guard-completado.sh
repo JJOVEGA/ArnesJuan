@@ -931,7 +931,7 @@ arnes_guard_completado() {
 
 # Ejecutado directamente (no `source`): hace su propio preludio y corre.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio || exit 0
+  arnes_preludio guardian || exit 0
   arnes_guard_completado
   arnes_emitir_avisos
   exit 0

@@ -38,7 +38,7 @@ DIR="${BASH_SOURCE[0]%/*}"
 # shellcheck source=/dev/null
 . "$DIR/guard-completado.sh"
 
-arnes_preludio || exit 0
+arnes_preludio guardian || exit 0
 arnes_guard_git
 arnes_guard_codigo
 arnes_guard_completado
