@@ -83,6 +83,36 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-05, posterior a `0c31cdd`) — **SEC-120: los tres puntos abiertos de la fase 2** («0 procesos añadidos» rige sobre el camino común; ilegible = todo lo que no sea exactamente un objeto JSON; sin `CLAUDE_PROJECT_DIR` sigue inerte, como límite declarado); **orden al volver los créditos, sin pedir autorización**: QA, seguridad, commit validado, 2b de CA-54, SEC-115/118
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisiones del propietario, SEC-120:
+>
+> 1. Procesos. "0 procesos añadidos" rige sobre el CAMINO COMÚN: toda entrada
+>    legible cuesta lo mismo que en v1.35.0. En una entrada ilegible el hook
+>    antes no decidía y ahora emite deny: el jq que emite esa decisión es el
+>    coste de decidir, no un proceso añadido al análisis. CA-47 punto 20 lo
+>    dice así, con las dos cifras medidas (normal: +0; ilegible: +1). No es
+>    incumplimiento de contrato.
+> 2. Qué es ilegible. Confirmo la lectura del desarrollador: todo lo que no sea
+>    exactamente un objeto JSON (null, número, vacío, dos objetos seguidos).
+>    Fail-closed; es el principio del arnés.
+> 3. Sin CLAUDE_PROJECT_DIR el hook sigue inerte, como en v1.35.0: denegar ahí
+>    rompería proyectos que no usan el arnés. Se declara como límite en el
+>    punto 20.
+>
+> Al volver los créditos: QA en comisión nueva, seguridad con QA favorable,
+> commit validado, 2b de CA-54, SEC-115/118. Sin pedirme autorización.
+>
+> Sobre P-136-G (SEC-127): no sé qué es; pégame su texto y te doy la decisión.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Write-back:** los puntos 1 a 3 cambian el texto de REQ-007 CA-47 punto 20, y en este repositorio el write-back es del `analista-requerimientos` (`AGENTS.md` §9: §6 no declara la vía proporcional). Va **antes** de la fase 3, porque QA no firma `aprobado` sin el write-back (§9). No es una fase nueva: es la dependencia que el plan de SEC-120 ya prevé («write-back del analista sólo si hay deriva»).
+- **La 2b y la intervención 3** se abren, cuando les toque, con su plan en la forma de `templates/autorizacion.md`, redactado por la coordinadora por esta delegación y calcado de la décima.
+- **P-136-G** sigue en § Pendientes. Su texto se le entrega al propietario en la respuesta de esta sesión.
+- **Pausa:** sin créditos de uso no se despacha a nadie.
+
 ### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-05) — **Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola** (REQ-007 CA-47 punto 20; vence el 2026-10-29)
 
 **Fuente de la delegación:** decisión del propietario del 2026-10-05, posterior a `39e68bb`, punto 3 (literal en esta sección): «Cuando conecte: recuento de QA (10 de 30), fase 4 sobre 82ceb63, commit validado, y apertura de SEC-120 sin pedirme la autorización». También P-136-F, punto 7: «Al cerrar CA-54, abre SEC-120 sola, como dice el plan de versión». La forma es la de `templates/autorizacion.md`. **Los bloques los redacta la coordinadora calcando la décima autorización:** no añaden facultades ni quitan ninguna parada que la décima tenía.

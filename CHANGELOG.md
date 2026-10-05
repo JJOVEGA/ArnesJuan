@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · SEC-120: el propietario resuelve los tres puntos de la fase 2 (procesos sobre el camino común, qué es ilegible, inerte sin `CLAUDE_PROJECT_DIR`) y fija el orden hasta SEC-115/118 sin pedir autorización
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisiones literales** en `PENDING_APPROVAL.md` § Resueltas. Sin incumplimiento de contrato: «0 procesos añadidos» rige sobre el camino común, y la entrada ilegible cuesta +1, que es el coste de decidir.
+- **Orden** (ESTADO): write-back del analista en CA-47 p. 20 → QA → seguridad → commit validado → 2b → SEC-115/118.
+- **Pausa** por falta de créditos de uso. P-136-G sigue pendiente; su texto se entrega al propietario.
+- **Avance (regla 6):** las dependencias de contrato de SEC-120 quedan resueltas; falta el write-back y la validación.
+
 ## [Interno] — 2026-10-05 · SEC-120, fase 2 hecha por el desarrollador en `aba1c9b` (SIN VALIDAR); tres puntos para QA y el analista; pausa por falta de créditos de uso
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
