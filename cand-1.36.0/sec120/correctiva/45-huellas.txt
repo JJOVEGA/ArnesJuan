@@ -1,0 +1,7 @@
+3effa3c7fd6e93de hooks/lib.sh
+fb82e669bab6663c hooks/guard.sh
+3d448097671c0f5d hooks/guard-git.sh
+34ac33b63a4890eb hooks/guard-codigo.sh
+9a6f2468d435a888 hooks/guard-completado.sh
+545b56ecc8018742 tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+fc65239ba0c3dbf0 tests/escenarios/hooks/run.sh

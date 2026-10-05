@@ -1,0 +1,16 @@
+Pasada correctiva de SEC-120 (QA-007-03 y QA-007-04). Worktree /home/juan/dev/ArnesJuan-v1.36, cand/1.36.0, cabeza
+4038cae (código de aba1c9b) + la pasada; huellas finales en 45-huellas.txt. Árboles: v1.35.0 =
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks (3956a6f); 82ceb63 y aba1c9b = `git archive <sha> hooks` en un temporal.
+Linux/WSL2, bash 5.3.9, jq 1.8.2.
+
+bash genera-y-mide.sh <worktree> v1.35.0=… 82ceb63=… aba1c9b=… candidato=…   > 10-procesos.txt (antes de evitar el jq
+                                                                                  de la entrada vacía) y 11-procesos-final.txt
+ARNES_HOOKS_DIR=<árbol> bash tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+                                                                                > 20-s44-hooks-{candidato,aba1c9b,v1.35.0}.txt
+cd /home/juan/dev/ArnesJuan-v1.35.0-base
+ARNES_HOOKS_DIR=<worktree>/hooks ARNES_SEMILLA_41=23062 bash tests/escenarios/hooks/run.sh > 30-banco-v1.35.0-con-hooks-candidato.txt
+bash tests/escenarios/hooks/inventario.sh 30-… > 31-inventario-candidato.txt
+diff ../../ca54/22-inventario-v1.35.0.txt 31-inventario-candidato.txt > 32-diff-inventarios.txt        # vacío
+cd <worktree>
+ARNES_SEMILLA_41=23062 bash tests/escenarios/hooks/run.sh > 40-banco-worktree.txt; inventario > 41-; diff ../78- 41- > 42-
+bash tests/escenarios/hooks/autoprueba-corredor.sh > 43-autoprueba.txt; gates de AGENTS.md §7 > 44-gates.txt
