@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · SEC-120, paso 2: QA (Opus) CON HALLAZGOS sobre `aba1c9b`: la reparación funciona (0 de `deny` a `allow`, sin falsos positivos, +0/+1 procesos), y hay tres `contrato` de severidad baja. Pasada correctiva para QA-007-03/04; P-136-H para QA-007-05
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; registro en `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `7a967e2`) y la coordinadora.
+
+- **Conforme:**
+  - 28 casos en verde, con fail-before idéntico en `82ceb63` y en v1.35.0;
+  - inventario 2 (a) sólo con CA-08 (ii) INCONCLUSO;
+  - autoprueba 117/0 y gates rc 0;
+  - procesos +0 y +1;
+  - 259 entradas de ataque propias: 0 de `deny` a `allow` y ningún falso positivo;
+  - PR-136-2 conforme.
+- **Banco del worktree:** 2106/3/13. Los 3 FAIL son INS-136-1 (calibración de `sonda-reloj`); se registran y se sigue. El verde de CA-69 2 (b) lo tiene que dar el CI sobre la cabeza final.
+- **Hallazgos:**
+  - **QA-007-03:** una entrada vacía o que empieza por NUL sale sin decisión, y un objeto más NUL y basura se juzga sólo por el objeto;
+  - **QA-007-04:** `file_path` o `command` con valor `false` salen sin decisión;
+  - **QA-007-05:** el límite sin `CLAUDE_PROJECT_DIR` no es exacto; el código deniega del lado seguro.
+- **Decisión de la coordinadora:** la pasada correctiva única del plan es para QA-007-03 y QA-007-04, porque el contrato ya decide esos casos. QA-007-05 pasa al propietario en **P-136-H**, con la recomendación de corregir el texto.
+- **Avance (regla 6):** SEC-120 funciona; quedan dos defectos de borde y una decisión de texto.
+
 ## [GitHub] — 2026-10-05 · SEC-120, paso 1: write-back del analista en REQ-007 CA-47 punto 20 con las tres decisiones del propietario
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora. Uso: cuenta del plan Team, por indicación del propietario.
 

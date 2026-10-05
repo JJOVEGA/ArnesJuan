@@ -43,7 +43,25 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-05: P-136-G resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-05] (coordinadora) — P-136-H: QA-007-05 (`contrato`, baja). Sin `CLAUDE_PROJECT_DIR`, el candidato deniega algunas entradas malformadas en lugar de quedar «inerte como en v1.35.0». ¿Se corrige el texto del límite o el código?
+
+**Contexto.** QA de SEC-120, fase 3 (`docs/qa/REQ-007.md`, «SEC-120: validación (fase 3)»; evidencia `cand-1.36.0/sec120/qa/`, commit `7a967e2`), sobre `aba1c9b`.
+- **Lo que dice hoy el límite declarado de CA-47 p. 20** (decisión 3 del propietario): sin `CLAUDE_PROJECT_DIR`, el hook sigue inerte, como en v1.35.0, porque denegar ahí rompería proyectos que no usan el arnés.
+- **Lo medido:** sin `CLAUDE_PROJECT_DIR`, un objeto seguido de basura y un `tool_input` numérico sí reciben `deny` en el candidato (v1.35.0 no decidía). `arnes_project_dir` toma el `cwd` del primer valor. **El error es del lado seguro:** sólo deniega dentro de proyectos que usan el arnés (los que tienen manifiesto en ese `cwd`), así que la razón del propietario («rompería proyectos que no usan el arnés») no se ve afectada.
+
+**Pregunta.** ¿Qué se alinea con qué?
+
+**Opciones.**
+- **(A) Corregir el texto (write-back del analista):** sin `CLAUDE_PROJECT_DIR`, si no se puede obtener el proyecto de la entrada, el hook es inerte, como en v1.35.0; si se obtiene un `cwd` con manifiesto, deniega. **Consecuencia:** se conserva la conducta más segura, sin código y sin gastar pasada; cambia la redacción de tu decisión 3, no su razón.
+- **(B) Corregir el código** para que sea inerte en todos los casos sin `CLAUDE_PROJECT_DIR`. **Consecuencia:** menos seguro, sin ninguna ventaja; consumiría la pasada correctiva o haría falta otra.
+
+**Recomendación de la coordinadora: (A).**
+
+**Qué trabajo sigue mientras no se decida:** la pasada correctiva única de SEC-120 para QA-007-03 y QA-007-04, que es código independiente de este punto, y su re-verificación por QA. Seguridad (paso 3) espera a esta decisión y a esa re-verificación. Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
