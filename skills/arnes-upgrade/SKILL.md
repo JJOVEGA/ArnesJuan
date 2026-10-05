@@ -1302,6 +1302,21 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   es decisión del propietario de tu proyecto. Tampoco autoriza nada ni retira ninguna revisión, firma
   ni aprobación humana que tus reglas exijan: decide cuándo se para y se pregunta, no qué se valida.
 
+- **Límite declarado: el análisis de un comando de `Bash` en el máximo puede tardar 5 s o más con cuatro formas
+  (REQ-007 CA-54 del arnés, QA-007-01; decisión P-136-F del propietario del arnés, 2026-10-05).** Esta entrada **no
+  migra nada**: dice lo que la versión que instalas **no** promete, para que no lo des por cubierto. **«Límite
+  declarado» no es «riesgo aceptado», y la decisión no repara nada.** CA-54 se cumple en su medición: en el máximo
+  declarado (131 072 bytes), en Linux/WSL2 y a nivel de hook, las 35 corridas de sus dos sondas terminan en menos de
+  5 s, con la misma decisión que 1.35.0. Quedan **fuera** del criterio cuatro formas: un comando que menciona el
+  estado terminal con todos sus destinos fuera de `requirements/`; uno que lleva un carácter no ASCII; un proyecto
+  sin globs de código; y el agente de código cuyo primer destino es código protegido. **Consecuencia:** un comando
+  con esas formas, en el máximo, **se juzga igual pero puede tardar 5 s o más**. Medido en las dos primeras: 10 de
+  30 corridas entre 5,0 y 5,8 s; las otras dos, sin cifra sobre el código del candidato. No es un fallo abierto: la
+  corrida más lenta medida queda a más de 54 s del límite de 60 s del cliente. Un margen no es una garantía: en un
+  equipo más lento o más cargado, el hook podría agotar el tiempo, y eso ya es SEC-115. En Windows/MSYS, sin medir.
+  La reparación es una segunda pasada de CA-54, prevista después de SEC-120; si no llega antes de publicar, la
+  versión sale con este límite. Sede: REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`», del arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

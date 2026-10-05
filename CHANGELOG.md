@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · P-136-F, write-back: QA-007-02 cerrado por reversión (`74da4c5`); ficha F-136-5 (recursión de la lectura léxica, `instrumento`, alta); QA-007-01 como límite declarado de CA-54; plan de versión de 1.36.0 en `docs/PLAN.md`
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (REQ-007, `docs/PENDIENTES.md`, guía e índice; ~204 k tokens) y la coordinadora (`docs/PLAN.md`, ESTADO y la comprobación del revert).
+
+- **Revert comprobado por la coordinadora:** `git diff 82ceb63 74da4c5 -- hooks/` da 0 bytes, y `cmp` sale idéntico en cada archivo de `hooks/`. El desarrollador corrió además las gates (rc 0) y la sección 46 (263/0).
+- **REQ-007:**
+  - QA-007-02 sale de `Hallazgos abiertos:`, con su rastro en el Historial;
+  - QA-007-01 queda como «límite declarado (P-136-F)», sin cambiar su clase (`contrato`);
+  - la nota de CA-54 gana «Límite declarado del candidato `82ceb63`»: cumple en las 35 corridas; los casos M y N, el proyecto sin globs de código y el desarrollador con el primer destino en código quedan fuera del criterio; la medición sobre un anfitrión degradado se registra como tal;
+  - el bloqueo del proveedor queda registrado;
+  - Historial y Correspondencia.
+- **F-136-5** (`docs/PENDIENTES.md`): «la lectura léxica de rutas es recursiva por segmento y sin tope», con la condición del propietario (primero el caso de banco con fail-before). Sobre `82ceb63` sólo está medido que 1 990 niveles dan `deny` por `guard.sh`.
+- **Guía** («Hacia 1.36.0»): un párrafo de límite declarado, listo para copiar a las notas.
+- **`docs/PLAN.md` § 1.36.0:** plan vigente por intervenciones (1 CA-54, 2 SEC-120, 2b la segunda pasada de CA-54, 3 SEC-115/118); la planificación anterior queda como historia.
+- **Avisos del analista:**
+  - el recuento de QA es **10 de 30**, no 8 de 30 (lo corrige QA en su registro);
+  - M0 y MD no tienen cifra sobre `82ceb63`, sólo sobre `dee5932` con el anfitrión degradado;
+  - QA-007-01 sigue como `contrato`, así que REQ-007 no puede cerrarse (no se iba a cerrar);
+  - el cambio se clasifica como menor, sin ADR, por el precedente de P-119-A.
+- **Avance (regla 6):** el contrato refleja el candidato `82ceb63`. Falta la seguridad (fase 4).
+
 ## [GitHub] — 2026-10-05 · Revert del código de `dee5932` por P-136-F; `hooks/` = `82ceb63`
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 

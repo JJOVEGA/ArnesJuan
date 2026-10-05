@@ -2133,3 +2133,51 @@ CA-54 en esta intervención (se registran)»). Evidencia: `docs/arnes/v1.36.0-ca
 - **Qué propone el propietario (literal):** «una calibración de sonda-reloj fuera de banda sale FAIL; según la propia filosofía del banco debería abstenerse (SKIP o INCONCLUSO con motivo), como ya hace la sonda que no converge».
 - **Consecuencia de no hacerlo:** sigue el rojo intermitente descrito en INS-136-1, que no informa sobre el código.
 - **Cuándo:** para después. **No se repara en esta intervención.** Cambiar un FAIL por una abstención cambia el contrato de REQ-021 CA-03 y CA-10 (§9), y lo fija el `analista-requerimientos`.
+
+## Ficha de la recursión de la lectura léxica (P-136-F, 2026-10-05)
+
+**Origen, literal** (decisión del propietario sobre P-136-F, `PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA
+(propietario, 2026-10-05) — **P-136-F: opción (C)**…», punto 2): «QA-007-02 queda CERRADO POR REVERSIÓN en el
+candidato, y abre una ficha de 1.36.0 (instrumento, alta): «la lectura léxica de rutas es recursiva por segmento y sin
+tope». Antes de cualquier intervención que la toque, el banco recibe primero el caso de destinos profundos (≈1500
+niveles, < 3 KB) con fail-before, y la propiedad es: toda ruta por debajo del límite de entrada recibe una decisión;
+ninguna mata al hook.»
+
+### F-136-5 — La lectura léxica de rutas es recursiva por segmento y sin tope
+
+- **Clase:** `instrumento`. **Severidad:** alta. Las dos, por decisión del propietario (arriba). **No** está en
+  `Hallazgos abiertos:` de ningún REQ: QA-007-02, el hallazgo que la originó, salió del de REQ-007 cerrado por
+  reversión (REQ-007, Historial, 2026-10-05).
+- **Qué se observó, y dónde.** En la pasada correctiva `dee5932`, la lectura léxica por directorio
+  (`_arnes_lectura_lexica`, `hooks/lib.sh`, bloque «POR DIRECTORIO» de ese commit) recurre por segmento sin tope. Un
+  destino de `Bash` con `..` seguido de unos 1 500 niveles —unos 3 KB, por debajo de `ARNES_ID_MAX` (4 096)— agota la
+  pila y el hook muere por SIGSEGV (rc 139, sin decisión). Con ese destino delante, una escritura de la coordinadora en
+  `src/a.ts` y el cierre de un REQ por `sed -i` pasan por `guard.sh` y por la puerta que juzga cada una
+  —`guard-codigo.sh` la escritura en código, `guard-completado.sh` el cierre—, donde v1.35.0 deniega
+  (`qa/segv/73-`). Umbral medido sobre `dee5932`: entre 1 400 y 1 500 niveles, con
+  `ulimit -s` de 8 192 KiB y bash 5.3.9. El banco no tiene ningún caso con un destino profundo.
+- **El candidato no tiene la recursión que introdujo `dee5932`.** `dee5932` se revirtió en `74da4c5`, con `hooks/`
+  byte a byte igual a `82ceb63` (comprobado por la coordinadora). Lo que QA dice de `82ceb63`, literal: «**No lo
+  introducía `82ceb63`:** con sus hooks, las mismas tres filas deniegan (`qa/segv/74-`). Lo introduce la pasada.»
+  - **Lo medido sobre `82ceb63`** (`qa/segv/74-segfault-en-82ceb63.txt`): las tres primeras filas de
+    `72-segfault-orden.sh` —un destino de 1 990 niveles delante de la escritura en `src/a.ts` por la coordinadora, y
+    delante del cierre de un REQ por la coordinadora y por el desarrollador—, por `guard.sh`: `deny`, rc 0, igual que
+    v1.35.0.
+  - **No medido sobre `82ceb63`:** otras profundidades, el umbral de 1 400 a 1 500 niveles, y `guard-codigo.sh` y
+    `guard-completado.sh` invocados solos.
+  - **Leído en el código, no medido:** en el worktree con `hooks/` = `82ceb63`, `_arnes_lectura_lexica`
+    (`hooks/lib.sh:748`) recorre los segmentos con un bucle y no se llama a sí misma.
+- **Por qué la ficha sigue abierta, aunque el candidato no tenga el defecto.** La intervención 2b vuelve a tocar el
+  recorrido de destinos de CA-54, y el banco sigue sin un caso que habría detectado QA-007-02.
+- **Condición del propietario, literal, para cualquier intervención que toque la lectura léxica:** «Antes de
+  cualquier intervención que la toque, el banco recibe primero el caso de destinos profundos (≈1500 niveles, < 3 KB)
+  con fail-before, y la propiedad es: toda ruta por debajo del límite de entrada recibe una decisión; ninguna mata al
+  hook.»
+- **Evidencia:** `docs/qa/REQ-007.md`, «Re-verificación de la pasada correctiva (QA-007-01)», §3, y
+  `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/ca54/qa/segv/` (`70-` a `74-`; rama
+  `evidencia/prueba-despacho-2026-09-14`, commit `a6f5b32`).
+- **Intervención:** la **2b** de `docs/PLAN.md` § «1.36.0 — plan vigente por intervenciones» (segunda pasada de
+  CA-54, después de SEC-120; P-136-F, punto 6), con su propia autorización.
+- **Dueños propuestos:** `desarrollador` (el caso del banco con su fail-before y el mecanismo), y
+  `analista-requerimientos` si la autorización de la 2b pide escribir la propiedad en el contrato de REQ-007.
+  **Forzador:** la autorización de la intervención 2b. **Ventana:** 1.36.0.

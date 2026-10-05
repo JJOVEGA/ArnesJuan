@@ -414,7 +414,22 @@ cuando deben.
 
 ---
 
-## 1.36.0 — el working set explícito
+## 1.36.0 — plan vigente por intervenciones (decisiones del propietario del 2026-10-03 y del 2026-10-05)
+
+**Este es el plan de versión vigente de 1.36.0.** Lo escribe la coordinadora con las decisiones del propietario, literales en `PENDING_APPROVAL.md` § Resueltas: «Alcance de 1.36.0», la décima autorización y P-136-A a P-136-F. Cada intervención lleva su propia autorización con la forma de `templates/autorizacion.md`. El contrato vive en `requirements/REQ-007.md`.
+
+| Intervención | Qué | Estado |
+|---|---|---|
+| **1** | **CA-54 / QA-023-10** (rendimiento del análisis de `Bash` en el máximo) | Candidato `82ceb63`. QA-007-01 queda como límite declarado (P-136-F). Faltan la seguridad sobre `82ceb63` y el commit validado |
+| **2** | **SEC-120**, sola (fallo de `jq` al leer o trocear la entrada → deny; REQ-007 CA-47 punto 20). **Vence el 2026-10-29** | Se abre al cerrar la 1 |
+| **2b** | **Segunda pasada de CA-54:** las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código) y la recursión sin tope de la lectura léxica (ficha de QA-007-02). **El banco recibe primero el caso de destinos profundos con su fail-before** | Después de la 2 (P-136-F, punto 6) |
+| **3** | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | Después de la 2b |
+
+**Fuera de 1.36.0, por decisión del propietario:** el hueco C, P-119-A (F2, F5 y F7) y el mecanismo de SEC-123.
+
+*(Lo que sigue es la planificación anterior de 1.36.0, «el working set explícito». Queda como historia y no está en el alcance vigente.)*
+
+### Historia — 1.36.0, el working set explícito (planificación anterior)
 
 **Qué entra:** archivar los REQ cerrados a `requirements/archive/`, con índice **derivado** y un
 resolutor de identificadores, sin subcarpetas por año y sin que `archivado` sea un estado.
