@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · SEC-120, fase 2 hecha por el desarrollador en `aba1c9b` (SIN VALIDAR); tres puntos para QA y el analista; pausa por falta de créditos de uso
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Reparación**, según el desarrollador (≈ 90 k tokens en esta fase; todo editado con Edit/Write):
+  - `arnes_parse_input` comprueba el código de salida de `jq`, y una entrada ilegible se deniega a todo agente con motivo propio;
+  - si el troceo falla, la puerta que lo necesita deniega y `ARNES_JQ` se vacía;
+  - los modos inertes no cambian.
+  - Resultados: los 28 casos en verde, y la sección 44 da 319/0 frente a 291/28 en `82ceb63` y en v1.35.0. El inventario CA-69 2 (a) sólo difiere en REQ-017 CA-08 (ii) (INCONCLUSO, 2 (c)). Banco 2110/0/12 con la semilla fijada; autoprueba 117/0; gates rc 0. Evidencia `2d50c55`.
+- **Puntos abiertos para QA y el analista** (no son parada del desarrollador, pero sí de contrato si QA los juzga así):
+  1. **Procesos:** las entradas normales quedan iguales a `82ceb63` y nunca por encima de v1.35.0. En las entradas de SEC-120 hay **+1**: el `jq` con el que `arnes_deny` emite la decisión donde antes no había ninguna. Se contrasta con «sin procesos nuevos» (pedido del propietario) y con «0 procesos añadidos» (CA-47 p. 20).
+  2. **Decisión del desarrollador:** cuenta como ilegible lo que no es exactamente un objeto (`null`, un número, la entrada vacía, dos objetos). Lo confirma el analista.
+  3. **Frontera:** sin `CLAUDE_PROJECT_DIR`, una entrada ilegible deja el hook inerte, como en v1.35.0. Denegar ahí afectaría a proyectos sin el arnés. Lo decide el analista.
+- **Pausa:** `/usage-credits` informa de que la organización no tiene créditos de uso. La fase 3 (QA) no se despacha hasta que los haya; se retoma desde ESTADO sin pedir autorización.
+- **Avance (regla 6):** SEC-120 está construido; faltan QA y seguridad.
+
 ## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 2: una entrada que `jq` no puede leer o trocear no pasa (REQ-007 CA-47 punto 20) — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase2.md`; evidencia `cand-1.36.0/sec120/`, commit `2d50c55` del árbol de evidencia).
 
