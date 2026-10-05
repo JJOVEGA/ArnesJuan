@@ -47,6 +47,22 @@ _(Vacía desde el 2026-10-05: P-136-F resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-05, posterior a `39e68bb`) — **M0 y MD como límite declarado «sin cifra sobre 82ceb63»; QA-007-01 sigue como `contrato`; impedimento de red del anfitrión; al conectar, se sigue sin pedir autorización hasta abrir SEC-120**
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisiones del propietario:
+> 1. M0 y MD: límite declarado «sin cifra sobre 82ceb63»; se miden en la
+>    intervención 2b, en anfitrión sano, antes de cualquier optimización.
+> 2. QA-007-01 mantiene la clase `contrato` hasta que QA decida; REQ-007 no se
+>    cerraba en esta intervención.
+> 3. El impedimento de red (Zscaler 403) se registra como del anfitrión, no
+>    del proveedor ni del arnés. Cuando conecte: recuento de QA (10 de 30),
+>    fase 4 sobre 82ceb63, commit validado, y apertura de SEC-120 sin pedirme
+>    la autorización.
+
+**Lo que añade la coordinadora, rotulado como suyo:** el punto 1 se escribe en `docs/PLAN.md` § 1.36.0, fila 2b. El punto 3 queda en ESTADO como el orden de reanudación. La cola sigue vacía.
+
 ### RESUELTA (propietario, 2026-10-05) — **P-136-F: opción (C)**: el candidato de CA-54 es `82ceb63` (se revierte `dee5932`); QA-007-02 cerrado por reversión con ficha de la recursión; QA-007-01 como límite declarado; fase 4 sobre `82ceb63`; segunda pasada como intervención 2b después de SEC-120
 
 **Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

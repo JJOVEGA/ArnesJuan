@@ -422,7 +422,7 @@ cuando deben.
 |---|---|---|
 | **1** | **CA-54 / QA-023-10** (rendimiento del análisis de `Bash` en el máximo) | Candidato `82ceb63`. QA-007-01 queda como límite declarado (P-136-F). Faltan la seguridad sobre `82ceb63` y el commit validado |
 | **2** | **SEC-120**, sola (fallo de `jq` al leer o trocear la entrada → deny; REQ-007 CA-47 punto 20). **Vence el 2026-10-29** | Se abre al cerrar la 1 |
-| **2b** | **Segunda pasada de CA-54:** las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código) y la recursión sin tope de la lectura léxica (ficha de QA-007-02). **El banco recibe primero el caso de destinos profundos con su fail-before** | Después de la 2 (P-136-F, punto 6) |
+| **2b** | **Segunda pasada de CA-54:** las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código) y la recursión sin tope de la lectura léxica (ficha de QA-007-02). **El banco recibe primero el caso de destinos profundos con su fail-before.** M0 y MD (límite declarado «sin cifra sobre `82ceb63`») se miden en anfitrión sano antes de cualquier optimización (decisión del propietario, 2026-10-05) | Después de la 2 (P-136-F, punto 6) |
 | **3** | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | Después de la 2b |
 
 **Fuera de 1.36.0, por decisión del propietario:** el hueco C, P-119-A (F2, F5 y F7) y el mecanismo de SEC-123.

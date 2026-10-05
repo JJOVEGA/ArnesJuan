@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Decisiones del propietario: M0 y MD como límite «sin cifra sobre `82ceb63`», que se miden en la 2b; QA-007-01 sigue como `contrato`; el 403 de Zscaler es del anfitrión
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- Las tres decisiones van literales en `PENDING_APPROVAL.md` § Resueltas.
+- `docs/PLAN.md` § 1.36.0, fila 2b: M0 y MD se miden en anfitrión sano antes de optimizar.
+- ESTADO: el impedimento queda atribuido al anfitrión, y el orden de reanudación sigue sin pedir autorización.
+- **Avance (regla 6):** quedan decididos los dos avisos del analista; la reanudación depende de la red.
+
 ## [Interno] — 2026-10-05 · Impedimento de red: dos comisiones de QA (corrección de su recuento) terminaron con un 403 de Zscaler al autenticar contra la API, sin cambiar nada; la fase 4 queda pendiente
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
