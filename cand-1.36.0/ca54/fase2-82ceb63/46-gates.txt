@@ -1,0 +1,1 @@
+gates AGENTS.md §7 rc=0

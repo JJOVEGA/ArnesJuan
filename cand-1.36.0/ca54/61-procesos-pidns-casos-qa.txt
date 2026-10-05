@@ -1,0 +1,10 @@
+== EVIDENCIA COMPLEMENTARIA: procesos exactos (espacio de PID propio, como forks-pidns.sh) en los casos propios de QA; lib.sh bd7afe64159d6f48; 2026-10-05T12:30:56-06:00 ==
+M-A | v1.35.0 procesos: 7 | candidato procesos: 6
+M-B | v1.35.0 procesos: 7 | candidato procesos: 6
+M-C | v1.35.0 procesos: 7 | candidato procesos: 6
+N-A | v1.35.0 procesos: 7 | candidato procesos: 6
+N-B | v1.35.0 procesos: 7 | candidato procesos: 6
+N-C | v1.35.0 procesos: 7 | candidato procesos: 6
+MR-A | v1.35.0 procesos: 9 | candidato procesos: 8
+MR-B | v1.35.0 procesos: 9 | candidato procesos: 8
+MR-C | v1.35.0 procesos: 9 | candidato procesos: 8

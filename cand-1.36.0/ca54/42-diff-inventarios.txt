@@ -1,0 +1,13 @@
+0a1,3
+> FAIL	REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  la calibración de 'reloj' NO distingue el sujeto sensible del insensible: a=N b=N (banda a [N] · b [N], en milésimas)
+> FAIL	REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  se esperaba <PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS > y se obtuvo <FAIL SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL PASS >
+> FAIL	REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho : la calibración real se rechazó: la calibración de 'reloj' NO distingue el sujeto sensible del insensible: a=2487 b=890 (banda a [N] · b [N], en milésimas);
+1445a1449
+> PASS	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+1470d1473
+< PASS	REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible N× · insensible N× (esperados N y N, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=N a N× el suelo, r=N)
+1480,1481d1482
+< PASS	REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  (N registros → PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS )
+< PASS	REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho  (la misma calibración con vivos=N es FAIL y con vivos=N pasa; en medición el mismo hecho da SKIP, arriba)
+2041d2041
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

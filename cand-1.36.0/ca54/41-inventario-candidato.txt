@@ -1,3 +1,6 @@
+FAIL	REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  la calibración de 'reloj' NO distingue el sujeto sensible del insensible: a=N b=N (banda a [N] · b [N], en milésimas)
+FAIL	REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  se esperaba <PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS > y se obtuvo <FAIL SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL FAIL PASS >
+FAIL	REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho : la calibración real se rechazó: la calibración de 'reloj' NO distingue el sujeto sensible del insensible: a=2487 b=890 (banda a [N] · b [N], en milésimas);
 PASS	'*aprobado' tampoco -> deny  (deny)
 PASS	'*aprobado*' pareado si cierra -> allow  (allow)
 PASS	'aprobado*' NO cierra un critico -> deny  (deny)
@@ -1443,6 +1446,7 @@ PASS	REQ-017 CA-06 sin línea base y bajo el suelo de 50 ms la sonda emite SKIP 
 PASS	REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  N procesos frente a N (menos es conforme)
 PASS	REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  N procesos frente a N (menos es conforme)
 PASS	REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (N sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )
+PASS	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
 PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
 PASS	REQ-017 CA-09 la dirección se COMPRUEBA por rangos, no se publica: por debajo es FAIL y el solapamiento es SKIP  (N pares de rangos → PASS PASS FAIL SKIP SKIP SKIP SKIP )
 PASS	REQ-017 CA-09 la pared de los 60 s de este árbol NO es menor que la de v1.32.1, pareado en la misma corrida  el PEOR de este árbol vale N× el MEJOR de v1.32.1 medido EN ESTA MISMA corrida (>= N×; los rangos no se solapan, así que la dirección no es ruido). La magnitud es del Historial y de SEC-030
@@ -1467,7 +1471,6 @@ PASS	REQ-021 CA-03 (a.3) cond. 4: si el registro DECLARA el tamaño del sujeto d
 PASS	REQ-021 CA-03 (a.3) cond. 5: el umbral con que el juez decide NO sale del registro juzgado —un reloj que publique suelo=1µs no compra su propia abstención—  (disc_param=N · disc_obs=N · testigo del juez=N, obtenido antes de invocar: terna <N N N>)
 PASS	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=N derivado de Nns/vuelta para N× el suelo de Nµs que declara el JUEZ —la sonda publica suelo=Nµs y no decide—; sensible Nµs · insensible Nµs, ninguno pegado al suelo)
 PASS	REQ-021 CA-03 calibración de sonda-procesos.sh: el sujeto sensible responde al parámetro y el insensible no  sensible N× · insensible N× (esperados N y N, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=N a N× el suelo, r=N)
-PASS	REQ-021 CA-03 calibración de sonda-reloj.sh: el sujeto sensible responde al parámetro y el insensible no  sensible N× · insensible N× (esperados N y N, los dos en banda y distinguidos; tamaño derivado del suelo en esta corrida: cal_n=N a N× el suelo, r=N)
 PASS	REQ-021 CA-04.1 el descendiente REPARENTADO se ve y se mata: el recorrido por children no lo alcanza y la marca de entorno sí  (vivos=N, mecanismo proc+marca; el doble fork lo reparenta a init y no sobrevive)
 PASS	REQ-021 CA-04.1 fail-before: el mismo sujeto SIN la mitad de descendencia deja vivo al nieto  (PID N y su descendencia siguen vivos sin la barrida; esta sección los recoge)
 PASS	REQ-021 CA-04.1 fail-before: sin la marca de entorno, el MISMO sujeto publica vivos=0 con el reparentado vivo  (la copia sin la marca publica vivos=N y deja el proceso vivo; esta sección lo recoge)
@@ -1477,8 +1480,6 @@ PASS	REQ-021 CA-04.4 el directorio de envoltorios es privado y se retira tambié
 PASS	REQ-021 CA-04.5 un PATH con componente vacío o relativo no se mide: se dice  (las cuatro formas —':' inicial, ':' final, '::' y '.'— dan estado=path-inseguro, ninguna un número)
 PASS	REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj N× (Nµs sobre Nµs) y procesos N× (N sobre N), techo N×
 PASS	REQ-021 CA-09 bash -n pasa en los 2 archivos de tests/util/ (las gates del manifiesto no miran tests/, y .arnes/config.json no se toca)
-PASS	REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  (N registros → PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS )
-PASS	REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho  (la misma calibración con vivos=N es FAIL y con vivos=N pasa; en medición el mismo hecho da SKIP, arriba)
 PASS	REQ-021 QA-021-04 el parser no se puede inyectar: clave repetida es ILEGIBLE, y un valor con metacaracteres de glob no se expande contra el directorio de trabajo
 PASS	REQ-023 CA-02 anti-vacuidad: 5 campo(s) de la clase abren con la variante en 713ac68
 PASS	REQ-023 CA-02 declarado por una variante, cada campo de la clase DENIEGA
@@ -2038,7 +2039,6 @@ PASS	vineta '- Seguridad:' en historia tampoco cuenta -> deny  (deny)
 PASS	y '**sí**' sigue exigiendo auditoria -> deny  (deny)
 SKIP	REQ-017 CA-05 (i) la ruta crítica cuesta no más de N× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (N× — N s frente a N s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=N
 SKIP	REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (N× — N s frente a N s, medido el 2026-09-07); es acreditación de fail-before, no puerta de cada PR — se repite con ARNES_COSTE_RUTA_CRITICA=N
-SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
 SKIP	REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj N× (Nµs sobre Nµs) cabe en el techo N×, pero la mitad en PROCESOS no es medible en este instrumento: publica procesos=no-aplica (contarlos exigiría instrumentar, y una muestra mixta no es publicable, CA-02.5)
 SKIP	REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera N×  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=N; la de cada cambio de la sonda, en docs/qa/ de su REQ
 SKIP	REQ-030 CA-07 control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera N  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=N; última acreditación: ensayo en CI del 2026-09-26 (rama evidencia/prueba-despacho-2026-09-14, sondas-coste/ensayo-ci/resultados.md §N); la de cada cambio de la sonda, en docs/qa/ de su REQ

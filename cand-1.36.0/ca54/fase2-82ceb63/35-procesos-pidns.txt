@@ -1,0 +1,12 @@
+== EVIDENCIA COMPLEMENTARIA (no la del contrato): procesos creados por invocacion, contados en un espacio de PID propio (exacto); R=2; hooks sha256 lib.sh d43d374b39a2684f; inicio 2026-10-05T09:59:41-06:00; carga 1.40 1.21 0.92 ==
+ca54-65536-A | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-65536-B | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-65536-C | v1.35.0 procesos: 6 6 | candidato procesos: 5 5
+ca54-131072-A | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54-131072-B | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54-131072-C | v1.35.0 procesos: 7 7 | candidato procesos: 6 6
+ca54x-original | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-A | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-B | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+ca54x-control-C | v1.35.0 procesos: 7 7 | candidato procesos: 7 7
+rc=0 fin 2026-10-05T10:02:36-06:00
