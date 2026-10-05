@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Impedimento de red: dos comisiones de QA (corrección de su recuento) terminaron con un 403 de Zscaler al autenticar contra la API, sin cambiar nada; la fase 4 queda pendiente
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Error literal:** «Agent terminated early due to an API error: Failed to authenticate. API Error: 403 Internet Security by Zscaler (error type authentication_failed, HTTP 403, model sent to the API: claude-opus-5-5)». Ocurrió dos veces seguidas en la comisión de QA. El árbol no cambió: sólo se movió el bloque derivado de ESTADO.
+- **Qué es:** un fallo de red o del proxy de esta máquina, **no** un control del proveedor sobre el contenido. Se reintentó una vez, porque era infraestructura, y no se insiste más.
+- **Qué queda pendiente:**
+  - la corrección de QA de su recuento: «8 de 30» → 10 de 30, según el analista;
+  - la seguridad sobre `82ceb63` (fase 4);
+  - el commit validado;
+  - la apertura de SEC-120.
+  El plan se retoma desde ESTADO sin volver a pedir la autorización.
+- **Avance (regla 6):** sin cambios desde `33f46ff`; el plan espera a que la red permita las comisiones.
+
 ## [GitHub] — 2026-10-05 · P-136-F, write-back: QA-007-02 cerrado por reversión (`74da4c5`); ficha F-136-5 (recursión de la lectura léxica, `instrumento`, alta); QA-007-01 como límite declarado de CA-54; plan de versión de 1.36.0 en `docs/PLAN.md`
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (REQ-007, `docs/PENDIENTES.md`, guía e índice; ~204 k tokens) y la coordinadora (`docs/PLAN.md`, ESTADO y la comprobación del revert).
 
