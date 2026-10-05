@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Décima autorización: pasada correctiva de QA-007-01 comiteada por el desarrollador en `dee5932` (SIN VALIDAR); decisión de la coordinadora sobre el SKIP de REQ-017 CA-09; ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Banco del worktree** con la pasada: 2036/0/14, autoprueba 117/0 y gates rc 0, según el desarrollador. INS-136-1 no se reprodujo en esa corrida.
+- **REQ-017 CA-09** (ejecuta hooks) pasó de PASS a SKIP. Es una abstención de la sonda de reloj: los rangos se solapan, por la dispersión que se atribuye a SEC-030. Con el mismo código dio PASS (1,910×) en `40-`. **La coordinadora no lo trata como parada:** CA-69 2 (c), «Un SKIP o un INCONCLUSO no acredita» (decisión 7 de 1.35.0). Se declara con su motivo y no se repite. Un FAIL en ese caso sí sería parada. Así se informó al propietario.
+- **Avance (regla 6):** la pasada correctiva está comiteada; falta la re-verificación de QA.
+
 ## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 (CA-54): casos M, N y MR de QA por debajo de 5 s (45/45, máx. 4 713 ms) y las 35 corridas (máx. 4 011 ms), con las mismas decisiones — **SIN VALIDAR por QA**
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico). Evidencia en el árbol `ArnesJuan-evidencia`, `cand-1.36.0/ca54/` (commit de esta pasada). Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`, sección «Pasada correctiva (QA-007-01)».
 
