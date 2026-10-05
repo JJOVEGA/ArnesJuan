@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · SEC-120: pasada correctiva de QA-007-03/04 en `413c6bd` (SIN VALIDAR); ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Según el desarrollador** (≈ 75 k tokens):
+  - la entrada vacía, la que empieza por NUL y la que trae algo detrás del objeto se dan por ilegibles y reciben `deny`;
+  - `false` en `file_path` y en `command` se deniega;
+  - 44 casos nuevos (sección 44, 363/0; cuadre 2166), con fail-before sobre `aba1c9b` y v1.35.0;
+  - el inventario CA-69 2 (a) es idéntico a `22-`;
+  - banco 2154/0/12, autoprueba 117/0 y gates rc 0;
+  - 0 procesos añadidos en el camino común.
+- **Avance (regla 6):** quedan reparados los dos defectos de borde; falta la re-verificación de QA y P-136-H.
+
 ## [GitHub] — 2026-10-05 · SEC-120, pasada correctiva única: QA-007-03 (entrada vacía o con NUL) y QA-007-04 (`false` en `file_path` o en `command`) — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro `docs/arnes/v1.36.0-sec120-fase2.md`, «Pasada correctiva (QA-007-03/04)»; evidencia `cand-1.36.0/sec120/correctiva/`, commit `1be81c3` del árbol de evidencia).
 

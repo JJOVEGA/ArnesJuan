@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-> **Plan autorizado vigente: intervención 2 de 1.36.0, SEC-120 (por delegación del propietario del 2026-10-05), fase 3 de 4 (fase 2 en `aba1c9b`, evidencia `2d50c55`, SIN VALIDAR: 28 casos en verde, inventario sólo con CA-69 2 (c), banco 2110/0/12, autoprueba 117/0, gates rc 0). **Los tres puntos abiertos los resolvió el propietario** (2026-10-05, literal en la cola): +0 procesos en el camino común y +1 en la entrada ilegible, que es el coste de decidir; ilegible = todo lo que no sea exactamente un objeto JSON; sin `CLAUDE_PROJECT_DIR`, inerte como límite declarado. **Orden final de 1.36.0 (ajuste de alcance del propietario, 2026-10-05; `docs/PLAN.md` § 1.36.0), sin pedir autorización:** (1) ~~el analista escribe las decisiones de SEC-120 en CA-47 p. 20~~ **hecho**; (2) QA hecho: **con hallazgos** QA-007-03/04/05 (`contrato`, baja); **siguiente:** la pasada correctiva única para QA-007-03 y QA-007-04 (desarrollador) y su re-verificación por QA; QA-007-05 → **P-136-H** en la cola; luego de SEC-120 (Opus, comisión nueva); (3) seguridad con QA favorable; (4) commit validado; (5) **SEC-127 sola**, con las cuatro condiciones de P-136-G; (6) SEC-115/118; (7) cierre y publicación (decisión del propietario). **La 2b de CA-54 sale a 1.37** (F-136-6). Nada más entra en 1.36.0. **PAUSA: la organización no tiene créditos de uso.** La cola está vacía.** El plan está literal en `PENDING_APPROVAL.md` § Resueltas («Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola»). **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: intervención 2 de 1.36.0, SEC-120 (por delegación del propietario del 2026-10-05), fase 3 de 4 (fase 2 en `aba1c9b`, evidencia `2d50c55`, SIN VALIDAR: 28 casos en verde, inventario sólo con CA-69 2 (c), banco 2110/0/12, autoprueba 117/0, gates rc 0). **Los tres puntos abiertos los resolvió el propietario** (2026-10-05, literal en la cola): +0 procesos en el camino común y +1 en la entrada ilegible, que es el coste de decidir; ilegible = todo lo que no sea exactamente un objeto JSON; sin `CLAUDE_PROJECT_DIR`, inerte como límite declarado. **Orden final de 1.36.0 (ajuste de alcance del propietario, 2026-10-05; `docs/PLAN.md` § 1.36.0), sin pedir autorización:** (1) ~~el analista escribe las decisiones de SEC-120 en CA-47 p. 20~~ **hecho**; (2) QA hecho: **con hallazgos** QA-007-03/04/05 (`contrato`, baja); pasada correctiva única hecha en `413c6bd` (evidencia `1be81c3`; SIN VALIDAR); **siguiente:** la re-verificación de QA; QA-007-05 → **P-136-H** en la cola; luego de SEC-120 (Opus, comisión nueva); (3) seguridad con QA favorable; (4) commit validado; (5) **SEC-127 sola**, con las cuatro condiciones de P-136-G; (6) SEC-115/118; (7) cierre y publicación (decisión del propietario). **La 2b de CA-54 sale a 1.37** (F-136-6). Nada más entra en 1.36.0. **PAUSA: la organización no tiene créditos de uso.** La cola está vacía.** El plan está literal en `PENDING_APPROVAL.md` § Resueltas («Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola»). **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -550,7 +550,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-05 17:40
+## Estado derivado — 2026-10-05 17:54
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -560,9 +560,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `af362fd` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `413c6bd` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
+**Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
