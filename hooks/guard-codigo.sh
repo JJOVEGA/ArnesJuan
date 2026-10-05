@@ -119,7 +119,10 @@ arnes_guard_codigo() {
     if [ "$via_bash" -eq 1 ]; then
       while IFS= read -r cand; do
         [ -n "$cand" ] || continue
-        arnes_identidad "$cand"; arnes_id_pertenece codigo; rc=$?
+        # Con `req` de segundo ambito: si el destino queda fuera del codigo, su pertenencia a
+        # `requirements_dir` se juzga en esta misma llamada, sobre las mismas rutas, para `guard-completado`
+        # (`_arnes_id_adelanta`). No cambia lo que esta puerta recibe.
+        arnes_identidad "$cand"; arnes_id_pertenece codigo req; rc=$?
         if [ "$rc" -eq 0 ]; then objetivo="$ARNES_ID_REL"; break; fi
         # El primer no determinable se recuerda, pero se sigue buscando: un destino que SI es
         # codigo da un motivo mas claro que uno que no se pudo situar.

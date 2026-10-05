@@ -601,7 +601,7 @@ ARNES_ID_MAX=4096   # PATH_MAX: una ruta mas larga no la abre el sistema; es no 
 declare -gA ARNES_IDM_E=() ARNES_IDM_C=() ARNES_IDM_A=() ARNES_IDM_F=() ARNES_IDM_F2=() \
             ARNES_IDM_L=() ARNES_IDM_LN=() ARNES_IDM_B=() ARNES_IDM_K=() ARNES_IDM_X=() \
             ARNES_IDM_V=() ARNES_IDM_FD=() ARNES_IDM_O=() ARNES_IDM_R=()
-declare -gA ARNES_TRAMO_FIS=() ARNES_TRAMO_TXT=() ARNES_DIRFIS=() ARNES_AMB_LISTO=() ARNES_AMB_NT=()
+declare -gA ARNES_TRAMO_FIS=() ARNES_TRAMO_TXT=() ARNES_DIRFIS=() ARNES_AMB_LISTO=() ARNES_AMB_NT=() ARNES_LEXDIR=()
 declare -ga ARNES_AMB_req_P=() ARNES_AMB_req_T=() ARNES_AMB_req_F=() ARNES_AMB_req_Q=() \
             ARNES_AMB_codigo_P=() ARNES_AMB_codigo_T=() ARNES_AMB_codigo_F=() ARNES_AMB_codigo_Q=() \
             ARNES_AMB_manifiesto_P=() ARNES_AMB_manifiesto_T=() ARNES_AMB_manifiesto_F=() ARNES_AMB_manifiesto_Q=()
@@ -752,6 +752,19 @@ _arnes_lectura_lexica() {   # <ruta absoluta> -> ARNES_LL
     *//*|*/./*|*/../*|*\\*) ;;
     *) ARNES_LL="$p"; return 0 ;;
   esac
+  # POR DIRECTORIO (pasada correctiva de QA-007-01): la lectura de `D/B`, con `B` un NOMBRE (ni vacio, ni
+  # `.`, ni `..`) y sin barras invertidas en ninguno de los dos, se deriva de la de `D` si `D` empieza por
+  # `/` y no acaba en `/`. Entonces las dos rutas tienen el mismo prefijo (`/` o `//`), los segmentos de
+  # `D/B` son los de `D` mas `B`, y `B` solo se apila: el resultado es la lectura de `D` seguida de `/B`,
+  # o de `B` si la de `D` acaba en `/` (la pila quedo vacia y solo queda el prefijo). La de `D` la calcula
+  # esta misma funcion y se memoriza por invocacion: miles de destinos en `docs/../` la pagan una vez.
+  local d="${p%/*}" b="${p##*/}"
+  if [[ $d == /?* && $d != */ && -n $b && $b != . && $b != .. && $d$b != *\\* ]]; then
+    if [[ -n ${ARNES_LEXDIR[$d]+x} ]]; then d="${ARNES_LEXDIR[$d]}"
+    else _arnes_lectura_lexica "$d"; ARNES_LEXDIR[$d]="$ARNES_LL"; d="$ARNES_LL"; fi
+    if [[ $d == */ ]]; then ARNES_LL="$d$b"; else ARNES_LL="$d/$b"; fi
+    return 0
+  fi
   p="${p//\\//}"
   case "$p" in
     //|//[!/]*) pre='//'; rest="${p#//}" ;;
@@ -883,13 +896,31 @@ _arnes_lf_nodet() {   # <recorrer <dir>|raiz|cwd>
 # de directorio. 1 = no es ese camino, y quien llama sigue por `_arnes_lectura_fisica`, que lo resuelve
 # todo como siempre. Existe porque se recorre una vez por destino y la funcion completa declara once
 # variables y dos bucles para llegar aqui.
+#
+# Y UN NIVEL QUE NO EXISTE sobre un directorio ya resuelto (pasada correctiva de QA-007-01): `d/f` con `d`
+# inexistente. Ahi `_arnes_lectura_fisica` hace, en este orden: `d` no esta en memoria, el sistema no ve
+# nada en `d` (ni `-e` ni `-L`: si viera algo, ese camino es suyo), `d` no es una raiz, sube al padre —con
+# sus mismos ajustes, '' -> '/' y 'X:' -> 'X:/'—, el padre SI esta en memoria, y el segmento que queda es
+# un NOMBRE (ni '', ni '.', ni '..'). Publica lo mismo que ella en ese camino: ARNES_LF_RESTO=1 y el
+# directorio fisico del padre seguido del nombre. Cualquier otra forma vuelve a ella.
 _arnes_lf_memo() {   # <ruta absoluta, sin barra final> <dir 0|1>
   [ "$2" = 0 ] && [ -n "${1##*/}" ] || return 1
-  local d="${1%/*}"
-  [ -n "${ARNES_DIRFIS[${d:-/}]+x}" ] || return 1
-  ARNES_PWD_FIS="${ARNES_DIRFIS[${d:-/}]}"; ARNES_LF_RESTO=0
-  d="$ARNES_PWD_FIS"; [ "$d" != / ] || d=''
-  ARNES_LF_DIR="${d:-/}"; ARNES_LF="$d/${1##*/}"
+  local d="${1%/*}" p s
+  if [ -n "${ARNES_DIRFIS[${d:-/}]+x}" ]; then
+    ARNES_PWD_FIS="${ARNES_DIRFIS[${d:-/}]}"; ARNES_LF_RESTO=0
+    d="$ARNES_PWD_FIS"; [ "$d" != / ] || d=''
+    ARNES_LF_DIR="${d:-/}"; ARNES_LF="$d/${1##*/}"
+    return 0
+  fi
+  [[ $d == */* ]] || return 1
+  s="${d##*/}"; p="${d%/*}"
+  case "$s" in ''|.|..) return 1 ;; esac
+  case "$p" in '') p=/ ;; [A-Za-z]:) p="$p/" ;; esac
+  [[ -n ${ARNES_DIRFIS[$p]+x} ]] || return 1
+  [[ -e $d || -L $d ]] && return 1
+  ARNES_PWD_FIS="${ARNES_DIRFIS[$p]}"; ARNES_LF_RESTO=1
+  p="$ARNES_PWD_FIS"; [[ $p != / ]] || p=''
+  ARNES_LF_DIR="$p/$s"; ARNES_LF="$ARNES_LF_DIR/${1##*/}"
 }
 
 # arnes_identidad <ruta tal como llego> — la identidad de UN destino, memorizada por invocacion.
@@ -1215,9 +1246,9 @@ _arnes_ambito() {   # <req|codigo|manifiesto> -> ARNES_AMB_<amb>_P (patrones), _
   ARNES_AMB_NT[$1]=${#t[@]}   # cuantos tramos aportan por la via (c): `arnes_id_pertenece` no los nombra si son 0
 }
 
-arnes_id_pertenece() {
+arnes_id_pertenece() {   # <ambito> [ambito cuyo «fuera» se resuelve en la misma llamada: `_arnes_id_adelanta`]
   local amb="$1" x rel via
-  local -a fis=() rels=()
+  local -a fis=() rels=() todas=()
   # COSTE (CA-54, nota del 2026-10-03): se recorre una vez por destino y por puerta. Las consultas de
   # memoria —el ambito ya preparado, la lectura lexica ya calculada— se hacen en linea con la condicion
   # con la que abre su funcion, y los tramos de la via (c) y el motivo de CA-47 punto 4 viven en su
@@ -1254,6 +1285,7 @@ arnes_id_pertenece() {
       _arnes_bajo "$ARNES_ID_LN" "$ARNES_RAIZ_ENV_N" && rels+=("${ARNES_BAJO:-.}")
       _arnes_bajo "$ARNES_ID_LN" "$ARNES_RAIZ_FIS_N" && rels+=("${ARNES_BAJO:-.}")
     fi
+    todas+=(${rels[@]+"${rels[@]}"})   # las rutas relativas de (a) y (b), en su orden: `_arnes_id_adelanta`
     for rel in ${rels[@]+"${rels[@]}"}; do
       [[ $ARNES_ID_B == 1 ]] && rel="$rel/"
       for x in "${pats[@]}"; do      # no vacio: comprobado arriba; mismo orden que el indice
@@ -1264,7 +1296,10 @@ arnes_id_pertenece() {
   # (c): la fisica bajo la identidad fisica del tramo fijo de cada patron; solo si el ambito tiene
   # tramos que aportan (`_arnes_ambito`, `_arnes_id_via_c`).
   if [[ -z $ARNES_ID_REL && ${ARNES_AMB_NT[$amb]:-0} != 0 ]]; then _arnes_id_via_c "$amb"; fi
-  [[ -n $ARNES_ID_REL ]] || return 1
+  if [[ -z $ARNES_ID_REL ]]; then
+    [[ -z ${2:-} || -z $ARNES_ID_RUTA ]] || _arnes_id_adelanta "$2"
+    return 1
+  fi
   # CA-47, punto 4: con las dos lecturas designando archivos distintos (`_arnes_id_v`).
   [[ $ARNES_ID_V == 0 ]] && return 0
   _arnes_id_v
@@ -1284,6 +1319,39 @@ _arnes_id_via_c() {   # <ambito> -> ARNES_ID_REL
     done
   done
   return 0
+}
+
+# LA PERTENENCIA A UN SEGUNDO AMBITO, EN LA MISMA LLAMADA (CA-54; pasada correctiva de QA-007-01).
+# `guard-codigo` y `guard-completado` juzgan, cada una en su bucle, los MISMOS destinos de un comando de
+# `Bash` con las MISMAS rutas relativas, y en el maximo eso son miles de destinos dos veces; con el estado
+# terminal mencionado, o con un caracter no ASCII, el recorrido de `guard-completado` no se puede saltar
+# (P-136-D) y el hook pasaba de 5 s. Aqui, cuando `arnes_id_pertenece` deja el destino FUERA del primer
+# ambito, ya tiene resuelto todo lo que no depende del ambito —el enlace del ultimo componente, las
+# lecturas fisicas (`fis`) y las rutas relativas de (a) y (b) (`todas`), en su orden—, y juzga el segundo
+# ambito sobre eso mismo: sus patrones contra esas rutas y, si no casa ninguna, su via (c). Deja en
+# ARNES_ADEL_<ambito>[destino] 1 si queda fuera y 0 si no. Es el juicio de `arnes_id_pertenece <ambito>`
+# sobre la misma identidad memorizada, salvo en lo que el 1 no mira: que dentro sea 0 o 2 lo vuelve a
+# decidir quien lo use, juzgando entero (`guard-completado` solo reutiliza el 1). No arranca procesos —el
+# enlace ya esta resuelto y la forma de comparacion ya calculada— ni toca lo que publica el primer ambito
+# (ARNES_ID_REL vuelve vacio, ARNES_ID_C y ARNES_ID_A no se tocan). Lee `fis` y `todas` de quien llama.
+declare -gA ARNES_ADEL_req=() ARNES_ADEL_codigo=() ARNES_ADEL_manifiesto=()
+_arnes_id_adelanta() {   # <ambito>
+  local amb="$1" rel x f=1
+  local -n adel="ARNES_ADEL_$amb"
+  [[ -n ${ARNES_AMB_LISTO[$amb]:-} ]] || _arnes_ambito "$amb"
+  local -n p2="ARNES_AMB_${amb}_P"
+  if (( ${#p2[@]} > 0 )); then
+    for rel in ${todas[@]+"${todas[@]}"}; do
+      [[ $ARNES_ID_B == 1 ]] && rel="$rel/"
+      for x in "${p2[@]}"; do
+        if _arnes_casa_patron "$amb" "$x" "$rel"; then f=0; break 2; fi
+      done
+    done
+    if [[ $f == 1 && ${ARNES_AMB_NT[$amb]:-0} != 0 ]]; then
+      _arnes_id_via_c "$amb"; [[ -z $ARNES_ID_REL ]] || f=0; ARNES_ID_REL=''
+    fi
+  fi
+  adel[$ARNES_ID_RUTA]=$f
 }
 
 # CA-47, punto 4: dentro del ambito por alguna lectura y con las dos designando archivos
@@ -2017,8 +2085,24 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # fase no arranca procesos: el locale C no llega a ninguno, y no escribe nada en stderr, asi que el
   # stderr del grupo es solo el aviso de bash al RESTAURAR un locale del entorno que no esta instalado
   # (lo da una vez por cambio): sin redirigirlo, cada analisis anadiria una linea que v1.35.0 no escribia.
-  if [[ $ARNES_SIN_TEXTO == *[![:ascii:]]* ]]; then _arnes_escrituras_texto "$ARNES_SIN_TEXTO"
+  #
+  # Y TAMBIEN CON TEXTO NO ASCII SI EL LOCALE DEL PROCESO ES UTF-8 (pasada correctiva de QA-007-01: un
+  # solo caracter no ASCII devolvia esta fase al camino lento y el hook pasaba de 5 s). En UTF-8 un byte
+  # ASCII es SIEMPRE un caracter suelto: no forma parte de ninguna secuencia multibyte, y una secuencia
+  # invalida o cortada no lo absorbe (bash avanza un byte). Todo lo que hace esta fase busca, sustituye o
+  # trocea por caracteres ASCII (`$(`, `)`, `>`, `|`, `;`, blancos) y compara con patrones de literales
+  # ASCII y `*`, asi que byte a byte y caracter a caracter da lo mismo. En otro locale multibyte (donde un
+  # byte ASCII si puede ser la segunda mitad de un caracter) sigue resolviendose en el del proceso.
+  if [[ $ARNES_SIN_TEXTO == *[![:ascii:]]* ]] && ! _arnes_locale_utf8; then _arnes_escrituras_texto "$ARNES_SIN_TEXTO"
   else { LC_ALL=C _arnes_escrituras_texto "$ARNES_SIN_TEXTO"; } 2>/dev/null; fi
+}
+
+# ¿El locale del proceso es UTF-8? Se le pregunta a bash, sin procesos: en UTF-8, una secuencia de dos,
+# una de tres y una de cuatro bytes son UN caracter cada una; en los demas locales multibyte probados por
+# su forma (GB18030, Big5, EUC, Shift-JIS) al menos una de las tres no lo es, y en uno de un byte ninguna.
+_arnes_locale_utf8() {
+  local a=$'\xc3\xa9' b=$'\xe2\x82\xac' c=$'\xf0\x9f\x98\x80'
+  (( ${#a} == 1 && ${#b} == 1 && ${#c} == 1 ))
 }
 
 # La segunda mitad de `arnes_bash_escrituras`: del texto del comando ya descontado

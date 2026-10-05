@@ -2,6 +2,29 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 (CA-54): casos M, N y MR de QA por debajo de 5 s (45/45, máx. 4 713 ms) y las 35 corridas (máx. 4 011 ms), con las mismas decisiones — **SIN VALIDAR por QA**
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico). Evidencia en el árbol `ArnesJuan-evidencia`, `cand-1.36.0/ca54/` (commit de esta pasada). Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`, sección «Pasada correctiva (QA-007-01)».
+
+- **Código (`hooks/`), por propiedad**, todo editado con la herramienta de edición:
+  - la pertenencia a `requirements/` se juzga en la misma llamada que la de código (`_arnes_id_adelanta`), y `guard-completado` sólo reutiliza el «fuera»: ningún destino deja de juzgarse;
+  - la fase de tokens corre en locale C también cuando el locale es UTF-8;
+  - `_arnes_lf_memo` cubre un nivel que no existe sobre un directorio ya resuelto;
+  - la lectura léxica de `D/B` se deriva de la de `D`, memorizada.
+  - El atajo de P-136-D sigue en su sitio, después de las denegaciones por forma.
+- **Procesos:**
+  - `sonda-procesos.sh` da la misma cuenta en los dos árboles: 0 procesos añadidos;
+  - el recuento exacto da uno menos en S1, M, N y MR, e igual en S2.
+- **Inventario** con `ARNES_SEMILLA_41=23062` frente a `22-`, sólo con casos declarados:
+  - REQ-021 CA-03, CA-10 y CA-10.2 en FAIL, de INS-136-1: es `instrumento`, no atribuible al cambio (P-136-E);
+  - REQ-017 CA-08 (ii) «6 líneas», de CA-69 2 (c).
+- **Banco del worktree:** 2036 PASS, 0 FAIL, 14 SKIP. Declarados uno por uno:
+  - el SKIP de REQ-017 CA-09, una abstención que no acredita (dio PASS en `40-` con el mismo código);
+  - REQ-017 CA-08 (ii) «200 líneas», de CA-69 2 (c);
+  - el nombre con semilla de la sección 41.
+- **Autoprueba** 117/0. **Gates de §7:** rc 0.
+- **Sin medir:** Windows/MSYS, el host, el CI, los locales en_US y tr_TR, y formas de comando distintas de S1, S2, M, N y MR.
+- **Avance (regla 6):** QA-007-01 reparado por el desarrollador; falta re-validación de QA y después seguridad.
+
 ## [GitHub] — 2026-10-05 · P-136-E resuelta por el propietario: opción (A); hallazgo `instrumento` INS-136-1, no atribuible al cambio; regla de parada afinada también en `templates/autorizacion.md`; ficha F-136-4 (REQ-021)
 > Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (texto y trazabilidad, dentro de lo que la décima autorización le deja decidir).
 

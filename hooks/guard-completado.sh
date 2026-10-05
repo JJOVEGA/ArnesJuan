@@ -400,6 +400,10 @@ arnes_guard_completado() {
     arnes_estado_ausente "$bash_cmd" "$estado_done" && return 0
     while IFS= read -r d; do
       [ -n "$d" ] || continue
+      # Un destino que `guard-codigo` ya juzgo FUERA de `requirements_dir` en esta invocacion, sobre la misma
+      # identidad memorizada y las mismas rutas (`_arnes_id_adelanta`), da aqui 1 y sigue: se usa ese juicio.
+      # Cualquier otro —sin ese juicio, o juzgado dentro— se juzga entero aqui, como siempre.
+      [[ ${ARNES_ADEL_req[$d]:-} == 1 ]] && continue
       arnes_identidad "$d"; arnes_id_pertenece req; rc=$?
       [ "$rc" -ne 1 ] || continue
       if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then
