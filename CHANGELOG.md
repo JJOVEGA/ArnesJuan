@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · P-136-G (SEC-127) resuelta por el propietario: se repara dentro de la 2b de CA-54, sin subshell; la premisa de versión de bash no se declara como límite
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas, con la ficha debajo; la cola queda vacía.
+- **Condiciones** (en la fila 2b de `docs/PLAN.md`):
+  - `local LC_ALL=C` o guardar y restaurar, a elección del desarrollador;
+  - caso de banco del locale tras el atajo, y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado;
+  - seguridad reclasifica SEC-127 al cerrarlo;
+  - publicar 1.36.0 sigue en manos del propietario mientras SEC-127 esté abierto.
+- **Avance (regla 6):** no queda ninguna decisión pendiente; el plan espera a que vuelvan los créditos.
+
 ## [Interno] — 2026-10-05 · SEC-120: el propietario resuelve los tres puntos de la fase 2 (procesos sobre el camino común, qué es ilegible, inerte sin `CLAUDE_PROJECT_DIR`) y fija el orden hasta SEC-115/118 sin pedir autorización
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

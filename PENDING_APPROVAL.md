@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-### [2026-10-05] (coordinadora) — P-136-G: SEC-127 (`contrato`, baja; R-052). Con bash 5.0 o anterior en modo POSIX, el atajo de `guard-completado` podría dejar el recorrido de destinos en locale C y un cierre con estado no ASCII pasaría. ¿Se repara, se declara la premisa como límite o se mide?
+_(Vacía desde el 2026-10-05: P-136-G resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-05) — **P-136-G (SEC-127): opción (A), dentro de la 2b de CA-54** (o sola antes de publicar si la 2b se retrasa); sin subshell; QA con caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé; seguridad reclasifica al cerrar; la premisa de versión de bash NO se declara como límite
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-G (SEC-127): opción (A), en la intervención 2b de CA-54, que ya toca
+> ese código. Si la 2b se retrasa más allá de la publicación de 1.36.0, (A) va
+> sola antes de publicar.
+>
+> Condiciones:
+> 1. La asignación de locale del atajo no puede persistir en ningún bash. Se
+>    hace SIN subshell (un subshell es un proceso, y el camino común sigue en
+>    0 procesos añadidos): con `local LC_ALL=C` dentro de la función que lo
+>    necesita, o guardando y restaurando el valor explícitamente. El
+>    desarrollador elige entre esas dos.
+> 2. QA lo verifica con un caso de banco que lea el locale del proceso DESPUÉS
+>    del atajo y con el cierre de un REQ con estado no ASCII (TERMINÉ /
+>    terminé) en LC_ALL=C simulado, que es el que pasó de deny a allow.
+> 3. Seguridad reclasifica SEC-127 al cerrarlo. Hasta entonces la publicación
+>    de 1.36.0 queda en mi mano, como ya está.
+> 4. La premisa "bash 5.1+ o sin modo POSIX" NO se declara como límite: se
+>    repara, y punto. Que CA-47 no dependa de la versión de bash.
+
+**Lo que añade la coordinadora, rotulado como suyo:** se escribe en `docs/PLAN.md` § 1.36.0, fila 2b. Cuando se abra la 2b, su plan (`templates/autorizacion.md`) incluye estas condiciones tal cual. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-G: SEC-127 (`contrato`, baja; R-052). Con bash 5.0 o anterior en modo POSIX, el atajo de `guard-completado` podría dejar el recorrido de destinos en locale C y un cierre con estado no ASCII pasaría. ¿Se repara, se declara la premisa como límite o se mide?
 
 **Contexto.** Fase 4 de la décima autorización, R-052 (`docs/seguridad/registro-seguridad.md`), sobre el código de `82ceb63`. **Determinación: con hallazgos, sin veto.**
 - **Conforme:**
@@ -80,8 +108,6 @@
 **Qué trabajo sigue mientras no se decida:** **SEC-120 (intervención 2), que no depende de esta decisión**, ya está autorizada por delegación y vence el 2026-10-29. Esta entrada impide marcar cualquier REQ como `completado`.
 
 **Espera:** elección del propietario.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-05, posterior a `0c31cdd`) — **SEC-120: los tres puntos abiertos de la fase 2** («0 procesos añadidos» rige sobre el camino común; ilegible = todo lo que no sea exactamente un objeto JSON; sin `CLAUDE_PROJECT_DIR` sigue inerte, como límite declarado); **orden al volver los créditos, sin pedir autorización**: QA, seguridad, commit validado, 2b de CA-54, SEC-115/118
 
