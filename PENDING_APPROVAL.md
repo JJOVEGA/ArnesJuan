@@ -43,8 +43,39 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-05: P-136-E resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-05] (coordinadora) — P-136-E: la pasada correctiva de QA-007-01 cumple los tiempos, pero el inventario cambia en 3 casos de calibración del reloj (PASS → FAIL) que no ejecutan los hooks; ¿cómo se trata?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-05) — **P-136-E: opción (A)**; los tres casos de calibración son hallazgo `instrumento`, no atribuible al cambio; regla de parada afinada («un veredicto del banco que cambia» = un caso que ejecuta hooks o lee archivos del delta); ficha nueva de REQ-021
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-E: opción (A). Los tres casos (REQ-021 CA-03, CA-10 y CA-10.2) se
+> registran como hallazgo `instrumento`, no atribuible al cambio, con la prueba
+> estática (la calibración no ejecuta hooks) y la corroboración: ayer fallaron
+> los mismos tres en WSL con el banco entero y pasaron solos en la sección 38
+> (docs/qa/REQ-023.md, validación manual), y en el CI dos corridas rojas en dos
+> sondas de reloj distintas y la tercera verde.
+>
+> Afino la regla de parada de esta autorización, y que la plantilla lo recoja:
+> «un veredicto del banco que cambia» = un caso que ejecuta hooks o lee archivos
+> del delta. Un caso de calibración de sonda que cambia se registra y se sigue.
+>
+> Ficha nueva, para después (REQ-021, instrumento): una calibración de
+> sonda-reloj fuera de banda sale FAIL; según la propia filosofía del banco
+> debería abstenerse (SKIP o INCONCLUSO con motivo), como ya hace la sonda que
+> no converge. No se repara en esta intervención.
+>
+> Continúa: commits del desarrollador, banco, autoprueba y gates; verificación
+> de QA con su propio inventario; fase 4 con QA favorable. No me preguntes
+> hasta QA, salvo por un cambio de veredicto en un caso que sí ejecuta hooks.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Registro:** hallazgo `instrumento` **INS-136-1** y ficha **F-136-4** (REQ-021) en `docs/PENDIENTES.md`; la regla afinada, en el bloque «Cuándo paras» de `templates/autorizacion.md` (como guía para cualquier autorización) y en su ejemplo (como precisión fechada de la décima). La décima autorización se lee, desde hoy, con esta regla de parada.
+- **Qué trabajo sigue:** el plan. Primero el desarrollador comitea y corre el banco, la autoprueba y las gates; después QA re-verifica con su propio inventario; después la fase 4, con QA favorable. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-E: la pasada correctiva de QA-007-01 cumple los tiempos, pero el inventario cambia en 3 casos de calibración del reloj (PASS → FAIL) que no ejecutan los hooks; ¿cómo se trata?
 
 **Contexto.** Décima autorización, pasada correctiva 1 de 1, sobre `488cd8e`, con el código **sin comitear** (copia: `cand-1.36.0/ca54/50-pasada-correctiva-sin-commit.patch`, sha256 `d9d62a06…`, en el árbol de evidencia, sin commit allí).
 - **Tiempos, medidos por el desarrollador:**
@@ -75,9 +106,6 @@
 **Qué trabajo sigue mientras no se decida.** **Ninguno del plan.** La pasada correctiva, la re-verificación de QA y la fase 4 dependen de esta decisión. Esta entrada impide marcar cualquier REQ como `completado` (ninguno se iba a cerrar).
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-05) — **P-136-D: opción (A) con condición de equivalencia**; semilla de la sección 41 fijada; fichas de instrumento; el plan de la décima autorización continúa desde la fase 2
 

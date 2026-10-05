@@ -44,6 +44,11 @@
 
 - …
 
+<!-- Si la lista incluye «un veredicto del banco que cambia», dilo con su alcance: un caso que ejecuta el
+     código del cambio o lee archivos del delta. Un caso de calibración de un instrumento (una sonda que
+     mide la máquina, no el código) que cambia se registra como hallazgo `instrumento` y el plan sigue.
+     (Precisión del propietario del arnés, 2026-10-05, P-136-E.) -->
+
 ## Si la sesión se corta
 <!-- Qué va aquí: cómo retoma la sesión siguiente: dónde lee el plan, desde qué fase continúa (la última
      comiteada) y que no vuelve a pedir la autorización. -->
@@ -93,6 +98,8 @@ entrega, que están en esa sede. Los identificadores (CA-54, SEC-120…) son de 
 > que la prevista; un veredicto del banco que cambia (inventario distinto);
 > un control del proveedor detiene algo (registra, sigue con lo
 > independiente); publicar, fusionar, etiquetar, cerrar un REQ.
+>
+> *(Precisión del propietario, 2026-10-05, P-136-E: «un veredicto del banco que cambia» = un caso que ejecuta hooks o lee archivos del delta. Un caso de calibración de sonda que cambia se registra y se sigue.)*
 >
 > ## Si la sesión se corta
 > La siguiente lee este plan en la cola y en ESTADO y continúa desde la última

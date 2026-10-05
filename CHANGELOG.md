@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · P-136-E resuelta por el propietario: opción (A); hallazgo `instrumento` INS-136-1, no atribuible al cambio; regla de parada afinada también en `templates/autorizacion.md`; ficha F-136-4 (REQ-021)
+> Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (texto y trazabilidad, dentro de lo que la décima autorización le deja decidir).
+
+- **Cola:** P-136-E literal en § Resueltas, con la ficha debajo. La cola queda vacía.
+- **`docs/PENDIENTES.md`:**
+  - INS-136-1: REQ-021 CA-03, CA-10 y CA-10.2 pasan de PASS a FAIL por la calibración de `sonda-reloj.sh`, que no ejecuta hooks. Va con la prueba estática y la corroboración del propietario;
+  - F-136-4: una calibración fuera de banda debería abstenerse en lugar de dar FAIL. Es para después; cambia el contrato de REQ-021 y lo fija el analista.
+- **`templates/autorizacion.md`:** el bloque «Cuándo paras» gana una guía: «un veredicto del banco que cambia» = un caso que ejecuta el código del cambio o lee archivos del delta; un caso de calibración de un instrumento que cambia se registra y el plan sigue. El ejemplo de la décima lleva la precisión fechada.
+- **Avance (regla 6):** el plan sigue con los commits del desarrollador, el banco y la autoprueba, y después la re-verificación de QA.
+
 ## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 PARADA: los tiempos cumplen (35/35 y 45/45 por debajo de 5 s), pero el inventario cambia en 3 casos de calibración del reloj que no ejecutan los hooks; ficha P-136-E; código SIN COMITEAR
 > Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (pasada correctiva; tramo de ~60 k tokens, ~655 k acumulados en la comisión) y la coordinadora (comprobación estática y este registro).
 

@@ -2118,3 +2118,18 @@ CA-54 en esta intervención (se registran)»). Evidencia: `docs/arnes/v1.36.0-ca
 - **Dueño propuesto:** la coordinadora (despacho: que el encargo del `desarrollador` pida las herramientas de
   edición sobre `hooks/`, o el motivo si usa la consola) y el `desarrollador` (conducta). **Reparación:** ninguna en
   esta intervención, por decisión del propietario.
+
+## Hallazgo y ficha de la pasada correctiva de QA-007-01 (P-136-E, 2026-10-05)
+
+**Origen:** decisión del propietario P-136-E, literal en `PENDING_APPROVAL.md` § Resueltas. Evidencia: `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/ca54/42-diff-inventarios.txt` (pasada correctiva de QA-007-01).
+
+### INS-136-1 — Hallazgo `instrumento`, no atribuible al cambio: la calibración de `sonda-reloj.sh` sale fuera de banda y tres casos del banco pasan a FAIL
+- **Qué se observó:** en el inventario de la pasada correctiva (banco de v1.35.0 con los hooks del candidato y `ARNES_SEMILLA_41=23062`), REQ-021 CA-03 «calibración de `sonda-reloj.sh`» (`a=2487` frente a la banda [1600, 2400]), REQ-021 CA-10 y REQ-021 CA-10.2 pasan de PASS a FAIL. Los dos últimos heredan la misma calibración.
+- **Por qué no es atribuible al cambio** (prueba estática, comprobada en el disco por la coordinadora): la calibración la hace `tests/util/sonda-reloj.sh --calibrar` sobre un sujeto propio de bash y la juzga `sonda_juzga_calibracion` (`tests/escenarios/hooks/run.sh`). Ni `sonda-reloj.sh` ni `sonda-procesos.sh` hacen referencia a `HOOKS_DIR`, `guard.sh` ni `lib.sh`. **Corroboración del propietario:** los mismos tres fallaron en WSL con el banco entero y pasaron solos en la sección 38 (`docs/qa/REQ-023.md`, validación manual), y en el CI hubo dos corridas rojas en dos sondas de reloj distintas y una tercera verde.
+- **Consecuencia:** mientras siga así, un inventario puede diferir en estos casos sin que cambie el código. Por la regla de parada afinada en P-136-E, se registran y el plan sigue.
+- **Dueño propuesto:** `desarrollador` (instrumento), con QA. **No se repara en esta intervención.**
+
+### F-136-4 — REQ-021, `instrumento`: una calibración de `sonda-reloj` fuera de banda sale FAIL en vez de abstenerse
+- **Qué propone el propietario (literal):** «una calibración de sonda-reloj fuera de banda sale FAIL; según la propia filosofía del banco debería abstenerse (SKIP o INCONCLUSO con motivo), como ya hace la sonda que no converge».
+- **Consecuencia de no hacerlo:** sigue el rojo intermitente descrito en INS-136-1, que no informa sobre el código.
+- **Cuándo:** para después. **No se repara en esta intervención.** Cambiar un FAIL por una abstención cambia el contrato de REQ-021 CA-03 y CA-10 (§9), y lo fija el `analista-requerimientos`.
