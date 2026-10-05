@@ -1,0 +1,3 @@
+s3-v3-10001-niveles sin CLAUDE_PROJECT_DIR (cwd en la entrada): sin-decision
+s10-truncada sin CLAUDE_PROJECT_DIR (cwd en la entrada): sin-decision
+n4-edit-cierre-rojo sin CLAUDE_PROJECT_DIR (cwd en la entrada): deny

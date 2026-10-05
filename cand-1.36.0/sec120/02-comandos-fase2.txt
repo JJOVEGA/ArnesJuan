@@ -1,0 +1,28 @@
+SEC-120, fase 2 (reparación). Worktree /home/juan/dev/ArnesJuan-v1.36, cand/1.36.0, cabeza 5f52a74 + la reparación.
+Árboles: v1.35.0 = /home/juan/dev/ArnesJuan-v1.35.0-base/hooks (3956a6f); 82ceb63 = git archive 82ceb63 hooks en un
+temporal, idéntico (diff -r) a los hooks del worktree antes de reparar; candidato = hooks del worktree (huellas en 76-).
+
+# Procesos (sonda del contrato + recuento exacto por espacio de PID), antes y después
+bash genera-entradas.sh                                     # proyecto/ y entradas/ (n* normales, s* de SEC-120)
+bash procesos-sec120.sh <worktree> v1.35.0=<base>/hooks 82ceb63=<tmp>/hooks                 > 50-procesos-antes.txt
+bash procesos-sec120.sh <worktree> v1.35.0=<base>/hooks 82ceb63=<tmp>/hooks candidato=<worktree>/hooks > 51-procesos-despues.txt
+
+# CA-69 2 (a): el banco de v1.35.0 tal cual, con los hooks del candidato y la semilla de referencia
+cd /home/juan/dev/ArnesJuan-v1.35.0-base
+ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.36/hooks ARNES_SEMILLA_41=23062 bash tests/escenarios/hooks/run.sh > 60-banco-v1.35.0-con-hooks-candidato.txt
+bash tests/escenarios/hooks/inventario.sh 60-… > 61-inventario-candidato.txt
+diff ../ca54/22-inventario-v1.35.0.txt 61-inventario-candidato.txt > 62-diff-inventarios.txt
+
+# CA-69 2 (b): el banco del worktree (2122), autoprueba y gates
+cd /home/juan/dev/ArnesJuan-v1.36
+ARNES_SEMILLA_41=23062 bash tests/escenarios/hooks/run.sh > 70-banco-worktree.txt        (y 77-, sobre los bytes finales)
+bash tests/escenarios/hooks/inventario.sh 70-… > 71-inventario-worktree.txt; diff 33-… 71-… > 72-diff-inventario-worktree-fase1.txt
+bash tests/escenarios/hooks/autoprueba-corredor.sh > 73-autoprueba.txt                   (y 79-, final)
+gates de AGENTS.md §7 > 74-gates.txt
+
+# Fail-before sobre los bytes finales de la sección 44
+ARNES_HOOKS_DIR=<base>/hooks bash tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh > 80-…
+ARNES_HOOKS_DIR=<tmp 82ceb63>/hooks bash … > 81-…
+
+# Frontera: sin CLAUDE_PROJECT_DIR (el proyecto sale del cwd de la entrada)
+env -u CLAUDE_PROJECT_DIR bash <worktree>/hooks/guard.sh < entradas/<x>.json > 75-frontera-sin-project-dir.txt

@@ -1,0 +1,89 @@
+1,28d0
+< FAIL	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-git.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-codigo.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-git.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto por guard.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas por guard-completado.sh candidata  esperado=deny got=allow  <>
+< FAIL	SEC-120 T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas por guard.sh candidata  esperado=deny got=allow  <>
+1475d1446
+< PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+1815a1787
+> PASS	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard-codigo.sh candidata  (deny)
+1816a1789
+> PASS	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard-completado.sh candidata  (deny)
+1817a1791
+> PASS	SEC-120 L1 (V3) Edit de la coordinadora que cierra un REQ critico en rojo, clave de 10001 niveles por guard.sh candidata  (deny)
+1818a1793
+> PASS	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard-codigo.sh candidata  (deny)
+1819a1795
+> PASS	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard-completado.sh candidata  (deny)
+1820a1797
+> PASS	SEC-120 L2 (V3) el mismo cierre del desarrollador por guard.sh candidata  (deny)
+1821a1799
+> PASS	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard-codigo.sh candidata  (deny)
+1822a1801
+> PASS	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard-completado.sh candidata  (deny)
+1823a1803
+> PASS	SEC-120 L3 (V3 por Write) el desarrollador escribe src/a.ts por guard.sh candidata  (deny)
+1824a1805
+> PASS	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard-codigo.sh candidata  (deny)
+1825a1807
+> PASS	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard-completado.sh candidata  (deny)
+1826a1809
+> PASS	SEC-120 L4 (V3 por MultiEdit) la coordinadora edita docs/n.md por guard.sh candidata  (deny)
+1827a1811
+> PASS	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-codigo.sh candidata  (deny)
+1828a1813
+> PASS	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-completado.sh candidata  (deny)
+1829a1815
+> PASS	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard-git.sh candidata  (deny)
+1830a1817
+> PASS	SEC-120 L5 (V3 por Bash) ls -la del desarrollador por guard.sh candidata  (deny)
+1831a1819
+> PASS	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-codigo.sh candidata  (deny)
+1832a1821
+> PASS	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-completado.sh candidata  (deny)
+1833a1823
+> PASS	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard-git.sh candidata  (deny)
+1834a1825
+> PASS	SEC-120 L6 entrada truncada: Bash echo x > src/a.ts de la coordinadora, sin la llave final por guard.sh candidata  (deny)
+1837a1829
+> PASS	SEC-120 T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena por guard-completado.sh candidata  (deny)
+1838a1831
+> PASS	SEC-120 T1 (V1) MultiEdit que cierra un REQ en rojo con las ediciones como cadena por guard.sh candidata  (deny)
+1839a1833
+> PASS	SEC-120 T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número por guard-completado.sh candidata  (deny)
+1840a1835
+> PASS	SEC-120 T2 (V2) MultiEdit sobre un REQ en rojo con las ediciones como número por guard.sh candidata  (deny)
+1841a1837
+> PASS	SEC-120 T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto por guard-completado.sh candidata  (deny)
+1842a1839
+> PASS	SEC-120 T3 MultiEdit que cierra un REQ en rojo con las ediciones como objeto por guard.sh candidata  (deny)
+1843a1841
+> PASS	SEC-120 T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas por guard-completado.sh candidata  (deny)
+1844a1843
+> PASS	SEC-120 T4 MultiEdit sobre un REQ en rojo con las ediciones como lista de cadenas por guard.sh candidata  (deny)
+2113a2113
+> SKIP	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

@@ -1,0 +1,21 @@
+== procesos ANTES de reparar; 2026-10-05T16:47:49-06:00; carga 0.11 0.69 0.77; sha256 lib.sh v1.35.0 dfa953890c1e4571, 82ceb63 d43d374b39a2684f ==
+n1-bash-ls.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 5 5 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 4 4
+n2-edit-literal-req.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+n3-multiedit-req.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+n4-edit-cierre-rojo.json | v1.35.0: deny; sonda estado=ok procesos=7; exacto 7 7 | 82ceb63: deny; sonda estado=ok procesos=7; exacto 7 7
+n5-write-src-coord.json | v1.35.0: deny; sonda estado=ok procesos=6; exacto 5 5 | 82ceb63: deny; sonda estado=ok procesos=6; exacto 5 5
+n6-bash-escribe-src.json | v1.35.0: deny; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: deny; sonda estado=ok procesos=6; exacto 6 6
+n7-bash-git-status.json | v1.35.0: sin-decision; sonda estado=ok procesos=5; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=5; exacto 5 5
+s1-v1-edits-cadena.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+s10-truncada.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 3 3 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 3 3
+s11-null.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 3 3 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 3 3
+s12-dos-objetos.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 5 5 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 4 4
+s2-v2-edits-numero.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+s3-v3-10001-niveles.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 3 3 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 3 3
+s4-v4-9000-niveles.json | v1.35.0: deny; sonda estado=ok procesos=7; exacto 7 7 | 82ceb63: deny; sonda estado=ok procesos=7; exacto 7 7
+s5-edits-objeto.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+s6-edits-lista-cadenas.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+s7-new-string-numero.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 82ceb63: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+s8-file-path-numero.json | v1.35.0: sin-decision; sonda estado=ok procesos=5; exacto 4 4 | 82ceb63: sin-decision; sonda estado=ok procesos=5; exacto 4 4
+s9-command-numero.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 5 5 | 82ceb63: sin-decision; sonda estado=ok procesos=4; exacto 4 4
+rc=0 fin 2026-10-05T16:47:56-06:00
