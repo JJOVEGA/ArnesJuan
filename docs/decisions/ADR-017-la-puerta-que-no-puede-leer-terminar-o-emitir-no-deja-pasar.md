@@ -52,3 +52,23 @@ Las tres van a todo agente cuando la decisión no se puede atribuir, y sin proce
 - (−) **Puede mover lo que mide REQ-017 CA-09** (sección 37/3 del banco, la pared de los 60 s por `Write`). REQ-017 está `completado`: si el veredicto cambia, se escala antes de entregar (REQ-007 CA-68, `AGENTS.md` §9). Decisión del propietario (décima autorización): «CA-68 / REQ-017 CA-09: se evalúa al construir SEC-115; si afecta, §9.»
 - (=) **Windows/MSYS, declarado no medido.** No se le atribuye cobertura. Si el motivo siguiera pasando por la línea de órdenes, el límite de `CreateProcess` podría bajar el umbral de SEC-118 (R-045 §4, inferido). Allí, además, la retirada del transporte es superlineal (R-047, observación de QA).
 - (=) No supersede ningún ADR. Se apoya en el mismo principio que ADR-015 (una edición que la puerta no puede reconstruir se deniega) y que ADR-016 (un REQ que la puerta no puede leer entero no se edita).
+
+## Nota posterior (2026-10-06) — SEC-129: también la puerta que termina por un camino que no es un juicio
+
+*Nota añadida por el `analista-requerimientos` en la fase 0 del paso 6 de 1.36.0. No reescribe nada de lo anterior: el título, la decisión y las consecuencias de arriba siguen como se aceptaron el 2026-10-03.*
+
+**Qué cambia en el alcance.** La decisión de arriba cubre tres cosas: la puerta que no puede **leer** su entrada, la que no puede **terminar** de juzgarla a tiempo y la que no puede **emitir** su decisión. Desde esta fecha cubre también otras dos:
+- la puerta que **termina por un camino que no es un juicio**: un error del intérprete, una puerta abandonada a mitad o un analizador que devuelve un código fuera de su vocabulario (ejemplos **no exhaustivos**). Ésa tampoco deja pasar;
+- y **ninguna decisión depende del modo del intérprete heredado del entorno**.
+
+Es SEC-129 (`docs/seguridad/registro-seguridad.md` § R-054, §4; su clase y su estado viven allí). Con el hook arrancado en modo POSIX, la vía `Bash` de las tres puertas sale sin decisión para toda llamada, medido igual desde v1.30.3. Ese hook no está en ninguno de los tres casos de arriba: termina en milisegundos, con rc 0, y no llega a decidir nada que emitir (R-054 §5).
+
+**Por qué entra aquí.** Lo decidió el propietario el 2026-10-06: «P-136-L: (A). … la reparación va dentro de SEC-115/118, que ya trata «el hook siempre emite decisión».» (`PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-10-06) — P-136-J (A, acotada), P-136-K (A) y P-136-L (A)»). El principio es el mismo: una puerta que no puede medir no deja pasar. Aquí la puerta no midió porque su analizador falló, y dejó pasar.
+
+**Dónde vive el contrato.** En REQ-007 CA-68, viñeta «Un final que no es un juicio no deja pasar, y ninguna decisión depende del modo del intérprete heredado», con el texto de R-054 §5 citado y su medida. El movimiento de «sin decisión» a `deny` está en CA-69, punto 3. Rige lo mismo que arriba para el resto: la técnica es del desarrollador y no hay procesos añadidos.
+
+**Lo que no entra:**
+- `BASH_ENV` con otro contenido que `set -o posix`, que corre antes del hook (ficha F-136-9).
+- Las variables `ARNES_*_LISTO` heredadas (QA-007-07). Su inclusión está pendiente de la decisión P-136-N del propietario.
+
+**Consecuencias.** (−) Las filas de `Bash` con el hook en modo POSIX pasan de «sin decisión» a `deny`, y se declaran en CA-69, punto 3. Sobre lo legítimo no hay movimiento esperado: la parte (ii) exige la misma decisión que en modo normal, así que `ls -la` sigue sin decisión. (=) No supersede este ADR ni ningún otro, y su `Estado:` no cambia.

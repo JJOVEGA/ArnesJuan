@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, fase 0 (analista): CA-68 gana la propiedad de SEC-129 y la restricción de los techos; CA-69 punto 7 con E1–E3 y la comprobación de SEC-130; nota posterior fechada en ADR-017
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~213 k tokens) y la coordinadora.
+
+- **CA-68:** (i) sólo un juicio terminado puede salir sin decisión; (ii) ninguna decisión depende del modo heredado del intérprete. Medida: la matriz de `seg-posix/02-matriz.sh` por las tres puertas de `Bash`, con fail-before contra `78a2f33` y v1.35.0. QA-007-07 queda pendiente de P-136-N. Techos: la restricción de la evaluación, con los 296 976 bytes como cota de contrato.
+- **CA-69 p. 3:** declara el movimiento de esas filas de «sin decisión» a `deny`. **CA-69 p. 7:** E1, E2, E3, la regla de «afecta» (basta un caso; para por §9) y la comprobación de QA sobre SEC-130.
+- **ADR-017:** nota posterior (2026-10-06), sin reescribir. Historial, Correspondencia e índice.
+- **Precisión del analista:** la evaluación de CA-68 frente a CA-09 dice «no se puede saber sin medir», no «no afecta»; la obligación de medir E1–E3 no cambia.
+- **Incidencia de la coordinadora:** el analista arrancó antes de que el plan del paso 6 quedara comiteado (mi primer commit falló por el CHANGELOG), y declaró «fuente no disponible»; corregido en una segunda pasada corta con la sede `2cf0934`.
+- **Avance (regla 6):** el contrato del paso 6 está escrito; sigue la fase 1 (casos y fail-before).
+
 ## [GitHub] — 2026-10-06 · Paso 5: commit validado. R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-129 anotado en REQ-007; SEC-130 (`instrumento`, baja) → F-136-12. Apertura del paso 6 (SEC-115/118 con SEC-129) por delegación
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-055; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `2d676d1`; ~197 k tokens) y la coordinadora.
 
