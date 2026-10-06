@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 2: reparación en `hooks/lib.sh` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`; evidencia `cand-1.36.0/sec127/`, commits `42cd8a9` y `281869b` del árbol de evidencia).
+
+- **SEC-127:** `arnes_estado_ausente` deja de usar una asignación delante de una llamada de función.
+  - Ahora guarda `LC_ALL`, lo pone en C, llama y lo restaura (o lo borra si no estaba definido), con sentencias sueltas, sin subshell y sin procesos.
+  - Funciona también en bash 5.0 o anterior en modo POSIX porque el punto «o» de NEWS de bash-5.1 sólo afecta a las asignaciones delante de una función, y ya no queda ninguna.
+- **QA-007-06:** `arnes_preludio` vacía `ARNES_INPUT` antes del `read`.
+  - Un `read` que falla con error no asigna nada, así que deja la entrada vacía, que es ilegible: deny a todo agente.
+  - El límite sin `CLAUDE_PROJECT_DIR` y los hooks de parada no cambian.
+- **Casos:** sección 47 32/0 (RF1 y RF2 en verde; LO, LK, RL siguen en verde); `413c6bd` 24/8; v1.35.0 20/8/4; sección 44 363/0.
+- **CA-69 2 (a)** con la semilla 23062: 2038/0/12, y el `diff` frente a `ca54/22-` está **vacío**.
+- **Banco del worktree:** 2185/0/13, cuadre 2198. Autoprueba 117/0 y gates rc 0.
+- **Procesos:**
+  - camino común (n1–n9): +0 frente a `413c6bd` y no más que v1.35.0, en la sonda y en el recuento exacto;
+  - entrada estándar cerrada o directorio: +1, el `jq` que emite el deny (coste de decidir).
+- **Fuera:** P-136-K, P-136-L y SEC-128.
+- **Avance (regla 6):** el paso 5 queda listo para la fase 3, QA (Opus).
+
 ## [GitHub] — 2026-10-05 · Paso 5, fase 1 (`ab52c9b`, SIN VALIDAR): casos de QA-007-06 con su fail-before; los de SEC-127 no pueden fallar en bash 5.3.9; fichas P-136-K (cómo se acredita SEC-127) y P-136-L (`POSIXLY_CORRECT=1` apaga la vía `Bash`, preexistente)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~105 k tokens; sección 47, 32 casos; evidencia `79f3908`) y la coordinadora.
 

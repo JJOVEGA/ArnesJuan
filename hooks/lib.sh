@@ -29,9 +29,15 @@ arnes_read_stdin() { cat; }
 # encontro: asi se sabe, sin procesos, que habia algo detras. Sin `CLAUDE_PROJECT_DIR` y sin proyecto que
 # sacar de la entrada, sigue inerte (limite declarado de CA-47 punto 20). Los hooks de parada no pasan
 # `guardian` y conservan la conducta de siempre.
+#
+# UN `read` QUE FALLA CON ERROR NO ASIGNA NADA (QA-007-06, SEC-127): con la entrada estandar cerrada o
+# siendo un directorio —por cualquier causa—, bash avisa y devuelve 1, igual que en el fin de archivo,
+# pero deja la variable como estaba. Sin valor previo, `set -u` abortaba el hook sin decision; con uno
+# heredado del entorno, se habria juzgado ese. Por eso la variable se vacia ANTES de leer: un `read`
+# fallido deja la entrada vacia, que es ilegible por la regla de arriba, sin procesos y sin otra rama.
 arnes_preludio() {
   arnes_require_jq || return 1
-  ARNES_INPUT_NUL=0
+  ARNES_INPUT_NUL=0; ARNES_INPUT=''
   if IFS= read -r -d '' ARNES_INPUT; then ARNES_INPUT_NUL=1; fi
   [ -n "${ARNES_INPUT:-}" ] || [ "${1:-}" = guardian ] || return 1
   arnes_project_dir "$ARNES_INPUT"
@@ -2182,11 +2188,23 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
 # forma (un acento, un punto, un parentesis: la expresion cambia) o un solo byte no ASCII en el texto
 # (los plegados de mayusculas de otros alfabetos), responde 1. Se resuelve en el locale C, donde pasar a
 # minusculas solo toca A-Z; no arranca ningun proceso, asi que el locale C no llega a ninguno.
+#
+# EL LOCALE SE GUARDA Y SE RESTAURA A MANO, NO CON UNA ASIGNACION DELANTE DE LA LLAMADA (SEC-127, R-052
+# §4). Esta funcion corre en el proceso que juzga, no en un subshell. `LC_ALL=C funcion …` se deshace al
+# volver solo desde bash 5.1: en bash 5.0 o anterior, en modo POSIX, la asignacion delante de una funcion
+# PERSISTE (NEWS de bash-5.1, punto «o»), y el recorrido de destinos de despues correria en C, donde
+# `grep -i` no pliega las mayusculas que no son ASCII. Aqui solo hay asignaciones y un `unset` sueltos,
+# que todo bash, en todo modo, aplica y deshace igual; sin subshell y sin procesos.
 arnes_estado_ausente() {   # <texto> <estado terminal>
-  # El stderr del grupo es solo el aviso de bash al RESTAURAR un locale del entorno que no esta
-  # instalado (lo da una vez por cambio; la funcion no escribe nada): sin el, cada llamada anadiria una
-  # linea que v1.35.0 no escribia.
-  { LC_ALL=C _arnes_estado_ausente_c "$1" "$2"; } 2>/dev/null
+  local rc=0 habia="${LC_ALL+1}" antes="${LC_ALL-}"
+  # El stderr del grupo es solo el aviso de bash al cambiar a, o RESTAURAR, un locale del entorno que no
+  # esta instalado (la funcion no escribe nada): sin el, cada llamada anadiria una linea que v1.35.0 no
+  # escribia.
+  { LC_ALL=C
+    _arnes_estado_ausente_c "$1" "$2" || rc=$?
+    if [ -n "$habia" ]; then LC_ALL="$antes"; else unset LC_ALL; fi
+  } 2>/dev/null
+  return "$rc"
 }
 _arnes_estado_ausente_c() {
   case "$2" in ''|*[!A-Za-z0-9_-]*) return 1 ;; esac

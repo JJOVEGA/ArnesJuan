@@ -1,7 +1,7 @@
 # Sección 47 del banco — 47-lectura-fallida-y-locale
 # Se hace `source` desde el corredor, en su propio subshell y con sus ayudantes; no se ejecuta
 # suelto ni hace `source` de otra sección (invariantes 3 y 4 del README del banco).
-# 1.36.0, paso 5 (SEC-127 y QA-007-06), fase 1: casos SIN REPARAR, a nivel de hook y de librería.
+# 1.36.0, paso 5 (SEC-127 y QA-007-06): casos de la fase 1, reparados en la 2; hook y librería.
 #   RF  QA-007-06 (REQ-007 CA-47 punto 20, «Pendiente hasta SEC-127»): si el `read` de la entrada
 #       falla con error, por cualquier causa —medidas: la entrada estándar CERRADA y una entrada
 #       estándar que es un DIRECTORIO—, el hook deniega a todo agente, con el motivo de la entrada
