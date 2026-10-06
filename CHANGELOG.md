@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Resumen del plan vigente del propietario registrado literal; `docs/PLAN.md` gana el objetivo rector, la condición previa de CA-68 en el paso 6, el detalle del cierre y las fichas de 1.37.0 (a–e) y 1.38.0 (f–i)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- La fuente sigue siendo `docs/PLAN.md`, la cola y ESTADO; el resumen del propietario queda literal en la cola por si difieren.
+- **Nada se construye de 1.37 ni 1.38:** son fichas. La 2b de CA-54 (F-136-6) queda dentro de la ficha e).
+- **Avance (regla 6):** el plan queda completo hasta la publicación; sigue QA del paso 5, ya en curso.
+
 ## [GitHub] — 2026-10-06 · P-136-M medido: REQ-017 CA-08 (ii) no tiene escalón entre v1.35.0 y `78a2f33` (medianas 1,207–1,228); INS-136-2 y F-136-8; el paso 5 sigue a QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (medición, ~25 k tokens; evidencia `a16f3f8`) y la coordinadora.
 

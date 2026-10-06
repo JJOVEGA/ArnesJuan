@@ -47,6 +47,84 @@ _(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-06, sobre `df0b4f0`) — **Resumen del plan vigente de 1.36.0, fichas de 1.37.0 y 1.38.0, y objetivo rector del arnés** (la fuente sigue siendo `docs/PLAN.md`, la cola y ESTADO)
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Plan vigente, para la coordinadora (resumen del propietario; la fuente es
+> docs/PLAN.md, la cola y ESTADO; si algo difiere, mandan ellos).
+>
+> ## 1.36.0 — en curso. Alcance cerrado: nada más entra; lo nuevo va a ficha.
+> 1. CA-54 / QA-023-10 — CERRADO en 82ceb63. QA-007-01 límite declarado;
+>    recursión medida por seguridad hasta 2040 niveles. La 2b sale a 1.37.
+> 2. SEC-120 — CERRADO (reparado, QA favorable, seguridad, commit).
+>    QA-007-05 corregido en texto; QA-007-06 residual, reparado en el paso 5.
+> 3. Paso 5 — SEC-127 + QA-007-06 + SEC-128 — EN CURSO:
+>    - código hecho (a59917d, 78a2f33), sin validar;
+>    - P-136-M en medición dirigida (REQ-017 CA-08 (ii) con anfitrión en
+>      reposo sobre v1.35.0 → 82ceb63 → 413c6bd → a59917d → 78a2f33); si hay
+>      escalón, pasada correctiva del paso 5 (sin gastar) sobre ese commit;
+>      si no, instrumento y ficha para REQ-017;
+>    - después: QA del paso 5 entero → revisión corta de POSIXLY_CORRECT
+>      (P-136-L) → seguridad (reclasifica SEC-127) → commit validado.
+>    - bash 5.0/POSIX: no medido, declarado (P-136-K).
+> 4. SEC-115/118 — CA-67, CA-68, CA-69; ADR-017. El hook siempre emite
+>    decisión; plazo propio 40 s; tope del motivo; los avisos entran
+>    (P-136-B/C). Incluye la reparación de POSIXLY_CORRECT (P-136-L). ANTES
+>    de construir: evaluar CA-68 frente a REQ-017 CA-09; si afecta, parar y
+>    presentarlo al propietario con §9.
+> 5. Cierre — notas [1.36.0], límites declarados, decisiones de riesgo,
+>    limpieza de propuesta-v1.35.0/ a docs/historia o evidencia, PR fuera de
+>    borrador, CI verde; fusión, tag y publicación: propietario.
+> Pendiente del propietario: ninguno salvo lo que CA-68 produzca y publicar.
+>
+> ## Reglas de ejecución (plantilla templates/autorizacion.md)
+> - Cada fase termina en commit local; la siguiente empieza sin pedir permiso.
+> - Decide sola: texto, trazabilidad, banco sin cambio de veredicto, la
+>   pasada correctiva prevista, orden y presupuesto de despachos, registrar
+>   defectos sin repararlos.
+> - Para y pregunta sólo por: cambio de contrato o alcance; aceptar/aplazar
+>   riesgo; más pasadas que la prevista; un caso que EJECUTA HOOKS cambia de
+>   veredicto (los de calibración de sonda se registran y se sigue); un
+>   control del proveedor detiene algo (registra, no reintenta, sigue con lo
+>   independiente); publicar/fusionar/etiquetar/cerrar REQ.
+> - Si la sesión se corta: lee ESTADO y la cola y continúa; la autorización
+>   ya está dada.
+> - hooks/ sólo lo edita el desarrollador. Push de la candidata: recordar al
+>   propietario al final de cada fase (ficha para que lo haga el agente en
+>   1.37).
+>
+> ## 1.37.0 (fichas registradas; no se construyen ahora)
+> a) Plan de desarrollo (docs/PLAN.md como fuente; la coordinadora continúa
+>    sola salvo gates; línea derivada en ESTADO).
+> b) Post-condición de filesystem (foto antes / comparación después /
+>    reversión; hueco C pasa de límite a detección).
+> c) Adelgazamiento: roles, gates y tabla §13 a .arnes/config.json; AGENTS.md
+>    a la mitad; historia a docs/; rigor proporcional como regla por
+>    defecto; analista en modelo más barato y /compact entre fases.
+> d) Spike «ArnesJuan como mod»: guard-git como mod medido contra el banco.
+> e) 2b de CA-54 (QA-007-01, recursión), push de candidata por el agente,
+>    límite declarado de mods (un mod de usuario puede aprobar lo que las
+>    puertas niegan; mitigación allowManagedModsOnly).
+>
+> ## 1.38.0
+> f) Frontmatter YAML en los REQ. g) Veredictos con hash de árbol, comando y
+> rc, comprobados por guard-completado. h) Sección adversarial permanente del
+> banco (t3/t4/t5/t5b/t9 por referencia; entornos desde archivos). i) runs/
+> por corrida (observabilidad).
+>
+> ## Medición de esta prueba de modelo
+> Al cerrar SEC-115/118: decisiones escaladas, paradas no previstas, tokens
+> por rol, comparado con CA-54 y SEC-120.
+
+**Y su objetivo, literal, en el mismo mensaje:** «Mi objetivo principal es que este arnés nos ayude a construir aplicaciones más rápido, con menos coste y sin perder el control de: Fidelidad al encargo: que los agentes no cambien requisitos o alcance sin tu autorización. Un plan de desarrollo: saber qué hacer primero, qué depende de qué y cuándo una entrega está terminada. Autonomía útil: continuar el trabajo autorizado sin detenerse por cada ajuste menor. Calidad y seguridad proporcionales: detectar errores sin convertir cada corrección en una cadena interminable. Medición real: conocer tiempo, tokens y coste hasta una entrega aprobada; no presumir ahorro sin evidencia.»
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Lo que no estaba en `docs/PLAN.md` y ahora está:** la condición previa del paso 6 (evaluar CA-68 frente a REQ-017 CA-09 **antes** de construir; si afecta, parar y presentarlo con §9); el detalle del paso 7 (notas, límites, decisiones de riesgo, limpieza de `propuesta-v1.35.0/`, PR fuera de borrador, CI verde); las fichas a–e de 1.37.0 y f–i de 1.38.0; y el objetivo rector, al principio.
+- **P-136-M ya está medido** (sin escalón; INS-136-2, F-136-8), así que el punto 3 del resumen va por «después».
+- **El PR:** el paso 7 dice «PR fuera de borrador», lo que presupone un PR en borrador antes. Abrirlo sigue siendo decisión del propietario (propuesta hecha el 2026-10-06, pendiente de «adopto»).
+- La cola sigue vacía.
+
 ### RESUELTA (propietario, 2026-10-06, sobre la cabeza `098896c`) — **La coordinadora pasa al modelo Fable 5.1 como prueba acotada** (lo que queda del paso 5 y SEC-115/118); los subagentes conservan su modelo; el plan no cambia
 
 **Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`, tras `/model fable`):
