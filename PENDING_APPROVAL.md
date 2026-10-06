@@ -43,9 +43,56 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-05: P-136-H y P-136-I resueltas por el propietario, en § Resueltas.)_
+
+### [2026-10-05] (coordinadora) — P-136-J: SEC-128 (`contrato`, baja; R-053). `guard-codigo` deja pasar al agente de código con un `file_path` que no es texto, antes de aplicar la regla del enlace (SEC-004). ¿Se repara dentro de SEC-127, se repara aparte o se declara?
+
+**Contexto.** R-053 (`docs/seguridad/registro-seguridad.md`), sobre `413c6bd`. **Determinación: con hallazgos, sin veto. SEC-120 queda `mitigado` en el candidato.**
+- **SEC-128:** `hooks/guard-codigo.sh:37-42` devuelve permiso al agente de código cuando `file_path` no es texto, y lo hace **antes** de `arnes_deny_enlace` (`:67`), cuya regla (SEC-004) alcanza a todo agente.
+  - Medido: el agente de código, con `file_path: 5` y un enlace `<raíz>/5 -> src/a.ts`. v1.35.0 y `82ceb63` deniegan; el candidato, con `guard-codigo` invocado solo, **sale sin decisión**. Es un movimiento que CA-69 p. 3 prohíbe.
+  - **Por `guard.sh`, que es la vía real, no tiene efecto:** `guard-completado` deniega en los tres árboles.
+  - La fila **K5** del banco (`44-…:366`) da esa conducta por conforme con un rótulo falso («la puerta de código no juzga el destino del desarrollador»).
+- **Alcance (§6, regla 2):** impide **cerrar** REQ-007. Mientras siga abierto, **publicar** vuelve al propietario; el auditor no lo veta. No impide implementar, probar, el commit validado de SEC-120 ni SEC-127.
+
+**Pregunta.** ¿Cómo se repara SEC-128?
+
+**Opciones.**
+- **(A) Dentro de SEC-127**, que es una intervención corta, con su ciclo completo y antes de publicar. `guard-codigo` deniega también al agente de código cuando el campo no es texto (remediación (a) de R-053); K5 pasa a `deny` y se añade un caso con enlace. Write-back del analista. **Consecuencia:** el mismo patrón que QA-007-06; añade poco a SEC-127. Toca `guard-codigo.sh` y el banco, y no `lib.sh`.
+- **(B) Una intervención propia** después de SEC-127. **Consecuencia:** otro ciclo completo antes de publicar.
+- **(C) Declarar el movimiento** como límite (por `guard.sh` no tiene efecto). **Consecuencia:** cero código, pero CA-69 p. 3 deja de cumplirse para esa forma y K5 sigue con un rótulo falso.
+
+**Recomendación de la coordinadora: (A).**
+
+**Qué trabajo sigue mientras no se decida:** el commit validado de SEC-120 (hecho) y la fase 1 de SEC-127 (casos de banco del locale y de QA-007-06, con su fail-before), que no dependen de esta decisión. La reparación de SEC-127 (fase 2) espera a la decisión, para no gastar dos pasadas sobre el banco. Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
+
+### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-05) — **Plan autorizado: paso 5 de 1.36.0, SEC-127 más QA-007-06**
+
+**Fuente de la delegación:** «Continúa sin pararte: write-back de QA-007-05, seguridad de SEC-120, commit validado, SEC-127» (P-136-H/I, literal en esta sección). Las condiciones son las de P-136-G y P-136-I, sin cambios. Los bloques se calcan del plan de SEC-120.
+
+> ## Plan autorizado (se ejecuta entero; cada fase termina en commit local y la siguiente empieza sin pedir permiso)
+> Fase 1 — desarrollador: casos de banco, con su fail-before sobre el candidato (`413c6bd`) y v1.35.0:
+> (i) SEC-127: el locale del proceso leído DESPUÉS del atajo de `guard-completado`, y el cierre de un REQ con estado no ASCII (TERMINÉ/terminé) en `LC_ALL=C` simulado;
+> (ii) QA-007-06: `read` de la entrada falla con error, por cualquier causa (ejemplos no exhaustivos: entrada estándar cerrada, entrada que es un directorio), con un caso por cada causa medida.
+> Sin reparar.
+> Fase 2 — desarrollador: reparación SIN subshell (`local LC_ALL=C` o guardar y restaurar, a su elección) y `read` fallido → entrada ilegible → `deny`, con 0 procesos añadidos en el camino común. La versión de bash no se declara como límite. Entrega: casos en verde, inventario CA-69 2 con la semilla fijada, banco, autoprueba y gates.
+> Fase 3 — QA (Opus): repite y ataca. Cierra QA-007-05 (texto corregido por P-136-H) y QA-007-06 si procede. Una pasada correctiva como máximo, y su re-verificación.
+> Fase 4 — seguridad, sólo con QA favorable: reclasifica SEC-127 al cerrarlo. Write-back del analista si hay deriva. Commit validado.
+>
+> ## Lo que decide la coordinadora sola
+> Lo mismo que en el plan de SEC-120.
+>
+> ## Cuándo paras y me preguntas (solo esto)
+> Lo mismo que en el plan de SEC-120, con la regla de parada afinada de P-136-E.
+>
+> ## Si la sesión se corta
+> Se continúa desde la última fase comiteada, sin pedir la autorización.
+>
+> ## Límites
+> Nada fuera de SEC-127 y QA-007-06 (SEC-128 está en P-136-J); nada de SEC-115/118. No `AGENTS.md` ni contadores. No push, versión, PR, fusión ni tag.
 
 ### RESUELTA (propietario, 2026-10-05) — **P-136-H: (A)** (el texto del límite del punto 20, sin código) y **P-136-I: (B)** (SEC-120 se cierra con QA-007-06 como residual declarado, que se repara en SEC-127); el plan de SEC-127 gana QA-007-06; se sigue sin parar
 

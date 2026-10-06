@@ -10284,3 +10284,189 @@ Es el mismo precedente que R-050. **El `auditor-seguridad` no ha revisado, medid
 - una lectura de rutas que recurra por segmento (F-136-5).
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-052**; último hallazgo **SEC-127** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-053** y **SEC-128**.
+
+---
+
+## Revisión R-053 — **Intervención 2 de 1.36.0, fase 4: determinación de seguridad del delta de SEC-120** (`hooks/`, `82ceb63`..`413c6bd`: la reparación y su pasada correctiva). `cand/1.36.0` @ `72a328e`, con el código de `413c6bd` — 2026-10-05 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** `git grep` de `R-053` y `SEC-128` en todas las ramas locales y remotas y en las etiquetas, y búsqueda en los worktrees: sólo aparecían como «próximos libres» en la línea final de R-052. Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola», fase 4; y la entrada «RESUELTA (propietario, 2026-10-05) — P-136-H: (A) … y P-136-I: (B)», leída literal: «Continúa sin pararte: write-back de QA-007-05, seguridad de SEC-120, commit validado, SEC-127».
+- **Orden:** QA se pronunció antes sobre este código: `docs/qa/REQ-007.md`, «SEC-120: validación (fase 3)» y «SEC-120: re-verificación de la pasada correctiva», veredicto con hallazgos (QA-007-03 y QA-007-04 cerrados; QA-007-05 con su texto corregido por P-136-H; QA-007-06 residual por P-136-I). No miré las quality gates ni rehíce su trabajo.
+- **Delta revisado:** `git diff 82ceb63 413c6bd -- hooks/`: `guard.sh`, `guard-git.sh`, `guard-codigo.sh`, `guard-completado.sh` y `lib.sh` (+115 −22). **`hooks/` y `tools/` de la cabeza son los de `413c6bd`** (`git diff --quiet` rc 0; `lib.sh` sha256 `3effa3c7fd6e93de…`). `tools/` no cambia en el delta. Leí el diff entero. **Ningún control del proveedor me detuvo.**
+- **Contrato:** REQ-007 CA-47 punto 20, con las decisiones del propietario ya transcritas (coste +0 en el camino común y +1 en lo ilegible; ilegible = todo lo que no sea exactamente un objeto JSON; el límite sin `CLAUDE_PROJECT_DIR` en el texto literal de P-136-H; QA-007-06 pendiente hasta SEC-127), y CA-69 punto 3.
+- **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/seg-R053/` (`00-` y `90-` a `93-`), sin commit allí. Árboles: el candidato, `82ceb63` por `git archive` y v1.35.0 en `/home/juan/dev/ArnesJuan-v1.35.0-base`. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook. `92-` se repitió y salió idéntico.
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 o de `82ceb63` en `allow` o en «sin decisión»?
+
+**Respuesta: por `guard.sh`, que es el único guardián que registra `hooks/hooks.json`, no. En `guard-codigo.sh` invocado aislado, sí, en una forma estrecha: es SEC-128 (§4).**
+
+**Todo lo que añade el delta en los guardianes es una denegación, salvo una rama.** `arnes_deny_entrada_ilegible`, `arnes_deny_no_texto` y la denegación del troceo terminan el proceso con `deny`. La única salida nueva que no es `deny` es el `return 0` del agente de código en `guard-codigo.sh:40-41`. Eso es SEC-128. En `guard-completado` no hay ninguna salida antes de la lectura, así que su denegación «no es texto» alcanza a todo agente.
+
+**1.1 `arnes_preludio guardian` en hooks que no son guardianes.**
+- Sólo pasan `guardian` `guard.sh` y los tres guardianes. `stop.sh`, `estado-derivado.sh` y `rotar-artefactos.sh` llaman a `arnes_preludio` sin argumento. En ellos la condición `[ -n "${ARNES_INPUT:-}" ] || [ "${1:-}" = guardian ] || return 1` es la de siempre (lectura, `grep -rn arnes_preludio hooks/`).
+- Ningún hook de parada llama a `arnes_parse_input`, así que `ARNES_INPUT_NUL` no decide nada en ellos. `tools/` no usa ni el preludio ni la lectura.
+- QA midió los tres hooks de parada con 8 entradas y obtuvo un árbol idéntico al de v1.35.0 (`qa2/50-`). Con stdin cerrado o con un directorio, `stop.sh` sigue con rc 0 (`seg-R053/91-`).
+
+**1.2 `null` → `""` frente a `// ""`.**
+- Para `file_path` y `command`, `if . == null then "" else . end` se diferencia de `// ""` en dos cosas:
+  - **`false`** ya no se lee como ausente: se marca como no texto y la puerta que necesita el campo deniega. Es QA-007-04, en dirección `allow` → `deny`.
+  - **Un `tool_input` que no es un objeto** hace fallar a `jq`. `//` se tragaba el error y dejaba el campo vacío. Ahora la entrada se marca ilegible y deniega. También es dirección `allow` → `deny`, y el host no lo envía.
+- Para una cadena o un `null`, el valor es el mismo que antes. Los demás campos (`tool_name`, `agent_id` y `agent_type`) conservan `// ""`, y `cwd` conserva su filtro: sin cambio.
+- La cabecera pasa de 8 a 10 cifras. La comprobé contra el `read`: 5 de saltos, 3 de retornos de carro y 2 de no texto, en el mismo orden.
+
+**1.3 El vaciado de `ARNES_JQ`.**
+- En `arnes_parse_input`, `ARNES_JQ=''` e `ARNES_INPUT_ILEGIBLE=1` se fijan **antes** de llamar a `jq`. Sólo una salida con rc 0 y no vacía los cambia. Una salida parcial de un `jq` que falla queda en la `local out` y no se reparte.
+- En el troceo de `guard-completado` (`:463`), `arnes_jq_str` no toca `ARNES_JQ` si `jq` falla. La rama del fallo lo vacía y llama a `arnes_deny`, que hace `exit`. Ninguna línea posterior puede leer la lectura anterior.
+- `texto`, `no-lista` y `no-objeto` sólo convierten en error lo que antes era un valor coaccionado o un fallo ignorado. Con cadenas, `null` o `edits: []`, las piezas son las de antes.
+- El único otro `arnes_jq_*` de los guardianes lee el manifiesto (`:916`), y eso es CA-51, fuera del punto 20.
+- El motivo nuevo del troceo interpola `$rel`, que la identidad acota a `ARNES_ID_MAX=4096` caracteres (`lib.sh:656`). Queda por debajo del límite de un argumento: CA-67 conforme.
+
+**1.4 La detección de NUL por el código de salida de `read`.**
+- `read -d ''` devuelve 0 **sólo** si encuentra el delimitador, el NUL. Con un fin de archivo sin NUL devuelve 1 y asigna lo leído. Con un error de lectura devuelve 1 y **no asigna**: de ahí QA-007-06 (§3).
+- Ningún JSON que emite el host lleva un NUL crudo, así que en una entrada legible la detección nunca dispara: no hay falso positivo posible.
+- Un NUL en cualquier posición detiene la lectura en el primero y marca la entrada. No hay forma de esconderlo detrás de otro.
+- La variable heredada no cuenta: el preludio fija `ARNES_INPUT_NUL=0` antes de leer (`qa2/53-`).
+
+### 2. ¿Puede una entrada legible y normal acabar denegada?
+
+**No, en lo que el host envía.** Lo nuevo sólo deniega cuando falta alguna de estas condiciones:
+- exactamente un objeto JSON y ningún NUL;
+- `file_path` o `command` como cadena o `null`;
+- en el REQ, `content`, `old_string` y `new_string` como cadena o `null`, y `edits` como lista de objetos.
+
+El esquema de herramientas del host produce siempre esa forma. QA midió las legibles normales (`git status`, `ls`, los `Edit` y `MultiEdit` literales, el `Write` vacío, el salto final, los blancos, el multilínea y el BOM) sin ningún falso positivo (`qa2/40-` a `qa2/42-`), y `null` sigue siendo ausencia. El coste en el camino común es +0, medido por QA con la sonda del contrato (`qa2/52-`).
+
+**Lo único que puede denegar sin necesitarlo** es un `tool_input` que no es un objeto: deniega en todas las puertas, también en la que no juzga esa herramienta. Ninguna llamada legítima lo produce. **Observación O-53-2.**
+
+### 3. ¿Encajan QA-007-06 como residual y el límite sin `CLAUDE_PROJECT_DIR`? ¿Queda algún fallo en abierto de SEC-120 sin cubrir?
+
+**QA-007-06 como residual declarado: encaja.**
+- **Lo reproduje y tiene más de una causa** (`seg-R053/91-`). Con stdin cerrado (`EBADF`) **y con stdin que es un directorio (`EISDIR`)**, los cuatro guardianes salen con rc 1 y sin decisión. v1.35.0 y `82ceb63` salen con rc 0 y sin decisión, y con `/dev/null` el candidato deniega.
+- **Ninguna decisión cambia:** el host trata rc 1 como error no bloqueante. **No hay movimiento.**
+- **Tiene los tres elementos que exige §6, «Loop de error»:**
+  - **dueño:** `desarrollador` y `analista-requerimientos`;
+  - **forzador medido:** sigue en `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre de REQ-007 mientras esté. Además, la publicación por delegación exige todo en verde;
+  - **vencimiento:** dentro de SEC-127, antes de publicar.
+- **El punto 20 no lo convierte en frontera,** y eso es lo correcto.
+- **Condición que añado:** la reparación en SEC-127 se enuncia **por propiedad** —«`read` falla con error, por cualquier causa; ejemplos **no exhaustivos**: descriptor cerrado, directorio»— y no sólo como «entrada estándar cerrada». El caso de banco debe incluir al menos las dos causas medidas.
+
+**El límite sin `CLAUDE_PROJECT_DIR`: encaja con la política.**
+- CA-23 deja inerte un proyecto sin arnés, y sin proyecto no hay regla que aplicar.
+- Donde se obtiene un proyecto con manifiesto, el candidato deniega más que v1.35.0. Es la dirección segura.
+- **Medí el lado inerte** (`seg-R053/93-`):
+  - dos objetos seguidos con `cwd` de un proyecto con manifiesto salen sin decisión en los tres árboles: `arnes_project_dir` devuelve dos líneas, que no son un proyecto;
+  - un objeto seguido de basura deniega en el candidato.
+
+  Las dos cosas coinciden con el texto de P-136-H («inerte si no puede obtener el proyecto»).
+- **El residuo está escrito,** con «observado y **no verificado**» para el host.
+
+**Fallos en abierto de SEC-120 sin cubrir: ninguno en lo que el punto 20 promete y el host puede enviar.**
+- Los vectores de R-045-A §4 (V1–V3) deniegan, y V4 sigue denegando por el veredicto: sección 44, QA.
+- Lo que queda fuera son tres cosas:
+  - el residual QA-007-06;
+  - el límite sin la variable;
+  - la cláusula 1 de §13: si `jq` no arranca para emitir el `deny`, no hay decisión. Es la familia de SEC-118 y no es nueva.
+- **Fuera de la letra del punto 20 registro O-53-1,** que no es movimiento y que el `matcher` hace inalcanzable.
+
+### 4. SEC-128 — `contrato` (REQ-007) · **abierto** · severidad **baja** · introducido por `aba1c9b` (por lectura de `git show aba1c9b:hooks/guard-codigo.sh`; no medido en ese árbol), sin cambio en `413c6bd` · dueños `desarrollador` (`hooks/guard-codigo.sh`) y `analista-requerimientos` (CA-47 punto 20 y el caso K5)
+
+**`guard-codigo.sh`, invocado aislado, ya no deniega al agente de código la escritura a través de un enlace dentro de la raíz cuando `file_path` no es texto.**
+
+**El mecanismo.** La rama de SEC-120 (`guard-codigo.sh:37-42`) devuelve `return 0` al agente de código **antes** de `arnes_deny_enlace` (`:67`). Esa regla, la de SEC-004 (REQ-007 CA-49 (i)), alcanza a **todo agente**. En v1.35.0 y `82ceb63`, un `file_path` numérico se leía con `tostring`, y si su texto nombraba un enlace dentro de la raíz, esta puerta denegaba también al agente de código.
+
+**Medido** (`seg-R053/90-`, `92-`):
+- **Entrada:** el agente de código, con `file_path: 5` y `<raíz>/5 -> src/a.ts`.
+- **v1.35.0 y `82ceb63`:** `deny` por enlace en `Edit`, `Write` y `MultiEdit`.
+- **Candidato:** **sin decisión** en las tres.
+- **Por `guard.sh` y por `guard-completado.sh`:** `deny` en los tres árboles («no es texto» en el candidato).
+- **La coordinadora** sigue recibiendo `deny` de `guard-codigo` (`E5c`).
+- **`file_path` como cadena `"5"`** sigue denegando (`Es`).
+
+**Por qué es `contrato`, y no sólo una nota.**
+- CA-69 punto 3 dice: «Ningún movimiento de `deny` a `allow` (CA-24): uno es hallazgo».
+- La Medida del punto 20 se hace «por `guard.sh` y por cada guardián que juzga la herramienta».
+- La fila K5 de la sección 44 (`44-integridad-de-la-entrada.sh:366`) lo da por conforme con el rótulo «la puerta de código no juzga el destino del desarrollador». Desde SEC-004, en v1.35.0, sí lo juzga, para la regla del enlace.
+- El requerimiento afirma algo falso sobre lo construido. Las 456 filas de QA no traían un `file_path` no textual que nombrara un enlace.
+
+**Efecto:** ninguno por la entrada registrada. `guard.sh` ejecuta `guard-completado`, que deniega a todo agente un campo que no es texto y no tiene ninguna salida antes de esa denegación. Además, el host valida `file_path` como cadena contra el esquema (observado, **no verificado**). **No justifica veto.**
+
+**Remediación** (decisión de alcance, no la encadeno):
+- **(a) Preferida:** que `guard-codigo` deniegue también al agente de código cuando el campo que juzga no es texto. Es lo que ya hace `guard-completado`, y lo que dice la segunda viñeta del punto 20 («esa puerta deniega»). K5 pasa a `deny`, y se añade un caso con enlace.
+- **(b)** Aplicar `arnes_deny_enlace` antes de la excepción.
+- **(c)** Declarar el movimiento como límite en el punto 20 y en CA-69 punto 3.
+
+Cualquiera de las tres necesita write-back del `analista-requerimientos` (§9: §6 no declara la vía proporcional).
+
+**Forzador:** la intervención de SEC-127, que vuelve a tocar los guardianes antes de publicar, o la que decida la coordinadora. **Vencimiento propuesto:** antes de publicar 1.36.0. **No aceptado.**
+
+### 5. Observaciones (no hallazgos)
+
+- **O-53-1 — Un `tool_name` que no es texto** (`5`, `false`) sale sin decisión en v1.35.0, en `82ceb63` y en el candidato, por `guard.sh` y por cada guardián (`92-`, `TN5` y `TNf`).
+  - No es movimiento.
+  - Queda fuera de la letra del punto 20, que trocea `tool_input`.
+  - El `matcher` de `hooks.json` lo hace inalcanzable: el host sólo invoca el hook con un nombre que casa.
+  - Lo anoto para que el analista valore, cuando vuelva a abrir el punto 20, si la propiedad «un valor que la puerta necesita y no es texto» debe alcanzar también a `tool_name`.
+- **O-53-2 — El motivo de entrada ilegible es inexacto para un `tool_input` que no es un objeto** («no la interpreta como un unico objeto JSON»). Ya lo vio QA. Pierde precisión en el motivo, no protección.
+- **O-53-3 — Variables heredadas del entorno** (`ARNES_INPUT` con un error de lectura, `ARNES_INPUT_LISTO`): son preexistentes y quedan fuera del modelo de amenaza, porque quien fija el entorno del hook ya controla el hook. No son movimiento.
+
+### 6. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta: CON HALLAZGOS, SIN VETO.** La propiedad de SEC-120 se cumple por la entrada registrada: una entrada que `jq` no puede leer o trocear no pasa. Las únicas excepciones son el residual QA-007-06 y el límite declarado. No hay movimiento de `deny` a `allow` por `guard.sh` ni falsos positivos en lo legible.
+- **SEC-128:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007. Está en su `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre (§6 y §13).
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por delegación y vuelve al propietario (§4 y política de autoalojamiento).
+    - **No impide** implementar, probar ni el commit validado de SEC-120.
+  - **(ii) Qué parte afecta:** `guard-codigo.sh` invocado aislado, rama de SEC-120, agente de código, `Edit`, `Write` y `MultiEdit`.
+  - **(iii) Evidencia:** `hooks/guard-codigo.sh:37-42` y `:67`, `tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh:366`, y `seg-R053/90-` y `92-`.
+  - **(iv) Qué lo resuelve:** la remediación (a), (b) o (c) del §4, con su write-back.
+- **QA-007-06:** residual declarado conforme (§3), con la condición de enunciarlo por propiedad en SEC-127. Su clase y su sitio no cambian.
+- **QA-007-05:** el texto de P-136-H dice la verdad sobre lo que medí (§3). Lo cierra QA, como fija la cola.
+
+### 7. SEC-120 → **`mitigado`** en el candidato (`413c6bd`, sin publicar)
+
+- **Qué queda reparado y medido:**
+  - una entrada que `jq` no puede leer, o que no es exactamente un objeto JSON, se deniega a todo agente;
+  - unas ediciones o un contenido que la puerta no puede trocear se deniegan;
+  - ninguna variable conserva la lectura anterior.
+
+  Evidencia: QA, sección 44, 363/0 y fail-before 314/49; y este §1.
+- **Residual declarado:** QA-007-06 (`contrato`, en REQ-007), que se repara en SEC-127 antes de publicar.
+- **Límite declarado:** sin `CLAUDE_PROJECT_DIR`, inerte si no se obtiene el proyecto (CA-47 punto 20, texto de P-136-H).
+- **No acreditado:** el anfitrión, Windows/MSYS y el CI sobre la cabeza final.
+- La entrada original (R-045-A §4) se conserva sin cambios.
+
+### 8. Firmas y cobertura
+
+- **`Seguridad:` de REQ-007 sigue en `pendiente`.** Añado sólo la referencia a R-053 dentro de su paréntesis. **`Hallazgos abiertos:` de REQ-007** recibe SEC-128.
+- **Lo que acredita esta revisión:**
+  - que el delta no mueve ningún `deny` a `allow` ni a «sin decisión» por `guard.sh`;
+  - que los hooks de parada conservan su conducta;
+  - que lo legible normal no se deniega;
+  - que el residual y el límite encajan con la política de la casa.
+- **Lo que NO acredita:**
+  - las quality gates ni el coste, que son de QA (cito su +0);
+  - el anfitrión (`claude -p`);
+  - Windows/MSYS y el `jq` de Windows;
+  - el CI;
+  - SEC-127, SEC-115 y SEC-118;
+  - bash anterior a 5.1, que no he medido.
+
+### 9. Estado tras R-053
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-120`** | `instrumento` | **`mitigado`** en el candidato `413c6bd`; residual QA-007-06 y límite sin `CLAUDE_PROJECT_DIR`, declarados | `desarrollador` | No (el residual bloquea por su cuenta) |
+| **`SEC-128`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+| `QA-007-06` | `contrato` (REQ-007) | residual declarado (P-136-I); se repara en SEC-127, por propiedad | `desarrollador`; `analista-requerimientos` | REQ-007 |
+| `SEC-127` | `contrato` (REQ-007) | sin cambio | `desarrollador` | REQ-007 |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una salida temprana de un guardián que exceptúe a un agente **antes** de una regla que alcanza a todo agente;
+- una comprobación de presencia de la entrada que use `${X:-}` y una lectura posterior que no lo use (`set -u`);
+- un `// ""` que vuelva a tratar `false` como ausencia en un campo que decide.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-053**; último hallazgo **SEC-128** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-054** y **SEC-129**.

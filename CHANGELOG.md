@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · SEC-120: commit validado. Seguridad R-053 con hallazgos y sin veto: SEC-120 queda `mitigado` en el candidato (`413c6bd`); SEC-128 (`contrato`, baja) → P-136-J. Apertura del paso 5: SEC-127 más QA-007-06
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-053 en `docs/seguridad/registro-seguridad.md`; REQ-007: el paréntesis de `Seguridad:`, que sigue `pendiente`, y `Hallazgos abiertos:` con SEC-128; evidencia `seg-R053/`, commit `e837604`, hecho por la coordinadora; ~192 k tokens) y la coordinadora.
+
+- **R-053:**
+  - por `guard.sh` no hay ningún `deny` que pase a `allow` ni a «sin decisión»;
+  - ninguna entrada legible normal se deniega;
+  - el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR` encajan. QA-007-06 se reproduce también con stdin como directorio, y su reparación se enuncia por propiedad;
+  - **SEC-120 queda `mitigado` en el candidato**, con la entrada original intacta;
+  - observaciones O-53-1 (`tool_name` que no es texto, fuera del `matcher`) y O-53-2.
+- **SEC-128:** `guard-codigo` deja pasar al agente de código con un `file_path` que no es texto, antes de la regla del enlace (SEC-004). `guard-codigo` solo, sin decisión; por `guard.sh`, sin efecto. La fila K5 lo daba por bueno con un rótulo falso. **P-136-J** (recomendación (A): repararlo dentro de SEC-127).
+- **Evidencia:** la de R-052 (CA-54), que había quedado sin commit, también se comitea (`cand-1.36.0/ca54/seg-R052/`).
+- **Paso 5 abierto por delegación:** plan de SEC-127 más QA-007-06 en la cola; la fase 1 empieza ya, y la fase 2 espera P-136-J.
+- **Avance (regla 6):** SEC-120 cerrado como intervención y mitigado antes de su vencimiento (2026-10-29).
+
 ## [GitHub] — 2026-10-05 · P-136-H (A) y P-136-I (B) resueltas por el propietario; write-back del analista en CA-47 p. 20; el plan de SEC-127 gana QA-007-06
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~104 k tokens) y la coordinadora.
 

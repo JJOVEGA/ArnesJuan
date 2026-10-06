@@ -423,10 +423,10 @@ cuando deben.
 | Paso | Qué | Estado |
 |---|---|---|
 | — | **CA-54 / QA-023-10** (intervención 1) | **Cerrada:** candidato `82ceb63`. QA-007-01 es límite declarado, y la medición de seguridad sobre la recursión (R-052, hasta 2 040 niveles, `deny` y rc 0) es la evidencia |
-| 1 | **SEC-120** (REQ-007 CA-47 p. 20; vence el 2026-10-29): write-back del analista con las decisiones del propietario sobre la fase 2 | Pendiente: los créditos de uso |
-| 2 | SEC-120: QA (Opus, comisión nueva) sobre `aba1c9b` | — |
-| 3 | SEC-120: seguridad, con QA favorable | — |
-| 4 | SEC-120: commit validado | — |
+| 1 | **SEC-120** (REQ-007 CA-47 p. 20; vence el 2026-10-29): write-back del analista con las decisiones del propietario sobre la fase 2 | **Hecho** (`af362fd`, `72a328e`) |
+| 2 | SEC-120: QA (Opus, comisión nueva) sobre `aba1c9b` | **Hecho:** con hallazgos; una pasada correctiva (`413c6bd`); QA-007-06 como residual (P-136-I) |
+| 3 | SEC-120: seguridad, con QA favorable | **Hecho:** R-053, con hallazgos y sin veto; SEC-120 `mitigado`; SEC-128 → P-136-J |
+| 4 | SEC-120: commit validado | **Hecho** |
 | 5 | **SEC-127, sola** (intervención corta), **más QA-007-06** (entrada estándar cerrada → `deny`; P-136-I), con un caso de banco para cada uno, y las cuatro condiciones de P-136-G: sin subshell (`local LC_ALL=C` o guardar y restaurar); caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado; seguridad lo reclasifica al cerrarlo; la versión de bash no se declara como límite | — |
 | 6 | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | — |
 | 7 | **Cierre y publicación** de 1.36.0: fusionar, etiquetar y publicar son decisión del propietario mientras SEC-127 no esté cerrado | — |
