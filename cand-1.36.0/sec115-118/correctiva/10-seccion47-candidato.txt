@@ -1,0 +1,107 @@
+# seccion 47 (102 casos), hooks=candidato, 2026-10-06T16:15:34-06:00
+--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---
+  PASS  SEC-118 CA-67 D0a control: 'Hallazgos abiertos:' 1601 veces, líneas ASCII de 66 caracteres, por Write -> deny  (a) rc 0 en 2009ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D0b control: 'Hallazgos abiertos:' 2501 veces, líneas ASCII de 29 caracteres, por Write -> deny  (a) rc 0 en 2009ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D1 'Hallazgos abiertos:' 1801 veces, líneas ASCII de 66 caracteres, por Write -> deny emitido  (a) rc 0 en 2410ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D2 'Hallazgos abiertos:' 3000 veces, líneas ASCII de 29 caracteres, por Write -> deny emitido  (a) rc 0 en 2610ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D3 'Hallazgos abiertos:' 1601 veces con ñ, por Write -> deny emitido  (a) rc 0 en 2511ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D4 'Hallazgos abiertos:' 1001 veces con caracteres de 4 bytes, por Write -> deny emitido  (a) rc 0 en 1307ms, salida 16494 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D5 'Hallazgos abiertos:' 2501 veces, cortas con ñ, por Write -> deny emitido  (a) rc 0 en 2711ms, salida 16494 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D6 'QA:' de unos 140 KB sin paréntesis final, cierre por Edit -> deny emitido  (a) rc 0 en 1909ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D7 'Seguridad:' de unos 140 KB sin paréntesis final, cierre por Edit -> deny emitido  (a) rc 0 en 1411ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D8 'Sensible a seguridad:' dudoso de unos 140 KB, cierre por Edit -> deny emitido  (a) rc 0 en 4713ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D9 línea de cabecera sin ':' de unos 140 KB con un retorno de carro interior, cierre por Edit -> deny emitido  (a) rc 0 en 1308ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido ASCII, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1810ms, salida 16404 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido ASCII, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1409ms, salida 16404 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido de 2 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1610ms, salida 16403 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido de 2 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1510ms, salida 16404 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido de 4 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 707ms, salida 16401 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido de 4 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 608ms, salida 16404 bytes; (b) aviso; (c) sin cerrar
+  PASS  SEC-115 CA-68 T1 control del fail-before: QA pendiente con unos 255 KB de evidencia con blancos, Edit a completado -> deny en no más de 40 s  (a) rc 0 en 2411ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-115 CA-68 T2a Write de 2025113 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 508ms, salida 648 bytes; (b) deny; (c) intacto
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 308ms, salida 648 bytes; (b) deny; (c) intacto
+  PASS  SEC-115 CA-68 T3 búsqueda del old_string de 128000 bytes en una racha de 256000, Edit a completado -> deny en no más de 40 s  (a) rc 0 en 1912ms, salida 627 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 105ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 106ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 106ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 107ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 109ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 106ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 106ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo normal (control), por guard-codigo.sh -> deny  (a) rc 0 en 106ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=1, por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=, por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo SHELLOPTS, por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo BASH_ENV, por guard-codigo.sh -> deny  (a) rc 0 en 110ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 108ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo --posix, por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 108ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 109ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 106ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 107ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo normal (control), por guard-completado.sh -> deny  (a) rc 0 en 106ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=1, por guard-completado.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=, por guard-completado.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo SHELLOPTS, por guard-completado.sh -> deny  (a) rc 0 en 107ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo BASH_ENV, por guard-completado.sh -> deny  (a) rc 0 en 107ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 106ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo --posix, por guard-completado.sh -> deny  (a) rc 0 en 107ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo normal (control), por guard.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo normal (control), por guard-git.sh -> deny  (a) rc 0 en 106ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=1, por guard.sh -> deny  (a) rc 0 en 106ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=1, por guard-git.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=, por guard-git.sh -> deny  (a) rc 0 en 106ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo SHELLOPTS, por guard-git.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 106ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo BASH_ENV, por guard-git.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo --posix, por guard.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo --posix, por guard-git.sh -> deny  (a) rc 0 en 107ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo normal (control), por guard.sh -> deny  (a) rc 0 en 107ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo PC=1, por guard.sh -> deny  (a) rc 0 en 105ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo PC=, por guard.sh -> deny  (a) rc 0 en 106ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 106ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 106ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo --posix, por guard.sh -> deny  (a) rc 0 en 107ms, salida 595 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo normal (control), control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 107ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo PC=1, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 106ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo PC=, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 109ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo SHELLOPTS, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 108ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo BASH_ENV, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 107ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo --posix, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 109ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  QA-007-07 CA-68 E ARNES_INPUT_LISTO=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc 0 en 110ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  QA-007-07 CA-68 E ARNES_MANIFEST_LISTO=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc 0 en 110ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  QA-007-10 CA-68 P ARNES_CWD_VISTO heredada con el cwd inexistente de la entrada, echo x > src/a.ts, por guard.sh -> deny no determinable  (a) rc 0 en 109ms, salida 507 bytes; (b) deny; (c) intacto
+  PASS  QA-007-12 CA-67 P 'QA:' en disco con 140000 bytes que no son UTF-8, cierre por Edit -> deny con el motivo en no más de 16384 bytes  (a) rc 0 en 1411ms, salida 16495 bytes; (b) deny; (c) intacto
+  PASS  QA-007-11 CA-68 P FUNCNEST heredada (1), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  QA-007-11 CA-68 P SHELLOPTS heredada (keyword), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc 0 en 110ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  QA-007-11 CA-68 P BASH_FUNC_jq%% heredada (() { :; }), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  QA-007-11 CA-68 P BASH_COMPAT=31 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 109ms, salida 287 bytes; (b) aviso; (c) sin cerrar
+  PASS  QA-007-11 CA-68 P BASHOPTS=compat40 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 110ms, salida 287 bytes; (b) aviso; (c) sin cerrar
+aviso: vuelta parcial (1 de 61 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 102 PASS, 0 FAIL
