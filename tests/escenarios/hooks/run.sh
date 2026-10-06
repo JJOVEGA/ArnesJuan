@@ -1684,7 +1684,10 @@ done
 # sección nueva 47-decision-emitida.sh —D 11 (9 + 2 controles), A 6, T 4 (2 + 2 controles del fail-before), M 72
 # (6 modos × 12 filas de guardián)—. Se escriben SIN reparar: con los hooks de 78a2f33 salen 57 FAIL (y con los
 # de v1.35.0, 58: T2b pasa del plazo de 40 s), que la fase 2 tiene que volver PASS. Ninguna sección cambia su número.
-CASOS_ESPERADOS=2303
+# Y 2303 → 2305 por QA-007-07 (P-136-N (A); REQ-007 CA-68): +2 en 47-decision-emitida.sh (93 → 95), bloque E —un
+# Write legible de la coordinadora a src/ con ARNES_INPUT_LISTO=1 o ARNES_MANIFEST_LISTO=1 heredada del entorno, deny—;
+# en 0efd3c2 y v1.35.0 salen sin decisión (el fail-before). Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2305
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

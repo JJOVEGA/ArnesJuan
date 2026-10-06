@@ -121,6 +121,15 @@ arnes_preludio() {
 #
 # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
 # salida anterior de jq.
+#
+# LAS MARCAS DE «YA LEIDO» NACEN VACIAS AL CARGAR LA LIBRERIA (QA-007-07; REQ-007 CA-68, P-136-N). Exportadas en
+# el entorno del hook, `ARNES_INPUT_LISTO=1` o `ARNES_MANIFEST_LISTO=1` hacian creer que la entrada o el
+# manifiesto ya se habian leido: las puertas se saltaban la lectura y salian sin decision —medido con un `Write`
+# legible de la coordinadora a `src/` y, con la primera, con la entrada estandar cerrada—. Una decision del hook no
+# depende de lo que herede del entorno: se vacian aqui, sin procesos, antes de que nada las lea. Todo `source`
+# de esta libreria ocurre antes del preludio, asi que vaciarlas de nuevo al cargarla otra vez no borra ninguna
+# lectura hecha.
+ARNES_INPUT_LISTO=''; ARNES_MANIFEST_LISTO=''
 arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
   local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' t_fp='' t_cmd='' out

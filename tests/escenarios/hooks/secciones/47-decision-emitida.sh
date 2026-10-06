@@ -22,8 +22,8 @@
 # FAIL en los dos, y los controles PASS (docs/arnes/v1.36.0-sec115-118-fase1.md). T1 y T2b (1 MB) no reproducen
 # su fail-before aquí (deciden antes de 60 s en los dos árboles) y quedan como CONTROLES; T2b, medida de 29 a 49 s,
 # roza el plazo de 40 s y antes de la reparación puede salir FAIL por (a). Esto NO es el host.
-CASOS_ESPERADOS_SECCION=93
-PISO_AUTONOMO_SECCION=82  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 55 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-87)
+CASOS_ESPERADOS_SECCION=95
+PISO_AUTONOMO_SECCION=85  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 58 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-90)
 seccion_nueva "--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---"
 PD47="$RAIZ/de47-$BASHPID"; W47="$RAIZ/w47-$BASHPID"; mkdir -p "$W47"; BE47="$W47/bashenv"; printf 'set -o posix\n' > "$BE47"
 O47=''; RC47=0; MS47=0; E47_IN=''; E47_APLICA=':'; E47_F=''; E47_C=intacto
@@ -43,6 +43,7 @@ r47() {
       PC=)      POSIXLY_CORRECT= timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       SHELLOPTS) timeout 60 env SHELLOPTS=posix "$BASH" "$HOOKS_DIR/$s" ;;
       BASH_ENV) BASH_ENV="$BE47" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
+      ARNES_INPUT_LISTO=1|ARNES_MANIFEST_LISTO=1) env "$m" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       --posix)  timeout 60 "$BASH" --posix "$HOOKS_DIR/$s" ;;
       *)        exit 98 ;;
     esac < "$3" 2>>"$ERRLOG")"; RC47=$?
@@ -54,7 +55,7 @@ h47() { local f r=''; for f in $E47_F; do if [ -e "$PD47/$f" ]; then r+="$f=$(ck
 # E47_APLICA (lo que la herramienta haría si el entorno no recibe deny), E47_F y E47_C (intacto: la huella no
 # cambia; abierto: el REQ no queda en `Estado: completado`). Las tres comprobaciones, por separado.
 j47() {
-  local nom="$1" esp="$2" s="$3" m="$4" plazo="$5" ent="$E47_IN" sal got a='' c cok=si antes despues nb
+  local nom="$1" esp="$2" s="$3" m="$4" plazo="$5" cita="${6:-}" ent="$E47_IN" sal got a='' c cok=si antes despues nb
   if [ -n "$FILTRO" ] && ! printf '%s' "$nom" | grep -qi -- "$FILTRO"; then return 0; fi
   json_no_vacio "$nom" "$ent" || { FAIL=$((FAIL + 1)); return 0; }
   printf '%s' "$ent" > "$W47/in"; antes="$(h47)"
@@ -71,8 +72,10 @@ j47() {
     '')                               got=nada ;;
     *)                                got=otra ;;
   esac
+  # Con <cita>, el deny tiene que ser el de la puerta que juzga, no otro (p. ej., el fijo de un final sin juicio).
+  [ -z "$cita" ] || [ "$got" != deny ] || [[ "$sal" == *"$cita"* ]] || got='deny con otro motivo'
   # (c) si el entorno no recibe deny, la herramienta se ejecuta: se aplica y se mira el archivo protegido.
-  [ "$got" = deny ] || (cd "$PD47" && eval "$E47_APLICA") >/dev/null 2>&1
+  [[ "$got" == deny* ]] || (cd "$PD47" && eval "$E47_APLICA") >/dev/null 2>&1
   despues="$(h47)"
   case "$E47_C" in
     intacto) if [ "$antes" = "$despues" ]; then c='(c) intacto'; else c='(c) MODIFICADO'; cok=no; fi ;;
@@ -243,5 +246,18 @@ for f47 in "${M47[@]}"; do
       j47 "$nom47" "$x47" "$s47" "$m47" -
     done
   done
+done
+
+# --- E · QA-007-07 / CA-68 (P-136-N): ninguna decisión depende de lo que el hook herede del entorno ------
+# Las marcas de «ya leído» de lib.sh exportadas en el entorno no se saltan la lectura ni el manifiesto: el Write
+# legible de la coordinadora a src/ sigue en el deny de guard-codigo, con su motivo. Fail-before: v1.35.0 y 78a2f33,
+# sin decisión (set -u aborta el hook); 0efd3c2 ya deniega, pero con el motivo fijo de la trampa de entrada.sh —un
+# final sin juicio—, no con el de la puerta: por eso el caso exige la cita del motivo de guard-codigo.
+for v47 in ARNES_INPUT_LISTO ARNES_MANIFEST_LISTO; do
+  if ! pg47; then echo "  FAIL  QA-007-07 $v47  no se pudo preparar el repositorio del proyecto (git)"; FAIL=$((FAIL + 1)); continue; fi
+  E47_IN="$(jq -cn --arg c "$PD47" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:$c,session_id:"s",tool_input:{file_path:($c+"/src/a.ts"),content:"x"}}')"
+  E47_APLICA='printf x > src/a.ts'
+  j47 "QA-007-07 CA-68 E $v47=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo" \
+    deny guard.sh "$v47=1" - 'es código de la app'
 done
 rm -rf "$PD47" "$W47"

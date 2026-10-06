@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6 (desarrollador): QA-007-07 — las marcas de «ya leído» de `lib.sh` no se heredan del entorno — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-N (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, sección «QA-007-07»; evidencia `8bd6626`.
+
+- **Cambio:** `hooks/lib.sh` vacía `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` al cargarse. Es una línea y no lanza procesos.
+- **Casos:** dos en la sección 47 (bloque E, uno por variable), que exigen el `deny` de guard-codigo con su motivo. La sección pasa de 93 a 95 y el total de 2303 a 2305.
+- **Fail-before:**
+  - en `78a2f33` y v1.35.0, sin decisión;
+  - en `0efd3c2`, `deny`, pero con el motivo fijo de la trampa de la fase 2, así que el caso falla igual.
+- **Medidas:**
+  - sección 47: 95/0;
+  - banco del worktree: 2292/1/12. El FAIL es REQ-017 CA-08 (ii), de reloj (INS-136-2), y no lo atribuyo al cambio;
+  - 2 (a): 2037/0/13, con sólo las diferencias de instrumento y de 2 (c);
+  - autoprueba 117/0, gates con rc 0 y procesos +0.
+- **Avance (regla 6):** QA-007-07 queda reparado y con casos. Falta la validación de QA.
+
 ## [GitHub] — 2026-10-06 · Borrador de las notas `[1.36.0]` (analista) en `docs/arnes/notas-1.36.0-borrador.md`, con huecos `[PENDIENTE: …]`; tres desajustes detectados para el cierre; F-136-5 corregida a 1.37
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~? k tokens) y la coordinadora.
 
