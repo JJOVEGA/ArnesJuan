@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, write-back del analista por P-136-O/N: los techos como cambio de compatibilidad declarado (CA-68, CA-69 p. 3, guía, nota posterior en ADR-017); CA-68 (ii) sobre todo lo que el hook herede del entorno, con QA-007-07; observación de la sección 24 en CA-69 p. 7
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Cambio de compatibilidad** (clasificado de fondo por el analista → nota posterior fechada en ADR-017, sin ADR nuevo): un documento de más de 393 216 bytes no se escribe entero de una vez, y un `Edit` cuyo producto (documento + `new_string`) × `old_string` supera 2³² se deniega; fronteras medidas 393 213/393 214 (`65-`). `REQ-021.md` y `REQ-023.md` no cambian.
+- **CA-68 (ii):** «nada que el hook herede del entorno» (modo del intérprete, `ARNES_INPUT_LISTO`, `ARNES_MANIFEST_LISTO`), con un caso por variable. **Precisión del analista, aceptada por la coordinadora e informada al propietario:** quedan fuera `CLAUDE_PROJECT_DIR` y las entradas que el host da por contrato, porque si no (ii) contradiría CA-47 p. 20.
+- **Otras precisiones:** la regla del producto en vez de «~6,5 KB» (esa cifra sólo vale para un documento de 660 KB); QA fija cuántas corridas de la sección 24 hará antes de correrlas.
+- **Avance (regla 6):** el contrato del paso 6 está completo; falta QA-007-07 (desarrollador, en curso) y la validación.
+
 ## [Interno] — 2026-10-06 · P-136-O (1) (A), (2) (A) y P-136-N (A) adoptadas por el propietario; ficha F-136-17 (adelgazar `REQ-007.md`); el paso 6 sigue con QA-007-07 y el write-back de los techos en paralelo
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

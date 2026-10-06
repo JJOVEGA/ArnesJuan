@@ -1328,6 +1328,25 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   POSIX queda declarada como no medida:** en ese intérprete la corrección se sostiene por lectura, no por medida.
   Sede: REQ-007, CA-47, punto 20, «SEC-127 — cómo se acredita (P-136-K)», del arnés.
 
+- **Cambio de compatibilidad: un REQ muy grande no se escribe entero de una vez, y un `Edit` con un `old_string`
+  grande sobre él se deniega (REQ-007 CA-68 del arnés; decisión P-136-O del propietario del arnés, 2026-10-06).**
+  Esta entrada **no migra nada**: dice qué llamadas legítimas que la versión anterior dejaba pasar **deniega** la
+  que instalas, para que no te sorprenda. Para que un hook que no termina de juzgar a tiempo no deje pasar,
+  `guard-completado` mide el tamaño antes de las operaciones que crecen más que linealmente, y deniega a todo
+  agente por encima de dos techos. **(1)** El `Write` de un REQ cuyo `content` pasa de unos **393 216 bytes** (el
+  techo cuenta el texto troceado: el `content` más 4 bytes, sin el salto final; medido, 393 213 bytes pasan y
+  393 214 deniegan) **se deniega**: un REQ de ese tamaño no se escribe entero de una vez. **(2)** Un `Edit` cuyo
+  producto (bytes del documento más los de los `new_string`) × (bytes de los `old_string`) pasa de **2³²** **se
+  deniega**; en un `MultiEdit` cuentan todas sus ediciones. La frontera depende del tamaño del REQ: sobre uno de
+  660 431 bytes, un `old_string` de 3 000 a 6 400 bytes pasa y uno de 7 000 o más deniega. **Consecuencia y
+  salida:** con 1.35.0 esas llamadas salían sin decisión; ahora el motivo del `deny` lo dice y dice cómo salir:
+  edita el REQ por fragmentos con `Edit`, usa un `old_string` más corto —basta con el trozo que identifica el
+  sitio— o parte la edición en varias llamadas. Los REQ por debajo de esos tamaños no cambian (medido: un `Write`
+  de 296 973 bytes sigue igual). Medido en Linux/WSL2, una corrida por punto; Windows/MSYS y el host, sin medir. Si
+  tus REQ crecen hasta ahí, puedes archivar su historia con la rotación por sección que el arnés ya trae
+  (`rotacion.artefactos`, apagada por defecto). Sede: REQ-007, CA-68, «Techos de tamaño», «Cambio de compatibilidad declarado…», y
+  CA-69, punto 3, del arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
