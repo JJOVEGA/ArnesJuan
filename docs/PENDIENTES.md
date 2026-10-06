@@ -2252,3 +2252,9 @@ ninguna mata al hook.»
 ### F-136-10 — Observaciones de R-054 sin hallazgo
 - **O-54-2:** el `2>/dev/null` de CA-54 (`lib.sh:2083`) oculta en los comandos ASCII el error del intérprete que v1.35.0 dejaba en stderr; no cambia ninguna decisión. Se revisa al reparar SEC-129 (R2).
 - **O-54-3:** las expansiones `$'…'` en modo POSIX quedan **sin medir**: un control del proveedor detuvo esa sonda y no se reintentó (regla del propietario).
+
+### F-136-11 — QA-007-07 (`contrato`, baja, preexistente): `ARNES_INPUT_LISTO=1` o `ARNES_MANIFEST_LISTO=1` heredadas del entorno dejan a las puertas sin decidir
+- **Qué se observó** (QA del paso 5, `docs/qa/REQ-007.md`, «Paso 5: validación…»; evidencia `cand-1.36.0/sec127/qa/`, commit `ba474ae`): con cualquiera de esas dos variables exportadas en el entorno del hook, las puertas no deciden ni ante un `Write` legible de la coordinadora a `src/`; con `ARNES_INPUT_LISTO=1` tampoco deciden con la entrada estándar cerrada. Causa: `hooks/lib.sh:125` no inicializa esas variables al cargarse. **v1.35.0 se comporta igual**: no lo introduce el paso 5.
+- **Por qué `contrato`:** CA-47 punto 20 promete `deny` «por cualquier causa». Está en `Hallazgos abiertos:` de REQ-007 (lo puso QA) e impide cerrarlo.
+- **Misma familia que SEC-129** (R-054): estado heredado del entorno que apaga las puertas. La propiedad que R-054 propone para CA-68 («ninguna decisión depende del modo del intérprete heredado del entorno») lo cubriría si se enuncia sobre **el entorno heredado**, no sólo sobre el modo del intérprete.
+- **Dónde se repara:** decisión de alcance del propietario (ficha registrada por la regla de P-136-J, «si aparece algo más, ficha»); propuesta en la cola.

@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · QA del paso 5 (Opus) sobre `78a2f33`: el código cumple el contrato, sin hallazgos contra él; QA-007-05 cerrado; QA-007-06 validado y pendiente del write-back; QA-007-07 (preexistente) → F-136-11 y P-136-N
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` y la cabecera de REQ-007; evidencia `ba474ae`) y la coordinadora.
+
+- **Conforme:**
+  - sección 47 44/0 y sección 44 363/0, con fail-before de E y K5 sobre `a59917d` y de RF sobre `413c6bd`;
+  - SEC-127 por lectura: la única asignación delante de una función que queda corre dentro de `$(…)`; la restauración con `LC_ALL` no definida está medida;
+  - inventario 2 (a) sólo con una línea de 2 (c) (INS-136-2);
+  - banco 2197/0/13, autoprueba 117/0, gates rc 0;
+  - +0 procesos en el camino común;
+  - ataques: 462 combinaciones de `file_path` no textual, 264 de `command`, varias causas más de `read` fallido, 160 combinaciones de locale y 192 cierres: ninguna regresión.
+- **Hallazgos:** QA-007-05 **cerrado**; QA-007-06 reparado y validado, **abierto sólo hasta que el analista actualice la viñeta** «Pendiente hasta SEC-127» de CA-47 p. 20 (no hace falta otra corrida); **QA-007-07** (`contrato`, baja, preexistente): `ARNES_INPUT_LISTO=1` o `ARNES_MANIFEST_LISTO=1` heredadas del entorno dejan a las puertas sin decidir.
+- **No medido:** bash ≤ 5.0 en modo POSIX (P-136-K); `POSIXLY_CORRECT` (SEC-129); el host; Windows/MSYS; el CI sobre la cabeza final.
+- **Avance (regla 6):** el código del paso 5 está validado; faltan el write-back, el cierre de QA-007-06 y la determinación de seguridad.
+
 ## [GitHub] — 2026-10-06 · R-054 (P-136-L): `POSIXLY_CORRECT` y sus equivalentes apagan la vía `Bash` de las tres puertas desde v1.30.3; SEC-129 (`contrato`, media), se repara en el paso 6; fichas F-136-9 y F-136-10; un control del proveedor detuvo una sonda
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-054; evidencia `2713c21`) y la coordinadora.
 

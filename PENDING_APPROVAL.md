@@ -43,7 +43,23 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-06] (coordinadora) — P-136-N: QA-007-07 (`contrato`, baja, preexistente): variables `ARNES_*_LISTO` heredadas del entorno dejan a las puertas sin decidir. ¿Entra en el paso 6 junto a SEC-129, o va a 1.37?
+
+**Contexto.** Hallazgo nuevo de QA en el paso 5 (F-136-11 en `docs/PENDIENTES.md`). No lo introduce el paso 5: v1.35.0 se comporta igual. Es la misma familia que SEC-129 (`POSIXLY_CORRECT`): un estado heredado del entorno apaga las puertas sin ruido. La reparación es inicializar dos variables al cargar `lib.sh` (una línea; sin procesos). La propiedad que R-054 propone para CA-68 lo cubre si se enuncia sobre «el entorno heredado» y no sólo sobre «el modo del intérprete».
+
+**Opciones.**
+- **(A) Entra en el paso 6 (SEC-115/118), junto a SEC-129,** como parte de la misma propiedad: «ninguna decisión depende de nada heredado del entorno». El analista lo escribe en CA-68 con SEC-129; el desarrollador lo repara en la misma fase; QA y seguridad lo cubren con un caso de banco. **Consecuencia:** coste marginal (una línea y un caso); el paso 6 crece en una variable de la misma clase que ya trata.
+- **(B) Ficha para 1.37.** **Consecuencia:** 1.36.0 se publica con un `contrato` abierto que una variable de entorno puede explotar, declarado en las notas; REQ-007 sigue sin poder cerrarse por él.
+
+**Recomendación de la coordinadora: (A).** Sirve a «calidad proporcional» sin dañar «autonomía útil»: no abre ningún ciclo nuevo, va dentro del que ya existe para la misma clase de defecto.
+
+**Decisión propuesta, lista para adoptar:** «P-136-N: (A). QA-007-07 entra en el paso 6 con SEC-129, bajo la propiedad de CA-68 enunciada sobre el entorno heredado: ninguna decisión del hook depende de nada que herede del entorno (modo del intérprete, variables `ARNES_*`, `BASH_ENV` queda como ficha F-136-9). Caso de banco para cada variable. Nada más entra.»
+
+**Qué trabajo sigue mientras no se decida:** todo lo del paso 5 (write-back de QA-007-06, su cierre por QA, la determinación de seguridad y el commit validado), que no depende de esto. La apertura del paso 6 espera a esta decisión sólo en su alcance; su plan se redacta con las dos variantes.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
