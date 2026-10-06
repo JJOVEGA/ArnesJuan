@@ -43,7 +43,38 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-06: P-136-O y P-136-N resueltas por el propietario, en § Resueltas.)_
+
+### [2026-10-06] (coordinadora) — P-136-P: QA del paso 6 CON HALLAZGOS; (1) E2 dio 1 FAIL en 6 corridas de REQ-017 CA-09 (regla «afecta» → §9, decisión tuya); (2) alcance de la única pasada correctiva ante cinco hallazgos `contrato` más (QA-007-09 a QA-007-12)
+
+**Contexto.** `docs/qa/REQ-007.md`, «Paso 6: validación de SEC-115, SEC-118, SEC-129 y QA-007-07»; evidencia `cand-1.36.0/sec115-118/qa/`, commit `e19b708`; código `8e11f87`. **Conforme:** sección 47 95/0 con fail-before (`78a2f33` y v1.35.0 36/59); SEC-118 con UTF-8 válido (motivos de 16 382–16 384 bytes; los avisos de 140 KB se emiten); SEC-115: T1–T3 en `deny` en 0,4–2,6 s, T2b en 0,2–0,4 s (v1.35.0: 32–38 s), el plazo actúa en una llamada real (REQ de 3 MB → `deny` a los 36,3 s); E1 sin cambio; E3 PASS; techos: fronteras reproducidas, nada cambia fuera de `requirements/`; matriz POSIX en `deny`; QA-007-07 reparado; R2 deniega `exit` inesperado y códigos no declarados; banco 2292/0/13; autoprueba 117/0; gates rc 0; +0 procesos; **INS-136-3** (la sección 24 no se reproduce en 15 corridas + inventario). **Cerrados por QA:** QA-007-07 y **QA-023-10** (en su medición, 35 corridas sobre `82ceb63`). **SEC-130: confirmado que R2 no lo cubre** (`ulimit -n 3` → cierre por `sed` sin decisión); sigue F-136-12.
+
+**(1) QA-007-08 — E2 «afecta».** CA-69 p. 7 dice: un FAIL en E2 → parar y presentar con §9. El candidato dio **4 PASS, 1 SKIP por solape y 1 FAIL (corrida 4, 0,962×)**; v1.35.0, 5 PASS y 1 por solape. E1 (las tres entradas de la sonda a nivel de hook) **no muestra ningún cambio** de decisión ni de duración, así que la causa que la ficha preparada presuponía (un techo o el plazo) no aparece. La cifra 0,962× es **por debajo de 1**: el candidato salió más rápido que la referencia en esa corrida, no más lento. REQ-017 está `completado`.
+- **(A) Registrarlo como instrumento (INS-136-4)** y ampliar F-136-8 a CA-09: la sonda 37/3 también decide sobre una banda que el ruido del anfitrión cruza (INS-136-1 y 2 ya lo documentan para CA-03 y CA-08 (ii)); E1 es la medida directa y no cambia. **Consecuencia:** REQ-017 no se reabre; la revisión del instrumento queda en 1.37 con F-136-8. Sin código.
+- **(B) Reabrir REQ-017 por §9** (vuelve a `en-revisión` y re-recorre el ciclo). **Consecuencia:** un ciclo completo sobre un REQ cerrado, por una corrida de 6 con el candidato más rápido.
+- **(C) Repetir E2 en anfitrión sano** (≥ 6 corridas, carga < 0,5 registrada), sin repetir hasta el verde: si vuelve a dar FAIL en la misma dirección, (A); si da FAIL con el candidato más lento, (B). **Consecuencia:** 20–30 minutos.
+
+**(2) Los cinco hallazgos `contrato` y la única pasada correctiva del plan:**
+
+| Id | Qué | Preexistente | Cabe en la pasada sin cambiar alcance |
+|---|---|---|---|
+| **QA-007-10** | `ARNES_CWD_VISTO` heredada del entorno cambia la decisión (barrido de 32 810 combinaciones; sólo ésa) | sí | **Sí:** es la propiedad (ii) de P-136-N; vaciarla al cargar y un caso |
+| **QA-007-12** | con bytes no UTF-8 venidos del disco, el motivo emitido llega a 48 781 bytes (se acota antes de que `jq` sustituya cada byte por U+FFFD); la decisión se emite | no (lo introduce la fase 2) | **Sí:** acotar después de sanear; CA-67 lo exige |
+| **QA-007-11 (a)** | estado del intérprete heredado: `FUNCNEST=1/2`, `BASH_COMPAT` 31–42, `compat*`, `keyword`, funciones importadas (`BASH_FUNC_jq%%`) dejan sin decisión o rompen el JSON | sí | **Sí:** neutralizables en `hooks/entrada.sh` (propiedad (ii)) |
+| **QA-007-11 (b)** | `SHELLOPTS=noexec` u `onecmd`, y `xtrace` con `BASH_XTRACEFD=1`: no se pueden neutralizar desde dentro del hook; piden actuar en `hooks.json` o declarar la frontera | sí | **No:** decisión de alcance |
+| **QA-007-09** | un `Edit` pequeño que cierra un REQ con **CRLF en disco** de ≥ 3,6 MB sale sin decisión a los 60 s (`guard-completado.sh:604`, superlineal y sin techo: el techo mide la entrada, no el disco); v1.35.0 falla desde 3 MB | sí | **No:** un techo sobre el documento en disco es otro cambio de compatibilidad (y `REQ-007.md` tiene 660 KB) |
+
+- **(A) La pasada repara QA-007-10, QA-007-12 y QA-007-11 (a).** QA-007-11 (b) y QA-007-09 quedan como **límites declarados** con ficha para 1.37 (la frontera de `hooks.json`, y un techo sobre el disco o una normalización lineal del CRLF, propuestos antes de hacerse). **Consecuencia:** una pasada acotada y una re-verificación; 1.36.0 publica dos límites más, declarados en las notas, los dos preexistentes y peores en v1.35.0.
+- **(B) La pasada repara también QA-007-09** con un techo sobre el tamaño del documento en disco para la vía CRLF (cifra por fijar, por encima de 660 KB). **Consecuencia:** otro movimiento `allow` → `deny` que el contrato tiene que declarar; alarga la pasada.
+- **(C) Sin pasada:** todo como límite declarado. **Consecuencia:** se publica con QA-007-12 (introducido por esta ventana) y QA-007-10 abiertos.
+
+**Recomendación de la coordinadora: (1) = (A); (2) = (A).**
+
+**Decisión propuesta, lista para adoptar:** «P-136-P: (1) (A): QA-007-08 es INS-136-4; F-136-8 se amplía a CA-09; REQ-017 no se reabre. (2) (A): la pasada correctiva repara QA-007-10, QA-007-12 y QA-007-11 (a); QA-007-11 (b) y QA-007-09 quedan como límites declarados con ficha para 1.37. Nada más entra.»
+
+**Qué trabajo sigue mientras no se decida:** el write-back de estado del analista (QA-007-07 construido en `8e11f87`; punteros de `lib.sh`; QA-023-10 cerrado), que no depende de esto. La pasada y seguridad esperan.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 

@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · QA del paso 6 (Opus) sobre `8e11f87`: CON HALLAZGOS y parada por P-136-P — E2 dio 1 FAIL en 6 (QA-007-08); cinco `contrato` más (QA-007-09 a QA-007-12); QA-007-07 y QA-023-10 cerrados; INS-136-3
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` y el paréntesis de `QA:`; evidencia `e19b708`) y la coordinadora.
+
+- **Conforme:** sección 47 95/0 con su fail-before; SEC-118 con UTF-8 válido; SEC-115 (T1–T3 y T2b en `deny` en < 3 s; el plazo actúa en una llamada real de 3 MB a los 36,3 s); E1 sin cambio; E3 PASS; techos reproducidos y sin efecto fuera de `requirements/`; matriz POSIX; R2 ante `exit` y códigos no declarados; banco 2292/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **QA-007-08 (`contrato`):** E2 con 1 FAIL en 6 corridas (0,962×); por CA-69 p. 7, parada. **QA-007-09:** CRLF en disco ≥ 3,6 MB → sin decisión a los 60 s (preexistente; `guard-completado.sh:604`). **QA-007-10:** `ARNES_CWD_VISTO` heredada cambia la decisión. **QA-007-11:** estado del intérprete heredado (`FUNCNEST`, `BASH_COMPAT`, `SHELLOPTS=noexec/onecmd`, `xtrace`, funciones importadas). **QA-007-12:** con bytes no UTF-8 el motivo llega a 48 781 bytes. **SEC-130:** R2 no lo cubre, medido.
+- **Cerrados:** QA-007-07 y QA-023-10 (en su medición). **INS-136-3** registrado (la sección 24 no se reproduce en 15 corridas).
+- **P-136-P** en la cola, con la decisión propuesta: (1) QA-007-08 como instrumento (INS-136-4, F-136-8 ampliada a CA-09), sin reabrir REQ-017; (2) la pasada repara QA-007-10, QA-007-12 y QA-007-11 (a); QA-007-11 (b) y QA-007-09, límites declarados con ficha para 1.37.
+- **Avance (regla 6):** el paso 6 está validado en lo esencial; faltan la decisión del propietario, la pasada y seguridad.
+
 ## [Interno] — 2026-10-06 · Paso 6: QA-007-07 reparado por el desarrollador en `8e11f87` (SIN VALIDAR); ESTADO a la fase 3 (QA del paso 6 entero)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
