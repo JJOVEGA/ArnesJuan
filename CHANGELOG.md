@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Paso 5, fase 1 (`ab52c9b`, SIN VALIDAR): casos de QA-007-06 con su fail-before; los de SEC-127 no pueden fallar en bash 5.3.9; fichas P-136-K (cómo se acredita SEC-127) y P-136-L (`POSIXLY_CORRECT=1` apaga la vía `Bash`, preexistente)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~105 k tokens; sección 47, 32 casos; evidencia `79f3908`) y la coordinadora.
+
+- **Sección 47:**
+  - RF1 y RF2 (stdin cerrado o que es un directorio, en los 4 guardianes) fallan en `413c6bd`, que es el fail-before, y salen sin decisión en v1.35.0;
+  - RL1 y RL2 (el límite sin `CLAUDE_PROJECT_DIR`), en verde;
+  - LO1–LO4 (el locale después del atajo) y LK (el cierre fiel en UTF-8), en verde y **sin fail-before** en bash 5.3.9.
+  - Banco 2176/8/14 (los 8 FAIL son los RF); cuadre 2198; autoprueba 117/0; gates rc 0.
+  - El banco lanza ahora el hook sin `env`, porque el `env` de uutils abre el descriptor 0 sobre `/dev/null`.
+- **P-136-K:** el caso 2 que pidió el propietario no es construible como fail-before, porque O-52-3 ya ocurre en v1.35.0 y la reparación restaura C.
+- **P-136-L:** con `POSIXLY_CORRECT=1`, la vía `Bash` no decide en ningún árbol. Es preexistente y está sin clasificar.
+- **Las tres fichas están agrupadas con P-136-J.** La fase 2 sigue, porque no depende de ellas.
+- **Avance (regla 6):** QA-007-06 está medido como fallo; la acreditación de SEC-127 queda pendiente del propietario.
+
 ## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 1: casos del banco y fail-before, sin reparar — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase1.md`; evidencia `cand-1.36.0/sec127/`, commit `79f3908` del árbol de evidencia).
 

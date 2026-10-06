@@ -67,6 +67,39 @@
 **Espera:** elección del propietario.
 
 
+### [2026-10-05] (coordinadora) — P-136-K: el caso 2 de SEC-127 tal como lo pidió el propietario («cierre TERMINÉ/terminé en `LC_ALL=C` simulado, que pasó de `deny` a `allow`») no es construible como fail-before. ¿Con qué se acredita SEC-127?
+
+**Contexto.** Fase 1 del paso 5 (`ab52c9b`; `docs/arnes/v1.36.0-sec127-fase1.md` §3; evidencia `cand-1.36.0/sec127/`, commit `79f3908`).
+- Con `LC_ALL=C` en el **entorno**, el cierre `TERMINÉ`/`terminé` sale sin decisión **también en v1.35.0**: es O-52-3 (R-052 §5), anterior al candidato y no registrado como hallazgo. La simulación de R-052 (`seg-R052/94-`) no aísla el mecanismo de SEC-127 (que la asignación del atajo persista en bash ≤ 5.0 en modo POSIX): mide el locale del entorno.
+- Exigir `deny` ahí sería un movimiento de «sin decisión» a `deny` que CA-69 p. 3 no admite para CA-54. Además, la reparación autorizada (`local LC_ALL=C` o guardar y restaurar) devuelve el locale de partida, que en esa simulación es C: el caso no podría ponerse en verde.
+- **Lo que sí está construido:** LO1–LO4 (el locale leído después del atajo, en modo normal y POSIX) y LK (el cierre fiel, en UTF-8), los dos en verde hoy. **No son fail-before** en bash 5.3.9. **No hay bash ≤ 5.0 en el anfitrión;** la descarga de `ftp.gnu.org` agotó el tiempo y no se reintentó.
+
+**Opciones.**
+- **(A)** Aceptar LO y LK como los casos de SEC-127, con el fail-before real pendiente de un bash ≤ 5.0 (se registra como no medido). La reparación sin subshell sigue tal cual. **Consecuencia:** SEC-127 se repara por construcción y se verifica por lectura y con los casos de bash 5.3; la acreditación con bash 5.0 queda declarada como laguna.
+- **(B)** Contratar O-52-3: que el cierre con estado no ASCII se deniegue sea cual sea el locale del proceso. **Consecuencia:** es un cambio de contrato del analista, con un movimiento nuevo declarado y otra reparación (por ejemplo, comparar la clave sin depender de `grep -i`). Alarga el paso 5.
+- **(C)** Conseguir un bash 5.0 (contenedor o compilación local) para medir el fail-before real antes de reparar. **Consecuencia:** coste de montarlo y una dependencia de red.
+
+**Recomendación de la coordinadora: (A),** con O-52-3 como ficha para que el auditor lo clasifique. Es lo que la reparación sin subshell ya garantiza, y no amplía el paso 5.
+
+**Qué trabajo sigue mientras no se decida:** la fase 2 (la reparación de SEC-127 sin subshell y de QA-007-06), que no depende de esto. QA (fase 3) sí espera. **Agrupada con P-136-J y P-136-L.**
+
+**Espera:** elección del propietario.
+
+### [2026-10-05] (coordinadora) — P-136-L: con `POSIXLY_CORRECT=1` en el entorno, la vía `Bash` NO decide en ninguno de los dos árboles (v1.35.0 tampoco). Es un fallo en abierto preexistente y sin clasificar. ¿Qué se hace?
+
+**Contexto.** Hallazgo lateral del desarrollador en la fase 1 de SEC-127 (`cand-1.36.0/sec127/09-`): con `POSIXLY_CORRECT=1`, ni `echo x > src/a.ts`, ni `sed -i …completado`, ni `git reset --hard` reciben decisión. `Write` sí deniega. Ocurre en v1.35.0 y en el candidato, así que **no es movimiento**. Ningún agente de seguridad lo ha revisado. Si el entorno de Claude Code llevara esa variable, las puertas de `Bash` quedarían apagadas en todos los proyectos. En bash 5.3 deja además a SEC-127 sin movimiento (R-052 §4 decía que eso lo cerraría por medición).
+
+**Opciones.**
+- **(A) Revisión corta del `auditor-seguridad` ahora:** registra el hallazgo (SEC-129), lo clasifica, mide el alcance desde el host y propone la remediación. La reparación se decide después. **Consecuencia:** de 20 a 40 minutos; no toca código.
+- **(B) Meterlo en SEC-115/118 (paso 6)**, que ya trata de que el hook decida siempre. **Consecuencia:** se registra ahora como ficha y se repara allí, antes de publicar.
+- **(C) Ficha para 1.37.** **Consecuencia:** 1.36.0 se publicaría con ese fallo en abierto, sin declarar.
+
+**Recomendación de la coordinadora: (A) y después (B).** Un posible apagado de las puertas de `Bash` por una variable de entorno merece clasificarse ya, y su arreglo encaja en el paso 6.
+
+**Qué trabajo sigue mientras no se decida:** la fase 2 de SEC-127. **Agrupada con P-136-J y P-136-K.**
+
+**Espera:** elección del propietario.
+
 ## Resueltas
 
 ### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-05) — **Plan autorizado: paso 5 de 1.36.0, SEC-127 más QA-007-06**

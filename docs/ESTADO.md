@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-> **Plan autorizado vigente: paso 5 de 1.36.0, SEC-127 más QA-007-06 (por delegación del propietario del 2026-10-05), fase 1 de 4, siguiente acción: el desarrollador escribe los casos de banco del locale tras el atajo, del cierre TERMINÉ/terminé con `LC_ALL=C` y de `read` fallido (entrada estándar cerrada y directorio), con su fail-before.** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **SEC-120 está cerrado como intervención** (commit validado; R-053: `mitigado` en el candidato `413c6bd`, con el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR`). **P-136-J (SEC-128) está pendiente del propietario.** La fase 2 de SEC-127 espera esa decisión. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: paso 5 de 1.36.0, SEC-127 más QA-007-06 (por delegación del propietario del 2026-10-05), fase 2 de 4 (fase 1 en `ab52c9b`, sección 47: los casos de QA-007-06 fallan como se esperaba; los de SEC-127 no pueden fallar en bash 5.3.9), siguiente acción: el desarrollador repara SEC-127 sin subshell y QA-007-06 (`read` fallido → `deny`). **Pendientes del propietario, agrupadas: P-136-J (SEC-128), P-136-K (cómo se acredita SEC-127) y P-136-L (`POSIXLY_CORRECT=1` apaga la vía `Bash`, preexistente).** QA (fase 3) espera a P-136-J y P-136-K.** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **SEC-120 está cerrado como intervención** (commit validado; R-053: `mitigado` en el candidato `413c6bd`, con el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR`). **P-136-J (SEC-128) está pendiente del propietario.** La fase 2 de SEC-127 espera esa decisión. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -550,7 +550,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-05 18:34
+## Estado derivado — 2026-10-05 18:52
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -560,9 +560,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `72a328e` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `ab52c9b` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
+**Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
