@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Condición previa del paso 6 evaluada: leyendo, CA-68 no afecta a REQ-017 CA-09; sin parada; restricción de techos y mediciones E1–E3 para la fase 2 de SEC-115/118
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (evaluación, `docs/arnes/v1.36.0-sec115-118-ca68-vs-req017.md`) y la coordinadora.
+
+- **Conclusión:** «no se puede saber sin medir»; por lectura, el plazo de 40 s y el paso a `deny` no afectan (la sonda 37/3 descarta la decisión y su `timeout` va fuera del hook). Lo que podría afectar es la **colocación de los techos de tamaño**.
+- **Lo que entra en el plan de SEC-115/118:** techos que no caigan sobre las entradas de la sonda; y en la fase 2, E1, E2 y E3. «Afecta» = un motivo de techo o plazo en E1, o un SKIP estructural o un FAIL en E2 o E3; entonces se para y se presenta al propietario con §9 (ficha ya redactada, con su «Decisión propuesta»).
+- **Aviso del analista:** el caso «el coste sube el ratio» cae en REQ-017 CA-08 (ii), que ya oscila alrededor de 1,25× (INS-136-2); las comprobaciones del plazo no deben ir en el camino común, o se mide antes y después como en P-136-M.
+- **Avance (regla 6):** el paso 6 puede abrirse en cuanto cierre el paso 5; su plan ya tiene la restricción medible.
+
 ## [Interno] — 2026-10-06 · PR #60 en borrador (decisión del propietario); dos comisiones en paralelo con QA, sobre archivos disjuntos: `POSIXLY_CORRECT` (seguridad) y CA-68 frente a REQ-017 CA-09 (analista)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
