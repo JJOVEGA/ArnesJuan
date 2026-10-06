@@ -1,0 +1,10 @@
+E1 ARNES_INPUT_NUL=1 en el entorno, ls legible: nada
+E2 ARNES_INPUT_NUL=0 en el entorno, un NUL: deny
+E3 stdin /dev/null: deny
+E4 stdin cerrada: nada rc=0 stderr=/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Bad file descriptor
+/home/juan/dev/ArnesJuan-
+E4b stdin cerrada v1.35.0: nada
+E5 ARNES_INPUT_LISTO=1 en el entorno con un NUL (observación previa, igual en v1.35.0): nada
+E6 1 MiB de blancos, cand: 109 ms
+E6b 1 MiB de blancos, v1.35.0: 90 ms
+E7 1 MiB de NUL, cand: 32 ms (una corrida, sin procedimiento de reloj: orientativo)

@@ -1,0 +1,15 @@
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks guard.sh rc=0 out=0 err=lib.sh: line 26: read: 0: read error: Bad file descriptor 
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks guard-git.sh rc=0 out=0 err=lib.sh: line 26: read: 0: read error: Bad file descriptor 
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks guard-codigo.sh rc=0 out=0 err=lib.sh: line 26: read: 0: read error: Bad file descriptor 
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks guard-completado.sh rc=0 out=0 err=lib.sh: line 26: read: 0: read error: Bad file descriptor 
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks stop.sh rc=0 out=0 err=lib.sh: line 26: read: 0: read error: Bad file descriptor 
+taba1c9b/hooks guard.sh rc=0 out=0 err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/taba1c9b/hooks/lib.sh: l
+taba1c9b/hooks guard-git.sh rc=0 out=0 err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/taba1c9b/hooks/lib.sh: l
+taba1c9b/hooks guard-codigo.sh rc=0 out=0 err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/taba1c9b/hooks/lib.sh: l
+taba1c9b/hooks guard-completado.sh rc=0 out=0 err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/taba1c9b/hooks/lib.sh: l
+taba1c9b/hooks stop.sh rc=0 out=0 err=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/taba1c9b/hooks/lib.sh: l
+/home/juan/dev/ArnesJuan-v1.36/hooks guard.sh rc=1 out=0 err=lib.sh: line 35: read: 0: read error: Bad file descriptor lib.sh: line 37: ARNES_INPUT: unbound variable 
+/home/juan/dev/ArnesJuan-v1.36/hooks guard-git.sh rc=1 out=0 err=lib.sh: line 35: read: 0: read error: Bad file descriptor lib.sh: line 37: ARNES_INPUT: unbound variable 
+/home/juan/dev/ArnesJuan-v1.36/hooks guard-codigo.sh rc=1 out=0 err=lib.sh: line 35: read: 0: read error: Bad file descriptor lib.sh: line 37: ARNES_INPUT: unbound variable 
+/home/juan/dev/ArnesJuan-v1.36/hooks guard-completado.sh rc=1 out=0 err=lib.sh: line 35: read: 0: read error: Bad file descriptor lib.sh: line 37: ARNES_INPUT: unbound variable 
+/home/juan/dev/ArnesJuan-v1.36/hooks stop.sh rc=0 out=0 err=lib.sh: line 35: read: 0: read error: Bad file descriptor 

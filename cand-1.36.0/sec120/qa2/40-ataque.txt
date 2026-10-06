@@ -1,0 +1,456 @@
+qa/entradas/F00-cierre-rojo-c                        deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/F00-cierre-rojo-d                        deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/F01-bash-con-timeout-c                   nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F01-bash-con-timeout-d                   nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F02-bash-escribe-src-timeout-c           deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa/entradas/F02-bash-escribe-src-timeout-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F03-edit-req-replace_all-c               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F03-edit-req-replace_all-d               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F04-multiedit-req-c                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F04-multiedit-req-d                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F05-multiedit-req-sin-ediciones-c        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F05-multiedit-req-sin-ediciones-d        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F06-write-req-vacio-c                    nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F06-write-req-vacio-d                    nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F07-write-docs-unicode-c                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F07-write-docs-unicode-d                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F08-edit-req-extra-anidado-c             nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F08-edit-req-extra-anidado-d             nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F09-edit-req-campos-del-host-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F09-edit-req-campos-del-host-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F10-write-src-c                          deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: 'src/a.ts' es código de la app; sólo el agente || ARNES: 'src/a.ts' es código de la app; sólo el agente
+qa/entradas/F10-write-src-d                          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F11-git-status-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F11-git-status-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F12-git-reset-hard-c                     deny   deny   deny   | deny   nada   nada   | deny   nada   nada   | ARNES: 'git reset --hard' descarta o esconde trabajo qu || ARNES: 'git reset --hard' descarta o esconde trabajo qu
+qa/entradas/F12-git-reset-hard-d                     deny   deny   deny   | deny   nada   nada   | deny   nada   nada   | ARNES: 'git reset --hard' descarta o esconde trabajo qu || ARNES: 'git reset --hard' descarta o esconde trabajo qu
+qa/entradas/F13-cierre-verde-c                       nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F13-cierre-verde-d                       nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F14-cierre-verde-con-salto-final-c       nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F15-cierre-verde-blancos-alrededor-c     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/F16-cierre-verde-multilinea-c            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/I01-vacia                                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I02-solo-blancos                         nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I03-null                                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I04-numero                               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I05-cadena                               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I06-true                                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I07-lista-vacia                          nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I08-lista-con-cierre                     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I09-dos-objetos                          deny   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I10-objeto-y-basura                      nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I11-objeto-NUL-basura                    deny   deny   deny   | nada   nada   deny   | deny   deny   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I12-NUL-objeto                           nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I13-BOM-objeto                           deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I14-objeto-y-null                        deny   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I15-objeto-saltos-finales                deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I16-truncada                             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I17-utf8-invalido                        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I18-surrogado-suelto                     deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I19-clave-duplicada-ultima-Bash          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/I20-nan                                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I21-NaN                                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I22-Infinity                             deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I23-numero-enorme                        deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I24-cero-inicial                         deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/I25-coma-final                           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I26-comillas-simples                     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I27-utf8-invalido-dev                    nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/I28-escape-en-clave                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/I29-comentario                           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/M1-req-09049b-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-09049b-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-35dba5-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-35dba5-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-37a625-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-37a625-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-68934a-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-68934a-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-9a19fc-c                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/M1-req-9a19fc-d                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/M1-req-a21caf-c                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se permite la edicion 1 de 1 de este MultiEdi || ARNES: no se permite la edicion 1 de 1 de este MultiEdi
+qa/entradas/M1-req-a21caf-d                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se permite la edicion 1 de 1 de este MultiEdi || ARNES: no se permite la edicion 1 de 1 de este MultiEdi
+qa/entradas/M1-req-a6400d-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-a6400d-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-b326b5-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-b326b5-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-c52c54-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-c52c54-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-c676ed-c                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-c676ed-d                          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-d75171-c                          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M1-req-d75171-d                          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M1-req-e3dd48-c                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-e3dd48-d                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-eb90c0-c                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M1-req-eb90c0-d                          deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M2-docs-09049b-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-09049b-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-35dba5-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-35dba5-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-37a625-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-37a625-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-68934a-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-68934a-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-9a19fc-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-9a19fc-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-a21caf-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-a21caf-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-a6400d-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-a6400d-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-b326b5-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-b326b5-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-c52c54-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-c52c54-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-c676ed-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-c676ed-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-d75171-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-d75171-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-e3dd48-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-e3dd48-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-eb90c0-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M2-docs-eb90c0-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/M3-req-sin-edits-c                       nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/M3-req-sin-edits-d                       nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N0-tool_name-5-c                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-5-d                         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-__-c                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-__-d                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-__x__-c                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-__x__-d                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-false-c                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-false-d                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-null-c                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-null-d                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-true-c                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N0-tool_name-true-d                      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N1-edit-file_path-5-c                    nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-5-d                    nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-__-c                   nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-__-d                   nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-__x__-c                nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-__x__-d                nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-false-c                nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-false-d                nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-null-c                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N1-edit-file_path-null-d                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N1-edit-file_path-true-c                 nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N1-edit-file_path-true-d                 nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-5-c                   nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-5-d                   nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-__-c                  nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-__-d                  nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-__x__-c               nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-__x__-d               nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-false-c               nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-false-d               nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-null-c                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N2-write-file_path-null-d                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N2-write-file_path-true-c                nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N2-write-file_path-true-d                nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/N3-bash-command-5-c                      nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-5-d                      nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-__-c                     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-__-d                     nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-__x__-c                  nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-__x__-d                  nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-false-c                  nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-false-d                  nada   nada   deny   | nada   nada   nada   | deny   nada   deny   |  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-null-c                   nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N3-bash-command-null-d                   nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N3-bash-command-true-c                   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N3-bash-command-true-d                   nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/N4-write-content-req-5-c                 nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-5-d                 nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-__-c                nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-__-d                nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-__x__-c             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-__x__-d             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-false-c             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-false-d             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-null-c              nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N4-write-content-req-null-d              nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N4-write-content-req-true-c              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N4-write-content-req-true-d              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-5-c               nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-5-d               nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-__-c              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-__-d              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-__x__-c           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-__x__-d           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-false-c           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-false-d           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-null-c            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N5-edit-new_string-req-null-d            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N5-edit-new_string-req-true-c            nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N5-edit-new_string-req-true-d            nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-5-c               deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-5-d               deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-__-c              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-__-d              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-__x__-c           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-__x__-d           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-false-c           deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-false-d           deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-null-c            deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se permite la unica edicion de este Edit sobr || ARNES: no se permite la unica edicion de este Edit sobr
+qa/entradas/N6-edit-old_string-req-null-d            deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se permite la unica edicion de este Edit sobr || ARNES: no se permite la unica edicion de este Edit sobr
+qa/entradas/N6-edit-old_string-req-true-c            deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N6-edit-old_string-req-true-d            deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas/N7-edit-tool_input-5-c                   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-5-d                   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-__-c                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N7-edit-tool_input-__-d                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N7-edit-tool_input-__x__-c               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-__x__-d               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-false-c               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-false-d               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-null-c                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N7-edit-tool_input-null-d                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N7-edit-tool_input-true-c                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N7-edit-tool_input-true-d                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-5-c                   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-5-d                   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-__-c                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N8-bash-tool_input-__-d                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N8-bash-tool_input-__x__-c               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-__x__-d               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-false-c               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-false-d               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-null-c                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N8-bash-tool_input-null-d                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/N8-bash-tool_input-true-c                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N8-bash-tool_input-true-d                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas/N9-write-src-cwd-5-c                     deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-5-d                     deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-__-c                    deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-__-d                    deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-__x__-c                 deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-__x__-d                 deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-false-c                 deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-false-d                 deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-null-c                  deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-null-d                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-true-c                  deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/N9-write-src-cwd-true-d                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa/entradas/NA-write-file_path-lista-src-c           nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/NA-write-file_path-lista-src-d           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas/NB-bash-command-lista-escritura-c        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/NB-bash-command-lista-escritura-d        nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/NC-bash-command-lista-git-c              nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/NC-bash-command-lista-git-d              nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas/ND-replace_all-cadena-c                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/ND-replace_all-cadena-d                  deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa/entradas/NE-agente-no-texto-c                     deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: 'src/a.ts' es código de la app; sólo el agente || ARNES: 'src/a.ts' es código de la app; sólo el agente
+qa/entradas/NE-agente-no-texto-d                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas/NF-agente-false-c                        deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: 'src/a.ts' es código de la app; sólo el agente || ARNES: 'src/a.ts' es código de la app; sólo el agente
+qa/entradas/NF-agente-false-d                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas2/X01-edit-file_path-lista-vacia          nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas2/X02-bash-command-lista-vacia            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas2/X03-edit-tool_input-lista-vacia         nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas2/X04-write-content-lista-vacia           nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se juzga esta edicion de 'requirements/REQ-90 || ARNES: no se juzga esta edicion de 'requirements/REQ-90
+qa/entradas2/X05-write-file_path-false               nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa/entradas2/X06-bash-command-false                  nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa/entradas2/X07-bash-ls                             nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa/entradas2/X08-bash-escribe-src                    deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa/entradas2/X10-solo-salto                          nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas2/X11-ls-NUL-escritura                    nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas2/X12-escritura-NUL                       deny   deny   deny   | nada   deny   nada   | deny   deny   deny   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas2/X13-solo-NUL                            nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa/entradas2/X14-escape-unicode-en-clave             deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa2/entradas/G01-ls-c-64KiB                          deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el cuerpo sin citar de un heredoc (o el texto de || ARNES: el cuerpo sin citar de un heredoc (o el texto de
+qa2/entradas/G02-git-status-c                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G02-git-status-d                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G03-ls-timeout-c                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G03-ls-timeout-d                        nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G04-edit-docs-relativa-c                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G04-edit-docs-relativa-d                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G05-edit-literal-req-c                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G05-edit-literal-req-d                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G06-multiedit-req-c                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G06-multiedit-req-d                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G07-write-vacio-docs-c                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G07-write-vacio-docs-d                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G08-edit-src-c                          deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: 'src/a.ts' es código de la app; sólo el agente || ARNES: 'src/a.ts' es código de la app; sólo el agente
+qa2/entradas/G08-edit-src-d                          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G09-bash-escribe-src-c                  deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/G09-bash-escribe-src-d                  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G10-ls-c-salto-final                    nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G11-ls-c-blancos-alrededor              nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G12-ls-c-multilinea                     nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/G13-ls-c-BOM                            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T01-Bash-tool_input-0-c                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-0-d                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-cadena-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-cadena-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-false-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-false-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-listavacia-c        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-listavacia-d        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-listax-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-listax-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-true-c              nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Bash-tool_input-true-d              nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-0-c                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-0-d                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-cadena-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-cadena-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-false-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-false-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-listavacia-c        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-listavacia-d        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-listax-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-listax-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-true-c              nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Edit-tool_input-true-d              nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-0-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-0-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-cadena-c       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-cadena-d       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-false-c        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-false-d        nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-listavacia-c   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-listavacia-d   nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-listax-c       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-listax-d       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-true-c         nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-MultiEdit-tool_input-true-d         nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-0-c                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-0-d                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-cadena-c           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-cadena-d           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-false-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-false-d            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-listavacia-c       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-listavacia-d       nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-listax-c           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-listax-d           nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-true-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T01-Write-tool_input-true-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T02-Edit-file_path-0-c                  nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-0-d                  nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-false-c              nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-false-d              nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-lista-c              nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-lista-d              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-objeto-c             nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-objeto-d             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-true-c               nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-true-d               nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T02-Edit-file_path-vacia-c              nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T02-Edit-file_path-vacia-d              nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T03-Write-file_path-0-c                 nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-0-d                 nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-false-c             nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-false-d             nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-lista-c             nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-lista-d             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-objeto-c            nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-objeto-d            nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-true-c              nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-true-d              nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T03-Write-file_path-vacia-c             nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T03-Write-file_path-vacia-d             nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T04-MultiEdit-file_path-0-c             nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-0-d             nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-false-c         nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-false-d         nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-lista-c         nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-lista-d         nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-objeto-c        nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-objeto-d        nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-true-c          nada   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-true-d          nada   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: el campo 'file_path' de esta llamada no es texto || ARNES: el campo 'file_path' de esta llamada no es texto
+qa2/entradas/T04-MultiEdit-file_path-vacia-c         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T04-MultiEdit-file_path-vacia-d         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T05-Bash-command-0-c                    nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-0-d                    nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-false-c                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-false-d                nada   nada   deny   | nada   nada   nada   | deny   nada   deny   |  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-lista-c                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-lista-d                nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-objeto-c               nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-objeto-d               nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-true-c                 nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-true-d                 nada   deny   deny   | deny   nada   deny   | deny   nada   deny   | ARNES: el campo 'command' de esta llamada no es texto,  || ARNES: el campo 'command' de esta llamada no es texto, 
+qa2/entradas/T05-Bash-command-vacia-c                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T05-Bash-command-vacia-d                nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-0-c               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-0-d               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-false-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-false-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-lista-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-lista-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-objeto-c          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-objeto-d          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-true-c            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-true-d            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-vacia-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T06-Edit-docs-command-vacia-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-0-c               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-0-d               nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-false-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-false-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-lista-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-lista-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-objeto-c          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-objeto-d          nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-true-c            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-true-d            nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-vacia-c           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T07-Bash-ls-file_path-vacia-d           nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-0-c      deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-0-d      nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-false-c  deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-false-d  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-lista-c  deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-lista-d  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-objeto-c deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-objeto-d nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-true-c   deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-true-d   nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T08-Bash-escribe-src-file_path-vacia-c  deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: el comando escribe en 'src/a.ts', que es código
+qa2/entradas/T08-Bash-escribe-src-file_path-vacia-d  nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T09-Edit-cierre-rojo-command-false-c    deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa2/entradas/T09-Edit-cierre-rojo-command-false-d    deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: no se puede completar 'requirements/REQ-900.md':
+qa2/entradas/T10-Edit-req-literal-command-false-c    nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T10-Edit-req-literal-command-false-d    nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T11-Glob-tool_input-false-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-Glob-tool_input-false-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-Grep-tool_input-false-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-Grep-tool_input-false-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-NotebookEdit-tool_input-false-c     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-NotebookEdit-tool_input-false-d     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-Read-tool_input-false-c             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T11-Read-tool_input-false-d             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/T12-Glob-campos-false-c                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-Glob-campos-false-d                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-Grep-campos-false-c                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-Grep-campos-false-d                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-NotebookEdit-campos-false-c         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-NotebookEdit-campos-false-d         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-Read-campos-false-c                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T12-Read-campos-false-d                 nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T13-Edit-src-agent_type-false-c         deny   deny   deny   | nada   deny   nada   | nada   deny   nada   | ARNES: 'src/a.ts' es código de la app; sólo el agente || ARNES: 'src/a.ts' es código de la app; sólo el agente
+qa2/entradas/T13-Edit-src-agent_type-false-d         nada   nada   nada   | nada   nada   nada   | nada   nada   nada   |  || 
+qa2/entradas/T14-Edit-src-cwd-false-c                deny   deny   deny   | nada   deny   deny   | nada   deny   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa2/entradas/T14-Edit-src-cwd-false-d                deny   deny   deny   | nada   nada   deny   | nada   nada   deny   | ARNES: no se pudo determinar a que archivo escribe 'src || ARNES: no se pudo determinar a que archivo escribe 'src
+qa2/entradas/Z01-ls-c-NUL-final                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z01-ls-d-NUL-final                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z02-ls-c-salto-NUL                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z03-NUL-dentro-del-command-c            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z04-ls-c-NUL-escritura-c                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z04-ls-d-NUL-escritura-d                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z05-blancos-NUL-ls-c                    nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z06-un-NUL                              nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z07-cierre-rojo-c-NUL                   deny   deny   deny   | nada   nada   deny   | deny   deny   deny   | ARNES: no se puede completar 'requirements/REQ-900.md': || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z08-escritura-d-NUL-ls-d                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z09-escritura-d-NUL-final               nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z10-NUL-entre-claves-c                  nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z11-solo-CR                             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z12-CRLF                                nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z13-solo-BOM                            nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z14-ls-c-64KiB-NUL-final                deny   deny   deny   | nada   deny   deny   | deny   deny   deny   | ARNES: el cuerpo sin citar de un heredoc (o el texto de || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z15-ls-c-64KiB-NUL-en-medio             nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z16-1MiB-de-NUL                         nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z17-escritura-c-1MiB-NUL                deny   deny   deny   | nada   deny   nada   | deny   deny   deny   | ARNES: el comando escribe en 'src/a.ts', que es código || ARNES: la entrada de esta llamada no se pudo leer: jq n
+qa2/entradas/Z18-1MiB-de-blancos                     nada   deny   deny   | deny   deny   deny   | deny   deny   deny   | ARNES: la entrada de esta llamada no se pudo leer: jq n || ARNES: la entrada de esta llamada no se pudo leer: jq n

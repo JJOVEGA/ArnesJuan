@@ -1,0 +1,34 @@
+qa/entradas/I01-vacia                                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa/entradas/I11-objeto-NUL-basura                    deny   deny   deny   | nada   nada   deny   | deny   deny   deny   | ARNES: no se puede completar
+qa/entradas/I12-NUL-objeto                           nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa/entradas/N1-edit-file_path-false-c                nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa/entradas/N1-edit-file_path-false-d                nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_pa
+qa/entradas/N2-write-file_path-false-c               nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa/entradas/N2-write-file_path-false-d               nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_pa
+qa/entradas/N3-bash-command-false-c                  nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command
+qa/entradas/N3-bash-command-false-d                  nada   nada   deny   | nada   nada   nada   | deny   nada   deny   |  || ARNES: el campo 'command
+qa/entradas2/X05-write-file_path-false               nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa/entradas2/X06-bash-command-false                  nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command
+qa/entradas2/X11-ls-NUL-escritura                    nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa/entradas2/X12-escritura-NUL                       deny   deny   deny   | nada   deny   nada   | deny   deny   deny   | ARNES: el comando escribe en
+qa/entradas2/X13-solo-NUL                            nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/T02-Edit-file_path-false-c              nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T02-Edit-file_path-false-d              nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T03-Write-file_path-false-c             nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T03-Write-file_path-false-d             nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T04-MultiEdit-file_path-false-c         nada   nada   deny   | nada   nada   nada   | nada   deny   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T04-MultiEdit-file_path-false-d         nada   nada   deny   | nada   nada   nada   | nada   nada   deny   |  || ARNES: el campo 'file_pa
+qa2/entradas/T05-Bash-command-false-c                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: el campo 'command
+qa2/entradas/T05-Bash-command-false-d                nada   nada   deny   | nada   nada   nada   | deny   nada   deny   |  || ARNES: el campo 'command
+qa2/entradas/Z01-ls-c-NUL-final                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z01-ls-d-NUL-final                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z02-ls-c-salto-NUL                      nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z04-ls-c-NUL-escritura-c                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z04-ls-d-NUL-escritura-d                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z06-un-NUL                              nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z07-cierre-rojo-c-NUL                   deny   deny   deny   | nada   nada   deny   | deny   deny   deny   | ARNES: no se puede completar
+qa2/entradas/Z08-escritura-d-NUL-ls-d                nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z09-escritura-d-NUL-final               nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z14-ls-c-64KiB-NUL-final                deny   deny   deny   | nada   deny   deny   | deny   deny   deny   | ARNES: el cuerpo sin citar d
+qa2/entradas/Z16-1MiB-de-NUL                         nada   nada   deny   | nada   nada   nada   | deny   deny   deny   |  || ARNES: la entrada de est
+qa2/entradas/Z17-escritura-c-1MiB-NUL                deny   deny   deny   | nada   deny   nada   | deny   deny   deny   | ARNES: el comando escribe en

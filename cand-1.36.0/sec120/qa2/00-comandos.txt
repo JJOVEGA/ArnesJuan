@@ -1,0 +1,15 @@
+QA, re-verificación de la pasada correctiva de SEC-120 (QA-007-03 y QA-007-04). Worktree /home/juan/dev/ArnesJuan-v1.36,
+cand/1.36.0, cabeza 0f5dd41 (código de 413c6bd; hooks/tools/tests sin diferencias entre 413c6bd y la cabeza).
+Árboles: v1.35.0 = /home/juan/dev/ArnesJuan-v1.35.0-base (3956a6f, limpio); aba1c9b y 82ceb63 = `git archive <sha> hooks tools`
+en el temporal de la sesión de QA. Linux/WSL2, bash 5.3.9, jq 1.8.2. Nada repetido para obtener verde.
+
+bash corridas.sh                      -> 00-entorno, 10- a 13- (sección 44 en cand, aba1c9b, 82ceb63, v1.35.0),
+                                         20-/21-/22- (CA-69 2 (a)), 30-/33- (banco del worktree), 31- (autoprueba), 32- (gates)
+(sección 44 del candidato, otra vez)  -> 14-s44-candidato-repeticion.txt (determinismo: mismas 363 líneas)
+bash genera-ataque2.sh; bash ataque2.sh > 40-ataque.txt   (entradas de qa/entradas, qa/entradas2 y qa2/entradas: 456 filas)
+41-cambios-aba-cand.txt               -> filas cuya decisión cambia de aba1c9b al candidato (34; todas nada -> deny)
+42-repeticion-candidato.txt           -> guard.sh del candidato otra vez sobre 239 entradas: 0 diferencias
+bash parada.sh > 50-parada.txt        -> stop.sh, estado-derivado.sh, rotar-artefactos.sh con entradas vacías/NUL/normales
+bash sin-project-dir.sh > 51-          -> sin CLAUDE_PROJECT_DIR (datos para P-136-H; QA-007-05 no se juzga)
+proc/genera-entradas-qa.sh; R=3 proc/procesos-qa.sh <wt> v1.35.0=… 82ceb63=… aba1c9b=… candidato=…  > 52-procesos.txt
+53-entorno-y-stdin.txt, 54-stdin-cerrada.txt  -> variables heredadas, stdin /dev/null y cerrada (QA-007-06)
