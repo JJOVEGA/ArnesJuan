@@ -1,0 +1,7 @@
+0a1
+> FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× (#N:no-converge(N/N) ) — describe una medición que excede el techo; no afirma la causa
+353a355,356
+> PASS	QA-007-07 CA-68 E ARNES_INPUT_LISTO=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+> PASS	QA-007-07 CA-68 E ARNES_MANIFEST_LISTO=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+2293d2295
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
