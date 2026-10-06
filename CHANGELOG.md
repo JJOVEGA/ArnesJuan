@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, pasada correctiva (desarrollador): QA-007-10, QA-007-12 y QA-007-11 (a) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-P (2) (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «Pasada correctiva»; evidencia `1adeffc`.
+
+- **QA-007-10:** `lib.sh` vacía `ARNES_CWD_VISTO` al cargarse.
+- **QA-007-12:** el motivo y el aviso se acotan en la misma llamada a `jq`, después de sanear el UTF-8 (`ARNES_JQ_ACOTA`). El motivo no pasa nunca de 16 384 bytes.
+- **QA-007-11 (a):** `entrada.sh` retira las funciones importadas, `FUNCNEST`, `BASH_COMPAT` y `compat*`, y la opción `keyword`. `noexec`, `onecmd` y `xtrace` quedan como límite declarado.
+- **Casos:** 7 en la sección 47 (bloque P). La sección pasa de 95 a 102 y el total de 2305 a 2312. Los 7 fallan con `8e11f87` y con v1.35.0.
+- **Medidas:**
+  - sección 47: 102/0;
+  - banco del worktree: 2298/1/13; el FAIL es INS-136-1;
+  - 2 (a): 2037/1/12; el FAIL es INS-136-2;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** los tres hallazgos de la pasada correctiva están reparados y con casos. Falta la validación de QA.
+
 ## [GitHub] — 2026-10-06 · Write-back de P-136-P (analista): INS-136-4 en CA-69 p. 7 con la regla de «afecta» intacta y su precisión; límites declarados QA-007-09 y QA-007-11 (b) en CA-68; QA-007-10/11 (a)/12 «en la pasada, sin validar»; la guía gana los cinco párrafos de compatibilidad que faltaban
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 

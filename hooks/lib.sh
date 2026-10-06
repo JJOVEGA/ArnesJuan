@@ -370,15 +370,19 @@ arnes_require_jq() {
 # 154 598 bytes (R-045 §4 y `docs/arnes/v1.36.0-sec115-118-fase1.md`). Ahora, dos cosas:
 #   * el motivo viaja por la ENTRADA ESTÁNDAR de `jq` (here-string: sin procesos nuevos), así que
 #     ningún dato variable pasa por la línea de órdenes;
-#   * se ACOTA a `ARNES_MOTIVO_MAX_BYTES` bytes (`arnes_acota`): conserva su comienzo —que nombra la
-#     causa—, dice que se acortó y nunca parte un carácter multibyte.
+#   * se ACOTA a `ARNES_MOTIVO_MAX_BYTES` bytes (`ARNES_JQ_ACOTA`), DENTRO de la misma llamada a `jq` y
+#     DESPUÉS de que `jq -R` sustituya cada byte que no es UTF-8 por U+FFFD (3 bytes): conserva su
+#     comienzo —que nombra la causa—, dice que se acortó y nunca parte un carácter. Hasta la pasada
+#     correctiva se acotaba antes, en bash, y con bytes inválidos venidos del disco el motivo emitido
+#     llegaba a 48 781 bytes (QA-007-12).
 # Y si aun así `jq` no escribe la decisión, `ARNES_JUICIO` no queda en `fin` y la salida del proceso
 # emite la denegación fija de `arnes_entrada_del_hook` (CA-68 (i)): el `exit 0` ya no puede quedarse mudo.
 # Salida compacta (-c): una sola línea, el formato que esperan los hooks.
 arnes_deny() {
-  arnes_acota "$1"
-  jq -cRs 'rtrimstr("\n") | {hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:.}}' \
-    <<< "$ARNES_ACOTADO" && ARNES_JUICIO=fin
+  jq -cRs --argjson tope "$ARNES_MOTIVO_MAX_BYTES" "$ARNES_JQ_ACOTA"'
+    rtrimstr("\n") | arnes_acota($tope)
+    | {hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:.}}' \
+    <<< "$1" && ARNES_JUICIO=fin
   exit 0
 }
 
@@ -387,38 +391,24 @@ arnes_deny() {
 # lo lee una persona y un modelo, y 16 KiB ya es más de lo que cualquier motivo del arnés necesita para
 # nombrar su causa (el mayor con tope propio, REQ-023 CA-01, mide unos 9,6 KB).
 ARNES_MOTIVO_MAX_BYTES=16384
-# arnes_acota <texto> -> ARNES_ACOTADO: el texto entero si cabe en el tope; si no, su comienzo y una nota
-# de que se acortó, todo en no más de `ARNES_MOTIVO_MAX_BYTES` bytes. Se cuenta y se corta en BYTES
-# (`LC_ALL=C` local, restaurado al volver) y se retira la secuencia UTF-8 que el corte deje partida: un
-# carácter de 2, 3 o 4 bytes nunca sale a medias. Sin procesos.
-arnes_acota() {
-  local LC_ALL=C
-  local t="$1" n nota corte k=0 c ln=1
-  n=${#t}
-  if [ "$n" -le "$ARNES_MOTIVO_MAX_BYTES" ]; then ARNES_ACOTADO="$t"; return 0; fi
-  nota=" [...] (ARNES: motivo acortado: medía $n bytes y el tope es $ARNES_MOTIVO_MAX_BYTES; se conserva su comienzo)"
-  corte=$(( ARNES_MOTIVO_MAX_BYTES - ${#nota} ))
-  t="${t:0:corte}"
-  # Bytes de continuación (10xxxxxx) al final, y el byte de cabeza que los precede.
-  while [ "$k" -lt 3 ] && [ "$k" -lt "${#t}" ] && [[ "${t:${#t}-1-k:1}" == [$'\x80'-$'\xbf'] ]]; do k=$((k + 1)); done
-  if [ "$k" -lt "${#t}" ]; then
-    c="${t:${#t}-1-k:1}"
-    case "$c" in
-      [$'\xc0'-$'\xdf']) ln=2 ;;
-      [$'\xe0'-$'\xef']) ln=3 ;;
-      [$'\xf0'-$'\xf7']) ln=4 ;;
-      [$'\x80'-$'\xff']) ln=0 ;;
-      *) ln=1 ;;
-    esac
-    # Completo: se queda. Partido (o un byte que no abre ninguna secuencia): fuera la cabeza y su cola.
-    if [ "$ln" -ne $((k + 1)) ] && { [ "$ln" -ne 1 ] || [ "$k" -gt 0 ]; }; then
-      if [ "$ln" -eq 1 ]; then t="${t:0:${#t}-k}"; else t="${t:0:${#t}-1-k}"; fi
-    fi
-  else
-    t="${t:0:${#t}-k}"
-  fi
-  ARNES_ACOTADO="$t$nota"
-}
+# ARNES_JQ_ACOTA: las definiciones de `jq` que acotan un texto YA LEÍDO por `jq -R` —es decir, con cada byte que
+# no es UTF-8 ya sustituido por U+FFFD—, así que el tope se mide sobre lo que de verdad se emite. `arnes_acota($t)`:
+# el texto entero si sus bytes UTF-8 caben en $t; si no, su comienzo, por caracteres enteros, y una nota de que se
+# acortó, todo en no más de $t bytes. Los bytes se cuentan por punto de código (1 a 4) y no con `utf8bytelength`,
+# que no tiene jq 1.5. Es un trozo de programa, fijo: ningún dato variable viaja en la línea de órdenes.
+ARNES_JQ_ACOTA='
+def arnes_b: if . < 128 then 1 elif . < 2048 then 2 elif . < 65536 then 3 else 4 end;
+def arnes_bytes: explode | map(arnes_b) | add // 0;
+def arnes_acota($t): arnes_bytes as $n
+  | if $n <= $t then .
+    else (" [...] (ARNES: motivo acortado: medía \($n) bytes y el tope es \($t); se conserva su comienzo)") as $nota
+      | ($t - ($nota | arnes_bytes)) as $b
+      | (explode | .[:$b]
+         | reduce .[] as $c ({o: [], n: 0};
+             ($c | arnes_b) as $l
+             | if .n >= 0 and .n + $l <= $b then .o += [$c] | .n += $l else .n = -1 end)
+         | .o | implode) + $nota
+    end;'
 
 # --- Un final que no es un juicio no deja pasar (SEC-129, SEC-115; REQ-007 CA-68) ----------------
 # El hook sólo sale sin decisión cuando ha TERMINADO un juicio que concluye que la llamada no toca
@@ -494,8 +484,8 @@ arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
 arnes_emitir_avisos() {
   [ -n "$ARNES_AVISOS" ] || return 0
   # Los avisos entran (SEC-118, P-136-B): por la entrada estandar y acotados, como el motivo de `arnes_deny`.
-  arnes_acota "${ARNES_AVISOS%$'\n'}"
-  jq -cRs 'rtrimstr("\n") | {systemMessage:.}' <<< "$ARNES_ACOTADO"
+  jq -cRs --argjson tope "$ARNES_MOTIVO_MAX_BYTES" "$ARNES_JQ_ACOTA"' rtrimstr("\n") | arnes_acota($tope) | {systemMessage:.}' \
+    <<< "${ARNES_AVISOS%$'\n'}"
   return 0
 }
 
@@ -1138,6 +1128,10 @@ _arnes_id_previas() {   # <ruta tal como llego>
 # orden de siempre. 0 + ARNES_ID_CWDC (el `cwd` en forma de comparacion); 1 = no determinable (y quien
 # llama sale). Aparte por coste, como `_arnes_id_previas`: el `cwd` es el mismo para todos los destinos
 # de la llamada y, una vez comprobado, `_arnes_id_calcula` no vuelve a recorrer esto.
+# La memoria `ARNES_CWD_VISTO` nace vacia al cargar la libreria (QA-007-10; REQ-007 CA-68, P-136-N): exportada en el
+# entorno con el valor del `cwd` de la entrada, se saltaba la comprobacion de que el directorio existe y una ruta
+# relativa bajo un `cwd` inexistente salia sin decision en vez de «no determinable». Como `ARNES_*_LISTO`, arriba.
+ARNES_CWD_VISTO=''
 _arnes_id_ancla_rel() {
   local c
   # QA-023-13: un `cwd` con un retorno de carro no ancla. El transporte de la entrada retira el

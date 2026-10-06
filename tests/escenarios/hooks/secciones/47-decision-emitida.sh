@@ -22,8 +22,8 @@
 # FAIL en los dos, y los controles PASS (docs/arnes/v1.36.0-sec115-118-fase1.md). T1 y T2b (1 MB) no reproducen
 # su fail-before aquí (deciden antes de 60 s en los dos árboles) y quedan como CONTROLES; T2b, medida de 29 a 49 s,
 # roza el plazo de 40 s y antes de la reparación puede salir FAIL por (a). Esto NO es el host.
-CASOS_ESPERADOS_SECCION=95
-PISO_AUTONOMO_SECCION=85  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 58 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-90)
+CASOS_ESPERADOS_SECCION=102
+PISO_AUTONOMO_SECCION=91  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 64 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-96)
 seccion_nueva "--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---"
 PD47="$RAIZ/de47-$BASHPID"; W47="$RAIZ/w47-$BASHPID"; mkdir -p "$W47"; BE47="$W47/bashenv"; printf 'set -o posix\n' > "$BE47"
 O47=''; RC47=0; MS47=0; E47_IN=''; E47_APLICA=':'; E47_F=''; E47_C=intacto
@@ -44,6 +44,7 @@ r47() {
       SHELLOPTS) timeout 60 env SHELLOPTS=posix "$BASH" "$HOOKS_DIR/$s" ;;
       BASH_ENV) BASH_ENV="$BE47" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       ARNES_INPUT_LISTO=1|ARNES_MANIFEST_LISTO=1) env "$m" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
+      env:*)    env "${m#env:}" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       --posix)  timeout 60 "$BASH" --posix "$HOOKS_DIR/$s" ;;
       *)        exit 98 ;;
     esac < "$3" 2>>"$ERRLOG")"; RC47=$?
@@ -74,6 +75,11 @@ j47() {
   esac
   # Con <cita>, el deny tiene que ser el de la puerta que juzga, no otro (p. ej., el fijo de un final sin juicio).
   [ -z "$cita" ] || [ "$got" != deny ] || [[ "$sal" == *"$cita"* ]] || got='deny con otro motivo'
+  # Con <tope> (7.º), el motivo emitido, en bytes, no lo pasa (CA-67, «en cualquier codificación»).
+  if [ -n "${7:-}" ] && [ "$got" = deny ]; then
+    local mb; mb="$(jq -j '.hookSpecificOutput.permissionDecisionReason' <<< "$sal" | LC_ALL=C wc -c)"
+    [ "$mb" -le "$7" ] || got="deny con un motivo de $mb bytes"
+  fi
   # (c) si el entorno no recibe deny, la herramienta se ejecuta: se aplica y se mira el archivo protegido.
   [[ "$got" == deny* ]] || (cd "$PD47" && eval "$E47_APLICA") >/dev/null 2>&1
   despues="$(h47)"
@@ -259,5 +265,33 @@ for v47 in ARNES_INPUT_LISTO ARNES_MANIFEST_LISTO; do
   E47_APLICA='printf x > src/a.ts'
   j47 "QA-007-07 CA-68 E $v47=1 heredada del entorno, Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo" \
     deny guard.sh "$v47=1" - 'es código de la app'
+done
+
+# --- P · Pasada correctiva del paso 6 (P-136-P (2) (A)): QA-007-10, QA-007-12 y QA-007-11 (a) -------------
+# Fail-before: 8e11f87 (y v1.35.0). Un caso por forma.
+# QA-007-10: `ARNES_CWD_VISTO` heredada con el `cwd` —inexistente— de la entrada no se salta «no determinable».
+if pg47; then
+  E47_IN="$(jq -cn --arg c "$PD47/no-existe" '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:$c,tool_input:{command:"echo x > src/a.ts"}}')"
+  E47_APLICA='printf x > src/a.ts'
+  j47 "QA-007-10 CA-68 P ARNES_CWD_VISTO heredada con el cwd inexistente de la entrada, echo x > src/a.ts, por guard.sh -> deny no determinable" \
+    deny guard.sh "env:ARNES_CWD_VISTO=$PD47/no-existe" - 'no se pudo determinar'
+else echo "  FAIL  QA-007-10 CA-68 P  no se pudo preparar el repositorio del proyecto (git)"; FAIL=$((FAIL + 1)); fi
+# QA-007-12: un `QA:` en disco de 140 000 bytes 0xFF (no UTF-8) que el motivo cita: deny con el motivo en el tope.
+E47_C=intacto
+trozos47 '# REQ-950\n' 'Estado: en-revisión' 'Estado: completado' "\nQA: pendiente $(rep47 140000 $'\377')\nSeguridad: pendiente$POST47"; e47
+j47 "QA-007-12 CA-67 P 'QA:' en disco con 140000 bytes que no son UTF-8, cierre por Edit -> deny con el motivo en no más de 16384 bytes" \
+  deny guard.sh normal - '' 16384
+# QA-007-11 (a): estado del intérprete heredado que entrada.sh deshace.
+for f47 in 'FUNCNEST=1' 'SHELLOPTS=keyword' 'BASH_FUNC_jq%%=() { :; }'; do
+  if ! pg47; then echo "  FAIL  QA-007-11 $f47  no se pudo preparar el repositorio del proyecto (git)"; FAIL=$((FAIL + 1)); continue; fi
+  E47_IN="$(jq -cn --arg c "$PD47" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:$c,tool_input:{file_path:($c+"/src/a.ts"),content:"x"}}')"
+  E47_APLICA='printf x > src/a.ts'
+  j47 "QA-007-11 CA-68 P ${f47%%=*} heredada (${f47#*=}), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo" \
+    deny guard.sh "env:$f47" - 'es código de la app'
+done
+E47_C=abierto
+for f47 in 'BASH_COMPAT=31' 'BASHOPTS=compat40'; do
+  trozos47 '# REQ-950\nEstado: en-revisión\n' 'QA: pendiente' 'QA: quizas' "\nSeguridad: pendiente$POST47"; e47
+  j47 "QA-007-11 CA-68 P $f47 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión" aviso guard.sh "env:$f47" -
 done
 rm -rf "$PD47" "$W47"
