@@ -1,0 +1,188 @@
+# seccion 47-decision-emitida.sh sha256 721e4663ed0b257e, ARNES_HOOKS_DIR=v1.35.0 (3956a6f), 2026-10-06T10:20:47-06:00
+--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---
+  PASS  SEC-118 CA-67 D0a control: 'Hallazgos abiertos:' 1601 veces, líneas ASCII de 66 caracteres, por Write -> deny  (a) rc 0 en 2314ms, salida 121088 bytes; (b) deny; (c) intacto
+  PASS  SEC-118 CA-67 D0b control: 'Hallazgos abiertos:' 2501 veces, líneas ASCII de 29 caracteres, por Write -> deny  (a) rc 0 en 2514ms, salida 111957 bytes; (b) deny; (c) intacto
+  FAIL  SEC-118 CA-67 D1 'Hallazgos abiertos:' 1801 veces, líneas ASCII de 66 caracteres, por Write -> deny emitido  (a) rc 0 en 2311ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D2 'Hallazgos abiertos:' 3000 veces, líneas ASCII de 29 caracteres, por Write -> deny emitido  (a) rc 0 en 3615ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D3 'Hallazgos abiertos:' 1601 veces con ñ, por Write -> deny emitido  (a) rc 0 en 3916ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D4 'Hallazgos abiertos:' 1001 veces con caracteres de 4 bytes, por Write -> deny emitido  (a) rc 0 en 2013ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D5 'Hallazgos abiertos:' 2501 veces, cortas con ñ, por Write -> deny emitido  (a) rc 0 en 3516ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D6 'QA:' de unos 140 KB sin paréntesis final, cierre por Edit -> deny emitido  (a) rc 0 en 1110ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D7 'Seguridad:' de unos 140 KB sin paréntesis final, cierre por Edit -> deny emitido  (a) rc 0 en 1311ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D8 'Sensible a seguridad:' dudoso de unos 140 KB, cierre por Edit -> deny emitido  (a) rc 0 en 5216ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 D9 línea de cabecera sin ':' de unos 140 KB con un retorno de carro interior, cierre por Edit -> deny emitido  (a) rc 0 en 909ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 301: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido ASCII, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1109ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido ASCII, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1110ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido de 2 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1810ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido de 2 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 1610ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A QA de unos 140 KB fuera del vocabulario, contenido de 4 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 609ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  FAIL  SEC-118 CA-67 A Seguridad de unos 140 KB fuera del vocabulario, contenido de 4 bytes, Edit sin cerrar -> aviso emitido, sin decisión  (a) rc 0 en 810ms, salida 0 bytes; (b) esperado=aviso got=nada; (c) sin cerrar
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 333: /home/juan/.local/bin/jq: Argument list too long
+  PASS  SEC-115 CA-68 T1 control del fail-before: QA pendiente con unos 255 KB de evidencia con blancos, Edit a completado -> deny en no más de 40 s  (a) rc 0 en 4319ms, salida 316 bytes; (b) deny; (c) intacto
+  FAIL  SEC-115 CA-68 T2a Write de 2025113 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) NO RESPONDIÓ en 60 s: el timeout lo cortó, y un hook muerto no decide, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 37270ms, salida 316 bytes; (b) deny; (c) intacto
+  FAIL  SEC-115 CA-68 T3 búsqueda del old_string de 128000 bytes en una racha de 256000, Edit a completado -> deny en no más de 40 s  (a) NO RESPONDIÓ en 60 s: el timeout lo cortó, y un hook muerto no decide, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 108ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 107ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 110ms, salida 337 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 111ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 111ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Write requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 108ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 109ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 108ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Edit requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 108ms, salida 316 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 109ms, salida 490 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo normal (control), por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 490 bytes; (b) deny; (c) intacto
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=1, por guard-codigo.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo PC=, por guard-codigo.sh -> deny  (a) rc 0 en 106ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo SHELLOPTS, por guard-codigo.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo BASH_ENV, por guard-codigo.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 111ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash echo x > src/a.ts, modo --posix, por guard-codigo.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  PASS  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo normal (control), por guard.sh -> deny  (a) rc 0 en 212ms, salida 490 bytes; (b) deny; (c) intacto
+  FAIL  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo PC=1, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo PC=, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 115ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash printf x | tee src/a.ts, modo --posix, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo normal (control), por guard.sh -> deny  (a) rc 0 en 108ms, salida 456 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo normal (control), por guard-completado.sh -> deny  (a) rc 0 en 109ms, salida 456 bytes; (b) deny; (c) intacto
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=1, por guard-completado.sh -> deny  (a) rc 0 en 110ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo PC=, por guard-completado.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo SHELLOPTS, por guard-completado.sh -> deny  (a) rc 0 en 112ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 111ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo BASH_ENV, por guard-completado.sh -> deny  (a) rc 0 en 111ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo --posix, por guard.sh -> deny  (a) rc 0 en 110ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash sed -i s/en-revision/completado/ requirements/REQ-900.md, modo --posix, por guard-completado.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo normal (control), por guard.sh -> deny  (a) rc 0 en 109ms, salida 602 bytes; (b) deny; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash git reset --hard, modo normal (control), por guard-git.sh -> deny  (a) rc 0 en 109ms, salida 602 bytes; (b) deny; (c) intacto
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=1, por guard-git.sh -> deny  (a) código de salida 1, no 0, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=, por guard.sh -> deny  (a) rc 0 en 214ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo PC=, por guard-git.sh -> deny  (a) código de salida 1, no 0, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 109ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo SHELLOPTS, por guard-git.sh -> deny  (a) código de salida 1, no 0, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo BASH_ENV, por guard-git.sh -> deny  (a) código de salida 1, no 0, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo --posix, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git reset --hard, modo --posix, por guard-git.sh -> deny  (a) código de salida 1, no 0, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+  PASS  SEC-129 CA-68 (ii) M Bash git clean -fd, modo normal (control), por guard.sh -> deny  (a) rc 0 en 108ms, salida 595 bytes; (b) deny; (c) intacto
+  FAIL  SEC-129 CA-68 (ii) M Bash git clean -fd, modo PC=1, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git clean -fd, modo PC=, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git clean -fd, modo SHELLOPTS, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git clean -fd, modo BASH_ENV, por guard.sh -> deny  (a) rc 0 en 107ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  FAIL  SEC-129 CA-68 (ii) M Bash git clean -fd, modo --posix, por guard.sh -> deny  (a) rc 0 en 108ms, salida 0 bytes; (b) esperado=deny got=nada; (c) MODIFICADO
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+          stderr| /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo normal (control), control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 106ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo PC=1, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 107ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo PC=, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 108ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo SHELLOPTS, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 109ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo BASH_ENV, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 108ms, salida 0 bytes; (b) nada; (c) intacto
+  PASS  SEC-129 CA-68 (ii) M Bash ls -la, modo --posix, control sin falso positivo, por guard.sh -> sin decisión  (a) rc 0 en 108ms, salida 0 bytes; (b) nada; (c) intacto
+aviso: vuelta parcial (1 de 61 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 36 PASS, 57 FAIL

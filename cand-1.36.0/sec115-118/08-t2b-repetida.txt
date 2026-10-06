@@ -1,0 +1,5 @@
+# T2b (Write de 1 012 650 bytes) repetida, intercalada, timeout 120, 2026-10-06T10:04:08-06:00; uptime:  10:04:08 up 4 days,  1:17,  1 user,  load average: 0.68, 1.59, 1.83
+t2-1m            /home/juan/dev/ArnesJuan-v1.36     dec=deny aviso=no rc=0   ms=36367  salida=317B json=si entrada=1025684B disco=igual motivo<ARNES: no se puede completar 'requirements/REQ-950.md': e
+t2-1m            /home/juan/dev/ArnesJuan-v1.35.0-base dec=deny aviso=no rc=0   ms=45495  salida=317B json=si entrada=1025684B disco=igual motivo<ARNES: no se puede completar 'requirements/REQ-950.md'
+t2-1m            /home/juan/dev/ArnesJuan-v1.36     dec=deny aviso=no rc=0   ms=37772  salida=317B json=si entrada=1025684B disco=igual motivo<ARNES: no se puede completar 'requirements/REQ-950.md': e
+t2-1m            /home/juan/dev/ArnesJuan-v1.35.0-base dec=deny aviso=no rc=0   ms=39473  salida=317B json=si entrada=1025684B disco=igual motivo<ARNES: no se puede completar 'requirements/REQ-950.md'

@@ -1,0 +1,3 @@
+# t1b (exploratoria, no es T1): QA: pendiente + 255 KB 'evidencia ' SIN parentesis, Edit a completado, timeout 120, 2026-10-06T09:50:16-06:00
+t1b              /home/juan/dev/ArnesJuan-v1.36     dec=nada aviso=no rc=0   ms=2308   salida=0B json=no entrada=431B disco=igual intento[arg=r motivo_bytes=229705 salida_bytes=229817;] stderr[environment: line 16: /home/juan/.local/bin/jq: Argument list too long|] motivo<>
+t1b              /home/juan/dev/ArnesJuan-v1.35.0-base dec=nada aviso=no rc=0   ms=2310   salida=0B json=no entrada=431B disco=igual intento[arg=r motivo_bytes=229705 salida_bytes=229817;] stderr[environment: line 16: /home/juan/.local/bin/jq: Argument list too long|] motivo<>
