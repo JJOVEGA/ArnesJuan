@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · P-136-M medido: REQ-017 CA-08 (ii) no tiene escalón entre v1.35.0 y `78a2f33` (medianas 1,207–1,228); INS-136-2 y F-136-8; el paso 5 sigue a QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (medición, ~25 k tokens; evidencia `a16f3f8`) y la coordinadora.
+
+- **Medición** (una corrida por commit, 5 mediciones, carga inicial 0,41): las cinco medianas se separan 0,021 y v1.35.0 ya llega a 1,285. El FAIL del inventario de SEC-128 se midió con el anfitrión cargado. Tabla completa en `docs/PENDIENTES.md`, INS-136-2.
+- **Por la rama «sin escalón» de P-136-M:** se registra como `instrumento` (INS-136-2) y se abre F-136-8 para REQ-017 en 1.37. Nadie toca el umbral.
+- **Avance (regla 6):** la parada queda resuelta por medida; sigue QA del paso 5 (SEC-127, QA-007-06 y SEC-128).
+
 ## [Interno] — 2026-10-06 · La coordinadora pasa a Fable 5.1 como prueba acotada (decisión del propietario, cabeza `098896c`); el plan no cambia
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

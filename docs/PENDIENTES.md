@@ -2217,3 +2217,25 @@ ninguna mata al hook.»
 - **Dueños propuestos:** `auditor-seguridad` (clase y severidad); después, si se decide repararlo, `analista-requerimientos`
   (contrato) y `desarrollador`.
 - **Ventana:** **ninguna en 1.36.0.**
+
+## Medición dirigida de P-136-M (2026-10-06): REQ-017 CA-08 (ii) no tiene escalón entre v1.35.0 y `78a2f33`
+
+**Origen:** decisión del propietario P-136-M (A), literal en `PENDING_APPROVAL.md` § Resueltas. Evidencia: `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/m-ca08/`, commit `a16f3f8` (`20-resumen.txt`, `00-carga.txt`, `11-` a `15-`). Método: la sección 37/5 del banco de v1.35.0 con el filtro del caso, `SONDA_COSTE_R=5`, una corrida por commit, carga inicial 0,41.
+
+### INS-136-2 — Hallazgo `instrumento`, no atribuible al cambio: REQ-017 CA-08 (ii) oscila alrededor del techo de 1,25× en los cinco commits
+
+| Commit | r (las 5) | mín | mediana | máx | Veredicto |
+|---|---|---|---|---|---|
+| v1.35.0 | 1,207 1,208 1,142 1,285 1,237 | 1,142 | 1,208 | 1,285 | INCONCLUSO |
+| `82ceb63` | 1,150 1,228 1,256 1,237 1,228 | 1,150 | 1,228 | 1,256 | INCONCLUSO |
+| `413c6bd` | 1,224 1,188 1,207 1,242 1,148 | 1,148 | 1,207 | 1,242 | PASS |
+| `a59917d` | 1,242 1,225 1,211 1,166 1,222 | 1,166 | 1,222 | 1,242 | PASS |
+| `78a2f33` | 1,217 1,203 1,235 1,323 1,225 | 1,203 | 1,225 | 1,323 | INCONCLUSO |
+
+- Las cinco medianas se separan 0,021; dentro de cada commit, las cifras se separan entre 0,08 y 0,14. v1.35.0, sin ningún cambio de esta ventana, ya llega a 1,285. Que salga PASS, INCONCLUSO o FAIL depende del máximo de cinco cifras que rondan el techo, no del árbol. El FAIL del inventario de SEC-128 (1,251–1,286, 5 de 5) se midió con el anfitrión cargado (≈ 1,4–2,0).
+- **Límite de la medición:** una sola corrida por commit, con la carga subiendo hasta 1,54 durante la medida; no se descarta un efecto menor de ≈ 0,02. Sólo Linux/WSL2, bash 5.3.9.
+- **Consecuencia:** un inventario puede diferir en este caso sin que cambie el código. Se registra y el plan sigue (P-136-M, rama «sin escalón»). **Sin reparar.**
+
+### F-136-8 — 1.37, REQ-017: un techo de 1,25× con el ratio en 1,20–1,30 en reposo es demasiado fino para acreditar nada
+- **Qué dice el propietario (literal, P-136-M):** «un techo de 1,25× con el ratio en 1,20–1,30 en reposo es demasiado fino para acreditar nada; se revisa en 1.37, no ahora».
+- **Dueño propuesto:** `analista-requerimientos` (cambia el contrato de REQ-017 CA-08 (ii)), con QA. Relacionada con F-136-4 (la calibración de `sonda-reloj`) e INS-136-1.
