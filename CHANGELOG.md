@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Paso 6, fase 1 registrada (`738b74d`, SIN VALIDAR): 93 casos de SEC-118/115/129 con fail-before idéntico en `78a2f33` y v1.35.0; E1 medido; T2b roza los 40 s; un FAIL de calibración de reloj (INS-136-1); ESTADO a la fase 2
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Lo que fallaba y se ve ahora medido:** SEC-118, el hook intenta emitir motivos de 134–155 KB y avisos de ≈ 287 KB y sale sin decisión; SEC-115, T2a (2 MB) y T3 (256 KB) no responden en 60 s; SEC-129, 40 filas de `Bash` en los cinco modos POSIX sin decisión. Los controles (D, T1/T2b, M en modo normal) pasan.
+- **E1:** las tres entradas de la sonda 37/3 salen sin decisión, sin motivo y con rc 0 en los dos árboles (106 ms, 0,4–0,6 s, 1,3–2,0 s): son cierres legítimos que la fase 2 tiene que seguir dejando pasar.
+- **Riesgo para la fase 2:** T2b tarda entre 29 y 49 s según la carga, y el plazo propio es de 40 s como máximo.
+- **Banco:** 2231/59/13; 57 FAIL esperados, T2b por el plazo bajo carga, y `REQ-021 CA-03 (c)` (calibración de reloj: clase de INS-136-1, se registra y se sigue). Autoprueba 117/0; gates rc 0.
+- **Avance (regla 6):** los fallos de SEC-115/118/129 están medidos como casos; sigue la reparación.
+
 ## [GitHub] — 2026-10-06 · Paso 6, fase 1 (desarrollador): casos del banco con fail-before para SEC-118, SEC-115 y SEC-129, SIN reparar — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (puntos 1 y 7, E1). Registro: `docs/arnes/v1.36.0-sec115-118-fase1.md`; evidencia `cand-1.36.0/sec115-118/` (`08751e4`, el procedimiento de T3 antes de medir, y `86c4ff1`).
 
