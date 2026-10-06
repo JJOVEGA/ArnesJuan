@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · P-136-J (A, acotada), P-136-K (A) y P-136-L (A) resueltas por el propietario; encadenado sin parar hasta abrir SEC-115/118
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisiones literales** en la cola, con las fichas debajo; la cola queda vacía.
+- **Orden en serie:** write-back del analista → SEC-128 → QA del paso 5 → seguridad (`POSIXLY_CORRECT` más el paso 5) → commit validado → SEC-115/118.
+- **Avance (regla 6):** no queda ninguna decisión pendiente en el paso 5.
+
 ## [Interno] — 2026-10-05 · Paso 5, fase 2 (`a59917d`, SIN VALIDAR): SEC-127 y QA-007-06 reparados por el desarrollador; QA espera a P-136-J y P-136-K
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

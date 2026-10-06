@@ -43,8 +43,42 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-06: P-136-J, P-136-K y P-136-L resueltas por el propietario, en § Resueltas.)_
 
-### [2026-10-05] (coordinadora) — P-136-J: SEC-128 (`contrato`, baja; R-053). `guard-codigo` deja pasar al agente de código con un `file_path` que no es texto, antes de aplicar la regla del enlace (SEC-004). ¿Se repara dentro de SEC-127, se repara aparte o se declara?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-06) — **P-136-J (A, acotada), P-136-K (A) y P-136-L (A)**; se encadena sin parar hasta abrir SEC-115/118
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-J: (A), acotada: la reparación es únicamente que un file_path que no
+> es texto no deje pasar a nadie (fail-closed), con su caso de banco. Nada
+> más entra en esta fase 2 corta. Si al abrirla aparece algo más, ficha.
+>
+> P-136-K: (A). SEC-127 se acredita con los casos de la sección 47 y la
+> lectura del código; la prueba en bash 5.0 en modo POSIX queda declarada
+> como no medida en CA-47 y en las notas. O-52-3 pasa a ficha de seguridad.
+>
+> P-136-L: (A). Revisión corta de seguridad ahora, para fijar qué apaga
+> exactamente POSIXLY_CORRECT=1 y desde cuándo (también en v1.35.0: no es
+> regresión); la reparación va dentro de SEC-115/118, que ya trata «el hook
+> siempre emite decisión».
+>
+> Encadena sin parar: SEC-128, QA del paso 5 entero, revisión corta de
+> POSIXLY_CORRECT, seguridad de SEC-127, commit validado, y abre SEC-115/118.
+
+**Lo que añade la coordinadora:**
+- **Orden en serie** (todo es REQ-007):
+  1. el analista escribe J y K en el contrato (CA-47) y añade la ficha O-52-3;
+  2. el desarrollador repara SEC-128;
+  3. QA del paso 5 entero;
+  4. una sola comisión de `auditor-seguridad`: la revisión corta de `POSIXLY_CORRECT` y la seguridad de SEC-127, SEC-128 y QA-007-06;
+  5. commit validado;
+  6. apertura de SEC-115/118 con su plan, que incluye la reparación de `POSIXLY_CORRECT`.
+- **«Las notas»** de K: las notas `[1.36.0]` no existen todavía. El texto va a la entrada «Hacia 1.36.0» de la guía, como se hizo con QA-007-01, para copiarlo después a las notas.
+- La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-J: SEC-128 (`contrato`, baja; R-053). `guard-codigo` deja pasar al agente de código con un `file_path` que no es texto, antes de aplicar la regla del enlace (SEC-004). ¿Se repara dentro de SEC-127, se repara aparte o se declara?
 
 **Contexto.** R-053 (`docs/seguridad/registro-seguridad.md`), sobre `413c6bd`. **Determinación: con hallazgos, sin veto. SEC-120 queda `mitigado` en el candidato.**
 - **SEC-128:** `hooks/guard-codigo.sh:37-42` devuelve permiso al agente de código cuando `file_path` no es texto, y lo hace **antes** de `arnes_deny_enlace` (`:67`), cuya regla (SEC-004) alcanza a todo agente.
@@ -67,7 +101,7 @@
 **Espera:** elección del propietario.
 
 
-### [2026-10-05] (coordinadora) — P-136-K: el caso 2 de SEC-127 tal como lo pidió el propietario («cierre TERMINÉ/terminé en `LC_ALL=C` simulado, que pasó de `deny` a `allow`») no es construible como fail-before. ¿Con qué se acredita SEC-127?
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-K: el caso 2 de SEC-127 tal como lo pidió el propietario («cierre TERMINÉ/terminé en `LC_ALL=C` simulado, que pasó de `deny` a `allow`») no es construible como fail-before. ¿Con qué se acredita SEC-127?
 
 **Contexto.** Fase 1 del paso 5 (`ab52c9b`; `docs/arnes/v1.36.0-sec127-fase1.md` §3; evidencia `cand-1.36.0/sec127/`, commit `79f3908`).
 - Con `LC_ALL=C` en el **entorno**, el cierre `TERMINÉ`/`terminé` sale sin decisión **también en v1.35.0**: es O-52-3 (R-052 §5), anterior al candidato y no registrado como hallazgo. La simulación de R-052 (`seg-R052/94-`) no aísla el mecanismo de SEC-127 (que la asignación del atajo persista en bash ≤ 5.0 en modo POSIX): mide el locale del entorno.
@@ -85,7 +119,7 @@
 
 **Espera:** elección del propietario.
 
-### [2026-10-05] (coordinadora) — P-136-L: con `POSIXLY_CORRECT=1` en el entorno, la vía `Bash` NO decide en ninguno de los dos árboles (v1.35.0 tampoco). Es un fallo en abierto preexistente y sin clasificar. ¿Qué se hace?
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-L: con `POSIXLY_CORRECT=1` en el entorno, la vía `Bash` NO decide en ninguno de los dos árboles (v1.35.0 tampoco). Es un fallo en abierto preexistente y sin clasificar. ¿Qué se hace?
 
 **Contexto.** Hallazgo lateral del desarrollador en la fase 1 de SEC-127 (`cand-1.36.0/sec127/09-`): con `POSIXLY_CORRECT=1`, ni `echo x > src/a.ts`, ni `sed -i …completado`, ni `git reset --hard` reciben decisión. `Write` sí deniega. Ocurre en v1.35.0 y en el candidato, así que **no es movimiento**. Ningún agente de seguridad lo ha revisado. Si el entorno de Claude Code llevara esa variable, las puertas de `Bash` quedarían apagadas en todos los proyectos. En bash 5.3 deja además a SEC-127 sin movimiento (R-052 §4 decía que eso lo cerraría por medición).
 
@@ -99,8 +133,6 @@
 **Qué trabajo sigue mientras no se decida:** la fase 2 de SEC-127. **Agrupada con P-136-J y P-136-K.**
 
 **Espera:** elección del propietario.
-
-## Resueltas
 
 ### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-05) — **Plan autorizado: paso 5 de 1.36.0, SEC-127 más QA-007-06**
 
