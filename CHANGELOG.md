@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-05 · Paso 5, fase 2 (`a59917d`, SIN VALIDAR): SEC-127 y QA-007-06 reparados por el desarrollador; QA espera a P-136-J y P-136-K
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Según el desarrollador** (~60 k tokens; sólo `hooks/lib.sh`, sin subshell y sin procesos nuevos):
+  - `arnes_estado_ausente` guarda `LC_ALL`, lo pone en C y lo restaura, sin asignarlo delante de una llamada de función; vale también en bash ≤ 5.0 en modo POSIX, sostenido por lectura (NEWS de bash-5.1, punto «o»);
+  - `arnes_preludio` vacía `ARNES_INPUT` antes del `read`, así que un `read` fallido da entrada vacía, que es ilegible, y `deny`.
+  - Resultados: sección 47 32/0; inventario CA-69 2 (a) idéntico a `22-`; banco 2185/0/13; autoprueba 117/0; gates rc 0. Procesos: +0 en el camino común (nueve entradas) y +1 en stdin cerrado o directorio, que es el coste de decidir.
+- **Avance (regla 6):** SEC-127 y QA-007-06 construidos; QA espera las decisiones P-136-J y P-136-K.
+
 ## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 2: reparación en `hooks/lib.sh` — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`; evidencia `cand-1.36.0/sec127/`, commits `42cd8a9` y `281869b` del árbol de evidencia).
 
