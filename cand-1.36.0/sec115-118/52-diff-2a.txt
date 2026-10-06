@@ -1,0 +1,4 @@
+0a1
+> FAIL	arnes-lectura: ...el contador no dice 1
+1794d1794
+< PASS	arnes-lectura: ...y cuenta 1 anomalia, no 0

@@ -1,0 +1,31 @@
+# 2026-10-06T11:12:22-06:00; bash 5.3.9(1)-release; candidato /home/juan/dev/ArnesJuan-v1.36/hooks
+F0  Bash  echo x > src/a.ts        rc=0 dec=deny motivo<ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).>
+F0  Bash  git reset --hard         rc=0 dec=deny motivo<ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros>
+F0  Bash  ls -la                   rc=0 dec=nada motivo<>
+F0  Write docs/n.md                rc=0 dec=nada motivo<>
+F0  Write src/a.ts                 rc=0 dec=deny motivo<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desa>
+F0  Bash  echo x > src/a.ts        rc=0 dec=nada motivo<>
+F1  Bash  echo x > src/a.ts        rc=0 dec=deny motivo<ARNES: la puerta guard-git no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no >
+F1  Bash  git reset --hard         rc=0 dec=deny motivo<ARNES: la puerta guard-git no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no >
+F1  Bash  ls -la                   rc=0 dec=deny motivo<ARNES: la puerta guard-git no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no >
+F1  Write docs/n.md                rc=0 dec=deny motivo<ARNES: la puerta guard-git no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no >
+F1  Write src/a.ts                 rc=0 dec=deny motivo<ARNES: la puerta guard-git no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no >
+F1  Bash  echo x > src/a.ts        rc=0 dec=nada motivo<>
+F2  Bash  echo x > src/a.ts        rc=0 dec=deny motivo<ARNES: el analisis de escrituras de este comando termino con un codigo que no esta en su vocabulario declarado (7), en guard-codigo: el analisis no co>
+F2  Bash  git reset --hard         rc=0 dec=deny motivo<ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros>
+F2  Bash  ls -la                   rc=0 dec=deny motivo<ARNES: el analisis de escrituras de este comando termino con un codigo que no esta en su vocabulario declarado (7), en guard-codigo: el analisis no co>
+F2  Write docs/n.md                rc=0 dec=nada motivo<>
+F2  Write src/a.ts                 rc=0 dec=deny motivo<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desa>
+F2  Bash  echo x > src/a.ts        rc=0 dec=nada motivo<>
+F3  Bash  echo x > src/a.ts        rc=0 dec=deny motivo<ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).>
+F3  Bash  git reset --hard         rc=0 dec=deny motivo<ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios agentes en vuelo el arbol contiene cambios intermedios de otros>
+F3  Bash  ls -la                   rc=0 dec=deny motivo<ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote>
+F3  Write docs/n.md                rc=0 dec=deny motivo<ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote>
+F3  Write src/a.ts                 rc=0 dec=deny motivo<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (intento de la sesión coordinadora). Delega el cambio en 'desa>
+F3  Bash  echo x > src/a.ts        rc=0 dec=nada motivo<>
+F4  Bash  echo x > src/a.ts        rc=0 dec=deny motivo<ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote>
+F4  Bash  git reset --hard         rc=0 dec=deny motivo<ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote>
+F4  Bash  ls -la                   rc=0 dec=nada motivo<>
+F4  Write docs/n.md                rc=0 dec=nada motivo<>
+F4  Write src/a.ts                 rc=0 dec=deny motivo<ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote>
+F4  Bash  echo x > src/a.ts        rc=0 dec=nada motivo<>

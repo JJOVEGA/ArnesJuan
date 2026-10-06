@@ -54,8 +54,8 @@ case "$V" in
   t1b)  # exploratoria, NO es T1: la misma evidencia SIN paréntesis (se normaliza el valor entero)
     { printf '# REQ-950\nEstado: en-revisión\nQA: pendiente '; rep 25500 'evidencia '; printf '\nSeguridad: pendiente\nRigor: critico\n\n## Texto\nx\n'; } > "$R"
     printf 'Estado: en-revisión' > "$W/old"; printf 'Estado: completado' > "$W/new"; editj ;;
-  t2-2m|t2-1m)  # R-044-C §2 vía (b): Write con la cabecera pendiente, de 2 025 113 / 1 012 650 bytes
-    obj=2025113; [ "$V" = t2-1m ] && obj=1012650
+  t2-2m|t2-1m|t2n-*)  # R-044-C §2 vía (b): Write con la cabecera pendiente, de 2 025 113 / 1 012 650 bytes (t2n-<N>: de N)
+    obj=2025113; [ "$V" = t2-1m ] && obj=1012650; case "$V" in t2n-*) obj="${V#t2n-}" ;; esac
     cab en-revisión pendiente pendiente > "$R"
     { cab completado pendiente pendiente; printf '\n## Texto\n'; } > "$W/doc"
     lin="$(rep 7 'relleno de cuerpo ')"; lin="${lin:0:79}"; n=$(( (obj - $(wc -c < "$W/doc")) / 80 ))
@@ -90,6 +90,7 @@ JQLOG="$W/jqlog"; : > "$JQLOG"
   printf '%s %s\n' "$rc" "$(( (t1 - t0) / 1000 ))" > "$W/rc"
 )
 read -r rc ms < "$W/rc"; ob="$(wc -c < "$W/out")"
+[ -z "${SONDA_GUARDA:-}" ] || cp "$W/out" "$SONDA_GUARDA"   # fase 2: la salida entera, para medir el motivo
 d=nada; grep -q '"permissionDecision":"deny"' "$W/out" && d=deny
 av=no; grep -q '"systemMessage"' "$W/out" && av=si
 jv=no; [ -s "$W/out" ] && jq -e . "$W/out" >/dev/null 2>&1 && jv=si

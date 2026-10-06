@@ -1,0 +1,12 @@
+854c854
+< PASS	REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+---
+> PASS	REQ-007 CA-66 una ruta de 4186 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+1435d1434
+< PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+1446c1445
+< PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+---
+> PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× (#N:no-converge(N/N) #N:no-converge(N/N) )
+2038a2038
+> SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta N o más repeticiones resueltas de v1.32.1 y todas por encima de N× · v1.32.1: N× N× N× N× N× (N de N resueltas) · este árbol: N× N× N× N× N× (N de N resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto

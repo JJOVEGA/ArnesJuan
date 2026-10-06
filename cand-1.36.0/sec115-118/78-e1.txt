@@ -1,0 +1,20 @@
+# E1 2026-10-06T11:27:51-06:00; bash 5.3.9(1)-release; 6.18.33.2-microsoft-standard-WSL2; LANG=C.UTF-8 sin LC_ALL; k=3; generador: ea0ef46ffdcf95f3 (11 líneas)
+# columnas: rep N arbol decision rc ms entrada_bytes sha_entrada | motivo completo
+rep=1 N=0      arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=104    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=1 N=0      arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=105    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=1 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=304    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=1 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=406    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=1 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=1007   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>
+rep=1 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=1006   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>
+rep=2 N=0      arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=105    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=2 N=0      arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=105    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=2 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=305    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=2 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=405    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=2 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=1006   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>
+rep=2 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=1005   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>
+rep=3 N=0      arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=105    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=3 N=0      arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=103    entrada=301B sha=5127ee51558a694d | <sin motivo>
+rep=3 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=304    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=3 N=98304  arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=405    entrada=98605B sha=fb1b6b0f1396af5c | <sin motivo>
+rep=3 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.36 dec=nada rc=0   ms=1006   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>
+rep=3 N=196608 arbol=/home/juan/dev/ArnesJuan-v1.35.0-base dec=nada rc=0   ms=1006   entrada=196909B sha=ec4c0cdba60725e3 | <sin motivo>

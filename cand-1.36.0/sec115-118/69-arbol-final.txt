@@ -1,0 +1,20 @@
+# 2026-10-06T11:20:00-06:00 arbol final: cabeza e33e6c7 + cambios sin confirmar
+ M ARCHITECTURE.md
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M hooks/guard-completado.sh
+ M hooks/guard-git.sh
+ M hooks/guard.sh
+ M hooks/lib.sh
+ M tests/escenarios/hooks/secciones/47-decision-emitida.sh
+?? hooks/entrada.sh
+c03959191a955111022723fe820bff7a762a5dba92d4b0524a545dd25e0bec10  hooks/entrada.sh
+4a641cac9d1a2afeec87f5f6547528d19b9f423ce97b37912985f45ffa2acb39  hooks/estado-derivado.sh
+528ba686d7364f29123ca599ff77b7e2bee898ec0882458c64596051668ac684  hooks/guard-codigo.sh
+99bc72cef0151cae9609cb27af562054c2ebffcc3bf884b9ec4e6f1a70f9cbdd  hooks/guard-completado.sh
+45a11d8df3a965f719850dae3ac370cdd33b7e84443f59ba3078c251021ede13  hooks/guard-git.sh
+f4b1f8a1a4fdc927fd87fb452f287bec8a59d4c2bda9001de068f46aa264b959  hooks/guard.sh
+5e8f7cb8eb17fbc0e317ddb4aa47ba26311c14a2e9298a858af925ba103b8dee  hooks/lib.sh
+dd9e6dcf62c79336bd749f5b19b697a9b00509337882811de0d877b3b58e902a  hooks/rotar-artefactos.sh
+0570ec9dd0edf14523e812bb53a247d967c261b9eaf781a6c80f5d1d36c532ca  hooks/stop.sh
+f52870a38576991beb2c6c7db428c1347009966c77d5916451cbb852aaf18897  hooks/campos-req.awk

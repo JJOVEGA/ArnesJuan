@@ -1,0 +1,15 @@
+# REQ legitimos de este repositorio (copias en un proyecto de prueba), cabeza e33e6c7, 2026-10-06T11:17:07-06:00
+Write de REQ-007.md entero (660431 B)        v1.36/hooks    rc=0 dec=deny ms=204 motivo<ARNES: no se juzga esta escritura de 'requirements/REQ-007.md': el texto que trae (el contenido del Write, o l>
+Write de REQ-007.md entero (660431 B)        v1.35.0-base/hooks rc=0 dec=nada ms=11623 motivo<>
+Write de REQ-021.md entero (296973 B)        v1.36/hooks    rc=0 dec=nada ms=2208 motivo<>
+Write de REQ-021.md entero (296973 B)        v1.35.0-base/hooks rc=0 dec=nada ms=3009 motivo<>
+Write de REQ-023.md entero (170764 B)        v1.36/hooks    rc=0 dec=nada ms=1109 motivo<>
+Write de REQ-023.md entero (170764 B)        v1.35.0-base/hooks rc=0 dec=nada ms=1108 motivo<>
+Edit de REQ-007.md, old_string de 1500 B     v1.36/hooks    rc=0 dec=nada ms=806 motivo<>
+Edit de REQ-007.md, old_string de 1500 B     v1.35.0-base/hooks rc=0 dec=nada ms=807 motivo<>
+Edit de REQ-007.md, old_string de 3000 B     v1.36/hooks    rc=0 dec=nada ms=806 motivo<>
+Edit de REQ-007.md, old_string de 3000 B     v1.35.0-base/hooks rc=0 dec=nada ms=1007 motivo<>
+Edit de REQ-007.md, old_string de 3335 B     v1.36/hooks    rc=0 dec=deny ms=204 motivo<ARNES: no se juzga esta edicion de 'requirements/REQ-007.md': buscar sus old_string en el documento costaria, >
+Edit de REQ-007.md, old_string de 3335 B     v1.35.0-base/hooks rc=0 dec=nada ms=706 motivo<>
+Edit de REQ-007.md, old_string de 6000 B     v1.36/hooks    rc=0 dec=deny ms=205 motivo<ARNES: no se juzga esta edicion de 'requirements/REQ-007.md': buscar sus old_string en el documento costaria, >
+Edit de REQ-007.md, old_string de 6000 B     v1.35.0-base/hooks rc=0 dec=nada ms=706 motivo<>

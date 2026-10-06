@@ -1,0 +1,2 @@
+PASS	REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
