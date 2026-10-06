@@ -2315,3 +2315,7 @@ ninguna mata al hook.»
 ### F-136-19 — 1.37: QA-007-11 (b) (`contrato`, preexistente): `SHELLOPTS=noexec` u `onecmd`, y `xtrace` con `BASH_XTRACEFD=1`, heredados del entorno, no se pueden neutralizar desde dentro del hook
 - **Qué:** con `noexec` el intérprete no ejecuta nada, con `onecmd` sale tras la primera orden, y `xtrace` hacia stdout rompe el JSON de la decisión. `hooks/entrada.sh` no llega a correr o no puede deshacerlo. Piden actuar en la orden de `hooks.json` (invocar bash de forma que ignore ese estado) o declarar la frontera del entorno del host.
 - **Límite declarado en 1.36.0** (P-136-P (2) (A)); dueño `desarrollador` con `auditor-seguridad`; se evalúa con F-136-9 (`BASH_ENV`), que es la misma frontera.
+
+### PR-136-4 — Hallazgo de proceso, clase `instrumento`: QA comiteó su evidencia con `core.hooksPath=/dev/null` (lo declaró él mismo)
+- **Qué:** en el árbol de evidencia (`cand-1.36.0/sec115-118/qa2/`, commit `6cf1ba0`), el `qa-tester` hizo el commit con `core.hooksPath=/dev/null`. El repositorio de evidencia apunta a `.githooks`, que no existe en esa rama, así que **no se saltó ningún hook**; aun así es la forma del bypass (memoria del proyecto: informar un bypass no lo autoriza). **Sin reparar;** se suma a PR-136-1/2/3 como instancias de la misma clase; el control mecánico es la ficha b) de 1.37.
+- **Además, tres defectos del instrumento de QA**, corregidos y repetidos una sola vez, con las corridas malas descartadas y rotuladas (`qa2/descartadas/`): no cuentan como evidencia.

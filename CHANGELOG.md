@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Re-verificación de QA (Opus) de `03cbf5e`: CON HALLAZGOS. QA-007-10, QA-007-11 (a) y QA-007-12 cerrados; QA-007-08 → INS-136-4; **QA-007-13** (`contrato`, baja): función importada `builtin` → sin decisión, y cuelgue de 60 s por llamada (regresión); P-136-Q; PR-136-4
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `6cf1ba0`) y la coordinadora.
+
+- **Conforme:** bloque P 7/7 con fail-before; 393 casos de bytes no UTF-8 sin fallo (`8e11f87` fallaba 119); 38 930 combinaciones de variables y 7 272 con `localvar_inherit` sin diferencias; T1–T3, T2b (206–308 ms) y la matriz POSIX en `deny`; E1 igual; fronteras de los techos idénticas; inventario sólo con INS-136-2 y 2 (c); banco 2299/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **QA-007-13:** al suplantar con funciones importadas 21 órdenes del preludio (567 combinaciones por árbol): `builtin` (regresión: sin decisión, y 60 100 ms con rc 124 si la función devuelve 0), `.` y `[` (preexistentes: `guard.sh` los usa antes de `entrada.sh`), `SHELLOPTS=errexit` (preexistente, deniega todo). `POSIXLY_CORRECT=y` protege a los builtins especiales (medido fuera del hook).
+- **`Hallazgos abiertos:`** de REQ-007: 14 elementos, 11 875 bytes, legible.
+- **PR-136-4:** QA comiteó su evidencia con `core.hooksPath=/dev/null` (no había hooks que saltar; declarado por él). Tres defectos de su instrumento, corregidos, con las corridas malas descartadas.
+- **P-136-Q** en la cola: recomendación (A), una pasada acotada con tope de una hora; si no cabe, límite declarado.
+- **Avance (regla 6):** el paso 6 queda a una decisión de cerrarse; el cuelgue de 60 s es lo único que la coordinadora no quiere publicar como límite.
+
 ## [Interno] — 2026-10-06 · Paso 6: pasada correctiva única en `03cbf5e` (SIN VALIDAR): QA-007-10, QA-007-12 y QA-007-11 (a) reparados; ESTADO a la re-verificación de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

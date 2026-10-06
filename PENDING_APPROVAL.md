@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-06: P-136-P resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-06] (coordinadora) — P-136-Q: QA-007-13 (`contrato`, baja): una función importada del entorno llamada `builtin` deja al hook sin decisión, y si devuelve 0 **toda llamada muere a los 60 s** (regresión de la pasada correctiva). No quedan pasadas en el plan. ¿Una pasada acotada más, o límite declarado?
+
+**Contexto.** Re-verificación de QA de `03cbf5e` (`docs/qa/REQ-007.md`, «Paso 6: re-verificación de la pasada correctiva»; evidencia `cand-1.36.0/sec115-118/qa2/`, `6cf1ba0`). **Conforme:** QA-007-10, QA-007-11 (a) y QA-007-12 **cerrados** (393 casos con bytes no UTF-8 sin fallo; 38 930 combinaciones de variables sin diferencias; 7 272 con `localvar_inherit`); T1–T3 y la matriz POSIX en `deny`; E1 igual; inventario sólo con INS-136-2 y 2 (c); banco 2299/0/13; autoprueba 117/0; gates rc 0; +0 procesos. QA-007-08 reclasificado a `instrumento` (INS-136-4).
+
+**QA-007-13.** CA-68 (ii) promete «la misma decisión que sin ese estado» para cualquier estado heredado, y cita las funciones importadas como ejemplo. Atacando la limpieza de `entrada.sh` con funciones importadas que llevan el nombre de 21 órdenes que usa el preludio (567 combinaciones por árbol):
+- **`builtin` — REGRESIÓN de `03cbf5e`:** la limpieza protege sus órdenes con `builtin`, que **no** es un builtin especial y una función puede suplantarlo. Con `BASH_FUNC_builtin%%` exportada, todo lo que debería denegarse sale sin decisión; si esa función devuelve 0, el bucle `while IFS= builtin read …` sobre `/proc/self/environ` no avanza y **cualquier llamada tarda 60 100 ms y sale con rc 124**, incluso `ls -la` (107 ms en `8e11f87` y v1.35.0).
+- **`.` y `[` — preexistentes:** `guard.sh` los ejecuta antes de cargar `entrada.sh`, así que ninguna limpieza interna llega a tiempo (sólo la orden de `hooks.json` podría).
+- **`SHELLOPTS=errexit` — preexistente, falla hacia el lado cerrado:** deniega todo, también lo legítimo.
+- **Dato medido por QA fuera del hook:** con `POSIXLY_CORRECT=y` activo, las funciones no pueden suplantar a los builtins **especiales** (`unset`, `set`, `.`, `eval`, `export`…), sin crear procesos; `builtin`, `shopt`, `printf`, `read` y `[` **no** son especiales.
+- **Vector:** exige un entorno que exporte una función con ese nombre al proceso de Claude Code; quien puede hacerlo ya podía exportar `BASH_FUNC_jq%%` en v1.35.0 (sin decisión). Severidad baja según QA; la consecuencia nueva es la **disponibilidad** (60 s por llamada).
+
+**Opciones.**
+- **(A) Una pasada más, acotada y con tope**, que excede el plan: en `entrada.sh`, antes de cualquier otra orden, `POSIXLY_CORRECT=y` para que los builtins especiales no puedan ser suplantados, retirar con `unset -f` (especial) las funciones homónimas de todas las órdenes que la limpieza va a usar (`builtin`, `shopt`, `printf`, `read`, `[`…), y sólo después la limpieza actual y `set +o posix`; sin bucle que dependa de órdenes suplantables (o con tope de iteraciones). Caso de banco por `builtin` (sin decisión y la variante que cuelga, con `timeout`). `.` y `[` en `guard.sh` antes de `entrada.sh` → **límite declarado** (F-136-20: la frontera es la orden de `hooks.json`, 1.37). `errexit` → límite declarado del lado cerrado. Re-verificación de QA acotada al bloque nuevo y a la regresión. **Consecuencia:** ≈ 1 h más; el candidato no publica un cuelgue de 60 s nuevo. Si la reparación no cabe en unas pocas líneas, se para y se vuelve a (B).
+- **(B) Límite declarado**, sin más pasadas: una función importada con el nombre de una orden del preludio (`builtin`, `.`, `[`) deja al hook sin decisión o colgado 60 s; ficha F-136-20 para 1.37 (`hooks.json`). **Consecuencia:** se publica una regresión de disponibilidad introducida en esta ventana, declarada; el contrato CA-68 (ii) tendría que acotar «funciones importadas» para no contradecirse.
+- **(C) Revertir la parte de QA-007-11 (a)** (la limpieza de funciones importadas) y declararla límite, conservando QA-007-10 y QA-007-12. **Consecuencia:** vuelve `BASH_FUNC_jq%%` → sin decisión (que ya tenía v1.35.0) y desaparece el cuelgue; también es un cambio de código que QA tiene que volver a mirar, así que no ahorra la re-verificación.
+
+**Recomendación de la coordinadora: (A), con tope de una hora.** Un cuelgue de 60 s por llamada es la clase de defecto que el paso 6 existe para eliminar («el hook siempre emite decisión»), y lo introdujo esta ventana; publicarlo como límite declarado contradice la promesa que estamos a punto de firmar. La técnica ya está medida por QA fuera del hook y es de pocas líneas. Si no cabe en el tope, (B).
+
+**Decisión propuesta, lista para adoptar:** «P-136-Q: (A), con tope: una pasada acotada a QA-007-13 (`POSIXLY_CORRECT=y` al arrancar, `unset -f` de las homónimas de las órdenes del preludio, bucle sin órdenes suplantables o con tope, `set +o posix` después), con caso de banco y re-verificación de QA acotada; `.`/`[` antes de `entrada.sh` y `errexit` como límites declarados (F-136-20). Si no cabe en pocas líneas, (B). Nada más entra. Los contadores no se reinician.»
+
+**Qué trabajo sigue mientras no se decida:** nada del paso 6 (seguridad espera a QA favorable). El borrador de las notas y la ficha F-136-20 se preparan.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
