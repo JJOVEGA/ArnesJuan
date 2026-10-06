@@ -1,0 +1,19 @@
+# QA paso 6 (fase 3) — procedimiento registrado ANTES de correr, 2026-10-06T14:16:48-06:00
+Arbol: worktree /home/juan/dev/ArnesJuan-v1.36, cabeza 6ec62b1; hooks/tools/tests identicos a 8e11f87 (git diff --stat vacio).
+Plataforma: 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; LANG=C.UTF-8; nproc 12.
+Carga al registrar: 0.33 1.28 1.39 1/800 344073
+
+P-136-O (2) (A) — seccion 24 aislada, numero de corridas fijado AHORA:
+  * 10 corridas en serie de la seccion 24 del banco de v1.35.0 (/home/juan/dev/ArnesJuan-v1.35.0-base,
+    sin cambiar una linea), con ARNES_HOOKS_DIR=/home/juan/dev/ArnesJuan-v1.36/hooks (tools/ hermano),
+    ARNES_SEMILLA_41=23062, anfitrion en reposo (sin otras corridas mias en paralelo), anotando
+    /proc/loadavg antes de cada una.
+  * 5 corridas en serie de la seccion 24 del banco del worktree, mismas condiciones.
+  * Regla: si CUALQUIERA de las 15 da el FAIL «el contador no dice 1» (o cualquier FAIL), es hallazgo
+    contra el delta. Si ninguna, INS-136-3 con estas corridas y la unica roja del desarrollador (50-).
+  * Ademas, el inventario propio de CA-69 2 (a): una corrida completa del banco de v1.35.0 con los
+    hooks del candidato y ARNES_SEMILLA_41=23062, frente a ca54/22-inventario-v1.35.0.txt; un FAIL de la
+    seccion 24 alli cuenta igual.
+E2: 6 corridas de 37/3 contra el candidato intercaladas con 6 contra v1.35.0 (minimo del contrato).
+E1: 3 mediciones por tamano, intercaladas.
+T2b: 5 mediciones.

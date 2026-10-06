@@ -1,0 +1,8 @@
+== S1, 2.ª corrida (QA paso 6), worktree 6ec62b1, hooks igual a 8e11f87: si. Inicio 2026-10-06T15:43:16-06:00; carga 1.63 2.93 3.17 ==
+techo=65536 forma=A bytes=65482 destinos=4162 | 9596e39 ms: 5316(allow,rc0) 5813(allow,rc0) 5114(allow,rc0) 5414(allow,rc0) 7016(allow,rc0) | candidato ms: 2010(allow,rc0) 2410(allow,rc0) 1907(allow,rc0) 2509(allow,rc0) 2811(allow,rc0) | carga=1.55 2.73 3.09
+techo=65536 forma=B bytes=65490 destinos=3700 | 9596e39 ms: 7519(allow,rc0) 6016(allow,rc0) 6416(allow,rc0) 5213(allow,rc0) 5714(allow,rc0) | candidato ms: 2609(allow,rc0) 2610(allow,rc0) 2310(allow,rc0) 2308(allow,rc0) 3110(allow,rc0) | carga=2.21 2.70 3.06
+techo=65536 forma=C bytes=65490 destinos=2775 | 9596e39 ms: 4812(allow,rc0) 5113(allow,rc0) 6015(allow,rc0) 6816(allow,rc0) 7017(allow,rc0) | candidato ms: 2209(allow,rc0) 2509(allow,rc0) 2208(allow,rc0) 3311(allow,rc0) 2809(allow,rc0) | carga=1.84 2.52 2.97
+techo=131072 forma=A bytes=131018 destinos=8258 | 9596e39 ms: 14056(allow,rc0) 14640(allow,rc0) 16954(allow,rc0) 11924(allow,rc0) 12647(allow,rc0) | candidato ms: 4312(allow,rc0) 5817(allow,rc0) 5815(allow,rc0) 3811(allow,rc0) 6845(allow,rc0) | carga=2.73 2.68 2.98
+techo=131072 forma=B bytes=131028 destinos=7341 | 9596e39 ms: 14528(allow,rc0) 14873(allow,rc0) 20284(allow,rc0) 12541(allow,rc0) 11324(allow,rc0) | candidato ms: 6718(allow,rc0) 5113(allow,rc0) 4814(allow,rc0) 8033(allow,rc0) 4612(allow,rc0) | carga=3.27 2.93 3.04
+techo=131072 forma=C bytes=131034 destinos=5506 | 9596e39 ms: 16036(allow,rc0) 13126(allow,rc0) 13026(allow,rc0) 16032(allow,rc0) 16332(allow,rc0) | candidato ms: 5915(allow,rc0) 4713(allow,rc0) 4312(allow,rc0) 7719(allow,rc0) 5514(allow,rc0) | carga=1.97 2.65 2.93
+rc=0 fin 2026-10-06T15:51:58-06:00 carga 1.97 2.65 2.93

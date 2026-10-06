@@ -1,0 +1,19 @@
+# 2026-10-06T14:32:07-06:00
+ArnesJuan-v1.36/hooks cv1 X              deny|rc=0|111ms|506B|ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio
+ArnesJuan-v1.36/hooks cv1 ARNES_CWD_VISTO nada|rc=0|113ms|0B|
+ArnesJuan-v1.36/hooks cv2 X              deny|rc=0|111ms|521B|ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa 
+ArnesJuan-v1.36/hooks cv2 ARNES_CWD_VISTO nada|rc=0|109ms|0B|
+ArnesJuan-v1.36/hooks cv3 X              deny|rc=0|110ms|509B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': es relativa y el directo
+ArnesJuan-v1.36/hooks cv3 ARNES_CWD_VISTO deny|rc=0|116ms|524B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': lleva '..' sobre un dire
+$S/t-78a2f33/hooks cv1 X              deny|rc=0|110ms|506B|ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio
+$S/t-78a2f33/hooks cv1 ARNES_CWD_VISTO nada|rc=0|111ms|0B|
+$S/t-78a2f33/hooks cv2 X              deny|rc=0|111ms|521B|ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa 
+$S/t-78a2f33/hooks cv2 ARNES_CWD_VISTO nada|rc=0|112ms|0B|
+$S/t-78a2f33/hooks cv3 X              deny|rc=0|111ms|509B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': es relativa y el directo
+$S/t-78a2f33/hooks cv3 ARNES_CWD_VISTO deny|rc=0|112ms|524B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': lleva '..' sobre un dire
+ArnesJuan-v1.35.0-base/hooks cv1 X              deny|rc=0|111ms|506B|ARNES: no se pudo determinar a que archivo escribe 'src/a.ts': es relativa y el directorio
+ArnesJuan-v1.35.0-base/hooks cv1 ARNES_CWD_VISTO nada|rc=0|113ms|0B|
+ArnesJuan-v1.35.0-base/hooks cv2 X              deny|rc=0|112ms|521B|ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-900.md': es relativa 
+ArnesJuan-v1.35.0-base/hooks cv2 ARNES_CWD_VISTO nada|rc=0|113ms|0B|
+ArnesJuan-v1.35.0-base/hooks cv3 X              deny|rc=0|109ms|509B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': es relativa y el directo
+ArnesJuan-v1.35.0-base/hooks cv3 ARNES_CWD_VISTO deny|rc=0|110ms|524B|ARNES: no se pudo determinar a que archivo escribe '../src/a.ts': lleva '..' sobre un dire

@@ -1,0 +1,336 @@
+# 2026-10-06T15:33:48-06:00; hooks /home/juan/dev/ArnesJuan-v1.36/hooks; bash 5.3.9(1)-release
+OK  L deny relleno=x desfase=0 total=16376                       bytes=16376  nota=no 
+OK  L deny relleno=x desfase=0 total=16383                       bytes=16383  nota=no 
+OK  L deny relleno=x desfase=0 total=16384                       bytes=16384  nota=no 
+OK  L deny relleno=x desfase=0 total=16385                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=0 total=16386                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=0 total=16387                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=0 total=16388                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=0 total=16392                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=0 total=32768                       bytes=16384  nota=si 
+MAL L deny relleno=x desfase=0 total=327680                      bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=x ~20000 caracteres                          bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=16376                       bytes=16376  nota=no 
+OK  L deny relleno=x desfase=1 total=16383                       bytes=16383  nota=no 
+OK  L deny relleno=x desfase=1 total=16384                       bytes=16384  nota=no 
+OK  L deny relleno=x desfase=1 total=16385                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=16386                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=16387                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=16388                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=16392                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=1 total=32768                       bytes=16384  nota=si 
+MAL L deny relleno=x desfase=1 total=327680                      bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=x ~20000 caracteres                          bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=16376                       bytes=16376  nota=no 
+OK  L deny relleno=x desfase=2 total=16383                       bytes=16383  nota=no 
+OK  L deny relleno=x desfase=2 total=16384                       bytes=16384  nota=no 
+OK  L deny relleno=x desfase=2 total=16385                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=16386                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=16387                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=16388                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=16392                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=2 total=32768                       bytes=16384  nota=si 
+MAL L deny relleno=x desfase=2 total=327680                      bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=x ~20000 caracteres                          bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=16376                       bytes=16376  nota=no 
+OK  L deny relleno=x desfase=3 total=16383                       bytes=16383  nota=no 
+OK  L deny relleno=x desfase=3 total=16384                       bytes=16384  nota=no 
+OK  L deny relleno=x desfase=3 total=16385                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=16386                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=16387                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=16388                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=16392                       bytes=16384  nota=si 
+OK  L deny relleno=x desfase=3 total=32768                       bytes=16384  nota=si 
+MAL L deny relleno=x desfase=3 total=327680                      bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=x ~20000 caracteres                          bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=16376                      bytes=16378  nota=no 
+OK  L deny relleno=ñ desfase=0 total=16383                      bytes=16383  nota=no 
+MAL L deny relleno=ñ desfase=0 total=16384                      bytes=16386  nota=no  pasa-del-tope(16386)
+OK  L deny relleno=ñ desfase=0 total=16385                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=16386                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=16387                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=16388                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=16392                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=0 total=32768                      bytes=16384  nota=si 
+MAL L deny relleno=ñ desfase=0 total=327680                     bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=ñ ~20000 caracteres                         bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=1 total=16376                      bytes=16376  nota=no 
+MAL L deny relleno=ñ desfase=1 total=16383                      bytes=16385  nota=no  pasa-del-tope(16385)
+OK  L deny relleno=ñ desfase=1 total=16384                      bytes=16384  nota=no 
+OK  L deny relleno=ñ desfase=1 total=16385                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=1 total=16386                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=1 total=16387                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=1 total=16388                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=1 total=16392                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=1 total=32768                      bytes=16383  nota=si 
+MAL L deny relleno=ñ desfase=1 total=327680                     bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=ñ ~20000 caracteres                         bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=16376                      bytes=16378  nota=no 
+OK  L deny relleno=ñ desfase=2 total=16383                      bytes=16383  nota=no 
+MAL L deny relleno=ñ desfase=2 total=16384                      bytes=16386  nota=no  pasa-del-tope(16386)
+OK  L deny relleno=ñ desfase=2 total=16385                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=16386                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=16387                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=16388                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=16392                      bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=2 total=32768                      bytes=16384  nota=si 
+MAL L deny relleno=ñ desfase=2 total=327680                     bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=ñ ~20000 caracteres                         bytes=16384  nota=si 
+OK  L deny relleno=ñ desfase=3 total=16376                      bytes=16376  nota=no 
+MAL L deny relleno=ñ desfase=3 total=16383                      bytes=16385  nota=no  pasa-del-tope(16385)
+OK  L deny relleno=ñ desfase=3 total=16384                      bytes=16384  nota=no 
+OK  L deny relleno=ñ desfase=3 total=16385                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=3 total=16386                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=3 total=16387                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=3 total=16388                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=3 total=16392                      bytes=16383  nota=si 
+OK  L deny relleno=ñ desfase=3 total=32768                      bytes=16383  nota=si 
+MAL L deny relleno=ñ desfase=3 total=327680                     bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=ñ ~20000 caracteres                         bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=0 total=16376                     bytes=16378  nota=no 
+OK  L deny relleno=€ desfase=0 total=16383                     bytes=16384  nota=no 
+OK  L deny relleno=€ desfase=0 total=16384                     bytes=16384  nota=no 
+OK  L deny relleno=€ desfase=0 total=16385                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=0 total=16386                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=0 total=16387                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=0 total=16388                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=0 total=16392                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=0 total=32768                     bytes=16383  nota=si 
+MAL L deny relleno=€ desfase=0 total=327680                    bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=€ ~20000 caracteres                        bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=1 total=16376                     bytes=16376  nota=no 
+MAL L deny relleno=€ desfase=1 total=16383                     bytes=16385  nota=no  pasa-del-tope(16385)
+MAL L deny relleno=€ desfase=1 total=16384                     bytes=16385  nota=no  pasa-del-tope(16385)
+OK  L deny relleno=€ desfase=1 total=16385                     bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=1 total=16386                     bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=1 total=16387                     bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=1 total=16388                     bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=1 total=16392                     bytes=16384  nota=si 
+OK  L deny relleno=€ desfase=1 total=32768                     bytes=16384  nota=si 
+MAL L deny relleno=€ desfase=1 total=327680                    bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=€ ~20000 caracteres                        bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=2 total=16376                     bytes=16377  nota=no 
+OK  L deny relleno=€ desfase=2 total=16383                     bytes=16383  nota=no 
+MAL L deny relleno=€ desfase=2 total=16384                     bytes=16386  nota=no  pasa-del-tope(16386)
+OK  L deny relleno=€ desfase=2 total=16385                     bytes=16382  nota=si 
+OK  L deny relleno=€ desfase=2 total=16386                     bytes=16382  nota=si 
+OK  L deny relleno=€ desfase=2 total=16387                     bytes=16382  nota=si 
+OK  L deny relleno=€ desfase=2 total=16388                     bytes=16382  nota=si 
+OK  L deny relleno=€ desfase=2 total=16392                     bytes=16382  nota=si 
+OK  L deny relleno=€ desfase=2 total=32768                     bytes=16382  nota=si 
+MAL L deny relleno=€ desfase=2 total=327680                    bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=€ ~20000 caracteres                        bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=16376                     bytes=16378  nota=no 
+OK  L deny relleno=€ desfase=3 total=16383                     bytes=16384  nota=no 
+OK  L deny relleno=€ desfase=3 total=16384                     bytes=16384  nota=no 
+OK  L deny relleno=€ desfase=3 total=16385                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=16386                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=16387                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=16388                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=16392                     bytes=16383  nota=si 
+OK  L deny relleno=€ desfase=3 total=32768                     bytes=16383  nota=si 
+MAL L deny relleno=€ desfase=3 total=327680                    bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=€ ~20000 caracteres                        bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=16376                    bytes=16378  nota=no 
+OK  L deny relleno=𝄞 desfase=0 total=16383                    bytes=16383  nota=no 
+MAL L deny relleno=𝄞 desfase=0 total=16384                    bytes=16386  nota=no  pasa-del-tope(16386)
+OK  L deny relleno=𝄞 desfase=0 total=16385                    bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=16386                    bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=16387                    bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=16388                    bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=16392                    bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=0 total=32768                    bytes=16382  nota=si 
+MAL L deny relleno=𝄞 desfase=0 total=327680                   bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=𝄞 ~20000 caracteres                       bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=16376                    bytes=16376  nota=no 
+OK  L deny relleno=𝄞 desfase=1 total=16383                    bytes=16383  nota=no 
+OK  L deny relleno=𝄞 desfase=1 total=16384                    bytes=16384  nota=no 
+OK  L deny relleno=𝄞 desfase=1 total=16385                    bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=16386                    bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=16387                    bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=16388                    bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=16392                    bytes=16383  nota=si 
+OK  L deny relleno=𝄞 desfase=1 total=32768                    bytes=16383  nota=si 
+MAL L deny relleno=𝄞 desfase=1 total=327680                   bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=𝄞 ~20000 caracteres                       bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=16376                    bytes=16376  nota=no 
+OK  L deny relleno=𝄞 desfase=2 total=16383                    bytes=16384  nota=no 
+OK  L deny relleno=𝄞 desfase=2 total=16384                    bytes=16384  nota=no 
+OK  L deny relleno=𝄞 desfase=2 total=16385                    bytes=16384  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=16386                    bytes=16384  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=16387                    bytes=16384  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=16388                    bytes=16384  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=16392                    bytes=16384  nota=si 
+OK  L deny relleno=𝄞 desfase=2 total=32768                    bytes=16384  nota=si 
+MAL L deny relleno=𝄞 desfase=2 total=327680                   bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=𝄞 ~20000 caracteres                       bytes=16382  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=16376                    bytes=16377  nota=no 
+MAL L deny relleno=𝄞 desfase=3 total=16383                    bytes=16385  nota=no  pasa-del-tope(16385)
+MAL L deny relleno=𝄞 desfase=3 total=16384                    bytes=16385  nota=no  pasa-del-tope(16385)
+OK  L deny relleno=𝄞 desfase=3 total=16385                    bytes=16381  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=16386                    bytes=16381  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=16387                    bytes=16381  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=16388                    bytes=16381  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=16392                    bytes=16381  nota=si 
+OK  L deny relleno=𝄞 desfase=3 total=32768                    bytes=16381  nota=si 
+MAL L deny relleno=𝄞 desfase=3 total=327680                   bytes=0      nota=no  json-invalido vacio sin-comienzo
+OK  L aviso relleno=𝄞 ~20000 caracteres                       bytes=16382  nota=si 
+MAL L deny relleno=$'\377' desfase=0 total=16376                 bytes=49114  nota=no  pasa-del-tope(49114)
+MAL L deny relleno=$'\377' desfase=0 total=16383                 bytes=49135  nota=no  pasa-del-tope(49135)
+MAL L deny relleno=$'\377' desfase=0 total=16384                 bytes=49138  nota=no  pasa-del-tope(49138)
+MAL L deny relleno=$'\377' desfase=0 total=16385                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=16386                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=16387                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=16388                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=16392                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=32768                 bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=0 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\377' ~20000 caracteres                    bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=1 total=16376                 bytes=49112  nota=no  pasa-del-tope(49112)
+MAL L deny relleno=$'\377' desfase=1 total=16383                 bytes=49133  nota=no  pasa-del-tope(49133)
+MAL L deny relleno=$'\377' desfase=1 total=16384                 bytes=49136  nota=no  pasa-del-tope(49136)
+MAL L deny relleno=$'\377' desfase=1 total=16385                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=16386                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=16387                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=16388                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=16392                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=32768                 bytes=48943  nota=si  pasa-del-tope(48943)
+MAL L deny relleno=$'\377' desfase=1 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\377' ~20000 caracteres                    bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=2 total=16376                 bytes=49110  nota=no  pasa-del-tope(49110)
+MAL L deny relleno=$'\377' desfase=2 total=16383                 bytes=49131  nota=no  pasa-del-tope(49131)
+MAL L deny relleno=$'\377' desfase=2 total=16384                 bytes=49134  nota=no  pasa-del-tope(49134)
+MAL L deny relleno=$'\377' desfase=2 total=16385                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=16386                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=16387                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=16388                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=16392                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=32768                 bytes=48941  nota=si  pasa-del-tope(48941)
+MAL L deny relleno=$'\377' desfase=2 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\377' ~20000 caracteres                    bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\377' desfase=3 total=16376                 bytes=49108  nota=no  pasa-del-tope(49108)
+MAL L deny relleno=$'\377' desfase=3 total=16383                 bytes=49129  nota=no  pasa-del-tope(49129)
+MAL L deny relleno=$'\377' desfase=3 total=16384                 bytes=49132  nota=no  pasa-del-tope(49132)
+MAL L deny relleno=$'\377' desfase=3 total=16385                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=16386                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=16387                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=16388                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=16392                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=32768                 bytes=48939  nota=si  pasa-del-tope(48939)
+MAL L deny relleno=$'\377' desfase=3 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\377' ~20000 caracteres                    bytes=48945  nota=si  pasa-del-tope(48945)
+MAL L deny relleno=$'\200' desfase=0 total=16376                 bytes=49114  nota=no  pasa-del-tope(49114)
+MAL L deny relleno=$'\200' desfase=0 total=16383                 bytes=49135  nota=no  pasa-del-tope(49135)
+MAL L deny relleno=$'\200' desfase=0 total=16384                 bytes=49138  nota=no  pasa-del-tope(49138)
+MAL L deny relleno=$'\200' desfase=0 total=16385                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=16386                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=16387                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=16388                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=16392                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=32768                 bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=0 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\200' ~20000 caracteres                    bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=1 total=16376                 bytes=49112  nota=no  pasa-del-tope(49112)
+MAL L deny relleno=$'\200' desfase=1 total=16383                 bytes=49133  nota=no  pasa-del-tope(49133)
+MAL L deny relleno=$'\200' desfase=1 total=16384                 bytes=49136  nota=no  pasa-del-tope(49136)
+MAL L deny relleno=$'\200' desfase=1 total=16385                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=16386                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=16387                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=16388                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=16392                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=32768                 bytes=48934  nota=si  pasa-del-tope(48934)
+MAL L deny relleno=$'\200' desfase=1 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\200' ~20000 caracteres                    bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=2 total=16376                 bytes=49110  nota=no  pasa-del-tope(49110)
+MAL L deny relleno=$'\200' desfase=2 total=16383                 bytes=49131  nota=no  pasa-del-tope(49131)
+MAL L deny relleno=$'\200' desfase=2 total=16384                 bytes=49134  nota=no  pasa-del-tope(49134)
+MAL L deny relleno=$'\200' desfase=2 total=16385                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=16386                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=16387                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=16388                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=16392                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=32768                 bytes=48932  nota=si  pasa-del-tope(48932)
+MAL L deny relleno=$'\200' desfase=2 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\200' ~20000 caracteres                    bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\200' desfase=3 total=16376                 bytes=49108  nota=no  pasa-del-tope(49108)
+MAL L deny relleno=$'\200' desfase=3 total=16383                 bytes=49129  nota=no  pasa-del-tope(49129)
+MAL L deny relleno=$'\200' desfase=3 total=16384                 bytes=49132  nota=no  pasa-del-tope(49132)
+MAL L deny relleno=$'\200' desfase=3 total=16385                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=16386                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=16387                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=16388                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=16392                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=32768                 bytes=48930  nota=si  pasa-del-tope(48930)
+MAL L deny relleno=$'\200' desfase=3 total=327680                bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\200' ~20000 caracteres                    bytes=48936  nota=si  pasa-del-tope(48936)
+MAL L deny relleno=$'\342\202' desfase=0 total=16376             bytes=24574  nota=no  pasa-del-tope(24574)
+MAL L deny relleno=$'\342\202' desfase=0 total=16383             bytes=24583  nota=no  pasa-del-tope(24583)
+MAL L deny relleno=$'\342\202' desfase=0 total=16384             bytes=24586  nota=no  pasa-del-tope(24586)
+MAL L deny relleno=$'\342\202' desfase=0 total=16385             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=16386             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=16387             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=16388             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=16392             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=32768             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=0 total=327680            bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\342\202' ~20000 caracteres                bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=1 total=16376             bytes=24572  nota=no  pasa-del-tope(24572)
+MAL L deny relleno=$'\342\202' desfase=1 total=16383             bytes=24584  nota=no  pasa-del-tope(24584)
+MAL L deny relleno=$'\342\202' desfase=1 total=16384             bytes=24584  nota=no  pasa-del-tope(24584)
+MAL L deny relleno=$'\342\202' desfase=1 total=16385             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=16386             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=16387             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=16388             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=16392             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=32768             bytes=24532  nota=si  pasa-del-tope(24532)
+MAL L deny relleno=$'\342\202' desfase=1 total=327680            bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\342\202' ~20000 caracteres                bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=2 total=16376             bytes=24573  nota=no  pasa-del-tope(24573)
+MAL L deny relleno=$'\342\202' desfase=2 total=16383             bytes=24582  nota=no  pasa-del-tope(24582)
+MAL L deny relleno=$'\342\202' desfase=2 total=16384             bytes=24585  nota=no  pasa-del-tope(24585)
+MAL L deny relleno=$'\342\202' desfase=2 total=16385             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=16386             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=16387             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=16388             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=16392             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=32768             bytes=24530  nota=si  pasa-del-tope(24530)
+MAL L deny relleno=$'\342\202' desfase=2 total=327680            bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\342\202' ~20000 caracteres                bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=16376             bytes=24571  nota=no  pasa-del-tope(24571)
+MAL L deny relleno=$'\342\202' desfase=3 total=16383             bytes=24583  nota=no  pasa-del-tope(24583)
+MAL L deny relleno=$'\342\202' desfase=3 total=16384             bytes=24583  nota=no  pasa-del-tope(24583)
+MAL L deny relleno=$'\342\202' desfase=3 total=16385             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=16386             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=16387             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=16388             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=16392             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=32768             bytes=24531  nota=si  pasa-del-tope(24531)
+MAL L deny relleno=$'\342\202' desfase=3 total=327680            bytes=0      nota=no  json-invalido vacio sin-comienzo
+MAL L aviso relleno=$'\342\202' ~20000 caracteres                bytes=24531  nota=si  pasa-del-tope(24531)
+OK  H QA: 140KB x del disco, Edit que cierra                     bytes=16384  nota=si 
+OK  H Seguridad: 140KB x del disco, Edit que cierra              bytes=16384  nota=si 
+MAL H Sensible: 140KB x del disco, Edit que cierra               bytes=0      nota=no  json-invalido vacio sin-comienzo
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa/h.sh: line 13: /home/juan/.local/bin/jq: Argument list too long
+MAL H aviso QA: 140KB x por Edit sin cerrar                      bytes=0      nota=no  vacio sin-comienzo
+OK  H QA: 140KB ñ del disco, Edit que cierra                    bytes=16384  nota=si 
+OK  H Seguridad: 140KB ñ del disco, Edit que cierra             bytes=16384  nota=si 
+MAL H Sensible: 140KB ñ del disco, Edit que cierra              bytes=0      nota=no  json-invalido vacio sin-comienzo
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa/h.sh: line 13: /home/juan/.local/bin/jq: Argument list too long
+MAL H aviso QA: 140KB ñ por Edit sin cerrar                     bytes=0      nota=no  vacio sin-comienzo
+OK  H QA: 140KB 𝄞 del disco, Edit que cierra                  bytes=16384  nota=si 
+OK  H Seguridad: 140KB 𝄞 del disco, Edit que cierra           bytes=16384  nota=si 
+MAL H Sensible: 140KB 𝄞 del disco, Edit que cierra            bytes=0      nota=no  json-invalido vacio sin-comienzo
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa/h.sh: line 13: /home/juan/.local/bin/jq: Argument list too long
+MAL H aviso QA: 140KB 𝄞 por Edit sin cerrar                   bytes=0      nota=no  vacio sin-comienzo
+MAL H QA: 140KB de bytes $'\377' del disco (no UTF-8), Edit que cierra bytes=48781  nota=si  pasa-del-tope(48781)
+MAL H Seguridad: 140KB de bytes $'\377' del disco, Edit que cierra bytes=48701  nota=si  pasa-del-tope(48701)
+MAL H QA: 140KB de bytes $'\200' del disco (no UTF-8), Edit que cierra bytes=48772  nota=si  pasa-del-tope(48772)
+MAL H Seguridad: 140KB de bytes $'\200' del disco, Edit que cierra bytes=48692  nota=si  pasa-del-tope(48692)
+MAL H QA: 140KB de bytes $'\303' del disco (no UTF-8), Edit que cierra bytes=48781  nota=si  pasa-del-tope(48781)
+MAL H Seguridad: 140KB de bytes $'\303' del disco, Edit que cierra bytes=48701  nota=si  pasa-del-tope(48701)
+OK  H ruta de 6 KB bajo requirements/ (Write)                    bytes=575    nota=no 
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa/h.sh: line 14: /home/juan/.local/bin/jq: Argument list too long
+OK  H git reset --hard con argumento de 200 KB                   bytes=408    nota=no 
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa/h.sh: line 14: /home/juan/.local/bin/jq: Argument list too long
+OK  H escritura por Bash a src/ con nombre de 200 KB de ñ       bytes=408    nota=no 
+# total 329 casos, 170 MAL

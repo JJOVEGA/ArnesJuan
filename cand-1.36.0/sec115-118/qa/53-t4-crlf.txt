@@ -1,0 +1,10 @@
+# 2026-10-06T14:53:03-06:00; loadavg 2.08 2.84 4.04 2/878 871643
+T4 disco 2000000 crlf  ArnesJuan-v1.36/hooks            deny|rc=0|20541ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 2000000 crlf  ArnesJuan-v1.35.0-base/hooks     deny|rc=0|19036ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+   normalizacion aislada del disco (bash, C.UTF-8): 16986 ms
+T4 disco 3000000 crlf  ArnesJuan-v1.36/hooks            deny|rc=0|36264ms|501B|ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio (30 s desde q
+T4 disco 3000000 crlf  ArnesJuan-v1.35.0-base/hooks     nada|rc=124|60021ms|0B|
+   normalizacion aislada del disco (bash, C.UTF-8): 39386 ms
+T4 disco 4000000 crlf  ArnesJuan-v1.36/hooks            deny|rc=124|60322ms|344B|ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o u
+T4 disco 4000000 crlf  ArnesJuan-v1.35.0-base/hooks     nada|rc=124|60028ms|0B|
+   normalizacion aislada del disco (bash, C.UTF-8): 96762 ms

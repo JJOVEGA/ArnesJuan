@@ -1,0 +1,33 @@
+# 2026-10-06T15:38:19-06:00
+ArnesJuan-v1.36/hooks        guard.sh             X=1                                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard.sh             ARNES_INPUT_LISTO=1                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard.sh             ARNES_MANIFEST_LISTO=1                         cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard.sh             ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-codigo.sh      X=1                                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-codigo.sh      ARNES_INPUT_LISTO=1                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-codigo.sh      ARNES_MANIFEST_LISTO=1                         cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-codigo.sh      ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-completado.sh  X=1                                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-completado.sh  ARNES_INPUT_LISTO=1                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-completado.sh  ARNES_MANIFEST_LISTO=1                         cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-completado.sh  ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-git.sh         X=1                                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-git.sh         ARNES_INPUT_LISTO=1                            cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-git.sh         ARNES_MANIFEST_LISTO=1                         cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.36/hooks        guard-git.sh         ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: deny rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard.sh             X=1                                            cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard.sh             ARNES_INPUT_LISTO=1                            cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard.sh             ARNES_MANIFEST_LISTO=1                         cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard.sh             ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-codigo.sh      X=1                                            cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-codigo.sh      ARNES_INPUT_LISTO=1                            cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-codigo.sh      ARNES_MANIFEST_LISTO=1                         cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-codigo.sh      ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-completado.sh  X=1                                            cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-completado.sh  ARNES_INPUT_LISTO=1                            cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-completado.sh  ARNES_MANIFEST_LISTO=1                         cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-completado.sh  ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-git.sh         X=1                                            cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-git.sh         ARNES_INPUT_LISTO=1                            cerrada: nada rc=0 | ls: nada|rc=1
+ArnesJuan-v1.35.0-base/hooks guard-git.sh         ARNES_MANIFEST_LISTO=1                         cerrada: nada rc=0 | ls: nada|rc=0
+ArnesJuan-v1.35.0-base/hooks guard-git.sh         ARNES_INPUT_LISTO=1 ARNES_MANIFEST_LISTO=1     cerrada: nada rc=0 | ls: nada|rc=1

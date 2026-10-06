@@ -1,0 +1,6 @@
+# 2026-10-06T14:21:35-06:00; bash 5.3.9(1)-release; ulimit -s 8192
+G8 b3 guard.sh nada|rc=139|910ms|0B|
+G8 b4 guard.sh nada|rc=139|1011ms|0B|
+S130-lib control (sin límite): rc=1  (1 = puede mencionarlo: decide grep)
+/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 2318: /dev/null: Too many open files
+S130-lib con ulimit -n 3:      rc=0  (0 = afirma la ausencia sin comprobarla)

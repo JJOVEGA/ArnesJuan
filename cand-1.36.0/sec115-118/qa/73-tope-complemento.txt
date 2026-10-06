@@ -1,0 +1,11 @@
+# 2026-10-06T15:36:48-06:00; hooks /home/juan/dev/ArnesJuan-v1.36/hooks
+OK  L deny ~327680 B relleno x (por archivo)                   bytes=16384  nota=si
+OK  L deny ~327680 B relleno ñ (por archivo)                  bytes=16383  nota=si
+OK  L deny ~327680 B relleno € (por archivo)                 bytes=16383  nota=si
+OK  L deny ~327680 B relleno 𝄞 (por archivo)                bytes=16382  nota=si
+OK  H aviso QA: 140KB x por Edit sin cerrar                    bytes=16384  nota=si
+OK  H Sensible dudoso 140KB x, Seguridad n/a, Edit que cierra  bytes=16384  nota=si
+OK  H aviso QA: 140KB ñ por Edit sin cerrar                   bytes=16384  nota=si
+OK  H Sensible dudoso 140KB ñ, Seguridad n/a, Edit que cierra bytes=16383  nota=si
+OK  H aviso QA: 140KB 𝄞 por Edit sin cerrar                 bytes=16384  nota=si
+OK  H Sensible dudoso 140KB 𝄞, Seguridad n/a, Edit que cierra bytes=16383  nota=si

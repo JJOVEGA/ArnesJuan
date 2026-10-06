@@ -1,0 +1,28 @@
+# 2026-10-06T14:50:11-06:00; loadavg 2.30 3.10 4.34 7/1042 870602; bash 5.3.9(1)-release
+T4 disco 660000 lf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|1133ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 1000000 lf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|919ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 2000000 lf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|1920ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 4000000 lf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|3120ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 660000 crlf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|3016ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 1000000 crlf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|7323ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 2000000 crlf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=0|20545ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T4 disco 4000000 crlf, Edit que cierra ArnesJuan-v1.36/hooks        deny|rc=124|60176ms|344B|ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o u
+T5 busqueda a doc 131072B old 32000B ArnesJuan-v1.36/hooks        deny|rc=0|511ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda a doc 65536B old 65000B ArnesJuan-v1.36/hooks        deny|rc=0|508ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda a doc 262144B old 16000B ArnesJuan-v1.36/hooks        deny|rc=0|212ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda ñ doc 131072B old 32000B ArnesJuan-v1.36/hooks        deny|rc=0|211ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda ñ doc 65536B old 65000B ArnesJuan-v1.36/hooks        deny|rc=0|310ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda ñ doc 262144B old 16000B ArnesJuan-v1.36/hooks        deny|rc=0|211ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda 𝄞 doc 131072B old 32000B ArnesJuan-v1.36/hooks        deny|rc=0|208ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda 𝄞 doc 65536B old 65000B ArnesJuan-v1.36/hooks        deny|rc=0|211ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T5 busqueda 𝄞 doc 262144B old 16000B ArnesJuan-v1.36/hooks        deny|rc=0|212ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+T6 Write 392900+cab lf x           ArnesJuan-v1.36/hooks        deny|rc=0|5120ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab lf ñ          ArnesJuan-v1.36/hooks        deny|rc=0|1812ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab lf 4           ArnesJuan-v1.36/hooks        deny|rc=0|711ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab crlf x         ArnesJuan-v1.36/hooks        deny|rc=0|5619ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab crlf ñ        ArnesJuan-v1.36/hooks        deny|rc=0|12932ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab crlf 4         ArnesJuan-v1.36/hooks        deny|rc=0|7520ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab cr x           ArnesJuan-v1.36/hooks        deny|rc=0|5019ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab cr ñ          ArnesJuan-v1.36/hooks        deny|rc=0|1815ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+T6 Write 392900+cab cr 4           ArnesJuan-v1.36/hooks        deny|rc=0|712ms|314B|ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+# fin 2026-10-06T14:52:36-06:00; loadavg 2.64 3.01 4.12 3/891 871565
