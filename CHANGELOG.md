@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · R-054 (P-136-L): `POSIXLY_CORRECT` y sus equivalentes apagan la vía `Bash` de las tres puertas desde v1.30.3; SEC-129 (`contrato`, media), se repara en el paso 6; fichas F-136-9 y F-136-10; un control del proveedor detuvo una sonda
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-054; evidencia `2713c21`) y la coordinadora.
+
+- **Qué apaga:** con `POSIXLY_CORRECT` exportada (con cualquier valor), `SHELLOPTS` con `posix`, `BASH_ENV` con `set -o posix` o `bash --posix`, la vía `Bash` de `guard-codigo`, `guard-completado` y `guard-git` sale con rc 0 y sin decisión para cualquier comando. `Edit`, `Write` y `MultiEdit` siguen denegando.
+- **Mecanismo:** en modo POSIX la comilla simple deja de ser especial dentro de `"${x//'$('/…}"` (cuatro sitios: `lib.sh:2099`, `:1773`, `:1776`, `guard-git.sh:231`); el detector devuelve rc 1 con la lista vacía, que las puertas leen como «no escribe», y `guard-git` se abandona a mitad.
+- **Desde cuándo:** idéntico en `78a2f33`, v1.35.0, v1.34.0, v1.33.2 y v1.30.3 (donde entró la forma `'$('`, `6c1b58a`). No es regresión de esta ventana. Un padre en modo POSIX **no** lo propaga; una variable exportada sí.
+- **Propiedad que CA-68 tiene que exigir** (para el write-back del analista en el paso 6): el hook sólo sale sin decisión cuando terminó un juicio que concluye que la llamada no toca nada protegido; cualquier otro final emite `deny` con motivo propio, y ninguna decisión depende del modo del intérprete heredado. Remediación R1 (`set +o posix` al arrancar, probado en copia: `deny` en los cinco modos) y R2 (código no declarado o puerta abandonada → `deny`).
+- **SEC-129 tapa a SEC-127** en modo POSIX (sale antes del atajo); la reclasificación va en la determinación del paso 5.
+- **Control del proveedor:** detuvo la sonda de las expansiones `$'…'` en modo POSIX; registrada como O-54-3, sin reintentar.
+- **Fichas:** F-136-9 (`BASH_ENV` corre antes que el hook) y F-136-10 (O-54-2, O-54-3).
+- **Avance (regla 6):** el paso 6 tiene ya su hallazgo medido y su propiedad propuesta; falta QA del paso 5.
+
 ## [GitHub] — 2026-10-06 · Condición previa del paso 6 evaluada: leyendo, CA-68 no afecta a REQ-017 CA-09; sin parada; restricción de techos y mediciones E1–E3 para la fase 2 de SEC-115/118
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (evaluación, `docs/arnes/v1.36.0-sec115-118-ca68-vs-req017.md`) y la coordinadora.
 

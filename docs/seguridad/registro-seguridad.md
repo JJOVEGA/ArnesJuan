@@ -10470,3 +10470,123 @@ Cualquiera de las tres necesita write-back del `analista-requerimientos` (§9: �
 - un `// ""` que vuelva a tratar `false` como ausencia en un campo que decide.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-053**; último hallazgo **SEC-128** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-054** y **SEC-129**.
+
+---
+
+## Revisión R-054 — **Revisión corta de `POSIXLY_CORRECT` (P-136-L, opción A)**: qué apaga el modo POSIX del intérprete en los hooks, desde cuándo y desde dónde puede llegar. `cand/1.36.0` @ `3d9c416`, con el código de `78a2f33` — 2026-10-06 — **REGISTRO Y CLASIFICACIÓN, NO FIRMA, NO DETERMINACIÓN SOBRE UN DELTA**
+
+**Numeración.** `R-054` y `SEC-129` sólo aparecían como «próximos libres» (R-053, línea final) y como reserva de este encargo en `PENDING_APPROVAL.md`, `CHANGELOG.md` y `docs/ESTADO.md` (`git grep` en ramas locales, remotas y etiquetas). Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «RESUELTA (propietario, 2026-10-06) — P-136-J (A, acotada), P-136-K (A) y P-136-L (A)», literal: «P-136-L: (A). Revisión corta de seguridad ahora, para fijar qué apaga exactamente POSIXLY_CORRECT=1 y desde cuándo (también en v1.35.0: no es regresión); la reparación va dentro de SEC-115/118, que ya trata «el hook siempre emite decisión».»
+- **Punto de partida:** el hallazgo lateral del desarrollador, `docs/arnes/v1.36.0-sec127-fase1.md` §4 y `cand-1.36.0/sec127/08-`/`09-`.
+- **Orden:** no firmo nada ni me pronuncio sobre el delta del paso 5, que QA está validando en paralelo; esta revisión no mira quality gates. **No toco `requirements/REQ-007.md`:** la anotación de SEC-129 en `Hallazgos abiertos:` va en la determinación del paso 5.
+- **Código:** `hooks/` y `tools/` de la cabeza son los de `78a2f33` (`git diff --quiet 78a2f33 HEAD -- hooks tools` rc 0; `lib.sh` sha256 `1d309101dcdd9818…`).
+- **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/` (`00-` a `09-`), con su commit allí. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook, invocaciones sueltas, **sin el banco**. Árboles: el candidato; v1.35.0 en `/home/juan/dev/ArnesJuan-v1.35.0-base` (`3956a6f`); v1.34.0, v1.33.2 y v1.30.3 por `git archive` en un temporal.
+- **Un control del proveedor me detuvo una vez** (una sonda de las expansiones `$'…'` en modo POSIX; §5, O-54-3). Paré esa línea y no la reintenté.
+
+### 1. Qué apaga, y el mecanismo
+
+**El modo POSIX de bash deja sin decisión la vía `Bash` de las tres puertas —`guard-codigo`, `guard-completado` y `guard-git`— para toda llamada. `Edit`, `Write` y `MultiEdit` siguen decidiendo.** Medido en el candidato y en v1.35.0 (`03-`):
+
+| Llamada (coordinadora) | modo normal | modo POSIX, por cualquiera de las cinco vías de §3 |
+|---|---|---|
+| `Write` a `src/a.ts` | `deny` | `deny` |
+| `Write` de un REQ a `completado` | `deny` | `deny` |
+| `Edit` de un REQ a `completado` | `deny` | `deny` |
+| `Bash` `echo x > src/a.ts` · `printf x \| tee src/a.ts` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `sed -i s/en-revision/completado/ requirements/REQ-900.md` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `git reset --hard` · `git clean -fd` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `ls -la` (control) | sin decisión | sin decisión |
+
+**El mecanismo, dos piezas que se suman:**
+1. **Una forma de expansión que en modo POSIX no se analiza igual.** El manual de bash (`/usr/share/doc/bash/POSIX`, punto 8; `COMPAT`, punto 47 y `compat42`): dentro de un `${…}` entre comillas dobles, en modo POSIX, **la comilla simple no es especial** al analizarlo. Así, `"${x//'$('/ }"` abre una sustitución de comandos que no cierra («unexpected EOF while looking for matching `''»), y `"${x//'"'/Q}"` da «bad substitution» (`00-`, F1 y F4; F2, F3 y la sustitución `$'\n'` del reemplazo, F5, no cambian). Sitios, los mismos cuatro en todos los árboles medidos (`00-`, `git grep`):
+   - `hooks/lib.sh:2099` — `_arnes_escrituras_texto`, `limpio="${limpio//'$('/ }"`, **incondicional**: falla con cualquier comando;
+   - `hooks/lib.sh:1773` y `:1776` — `_arnes_expansiones` (cuerpos de heredoc con `$(`), `'$('` y `'"'`;
+   - `hooks/guard-git.sh:231` — `limpio="${limpio//'$('/$'\n'}"`.
+2. **El fallo se lee como «nada que juzgar».** (a) El detector de escrituras que comparten `guard-codigo` y `guard-completado` corre en una sustitución de comandos (`arnes_escrituras_de`, `lib.sh:2242`); en modo POSIX el error de expansión es fatal para ese subshell, que sale con **rc 1 y la lista vacía** (`05-`). Los dos guardianes sólo reconocen los códigos especiales 2 a 5 (`guard-codigo.sh:78-99`, `guard-completado.sh:339-362`), y con cualquier otro código y la lista vacía **siguen como si el comando no escribiera nada** (`[ -n "$escrituras" ] || return 0`): es un **fallo en abierto ante un código de salida fuera del vocabulario del analizador**. (b) En `guard-git` el error aborta `arnes_guard_git` a mitad de juicio y `guard.sh` pasa a la puerta siguiente; el hook acaba en `exit 0` sin salida (`09-`).
+
+**Una diferencia de diagnóstico, no de decisión:** v1.35.0 deja el error en stderr; el candidato no, en los comandos ASCII, porque el grupo `{ LC_ALL=C _arnes_escrituras_texto …; } 2>/dev/null` de CA-54 (`lib.sh:2083`) se lo traga (`03-`, columna `e`). Ver O-54-2.
+
+**Lo que no se recorrió:** las demás diferencias del modo POSIX (el manual enumera más de sesenta) sólo se cubren por los casos de la tabla; el `git grep` busca la clase «comilla simple en el patrón de un `${…}` entre comillas dobles», no todas. `stop.sh` y `tools/` no deciden permisos; no los medí (`git grep` no encuentra la forma en `tools/`).
+
+### 2. Desde cuándo: **no es regresión de 1.36.0**
+
+Misma conducta, sin decisión por `Bash` en los cinco modos, en **78a2f33, v1.35.0, v1.34.0, v1.33.2 y v1.30.3** (`03-`). El `'$('` del detector entró en `6c1b58a` (`git log -S`; la primera etiqueta que lo contiene es v1.30.3). Antes de v1.30.3 **no está medido**: pudo haber otra forma con el mismo efecto. En v1.30.3 `guard-git` tampoco deniega en modo normal con el manifiesto de la prueba (sin `git.prohibidos`), así que esa fila no informa sobre `guard-git` en ese árbol.
+
+**Versiones de bash:** medido sólo en 5.3.9. Por `COMPAT` (`compat42`), la comilla simple dejó de ser especial en ese contexto en bash 4.3, así que en 4.3–5.2 —y en el bash 5.0 de Ubuntu 20.04— **se infiere** la misma conducta. En bash 3.2 (macOS) se infiere que este mecanismo no aplica; el arnés no está medido allí por otras razones. Windows/MSYS: no medido.
+
+### 3. Desde dónde puede llegar el modo POSIX al hook
+
+`hooks.json` lanza `"${CLAUDE_PLUGIN_ROOT}"/hooks/guard.sh`, cuyo shebang es `#!/usr/bin/env bash`: el hook es **un bash nuevo**, que sólo entra en modo POSIX por lo que hereda al arrancar. Medido (`07-`, y por hook en `03-`):
+- **Sí lo activan, las cinco medidas por hook:** `POSIXLY_CORRECT` exportada **con cualquier valor, también vacía**; `SHELLOPTS` exportada con `posix`; `BASH_ENV` apuntando a un archivo que hace `set -o posix`; y `bash --posix guard.sh` (sólo si alguien invoca así el hook).
+- **No lo propagan:** un padre en modo POSIX por `set -o posix`, por `bash --posix` o por bash invocado como `sh`. Bash define entonces `POSIXLY_CORRECT=y` **sin exportarla**, y el hijo arranca normal. Tampoco `/bin/sh` (dash) como intermediario.
+- **Este anfitrión:** el entorno de la herramienta `Bash` de esta sesión no tiene ninguna de las cuatro variables (`00-`).
+
+**Inferido, no medido desde el host (`claude -p` no ejercido):**
+- el hook hereda el entorno del proceso de Claude Code: el del shell del usuario que lo arranca, el de un contenedor, una imagen de CI o un servicio;
+- la clave `env` de los ajustes de Claude Code (de usuario, de proyecto en `.claude/settings.json` o local) también llega a los hooks;
+- un agente **no** puede activarlo para la llamada en curso desde su herramienta `Bash`: cada llamada es un proceso aparte y el hook lo lanza el cliente, no ese shell. Sí podría escribirlo en los ajustes del proyecto para sesiones futuras, si esa clave llega a los hooks. En este repositorio `.claude/` no está en `codigo_app.globs`.
+
+**Lectura de amenaza.** No hace falta un adversario: `POSIXLY_CORRECT` es una variable estándar que algunos usuarios exportan para que las herramientas GNU se comporten según POSIX, y con ella **el arnés apaga sus tres puertas de `Bash` en todos los proyectos de ese usuario, en silencio**. Eso es exactamente el descuido contra el que §13 dice proteger. Por eso no aplica el criterio de O-53-3 («quien fija el entorno del hook ya controla el hook»), que se refería a variables internas del arnés (`ARNES_*`) que nadie fija sin querer.
+
+### 4. SEC-129 — `contrato` (REQ-007) · **abierto** · severidad **media** · preexistente: medido desde v1.30.3 (§2), no es movimiento de 1.36.0 · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (CA-68, write-back)
+
+**Con el hook en modo POSIX, la vía `Bash` de `guard-codigo`, `guard-completado` y `guard-git` no emite decisión para ninguna llamada: un error del intérprete en el análisis se lee como «el comando no escribe nada» o abandona la puerta, y el hook termina con rc 0 y sin salida.**
+- **Efecto:** con una sola condición de entorno, ninguna escritura por shell a código protegido, ningún cierre de REQ por shell y ningún git destructivo (`reset --hard`, `clean -f`…, el único daño irreversible de los tres) recibe `deny`. Que el cliente tome por permitida una llamada sin decisión es inferido (REQ-031 CA-A12, nota), como en SEC-118.
+- **Por qué `contrato`:** CA-67/CA-68 prometen que un hook del arnés no deja una llamada sin decisión cuando no puede juzgarla, y `AGENTS.md` §1, «una puerta que no puede medir no deja pasar». Aquí la puerta no midió —su analizador falló— y dejó pasar. El propietario ya lo situó dentro de SEC-115/118 (P-136-L).
+- **Por qué media, y no baja como SEC-127:** basta **una** condición, y no exótica (§3); alcanza a las tres puertas de `Bash` y al git destructivo; es silenciosa —en el candidato, sin rastro en stderr en lo ASCII—; y lleva al menos cinco versiones publicada. **No alta**, porque la condición está en el entorno del operador, fuera del alcance de un agente en la llamada en curso (inferido, §3), y porque `Edit`/`Write`/`MultiEdit` siguen decidiendo.
+- **Remediación, por propiedad (el mecanismo es del `desarrollador`, dentro de SEC-115/118):**
+  - **(R1) Ninguna decisión del arnés depende del modo del intérprete que herede del entorno.** El hook sale del modo POSIX al arrancar, antes de cargar `lib.sh`, sin procesos. Ejemplo **no exhaustivo**, exploratorio y no es la reparación: `set +o posix` delante de `set -uo pipefail` en una copia de `guard.sh` devuelve `deny` en los cinco modos y deja `ls` sin decisión (`06-`). Lo mismo vale para todo hook o herramienta que comparta el lector. `BASH_ENV` corre **antes** de la primera línea del hook: R1 neutraliza su `set -o posix`, no cualquier otro contenido (O-54-1).
+  - **(R2) Un juicio que no termina con un resultado reconocido no deja pasar.** Un código de salida del analizador fuera de su vocabulario declarado (hoy, cualquier código distinto de 0, 2, 3, 4 y 5 de `arnes_escrituras_de`) deniega con motivo propio, a todo agente, en los dos guardianes que lo leen. Y una puerta que se abandona a mitad de juicio (como `arnes_guard_git` en `09-`) no se confunde con una que concluyó «no protegido». Sin procesos. R2 es la red general y R1 evita que, sin ella, en modo POSIX se deniegue **todo** comando, también `ls`.
+  - **(R3, opcional)** Escribir los cuatro patrones en una forma que no dependa del modo (`\$\(`, `\"`). Quita el mecanismo concreto pero no la clase, así que no sustituye a R1 ni a R2.
+- **Fail-before:** está ya materializado. Sin decisión en v1.35.0 y en el candidato, en los cinco modos (`03-`), y v1.35.0 es la línea base de CA-69.
+- **Write-back (§9):** hace falta. Es la propiedad del §6 en CA-68 (o en un punto nuevo del Bloque L) y, si se adopta R1, una premisa explícita del intérprete. En este repositorio lo transcribe el `analista-requerimientos` (§6 no declara la vía proporcional).
+- **Forzador:** la intervención de SEC-115/118, paso 6 de 1.36.0 (CA-67, CA-68, CA-69; ADR-017). **Vencimiento propuesto:** dentro de SEC-115/118, **antes de publicar 1.36.0**. **No aceptado.**
+
+### 5. Relación con SEC-127 y con SEC-115/118
+
+- **SEC-127 (R-052 §4):** su premisa es «el hook arranca en modo POSIX». En ese modo, el detector falla en `lib.sh:2099` y `guard-completado` sale en `[ -n "$escrituras" ] || return 0` **antes** de llegar al atajo `arnes_estado_ausente` (`guard-completado.sh:406`). Por eso la vía `Bash` no deniega ningún cierre, en ningún árbol: medido en bash 5.3, e **inferido** en bash 4.3–5.2 por §2. **SEC-129 enmascara a SEC-127:** mientras SEC-129 exista, el movimiento de `deny` a `allow` de SEC-127 no tiene línea base de la que moverse. Si se repara con R1, desaparece también la premisa de SEC-127, cuya remediación ya nombraba «salir del modo POSIX al entrar en el hook». **No reclasifico SEC-127 aquí:** va después, con QA terminado, como fija la cola.
+- **SEC-115/118 (CA-67, CA-68):** «el hook siempre emite decisión» **no cubre a SEC-129 tal como está escrito**:
+  - CA-67 habla de una denegación **decidida** que no llega a emitirse; aquí no se llega a decidir.
+  - CA-68 habla de un hook que no termina **antes de que el cliente lo mate**; aquí termina en milisegundos, con rc 0.
+
+  **La propiedad que CA-68 tiene que exigir para que SEC-129 quede dentro**, como propuesta al analista:
+
+  > Dado un hook del arnés que juzga una llamada de las que el `matcher` le hace llegar, **el hook sólo sale sin decisión cuando ha terminado un juicio que concluye que la llamada no toca nada que proteja**. Cualquier otro final de un juicio emite `deny` con motivo propio, a todo agente. Ejemplos **no exhaustivos** de ese otro final: un error del intérprete, una expansión abortada, una puerta abandonada a mitad, un analizador que devuelve un código fuera de su vocabulario declarado, y un estado del intérprete heredado del entorno que cambia el significado del código —el modo POSIX por `POSIXLY_CORRECT`, `SHELLOPTS` o `BASH_ENV`—. Además, **ninguna decisión depende del modo del intérprete heredado**.
+
+  **Medida propuesta:** los casos de `03-` a nivel de hook —las cinco vías de entrada al modo POSIX × la vía `Bash` de las tres puertas, con controles `Edit`/`Write` que siguen en `deny` y `ls` sin decisión en todos los modos (sin falsos positivos)—, con las tres comprobaciones de REQ-031 CA-A15 punto 4, y fail-before en v1.35.0. La herramienta de `02-matriz.sh` se puede reutilizar.
+
+### 6. Observaciones (no hallazgos)
+
+- **O-54-1 — `BASH_ENV` con cualquier contenido.** Corre antes de la primera línea de todo hook. Puede definir funciones con el nombre de un programa que el hook llama, o terminar el proceso: nada de eso se puede neutralizar desde dentro del script, sólo en la orden de `hooks.json`. Por ejemplo, `env -u BASH_ENV -u SHELLOPTS -u POSIXLY_CORRECT bash …`: se **infiere** que no añade procesos frente al `env bash` del shebang actual, pero no está medido. Sólo medí el caso `set -o posix`. Propongo ficha a la coordinadora; **no lo meto en SEC-129**, cuya reparación decidió el propietario dentro de SEC-115/118.
+- **O-54-2 — El candidato oculta el error del analizador en los comandos ASCII.** Es el `2>/dev/null` de CA-54, `lib.sh:2083`; v1.35.0 lo dejaba en stderr (`03-`, columna `e`). No cambia ninguna decisión, pero quita la única pista visible de SEC-129. Cuando R2 esté, el motivo del `deny` la sustituye.
+- **O-54-3 — Expansiones `$'…'` en el patrón de un `${…}` entre comillas dobles en modo POSIX** (el plegado de `lib.sh:2505` y siguientes, `:444` y `:1434`): **no medido**. Un control del proveedor detuvo la sonda y no la reintenté. Sólo está medido `$'\n'` como **reemplazo** (F5, igual en los dos modos). Con R1, deja de importar.
+
+### 7. Alcance (`AGENTS.md` §6, regla 2)
+
+- **Esta revisión no veta ni firma.** `Seguridad:` de REQ-007 no cambia y **REQ-007 no se toca** (encargo).
+- **SEC-129:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007, en cuanto figure en su `Hallazgos abiertos:` como `contrato`; `guard-completado` deniega el cierre (§6 y §13). La anotación queda **pendiente**: la hago en la determinación del paso 5. Hasta entonces la puerta no la ve, y eso no la levanta.
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por delegación y vuelve al propietario (§4 y política de autoalojamiento).
+    - **No impide** implementar ni probar el paso 5 ni su commit validado: es preexistente y no es movimiento.
+  - **(ii) Qué parte afecta:** la vía `Bash` de las tres puertas, en todo proyecto cuyo cliente arranque con el entorno de §3.
+  - **(iii) Evidencia:** `seg-posix/00-`, `03-`, `05-`, `07-` y `09-`; `hooks/lib.sh:2099`, `:1773`, `:1776` y `:2242`; `hooks/guard-git.sh:231`; `hooks/guard-codigo.sh:78-99`; `hooks/guard-completado.sh:339-362`.
+  - **(iv) Qué lo resuelve:** R1 y R2 (§4) con su write-back en CA-68 y su medida (§5).
+
+### 8. Estado tras R-054
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-129`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido; preexistente (≥ v1.30.3) | `desarrollador`; `analista-requerimientos` | **REQ-007**, cuando se anote (paso 5) |
+| `SEC-127` | `contrato` (REQ-007) | sin cambio aquí; enmascarado por SEC-129 (§5); se reclasifica después de QA | `desarrollador` | REQ-007 |
+| `SEC-115`, `SEC-118` | sin cambio | sin cambio; su vehículo (CA-67/CA-68) recibe SEC-129 | `desarrollador`; `analista-requerimientos` | sin cambio |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- un analizador cuyo código de salida no reconocido se trate como «nada que juzgar»;
+- un patrón entrecomillado con comilla simple dentro de un `${…}` entre comillas dobles en el código de una puerta;
+- una puerta cuya función pueda abandonarse a mitad sin que `guard.sh` lo distinga de un juicio terminado.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-054**; último hallazgo **SEC-129** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-055** y **SEC-130**.

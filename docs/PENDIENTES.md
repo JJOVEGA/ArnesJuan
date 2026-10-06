@@ -2239,3 +2239,16 @@ ninguna mata al hook.»
 ### F-136-8 — 1.37, REQ-017: un techo de 1,25× con el ratio en 1,20–1,30 en reposo es demasiado fino para acreditar nada
 - **Qué dice el propietario (literal, P-136-M):** «un techo de 1,25× con el ratio en 1,20–1,30 en reposo es demasiado fino para acreditar nada; se revisa en 1.37, no ahora».
 - **Dueño propuesto:** `analista-requerimientos` (cambia el contrato de REQ-017 CA-08 (ii)), con QA. Relacionada con F-136-4 (la calibración de `sonda-reloj`) e INS-136-1.
+
+## Fichas de la revisión R-054 (`POSIXLY_CORRECT`, 2026-10-06)
+
+**Origen:** P-136-L (A) del propietario; R-054 en `docs/seguridad/registro-seguridad.md`; evidencia `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/`, commit `2713c21`. **SEC-129** (`contrato`, media) no es ficha: se repara dentro de SEC-115/118 (paso 6) con R1 (salir del modo POSIX al arrancar el hook, sin procesos) y R2 (un código del analizador no declarado, o una puerta abandonada a mitad, deniega), y el write-back de la propiedad en CA-68 es del analista.
+
+### F-136-9 — Un `BASH_ENV` con cualquier contenido corre antes que el hook (O-54-1)
+- **Qué:** bash ejecuta el archivo que nombre `BASH_ENV` antes de cada script no interactivo, así que corre antes que `guard.sh`, con sus permisos. Sólo se neutraliza en la orden de `hooks.json` (invocar bash de forma que lo ignore), no desde dentro del hook.
+- **Consecuencia:** un entorno con `BASH_ENV` puede alterar el hook antes de que decida. Es preexistente y no es movimiento.
+- **Dueño propuesto:** `desarrollador` con `auditor-seguridad`; **sin ventana** en 1.36.0; se evalúa con la ficha b) de 1.37 (post-condición de filesystem) o aparte.
+
+### F-136-10 — Observaciones de R-054 sin hallazgo
+- **O-54-2:** el `2>/dev/null` de CA-54 (`lib.sh:2083`) oculta en los comandos ASCII el error del intérprete que v1.35.0 dejaba en stderr; no cambia ninguna decisión. Se revisa al reparar SEC-129 (R2).
+- **O-54-3:** las expansiones `$'…'` en modo POSIX quedan **sin medir**: un control del proveedor detuvo esa sonda y no se reintentó (regla del propietario).
