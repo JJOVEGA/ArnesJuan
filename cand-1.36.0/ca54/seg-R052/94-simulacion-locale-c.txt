@@ -1,0 +1,5 @@
+# R-052: SIMULACION de la consecuencia (no reproduccion de la fuga): el mismo comando con el entorno del proceso en LANG=C.UTF-8 y en LC_ALL=C. Estado terminal del manifiesto: terminé. GNU grep 3.12, bash 5.3.9.
+v1.35.0  [LANG=C.UTF-8]  decision=deny
+v1.35.0  [LANG=C.UTF-8 LC_ALL=C]  decision=allow
+82ceb63  [LANG=C.UTF-8]  decision=deny
+82ceb63  [LANG=C.UTF-8 LC_ALL=C]  decision=allow

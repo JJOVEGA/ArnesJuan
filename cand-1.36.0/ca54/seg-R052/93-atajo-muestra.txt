@@ -1,0 +1,201 @@
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/xcompletado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xcompletado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/xcompletado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xcompletado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/completado/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=deny  echo completado > docs/../requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=deny  echo completado > docs/../requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=deny  echo completado > docs/../requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=deny  echo completado > docs/../requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=completado  guard.sh             ag=-             v1.35.0=allow echo completadox > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=completado  guard.sh             ag=desarrollador v1.35.0=allow echo completadox > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=completado  guard-completado.sh  ag=-             v1.35.0=allow echo completadox > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=completado  guard-completado.sh  ag=desarrollador v1.35.0=allow echo completadox > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/completado/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/xCOMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xCOMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/xCOMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xCOMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/COMPLETADO/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=deny  echo COMPLETADO > docs/../requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=deny  echo COMPLETADO > docs/../requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=deny  echo COMPLETADO > docs/../requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=deny  echo COMPLETADO > docs/../requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=COMPLETADO  guard.sh             ag=-             v1.35.0=allow echo COMPLETADOx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=COMPLETADO  guard.sh             ag=desarrollador v1.35.0=allow echo COMPLETADOx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=-             v1.35.0=allow echo COMPLETADOx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=COMPLETADO  guard-completado.sh  ag=desarrollador v1.35.0=allow echo COMPLETADOx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/FIN_2-X/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/FIN_2-X/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/FIN_2-X/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/FIN_2-X/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/xFin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xFin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/xFin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xFin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/Fin_2-x/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=deny  echo Fin_2-x > docs/../requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=deny  echo Fin_2-x > docs/../requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=deny  echo Fin_2-x > docs/../requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=deny  echo Fin_2-x > docs/../requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=Fin_2-x     guard.sh             ag=-             v1.35.0=allow echo Fin_2-xx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=Fin_2-x     guard.sh             ag=desarrollador v1.35.0=allow echo Fin_2-xx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=-             v1.35.0=allow echo Fin_2-xx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=Fin_2-x     guard-completado.sh  ag=desarrollador v1.35.0=allow echo Fin_2-xx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/xterminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xterminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/xterminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/xterminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/terminé/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=allow sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=deny  echo terminé > docs/../requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=deny  echo terminé > docs/../requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=deny  echo terminé > docs/../requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=deny  echo terminé > docs/../requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=terminé    guard.sh             ag=-             v1.35.0=allow echo terminéx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=terminé    guard.sh             ag=desarrollador v1.35.0=allow echo terminéx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=terminé    guard-completado.sh  ag=-             v1.35.0=allow echo terminéx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=terminé    guard-completado.sh  ag=desarrollador v1.35.0=allow echo terminéx > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/I/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/I/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/I/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/I/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/xi/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/xi/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/xi/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/xi/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/i/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/i/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revision/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  sed -i 's/en-revisión/listo/' requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  echo i > docs/../requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  echo i > docs/../requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  echo i > docs/../requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  echo i > docs/../requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=allow echo hola > requirements/REQ-900.md
+IGUAL    est=i           guard.sh             ag=-             v1.35.0=deny  echo ix > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=i           guard.sh             ag=desarrollador v1.35.0=deny  echo ix > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=i           guard-completado.sh  ag=-             v1.35.0=deny  echo ix > requirements/REQ-900.md; : İ ı K ſ
+IGUAL    est=i           guard-completado.sh  ag=desarrollador v1.35.0=deny  echo ix > requirements/REQ-900.md; : İ ı K ſ
+TOTAL: 200 IGUAL, 0 DIFIERE (stdout+stderr+rc)

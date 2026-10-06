@@ -1,0 +1,47 @@
+# R-052 (auditor-seguridad), 2026-10-05. Arboles por git archive: v1.35.0 (lib.sh sha256 dfa95389…), 82ceb63 (d43d374b…), dee5932 (bd7afe64…). Linux/WSL2, bash 5.3.9.
+n=300 (609 c) + src/a.ts (coordinadora)        pila=8192  v1.35.0  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=8192  82ceb63  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=8192  dee5932  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=8192  v1.35.0  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=8192  82ceb63  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=8192  dee5932  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=8192  v1.35.0  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=8192  82ceb63  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=8192  dee5932  rc=139 decision=sin-salida
+n=2040 + cierre de REQ (desarrollador)         pila=8192  v1.35.0  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=8192  82ceb63  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=8192  dee5932  rc=139 decision=sin-salida
+dobles barras 1360 (4087 c) + src/a.ts         pila=8192  v1.35.0  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=8192  82ceb63  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=8192  dee5932  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=1024  v1.35.0  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=1024  82ceb63  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=1024  dee5932  rc=139 decision=sin-salida
+n=300 + cierre de REQ (desarrollador)          pila=1024  v1.35.0  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=1024  82ceb63  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=1024  dee5932  rc=139 decision=sin-salida
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=1024  v1.35.0  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=1024  82ceb63  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=1024  dee5932  rc=139 decision=sin-salida
+n=2040 + cierre de REQ (desarrollador)         pila=1024  v1.35.0  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=1024  82ceb63  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=1024  dee5932  rc=139 decision=sin-salida
+dobles barras 1360 (4087 c) + src/a.ts         pila=1024  v1.35.0  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=1024  82ceb63  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=1024  dee5932  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=256   v1.35.0  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=256   82ceb63  rc=0   decision=deny
+n=300 (609 c) + src/a.ts (coordinadora)        pila=256   dee5932  rc=139 decision=sin-salida
+n=300 + cierre de REQ (desarrollador)          pila=256   v1.35.0  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=256   82ceb63  rc=0   decision=deny
+n=300 + cierre de REQ (desarrollador)          pila=256   dee5932  rc=139 decision=sin-salida
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=256   v1.35.0  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=256   82ceb63  rc=0   decision=deny
+n=2040 (4089 c) + src/a.ts (coordinadora)      pila=256   dee5932  rc=139 decision=sin-salida
+n=2040 + cierre de REQ (desarrollador)         pila=256   v1.35.0  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=256   82ceb63  rc=0   decision=deny
+n=2040 + cierre de REQ (desarrollador)         pila=256   dee5932  rc=139 decision=sin-salida
+dobles barras 1360 (4087 c) + src/a.ts         pila=256   v1.35.0  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=256   82ceb63  rc=0   decision=deny
+dobles barras 1360 (4087 c) + src/a.ts         pila=256   dee5932  rc=0   decision=deny
+bash 5.3.9(1)-release; ulimit -s por defecto 8192
