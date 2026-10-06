@@ -1,0 +1,73 @@
+# bash 5.3.9(1)-release; Linux 6.18.33.2-microsoft-standard-WSL2; LANG=C.UTF-8; coordinadora (sin agent_id)
+# modos: normal | PC=1 (POSIXLY_CORRECT=1) | PC= (POSIXLY_CORRECT vacio) | SHELLOPTS=posix (exportada) | BASH_ENV (set -o posix) | --posix (bash --posix guard.sh)
+ArnesJuan-v1.36/hooks          Write src/a.ts                                                   | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.36/hooks          Write requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.36/hooks          Edit  requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.36/hooks          Bash  echo x > src/a.ts                                          | normal    deny rc0 e0 | PC=1      nada rc0 e0 | PC=       nada rc0 e0 | SHELLOPTS nada rc0 e0 | BASH_ENV  nada rc0 e0 | --posix   nada rc0 e0 |
+ArnesJuan-v1.36/hooks          Bash  printf x | tee src/a.ts                                    | normal    deny rc0 e0 | PC=1      nada rc0 e0 | PC=       nada rc0 e0 | SHELLOPTS nada rc0 e0 | BASH_ENV  nada rc0 e0 | --posix   nada rc0 e0 |
+ArnesJuan-v1.36/hooks          Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md   | normal    deny rc0 e0 | PC=1      nada rc0 e0 | PC=       nada rc0 e0 | SHELLOPTS nada rc0 e0 | BASH_ENV  nada rc0 e0 | --posix   nada rc0 e0 |
+ArnesJuan-v1.36/hooks          Bash  git reset --hard                                           | normal    deny rc0 e0 | PC=1      nada rc0 e1 | PC=       nada rc0 e1 | SHELLOPTS nada rc0 e1 | BASH_ENV  nada rc0 e1 | --posix   nada rc0 e1 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 233: unexpected EOF while looking for matching `''|
+ArnesJuan-v1.36/hooks          Bash  git clean -fd                                              | normal    deny rc0 e0 | PC=1      nada rc0 e1 | PC=       nada rc0 e1 | SHELLOPTS nada rc0 e1 | BASH_ENV  nada rc0 e1 | --posix   nada rc0 e1 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 233: unexpected EOF while looking for matching `''|
+ArnesJuan-v1.36/hooks          Bash  ls -la                                                     | normal    nada rc0 e0 | PC=1      nada rc0 e0 | PC=       nada rc0 e0 | SHELLOPTS nada rc0 e0 | BASH_ENV  nada rc0 e0 | --posix   nada rc0 e0 |
+ArnesJuan-v1.35.0-base/hooks   Write src/a.ts                                                   | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.35.0-base/hooks   Write requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.35.0-base/hooks   Edit  requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+ArnesJuan-v1.35.0-base/hooks   Bash  echo x > src/a.ts                                          | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command substitut
+ArnesJuan-v1.35.0-base/hooks   Bash  printf x | tee src/a.ts                                    | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command substitut
+ArnesJuan-v1.35.0-base/hooks   Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md   | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command substitut
+ArnesJuan-v1.35.0-base/hooks   Bash  git reset --hard                                           | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command subs
+ArnesJuan-v1.35.0-base/hooks   Bash  git clean -fd                                              | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command subs
+ArnesJuan-v1.35.0-base/hooks   Bash  ls -la                                                     | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|<arbol>/lib.sh: command substitut
+v1.34.0/hooks                  Write src/a.ts                                                   | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.34.0/hooks                  Write requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.34.0/hooks                  Edit  requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.34.0/hooks                  Bash  echo x > src/a.ts                                          | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.34.0/hooks                  Bash  printf x | tee src/a.ts                                    | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.34.0/hooks                  Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md   | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.34.0/hooks                  Bash  git reset --hard                                           | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 220: unexpected EOF while looking for matchin
+v1.34.0/hooks                  Bash  git clean -fd                                              | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 220: unexpected EOF while looking for matchin
+v1.34.0/hooks                  Bash  ls -la                                                     | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.33.2/hooks                  Write src/a.ts                                                   | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.33.2/hooks                  Write requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.33.2/hooks                  Edit  requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.33.2/hooks                  Bash  echo x > src/a.ts                                          | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.33.2/hooks                  Bash  printf x | tee src/a.ts                                    | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.33.2/hooks                  Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md   | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.33.2/hooks                  Bash  git reset --hard                                           | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 220: unexpected EOF while looking for matchin
+v1.33.2/hooks                  Bash  git clean -fd                                              | normal    deny rc0 e0 | PC=1      nada rc0 e3 | PC=       nada rc0 e3 | SHELLOPTS nada rc0 e3 | BASH_ENV  nada rc0 e3 | --posix   nada rc0 e3 |
+    stderr(--posix): <arbol>/guard-git.sh: command substitution: line 220: unexpected EOF while looking for matchin
+v1.33.2/hooks                  Bash  ls -la                                                     | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 1038: unexpected EOF while looking for matching `''
+v1.30.3/hooks                  Write src/a.ts                                                   | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.30.3/hooks                  Write requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.30.3/hooks                  Edit  requirements/REQ-900.md                                    | normal    deny rc0 e0 | PC=1      deny rc0 e0 | PC=       deny rc0 e0 | SHELLOPTS deny rc0 e0 | BASH_ENV  deny rc0 e0 | --posix   deny rc0 e0 |
+v1.30.3/hooks                  Bash  echo x > src/a.ts                                          | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|
+v1.30.3/hooks                  Bash  printf x | tee src/a.ts                                    | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|
+v1.30.3/hooks                  Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md   | normal    deny rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|
+v1.30.3/hooks                  Bash  git reset --hard                                           | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|
+v1.30.3/hooks                  Bash  git clean -fd                                              | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|
+v1.30.3/hooks                  Bash  ls -la                                                     | normal    nada rc0 e0 | PC=1      nada rc0 e2 | PC=       nada rc0 e2 | SHELLOPTS nada rc0 e2 | BASH_ENV  nada rc0 e2 | --posix   nada rc0 e2 |
+    stderr(--posix): <arbol>/lib.sh: command substitution: line 731: unexpected EOF while looking for matching `''|

@@ -1,0 +1,20 @@
+/home/juan/dev/ArnesJuan-v1.36/hooks normal
+  [echo x > src/a.ts] rc=0 lista=<src/a.ts>
+  [sed -i s/a/completado/ requirements/R.md] rc=0 lista=<s/a/completado/,requirements/R.md>
+  [echo ñ > src/a.ts] rc=0 lista=<src/a.ts>
+/home/juan/dev/ArnesJuan-v1.36/hooks posix
+  [echo x > src/a.ts] rc=1 lista=<>
+  [sed -i s/a/completado/ requirements/R.md] rc=1 lista=<>
+/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: command substitution: line 2100: unexpected EOF while looking for matching `''
+  [echo ñ > src/a.ts] rc=1 lista=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks normal
+  [echo x > src/a.ts] rc=0 lista=<src/a.ts>
+  [sed -i s/a/completado/ requirements/R.md] rc=0 lista=<s/a/completado/,requirements/R.md>
+  [echo ñ > src/a.ts] rc=0 lista=<src/a.ts>
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks posix
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  [echo x > src/a.ts] rc=1 lista=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  [sed -i s/a/completado/ requirements/R.md] rc=1 lista=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''
+  [echo ñ > src/a.ts] rc=1 lista=<>

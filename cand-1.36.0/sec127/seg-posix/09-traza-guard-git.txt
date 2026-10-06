@@ -1,0 +1,15 @@
+# SEC-129: traza (bash -x, sin las lineas '++') de guard.sh de 78a2f33, POSIXLY_CORRECT=1, coordinadora, Bash 'git reset --hard'. Manifiesto: agente_codigo + codigo_app src/*. Muestra que arnes_guard_git se abandona en la expansion de guard-git.sh:231 y el hook pasa a la puerta siguiente; exit 0 sin salida.
+190-+ limpio='git reset --hard'
+191-+ limpio='git reset --hard'
+192-+ limpio='git reset --hard'
+193-+ limpio='git reset --hard'
+194:/home/juan/dev/ArnesJuan-v1.36/hooks/guard-git.sh: command substitution: line 233: unexpected EOF while looking for matching `''
+195-+ arnes_guard_codigo
+196-+ local objetivo= via_bash=0 exceso=0 cand quien escrituras= rc nodet=0 nd_ruta= nd_causa= nd_arreglo=
+197-+ arnes_parse_input
+--
+278-+ return 0
+279-+ arnes_emitir_avisos
+280-+ '[' -n '' ']'
+281-+ return 0
+282:+ exit 0

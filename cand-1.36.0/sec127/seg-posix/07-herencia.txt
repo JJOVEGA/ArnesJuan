@@ -1,0 +1,12 @@
+# SEC-129: ¿hereda un hijo bash el modo POSIX del padre? (hijo = bash, como el shebang 'env bash' de guard.sh)
+# bash 5.3.9(1)-release; /bin/sh -> dash
+padre bash normal                                              hijo: normal 
+padre: set -o posix (sin exportar nada)                        hijo: declare -- POSIXLY_CORRECT="y" normal 
+padre: bash --posix                                            hijo: normal declare -- POSIXLY_CORRECT="y" 
+padre: bash invocado como sh (enlace)                          hijo: normal declare -- POSIXLY_CORRECT="y" 
+padre: dash (/bin/sh) -c                                       hijo: normal 
+padre: set -o posix; export SHELLOPTS                          hijo: posix 
+padre: export POSIXLY_CORRECT=1                                hijo: posix 
+padre: export POSIXLY_CORRECT (vacia)                          hijo: posix 
+padre: BASH_ENV con set -o posix                               hijo: posix 
+padre: BASHOPTS exportada (shopt, no set -o)                   hijo: /bin/bash: line 2: BASHOPTS: readonly variable normal 

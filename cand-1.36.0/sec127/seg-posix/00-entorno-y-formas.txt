@@ -1,0 +1,55 @@
+# R-054 / SEC-129 — entorno de la medicion, 2026-10-06
+worktree /home/juan/dev/ArnesJuan-v1.36 rama cand/1.36.0 cabeza 3d9c416; hooks/ y tools/ = 78a2f33: git diff --quiet 78a2f33 HEAD -- hooks tools -> rc 0
+lib.sh sha256 1d309101dcdd9818
+v1.35.0: /home/juan/dev/ArnesJuan-v1.35.0-base @ 3956a6f
+v1.34.0: git archive v1.34.0 hooks (cc8972c) en un temporal
+v1.33.2: git archive v1.33.2 hooks (10eac80) en un temporal
+v1.30.3: git archive v1.30.3 hooks (6c1b58a) en un temporal
+bash 5.3.9(1)-release; jq-1.8.2; Linux 6.18.33.2-microsoft-standard-WSL2; /bin/sh -> dash
+claude 2.1.289 (Claude Code) (no ejercido)
+
+## entorno de la herramienta Bash de esta sesion
+ninguna de POSIXLY_CORRECT, SHELLOPTS, BASH_ENV, ENV
+modo: normal
+
+## formas (01-formas.sh), bash 5.3.9(1)-release
+== posix=no
+F1 dollar-paren  [a  b) (c) "d" e;f]
+F2 paren-abre    [a $Ab) Ac) "d" e;f]
+F3 paren-cierra  [a $(bC (cC "d" e;f]
+F4 comilla-doble [a $(b) (c) QdQ e;f]
+F5 ansi-c-repl   [$'a $(b) (c) "d" e\nf']
+== posix=si
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/01-formas.sh: command substitution: line 4: unexpected EOF while looking for matching `''
+F1 ERROR
+F2 paren-abre    [a $Ab) Ac) "d" e;f]
+F3 paren-cierra  [a $(bC (cC "d" e;f]
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/01-formas.sh: line 6: bad substitution: no closing `}' in "${x//'"'/Q}"
+F4 ERROR
+F5 ansi-c-repl   [$'a $(b) (c) "d" e\nf']
+
+## sitios de las dos formas que fallan, por arbol (git grep)
+v1.30.3:
+   v1.30.3:hooks/lib.sh:534:    s="${s//'$('/$'\001'D}"
+   v1.30.3:hooks/lib.sh:537:    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+   v1.30.3:hooks/lib.sh:730:  limpio="${limpio//'$('/ }"
+v1.33.2:
+   v1.33.2:hooks/guard-git.sh:218:  limpio="${limpio//;/$'\n'}";  limpio="${limpio//'$('/$'\n'}"; limpio="${limpio//\`/$'\n'}"
+   v1.33.2:hooks/lib.sh:814:    s="${s//'$('/$'\001'D}"
+   v1.33.2:hooks/lib.sh:817:    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+   v1.33.2:hooks/lib.sh:1037:  limpio="${limpio//'$('/ }"
+v1.34.0:
+   v1.34.0:hooks/guard-git.sh:218:  limpio="${limpio//;/$'\n'}";  limpio="${limpio//'$('/$'\n'}"; limpio="${limpio//\`/$'\n'}"
+   v1.34.0:hooks/lib.sh:814:    s="${s//'$('/$'\001'D}"
+   v1.34.0:hooks/lib.sh:817:    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+   v1.34.0:hooks/lib.sh:1037:  limpio="${limpio//'$('/ }"
+v1.35.0:
+   v1.35.0:hooks/guard-git.sh:227:  limpio="${limpio//;/$'\n'}";  limpio="${limpio//'$('/$'\n'}"; limpio="${limpio//\`/$'\n'}"
+   v1.35.0:hooks/lib.sh:1570:    s="${s//'$('/$'\001'D}"
+   v1.35.0:hooks/lib.sh:1573:    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+   v1.35.0:hooks/lib.sh:1880:  limpio="${limpio//'$('/ }"
+78a2f33:
+   78a2f33:hooks/guard-git.sh:231:  limpio="${limpio//;/$'\n'}";  limpio="${limpio//'$('/$'\n'}"; limpio="${limpio//\`/$'\n'}"
+   78a2f33:hooks/lib.sh:1773:    s="${s//'$('/$'\001'D}"
+   78a2f33:hooks/lib.sh:1776:    case "$s" in *'"'*)     s="${s//'"'/$'\001'Q}" ;; esac
+   78a2f33:hooks/lib.sh:2099:  limpio="${limpio//'$('/ }"
