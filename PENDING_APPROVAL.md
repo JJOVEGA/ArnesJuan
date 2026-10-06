@@ -43,8 +43,19 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-06: P-136-P resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-06] (coordinadora) — P-136-P: QA del paso 6 CON HALLAZGOS; (1) E2 dio 1 FAIL en 6 corridas de REQ-017 CA-09 (regla «afecta» → §9, decisión tuya); (2) alcance de la única pasada correctiva ante cinco hallazgos `contrato` más (QA-007-09 a QA-007-12)
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-06) — **P-136-P: (1) (A) y (2) (A)** — adoptada la decisión propuesta, literal
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisión propuesta, lista para adoptar: «P-136-P: (1) (A): QA-007-08 es INS-136-4; F-136-8 se amplía a CA-09; REQ-017 no se reabre. (2) (A): la pasada correctiva repara QA-007-10, QA-007-12 y QA-007-11 (a); QA-007-11 (b) y QA-007-09 quedan como límites declarados con ficha para 1.37. Nada más entra.»
+
+**Lo que añade la coordinadora:** INS-136-4, la ampliación de F-136-8, y las fichas F-136-18 (QA-007-09) y F-136-19 (QA-007-11 (b)) en `docs/PENDIENTES.md`. En paralelo y sobre archivos disjuntos: el desarrollador hace la **única pasada correctiva** del paso 6 (`hooks/`, banco, `docs/arnes/`) y el analista escribe los límites declarados y el cierre de QA-007-08 como instrumento (`requirements/`, guía). Después, QA re-verifica; seguridad (fase 4); commit validado; paso 7. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-06] (coordinadora) — P-136-P: QA del paso 6 CON HALLAZGOS; (1) E2 dio 1 FAIL en 6 corridas de REQ-017 CA-09 (regla «afecta» → §9, decisión tuya); (2) alcance de la única pasada correctiva ante cinco hallazgos `contrato` más (QA-007-09 a QA-007-12)
 
 **Contexto.** `docs/qa/REQ-007.md`, «Paso 6: validación de SEC-115, SEC-118, SEC-129 y QA-007-07»; evidencia `cand-1.36.0/sec115-118/qa/`, commit `e19b708`; código `8e11f87`. **Conforme:** sección 47 95/0 con fail-before (`78a2f33` y v1.35.0 36/59); SEC-118 con UTF-8 válido (motivos de 16 382–16 384 bytes; los avisos de 140 KB se emiten); SEC-115: T1–T3 en `deny` en 0,4–2,6 s, T2b en 0,2–0,4 s (v1.35.0: 32–38 s), el plazo actúa en una llamada real (REQ de 3 MB → `deny` a los 36,3 s); E1 sin cambio; E3 PASS; techos: fronteras reproducidas, nada cambia fuera de `requirements/`; matriz POSIX en `deny`; QA-007-07 reparado; R2 deniega `exit` inesperado y códigos no declarados; banco 2292/0/13; autoprueba 117/0; gates rc 0; +0 procesos; **INS-136-3** (la sección 24 no se reproduce en 15 corridas + inventario). **Cerrados por QA:** QA-007-07 y **QA-023-10** (en su medición, 35 corridas sobre `82ceb63`). **SEC-130: confirmado que R2 no lo cubre** (`ulimit -n 3` → cierre por `sed` sin decisión); sigue F-136-12.
 
@@ -74,9 +85,6 @@
 **Qué trabajo sigue mientras no se decida:** el write-back de estado del analista (QA-007-07 construido en `8e11f87`; punteros de `lib.sh`; QA-023-10 cerrado), que no depende de esto. La pasada y seguridad esperan.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-06) — **P-136-O: (1) (A) y (2) (A); P-136-N: (A)** — adoptada la decisión propuesta por la coordinadora, literal
 

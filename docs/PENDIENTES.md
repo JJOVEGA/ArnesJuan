@@ -2244,6 +2244,7 @@ ninguna mata al hook.»
 ## Fichas de la revisión R-054 (`POSIXLY_CORRECT`, 2026-10-06)
 
 **Origen:** P-136-L (A) del propietario; R-054 en `docs/seguridad/registro-seguridad.md`; evidencia `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/`, commit `2713c21`. **SEC-129** (`contrato`, media) no es ficha: se repara dentro de SEC-115/118 (paso 6) con R1 (salir del modo POSIX al arrancar el hook, sin procesos) y R2 (un código del analizador no declarado, o una puerta abandonada a mitad, deniega), y el write-back de la propiedad en CA-68 es del analista.
+- **Ampliación (P-136-P (1) (A), 2026-10-06):** alcanza también a **CA-09** (la sonda 37/3, «la pared»): en el paso 6, E2 dio 1 FAIL en 6 corridas (0,962×, el candidato más rápido) con E1 sin ningún cambio; es INS-136-4, abajo. La revisión de 1.37 cubre las tres sondas de reloj de REQ-017 (CA-03, CA-08 (ii) y CA-09).
 
 ### F-136-9 — Un `BASH_ENV` con cualquier contenido corre antes que el hook (O-54-1)
 - **Qué:** bash ejecuta el archivo que nombre `BASH_ENV` antes de cada script no interactivo, así que corre antes que `guard.sh`, con sus permisos. Sólo se neutraliza en la orden de `hooks.json` (invocar bash de forma que lo ignore), no desde dentro del hook.
@@ -2300,3 +2301,17 @@ ninguna mata al hook.»
 ### INS-136-3 — Hallazgo `instrumento`, no atribuible al cambio: el FAIL «`arnes-lectura`: el contador no dice 1» de la sección 24 no se reproduce (P-136-O (2) (A))
 - **Qué:** apareció una vez, en la primera de tres corridas del inventario del desarrollador (`cand-1.36.0/sec115-118/50-`–`52-`), con el anfitrión cargado. QA fijó por adelantado 15 corridas de la sección 24 aislada (10 + 5) con la carga anotada, más su propio inventario CA-69 2 (a): **ninguna lo reprodujo** (`sec115-118/qa/`, commit `e19b708`). Tampoco en las ocho corridas posteriores del desarrollador.
 - **Consecuencia:** se registra con sus cifras y el plan sigue; si reaparece, vuelve a abrirse como hallazgo contra el delta. **Dueño:** `qa-tester`.
+
+## Fichas de P-136-P (2026-10-06)
+
+### INS-136-4 — Hallazgo `instrumento`, no atribuible al cambio: E2 (REQ-017 CA-09, sonda 37/3) dio 1 FAIL en 6 corridas sobre `8e11f87` (QA-007-08 reclasificado por decisión del propietario)
+- **Qué:** QA del paso 6 (`docs/qa/REQ-007.md`; evidencia `cand-1.36.0/sec115-118/qa/`, `e19b708`): el candidato dio 4 PASS, 1 SKIP por solape y **1 FAIL (corrida 4, 0,962×)**; v1.35.0, 5 PASS y 1 por solape. **E1** (las tres entradas de la sonda a nivel de hook) no cambia ni de decisión ni de duración, y la cifra está **por debajo de 1**: el candidato fue más rápido en esa corrida.
+- **Decisión del propietario (P-136-P (1) (A)):** es instrumento; REQ-017 no se reabre; F-136-8 se amplía a CA-09. **Dueño:** `qa-tester`, con el `analista-requerimientos` en 1.37.
+
+### F-136-18 — 1.37: QA-007-09 (`contrato`, preexistente): un REQ con CRLF en disco de ≥ 3,6 MB deja al hook sin decisión a los 60 s
+- **Qué:** un `Edit` pequeño que cierra un REQ con CRLF en disco: con 3,3 MB deniega a los 50,9 s; con ≥ 3,6 MB sale sin decisión a los 60 s. Causa: `hooks/guard-completado.sh:604` (normalización superlineal y sin techo; el techo de piezas mide la entrada, no el disco). **v1.35.0 falla desde 3 MB.**
+- **Qué lo resolvería:** un techo sobre el documento en disco para la vía CRLF (cifra por encima de 660 KB, el tamaño de `REQ-007.md`; es otro cambio de compatibilidad que declarar) o una normalización lineal (mejora que se propone antes de hacerse y mueve el perfil de la sonda 37/3). **Límite declarado en 1.36.0** (P-136-P (2) (A)); dueño `desarrollador` con el analista.
+
+### F-136-19 — 1.37: QA-007-11 (b) (`contrato`, preexistente): `SHELLOPTS=noexec` u `onecmd`, y `xtrace` con `BASH_XTRACEFD=1`, heredados del entorno, no se pueden neutralizar desde dentro del hook
+- **Qué:** con `noexec` el intérprete no ejecuta nada, con `onecmd` sale tras la primera orden, y `xtrace` hacia stdout rompe el JSON de la decisión. `hooks/entrada.sh` no llega a correr o no puede deshacerlo. Piden actuar en la orden de `hooks.json` (invocar bash de forma que ignore ese estado) o declarar la frontera del entorno del host.
+- **Límite declarado en 1.36.0** (P-136-P (2) (A)); dueño `desarrollador` con `auditor-seguridad`; se evalúa con F-136-9 (`BASH_ENV`), que es la misma frontera.

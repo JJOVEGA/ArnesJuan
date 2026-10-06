@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · P-136-P (1) (A) y (2) (A) adoptadas por el propietario: INS-136-4; F-136-8 ampliada a CA-09; F-136-18 (QA-007-09) y F-136-19 (QA-007-11 (b)) como límites declarados; la pasada correctiva del paso 6 y el write-back, en paralelo
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con su única pasada correctiva acotada a QA-007-10, QA-007-12 y QA-007-11 (a).
+
 ## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista tras QA (QA-007-07 construido y validado; punteros de `lib.sh` a `8e11f87`; QA-023-10 cerrado en la nota de CA-54; sección 24 → INS-136-3; SEC-130 no cubierto; la 2b → 1.37 en la nota de CA-54)
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~204 k tokens) y la coordinadora.
 
