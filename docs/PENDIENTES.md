@@ -2264,3 +2264,21 @@ ninguna mata al hook.»
 - **Qué lo resuelve:** que el atajo sólo afirme lo que ha comprobado. El auditor lo recomienda dentro de la propiedad R2 del paso 6 («cualquier otro final emite `deny`»). **Por la regla del propietario («lo nuevo va a ficha») no amplía el paso 6:** QA y seguridad comprueban allí si R2 lo cubre por construcción; si no, queda para 1.37.
 - **Dueño:** `desarrollador`. No bloquea el cierre de REQ-007; mientras esté abierto, la publicación vuelve al propietario por la regla vigente.
 - **O-55-1:** un control del proveedor detuvo una búsqueda del auditor (normalización con `declare -f` que borraba un temporal); no se reintentó.
+
+## Informe de uso real de 1.35.0 por un proyecto consumidor (canal privado, 2026-10-06)
+
+**Origen:** informe de dos días de uso de 1.35.0 en un proyecto consumidor, recibido por el propietario por canal privado y compartido con la coordinadora el 2026-10-06. Aquí sólo va lo que describe el arnés; nada del proyecto. **Lo que funcionó, como evidencia del objetivo rector:** hasta 3 agentes en paralelo sin chocar y unos 30 commits limpios en un día (autonomía útil); la lectura estricta de los campos del REQ y `tools/arnes-lectura.sh` encontraron cabeceras que la máquina no leía (calidad proporcional, del lado seguro); la puerta de `Edit` aceptó las firmas legítimas y distinguió las anteriores. **Lo que sigue débil, en tres fichas:**
+
+### F-136-13 — Escribir por consola no pasa por la puerta, también en proyectos consumidores (confirma el límite de §13 y PR-136-1/2)
+- **Qué:** un `qa-tester` del proyecto consumidor escribió su veredicto con `python3` por `Bash` y la puerta no lo vio; el proyecto lo corrigió reescribiendo con `Edit` y ahora lo prohíbe por escrito en cada encargo, «pero es disciplina, no un control de la máquina».
+- **Qué lo resuelve:** la ficha **b) de 1.37** (post-condición de filesystem: foto antes, comparación después, reversión), que convierte el hueco C de límite declarado en detección. Hasta entonces, la instrucción explícita en cada encargo, como ya hace este repositorio.
+
+### F-136-14 — La rotación del CHANGELOG mueve secciones a `CHANGELOG-archivo.md` sin avisar, y el recorte se puede comitear sin la copia
+- **Qué:** con `rotacion.activo: true`, al parar un agente se mueven secciones al archivo de rotación; el proyecto comiteó el recorte sin el archivo nuevo y tuvo que corregirlo. El hook `pre-commit` exige CHANGELOG pero no comprueba que el archivo de rotación viaje en el mismo commit.
+- **Qué lo resuelve:** (a) un aviso del hook `Stop` al rotar (mensaje a la persona, como el de vocabulario), y (b) que `pre-commit` deniegue un commit que recorta `CHANGELOG.md` sin añadir el `-archivo.md` correspondiente. **Dueño propuesto:** `desarrollador`; **sin ventana** en 1.36.0; candidata a 1.37 junto con la ficha a).
+
+### F-136-15 — El bloque derivado de `docs/ESTADO.md` deja el archivo siempre modificado, y obliga a cuidar cada `git add`
+- **Qué:** el bloque se reescribe en cada parada de agente (hora y cabeza), así que `docs/ESTADO.md` aparece modificado de forma permanente y es fácil arrastrarlo a un commit ajeno. Lo sufre también este repositorio (cada subagente lo declara en su informe).
+- **Qué lo resuelve:** opciones a evaluar en 1.37 con la ficha a) (plan de desarrollo con línea derivada): sacar el bloque derivado a un archivo propio (`docs/ESTADO-derivado.md`) enlazado desde ESTADO, o no reescribirlo cuando sólo cambian la hora y la cabeza. **Dueño propuesto:** `desarrollador`.
+
+**Observaciones sin ficha:** el tope de 16 384 bytes de `Hallazgos abiertos:` (SEC-113) obligó al proyecto a resumir un campo largo: es el diseño, y la puerta lo deniega en vez de leerlo mal; y un REQ cerrado con una cabecera ilegible sólo se puede corregir con las puertas en verde, que es el precio del fail-closed.

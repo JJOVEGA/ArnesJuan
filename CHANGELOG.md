@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Informe de uso real de 1.35.0 por un proyecto consumidor: tres agentes en paralelo sin chocar; tres debilidades registradas como fichas F-136-13 a F-136-15 (consola sin puerta, rotación sin aviso, ESTADO siempre modificado)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora. Fuente: informe recibido por el propietario por canal privado; aquí sólo lo que describe el arnés.
+
+- **Funcionó:** paralelo real (3 agentes, ~30 commits limpios), lectura estricta de campos y `arnes-lectura.sh`, la puerta de `Edit` con las firmas.
+- **Sigue débil:** escribir por consola (→ ficha b) de 1.37), la rotación del CHANGELOG sin aviso y sin control en `pre-commit` (F-136-14), y el bloque derivado de ESTADO siempre modificado (F-136-15).
+- **Avance (regla 6):** sin cambio en el trabajo del paso 6; las fichas alimentan 1.37.
+
 ## [GitHub] — 2026-10-06 · Paso 6, fase 0 (analista): CA-68 gana la propiedad de SEC-129 y la restricción de los techos; CA-69 punto 7 con E1–E3 y la comprobación de SEC-130; nota posterior fechada en ADR-017
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~213 k tokens) y la coordinadora.
 
