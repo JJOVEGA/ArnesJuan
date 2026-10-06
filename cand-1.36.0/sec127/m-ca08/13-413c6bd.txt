@@ -1,0 +1,9 @@
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  PASS  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.242× <= techo 1.250× en 5 de 5 resueltas: 1.224× 1.188× 1.207× 1.242× 1.148× (todas resueltas)
+aviso: vuelta parcial (1 de 59 secciones, filtro 'REQ-017 CA-08 (ii) un REQ real de 6 líneas'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 1 PASS, 0 FAIL
+
+real	0m39.187s
+user	0m25.457s
+sys	0m9.545s

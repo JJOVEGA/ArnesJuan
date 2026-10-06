@@ -1,0 +1,12 @@
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.150×, 1.256×] de 5 razones resueltas de 5: 1.150× 1.228× 1.256× 1.237× 1.228× (todas resueltas) · presupuesto fijo, no se repite
+aviso: vuelta parcial (1 de 59 secciones, filtro 'REQ-017 CA-08 (ii) un REQ real de 6 líneas'): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 0 PASS, 0 FAIL, 1 SKIP (de ellos 1 INCONCLUSO: 1 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+INCONCLUSO (rendimiento NO acreditado): 1 — la medición real no resolvió en esta corrida; no pone el banco en rojo y un check verde no lo acredita (REQ-030):
+       ! REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1
+       · REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.150×, 1.256×] de 5 razones resueltas de 5: 1.150× 1.228× 1.256× 1.237× 1.228× (todas resueltas) · presupuesto fijo, no se repite
+
+real	0m38.064s
+user	0m24.755s
+sys	0m9.253s

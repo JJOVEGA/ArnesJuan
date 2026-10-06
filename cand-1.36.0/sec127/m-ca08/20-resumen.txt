@@ -1,0 +1,20 @@
+P-136-M (A) - medicion dirigida de REQ-017 CA-08 (ii), "un REQ real de 6 lineas" (techo 1,250x frente a v1.32.1)
+Metodo: banco de v1.35.0 tal cual (3956a6f), seccion 37/5 con el filtro del corredor sobre el caso; ARNES_HOOKS_DIR en
+cada arbol (v1.35.0 el de la base; los demas por SHA con git archive, hooks/ y tools/ hermanos, comprobados archivo a
+archivo: 01-entorno.txt). Una corrida por commit, SONDA_COSTE_R=5 (literal del corredor). Sin repetir. Linux/WSL2, bash 5.3.9.
+Reposo: la carga de 1 min bajo de 1,89 a 0,41 a las 08:39:04 (00-carga.txt); la medida empezo ahi.
+
+commit    r (las 5, en orden)                    min     mediana  max     veredicto                 carga al final (1/5/15 min)
+v1.35.0   1.207 1.208 1.142 1.285 1.237          1.142   1.208    1.285   SKIP [INCONCLUSO]         0.74 0.94 0.99
+82ceb63   1.150 1.228 1.256 1.237 1.228          1.150   1.228    1.256   SKIP [INCONCLUSO]         1.03 1.00 1.01
+413c6bd   1.224 1.188 1.207 1.242 1.148          1.148   1.207    1.242   PASS                      1.54 1.14 1.06
+a59917d   1.242 1.225 1.211 1.166 1.222          1.166   1.222    1.242   PASS                      1.34 1.14 1.06
+78a2f33   1.217 1.203 1.235 1.323 1.225          1.203   1.225    1.323   SKIP [INCONCLUSO]         0.97 1.07 1.04
+
+Lectura: no hay escalon. Las cinco medianas caen en 1,207-1,228 (0,021 de separacion), mientras que el recorrido de
+cada commit es de 0,08 a 0,14. v1.35.0, sin ningun cambio de esta ventana, ya llega a 1,285. El veredicto
+(INCONCLUSO o PASS) lo decide el maximo de 5 cifras que rondan el techo, no el arbol. El FAIL del inventario
+(a0-, 1,251-1,286 en 5 de 5) se tomo con carga de fondo.
+Limites: una corrida por commit; la carga subio durante la medida (0,41 -> 1,54, en parte por la propia medida); no se
+puede excluir un efecto menor que ~0,02. Por lectura, el cambio de 78a2f33 frente a a59917d esta en una rama a la que
+este Edit no entra.
