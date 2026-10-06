@@ -1,0 +1,29 @@
+1,8d0
+< FAIL	QA-007-06 RF1 la entrada estándar está cerrada por guard-codigo.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF1 la entrada estándar está cerrada por guard-completado.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF1 la entrada estándar está cerrada por guard-git.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF1 la entrada estándar está cerrada por guard.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF2 la entrada estándar es un directorio por guard-codigo.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF2 la entrada estándar es un directorio por guard-completado.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF2 la entrada estándar es un directorio por guard-git.sh candidata  esperado=deny got=nada  <>
+< FAIL	QA-007-06 RF2 la entrada estándar es un directorio por guard.sh candidata  esperado=deny got=nada  <>
+341a334
+> PASS	QA-007-06 RF1 la entrada estándar está cerrada por guard-codigo.sh candidata  (deny)
+342a336
+> PASS	QA-007-06 RF1 la entrada estándar está cerrada por guard-completado.sh candidata  (deny)
+343a338
+> PASS	QA-007-06 RF1 la entrada estándar está cerrada por guard-git.sh candidata  (deny)
+344a340
+> PASS	QA-007-06 RF1 la entrada estándar está cerrada por guard.sh candidata  (deny)
+345a342
+> PASS	QA-007-06 RF2 la entrada estándar es un directorio por guard-codigo.sh candidata  (deny)
+346a344
+> PASS	QA-007-06 RF2 la entrada estándar es un directorio por guard-completado.sh candidata  (deny)
+347a346
+> PASS	QA-007-06 RF2 la entrada estándar es un directorio por guard-git.sh candidata  (deny)
+348a348
+> PASS	QA-007-06 RF2 la entrada estándar es un directorio por guard.sh candidata  (deny)
+1454a1455
+> PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+2185d2185
+< SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta N o más repeticiones resueltas de v1.32.1 y todas por encima de N× · v1.32.1: N× N× N× N× N× (N de N resueltas) · este árbol: N× N× N× N× N× (N de N resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto

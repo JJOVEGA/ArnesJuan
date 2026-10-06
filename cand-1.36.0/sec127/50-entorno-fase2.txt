@@ -1,0 +1,15 @@
+2026-10-05T18:55:59-06:00
+Linux sysvega-dev 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+LANG=C.UTF-8 LC_ALL=<sin definir>
+worktree 1126608 + la reparación sin comitear
+ M docs/ESTADO.md
+ M hooks/lib.sh
+ hooks/lib.sh | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
+1d309101dcdd98185f6413c24ce10e19ac0fe7a025634ed46489123b987df6a3  /home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh
+3effa3c7fd6e93deb27bd921fa9197ab36faaa887445f20a8575203c711087ce  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/t413/hooks/lib.sh
+dfa953890c1e4571792fcffe309049601e918c805ab440be27516dae92fa2fd3  /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh
+413c6bd materializado con git archive en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/t413: 11 rutas
+v1.35.0 3956a6f; hooks/ y tools/ frente a 3956a6f: identicos

@@ -1,0 +1,12 @@
+== procesos fase 2 (etiqueta por árbol); 2026-10-05T19:02:30-06:00; carga 0.90 1.50 1.06
+n1-bash-ls.json | v1.35.0: sin-decision; sonda estado=ok procesos=4; exacto 5 5 | 413c6bd: sin-decision; sonda estado=ok procesos=4; exacto 4 4 | candidato: sin-decision; sonda estado=ok procesos=4; exacto 4 4
+n2-edit-literal-req.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 413c6bd: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | candidato: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+n3-multiedit-req.json | v1.35.0: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | 413c6bd: sin-decision; sonda estado=ok procesos=6; exacto 6 6 | candidato: sin-decision; sonda estado=ok procesos=6; exacto 6 6
+n4-edit-cierre-rojo.json | v1.35.0: deny; sonda estado=ok procesos=7; exacto 7 7 | 413c6bd: deny; sonda estado=ok procesos=7; exacto 7 7 | candidato: deny; sonda estado=ok procesos=7; exacto 7 7
+n5-write-src-coord.json | v1.35.0: deny; sonda estado=ok procesos=6; exacto 5 5 | 413c6bd: deny; sonda estado=ok procesos=6; exacto 5 5 | candidato: deny; sonda estado=ok procesos=6; exacto 5 5
+n6-bash-escribe-src.json | v1.35.0: deny; sonda estado=ok procesos=6; exacto 6 6 | 413c6bd: deny; sonda estado=ok procesos=6; exacto 6 6 | candidato: deny; sonda estado=ok procesos=6; exacto 6 6
+n7-bash-git-status.json | v1.35.0: sin-decision; sonda estado=ok procesos=5; exacto 6 6 | 413c6bd: sin-decision; sonda estado=ok procesos=5; exacto 5 5 | candidato: sin-decision; sonda estado=ok procesos=5; exacto 5 5
+n8-bash-no-ascii-docs.json | v1.35.0: sin-decision; sonda estado=ok procesos=5; exacto 6 6 | 413c6bd: sin-decision; sonda estado=ok procesos=5; exacto 5 5 | candidato: sin-decision; sonda estado=ok procesos=5; exacto 5 5
+n9-bash-sed-no-ascii-docs.json | v1.35.0: sin-decision; sonda estado=ok procesos=5; exacto 6 6 | 413c6bd: sin-decision; sonda estado=ok procesos=5; exacto 5 5 | candidato: sin-decision; sonda estado=ok procesos=5; exacto 5 5
+stdin-cerrada | v1.35.0: sin-decision; sonda estado=sin-cuenta procesos=3; exacto 1 1 | 413c6bd: sin-decision; sonda estado=sin-cuenta procesos=3; exacto 1 1 | candidato: deny; sonda estado=ok procesos=4; exacto 2 2
+stdin-directorio | v1.35.0: sin-decision; sonda estado=sin-cuenta procesos=3; exacto 1 1 | 413c6bd: sin-decision; sonda estado=sin-cuenta procesos=3; exacto 1 1 | candidato: deny; sonda estado=ok procesos=4; exacto 2 2
