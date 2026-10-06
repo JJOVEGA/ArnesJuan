@@ -1,0 +1,40 @@
+== A: LC_ALL tras el atajo (78a2f33), set -u
+normal noDef         ls -la         rc=0 def= val=<> attr=<>
+normal noDef         x completado   rc=1 def= val=<> attr=<>
+normal noDef         TERMINÉ       rc=1 def= val=<> attr=<>
+normal vacia         ls -la         rc=0 def=si val=<> attr=<-x>
+normal vacia         x completado   rc=1 def=si val=<> attr=<-x>
+normal vacia         TERMINÉ       rc=1 def=si val=<> attr=<-x>
+normal expC.UTF-8    ls -la         rc=0 def=si val=<C.UTF-8> attr=<-x>
+normal expC.UTF-8    x completado   rc=1 def=si val=<C.UTF-8> attr=<-x>
+normal expC.UTF-8    TERMINÉ       rc=1 def=si val=<C.UTF-8> attr=<-x>
+normal shellC.UTF-8  ls -la         rc=0 def=si val=<C.UTF-8> attr=<-->
+normal shellC.UTF-8  x completado   rc=1 def=si val=<C.UTF-8> attr=<-->
+normal shellC.UTF-8  TERMINÉ       rc=1 def=si val=<C.UTF-8> attr=<-->
+posix  noDef         ls -la         rc=0 def= val=<> attr=<>
+posix  noDef         x completado   rc=1 def= val=<> attr=<>
+posix  noDef         TERMINÉ       rc=1 def= val=<> attr=<>
+posix  vacia         ls -la         rc=0 def=si val=<> attr=<-x>
+posix  vacia         x completado   rc=1 def=si val=<> attr=<-x>
+posix  vacia         TERMINÉ       rc=1 def=si val=<> attr=<-x>
+posix  expC.UTF-8    ls -la         rc=0 def=si val=<C.UTF-8> attr=<-x>
+posix  expC.UTF-8    x completado   rc=1 def=si val=<C.UTF-8> attr=<-x>
+posix  expC.UTF-8    TERMINÉ       rc=1 def=si val=<C.UTF-8> attr=<-x>
+posix  shellC.UTF-8  ls -la         rc=0 def=si val=<C.UTF-8> attr=<-->
+posix  shellC.UTF-8  x completado   rc=1 def=si val=<C.UTF-8> attr=<-->
+posix  shellC.UTF-8  TERMINÉ       rc=1 def=si val=<C.UTF-8> attr=<-->
+== B: la redireccion del grupo falla (ulimit -n), texto 'sed -i s/en-revision/completado/ requirements/REQ-900.md'
+413c  ulimit-n=3   /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/413c6bd/hooks/lib.sh: line 2185: /dev/null: Too many open files rc=1 
+413c  ulimit-n=4   /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/413c6bd/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/413c6bd/hooks/lib.sh: line 2185: /dev/null: Too many open files rc=1 
+413c  ulimit-n=5   rc=1 
+413c  ulimit-n=8   rc=1 
+413c  ulimit-n=10  rc=1 
+413c  ulimit-n=11  rc=1 
+413c  ulimit-n=12  rc=1 
+78a2  ulimit-n=3   /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/78a2f33/hooks/lib.sh: line 2198: /dev/null: Too many open files rc=0 
+78a2  ulimit-n=4   /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/78a2f33/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r055/78a2f33/hooks/lib.sh: line 2198: /dev/null: Too many open files rc=0 
+78a2  ulimit-n=5   rc=1 
+78a2  ulimit-n=8   rc=1 
+78a2  ulimit-n=10  rc=1 
+78a2  ulimit-n=11  rc=1 
+78a2  ulimit-n=12  rc=1 

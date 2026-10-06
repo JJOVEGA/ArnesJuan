@@ -1,0 +1,259 @@
+fp=5            dev   Edit      v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            dev   Write     v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            dev   MultiEdit v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  Edit      v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  Write     v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  MultiEdit v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord Edit      v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord Write     v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord MultiEdit v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    Edit      v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    Write     v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    MultiEdit v135 guard-codigo=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0  guard=deny<ARNES: '5' es un ENLACE SIMBOLICO situado dentro> rc=0
+fp=5            qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5            qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   Edit      v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   Write     v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   MultiEdit v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  Edit      v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  Write     v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  MultiEdit v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord Edit      v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord Write     v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord MultiEdit v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    Edit      v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    Write     v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    MultiEdit v135 guard-codigo=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0  guard=deny<ARNES: 'true' es un ENLACE SIMBOLICO situado den> rc=0
+fp=true         qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=true         qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp={"a":1}      qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp={"a":1}      qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=["src/a.ts"] qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=["src/a.ts"] qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=5.0          qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=5.0          qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           dev   Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           dev   Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           dev   MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           devp  Edit      413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           devp  Write     413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           devp  MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           coord Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           coord Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           coord MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           coord MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           qa    Edit      413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    Edit      78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           qa    Write     413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    Write     78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp=-1           qa    MultiEdit 413c guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp=-1           qa    MultiEdit 78a2 guard-codigo=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0  guard=deny<ARNES: el campo 'file_path' de esta llamada no e> rc=0
+fp="src/a.ts"   dev   Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   Edit      413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   Edit      78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   Write     413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   Write     78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   MultiEdit 413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   dev   MultiEdit 78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Edit      v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Edit      413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Edit      78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Write     v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Write     413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  Write     78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  MultiEdit v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  MultiEdit 413c guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   devp  MultiEdit 78a2 guard-codigo=nada rc=0                                                    guard=nada rc=0
+fp="src/a.ts"   coord Edit      v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord Edit      413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord Edit      78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord Write     v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord Write     413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord Write     78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord MultiEdit v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord MultiEdit 413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   coord MultiEdit 78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Edit      v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Edit      413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Edit      78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Write     v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Write     413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    Write     78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    MultiEdit v135 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    MultiEdit 413c guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+fp="src/a.ts"   qa    MultiEdit 78a2 guard-codigo=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0  guard=deny<ARNES: 'src/a.ts' es código de la app; sólo el> rc=0
+== control: Bash del agente de codigo con command no textual
+cmd=5        dev  Bash v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+cmd=5        dev  Bash 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'command' de esta llamada no es > rc=0
+cmd=5        dev  Bash 78a2 guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'command' de esta llamada no es > rc=0
+cmd=["ls"]   dev  Bash v135 guard-codigo=nada rc=0                                                    guard=nada rc=0
+cmd=["ls"]   dev  Bash 413c guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'command' de esta llamada no es > rc=0
+cmd=["ls"]   dev  Bash 78a2 guard-codigo=nada rc=0                                                    guard=deny<ARNES: el campo 'command' de esta llamada no es > rc=0

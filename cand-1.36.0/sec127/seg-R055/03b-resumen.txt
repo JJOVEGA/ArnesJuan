@@ -1,0 +1,19 @@
+== resumen (fp no textual: todo salvo "src/a.ts"), por arbol: guard-codigo / guard.sh
+413c gc=deny guard=deny 36
+413c gc=nada guard=deny 36
+78a2 gc=deny guard=deny 72
+v135 gc=deny guard=deny 24
+v135 gc=nada guard=nada 48
+== control textual src/a.ts
+413c coord gc=deny guard=deny 3
+413c dev gc=nada guard=nada 3
+413c devp gc=nada guard=nada 3
+413c qa gc=deny guard=deny 3
+78a2 coord gc=deny guard=deny 3
+78a2 dev gc=nada guard=nada 3
+78a2 devp gc=nada guard=nada 3
+78a2 qa gc=deny guard=deny 3
+v135 coord gc=deny guard=deny 3
+v135 dev gc=nada guard=nada 3
+v135 devp gc=nada guard=nada 3
+v135 qa gc=deny guard=deny 3

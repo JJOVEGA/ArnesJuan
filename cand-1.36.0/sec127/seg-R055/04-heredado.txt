@@ -1,0 +1,29 @@
+(ninguna)                    v135  Write-legible=deny  Bash-legible=deny  cerrada=nada 
+(ninguna)                    413c  Write-legible=deny  Bash-legible=deny  cerrada=nada 
+(ninguna)                    78a2  Write-legible=deny  Bash-legible=deny  cerrada=deny 
+ARNES_INPUT_LISTO=1          v135  Write-legible=nada  Bash-legible=nada  cerrada=nada 
+ARNES_INPUT_LISTO=1          413c  Write-legible=nada  Bash-legible=nada  cerrada=nada 
+ARNES_INPUT_LISTO=1          78a2  Write-legible=nada  Bash-legible=nada  cerrada=nada 
+ARNES_MANIFEST_LISTO=1       v135  Write-legible=nada  Bash-legible=nada  cerrada=nada 
+ARNES_MANIFEST_LISTO=1       413c  Write-legible=nada  Bash-legible=nada  cerrada=nada 
+ARNES_MANIFEST_LISTO=1       78a2  Write-legible=nada  Bash-legible=nada  cerrada=deny 
+ARNES_INPUT={"hook_event_nam v135  Write-legible=deny  Bash-legible=deny  cerrada=deny 
+ARNES_INPUT={"hook_event_nam 413c  Write-legible=deny  Bash-legible=deny  cerrada=deny 
+ARNES_INPUT={"hook_event_nam 78a2  Write-legible=deny  Bash-legible=deny  cerrada=deny 
+POSIXLY_CORRECT=1            v135  Write-legible=deny  Bash-legible=nada  cerrada=nada 
+POSIXLY_CORRECT=1            413c  Write-legible=deny  Bash-legible=nada  cerrada=nada 
+POSIXLY_CORRECT=1            78a2  Write-legible=deny  Bash-legible=nada  cerrada=deny 
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 16: SHELLOPTS: readonly variable
+SHELLOPTS=posix              v135  Write-legible=deny  Bash-legible=deny  cerrada=nada 
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 16: SHELLOPTS: readonly variable
+SHELLOPTS=posix              413c  Write-legible=deny  Bash-legible=deny  cerrada=nada 
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 18: SHELLOPTS: readonly variable
+/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-R055/04-heredado.sh: line 16: SHELLOPTS: readonly variable
+SHELLOPTS=posix              78a2  Write-legible=deny  Bash-legible=deny  cerrada=deny 
+
+NOTA DEL AUDITOR (R-055): las filas SHELLOPTS=posix son INVALIDAS por defecto del instrumento: `export SHELLOPTS=posix` falla en el bash que lanza la sonda (SHELLOPTS es de solo lectura), asi que esas filas corren sin modo POSIX. No se usan. El modo POSIX lo representa la fila POSIXLY_CORRECT=1; las demas vias de R-054 estan medidas en seg-posix/03-.

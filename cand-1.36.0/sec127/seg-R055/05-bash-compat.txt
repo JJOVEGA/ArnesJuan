@@ -1,0 +1,10 @@
+== ¿algún nivel de compatibilidad de bash 5.3.9 devuelve la persistencia de bash 5.0 en modo POSIX?
+BASH_COMPAT=    tras X=1 f: no-persiste
+BASH_COMPAT=50  tras X=1 f: no-persiste
+BASH_COMPAT=44  tras X=1 f: no-persiste
+BASH_COMPAT=43  tras X=1 f: no-persiste
+NEWS bash-5.1 punto o (/usr/share/doc/bash/NEWS.gz):
+o. Bash posix mode now treats assignment statements preceding shell function
+   definitions the same as in its default mode, since POSIX has changed and
+   no longer requires those assignments to persist after the function returns
+   (POSIX interp 654).

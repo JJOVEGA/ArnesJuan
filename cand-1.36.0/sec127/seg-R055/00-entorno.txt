@@ -1,0 +1,10 @@
+R-055 (auditor-seguridad), 2026-10-06 — determinación del paso 5 de 1.36.0 (SEC-127, QA-007-06, SEC-128)
+worktree: /home/juan/dev/ArnesJuan-v1.36 @ e02f8e3 (rama cand/1.36.0); código de hooks/ = 78a2f33 (diff -r vacío)
+delta revisado: git diff 413c6bd 78a2f33 -- hooks/ (hooks/lib.sh, hooks/guard-codigo.sh)
+árboles: v1.35.0 = /home/juan/dev/ArnesJuan-v1.35.0-base/hooks; 413c6bd y 78a2f33 = git archive en el scratchpad (r055/)
+anfitrión: Linux 6.18.33.2-microsoft-standard-WSL2; GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu); jq-1.8.2; ulimit -n = 1048576; carga: 0.84 1.02 1.47
+proyecto de prueba: copia de cand-1.36.0/sec120/proyecto (manifiesto: agente_codigo desarrollador, globs src/* app/*, estado terminal completado)
+
+01- sonda A y B a nivel de librería; 02- barrido de ulimit -n a nivel de hook; 03- SEC-128 a nivel de hook (03b- resumen); 04- QA-007-07 y SEC-129, 413c6bd frente a 78a2f33; 05- BASH_COMPAT
+
+O-55-1 (control del proveedor): una búsqueda de asignaciones delante de funciones sobre el código normalizado por 'declare -f' fue detenida por un control del proveedor (el script incluía la retirada de un temporal). No se reintentó; la búsqueda se hizo sólo por lectura con grep sobre el texto de 78a2f33 (ver registro R-055 §2).

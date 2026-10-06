@@ -1,0 +1,96 @@
+n=sin  v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=sin  v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=sin  413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=sin  413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=sin  78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=sin  78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=3    v135  guard.sh             nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=3    v135  guard-completado.sh  nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=3    413c  guard.sh             nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=3    413c  guard-completado.sh  nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=3    78a2  guard.sh             nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=3    78a2  guard-completado.sh  nada rc=127 err1=<bash: error while loading shared libraries: libtinfo.so.6: cannot open shared object file: Error 24>
+n=4    v135  guard.sh             nada rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard.sh: line 33: /home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib>
+n=4    v135  guard-completado.sh  nada rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-completado.sh: line 25: /home/juan/dev/ArnesJuan-v1.35.0-bas>
+n=4    413c  guard.sh             nada rc=0 err1=<<S>/413c6bd/hooks/guard.sh: line 33: <S>/413c6bd/hooks/lib.sh: Too many open files>
+n=4    413c  guard-completado.sh  nada rc=0 err1=<<S>/413c6bd/hooks/guard-completado.sh: line 25: <S>/413c6bd/hooks/lib.sh: Too many open files>
+n=4    78a2  guard.sh             nada rc=0 err1=<<S>/78a2f33/hooks/guard.sh: line 33: <S>/78a2f33/hooks/lib.sh: Too many open files>
+n=4    78a2  guard-completado.sh  nada rc=0 err1=<<S>/78a2f33/hooks/guard-completado.sh: line 25: <S>/78a2f33/hooks/lib.sh: Too many open files>
+n=5    v135  guard.sh             nada rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open file>
+n=5    v135  guard-completado.sh  nada rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open file>
+n=5    413c  guard.sh             nada rc=0 err1=<<S>/413c6bd/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=5    413c  guard-completado.sh  nada rc=0 err1=<<S>/413c6bd/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=5    78a2  guard.sh             nada rc=0 err1=<<S>/78a2f33/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=5    78a2  guard-completado.sh  nada rc=0 err1=<<S>/78a2f33/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=6    v135  guard.sh             deny<ARNES: no se pudo determinar a que archivo escribe 'requirem> rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open file>
+n=6    v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open file>
+n=6    413c  guard.sh             deny<ARNES: no se pudo determinar a que archivo escribe 'requirem> rc=0 err1=<<S>/413c6bd/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=6    413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<<S>/413c6bd/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=6    78a2  guard.sh             deny<ARNES: no se pudo determinar a que archivo escribe 'requirem> rc=0 err1=<<S>/78a2f33/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=6    78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<<S>/78a2f33/hooks/lib.sh: redirection error: cannot duplicate fd: Too many open files>
+n=7    v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=7    v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=7    413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=7    413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=7    78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=7    78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=8    78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=9    78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=10   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=11   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=12   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=13   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=14   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=16   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=20   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   v135  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   v135  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   413c  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   413c  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   78a2  guard.sh             deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
+n=32   78a2  guard-completado.sh  deny<ARNES: este comando escribe en 'requirements/REQ-900.md' y m> rc=0 err1=<>
