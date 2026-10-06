@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Write-back de P-136-P (analista): INS-136-4 en CA-69 p. 7 con la regla de «afecta» intacta y su precisión; límites declarados QA-007-09 y QA-007-11 (b) en CA-68; QA-007-10/11 (a)/12 «en la pasada, sin validar»; la guía gana los cinco párrafos de compatibilidad que faltaban
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- La regla «un FAIL en E2 → §9» sigue vigente; el propietario resolvió esta instancia por la dirección de la cifra y por E1.
+- La guía («Hacia 1.36.0») tiene ahora: entrada ilegible, `false` y `file_path` no textual, motivo acotado, plazo propio, modo POSIX heredado, techos, QA-007-01, SEC-127, y los dos límites nuevos; los del paso 6 marcados «su validación no está cerrada».
+- **Avance (regla 6):** el contrato y la guía están al día con P-136-P; falta la pasada correctiva (en curso) y su validación.
+
 ## [Interno] — 2026-10-06 · P-136-P (1) (A) y (2) (A) adoptadas por el propietario: INS-136-4; F-136-8 ampliada a CA-09; F-136-18 (QA-007-09) y F-136-19 (QA-007-11 (b)) como límites declarados; la pasada correctiva del paso 6 y el write-back, en paralelo
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
