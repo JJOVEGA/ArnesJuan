@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, fase 1 (desarrollador): casos del banco con fail-before para SEC-118, SEC-115 y SEC-129, SIN reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (puntos 1 y 7, E1). Registro: `docs/arnes/v1.36.0-sec115-118-fase1.md`; evidencia `cand-1.36.0/sec115-118/` (`08751e4`, el procedimiento de T3 antes de medir, y `86c4ff1`).
+
+- **Sección nueva `47-decision-emitida.sh`, 93 casos** (`CASOS_ESPERADOS` 2210 → 2303). Cada caso con las tres comprobaciones de CA-A15 punto 4, por `guard.sh` bajo `timeout 60`.
+  - **D, SEC-118:** 9 puntos que salen sin decisión y 2 controles.
+  - **A:** 6 avisos de unos 140 KB.
+  - **T, SEC-115:** T1, T2a, T2b y T3, con el plazo de 40 s.
+  - **M, SEC-129:** la matriz de `02-matriz.sh` en 6 modos.
+- **Fail-before:** con los hooks de `78a2f33` y con los de v1.35.0, **36 PASS y 57 FAIL**, con veredictos idénticos caso a caso.
+  - Ningún caso que espera `deny` lo da sobre `78a2f33`.
+  - T1 y T2b no reproducen y quedan como controles del fail-before. T2b, de 29 a 49 s, roza el plazo.
+- **E1:** las tres entradas de la sonda 37/3 salen sin decisión (allow), con rc 0, en los dos árboles: de 0,1 a 2,0 s.
+- **Banco del worktree:** 2231 PASS, 59 FAIL, 13 SKIP, con el cuadre bien. Los FAIL son los 57, T2b por el plazo en paralelo y un FAIL de la calibración de la 38/2, que no atribuyo. Autoprueba 117/0. Gates rc 0.
+- **Avance (regla 6):** los casos que la reparación tiene que poner en verde existen y fallan donde deben. Sigue la fase 2, la reparación.
+
 ## [Interno] — 2026-10-06 · Informe de uso real de 1.35.0 por un proyecto consumidor: tres agentes en paralelo sin chocar; tres debilidades registradas como fichas F-136-13 a F-136-15 (consola sin puerta, rotación sin aviso, ESTADO siempre modificado)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora. Fuente: informe recibido por el propietario por canal privado; aquí sólo lo que describe el arnés.
 
