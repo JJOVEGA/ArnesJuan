@@ -1,0 +1,32 @@
+# 2026-10-06T16:56:29-06:00
+== (1) nombres raros, Write de la coordinadora a src/a.ts (base: deny) ==
+base: deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[jq] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[$'j\nq'] deny|rc=0|213ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[a%%b] deny|rc=0|113ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[jq%%x] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[-f] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[\*] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[jq\ ] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[\ jq] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[xxxxxxxxxxxxxxxxxxxx] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[git] deny|rc=0|112ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[cat] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[grep] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[mktemp] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[read] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[printf] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+== (1b) dos entradas BASH_FUNC_jq%% (duplicada en el entorno) ==
+deny|rc=0|106ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+== (2) copia con /proc/self/environ inexistente ==
+1
+[sin] v1 deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[sin] v4 deny|rc=0|108ms|600B|ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios age
+[BASH_FUNC_jq%%=() { return 0; }] v1 nada|rc=0|106ms|0B|
+[BASH_FUNC_jq%%=() { return 0; }] v4 nada|rc=0|108ms|0B|
+[BASH_FUNC_printf%%=() { return 0; }] v1 deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[BASH_FUNC_printf%%=() { return 0; }] v4 deny|rc=0|108ms|600B|ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios age
+[FUNCNEST=1] v1 deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[FUNCNEST=1] v4 deny|rc=0|107ms|600B|ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios age
+[SHELLOPTS=keyword] v1 deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in
+[SHELLOPTS=keyword] v4 deny|rc=0|107ms|600B|ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser tuyo: con varios age

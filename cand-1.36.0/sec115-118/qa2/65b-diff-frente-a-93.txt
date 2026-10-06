@@ -1,0 +1,16 @@
+1d0
+< FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× (#N:no-converge(N/N) ) — describe una medición que excede el techo; no afirma la causa
+356a356,362
+> PASS	QA-007-10 CA-68 P ARNES_CWD_VISTO heredada con el cwd inexistente de la entrada, echo x > src/a.ts, por guard.sh -> deny no determinable  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+> PASS	QA-007-11 CA-68 P BASHOPTS=compat40 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión  (a) rc N en Nms, salida N bytes; (b) aviso; (c) sin cerrar
+> PASS	QA-007-11 CA-68 P BASH_COMPAT=31 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión  (a) rc N en Nms, salida N bytes; (b) aviso; (c) sin cerrar
+> PASS	QA-007-11 CA-68 P BASH_FUNC_jq%% heredada (() { :; }), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+> PASS	QA-007-11 CA-68 P FUNCNEST heredada (1), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+> PASS	QA-007-11 CA-68 P SHELLOPTS heredada (keyword), Write de la coordinadora a src/a.ts, por guard.sh -> deny de guard-codigo  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+> PASS	QA-007-12 CA-67 P 'QA:' en disco con 140000 bytes que no son UTF-8, cierre por Edit -> deny con el motivo en no más de 16384 bytes  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+877c883
+< PASS	REQ-007 CA-66 una ruta de 4186 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+---
+> PASS	REQ-007 CA-66 una ruta de 4278 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+2295a2302
+> SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

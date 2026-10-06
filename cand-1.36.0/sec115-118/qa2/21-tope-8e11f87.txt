@@ -1,0 +1,395 @@
+# 20-tope.sh hooks=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/t/8e11f87/hooks 2026-10-06T17:23:10-06:00
+OK|QA/cierre inval=ff n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=ff n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=ff n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=ff n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=ff n=20000|deny|motivo=48791B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48902B
+MAL|QA/cierre inval=ff n=140000|deny|motivo=48789B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48900B
+OK|QA/cierre inval=80 n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=80 n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=80 n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=80 n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=80 n=20000|deny|motivo=48782B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48893B
+MAL|QA/cierre inval=80 n=140000|deny|motivo=48780B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48891B
+OK|QA/cierre inval=c3 n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=c3 n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=c3 n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=c3 n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=c3 n=20000|deny|motivo=48791B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48902B
+MAL|QA/cierre inval=c3 n=140000|deny|motivo=48789B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48900B
+OK|QA/cierre inval=c0af n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=c0af n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=c0af n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=c0af n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=c0af n=20000|deny|motivo=48791B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48902B
+MAL|QA/cierre inval=c0af n=140000|deny|motivo=48792B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48903B
+OK|QA/cierre inval=eda080 n=4000|deny|motivo=4203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=4314B
+OK|QA/cierre inval=eda080 n=5300|deny|motivo=5502B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5613B
+OK|QA/cierre inval=eda080 n=5500|deny|motivo=5703B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5814B
+OK|QA/cierre inval=eda080 n=6000|deny|motivo=6201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=6312B
+OK|QA/cierre inval=eda080 n=20000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre inval=eda080 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre inval=f09d84 n=4000|deny|motivo=4203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=4314B
+OK|QA/cierre inval=f09d84 n=5300|deny|motivo=5508B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5619B
+OK|QA/cierre inval=f09d84 n=5500|deny|motivo=5709B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5820B
+OK|QA/cierre inval=f09d84 n=6000|deny|motivo=6214B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=6325B
+MAL|QA/cierre inval=f09d84 n=20000|deny|motivo=16400B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16511B
+MAL|QA/cierre inval=f09d84 n=140000|deny|motivo=16401B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16512B
+OK|QA/cierre inval=f5 n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=f5 n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=f5 n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=f5 n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=f5 n=20000|deny|motivo=48791B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48902B
+MAL|QA/cierre inval=f5 n=140000|deny|motivo=48789B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48900B
+OK|QA/cierre inval=fe n=4000|deny|motivo=12201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12312B
+OK|QA/cierre inval=fe n=5300|deny|motivo=16101B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16212B
+MAL|QA/cierre inval=fe n=5500|deny|motivo=16701B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16812B
+MAL|QA/cierre inval=fe n=6000|deny|motivo=18201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18312B
+MAL|QA/cierre inval=fe n=20000|deny|motivo=48791B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48902B
+MAL|QA/cierre inval=fe n=140000|deny|motivo=48789B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48900B
+MAL|QA/cierre ascii=15000+inval=ff x400|deny|motivo=16401B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16512B
+MAL|QA/cierre ascii=15000+inval=c3 x400|deny|motivo=16401B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16512B
+OK|QA/cierre ascii=15000+inval=e282 x400|deny|motivo=15804B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=15915B
+OK|QA/cierre ascii=15000+inval=f09d84 x400|deny|motivo=15603B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=15714B
+MAL|QA/cierre ascii=16100+inval=ff x400|deny|motivo=16591B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16702B
+MAL|QA/cierre ascii=16100+inval=c3 x400|deny|motivo=16591B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16702B
+MAL|QA/cierre ascii=16100+inval=e282 x400|deny|motivo=16435B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16546B
+OK|QA/cierre ascii=16100+inval=f09d84 x400|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|QA/cierre ascii=16300+inval=ff x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16300+inval=c3 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16300+inval=e282 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16300+inval=f09d84 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16350+inval=ff x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16350+inval=c3 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16350+inval=e282 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre ascii=16350+inval=f09d84 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+MAL|QA/cierre alterna valido+ff n=60000|deny|motivo=27186B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=27297B
+MAL|QA/cierre alterna valido+ff n=60000|deny|motivo=24485B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=24596B
+MAL|QA/cierre alterna valido+ff n=60000|deny|motivo=22863B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=22974B
+OK|QA/cierre valido=1B off=0 n=16000|deny|motivo=16201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16312B
+OK|QA/cierre valido=1B off=0 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=0 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=0 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=1 n=16000|deny|motivo=16202B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16313B
+OK|QA/cierre valido=1B off=1 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=1 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=1 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=2 n=16000|deny|motivo=16203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16314B
+OK|QA/cierre valido=1B off=2 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=2 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=2 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=3 n=16000|deny|motivo=16204B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16315B
+OK|QA/cierre valido=1B off=3 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=3 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=1B off=3 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=0 n=16000|deny|motivo=16201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16312B
+OK|QA/cierre valido=2B off=0 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=2B off=0 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=2B off=0 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=1 n=16000|deny|motivo=16202B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16313B
+OK|QA/cierre valido=2B off=1 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=1 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=1 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=2B off=2 n=16000|deny|motivo=16203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16314B
+OK|QA/cierre valido=2B off=2 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=2B off=2 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=2B off=2 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=3 n=16000|deny|motivo=16204B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16315B
+OK|QA/cierre valido=2B off=3 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=3 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=2B off=3 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=3B off=0 n=16000|deny|motivo=16203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16314B
+OK|QA/cierre valido=3B off=0 n=16384|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=3B off=0 n=16500|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=3B off=0 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=3B off=1 n=16000|deny|motivo=16204B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16315B
+OK|QA/cierre valido=3B off=1 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=3B off=1 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=3B off=1 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=3B off=2 n=16000|deny|motivo=16205B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16316B
+OK|QA/cierre valido=3B off=2 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=3B off=2 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=3B off=2 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=3B off=3 n=16000|deny|motivo=16206B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16317B
+OK|QA/cierre valido=3B off=3 n=16384|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=3B off=3 n=16500|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=3B off=3 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=4B off=0 n=16000|deny|motivo=16201B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16312B
+OK|QA/cierre valido=4B off=0 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=4B off=0 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|QA/cierre valido=4B off=0 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=4B off=1 n=16000|deny|motivo=16202B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16313B
+OK|QA/cierre valido=4B off=1 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=4B off=1 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|QA/cierre valido=4B off=1 n=140000|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|QA/cierre valido=4B off=2 n=16000|deny|motivo=16203B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16314B
+OK|QA/cierre valido=4B off=2 n=16384|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|QA/cierre valido=4B off=2 n=16500|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|QA/cierre valido=4B off=2 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=4B off=3 n=16000|deny|motivo=16204B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16315B
+OK|QA/cierre valido=4B off=3 n=16384|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=4B off=3 n=16500|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|QA/cierre valido=4B off=3 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+MAL|QA/aviso inval=ff n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=ff n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=ff n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=ff n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=ff n=20000|aviso|motivo=48869B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48889B
+MAL|QA/aviso inval=ff n=140000|aviso|motivo=48867B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48887B
+MAL|QA/aviso inval=80 n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=80 n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=80 n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=80 n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=80 n=20000|aviso|motivo=48860B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48880B
+MAL|QA/aviso inval=80 n=140000|aviso|motivo=48858B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48878B
+MAL|QA/aviso inval=c3 n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=c3 n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=c3 n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=c3 n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=c3 n=20000|aviso|motivo=48869B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48889B
+MAL|QA/aviso inval=c3 n=140000|aviso|motivo=48867B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48887B
+MAL|QA/aviso inval=c0af n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=c0af n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=c0af n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=c0af n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=c0af n=20000|aviso|motivo=48872B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48892B
+MAL|QA/aviso inval=c0af n=140000|aviso|motivo=48867B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48887B
+OK|QA/aviso inval=eda080 n=4000|aviso|motivo=8271B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=8291B
+OK|QA/aviso inval=eda080 n=5300|aviso|motivo=10869B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=10889B
+OK|QA/aviso inval=eda080 n=5500|aviso|motivo=11271B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=11291B
+OK|QA/aviso inval=eda080 n=6000|aviso|motivo=12267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12287B
+OK|QA/aviso inval=eda080 n=20000|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso inval=eda080 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso inval=f09d84 n=4000|aviso|motivo=8277B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=8297B
+OK|QA/aviso inval=f09d84 n=5300|aviso|motivo=10881B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=10901B
+OK|QA/aviso inval=f09d84 n=5500|aviso|motivo=11283B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=11303B
+OK|QA/aviso inval=f09d84 n=6000|aviso|motivo=12286B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12306B
+MAL|QA/aviso inval=f09d84 n=20000|aviso|motivo=16400B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16420B
+MAL|QA/aviso inval=f09d84 n=140000|aviso|motivo=16401B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16421B
+MAL|QA/aviso inval=f5 n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=f5 n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=f5 n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=f5 n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=f5 n=20000|aviso|motivo=48869B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48889B
+MAL|QA/aviso inval=f5 n=140000|aviso|motivo=48867B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48887B
+MAL|QA/aviso inval=fe n=4000|aviso|motivo=24267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=24287B
+MAL|QA/aviso inval=fe n=5300|aviso|motivo=32067B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=32087B
+MAL|QA/aviso inval=fe n=5500|aviso|motivo=33267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=33287B
+MAL|QA/aviso inval=fe n=6000|aviso|motivo=36267B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=36287B
+MAL|QA/aviso inval=fe n=20000|aviso|motivo=48869B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48889B
+MAL|QA/aviso inval=fe n=140000|aviso|motivo=48867B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48887B
+MAL|QA/aviso ascii=15000+inval=ff x400|aviso|motivo=17184B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=17204B
+MAL|QA/aviso ascii=15000+inval=c3 x400|aviso|motivo=17184B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=17204B
+MAL|QA/aviso ascii=15000+inval=e282 x400|aviso|motivo=16584B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16604B
+MAL|QA/aviso ascii=15000+inval=f09d84 x400|aviso|motivo=16386B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16406B
+MAL|QA/aviso ascii=16100+inval=ff x400|aviso|motivo=16669B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16689B
+MAL|QA/aviso ascii=16100+inval=c3 x400|aviso|motivo=16669B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16689B
+MAL|QA/aviso ascii=16100+inval=e282 x400|aviso|motivo=16453B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16473B
+OK|QA/aviso ascii=16100+inval=f09d84 x400|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso ascii=16300+inval=ff x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16300+inval=c3 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16300+inval=e282 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16300+inval=f09d84 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16350+inval=ff x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16350+inval=c3 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16350+inval=e282 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso ascii=16350+inval=f09d84 x400|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+MAL|QA/aviso alterna valido+ff n=60000|aviso|motivo=27211B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=27231B
+MAL|QA/aviso alterna valido+ff n=60000|aviso|motivo=24504B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=24524B
+MAL|QA/aviso alterna valido+ff n=60000|aviso|motivo=22877B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=22897B
+OK|QA/aviso valido=1B off=0 n=16000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=0 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=0 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=0 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=1 n=16000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=1 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=1 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=1 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=2 n=16000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=2 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=2 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=2 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=3 n=16000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=3 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=3 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=1B off=3 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=0 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=0 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=0 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=0 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=1 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=1 n=16384|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=1 n=16500|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=1 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=2 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=2 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=2 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=2B off=2 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=3 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=3 n=16384|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=3 n=16500|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=2B off=3 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+MAL|QA/aviso valido=3B off=0 n=16000|aviso|motivo=16385B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16405B
+OK|QA/aviso valido=3B off=0 n=16384|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=3B off=0 n=16500|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=3B off=0 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=3B off=1 n=16000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=3B off=1 n=16384|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=3B off=1 n=16500|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=3B off=1 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+MAL|QA/aviso valido=3B off=2 n=16000|aviso|motivo=16386B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16406B
+OK|QA/aviso valido=3B off=2 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=3B off=2 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=3B off=2 n=140000|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+MAL|QA/aviso valido=3B off=3 n=16000|aviso|motivo=16385B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16405B
+OK|QA/aviso valido=3B off=3 n=16384|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=3B off=3 n=16500|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=3B off=3 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=0 n=16000|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso valido=4B off=0 n=16384|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=4B off=0 n=16500|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|QA/aviso valido=4B off=0 n=140000|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso valido=4B off=1 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=1 n=16384|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso valido=4B off=1 n=16500|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso valido=4B off=1 n=140000|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=4B off=2 n=16000|aviso|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16401B
+OK|QA/aviso valido=4B off=2 n=16384|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=4B off=2 n=16500|aviso|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16402B
+OK|QA/aviso valido=4B off=2 n=140000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=3 n=16000|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=3 n=16384|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=3 n=16500|aviso|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16403B
+OK|QA/aviso valido=4B off=3 n=140000|aviso|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16404B
+OK|Seguridad/cierre inval=ff n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=ff n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=ff n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=ff n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=ff n=20000|deny|motivo=48709B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48820B
+MAL|Seguridad/cierre inval=ff n=140000|deny|motivo=48707B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48818B
+OK|Seguridad/cierre inval=80 n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=80 n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=80 n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=80 n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=80 n=20000|deny|motivo=48700B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48811B
+MAL|Seguridad/cierre inval=80 n=140000|deny|motivo=48698B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48809B
+OK|Seguridad/cierre inval=c3 n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=c3 n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=c3 n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=c3 n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=c3 n=20000|deny|motivo=48709B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48820B
+MAL|Seguridad/cierre inval=c3 n=140000|deny|motivo=48707B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48818B
+OK|Seguridad/cierre inval=c0af n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=c0af n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=c0af n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=c0af n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=c0af n=20000|deny|motivo=48712B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48823B
+MAL|Seguridad/cierre inval=c0af n=140000|deny|motivo=48707B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48818B
+OK|Seguridad/cierre inval=eda080 n=4000|deny|motivo=4238B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=4349B
+OK|Seguridad/cierre inval=eda080 n=5300|deny|motivo=5537B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5648B
+OK|Seguridad/cierre inval=eda080 n=5500|deny|motivo=5738B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5849B
+OK|Seguridad/cierre inval=eda080 n=6000|deny|motivo=6236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=6347B
+OK|Seguridad/cierre inval=eda080 n=20000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre inval=eda080 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre inval=f09d84 n=4000|deny|motivo=4244B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=4355B
+OK|Seguridad/cierre inval=f09d84 n=5300|deny|motivo=5543B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5654B
+OK|Seguridad/cierre inval=f09d84 n=5500|deny|motivo=5744B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=5855B
+OK|Seguridad/cierre inval=f09d84 n=6000|deny|motivo=6249B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=6360B
+MAL|Seguridad/cierre inval=f09d84 n=20000|deny|motivo=16399B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16510B
+MAL|Seguridad/cierre inval=f09d84 n=140000|deny|motivo=16400B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16511B
+OK|Seguridad/cierre inval=f5 n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=f5 n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=f5 n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=f5 n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=f5 n=20000|deny|motivo=48709B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48820B
+MAL|Seguridad/cierre inval=f5 n=140000|deny|motivo=48707B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48818B
+OK|Seguridad/cierre inval=fe n=4000|deny|motivo=12236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=12347B
+OK|Seguridad/cierre inval=fe n=5300|deny|motivo=16136B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16247B
+MAL|Seguridad/cierre inval=fe n=5500|deny|motivo=16736B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16847B
+MAL|Seguridad/cierre inval=fe n=6000|deny|motivo=18236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=18347B
+MAL|Seguridad/cierre inval=fe n=20000|deny|motivo=48709B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48820B
+MAL|Seguridad/cierre inval=fe n=140000|deny|motivo=48707B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=48818B
+MAL|Seguridad/cierre ascii=15000+inval=ff x400|deny|motivo=16436B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16547B
+MAL|Seguridad/cierre ascii=15000+inval=c3 x400|deny|motivo=16436B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16547B
+OK|Seguridad/cierre ascii=15000+inval=e282 x400|deny|motivo=15839B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=15950B
+OK|Seguridad/cierre ascii=15000+inval=f09d84 x400|deny|motivo=15638B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=15749B
+MAL|Seguridad/cierre ascii=16100+inval=ff x400|deny|motivo=16509B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16620B
+MAL|Seguridad/cierre ascii=16100+inval=c3 x400|deny|motivo=16509B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16620B
+MAL|Seguridad/cierre ascii=16100+inval=e282 x400|deny|motivo=16413B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16524B
+OK|Seguridad/cierre ascii=16100+inval=f09d84 x400|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre ascii=16300+inval=ff x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16300+inval=c3 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16300+inval=e282 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16300+inval=f09d84 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16350+inval=ff x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16350+inval=c3 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16350+inval=e282 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre ascii=16350+inval=f09d84 x400|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+MAL|Seguridad/cierre alterna valido+ff n=60000|deny|motivo=27157B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=27268B
+MAL|Seguridad/cierre alterna valido+ff n=60000|deny|motivo=24463B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=24574B
+MAL|Seguridad/cierre alterna valido+ff n=60000|deny|motivo=22848B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=22959B
+OK|Seguridad/cierre valido=1B off=0 n=16000|deny|motivo=16236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16347B
+OK|Seguridad/cierre valido=1B off=0 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=0 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=0 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=1 n=16000|deny|motivo=16237B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16348B
+OK|Seguridad/cierre valido=1B off=1 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=1 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=1 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=2 n=16000|deny|motivo=16238B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16349B
+OK|Seguridad/cierre valido=1B off=2 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=2 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=2 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=3 n=16000|deny|motivo=16239B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16350B
+OK|Seguridad/cierre valido=1B off=3 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=3 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=1B off=3 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=0 n=16000|deny|motivo=16236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16347B
+OK|Seguridad/cierre valido=2B off=0 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=0 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=0 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=1 n=16000|deny|motivo=16237B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16348B
+OK|Seguridad/cierre valido=2B off=1 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=1 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=1 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=2 n=16000|deny|motivo=16238B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16349B
+OK|Seguridad/cierre valido=2B off=2 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=2 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=2B off=2 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=3 n=16000|deny|motivo=16239B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16350B
+OK|Seguridad/cierre valido=2B off=3 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=3 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=2B off=3 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=0 n=16000|deny|motivo=16238B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16349B
+OK|Seguridad/cierre valido=3B off=0 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=0 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=0 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=3B off=1 n=16000|deny|motivo=16239B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16350B
+OK|Seguridad/cierre valido=3B off=1 n=16384|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=3B off=1 n=16500|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=3B off=1 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=3B off=2 n=16000|deny|motivo=16240B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16351B
+OK|Seguridad/cierre valido=3B off=2 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=3B off=2 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=3B off=2 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=3 n=16000|deny|motivo=16241B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16352B
+OK|Seguridad/cierre valido=3B off=3 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=3 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=3B off=3 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=4B off=0 n=16000|deny|motivo=16236B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16347B
+OK|Seguridad/cierre valido=4B off=0 n=16384|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=4B off=0 n=16500|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+OK|Seguridad/cierre valido=4B off=0 n=140000|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|Seguridad/cierre valido=4B off=1 n=16000|deny|motivo=16237B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16348B
+OK|Seguridad/cierre valido=4B off=1 n=16384|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|Seguridad/cierre valido=4B off=1 n=16500|deny|motivo=16381B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16492B
+OK|Seguridad/cierre valido=4B off=1 n=140000|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=4B off=2 n=16000|deny|motivo=16238B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16349B
+OK|Seguridad/cierre valido=4B off=2 n=16384|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=4B off=2 n=16500|deny|motivo=16382B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16493B
+OK|Seguridad/cierre valido=4B off=2 n=140000|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=4B off=3 n=16000|deny|motivo=16239B|utf8=si|ARNES=si|nota=no|prefijo=si|linea=16350B
+OK|Seguridad/cierre valido=4B off=3 n=16384|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=4B off=3 n=16500|deny|motivo=16383B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16494B
+OK|Seguridad/cierre valido=4B off=3 n=140000|deny|motivo=16384B|utf8=si|ARNES=si|nota=si|prefijo=si|linea=16495B
+# fin 2026-10-06T17:26:04-06:00: 393 casos, 119 MAL

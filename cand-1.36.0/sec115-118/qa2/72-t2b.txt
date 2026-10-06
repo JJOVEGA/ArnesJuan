@@ -1,0 +1,16 @@
+# T2b x5 (candidato): seccion 47 con filtro 'T2b', 2026-10-06T17:35:19-06:00
+## candidato 1 loadavg 1.62 2.71 4.72 1/765 2167599
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 308ms, salida 648 bytes; (b) deny; (c) intacto
+Resultado: 1 PASS, 0 FAIL
+## candidato 2 loadavg 1.49 2.67 4.69 2/772 2168638
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 207ms, salida 648 bytes; (b) deny; (c) intacto
+Resultado: 1 PASS, 0 FAIL
+## candidato 3 loadavg 1.53 2.66 4.68 1/775 2169673
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 208ms, salida 648 bytes; (b) deny; (c) intacto
+Resultado: 1 PASS, 0 FAIL
+## candidato 4 loadavg 1.53 2.66 4.68 1/764 2170707
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 307ms, salida 648 bytes; (b) deny; (c) intacto
+Resultado: 1 PASS, 0 FAIL
+## candidato 5 loadavg 1.49 2.63 4.66 1/757 2171739
+  PASS  SEC-115 CA-68 T2b control del fail-before: Write de 1012650 bytes con la cabecera pendiente -> deny en no más de 40 s  (a) rc 0 en 206ms, salida 648 bytes; (b) deny; (c) intacto
+Resultado: 1 PASS, 0 FAIL

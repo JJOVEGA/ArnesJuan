@@ -1,0 +1,48 @@
+# base, hooks=/home/juan/dev/ArnesJuan-v1.36/hooks, 2026-10-06T16:59:55-06:00, bash 5.3.9(1)-release
+BASE v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v2 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có
+BASE v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba
+BASE v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900
+BASE v6 deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9
+BASE v7 nada|rc=0|
+BASE v8 nada|rc=0|
+BASE v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se 
+BASE v10 deny|rc=0|ARNES: no se pudo determinar a que archivo escribe
+DIFIERE [SHELLOPTS=errexit] v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v2: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v6: base=[deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v7: base=[nada|rc=0|] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v8: base=[nada|rc=0|] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se ] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=errexit] v10: base=[deny|rc=0|ARNES: no se pudo determinar a que archivo escribe] con=[deny|rc=0|ARNES: el hook termino sin concluir el juicio de e]
+DIFIERE [SHELLOPTS=noexec] v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v2: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v6: base=[deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se ] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=noexec] v10: base=[deny|rc=0|ARNES: no se pudo determinar a que archivo escribe] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v2: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v6: base=[deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se ] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=onecmd] v10: base=[deny|rc=0|ARNES: no se pudo determinar a que archivo escribe] con=[nada|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v2: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v6: base=[deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v7: base=[nada|rc=0|] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v8: base=[nada|rc=0|] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se ] con=[deny|rc=0|]
+DIFIERE [SHELLOPTS=xtrace BASH_XTRACEFD=1] v10: base=[deny|rc=0|ARNES: no se pudo determinar a que archivo escribe] con=[deny|rc=0|]
+# fin 2026-10-06T17:06:21-06:00: 135 entradas, 1350 combinaciones, 36 diferencias

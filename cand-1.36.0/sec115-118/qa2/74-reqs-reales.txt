@@ -1,0 +1,4 @@
+REQ-021.md (296973 B) hooks=/home/juan/dev/ArnesJuan-v1.36/hooks: nada|rc=0|2110ms|0B|
+REQ-021.md (296973 B) hooks=/home/juan/dev/ArnesJuan-v1.35.0-base/hooks: nada|rc=0|2110ms|0B|
+REQ-023.md (170764 B) hooks=/home/juan/dev/ArnesJuan-v1.36/hooks: nada|rc=0|709ms|0B|
+REQ-023.md (170764 B) hooks=/home/juan/dev/ArnesJuan-v1.35.0-base/hooks: nada|rc=0|708ms|0B|

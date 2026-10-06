@@ -1,0 +1,11 @@
+# 2026-10-06T16:36:45-06:00 bash 5.3.9(1)-release
+candidato BASE guard.sh:v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des
+candidato BASE guard.sh:v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l
+candidato BASE guard.sh:v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue
+candidato BASE guard.sh:v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v
+candidato BASE guard.sh:v8 nada|rc=0|
+candidato BASE guard.sh:v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como 
+candidato BASE guard-codigo.sh:v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des
+candidato BASE guard-git.sh:v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue
+candidato BASE guard-completado.sh:v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v
+# candidato: 2835 combinaciones, 0 diferencias

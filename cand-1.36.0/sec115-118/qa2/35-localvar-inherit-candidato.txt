@@ -1,0 +1,40 @@
+# base con BASHOPTS=localvar_inherit, hooks=/home/juan/dev/ArnesJuan-v1.36/hooks, 2026-10-06T17:18:22-06:00
+BASE v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có
+BASE v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba
+BASE v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900
+BASE v6 deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9
+BASE v8 nada|rc=0|
+BASE v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se 
+BASE v10 deny|rc=0|ARNES: no se pudo determinar a que archivo escribe
+# fin 2026-10-06T17:22:14-06:00: 1800 combinaciones, 0 diferencias
+# base con BASHOPTS=localvar_inherit, hooks=/home/juan/dev/ArnesJuan-v1.36/hooks, 2026-10-06T17:18:22-06:00
+BASE v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có
+BASE v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba
+BASE v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900
+BASE v6 deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9
+BASE v8 nada|rc=0|
+BASE v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se 
+BASE v10 deny|rc=0|ARNES: no se pudo determinar a que archivo escribe
+# fin 2026-10-06T17:22:05-06:00: 1728 combinaciones, 0 diferencias
+# base con BASHOPTS=localvar_inherit, hooks=/home/juan/dev/ArnesJuan-v1.36/hooks, 2026-10-06T17:18:22-06:00
+BASE v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có
+BASE v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba
+BASE v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900
+BASE v6 deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9
+BASE v8 nada|rc=0|
+BASE v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se 
+BASE v10 deny|rc=0|ARNES: no se pudo determinar a que archivo escribe
+# fin 2026-10-06T17:22:27-06:00: 1920 combinaciones, 0 diferencias
+# base con BASHOPTS=localvar_inherit, hooks=/home/juan/dev/ArnesJuan-v1.36/hooks, 2026-10-06T17:18:22-06:00
+BASE v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el age
+BASE v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es có
+BASE v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde traba
+BASE v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900
+BASE v6 deny|rc=0|ARNES: este comando escribe en 'requirements/REQ-9
+BASE v8 nada|rc=0|
+BASE v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se 
+BASE v10 deny|rc=0|ARNES: no se pudo determinar a que archivo escribe
+# fin 2026-10-06T17:22:18-06:00: 1824 combinaciones, 0 diferencias

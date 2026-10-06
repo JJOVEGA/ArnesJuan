@@ -1,0 +1,7 @@
+# 2026-10-06T17:35:37-06:00
+Write REQ nuevo, content 393213 B con salto final                  ArnesJuan-v1.36/hooks      nada|rc=0|3715ms|0B|
+Write REQ nuevo, content 393214 B con salto final                  ArnesJuan-v1.36/hooks      deny|rc=0|206ms|647B|ARNES: no se juzga esta escritura de 'requirements/REQ-901.md': el texto que trae (el cont
+Edit: disco 65536 B x old 65536 B = 4294967296                     ArnesJuan-v1.36/hooks      deny|rc=0|3615ms|969B|ARNES: no se permite la unica edicion de este Edit sobre 'requirements/REQ-900.md': esta p
+Edit: disco 65537 B x old 65536 B = 4295032832                     ArnesJuan-v1.36/hooks      deny|rc=0|207ms|625B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 
+Edit: disco 131072 B x old 32768 B = 4294967296                    ArnesJuan-v1.36/hooks      nada|rc=0|206ms|0B|
+Edit: disco 131073 B x old 32768 B = 4295000064                    ArnesJuan-v1.36/hooks      deny|rc=0|208ms|626B|ARNES: no se juzga esta edicion de 'requirements/REQ-900.md': buscar sus old_string en el 

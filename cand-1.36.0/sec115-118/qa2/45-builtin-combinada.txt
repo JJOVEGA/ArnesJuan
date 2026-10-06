@@ -1,0 +1,7 @@
+# 44-builtin-combinada 2026-10-06T17:36:37-06:00: una corrida por punto, por guard.sh
+[builtin=return1 + jq=:] v1 ArnesJuan-v1.36: nada|rc=0|108ms|0B|
+[builtin=return0] v8 ls -la ArnesJuan-v1.36: nada|rc=124|60100ms|0B|
+[builtin=return1 + jq=:] v1 8e11f87: nada|rc=0|108ms|0B|
+[builtin=return0] v8 ls -la 8e11f87: nada|rc=0|107ms|0B|
+[builtin=return1 + jq=:] v1 ArnesJuan-v1.35.0-base: nada|rc=0|107ms|0B|
+[builtin=return0] v8 ls -la ArnesJuan-v1.35.0-base: nada|rc=0|107ms|0B|
