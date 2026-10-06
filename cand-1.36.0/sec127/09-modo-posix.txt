@@ -1,0 +1,17 @@
+# bash 5.3.9(1)-release; coordinadora (sin agent_id); LANG=C.UTF-8
+/home/juan/dev/ArnesJuan-v1.36         posix=no deny         rc=0 Write src/a.ts                                                     stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=si deny         rc=0 Write src/a.ts                                                     stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=no deny         rc=0 Bash  echo x > src/a.ts                                            stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=si sin-decision rc=0 Bash  echo x > src/a.ts                                            stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=no deny         rc=0 Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md     stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=si sin-decision rc=0 Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md     stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=no deny         rc=0 Bash  git reset --hard                                             stderr=<>
+/home/juan/dev/ArnesJuan-v1.36         posix=si sin-decision rc=0 Bash  git reset --hard                                             stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/guard-git.sh: command substitution: line 233: unexpected EOF while looking for matching `''|>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=no deny         rc=0 Write src/a.ts                                                     stderr=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=si deny         rc=0 Write src/a.ts                                                     stderr=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=no deny         rc=0 Bash  echo x > src/a.ts                                            stderr=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=si sin-decision rc=0 Bash  echo x > src/a.ts                                            stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|/home/juan/dev/ArnesJuan-v1.3>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=no deny         rc=0 Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md     stderr=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=si sin-decision rc=0 Bash  sed -i s/en-revision/completado/ requirements/REQ-900.md     stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: command substitution: line 1881: unexpected EOF while looking for matching `''|/home/juan/dev/ArnesJuan-v1.3>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=no deny         rc=0 Bash  git reset --hard                                             stderr=<>
+/home/juan/dev/ArnesJuan-v1.35.0-base  posix=si sin-decision rc=0 Bash  git reset --hard                                             stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/guard-git.sh: command substitution: line 229: unexpected EOF while looking for matching `''|/home/juan/dev/ArnesJuan>

@@ -1,0 +1,6 @@
+# 07-: el descriptor 0 que recibe el hook con la entrada estandar cerrada, directo y a traves de env (bash 5.3.9(1)-release, env (uutils coreutils) 0.8.0)
+## directo: bash -c 'ls -l /proc/self/fd/0' <&-
+ls: cannot access '/proc/$$/fd/0': No such file or directory
+fd0 cerrado
+## por env: env bash -c ... <&-
+/dev/null

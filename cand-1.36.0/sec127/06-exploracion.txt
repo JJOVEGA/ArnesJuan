@@ -1,0 +1,95 @@
+# bash 5.3.9(1)-release; grep grep (GNU grep) 3.12; LANG=C.UTF-8 LC_ALL=<sin definir>
+
+## QA-007-06: read de la entrada falla (con CLAUDE_PROJECT_DIR, y sin ella)
+CAND  guard.sh             stdin=cerrada    project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Bad file descriptor|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: >
+CAND  guard.sh             stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+CAND  guard.sh             stdin=directorio project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard.sh             stdin=directorio project_dir=sin decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-codigo.sh      stdin=cerrada    project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Bad file descriptor|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: >
+CAND  guard-codigo.sh      stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+CAND  guard-codigo.sh      stdin=directorio project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-codigo.sh      stdin=directorio project_dir=sin decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-completado.sh  stdin=cerrada    project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Bad file descriptor|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: >
+CAND  guard-completado.sh  stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+CAND  guard-completado.sh  stdin=directorio project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-completado.sh  stdin=directorio project_dir=sin decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-git.sh         stdin=cerrada    project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Bad file descriptor|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: >
+CAND  guard-git.sh         stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+CAND  guard-git.sh         stdin=directorio project_dir=con decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+CAND  guard-git.sh         stdin=directorio project_dir=sin decision=sin-decision rc=1 stderr=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 35: read: 0: read error: Is a directory|/home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line >
+V135  guard.sh             stdin=cerrada    project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descriptor|>
+V135  guard.sh             stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+V135  guard.sh             stdin=directorio project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard.sh             stdin=directorio project_dir=sin decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-codigo.sh      stdin=cerrada    project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descriptor|>
+V135  guard-codigo.sh      stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+V135  guard-codigo.sh      stdin=directorio project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-codigo.sh      stdin=directorio project_dir=sin decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-completado.sh  stdin=cerrada    project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descriptor|>
+V135  guard-completado.sh  stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+V135  guard-completado.sh  stdin=directorio project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-completado.sh  stdin=directorio project_dir=sin decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-git.sh         stdin=cerrada    project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descriptor|>
+V135  guard-git.sh         stdin=cerrada    project_dir=sin decision=sin-decision rc=0 stderr=<>
+V135  guard-git.sh         stdin=directorio project_dir=con decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+V135  guard-git.sh         stdin=directorio project_dir=sin decision=sin-decision rc=0 stderr=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory|>
+
+## SEC-127 caso 2: cierre por Bash con estado no ASCII (estado terminal del manifiesto: terminé)
+CAND  guard.sh             ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md
+CAND  guard.sh             ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard.sh             ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard.sh             ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=-             [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8                   ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 LC_ALL=C          ] decision=deny   sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard.sh             ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+CAND  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard.sh             ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+V135  guard-completado.sh  ag=desarrollador [LANG=C.UTF-8 POSIXLY_CORRECT=1 ] decision=sin-decision sed -i 's/en-revision/terminé/' requirements/REQ-900.md
+
+## SEC-127 caso 1: el locale del proceso DESPUES de arnes_estado_ausente (libreria, LANG=C.UTF-8)
+CAND  modo=normal texto=echo hola            antes[LC_ALL=<sin definir> len=5] rc=1 despues[LC_ALL=<sin definir> len=5]
+V135  modo=normal texto=echo hola            no existe arnes_estado_ausente
+CAND  modo=normal texto=echo ñandú TERMINÉ antes[LC_ALL=<sin definir> len=5] rc=1 despues[LC_ALL=<sin definir> len=5]
+V135  modo=normal texto=echo ñandú TERMINÉ no existe arnes_estado_ausente
+CAND  modo=posix  texto=echo hola            antes[LC_ALL=<sin definir> len=5] rc=1 despues[LC_ALL=<sin definir> len=5]
+V135  modo=posix  texto=echo hola            no existe arnes_estado_ausente
+CAND  modo=posix  texto=echo ñandú TERMINÉ antes[LC_ALL=<sin definir> len=5] rc=1 despues[LC_ALL=<sin definir> len=5]
+V135  modo=posix  texto=echo ñandú TERMINÉ no existe arnes_estado_ausente

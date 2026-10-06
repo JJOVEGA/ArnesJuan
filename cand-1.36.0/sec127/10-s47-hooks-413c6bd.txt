@@ -1,0 +1,36 @@
+--- 47 · lectura fallida de la entrada y locale tras el atajo (QA-007-06, SEC-127; REQ-007 CA-47 punto 20, CA-54) ---
+  FAIL  QA-007-06 RF1 la entrada estándar está cerrada por guard.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF1 la entrada estándar está cerrada por guard.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF1 la entrada estándar está cerrada por guard-codigo.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF1 la entrada estándar está cerrada por guard-codigo.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF1 la entrada estándar está cerrada por guard-completado.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF1 la entrada estándar está cerrada por guard-completado.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF1 la entrada estándar está cerrada por guard-git.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF1 la entrada estándar está cerrada por guard-git.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF2 la entrada estándar es un directorio por guard.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF2 la entrada estándar es un directorio por guard.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF2 la entrada estándar es un directorio por guard-codigo.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF2 la entrada estándar es un directorio por guard-codigo.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF2 la entrada estándar es un directorio por guard-completado.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF2 la entrada estándar es un directorio por guard-completado.sh v1.35.0: fail-before: sin decisión  (nada)
+  FAIL  QA-007-06 RF2 la entrada estándar es un directorio por guard-git.sh candidata  esperado=deny got=nada  <>
+  PASS  QA-007-06 RF2 la entrada estándar es un directorio por guard-git.sh v1.35.0: fail-before: sin decisión  (nada)
+  PASS  QA-007-06 RL1 sin CLAUDE_PROJECT_DIR, la entrada estándar cerrada: sin proyecto, sin decisión por guard.sh candidata  (nada)
+  PASS  QA-007-06 RL1 sin CLAUDE_PROJECT_DIR, la entrada estándar cerrada: sin proyecto, sin decisión por guard.sh v1.35.0: control, decide igual  (nada)
+  PASS  QA-007-06 RL2 sin CLAUDE_PROJECT_DIR, la entrada estándar es un directorio: sin decisión por guard.sh candidata  (nada)
+  PASS  QA-007-06 RL2 sin CLAUDE_PROJECT_DIR, la entrada estándar es un directorio: sin decisión por guard.sh v1.35.0: control, decide igual  (nada)
+  PASS  SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto ascii, estado completado) candidata  (igual rc=0)
+  PASS  SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto no-ascii, estado completado) candidata  (igual rc=1)
+  PASS  SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto ascii, estado completado) candidata  (igual rc=0)
+  PASS  SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto no-ascii, estado completado) candidata  (igual rc=1)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente coordinadora, locale UTF-8 por guard.sh candidata  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente coordinadora, locale UTF-8 por guard.sh v1.35.0: control, decide igual  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente coordinadora, locale UTF-8 por guard-completado.sh candidata  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente coordinadora, locale UTF-8 por guard-completado.sh v1.35.0: control, decide igual  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente desarrollador, locale UTF-8 por guard.sh candidata  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente desarrollador, locale UTF-8 por guard.sh v1.35.0: control, decide igual  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente desarrollador, locale UTF-8 por guard-completado.sh candidata  (deny)
+  PASS  SEC-127 LK cierre de REQ-900 a TERMINÉ (estado terminé) por Bash, agente desarrollador, locale UTF-8 por guard-completado.sh v1.35.0: control, decide igual  (deny)
+aviso: vuelta parcial (1 de 60 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 24 PASS, 8 FAIL

@@ -1,0 +1,11 @@
+2026-10-05T18:47:06-06:00
+Linux sysvega-dev 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+env (uutils coreutils) 0.8.0
+C.utf8
+LANG=C.UTF-8 LC_ALL=<sin definir>
+worktree 85341be (cand/1.36.0); hooks/ y tools/ frente a 413c6bd: identicos
+base v1.35.0 3956a6f; hooks/ y tools/ frente a 3956a6f: identicos
+22dc50c76eb4bd7026a745e860af4a6c14b69b2d228612f0fbae367e30cf8b16  tests/escenarios/hooks/secciones/47-lectura-fallida-y-locale.sh
+094e8b86c543ad5ff97eeebc47ca53eb5bef33c1466884e1dc05a293f03e5513  tests/escenarios/hooks/run.sh

@@ -1,0 +1,10 @@
+29,32c29,32
+< PASS	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto ascii, estado completado) candidata  (igual rc=N)
+< PASS	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto no-ascii, estado completado) candidata  (igual rc=N)
+< PASS	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto ascii, estado completado) candidata  (igual rc=N)
+< PASS	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto no-ascii, estado completado) candidata  (igual rc=N)
+---
+> SKIP	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto ascii, estado completado) candidata  el atajo no existe en este árbol (lo introdujo 82ceb63): SEC-127 no existía
+> SKIP	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo normal, texto no-ascii, estado completado) candidata  el atajo no existe en este árbol (lo introdujo 82ceb63): SEC-127 no existía
+> SKIP	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto ascii, estado completado) candidata  el atajo no existe en este árbol (lo introdujo 82ceb63): SEC-127 no existía
+> SKIP	SEC-127 LO el locale tras arnes_estado_ausente es el de antes (modo posix, texto no-ascii, estado completado) candidata  el atajo no existe en este árbol (lo introdujo 82ceb63): SEC-127 no existía
