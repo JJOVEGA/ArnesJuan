@@ -63,6 +63,33 @@
 
 ## Resueltas
 
+### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-06) — **Plan autorizado: paso 6 de 1.36.0, SEC-115 y SEC-118 (CA-67, CA-68, CA-69; ADR-017), con la reparación de SEC-129 (`POSIXLY_CORRECT`)**
+
+**Fuente de la delegación:** «Encadena sin parar: … commit validado, y abre SEC-115/118» (P-136-J/K/L, 2026-10-06) y el «Resumen del plan vigente» del propietario (punto 4). La condición previa está evaluada (`docs/arnes/v1.36.0-sec115-118-ca68-vs-req017.md`: leyendo, no afecta; se mide E1–E3). Los bloques se calcan de la décima autorización.
+
+**Contrato que rige** (REQ-007): **CA-67** (SEC-118: toda denegación decidida llega al cliente, entera o acotada, nunca perdida; el desarrollador elige la técnica; los avisos entran — P-136-B), **CA-68** (SEC-115: techos de tamaño más un plazo propio de no más de 40 s, sin procesos, medido a nivel de hook con la emisión incluida — P-136-C), **CA-69**, **ADR-017**. **Propiedad que CA-68 gana para SEC-129** (R-054; la escribe el analista en la fase 0): el hook sólo sale sin decisión cuando ha terminado un juicio que concluye que la llamada no toca nada protegido; cualquier otro final emite `deny` con motivo propio, a todo agente; y ninguna decisión depende del modo del intérprete heredado del entorno. **Si P-136-N = (A)**, la propiedad se enuncia sobre todo lo heredado del entorno e incluye `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` (QA-007-07); **si (B)**, QA-007-07 va a 1.37.
+
+**Restricción para los techos de tamaño:** ninguno puede caer sobre las entradas de la sonda 37/3 de REQ-017 CA-09 (un techo sobre `content` de `Write` queda por encima de los 296 976 bytes de `REQ-021.md`; ninguno por línea de cabecera en el camino común). Lo medido como «sin decisión» en 1.35.0 (1 801 y 3 000 líneas ASCII; 1 601 con `ñ`; 1 001 de 4 bytes; 2 501 cortas con `ñ`; ≈ 140 KB de R-045 §4) tiene que dar `deny`.
+
+> ## Plan autorizado (se ejecuta entero; cada fase termina en commit local y la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: write-back de CA-67/CA-68/CA-69 con la propiedad de SEC-129 (y QA-007-07 según P-136-N), la restricción de los techos y E1–E3 como medida; nota posterior fechada en ADR-017 si cambia su alcance; `Archivos:` con la sección prevista.
+> Fase 1 — desarrollador: casos de banco con fail-before sobre `78a2f33` y v1.35.0: SEC-118 (los puntos medidos, ASCII y multibyte, más los avisos), SEC-115 (T1–T3 con `timeout 60` y el plazo propio), SEC-129 (la matriz de `seg-posix/02-matriz.sh` por las tres puertas de `Bash`) y E1. Sin reparar.
+> Fase 2 — desarrollador: reparación con 0 procesos añadidos en el camino común: emisión siempre (motivo acotado o fuera de la línea de órdenes), plazo propio ≤ 40 s sin procesos, techos de tamaño donde la restricción lo permite, R1 (salir del modo POSIX al arrancar, sin procesos) y R2 (código del analizador no declarado, o puerta abandonada a mitad → `deny`). Entrega: casos en verde, E2 (sección 37/3 ≥ 6 veces) y E3 (la línea de CA-09 en los inventarios), inventario CA-69 2 con `ARNES_SEMILLA_41=23062`, banco, autoprueba, gates, procesos, y el tope del motivo medido en bytes con ASCII y multibyte (Windows: declarado no medido).
+> Fase 3 — QA (Opus): repite y ataca; comprueba si R2 cubre SEC-130 por construcción (F-136-12). Una pasada correctiva como máximo, y su re-verificación.
+> Fase 4 — seguridad, sólo con QA favorable: reclasifica SEC-115, SEC-118 y SEC-129 (y SEC-130 si R2 lo cubre). Write-back del analista si hay deriva. Commit validado.
+>
+> ## Lo que decide la coordinadora sola
+> Lo mismo que en los planes de SEC-120 y del paso 5. Presupuesto orientativo: desarrollador 400–700 k, QA 300–450 k, seguridad 150–250 k, analista 150–250 k.
+>
+> ## Cuándo paras y me preguntas (solo esto)
+> Lo mismo que en el plan de SEC-120, con la regla afinada de P-136-E, más: **E1, E2 o E3 dan «afecta»** → parar y presentar con §9 (ficha ya redactada en la evaluación); **el plazo de 40 s no se puede cumplir sin procesos**; **el tope del motivo no se puede medir**.
+>
+> ## Si la sesión se corta
+> Se continúa desde la última fase comiteada, sin pedir la autorización.
+>
+> ## Límites
+> Nada fuera de SEC-115, SEC-118 y SEC-129 (QA-007-07 sólo si P-136-N = (A); SEC-130 sólo como comprobación de QA). No `AGENTS.md` ni contadores. No push, versión, PR, fusión ni tag.
+
 ### RESUELTA (propietario, 2026-10-06) — **PR #60 en borrador** de `cand/1.36.0` hacia `main` («SI hazlo» a la decisión propuesta del 2026-10-06); y despacho en paralelo de dos comisiones que no tocan los archivos de QA
 
 **Texto del propietario, literal:** «SI hazlo» (a la propuesta: «Abre un PR en borrador de `cand/1.36.0` hacia `main`, titulado "Candidato 1.36.0 (borrador)", con la descripción remitiendo a `docs/PLAN.md` § 1.36.0 y a las notas pendientes. No es decisión de fusión ni de publicación; sirve para que cada push tenga su corrida de CI. Fusionar, etiquetar y publicar siguen siendo míos.»). Y, acto seguido: «Si podemos trabajar con varios agentes hazlo».

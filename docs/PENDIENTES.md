@@ -2258,3 +2258,9 @@ ninguna mata al hook.»
 - **Por qué `contrato`:** CA-47 punto 20 promete `deny` «por cualquier causa». Está en `Hallazgos abiertos:` de REQ-007 (lo puso QA) e impide cerrarlo.
 - **Misma familia que SEC-129** (R-054): estado heredado del entorno que apaga las puertas. La propiedad que R-054 propone para CA-68 («ninguna decisión depende del modo del intérprete heredado del entorno») lo cubriría si se enuncia sobre **el entorno heredado**, no sólo sobre el modo del intérprete.
 - **Dónde se repara:** decisión de alcance del propietario (ficha registrada por la regla de P-136-J, «si aparece algo más, ficha»); propuesta en la cola.
+
+### F-136-12 — SEC-130 (`instrumento`, baja; R-055): camino latente en `arnes_estado_ausente`, no alcanzable a nivel de hook
+- **Qué:** `rc` empieza en 0 («el comando no menciona el estado terminal»); si la redirección `2>/dev/null` del grupo falla, el grupo no corre y la función devuelve ese 0 sin haber comprobado nada (`hooks/lib.sh:2199`, `:2203-2207`). Medido a nivel de librería; **a nivel de hook no se alcanza**: con `ulimit -n` de 3 a 32 la decisión es idéntica en v1.35.0, `413c6bd` y `78a2f33` (`cand-1.36.0/sec127/seg-R055/02-`).
+- **Qué lo resuelve:** que el atajo sólo afirme lo que ha comprobado. El auditor lo recomienda dentro de la propiedad R2 del paso 6 («cualquier otro final emite `deny`»). **Por la regla del propietario («lo nuevo va a ficha») no amplía el paso 6:** QA y seguridad comprueban allí si R2 lo cubre por construcción; si no, queda para 1.37.
+- **Dueño:** `desarrollador`. No bloquea el cierre de REQ-007; mientras esté abierto, la publicación vuelve al propietario por la regla vigente.
+- **O-55-1:** un control del proveedor detuvo una búsqueda del auditor (normalización con `declare -f` que borraba un temporal); no se reintentó.

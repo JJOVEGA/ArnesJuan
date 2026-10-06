@@ -10590,3 +10590,138 @@ Misma conducta, sin decisión por `Bash` en los cinco modos, en **78a2f33, v1.35
 - una puerta cuya función pueda abandonarse a mitad sin que `guard.sh` lo distinga de un juicio terminado.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-054**; último hallazgo **SEC-129** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-055** y **SEC-130**.
+
+---
+
+## Revisión R-055 — **Paso 5 de 1.36.0, fase 4: determinación de seguridad del delta de SEC-127, QA-007-06 y SEC-128** (`hooks/`, `413c6bd`..`78a2f33`). `cand/1.36.0` @ `e02f8e3`, con el código de `78a2f33` — 2026-10-06 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** `git grep` de `R-055` y `SEC-130` en las ramas locales y remotas y en las etiquetas, y búsqueda en los `.md` del worktree: sólo aparecían como «próximos libres» en la última línea de R-054.
+
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «Plan autorizado: paso 5 de 1.36.0, SEC-127 más QA-007-06», fase 4, ampliado con SEC-128 (P-136-J).
+- **Orden de fases:** QA ya validó el código de `78a2f33` (`docs/qa/REQ-007.md`, «Paso 5: validación de SEC-127, QA-007-06 y SEC-128»: conforme, sin hallazgos contra el contrato; QA-007-05 y QA-007-06 cerrados; QA-007-07 abierto). Esta revisión va después, y no mira las quality gates.
+- **Contrato:** REQ-007 CA-47 punto 20 —subviñeta SEC-128, «Reparado en SEC-127» (QA-007-06), «SEC-127 — cómo se acredita (P-136-K)» y el límite sin `CLAUDE_PROJECT_DIR`— y CA-69 punto 3.
+- **Delta:** `hooks/lib.sh` (`arnes_preludio`: `ARNES_INPUT=''` antes del `read`; `arnes_estado_ausente`: el locale se guarda y se restaura con asignaciones sueltas) y `hooks/guard-codigo.sh` (la excepción del agente de código ante un campo que no es texto sólo vale en `Bash`). Los `hooks/` del worktree son idénticos a `78a2f33` (`diff -r` vacío).
+- **Evidencia:** árbol de evidencia, `cand-1.36.0/sec127/seg-R055/`, commit `2d676d1`: `01-` a `05-`, entorno en `00-`. Linux/WSL2, bash 5.3.9, a nivel de librería y de hook. **No corrí el banco** (encargo; QA lo corrió: `qa/30-`, 2197/0/13).
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 o de `413c6bd` en `allow` o en «sin decisión»?
+
+**Respuesta: a nivel de hook, no, en nada de lo medido ni de lo leído. A nivel de función, sí, un camino latente: es SEC-130 (§4), que no cambia ninguna decisión medida.**
+
+- **`arnes_estado_ausente` y `LC_ALL`** (`hooks/lib.sh:2198-2208`). `local rc=0 habia="${LC_ALL+1}" antes="${LC_ALL-}"` es seguro bajo `set -u`, porque las dos expansiones tienen valor por defecto. La restauración distingue «no definida» de «definida y vacía». Medido en `01-` A con cuatro estados de partida (no definida, vacía y exportada, `C.UTF-8` exportada y `C.UTF-8` sin exportar), en modo normal y en modo POSIX, con `set -u` y con tres textos. En las 24 filas, después de la llamada `LC_ALL` queda como estaba: definida o no, con el mismo valor y con el mismo atributo de exportación. Las respuestas son las esperadas: `ls -la` da 0; `x completado` y `TERMINÉ` dan 1.
+  - **El camino latente:** si la redirección `2>/dev/null` del grupo falla, el grupo no corre, `rc` se queda en 0 y la función afirma «no menciona el estado terminal» sin haberlo comprobado. En `413c6bd` esa misma falla devolvía 1 y el recorrido seguía. Medido en `01-` B: con el límite de descriptores en 3 o 4 y un comando que **sí** menciona `completado`, `413c6bd` responde 1 y `78a2f33` responde 0.
+  - **A nivel de hook no se alcanza en lo medido** (`02-`). Barrí `ulimit -n` en 3–14, 16, 20 y 32 con el cierre de la coordinadora por `sed -i`, por `guard.sh` y por `guard-completado.sh`. La decisión es **idéntica en v1.35.0, `413c6bd` y `78a2f33`** en todas las filas: con 3 a 5, sin decisión en los tres —preexistente, falla antes la carga de `lib.sh` o `arnes_require_jq`—; con 6 o más, `deny`. Las redirecciones anteriores del mismo hook piden lo mismo o más y fallan antes.
+- **`ARNES_INPUT=''` en `arnes_preludio`** (`hooks/lib.sh:40`). Un `read` que termina con fin de archivo o con NUL asigna igual que antes, así que lo legible no cambia. Uno que falla con error deja la entrada vacía: en los guardianes, eso es «ilegible» → `deny` (QA, `qa/52-`), donde `413c6bd` salía sin decisión; en los hooks de parada, inerte. Con un `ARNES_INPUT` heredado del entorno y la entrada cerrada, `413c6bd` juzgaba el heredado y `78a2f33` deniega por ilegible (`04-`). No hay ningún movimiento hacia `allow`.
+- **`guard-codigo`, campo que no es texto** (`hooks/guard-codigo.sh:41-49`). `arnes_campo_no_texto` sólo responde que sí en `Bash`, `Edit`, `Write` y `MultiEdit`, que es exactamente el `matcher` de `hooks/hooks.json`. La condición nueva **estrecha** la única salida con permiso del bloque: sólo pasa el agente de código, y sólo en `Bash`. No deja fuera ninguna herramienta ni ningún agente:
+  - en `Edit`, `Write` y `MultiEdit` deniega a todos, también a `arnes-juan:desarrollador`;
+  - en `Bash`, el agente de código pasa como en `413c6bd`;
+  - un `tool_name` con salto o retorno de carro no entra en este bloque y sigue en el del punto 13, sin cambio.
+
+  Medido en `03-`/`03b-`, con 72 combinaciones de `file_path` no textual: seis formas, cuatro agentes y tres herramientas. Todas dan `deny` en `78a2f33`, por `guard-codigo.sh` solo y por `guard.sh`. Los controles con texto (`src/a.ts`) dan la misma decisión en los tres árboles.
+- **Movimientos frente a v1.35.0 (CA-69 punto 3):** sólo hacia `deny`, y los dos están declarados en CA-47 punto 20:
+  - la entrada que no se puede leer, de «sin decisión» a `deny`;
+  - el `file_path` no textual del agente de código, de `allow` a `deny`.
+
+### 2. SEC-127: ¿queda alguna asignación delante de una función o de un builtin especial en el proceso que juzga?
+
+**No.** La búsqueda, por lectura con `grep` sobre el texto de `78a2f33`, cubrió las asignaciones (sin comillas, con comillas simples o dobles, y `$'…'`) seguidas de cualquiera de las 157 funciones definidas en `lib.sh` y los guardianes, o de un builtin especial. **Sólo queda una: `hooks/lib.sh:2083`** (`{ LC_ALL=C _arnes_escrituras_texto …; } 2>/dev/null`, CA-54).
+- Su único llamador es `arnes_escrituras_de`, que la invoca dentro de una sustitución de comandos (`hooks/lib.sh:2242`, `ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"`).
+- La llamada es la última orden de esa subshell. Aunque la asignación persistiera, moriría con la subshell, sin llegar al proceso que juzga.
+- Los `local LC_ALL=C` (`lib.sh:1372`, `:2963`, `:3010`, `:3051`; `guard-completado.sh:53`, `:272`) son otro mecanismo, no forman parte del delta y son iguales en v1.35.0.
+
+**La reparación elimina la premisa de versión por construcción.** Lo que queda en el proceso que juzga son asignaciones y un `unset` sueltos, cuyo alcance no cambia entre versiones ni modos del intérprete. La forma que NEWS de bash-5.1, punto «o», hace depender de la versión ya no está (`05-`). En el anfitrión, ningún `BASH_COMPAT` (50, 44, 43) reproduce la persistencia de 5.0, así que el fail-before sigue sin poder medirse aquí. Además, SEC-129 enmascara hoy la premisa (R-054 §5).
+
+**Reclasificación: SEC-127 → `mitigado` (cerrado por reparación) en el candidato `78a2f33`, sin publicar.**
+- **Laguna declarada, no acreditada:** bash 5.0 o anterior en modo POSIX está **no medido**. Ni el fail-before ni la conducta del candidato se midieron en ese intérprete; en él, la corrección se sostiene **por lectura**, como fija P-136-K.
+- **Acreditación:** la de P-136-K, la sección 47 (LO1–LO4 y LK, por QA) y la lectura de arriba.
+- **Write-back:** existe en CA-47 punto 20, «SEC-127 — cómo se acredita».
+- **Regresión a vigilar:** el retorno de una asignación delante de una función, o de un builtin especial, en código que corra en el proceso que juzga.
+
+### 3. SEC-128: ¿cubre el vector de R-053 §4 y no abre otro?
+
+**Sí, lo cubre, y no abre otro.** Con el vector de R-053 §4 —agente de código, `file_path: 5` y el enlace `<raíz>/5 → src/a.ts`—, `guard-codigo.sh` invocado solo pasa de «sin decisión» en `413c6bd` a `deny`, por el motivo del campo que no es texto, en `Edit`, `Write` y `MultiEdit`. Lo mismo ocurre con `true` y otro enlace, con el nombre prefijado del agente y con objeto, lista, `5.0` y `-1` (`03-`). Por `guard.sh` la decisión ya era `deny` y sigue siéndolo.
+
+No abre nada: el cambio sólo estrecha un `return 0`. El `Bash` del agente de código con `command` no textual queda igual que en `413c6bd`: `guard-codigo` no decide y `guard.sh` deniega por `guard-completado`. Los `file_path` de texto no cambian. QA validó también la fila K5 (`qa/15-`).
+
+**Reclasificación: SEC-128 → `mitigado` en el candidato `78a2f33`, sin publicar.**
+- **Write-back:** existe en CA-47 punto 20, subviñeta SEC-128.
+- **Regresión a vigilar:** cualquier excepción por agente colocada antes de la regla del enlace.
+
+### 4. SEC-130 — `instrumento` (REQ-007) · **abierto** · severidad **baja** · introducido por `a59917d` (reparación de SEC-127) · dueño `desarrollador` (`hooks/lib.sh:2198-2208`)
+
+**El atajo afirma una ausencia que no ha comprobado cuando su grupo no llega a ejecutarse.**
+- **El defecto:** `arnes_estado_ausente` inicia `rc=0`, que en esta función significa «el comando no menciona el estado terminal». Si la redirección `2>/dev/null` del grupo `{ …; }` falla, el grupo no corre y la función devuelve ese 0. `guard-completado.sh:406` sale entonces con `return 0` y se salta el recorrido de destinos. Contradice la propiedad literal de P-136-D, punto 1: el atajo omite el recorrido sólo «cuando el comando entero no menciona el estado terminal».
+- **Medido** a nivel de librería (`01-` B): `413c6bd` responde 1 y `78a2f33` responde 0 con un comando que menciona `completado`.
+- **No alcanzado** a nivel de hook en lo medido (`02-`): la decisión es idéntica en los tres árboles con cualquier límite de descriptores del barrido.
+- **No es movimiento de CA-69 punto 3** en lo medido.
+- **Por qué `instrumento` y baja:** es un defecto interno del guardián sin efecto medido sobre ninguna decisión, y la condición que lo dispara hace fallar antes al propio hook. **No bloquea el cierre de REQ-007.**
+- **Remediación, por propiedad:** el atajo sólo afirma la ausencia que ha comprobado, y un grupo que no llega a correr no afirma nada. Ejemplo **no exhaustivo**: iniciar `rc` en 1 y tomarlo de `_arnes_estado_ausente_c` dentro del grupo. Sin procesos.
+- **Relación con SEC-129:** es otra instancia de la clase que R-054 §4 (R2) y la propiedad propuesta para CA-68 (R-054 §5) ya nombran: un juicio que no termina no deja pasar. Si esa propiedad se adopta, SEC-130 cae dentro y se mide allí.
+- **Destino:** la reparación que se encargue, y en qué entrega, lo clasifica la coordinadora (`AGENTS.md` §6, regla 3). **No aceptado.**
+
+### 5. QA-007-07 y SEC-129: el paso 5 no los empeora
+
+Medido en `04-`: coordinadora con `Write` y `Bash` a `src/` y con la entrada cerrada, en v1.35.0, `413c6bd` y `78a2f33`.
+- **QA-007-07:**
+  - Con `ARNES_INPUT_LISTO=1`, la decisión es idéntica en los tres árboles: sin decisión.
+  - Con `ARNES_MANIFEST_LISTO=1`, lo legible es idéntico (sin decisión), y la entrada cerrada pasa de sin decisión a `deny` en `78a2f33`.
+  - El delta no toca esas variables y quita una de las heredadas que pesaban sobre la lectura: `ARNES_INPUT` ya no sobrevive a un `read` fallido.
+- **SEC-129:**
+  - Con `POSIXLY_CORRECT=1`, la vía `Bash` sale sin decisión en los tres árboles y `Write` deniega en los tres.
+  - La restauración del locale funciona igual en modo POSIX (`01-` A).
+  - La condición nueva de `guard-codigo` no usa la forma que R-054 §1 identificó: no hay comilla simple dentro de un `${…}` entre comillas dobles.
+  - Las filas `SHELLOPTS=posix` de `04-` son **inválidas** por un defecto de la sonda —`SHELLOPTS` es de solo lectura en el bash que la lanza— y no se usan. Están anotadas en el propio archivo.
+- **No los reparo ni decido su destino.** SEC-129 queda **anotado** en `Hallazgos abiertos:` de REQ-007, como se anunció en R-054 §7.
+
+### 6. Observaciones (no hallazgos)
+
+- **O-55-1 — Control del proveedor.** Detuvo una búsqueda sobre el código normalizado con `declare -f`, cuyo script retiraba un temporal. No la reintenté. La búsqueda de §2 se hizo sólo por lectura del texto, y es la que cuenta.
+- **O-55-2 — Hooks de parada.** Con un `read` fallido y un `ARNES_INPUT` heredado, `413c6bd` derivaba el bloque de continuidad desde la entrada heredada, y `78a2f33` queda inerte. No decide nada y es la dirección correcta. Lo dejo dicho porque no figura en CA-47 punto 20.
+
+### 7. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta del paso 5: CONFORME, SIN VETO.**
+  - Ningún `deny` pasa a `allow` ni a «sin decisión» a nivel de hook.
+  - Los movimientos son sólo hacia `deny`, y están declarados.
+  - SEC-127 y SEC-128 quedan mitigados.
+- **Esta revisión no firma REQ-007.** `Seguridad:` sigue en `pendiente`: añado sólo R-055 dentro de su paréntesis. La firma no procede, porque QA del REQ sigue pendiente y hay hallazgos `contrato` abiertos.
+- **SEC-129, ahora anotado como `contrato`:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007; `guard-completado` deniega el cierre con un hallazgo `contrato` abierto (§6 y §13). Con él abierto, **publicar** no puede hacerse por delegación y vuelve al propietario (§4); eso es efecto de la regla vigente, no un veto mío.
+  - **(ii) Qué parte afecta:** la vía `Bash` de las tres puertas.
+  - **(iii) Evidencia:** R-054 §4 y `seg-posix/03-`; sin cambio en `seg-R055/04-`.
+  - **(iv) Qué lo resuelve:** la reparación del paso 6 (R1 y R2), con su write-back en CA-68.
+- **SEC-130:**
+  - **(i) Qué acción impide:** ninguna por su clase; no bloquea **cerrar**. Abierto, devuelve **publicar** al propietario por la misma regla de §4.
+  - **(ii) Qué parte afecta:** el atajo de la vía `Bash` de `guard-completado`.
+  - **(iii) Evidencia:** `hooks/lib.sh:2199` y `:2203-2207`; `seg-R055/01-` B y `02-`.
+  - **(iv) Qué lo resuelve:** la propiedad de §4, con un caso a nivel de librería que falle en `78a2f33` (el de `01-` B sirve), o su inclusión en la propiedad de CA-68 del paso 6.
+- **No impide** implementar ni probar el paso 6, ni el commit validado del paso 5.
+
+### 8. Firmas y cobertura
+
+- **Revisado:** el delta de `hooks/` entre `413c6bd` y `78a2f33`, por lectura y a nivel de librería y de hook en Linux/WSL2, con bash 5.3.9.
+- **No revisado o no medido:**
+  - bash 5.0 o anterior en modo POSIX (laguna declarada de SEC-127);
+  - el host (`claude -p`);
+  - Windows/MSYS;
+  - el banco completo (lo corrió QA);
+  - la restauración de los `local LC_ALL=C` en intérpretes antiguos (preexistente, fuera del delta);
+  - `ENFILE` y otros fallos transitorios del sistema como disparadores de SEC-130.
+
+### 9. Estado tras R-055
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-127`** | `contrato` (REQ-007) | **`mitigado`** en `78a2f33`, sin publicar; bash ≤ 5.0 en modo POSIX **no medido** (laguna declarada, P-136-K) | `desarrollador` | no (sale de `Hallazgos abiertos:`) |
+| **`SEC-128`** | `contrato` (REQ-007) | **`mitigado`** en `78a2f33`, sin publicar | `desarrollador`; `analista-requerimientos` | no (sale de `Hallazgos abiertos:`) |
+| **`SEC-129`** | `contrato` (REQ-007) | `abierto`, no aceptado; **anotado** ahora en `Hallazgos abiertos:` de REQ-007; se repara en el paso 6 | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+| **`SEC-130`** | **`instrumento`** (REQ-007) | **`abierto`**, no aceptado, medido a nivel de librería, no alcanzado a nivel de hook | `desarrollador` | no |
+| `QA-007-07` | `contrato` (REQ-007) | sin cambio; no empeora (§5); su destino es P-136-N | `desarrollador`; `analista-requerimientos` | REQ-007 |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una asignación delante de una función o de un builtin especial en el proceso que juzga;
+- una excepción por agente colocada antes de la regla del enlace;
+- una función de atajo o de lectura cuyo valor por defecto sea la respuesta que deja pasar.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-055**; último hallazgo **SEC-130** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-056** y **SEC-131**.

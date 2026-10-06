@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 5: commit validado. R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-129 anotado en REQ-007; SEC-130 (`instrumento`, baja) → F-136-12. Apertura del paso 6 (SEC-115/118 con SEC-129) por delegación
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-055; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `2d676d1`; ~197 k tokens) y la coordinadora.
+
+- **R-055:** a nivel de hook ningún `deny` pasa a `allow` ni a «sin decisión»; los dos movimientos van hacia `deny` y están declarados. `LC_ALL` se restaura en 24 combinaciones; la condición nueva de `guard-codigo` deniega en 72. SEC-127: no queda ninguna asignación delante de una función ni de un builtin especial en el proceso que juzga; premisa de versión eliminada por construcción; bash ≤ 5.0 en modo POSIX, laguna declarada. SEC-128: cubre el vector y no abre otro.
+- **SEC-130** (`instrumento`, baja): camino latente en `arnes_estado_ausente` si falla la redirección del grupo; no alcanzable a nivel de hook. Ficha F-136-12; QA y seguridad comprueban en el paso 6 si R2 lo cubre.
+- **Control del proveedor (O-55-1):** detuvo una búsqueda del auditor; sin reintentar.
+- **Paso 6 abierto:** plan en la cola con fases 0–4, la restricción de los techos frente a REQ-017 CA-09, E1–E3 y las dos variantes de P-136-N.
+- **Recordatorio:** la candidata lleva commits locales sin push desde `f1ffac3`; el push es del propietario.
+- **Avance (regla 6):** el paso 5 está cerrado; empieza el paso 6, fase 0.
+
 ## [GitHub] — 2026-10-06 · QA-007-06 cerrado: write-back de estado del analista en CA-47 p. 20 y cierre por QA; el paso 5 pasa a seguridad
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (viñeta «Reparado en SEC-127…», Historial; ~59 k tokens), `qa-tester` (cierre en `Hallazgos abiertos:` y nota fechada) y la coordinadora.
 
