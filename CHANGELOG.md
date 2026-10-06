@@ -22,7 +22,7 @@ CHANGELOG — ArnesJuan
 - **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas, con las cifras de referencia de CA-54 y SEC-120 para la comparación que se entregará al cerrar SEC-115/118 (decisiones escaladas, paradas no previstas y tokens por rol).
 - Los subagentes conservan su modelo. Las reglas no cambian: `hooks/` sólo lo toca el desarrollador; un control del proveedor que detenga algo se registra y no se reintenta; publicar, fusionar y etiquetar son del propietario.
 - **Forma de las fichas desde aquí** (petición del propietario): cada ficha lleva además un bloque «Decisión propuesta, lista para adoptar», redactado como la escribiría él; la decisión sigue siendo suya.
-- **Push:** el propietario ordenó el push de `cand/1.36.0` el 2026-10-06, con esta cabeza.
+- **Push:** el propietario ordenó el push de `cand/1.36.0` el 2026-10-06, con esta cabeza; y confirmó que el push anterior de `0ed5d61` (08:17 CR) fue suyo, así que no hay hallazgo de proceso.
 - **Avance (regla 6):** sin cambios en el trabajo; la medición dirigida de P-136-M sigue en curso.
 
 ## [Interno] — 2026-10-06 · P-136-M resuelta por el propietario: (A), medición dirigida de REQ-017 CA-08 (ii) en reposo sobre cinco commits
