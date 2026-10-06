@@ -427,7 +427,7 @@ cuando deben.
 | 2 | SEC-120: QA (Opus, comisión nueva) sobre `aba1c9b` | — |
 | 3 | SEC-120: seguridad, con QA favorable | — |
 | 4 | SEC-120: commit validado | — |
-| 5 | **SEC-127, sola** (intervención corta), con las cuatro condiciones de P-136-G: sin subshell (`local LC_ALL=C` o guardar y restaurar); caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado; seguridad lo reclasifica al cerrarlo; la versión de bash no se declara como límite | — |
+| 5 | **SEC-127, sola** (intervención corta), **más QA-007-06** (entrada estándar cerrada → `deny`; P-136-I), con un caso de banco para cada uno, y las cuatro condiciones de P-136-G: sin subshell (`local LC_ALL=C` o guardar y restaurar); caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado; seguridad lo reclasifica al cerrarlo; la versión de bash no se declara como límite | — |
 | 6 | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017) | — |
 | 7 | **Cierre y publicación** de 1.36.0: fusionar, etiquetar y publicar son decisión del propietario mientras SEC-127 no esté cerrado | — |
 

@@ -43,8 +43,36 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-05: P-136-H y P-136-I resueltas por el propietario, en § Resueltas.)_
 
-### [2026-10-05] (coordinadora) — P-136-H: QA-007-05 (`contrato`, baja). Sin `CLAUDE_PROJECT_DIR`, el candidato deniega algunas entradas malformadas en lugar de quedar «inerte como en v1.35.0». ¿Se corrige el texto del límite o el código?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-05) — **P-136-H: (A)** (el texto del límite del punto 20, sin código) y **P-136-I: (B)** (SEC-120 se cierra con QA-007-06 como residual declarado, que se repara en SEC-127); el plan de SEC-127 gana QA-007-06; se sigue sin parar
+
+**Texto del propietario, literal** (mensaje del 2026-10-05 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-H: (A). El texto del límite del punto 20 queda: «sin
+> CLAUDE_PROJECT_DIR, el hook es inerte si no puede obtener el proyecto;
+> si del cwd de la entrada obtiene uno con manifiesto, deniega». Es la
+> conducta más segura y no toca código.
+>
+> P-136-I: (B). SEC-120 se cierra con QA-007-06 como residual declarado
+> (entrada estándar cerrada: los guardianes abortan sin decidir; ninguna
+> decisión cambia frente a v1.35.0; no provocable desde el host en lo
+> observado). Se repara dentro de SEC-127, que toca el mismo archivo, lleva
+> su ciclo completo y va antes de publicar. El punto 20 conserva la promesa
+> «deny por cualquier causa» con QA-007-06 anotado como pendiente hasta
+> SEC-127, no como límite.
+>
+> Ficha de SEC-127: su plan incluye QA-007-06 (entrada estándar cerrada →
+> deny) junto con el locale, con un caso de banco para cada uno.
+>
+> Continúa sin pararte: write-back de QA-007-05, seguridad de SEC-120,
+> commit validado, SEC-127.
+
+**Lo que añade la coordinadora:** el write-back es del analista. QA-007-05 se cierra cuando QA lo compruebe, en el QA de SEC-127; hasta entonces sigue en `Hallazgos abiertos:` con su clase. `docs/PLAN.md`, paso 5, gana QA-007-06. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-H: QA-007-05 (`contrato`, baja). Sin `CLAUDE_PROJECT_DIR`, el candidato deniega algunas entradas malformadas en lugar de quedar «inerte como en v1.35.0». ¿Se corrige el texto del límite o el código?
 
 **Contexto.** QA de SEC-120, fase 3 (`docs/qa/REQ-007.md`, «SEC-120: validación (fase 3)»; evidencia `cand-1.36.0/sec120/qa/`, commit `7a967e2`), sobre `aba1c9b`.
 - **Lo que dice hoy el límite declarado de CA-47 p. 20** (decisión 3 del propietario): sin `CLAUDE_PROJECT_DIR`, el hook sigue inerte, como en v1.35.0, porque denegar ahí rompería proyectos que no usan el arnés.
@@ -63,7 +91,7 @@
 **Espera:** elección del propietario.
 
 
-### [2026-10-05] (coordinadora) — P-136-I: QA-007-06 (`contrato`, baja, introducido por la pasada correctiva de SEC-120). Con la entrada estándar cerrada, los guardianes abortan sin decisión. No quedan pasadas: ¿cómo se cierra SEC-120?
+### RESUELTA (propietario, 2026-10-05; entrada de arriba) — [2026-10-05] (coordinadora) — P-136-I: QA-007-06 (`contrato`, baja, introducido por la pasada correctiva de SEC-120). Con la entrada estándar cerrada, los guardianes abortan sin decisión. No quedan pasadas: ¿cómo se cierra SEC-120?
 
 **Contexto.** Re-verificación de QA de la pasada correctiva única (`413c6bd`; `docs/qa/REQ-007.md`, «SEC-120: re-verificación de la pasada correctiva»; evidencia `qa2/`, commit `6d71b19`).
 - **Conforme:**
@@ -91,8 +119,6 @@
 **Qué trabajo sigue mientras no se decida:** ninguno del plan. La seguridad de SEC-120 (paso 3) espera a esta decisión y a P-136-H, porque QA no es favorable sin una de ellas. Esta entrada impide marcar cualquier REQ como `completado`.
 
 **Espera:** elección del propietario. **Agrupada con P-136-H**, que está arriba.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-05, posterior a `d2880c1`) — **Ajuste de alcance de 1.36.0**: SEC-127 se repara sola, entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 como ficha; orden final de 1.36.0 en siete pasos; nada más entra
 

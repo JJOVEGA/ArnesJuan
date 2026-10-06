@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · P-136-H (A) y P-136-I (B) resueltas por el propietario; write-back del analista en CA-47 p. 20; el plan de SEC-127 gana QA-007-06
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~104 k tokens) y la coordinadora.
+
+- **Decisiones literales** en la cola, con las fichas debajo; la cola queda vacía.
+- **Punto 20:**
+  - el límite lleva el texto literal del propietario (inerte si no puede obtener el proyecto; deniega si obtiene uno con manifiesto desde el `cwd` de la entrada);
+  - QA-007-06 queda como «pendiente hasta SEC-127, no límite», y se conserva «deny por cualquier causa».
+  - En `Hallazgos abiertos:`, QA-007-05 lleva «texto corregido; lo cierra QA» y QA-007-06 «residual declarado, se repara en SEC-127», sin cambiar clases.
+  - Historial, Correspondencia e índice.
+- **`docs/PLAN.md`, paso 5:** SEC-127 más QA-007-06, con un caso de banco para cada uno.
+- **Avance (regla 6):** SEC-120 queda listo para seguridad.
+
 ## [GitHub] — 2026-10-05 · SEC-120: re-verificación de QA sobre `413c6bd`, CON HALLAZGOS. QA-007-03/04 cerrados; QA-007-06 (`contrato`, baja) nuevo; ficha P-136-I agrupada con P-136-H; plan PARADO
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `6d71b19`) y la coordinadora.
 
