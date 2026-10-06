@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Paso 6: pasada correctiva única en `03cbf5e` (SIN VALIDAR): QA-007-10, QA-007-12 y QA-007-11 (a) reparados; ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** `lib.sh` vacía `ARNES_CWD_VISTO` al cargar; el motivo se acota dentro de la misma llamada a `jq`, después de sustituir los bytes inválidos por U+FFFD, por caracteres enteros (desaparece `arnes_acota`); `entrada.sh` retira funciones importadas (`BASH_FUNC_*%%` leídas de `/proc/self/environ`), `FUNCNEST`, `BASH_COMPAT`, `compat31`–`compat44` y `keyword`, con `builtin`. Bloque P: 7 casos (sección 47 102/0; `8e11f87` 95/7; cuadre 2312). Inventario 2 (a) sólo con INS-136-2 y 2 (c); banco 2298/1/13 (el FAIL es INS-136-1); autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **No comprobado por el desarrollador:** sin `/proc/self/environ` legible las funciones importadas no se retiran; `PATH`; una función importada con el nombre de una orden de la propia limpieza.
+- **Avance (regla 6):** el paso 6 está reparado entero; falta la re-verificación.
+
 ## [GitHub] — 2026-10-06 · Paso 6, pasada correctiva (desarrollador): QA-007-10, QA-007-12 y QA-007-11 (a) — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-P (2) (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «Pasada correctiva»; evidencia `1adeffc`.
 

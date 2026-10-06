@@ -16,7 +16,7 @@
 
 > **Modelo de la coordinadora: Fable 5.1 desde el 2026-10-06, cabeza `098896c`** (prueba acotada decidida por el propietario; los subagentes conservan su modelo; el plan no cambia; al cerrar SEC-115/118 se entrega la comparación en tres cifras con CA-54 y SEC-120). **`cand/1.36.0` sigue sin push: el push es del propietario.**
 >
-> **Plan autorizado vigente: paso 6 de 1.36.0, SEC-115 y SEC-118 con SEC-129 (por delegación del propietario del 2026-10-06), fase 2 hecha en `0efd3c2` (evidencia `65092c8`; SIN VALIDAR: sección 47 93/0, E1–E3 sin «afecta», inventario sólo con 2 (c)/INS, banco 2290/0/13, +0 procesos; `hooks/entrada.sh` nuevo; SEC-130 no cubierto por R2 → sigue F-136-12). **P-136-O (1) (A), (2) (A) y P-136-N (A), adoptadas por el propietario (2026-10-06).** Hecho: QA-007-07 reparado (`8e11f87`; sección 47 95/0; SIN VALIDAR) y el write-back del analista (`833d561`). Adelantado del paso 7: `propuesta-v1.35.0/` a `docs/historia/` (`1d1cf07`) y el borrador de las notas (`4fced9f`). **QA del paso 6 (fase 3) hecho: con hallazgos; P-136-P resuelta (1) (A) y (2) (A) por el propietario (2026-10-06).** En curso, en paralelo sobre archivos disjuntos: la **única pasada correctiva** del desarrollador (QA-007-10 `ARNES_CWD_VISTO`, QA-007-12 acotar tras sanear UTF-8, QA-007-11 (a) neutralizar `FUNCNEST`/`BASH_COMPAT`/`compat*`/`keyword`/funciones importadas en `entrada.sh`) y el write-back del analista (INS-136-4; QA-007-09 y QA-007-11 (b) como límites declarados). **Siguiente:** re-verificación de QA; seguridad (fase 4); commit validado; paso 7.** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **Paso 5 cerrado como intervención** (commit validado; R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-130 → F-136-12). **P-136-N pendiente del propietario** (QA-007-07: paso 6 o 1.37); el plan del paso 6 tiene las dos variantes. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: paso 6 de 1.36.0, SEC-115 y SEC-118 con SEC-129 (por delegación del propietario del 2026-10-06), fase 2 hecha en `0efd3c2` (evidencia `65092c8`; SIN VALIDAR: sección 47 93/0, E1–E3 sin «afecta», inventario sólo con 2 (c)/INS, banco 2290/0/13, +0 procesos; `hooks/entrada.sh` nuevo; SEC-130 no cubierto por R2 → sigue F-136-12). **P-136-O (1) (A), (2) (A) y P-136-N (A), adoptadas por el propietario (2026-10-06).** Hecho: QA-007-07 reparado (`8e11f87`; sección 47 95/0; SIN VALIDAR) y el write-back del analista (`833d561`). Adelantado del paso 7: `propuesta-v1.35.0/` a `docs/historia/` (`1d1cf07`) y el borrador de las notas (`4fced9f`). **QA del paso 6 (fase 3) hecho: con hallazgos; P-136-P resuelta (1) (A) y (2) (A) por el propietario (2026-10-06).** Hechos: la **única pasada correctiva** (`03cbf5e`, evidencia `1adeffc`; SIN VALIDAR: 7 casos del bloque P en verde con fail-before en `8e11f87`; sección 47 102/0; E1 sin cambio; +0 procesos) y el write-back del analista (`d965583`). **En curso: re-verificación de QA (Opus, comisión nueva) sobre `03cbf5e`.** Luego seguridad (fase 4), commit validado y paso 7.** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **Paso 5 cerrado como intervención** (commit validado; R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-130 → F-136-12). **P-136-N pendiente del propietario** (QA-007-07: paso 6 o 1.37); el plan del paso 6 tiene las dos variantes. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -552,7 +552,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-06 16:07
+## Estado derivado — 2026-10-06 16:32
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -562,9 +562,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `770a25d` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `03cbf5e` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
+**Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
