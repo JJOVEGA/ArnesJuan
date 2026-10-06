@@ -353,17 +353,109 @@ arnes_require_jq() {
 
 # Emite una decisión DENY de PreToolUse y termina con `exit 0`. La decisión existe SÓLO si
 # `jq` llegó a escribir el JSON: el `exit 0` no la acredita.
-# APARTE, LA LIMITACIÓN CONOCIDA Y SIN REPARAR: SEC-118. El motivo viaja como UN argumento de
-# `jq`; si supera el límite de un argumento (128 KiB en Linux) —o `jq` no arranca por otra
-# causa—, no se escribe nada y el hook sale sin decisión, que no es una denegación. Los motivos
-# de REQ-023 CA-01 y CA-13 llevan tope por eso; los que interpolan contenido sin tope están en
-# docs/seguridad/registro-seguridad.md, R-045 §4, en una lista que no es exhaustiva.
+#
+# TODA DENEGACIÓN DECIDIDA LLEGA AL CLIENTE, ENTERA O ACOTADA, NUNCA PERDIDA (SEC-118; REQ-007 CA-67,
+# P-136-B). Hasta 1.36.0 el motivo viajaba como UN argumento de `jq` (`--arg`), y por encima del límite
+# de un argumento (131 072 bytes en Linux; en Windows, el de `CreateProcess`, más bajo) `jq` no
+# arrancaba: no se escribía nada y el hook salía sin decisión con rc 0. Medido con motivos de 134 301 a
+# 154 598 bytes (R-045 §4 y `docs/arnes/v1.36.0-sec115-118-fase1.md`). Ahora, dos cosas:
+#   * el motivo viaja por la ENTRADA ESTÁNDAR de `jq` (here-string: sin procesos nuevos), así que
+#     ningún dato variable pasa por la línea de órdenes;
+#   * se ACOTA a `ARNES_MOTIVO_MAX_BYTES` bytes (`arnes_acota`): conserva su comienzo —que nombra la
+#     causa—, dice que se acortó y nunca parte un carácter multibyte.
+# Y si aun así `jq` no escribe la decisión, `ARNES_JUICIO` no queda en `fin` y la salida del proceso
+# emite la denegación fija de `arnes_entrada_del_hook` (CA-68 (i)): el `exit 0` ya no puede quedarse mudo.
 # Salida compacta (-c): una sola línea, el formato que esperan los hooks.
 arnes_deny() {
-  jq -cn --arg r "$1" \
-    '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
+  arnes_acota "$1"
+  jq -cRs 'rtrimstr("\n") | {hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:.}}' \
+    <<< "$ARNES_ACOTADO" && ARNES_JUICIO=fin
   exit 0
 }
+
+# El TOPE de un motivo o de un aviso, en BYTES (REQ-007 CA-67; OPERATIVO: «no más de 16 384 bytes», se baja
+# con la medición). Con la entrada estándar no hay límite del sistema que lo exija; se acota porque un motivo
+# lo lee una persona y un modelo, y 16 KiB ya es más de lo que cualquier motivo del arnés necesita para
+# nombrar su causa (el mayor con tope propio, REQ-023 CA-01, mide unos 9,6 KB).
+ARNES_MOTIVO_MAX_BYTES=16384
+# arnes_acota <texto> -> ARNES_ACOTADO: el texto entero si cabe en el tope; si no, su comienzo y una nota
+# de que se acortó, todo en no más de `ARNES_MOTIVO_MAX_BYTES` bytes. Se cuenta y se corta en BYTES
+# (`LC_ALL=C` local, restaurado al volver) y se retira la secuencia UTF-8 que el corte deje partida: un
+# carácter de 2, 3 o 4 bytes nunca sale a medias. Sin procesos.
+arnes_acota() {
+  local LC_ALL=C
+  local t="$1" n nota corte k=0 c ln=1
+  n=${#t}
+  if [ "$n" -le "$ARNES_MOTIVO_MAX_BYTES" ]; then ARNES_ACOTADO="$t"; return 0; fi
+  nota=" [...] (ARNES: motivo acortado: medía $n bytes y el tope es $ARNES_MOTIVO_MAX_BYTES; se conserva su comienzo)"
+  corte=$(( ARNES_MOTIVO_MAX_BYTES - ${#nota} ))
+  t="${t:0:corte}"
+  # Bytes de continuación (10xxxxxx) al final, y el byte de cabeza que los precede.
+  while [ "$k" -lt 3 ] && [ "$k" -lt "${#t}" ] && [[ "${t:${#t}-1-k:1}" == [$'\x80'-$'\xbf'] ]]; do k=$((k + 1)); done
+  if [ "$k" -lt "${#t}" ]; then
+    c="${t:${#t}-1-k:1}"
+    case "$c" in
+      [$'\xc0'-$'\xdf']) ln=2 ;;
+      [$'\xe0'-$'\xef']) ln=3 ;;
+      [$'\xf0'-$'\xf7']) ln=4 ;;
+      [$'\x80'-$'\xff']) ln=0 ;;
+      *) ln=1 ;;
+    esac
+    # Completo: se queda. Partido (o un byte que no abre ninguna secuencia): fuera la cabeza y su cola.
+    if [ "$ln" -ne $((k + 1)) ] && { [ "$ln" -ne 1 ] || [ "$k" -gt 0 ]; }; then
+      if [ "$ln" -eq 1 ]; then t="${t:0:${#t}-k}"; else t="${t:0:${#t}-1-k}"; fi
+    fi
+  else
+    t="${t:0:${#t}-k}"
+  fi
+  ARNES_ACOTADO="$t$nota"
+}
+
+# --- Un final que no es un juicio no deja pasar (SEC-129, SEC-115; REQ-007 CA-68) ----------------
+# El hook sólo sale sin decisión cuando ha TERMINADO un juicio que concluye que la llamada no toca
+# nada protegido. Lo marca `ARNES_JUICIO=fin`, que escriben sólo: la salida inerte de
+# `arnes_preludio`, el final de cada punto de entrada y `arnes_deny` cuando `jq` escribió la decisión.
+# Cualquier otro final —el intérprete que aborta el script, un `set -u`, un `exit` inesperado— lo
+# recoge la trampa de salida que instala cada punto de entrada (`guard.sh` y los tres guardianes
+# ejecutados por su cuenta) ANTES de cargar esta librería, con un motivo fijo y sin `jq`.
+# Y una puerta que el intérprete abandona a mitad sin terminar el proceso —una expansión que aborta
+# la orden en curso: medido en modo POSIX, `arnes_guard_git` se abandonaba y el siguiente guardián
+# corría como si hubiera permitido (R-054, `09-`)— no escribe su marca: `arnes_juicio_puerta` lo ve y
+# deniega.
+ARNES_PUERTA_FIN=''
+arnes_juicio_puerta() {   # <puerta> — tras `{ arnes_guard_X; ARNES_PUERTA_FIN=<puerta>; }`
+  if [ "$ARNES_PUERTA_FIN" != "$1" ]; then
+    arnes_deny "ARNES: la puerta $1 no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no se sabe si la llamada toca algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68)."
+  fi
+  ARNES_PUERTA_FIN=''
+  arnes_plazo
+}
+
+# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C). Cada punto de entrada pone `SECONDS=0` al
+# arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo comprueba
+# ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
+# OPERATIVO: la comprobación salta a los 30 s, para que la respuesta llegue en no más de 40 s con la
+# unidad en curso y la emisión; se baja con la medición. Lo que NO alcanza, dicho: una sola operación
+# que no termina no se interrumpe sin un proceso aparte; por eso las que crecen más que linealmente
+# tienen techo de tamaño delante (`ARNES_PIEZAS_MAX_BYTES`, `ARNES_EDIT_MAX_BUSQUEDA`).
+ARNES_PLAZO_S=30
+# Sólo en un proceso que arrancó por un punto de entrada (`ARNES_EN_HOOK`, entrada.sh): quien carga la
+# librería en otro shell —el banco, a nivel de librería— no tiene un reloj que signifique nada.
+arnes_plazo() {
+  [ -n "${ARNES_EN_HOOK:-}" ] || return 0
+  [ "${SECONDS:-0}" -ge "$ARNES_PLAZO_S" ] || return 0
+  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s desde que arranco; el cliente mata el hook a los 60 s y un hook muerto no deniega). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
+}
+
+# R2 (SEC-129): un codigo del analizador de escrituras de Bash fuera de su vocabulario declarado —0, y
+# los cuatro de «no analice»: ARNES_RC_EXCESO, ARNES_RC_CR, ARNES_RC_CUERPO_CR y ARNES_RC_LC10— no es «no
+# escribe nada»: es un analisis que no termino. Los dos guardianes que lo leen deniegan, a todo agente.
+arnes_deny_rc_analizador() {   # <codigo> <puerta>
+  arnes_deny "ARNES: el analisis de escrituras de este comando termino con un codigo que no esta en su vocabulario declarado ($1), en $2: el analisis no concluyo, y no se puede saber si el comando escribe algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68)."
+}
+
+# arnes_bytes <texto> -> ARNES_BYTES: su longitud en BYTES, sea cual sea el locale. Sin procesos.
+arnes_bytes() { local LC_ALL=C; ARNES_BYTES=${#1}; }
 
 # Motivo UNICO de la Excepcion nombrada LC10 (SEC-125; REQ-007 CA-47, punto 19), compartido por las cuatro
 # puertas: texto fijo, sin interpolar el comando ni la linea (no hereda SEC-118) y sin nombrar ninguna
@@ -392,7 +484,9 @@ ARNES_AVISOS=''
 arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
 arnes_emitir_avisos() {
   [ -n "$ARNES_AVISOS" ] || return 0
-  jq -cn --arg m "${ARNES_AVISOS%$'\n'}" '{systemMessage:$m}'
+  # Los avisos entran (SEC-118, P-136-B): por la entrada estandar y acotados, como el motivo de `arnes_deny`.
+  arnes_acota "${ARNES_AVISOS%$'\n'}"
+  jq -cRs 'rtrimstr("\n") | {systemMessage:.}' <<< "$ARNES_ACOTADO"
   return 0
 }
 
@@ -1558,6 +1652,23 @@ ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tst
 # dentro el caso ordinario (un REQ grande con un punado de ediciones) y corta antes de que
 # el reloj decida. Igual que el otro techo: el numero es operativo y sale impreso en el deny.
 ARNES_EDIT_MAX_PRESUPUESTO=67108864
+# TECHOS DE TAMAÑO DE SEC-115 (REQ-007 CA-68, P-136-C), los dos OPERATIVOS: se bajan con la medición, y
+# subirlos por encima de lo medido devuelve el hook a la pared de los 60 s, donde un hook muerto no deniega.
+#   * ARNES_PIEZAS_MAX_BYTES: el texto que trae una escritura de un REQ, tal como lo trocea `guard-completado`
+#     —el `content` de un `Write` más 4 bytes de cabecera de piezas, o las cadenas de todas las ediciones con
+#     sus separadores—, medido en BYTES antes de la normalización de transporte, que crece más que
+#     linealmente: medido en `78a2f33`, un `Write` de 1 012 650 bytes tardaba de 29 a 49 s y uno de
+#     2 025 113 no respondía en 60 s. Restricción del paso 6 (CA-68, «Dónde no puede caer un techo nuevo»):
+#     por encima de 296 976 bytes —el `content` de `REQ-021.md`— y lejos de las entradas de la sonda 37/3
+#     (como mucho 196 638 bytes). Medido justo por debajo (393 212 bytes): 3,8 s solo. Deniega el `Write`
+#     entero de un REQ más grande —en este repositorio, `REQ-007.md`, de 660 431 bytes—, y se declara.
+#   * ARNES_EDIT_MAX_BUSQUEDA: la búsqueda literal de cada `old_string` en la reconstrucción
+#     (`[[ … == *"$old"* ]]` y su sustitución) cuesta del orden de |documento| x |old_string| en el peor
+#     caso —una racha repetida—: medido, 256 000 bytes con un `old_string` de 128 000 no respondían en
+#     120 s (R-045-A §5). El presupuesto es ese producto, en bytes x bytes, sumado sobre las ediciones.
+#     Medido (Linux/WSL2, una corrida por punto): en el peor caso, unos 4,2e9 tardan 8,2 s solos.
+ARNES_PIEZAS_MAX_BYTES=393216
+ARNES_EDIT_MAX_BUSQUEDA=4294967296
 # Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
 ARNES_RC_EXCESO=2
 # Codigo de salida cuando NO analizo porque un retorno de carro del comando cae donde el analizador no

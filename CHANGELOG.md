@@ -2,6 +2,27 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, fase 2 (desarrollador): la decisión se emite siempre — SEC-118, SEC-115 y SEC-129 reparados en `hooks/` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (2, 3 y 7). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`; evidencia `cand-1.36.0/sec115-118/` (`65092c8`).
+
+- **SEC-118:** el motivo y los avisos viajan a `jq` por la entrada estándar y se acotan a 16 384 bytes, sin partir un carácter UTF-8 (`arnes_acota`). Medido en 273 casos, ninguno falla.
+- **SEC-115:** plazo propio que deniega a los 30 s, para responder en no más de 40 s, comprobado entre unidades de trabajo. Dos techos:
+  - piezas de una escritura de un REQ: 393 216 bytes;
+  - búsqueda de `old_string`: 4 294 967 296.
+
+  Ninguno lanza procesos, y los dos cumplen la restricción del paso 6.
+- **SEC-129:** `hooks/entrada.sh` (nuevo) sale del modo POSIX (R1), arranca el reloj y pone una trampa que emite un `deny` fijo si el proceso termina sin juicio concluido. Además, una puerta abandonada a mitad o un código del analizador fuera de su vocabulario deniega (R2). SEC-130 no queda cubierto por R2.
+- **Medidas:**
+  - sección 47: 93/0;
+  - banco del worktree: 2290/0/13;
+  - autoprueba 117/0 y gates con rc 0;
+  - procesos: +0 en el camino común;
+  - E1 sin cambios, E2 12/12 PASS y E3 PASS: nada «afecta»;
+  - 2 (a) final: 2037/0/13. La 1.ª corrida dio **1 FAIL no atribuido** (sección 24, `arnes-lectura`).
+- **Movimientos legítimos que se declaran y decide el propietario:** el `Write` de `REQ-007.md` entero (660 KB) y los `Edit` de `REQ-007.md` con un `old_string` de más de unos 6,5 KB pasan a `deny`.
+- **Incidencia:** una edición de `hooks/` se hizo una vez por consola, contra el encargo. Se deshizo y se rehízo con `Edit`.
+- **Avance (regla 6):** reparación construida y medida. Faltan QA, la decisión sobre los techos y el write-back del analista.
+
 ## [Interno] — 2026-10-06 · Paso 6, fase 1 registrada (`738b74d`, SIN VALIDAR): 93 casos de SEC-118/115/129 con fail-before idéntico en `78a2f33` y v1.35.0; E1 medido; T2b roza los 40 s; un FAIL de calibración de reloj (INS-136-1); ESTADO a la fase 2
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

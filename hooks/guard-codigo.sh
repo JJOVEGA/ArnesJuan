@@ -19,6 +19,9 @@
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# Ejecutado por su cuenta es un punto de entrada: R1, plazo y trampa de salida (entrada.sh, SEC-129/115).
+# shellcheck source=/dev/null
+[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
@@ -97,6 +100,10 @@ arnes_guard_codigo() {
       # una continuacion de linea. A TODO agente, el de codigo incluido: no pasa por la regla de destinatarios
       # de abajo. Motivo unico de las cuatro puertas.
       arnes_deny_lc10 guard-codigo
+    elif [ "$rc" -ne 0 ]; then
+      # R2 (SEC-129, REQ-007 CA-68 (i)): un codigo fuera del vocabulario del analizador no es «no escribe»:
+      # el analisis no concluyo (medido en modo POSIX: rc 1 con la lista vacia). A TODO agente.
+      arnes_deny_rc_analizador "$rc" guard-codigo
     else
       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
       #
@@ -196,7 +203,10 @@ arnes_guard_codigo() {
 
 # Ejecutado directamente (no `source`): hace su propio preludio y corre.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio guardian || exit 0
-  arnes_guard_codigo
+  arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+  arnes_plazo
+  { arnes_guard_codigo; ARNES_PUERTA_FIN=guard-codigo; }
+  arnes_juicio_puerta guard-codigo
+  ARNES_JUICIO=fin
   exit 0
 fi

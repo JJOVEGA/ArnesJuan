@@ -32,6 +32,9 @@
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# Ejecutado por su cuenta es un punto de entrada: R1, plazo y trampa de salida (entrada.sh, SEC-129/115).
+# shellcheck source=/dev/null
+[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
@@ -349,7 +352,10 @@ arnes_guard_git() {
 # Ejecutado directamente (no `source`): hace su propio preludio y corre. Produccion y
 # banco ejecutan LA MISMA funcion, no dos copias que puedan desfasarse.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio guardian || exit 0
-  arnes_guard_git
+  arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+  arnes_plazo
+  { arnes_guard_git; ARNES_PUERTA_FIN=guard-git; }
+  arnes_juicio_puerta guard-git
+  ARNES_JUICIO=fin
   exit 0
 fi

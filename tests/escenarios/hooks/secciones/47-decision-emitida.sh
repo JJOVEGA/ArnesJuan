@@ -1,7 +1,8 @@
 # Sección 47 del banco — 47-decision-emitida
 # Se hace `source` desde el corredor, en su propio subshell y con sus ayudantes; no se ejecuta
 # suelto ni hace `source` de otra sección (invariantes 3 y 4 del README del banco).
-# 1.36.0, paso 6, FASE 1 (casos con fail-before, SIN reparar): REQ-007 CA-67, CA-68 y CA-69, a NIVEL DE HOOK,
+# 1.36.0, paso 6: casos de la FASE 1 (fail-before), en verde con la reparación de la FASE 2 (arnes_deny y los avisos
+# por la entrada estándar y acotados; entrada.sh; techos y plazo propio). REQ-007 CA-67, CA-68 y CA-69, a NIVEL DE HOOK,
 # Linux/WSL2, bajo C.UTF-8, con las TRES comprobaciones separadas de REQ-031 CA-A15 punto 4 —(a) respuesta,
 # código de salida, JSON válido y duración bajo `timeout 60`, como el cliente; (b) la decisión que recibe el
 # entorno; (c) el archivo protegido tras aplicar lo que la herramienta haría si no se deniega—:
@@ -22,7 +23,7 @@
 # su fail-before aquí (deciden antes de 60 s en los dos árboles) y quedan como CONTROLES; T2b, medida de 29 a 49 s,
 # roza el plazo de 40 s y antes de la reparación puede salir FAIL por (a). Esto NO es el host.
 CASOS_ESPERADOS_SECCION=93
-PISO_AUTONOMO_SECCION=81  # 26 preámbulo (líneas 1-26, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 55 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 32-86)
+PISO_AUTONOMO_SECCION=82  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 55 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-87)
 seccion_nueva "--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---"
 PD47="$RAIZ/de47-$BASHPID"; W47="$RAIZ/w47-$BASHPID"; mkdir -p "$W47"; BE47="$W47/bashenv"; printf 'set -o posix\n' > "$BE47"
 O47=''; RC47=0; MS47=0; E47_IN=''; E47_APLICA=':'; E47_F=''; E47_C=intacto

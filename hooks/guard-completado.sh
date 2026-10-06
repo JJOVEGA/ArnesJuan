@@ -21,6 +21,9 @@ set -uo pipefail
 # plataforma un fork cuesta más que ejecutar el binario que va dentro.
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# Ejecutado por su cuenta es un punto de entrada: R1, plazo y trampa de salida (entrada.sh, SEC-129/115).
+# shellcheck source=/dev/null
+[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
@@ -359,6 +362,9 @@ arnes_guard_completado() {
       fi
       # SEC-125, LC10 (REQ-007 CA-47, punto 19, «Excepcion nombrada»): a todo agente, motivo unico.
       if [ "$rc" -eq "$ARNES_RC_LC10" ]; then arnes_parse_manifest; arnes_deny_lc10 guard-completado; fi
+      # R2 (SEC-129, REQ-007 CA-68 (i)): cualquier otro codigo que 0 no es «no escribe»: el analisis no
+      # concluyo. Medido en modo POSIX: rc 1 y la lista vacia, que se leia como un comando que no escribe.
+      [ "$rc" -eq 0 ] || arnes_deny_rc_analizador "$rc" guard-completado
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
@@ -460,7 +466,11 @@ arnes_guard_completado() {
   # troceaba como si fuera esta edicion. Ahora el filtro exige la forma —las ediciones, una lista de
   # objetos; el contenido y las cadenas de una edicion, texto o ausentes— y un fallo de jq deniega con
   # su motivo, sin citar la entrada. La misma llamada: sin procesos nuevos.
-  if ! arnes_jq_str "$ARNES_INPUT" -r '
+  #
+  # SEC-115 (REQ-007 CA-68): la misma llamada que `arnes_jq_str`, partida en dos para poner el TECHO
+  # `ARNES_PIEZAS_MAX_BYTES` entre jq y la normalizacion de transporte, que es la operacion que crece mas
+  # que linealmente. Por debajo del techo, las mismas operaciones en el mismo orden que antes.
+  if ! ARNES_JQ="$(jq -r '
     def texto: if . == null then "" elif type == "string" then . else error("no-texto") end;
     (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
      then "!" else "-" end) as $ctl |
@@ -472,10 +482,17 @@ arnes_guard_completado() {
                                       | if type == "object" then . else error("no-objeto") end
                                       | (.old_string | texto), (.new_string | texto),
                                         (if .replace_all == true then "1" else "0" end)]
-     else ["W", ""] end) | [$ctl] + . | join("\u0001")'; then
+     else ["W", ""] end) | [$ctl] + . | join("\u0001")' <<< "$ARNES_INPUT")"; then
     ARNES_JQ=''
     arnes_deny "ARNES: no se juzga esta edicion de '$rel': su tool_input no tiene la forma que esta puerta necesita para reconstruir el documento que quedaria escrito (las ediciones tienen que ser una lista de objetos, y el contenido y las cadenas de cada edicion, texto). Sin reconstruirlo no se puede saber si cierra el REQ ni con que veredictos, asi que no se permite a ningun agente: una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 20). Para corregirlo, envia la edicion con esa forma."
   fi
+  arnes_bytes "$ARNES_JQ"
+  if [ "$ARNES_BYTES" -gt "$ARNES_PIEZAS_MAX_BYTES" ]; then
+    ARNES_JQ=''
+    arnes_deny "ARNES: no se juzga esta escritura de '$rel': el texto que trae (el contenido del Write, o las cadenas de las ediciones) mide $ARNES_BYTES bytes y el techo de esta puerta es $ARNES_PIEZAS_MAX_BYTES bytes. Por encima, prepararlo para leerlo costaria mas de lo que la puerta puede medir antes de que el cliente la mate, y un hook muerto no deniega: una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). No es un veredicto sobre el contenido. Salidas: edita el REQ con Edit en cambios mas pequenos, o parte el documento."
+  fi
+  arnes_sin_cr_transporte "$ARNES_JQ"; ARNES_JQ="$ARNES_SIN_CR"
+  arnes_plazo
   piezas=()
   IFS=$'\001' read -r -d '' -a piezas <<< "$ARNES_JQ" || true
   if [ "${piezas[0]:-!}" = "!" ]; then
@@ -585,8 +602,21 @@ arnes_guard_completado() {
     # nombra esta clase). Un CR seguido de LF es un fin de linea y se normaliza; un CR
     # suelto en mitad de una linea NO lo es, y ya no se toca aqui. Pregunta cerrada.
     resultante="${disk//$'\r\n'/$'\n'}"; reconstruido=1; ne=$(( (np - 2) / 3 ))
+    # SEC-115 (REQ-007 CA-68, R-045-A §5): PRESUPUESTO DE LA BUSQUEDA. Buscar y sustituir cada `old_string`
+    # cuesta, en el peor caso, |texto| x |old_string|, y es UNA operacion que el plazo no interrumpe. Se
+    # acota ANTES de buscar: (documento + todos los new_string) x (todos los old_string), en bytes.
+    local doc_b old_b=0
+    arnes_bytes "$resultante"; doc_b=$ARNES_BYTES
+    for ((k = 2; k + 2 < np; k += 3)); do
+      arnes_bytes "${piezas[k]}"; old_b=$(( old_b + ARNES_BYTES ))
+      arnes_bytes "${piezas[k+1]}"; doc_b=$(( doc_b + ARNES_BYTES ))
+    done
+    if (( doc_b * old_b > ARNES_EDIT_MAX_BUSQUEDA )); then
+      arnes_deny "ARNES: no se juzga esta edicion de '$rel': buscar sus old_string en el documento costaria, en el peor caso, $doc_b x $old_b bytes, por encima del presupuesto de $ARNES_EDIT_MAX_BUSQUEDA de esta puerta; por encima no termina de medir antes de que el cliente la mate, y un hook muerto no deniega. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). No es un veredicto sobre la edicion. Salidas: usa un old_string mas corto (basta con el trozo que identifica el sitio) o parte la edicion."
+    fi
     # k arranca en 2: piezas[0] es la bandera de bytes de control y piezas[1] el modo.
     for ((k = 2; k + 2 < np; k += 3)); do
+      arnes_plazo
       old="${piezas[k]//$'\r\n'/$'\n'}"; new="${piezas[k+1]//$'\r\n'/$'\n'}"; ra="${piezas[k+2]}"
       nuevo+="$new"$'\n'
       if [ -z "$old" ] || [[ "$resultante" != *"$old"* ]]; then
@@ -913,6 +943,8 @@ arnes_guard_completado() {
   fi
 
   # --- Gate A3: quality gates en verde antes de completar ---
+  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas: lo que tarde una gate no lo interrumpe.
+  arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
   tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
@@ -931,8 +963,11 @@ arnes_guard_completado() {
 
 # Ejecutado directamente (no `source`): hace su propio preludio y corre.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio guardian || exit 0
-  arnes_guard_completado
+  arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+  arnes_plazo
+  { arnes_guard_completado; ARNES_PUERTA_FIN=guard-completado; }
+  arnes_juicio_puerta guard-completado
   arnes_emitir_avisos
+  ARNES_JUICIO=fin
   exit 0
 fi
