@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · SEC-128 reparado por el desarrollador en `78a2f33` (SIN VALIDAR); parada por P-136-M: REQ-017 CA-08 (ii) pasa de INCONCLUSO a FAIL en el inventario CA-69 2 (a)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~45 k tokens; evidencia `f641380`) y la coordinadora.
+
+- **SEC-128:**
+  - con `Edit`, `Write` o `MultiEdit`, un `file_path` que no es texto deniega a todo agente; `Bash` conserva la conducta de siempre;
+  - bloque E de la sección 47 (+12; cuadre 2210) 44/0, con fail-before sobre `a59917d`; K5 pasa a esperar `deny`;
+  - banco 2198/0/12; autoprueba 117/0; gates rc 0;
+  - procesos iguales en el camino común.
+- **Parada:** en el inventario de v1.35.0 con los hooks del candidato, REQ-017 CA-08 (ii) «6 líneas» sale FAIL, «mín(r) 1,251× > techo 1,250×» en 5 de 5, con el anfitrión cargado. Ejecuta hooks, así que se aplica la regla de P-136-E. **No se repitió.** P-136-M está en la cola (recomendación (A): medición dirigida por commits con el anfitrión en reposo).
+- **Avance (regla 6):** SEC-128 construido; la validación espera a la decisión.
+
 ## [GitHub] — 2026-10-06 · Paso 5, SEC-128 (P-136-J (A, acotada)): en `guard-codigo`, un `file_path` que no es texto no deja pasar a nadie — SIN VALIDAR por QA; un FAIL de reloj en el inventario 2 (a), declarado y sin repetir
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`, sección «SEC-128»; evidencia `cand-1.36.0/sec127/`, commit `f641380` del árbol de evidencia).
 

@@ -43,7 +43,32 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-06: P-136-J, P-136-K y P-136-L resueltas por el propietario, en § Resueltas.)_
+
+### [2026-10-06] (coordinadora) — P-136-M: en el inventario de SEC-128, REQ-017 CA-08 (ii) («un REQ real de 6 líneas», de reloj, ejecuta hooks) pasa de INCONCLUSO a FAIL: «mín(r) 1,251× > techo 1,250×» en 5 de 5. ¿Ruido de anfitrión o regresión de coste?
+
+**Contexto.** SEC-128 (`78a2f33`; evidencia `f641380`, `cand-1.36.0/sec127/`, archivos 90- a c1-; registro `docs/arnes/v1.36.0-sec127-fase2.md`, «SEC-128»).
+- **Conforme:**
+  - el cambio es una sola condición en `guard-codigo.sh`;
+  - bloque E de la sección 47: 44/0, con fail-before 41/3 sobre `a59917d`;
+  - K5 con su fail-before;
+  - banco del worktree 2198/0/12; autoprueba 117/0; gates rc 0;
+  - camino común: los mismos procesos que en `a59917d`.
+- **La parada:** el banco de v1.35.0 con los hooks del candidato da 2038/**1**/11. REQ-017 CA-08 (ii) «6 líneas» era INCONCLUSO en `22-` y en la corrida anterior (`61-`), y ahora es FAIL en 5 de 5, justo encima del techo. Carga del anfitrión ≈ 1,4–2,0. El `Edit` de ese caso no entra en la rama de SEC-128, pero sí pasa por SEC-120, QA-007-06 y CA-54.
+- **Por qué no se resuelve solo:** P-136-E define la parada como un caso que ejecuta hooks y pasa entre PASS y FAIL, y éste ejecuta hooks. Un FAIL no se desmiente repitiendo la corrida. Y 5 de 5 encima del techo no es el patrón de ruido que daba INCONCLUSO.
+
+**Pregunta.** ¿Cómo se trata?
+
+**Opciones.**
+- **(A) Medirlo de forma dirigida antes de QA:** el ratio de CA-08 (ii) con el anfitrión en reposo sobre `v1.35.0`, `82ceb63`, `413c6bd`, `a59917d` y `78a2f33`, con las mismas r, para localizar si hay un escalón y en qué commit. Si hay regresión atribuible, es un hallazgo y se usa la pasada correctiva del paso 5, que sigue sin gastar. Si no hay escalón, es INS de reloj y se sigue. **Consecuencia:** de 30 a 60 minutos; la decisión queda medida.
+- **(B) Que QA lo observe en su propio inventario,** con el anfitrión en reposo, como observación independiente. Si vuelve a dar FAIL, es un hallazgo. **Consecuencia:** más barato, pero no localiza el commit.
+- **(C) Registrarlo como instrumento** (reloj bajo carga) y seguir. **Consecuencia:** sin coste, pero se arriesga a publicar una regresión de coste en la vía `Edit`.
+
+**Recomendación de la coordinadora: (A).** Es la única que distingue el ruido de una regresión, y el escalón, si existe, dice qué reparar.
+
+**Qué trabajo sigue mientras no se decida:** ninguno del plan, porque QA del paso 5 depende de esto. Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
