@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista tras QA (QA-007-07 construido y validado; punteros de `lib.sh` a `8e11f87`; QA-023-10 cerrado en la nota de CA-54; sección 24 → INS-136-3; SEC-130 no cubierto; la 2b → 1.37 en la nota de CA-54)
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~204 k tokens) y la coordinadora.
+
+- Nada de QA-007-08 a QA-007-12 ni de E2: dependen de P-136-P. CA-67 y CA-68 siguen «SIN VALIDAR» en conjunto por lo mismo.
+- Pendiente de seguridad (fase 4): el texto de SEC-130 en `Hallazgos abiertos:` dice «no alcanzado a nivel de hook», y la medición de QA sobre una copia (`ulimit -n 3`) lo desmiente.
+- **Avance (regla 6):** el contrato refleja lo validado; falta la decisión P-136-P.
+
 ## [GitHub] — 2026-10-06 · QA del paso 6 (Opus) sobre `8e11f87`: CON HALLAZGOS y parada por P-136-P — E2 dio 1 FAIL en 6 (QA-007-08); cinco `contrato` más (QA-007-09 a QA-007-12); QA-007-07 y QA-023-10 cerrados; INS-136-3
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` y el paréntesis de `QA:`; evidencia `e19b708`) y la coordinadora.
 
