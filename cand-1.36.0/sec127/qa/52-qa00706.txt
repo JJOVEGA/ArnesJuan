@@ -1,0 +1,121 @@
+cerrada                    cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+cerrada                    cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+cerrada                    cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+cerrada                    cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+cerrada                    413c  guard.sh             nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+cerrada                    413c  guard-codigo.sh      nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+cerrada                    413c  guard-completado.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+cerrada                    413c  guard-git.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+cerrada                    v135  guard.sh             nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+cerrada                    v135  guard-codigo.sh      nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+cerrada                    v135  guard-completado.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+cerrada                    v135  guard-git.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+directorio                 cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+directorio                 cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+directorio                 cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+directorio                 cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+directorio                 413c  guard.sh             nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+directorio                 413c  guard-codigo.sh      nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+directorio                 413c  guard-completado.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+directorio                 413c  guard-git.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+directorio                 v135  guard.sh             nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+directorio                 v135  guard-codigo.sh      nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+directorio                 v135  guard-completado.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+directorio                 v135  guard-git.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+solo-escritura /dev/null   cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura /dev/null   cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura /dev/null   cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura /dev/null   cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura /dev/null   413c  guard.sh             nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura /dev/null   413c  guard-codigo.sh      nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura /dev/null   413c  guard-completado.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura /dev/null   413c  guard-git.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura /dev/null   v135  guard.sh             nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura /dev/null   v135  guard-codigo.sh      nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura /dev/null   v135  guard-completado.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura /dev/null   v135  guard-git.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura archivo     cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura archivo     cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura archivo     cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura archivo     cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+solo-escritura archivo     413c  guard.sh             nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura archivo     413c  guard-codigo.sh      nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura archivo     413c  guard-completado.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura archivo     413c  guard-git.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+solo-escritura archivo     v135  guard.sh             nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura archivo     v135  guard-codigo.sh      nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura archivo     v135  guard-completado.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+solo-escritura archivo     v135  guard-git.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+/dev/full                  cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  413c  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  413c  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  413c  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  413c  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/dev/full                  v135  guard.sh             nada rc=0 err=<>
+/dev/full                  v135  guard-codigo.sh      nada rc=0 err=<>
+/dev/full                  v135  guard-completado.sh  nada rc=0 err=<>
+/dev/full                  v135  guard-git.sh         nada rc=0 err=<>
+/proc/self/mem (EIO)       cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       413c  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       413c  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       413c  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       413c  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+/proc/self/mem (EIO)       v135  guard.sh             nada rc=0 err=<>
+/proc/self/mem (EIO)       v135  guard-codigo.sh      nada rc=0 err=<>
+/proc/self/mem (EIO)       v135  guard-completado.sh  nada rc=0 err=<>
+/proc/self/mem (EIO)       v135  guard-git.sh         nada rc=0 err=<>
+vacio                      cand  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      cand  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      cand  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      cand  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      413c  guard.sh             deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      413c  guard-codigo.sh      deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      413c  guard-completado.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      413c  guard-git.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=<>
+vacio                      v135  guard.sh             nada rc=0 err=<>
+vacio                      v135  guard-codigo.sh      nada rc=0 err=<>
+vacio                      v135  guard-completado.sh  nada rc=0 err=<>
+vacio                      v135  guard-git.sh         nada rc=0 err=<>
+JSON valido (control)      cand  guard.sh             nada rc=0 err=<>
+JSON valido (control)      cand  guard-codigo.sh      nada rc=0 err=<>
+JSON valido (control)      cand  guard-completado.sh  nada rc=0 err=<>
+JSON valido (control)      cand  guard-git.sh         nada rc=0 err=<>
+JSON valido (control)      413c  guard.sh             nada rc=0 err=<>
+JSON valido (control)      413c  guard-codigo.sh      nada rc=0 err=<>
+JSON valido (control)      413c  guard-completado.sh  nada rc=0 err=<>
+JSON valido (control)      413c  guard-git.sh         nada rc=0 err=<>
+JSON valido (control)      v135  guard.sh             nada rc=0 err=<>
+JSON valido (control)      v135  guard-codigo.sh      nada rc=0 err=<>
+JSON valido (control)      v135  guard-completado.sh  nada rc=0 err=<>
+JSON valido (control)      v135  guard-git.sh         nada rc=0 err=<>
+##### ARNES_INPUT heredado del entorno, entrada estandar cerrada (el heredado escribiria en src/ siendo coordinadora)
+heredado-Write-src cerrada  cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+heredado-Bash-ls  cerrada   cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+heredado-Write-src dir      cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+heredado-Bash-ls legible    cand  guard.sh         nada rc=0 err=<>
+heredado-Write-src cerrada  cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+heredado-Bash-ls  cerrada   cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Bad file descriptor >
+heredado-Write-src dir      cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Is a directory >
+heredado-Bash-ls legible    cand  guard-codigo.sh  nada rc=0 err=<>
+heredado-Write-src cerrada  413c  guard.sh         deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Bash-ls  cerrada   413c  guard.sh         nada rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Write-src dir      413c  guard.sh         deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Bash-ls legible    413c  guard.sh         nada rc=0 err=<>
+heredado-Write-src cerrada  413c  guard-codigo.sh  deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Bash-ls  cerrada   413c  guard-codigo.sh  nada rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Write-src dir      413c  guard-codigo.sh  deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/>
+heredado-Bash-ls legible    413c  guard-codigo.sh  nada rc=0 err=<>
+heredado-Write-src cerrada  v135  guard.sh         deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+heredado-Bash-ls  cerrada   v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+heredado-Write-src dir      v135  guard.sh         deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+heredado-Bash-ls legible    v135  guard.sh         nada rc=0 err=<>
+heredado-Write-src cerrada  v135  guard-codigo.sh  deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+heredado-Bash-ls  cerrada   v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Bad file descripto>
+heredado-Write-src dir      v135  guard-codigo.sh  deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Is a directory >
+heredado-Bash-ls legible    v135  guard-codigo.sh  nada rc=0 err=<>

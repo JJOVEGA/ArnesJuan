@@ -1,0 +1,11 @@
+## locale del entorno NO instalado (xx_XX.UTF-8): variables y stderr tras el atajo, y stderr del hook
+LC_ALL normal: bash: warning: setlocale: LC_ALL: cannot change locale (xx_XX.UTF-8): No such file or directory
+rc=0 antes=xx_XX.UTF-8/<sd> despues=xx_XX.UTF-8/<sd>
+LC_ALL posix: bash: warning: setlocale: LC_ALL: cannot change locale (xx_XX.UTF-8): No such file or directory
+rc=0 antes=xx_XX.UTF-8/<sd> despues=xx_XX.UTF-8/<sd>
+LANG normal: rc=0 antes=<sd>/xx_XX.UTF-8 despues=<sd>/xx_XX.UTF-8
+LANG posix: rc=0 antes=<sd>/xx_XX.UTF-8 despues=<sd>/xx_XX.UTF-8
+hook cand LC_ALL=xx_XX: decision=nada lineas-stderr=1
+hook cand LANG=xx_XX: decision=nada lineas-stderr=0
+hook v135 LC_ALL=xx_XX: decision=nada lineas-stderr=1
+hook v135 LANG=xx_XX: decision=nada lineas-stderr=0

@@ -1,0 +1,28 @@
+proceso-fuera     objeto-legible-src       cand=deny<ARNES: 'src/a.ts' es código de l  413c=deny<ARNES: 'src/a.ts' es código de l  v135=deny<ARNES: 'src/a.ts' es código de l  
+proceso-fuera     objeto-legible-docs      cand=nada  413c=nada  v135=nada  
+proceso-fuera     objeto+basura            cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-fuera     objeto+NUL               cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-fuera     tool_input-numerico      cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-fuera     dos-objetos              cand=nada  413c=nada  v135=nada  
+proceso-fuera     JSON-roto-sin-cwd        cand=nada  413c=nada  v135=nada  
+proceso-fuera     JSON-roto-cwd-al-final   cand=nada  413c=nada  v135=nada  
+proceso-fuera     cwd-sin-manifiesto       cand=nada  413c=nada  v135=nada  
+proceso-fuera     cwd-subdirectorio        cand=nada  413c=nada  v135=nada  
+proceso-fuera     cwd-numerico             cand=nada  413c=nada  v135=nada  
+proceso-fuera     vacia                    cand=nada  413c=nada  v135=nada  
+proceso-fuera     cerrada                  cand=nada  413c=nada  v135=nada  
+proceso-fuera     directorio               cand=nada  413c=nada  v135=nada  
+proceso-proyecto  objeto-legible-src       cand=deny<ARNES: 'src/a.ts' es código de l  413c=deny<ARNES: 'src/a.ts' es código de l  v135=deny<ARNES: 'src/a.ts' es código de l  
+proceso-proyecto  objeto-legible-docs      cand=nada  413c=nada  v135=nada  
+proceso-proyecto  objeto+basura            cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-proyecto  objeto+NUL               cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-proyecto  tool_input-numerico      cand=deny<ARNES: la entrada de esta llamada  413c=deny<ARNES: la entrada de esta llamada  v135=nada  
+proceso-proyecto  dos-objetos              cand=nada  413c=nada  v135=nada  
+proceso-proyecto  JSON-roto-sin-cwd        cand=nada  413c=nada  v135=nada  
+proceso-proyecto  JSON-roto-cwd-al-final   cand=nada  413c=nada  v135=nada  
+proceso-proyecto  cwd-sin-manifiesto       cand=nada  413c=nada  v135=nada  
+proceso-proyecto  cwd-subdirectorio        cand=nada  413c=nada  v135=nada  
+proceso-proyecto  cwd-numerico             cand=nada  413c=nada  v135=nada  
+proceso-proyecto  vacia                    cand=nada  413c=nada  v135=nada  
+proceso-proyecto  cerrada                  cand=nada  413c=nada  v135=nada  
+proceso-proyecto  directorio               cand=nada  413c=nada  v135=nada  

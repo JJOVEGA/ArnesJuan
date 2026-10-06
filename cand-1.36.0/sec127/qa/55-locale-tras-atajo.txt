@@ -1,0 +1,321 @@
+cand     en_US.UTF-8       LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     en_US.UTF-8       LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     en_US.UTF-8       LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     tr_TR.UTF-8       LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.UTF-8       LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+cand     tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+cand     C.UTF-8           LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+cand     C.UTF-8           LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+cand     C.UTF-8           LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=en_US.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  en_US.UTF-8       LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=en_US.UTF-8 LC_CTYPE=<sd> LANG=en_US.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.UTF-8 LANG=C exp=] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -x ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=no
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.UTF-8       LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.UTF-8 LC_CTYPE=<sd> LANG=tr_TR.UTF-8 exp=declare -- ] len=5 low=c4b1 grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=tr_TR.ISO-8859-9 LANG=C exp=] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -x ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=no
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+82ceb63  tr_TR.ISO-8859-9  LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=tr_TR.ISO-8859-9 LC_CTYPE=<sd> LANG=tr_TR.ISO-8859-9 exp=declare -- ] len=7 low=fd grep=0 posix=si
+82ceb63  C.UTF-8           LC_ALL               normal ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL               normal noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL               normal ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL               normal noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL               posix  ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL               posix  noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL               posix  ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL               posix  noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=<sd> exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LANG                 normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LANG                 normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LANG                 normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LANG                 normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LANG                 posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LANG                 posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LANG                 posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LANG                 posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=<sd> LANG=C.UTF-8 exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_CTYPE             normal ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_CTYPE             normal noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_CTYPE             normal ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_CTYPE             normal noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_CTYPE             posix  ascii          IGUAL rc=0 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_CTYPE             posix  noascii        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_CTYPE             posix  ascii-I        IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_CTYPE             posix  noascii-estado IGUAL rc=1 vars[LC_ALL=<sd> LC_CTYPE=C.UTF-8 LANG=C exp=] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-vacia         normal ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-vacia         normal noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-vacia         normal ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-vacia         normal noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-vacia         posix  ascii          IGUAL rc=0 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-vacia         posix  noascii        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-vacia         posix  ascii-I        IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-vacia         posix  noascii-estado IGUAL rc=1 vars[LC_ALL= LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -x ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-no-exportada  normal ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-no-exportada  normal noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-no-exportada  normal ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-no-exportada  normal noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=no
+82ceb63  C.UTF-8           LC_ALL-no-exportada  posix  ascii          IGUAL rc=0 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-no-exportada  posix  noascii        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-no-exportada  posix  ascii-I        IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+82ceb63  C.UTF-8           LC_ALL-no-exportada  posix  noascii-estado IGUAL rc=1 vars[LC_ALL=C.UTF-8 LC_CTYPE=<sd> LANG=C.UTF-8 exp=declare -- ] len=5 low=69 grep=1 posix=si
+TOTAL 320; no IGUAL: 0

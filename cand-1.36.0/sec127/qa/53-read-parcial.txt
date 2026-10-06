@@ -1,0 +1,42 @@
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Input/output error>
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Input/output error>
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    413c  guard.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    413c  guard-codigo.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Input/output error>
+pty: JSON (Write a src/ de la coordinadora) y luego EIO    v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Input/output error>
+pty: JSON truncado y luego EIO                             cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Input/output error>
+pty: JSON truncado y luego EIO                             cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Input/output error>
+pty: JSON truncado y luego EIO                             413c  guard.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pty: JSON truncado y luego EIO                             413c  guard-codigo.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pty: JSON truncado y luego EIO                             v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Input/output error>
+pty: JSON truncado y luego EIO                             v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Input/output error>
+pipe no bloqueante sin datos (EAGAIN)                      cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+pipe no bloqueante sin datos (EAGAIN)                      cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+pipe no bloqueante sin datos (EAGAIN)                      413c  guard.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pipe no bloqueante sin datos (EAGAIN)                      413c  guard-codigo.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pipe no bloqueante sin datos (EAGAIN)                      v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>
+pipe no bloqueante sin datos (EAGAIN)                      v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>
+Traceback (most recent call last):
+  File "/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/qa/53-read-parcial.py", line 29, in <module>
+    if "0,3" in nombre: time.sleep(0.3); os.write(w,src.encode())
+                                         ~~~~~~~~^^^^^^^^^^^^^^^^
+BrokenPipeError: [Errno 32] Broken pipe
+##### segunda parte (53-read-parcialb.py)
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       413c  guard.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       413c  guard-codigo.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>
+   (tuberia rota: el hook ya habia salido)
+pipe no bloqueante: JSON a los 0,3 s                       v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s cand  guard.sh         deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s cand  guard-codigo.sh  deny<ARNES: la entrada de esta llamada no se pudo > rc=0 err=</home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh: line 41: read: 0: read error: Resource temporarily unavailable>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s 413c  guard.sh         nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s 413c  guard-codigo.sh  nada rc=1 err=</tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5/413c6bd/ho>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s v135  guard.sh         nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>
+pipe no bloqueante: JSON ya escrito, escritor abierto 0,3 s v135  guard-codigo.sh  nada rc=0 err=</home/juan/dev/ArnesJuan-v1.35.0-base/hooks/lib.sh: line 26: read: 0: read error: Resource temporarily unavail>

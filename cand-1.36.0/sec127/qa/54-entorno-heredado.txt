@@ -1,0 +1,20 @@
+[]                                       cand  guard.sh         Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[]                                       cand  guard-codigo.sh  Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[]                                       v135  guard.sh         Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: nada rc=0
+[]                                       v135  guard-codigo.sh  Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1]                    cand  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1]                    cand  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1]                    v135  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1]                    v135  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1 ARNES_TOOL=Read]    cand  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1 ARNES_TOOL=Read]    cand  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1 ARNES_TOOL=Read]    v135  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_INPUT_LISTO=1 ARNES_TOOL=Read]    v135  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_MANIFEST_LISTO=1]                 cand  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[ARNES_MANIFEST_LISTO=1]                 cand  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[ARNES_MANIFEST_LISTO=1]                 v135  guard.sh         Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_MANIFEST_LISTO=1]                 v135  guard-codigo.sh  Write src/ coordinadora legible: nada rc=0 | entrada cerrada: nada rc=0
+[ARNES_GLOBS_CARGADOS=1]                 cand  guard.sh         Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[ARNES_GLOBS_CARGADOS=1]                 cand  guard-codigo.sh  Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: deny<ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta> rc=0
+[ARNES_GLOBS_CARGADOS=1]                 v135  guard.sh         Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: nada rc=0
+[ARNES_GLOBS_CARGADOS=1]                 v135  guard-codigo.sh  Write src/ coordinadora legible: deny<ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador> rc=0 | entrada cerrada: nada rc=0

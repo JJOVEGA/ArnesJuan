@@ -1,0 +1,193 @@
+IGUAL    terminé C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/terminé/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    terminé tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/TERMINE/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          normal coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          normal desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          normal desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   C.UTF-8          posix  desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   en_US.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=deny<ARNES: este comando escribe en 'req v135=deny<ARNES: este comando escribe en 'req 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      normal desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.UTF-8      posix  desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 normal desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  coord         guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LISTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/LİSTO/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard.sh             sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+IGUAL    listo   tr_TR.ISO-8859-9 posix  desarrollador guard-completado.sh  sed -i 's/en-revision/lısto/' requirements/REQ-900.md cand=nada v135=nada 
+TOTAL 192; DISTINTOS cand/v1.35.0: 0

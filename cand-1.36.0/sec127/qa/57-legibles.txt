@@ -1,0 +1,9 @@
+entrada grande: 100209 bytes
+cand  guard.sh             lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+cand  guard-codigo.sh      lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+cand  guard-completado.sh  lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+cand  guard-git.sh         lento=nada | salto=nada | crlf=nada | grande=nada | edit-req=nada | git-status=nada
+v135  guard.sh             lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+v135  guard-codigo.sh      lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+v135  guard-completado.sh  lento=nada | salto=nada | crlf=nada | grande=deny<> | edit-req=nada | git-status=nada
+v135  guard-git.sh         lento=nada | salto=nada | crlf=nada | grande=nada | edit-req=nada | git-status=nada

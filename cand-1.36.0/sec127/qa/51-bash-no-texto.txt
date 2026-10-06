@@ -1,0 +1,265 @@
+IGUAL    {command:5}                            ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:5}                            ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:5}                            ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5}                            ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:true}                         ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:true}                         ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:true}                         ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:false}                        ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:false}                        ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:false}                        ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:[]}                           ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:[]}                           ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:[]}                           ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:["ls"]}                       ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:["ls"]}                       ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:["ls"]}                       ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:{}}                           ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:{}}                           ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:{}}                           ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:null}                         ag=-                          guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=-                          guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=-                          guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=-                          guard-git.sh         cand=nada rc=0
+IGUAL    {command:null}                         ag=desarrollador              guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=desarrollador              guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=desarrollador              guard-git.sh         cand=nada rc=0
+IGUAL    {command:null}                         ag=arnes-juan:desarrollador   guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=arnes-juan:desarrollador   guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=arnes-juan:desarrollador   guard-git.sh         cand=nada rc=0
+IGUAL    {command:null}                         ag=qa-tester                  guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=qa-tester                  guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=qa-tester                  guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=qa-tester                  guard-git.sh         cand=nada rc=0
+IGUAL    {command:null}                         ag=intruso                    guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=intruso                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=intruso                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=intruso                    guard-git.sh         cand=nada rc=0
+IGUAL    {command:null}                         ag=SINTIPO                    guard.sh             cand=nada rc=0
+IGUAL    {command:null}                         ag=SINTIPO                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:null}                         ag=SINTIPO                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:null}                         ag=SINTIPO                    guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=-                          guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=-                          guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=-                          guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=-                          guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=desarrollador              guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=desarrollador              guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=desarrollador              guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=arnes-juan:desarrollador   guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=arnes-juan:desarrollador   guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=arnes-juan:desarrollador   guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=qa-tester                  guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=qa-tester                  guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=qa-tester                  guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=qa-tester                  guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=intruso                    guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=intruso                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=intruso                    guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=intruso                    guard-git.sh         cand=nada rc=0
+IGUAL    {}                                     ag=SINTIPO                    guard.sh             cand=nada rc=0
+IGUAL    {}                                     ag=SINTIPO                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {}                                     ag=SINTIPO                    guard-completado.sh  cand=nada rc=0
+IGUAL    {}                                     ag=SINTIPO                    guard-git.sh         cand=nada rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=-                          guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=-                          guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=-                          guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=-                          guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=desarrollador              guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=desarrollador              guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=desarrollador              guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=arnes-juan:desarrollador   guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=arnes-juan:desarrollador   guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=arnes-juan:desarrollador   guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=qa-tester                  guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=qa-tester                  guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=qa-tester                  guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=intruso                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=intruso                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=intruso                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=SINTIPO                    guard.sh             cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=SINTIPO                    guard-completado.sh  cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:5,file_path:"src/a.ts"}       ag=SINTIPO                    guard-git.sh         cand=deny<ARNES: el campo 'command' de esta llamada no es texto, asi que esta pu> rc=0
+IGUAL    {command:"ls",file_path:5}             ag=-                          guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=-                          guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=-                          guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=-                          guard-git.sh         cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=desarrollador              guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=desarrollador              guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=desarrollador              guard-git.sh         cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=arnes-juan:desarrollador   guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=arnes-juan:desarrollador   guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=arnes-juan:desarrollador   guard-git.sh         cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=qa-tester                  guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=qa-tester                  guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=qa-tester                  guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=qa-tester                  guard-git.sh         cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=intruso                    guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=intruso                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=intruso                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=intruso                    guard-git.sh         cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=SINTIPO                    guard.sh             cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=SINTIPO                    guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=SINTIPO                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"ls",file_path:5}             ag=SINTIPO                    guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=-                          guard.sh             cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=-                          guard-codigo.sh      cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=-                          guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=-                          guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=desarrollador              guard.sh             cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=desarrollador              guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=desarrollador              guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=desarrollador              guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=arnes-juan:desarrollador   guard.sh             cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=arnes-juan:desarrollador   guard-codigo.sh      cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=arnes-juan:desarrollador   guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=arnes-juan:desarrollador   guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=qa-tester                  guard.sh             cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=qa-tester                  guard-codigo.sh      cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=qa-tester                  guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=qa-tester                  guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=intruso                    guard.sh             cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=intruso                    guard-codigo.sh      cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=intruso                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=intruso                    guard-git.sh         cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=SINTIPO                    guard.sh             cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=SINTIPO                    guard-codigo.sh      cand=deny<ARNES: el comando escribe en 'src/a.ts', que es código de la app; só> rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=SINTIPO                    guard-completado.sh  cand=nada rc=0
+IGUAL    {command:"echo x > src/a.ts",file_path:5} ag=SINTIPO                    guard-git.sh         cand=nada rc=0
+TOTAL 264 casos; DISTINTOS frente a 413c6bd: 0
