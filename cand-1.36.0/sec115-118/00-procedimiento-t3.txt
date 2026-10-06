@@ -1,0 +1,24 @@
+SEC-115 / REQ-007 CA-68, Medida, vector T3 — procedimiento registrado ANTES de medir (2026-10-06)
+Comisión: desarrollador, paso 6 de 1.36.0, fase 1 (casos con fail-before, sin reparar).
+
+Qué es T3 (R-045-A §5): la búsqueda literal del `old_string` en la reconstrucción de un Edit
+(`[[ disco == *"$old"* ]]`), cuyo coste es del orden de |disco| x |old_string|.
+
+Construcción del vector (fija antes de medir):
+- REQ en disco: línea 1 `# REQ-950 ` seguida de una racha de L caracteres `a`; después
+  `Estado: en-revisión`, `QA: pendiente`, `Seguridad: pendiente`, `Sensible a seguridad: sí`,
+  `Rigor: critico`; una línea en blanco y `## Texto` / `x`.
+- Edit de la coordinadora (sin agent_id) con old_string = (L/2 caracteres `a`) + "\nEstado: en-revisión"
+  y new_string = (las mismas L/2 `a`) + "\nEstado: completado": la media racha es literal AL FINAL de la
+  racha, y la edición cierra el REQ con QA y Seguridad pendientes (esperado: deny).
+- Entrada por guard.sh (el punto de entrada del matcher), LANG=C.UTF-8, sin LC_ALL, Linux/WSL2,
+  bajo `timeout 120` para poder ver la duración por encima de 60 s.
+
+Barrido de tamaño (fijo antes de medir):
+- Árbol: v1.35.0 (/home/juan/dev/ArnesJuan-v1.35.0-base/hooks, 3956a6f).
+- L en 32000, 64000, 128000, 256000, 512000, en ese orden, UNA corrida por punto.
+- Regla de parada: el primer L cuya duración supere 60 s es el tamaño del caso T3 del banco. Se para
+  ahí (no se miden los mayores).
+- Si ninguno supera 60 s con L = 512000: T3 NO reproduce su fail-before en este anfitrión; se declara
+  con las duraciones medidas y el caso queda como control (CA-68, «Fail-before contra v1.35.0»).
+- Con el L elegido se mide una vez en 78a2f33 (los hooks del worktree) bajo timeout 120, para anotar.
