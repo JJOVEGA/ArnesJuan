@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · QA-007-06 cerrado: write-back de estado del analista en CA-47 p. 20 y cierre por QA; el paso 5 pasa a seguridad
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (viñeta «Reparado en SEC-127…», Historial; ~59 k tokens), `qa-tester` (cierre en `Hallazgos abiertos:` y nota fechada) y la coordinadora.
+
+- La viñeta de CA-47 p. 20 ya dice que QA-007-06 está construido en `a59917d` y validado en el paso 5, con el límite sin `CLAUDE_PROJECT_DIR` conservado; el texto anterior queda como «Antes».
+- `Hallazgos abiertos:` de REQ-007 queda con QA-007-01 (límite declarado), SEC-127, SEC-128 y QA-007-07, además de los anteriores a esta ventana. El lector no ve valores anómalos.
+- **Avance (regla 6):** el paso 5 queda con QA hecho y sin hallazgos contra su código; sigue la determinación de seguridad.
+
 ## [GitHub] — 2026-10-06 · QA del paso 5 (Opus) sobre `78a2f33`: el código cumple el contrato, sin hallazgos contra él; QA-007-05 cerrado; QA-007-06 validado y pendiente del write-back; QA-007-07 (preexistente) → F-136-11 y P-136-N
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` y la cabecera de REQ-007; evidencia `ba474ae`) y la coordinadora.
 
