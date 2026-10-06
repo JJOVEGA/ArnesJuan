@@ -47,6 +47,35 @@ _(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-06, sobre la cabeza `098896c`) — **La coordinadora pasa al modelo Fable 5.1 como prueba acotada** (lo que queda del paso 5 y SEC-115/118); los subagentes conservan su modelo; el plan no cambia
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`, tras `/model fable`):
+
+> Cambio de modelo de la coordinadora a Fable, decidido por el propietario,
+> como prueba acotada durante lo que queda del paso 5 y SEC-115/118. Los
+> subagentes mantienen su modelo. Nada del plan cambia: continúa desde donde
+> está (P-136-M en medición dirigida) con la autorización vigente, la
+> plantilla y ESTADO; no vuelvas a pedir lo ya autorizado.
+>
+> Registra el cambio en la cola y en ESTADO con la fecha y la cabeza. Al
+> cerrar SEC-115/118, entrega una comparación con CA-54 y SEC-120 en tres
+> cifras: decisiones escaladas al propietario, paradas no previstas por el
+> plan, y tokens totales por rol (coordinadora aparte). Sin valoración; sólo
+> las cifras, para que el propietario decida si el cambio se queda.
+>
+> Reglas que no cambian con el modelo: hooks/ sólo lo toca el desarrollador;
+> un control del proveedor que detenga algo se registra y no se reintenta;
+> publicar, fusionar y etiquetar son del propietario. Y recuérdale el push
+> de la candidata al final de cada fase comiteada.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Cabeza al cambiar:** `098896c` (P-136-M resuelta; medición dirigida en curso). Las entradas del CHANGELOG escritas por la coordinadora desde aquí llevan «modelo de IA: Fable 5.1»; las de los subagentes, el suyo.
+- **Cifras de referencia para la comparación**, tomadas de las entradas del CHANGELOG de cada intervención (la coordinadora aparte):
+  - **CA-54 (intervención 1):** decisiones escaladas al propietario: 7 (P-136-A a P-136-G); paradas no previstas por el plan: 4 (inventario distinto por la semilla, atajo frente a CA-54 (c), 5 213 ms sin el atajo, QA-007-02 en la re-verificación); tokens: desarrollador ≈ 682 k, QA ≈ 494 k, analista ≈ 954 k, seguridad ≈ 252 k.
+  - **SEC-120 (pasos 1–4):** decisiones escaladas: 3 (los tres puntos de la fase 2, en una sola entrada) + P-136-H + P-136-I = 5; paradas no previstas: 1 (la pausa por falta de créditos; las dos vueltas de hallazgos de QA estaban previstas por el plan como pasada correctiva); tokens: desarrollador ≈ 204 k + 90 k + 75 k ≈ 369 k, QA ≈ 203 k + 208 k ≈ 411 k, analista ≈ 132 k + 104 k ≈ 236 k, seguridad ≈ 192 k.
+  - **Paso 5 (SEC-127, QA-007-06, SEC-128) y SEC-115/118:** se cuentan desde aquí, y las cifras se entregan al cerrar SEC-115/118, sin valoración.
+- **Recordatorio al propietario, como pide:** `cand/1.36.0` lleva todos sus commits en local, sin push. El push es suyo.
+
 ### RESUELTA (propietario, 2026-10-06) — **P-136-M: (A)**, medición dirigida de REQ-017 CA-08 (ii) con el anfitrión en reposo sobre cinco commits
 
 **Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
