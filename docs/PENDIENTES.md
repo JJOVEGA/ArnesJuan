@@ -2290,3 +2290,8 @@ ninguna mata al hook.»
 
 ### PR-136-3 — Hallazgo de proceso, clase `instrumento`: una edición de `hooks/guard-completado.sh` por consola (Python) en la fase 2 del paso 6, deshecha y rehecha con `Edit`
 - **Qué:** el desarrollador lo declaró él mismo: la comprobación del plazo antes de las gates se aplicó primero por consola, se deshizo y se volvió a aplicar con `Edit`; el contenido final es el mismo. Ninguna puerta midió la primera edición (§13). Tercera instancia (PR-136-1, PR-136-2): el control mecánico que lo cerraría es la ficha b) de 1.37.
+
+### F-136-17 — 1.37: adelgazar `REQ-007.md` (660 431 bytes) moviendo su historia a `historial/` con la rotación por sección del arnés (P-136-O (1) (A))
+- **Por qué:** con los techos de SEC-115 (`ARNES_PIEZAS_MAX_BYTES` = 393 216), el `Write` entero de `REQ-007.md` y los `Edit` con `old_string` de más de ~6,5 KB sobre él se deniegan. El tamaño es el síntoma: el REQ acumula la historia de dos ventanas. El arnés ya trae la rotación de **una sección** de un documento a `historial/<nombre>.md` dejando intactos la cabecera y los criterios (`rotacion.artefactos`, `glob` + `seccion`; `AGENTS.md` §13).
+- **Qué hacer en 1.37:** declarar en `.arnes/config.json` (archivo protegido: lo edita el `desarrollador` con gate humano) la sección de historia de los REQ y activar la rotación, o mover a mano la historia de REQ-007 con su enlace. Medir después que el `Write` entero vuelve a caber bajo el techo.
+- **Dueño propuesto:** `desarrollador` (manifiesto) y `analista-requerimientos` (qué sección es historia).

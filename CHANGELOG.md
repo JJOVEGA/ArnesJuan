@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · P-136-O (1) (A), (2) (A) y P-136-N (A) adoptadas por el propietario; ficha F-136-17 (adelgazar `REQ-007.md`); el paso 6 sigue con QA-007-07 y el write-back de los techos en paralelo
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** («Decisión propuesta, lista para adoptar: …») y el texto adoptado, en la cola; la cola queda vacía.
+- **`docs/PLAN.md`**, paso 6: incluye QA-007-07 y los techos como cambio de compatibilidad declarado.
+- **F-136-17:** adelgazar `REQ-007.md` a `historial/` en 1.37 con la rotación por sección.
+- **Avance (regla 6):** quedan resueltas las dos paradas del paso 6; faltan QA-007-07 (una línea y dos casos), el write-back y la validación.
+
 ## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista en CA-67/68/69 de lo que no depende de P-136-O (SIN VALIDAR); `hooks/entrada.sh` en `Archivos:` de REQ-007
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora.
 

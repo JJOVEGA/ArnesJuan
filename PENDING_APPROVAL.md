@@ -43,8 +43,24 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-06: P-136-O y P-136-N resueltas por el propietario, en § Resueltas.)_
 
-### [2026-10-06] (coordinadora) — P-136-N: QA-007-07 (`contrato`, baja, preexistente): variables `ARNES_*_LISTO` heredadas del entorno dejan a las puertas sin decidir. ¿Entra en el paso 6 junto a SEC-129, o va a 1.37?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-06) — **P-136-O: (1) (A) y (2) (A); P-136-N: (A)** — adoptada la decisión propuesta por la coordinadora, literal
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisión propuesta, lista para adoptar: «P-136-O: (1) (A) y (2) (A). P-136-N: (A).»
+
+**Texto adoptado** (el de la coordinadora en las fichas P-136-O y P-136-N, que el propietario hace suyo con esa respuesta):
+- **P-136-O (1) (A):** los techos de tamaño (`ARNES_PIEZAS_MAX_BYTES` = 393 216 y `ARNES_EDIT_MAX_BUSQUEDA` = 2³²) quedan como **cambio de compatibilidad declarado**; el analista lo escribe en CA-68, CA-69 p. 3, la guía y las notas (consecuencia: un REQ de más de 393 216 bytes no se escribe entero de una vez, y un `Edit` con `old_string` de más de ~6,5 KB sobre un documento de ese tamaño se deniega: se parte la edición). **Ficha para adelgazar `REQ-007.md`** a `historial/` en 1.37.
+- **P-136-O (2) (A):** QA observa el FAIL de la sección 24 en su propio inventario y en varias corridas de la sección en reposo; si lo reproduce, es hallazgo; si no, INS-136-3.
+- **P-136-N (A):** QA-007-07 entra en el paso 6 con SEC-129, bajo la propiedad de CA-68 enunciada sobre el entorno heredado: ninguna decisión del hook depende de nada que herede del entorno (modo del intérprete, variables `ARNES_*`; `BASH_ENV` queda como ficha F-136-9). Caso de banco para cada variable. Nada más entra.
+
+**Lo que añade la coordinadora:** en paralelo y sobre archivos disjuntos, el desarrollador repara QA-007-07 (`hooks/lib.sh`, banco, `docs/arnes/`) y el analista escribe el movimiento de los techos y la propiedad ampliada (`requirements/`, guía). Después QA (fase 3), seguridad (fase 4), commit validado y paso 7. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-06] (coordinadora) — P-136-N: QA-007-07 (`contrato`, baja, preexistente): variables `ARNES_*_LISTO` heredadas del entorno dejan a las puertas sin decidir. ¿Entra en el paso 6 junto a SEC-129, o va a 1.37?
 
 **Contexto.** Hallazgo nuevo de QA en el paso 5 (F-136-11 en `docs/PENDIENTES.md`). No lo introduce el paso 5: v1.35.0 se comporta igual. Es la misma familia que SEC-129 (`POSIXLY_CORRECT`): un estado heredado del entorno apaga las puertas sin ruido. La reparación es inicializar dos variables al cargar `lib.sh` (una línea; sin procesos). La propiedad que R-054 propone para CA-68 lo cubre si se enuncia sobre «el entorno heredado» y no sólo sobre «el modo del intérprete».
 
@@ -61,7 +77,7 @@
 **Espera:** elección del propietario.
 
 
-### [2026-10-06] (coordinadora) — P-136-O: la fase 2 del paso 6 (`0efd3c2`) cumple el contrato, pero (1) sus techos de tamaño deniegan dos llamadas legítimas sobre `REQ-007.md` (660 KB) que v1.35.0 dejaba pasar, y (2) un FAIL no reproducido en el inventario, en un caso que ejecuta código del delta
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-06] (coordinadora) — P-136-O: la fase 2 del paso 6 (`0efd3c2`) cumple el contrato, pero (1) sus techos de tamaño deniegan dos llamadas legítimas sobre `REQ-007.md` (660 KB) que v1.35.0 dejaba pasar, y (2) un FAIL no reproducido en el inventario, en un caso que ejecuta código del delta
 
 **Contexto.** `docs/arnes/v1.36.0-sec115-118-fase2.md`; evidencia `cand-1.36.0/sec115-118/`, commit `65092c8`. **Conforme:** sección 47 93/0 (D y A con motivos de ≤ 16 384 bytes; T1–T3 en `deny` en 0,4–4,3 s; las 40 filas POSIX en `deny`); tope del motivo medido en 273 casos ASCII y multibyte; E1 sin cambio, E2 12/12 PASS, E3 PASS; inventario 2 (a) sólo con 2 (c), INS-136-2 y un nombre de caso que depende del PID; banco 2290/0/13; autoprueba 117/0; gates rc 0; +0 procesos. Técnica: el motivo va a `jq` por la entrada estándar y se acota a 16 384 bytes; plazo propio a 30 s (responde en ≤ 40); techos `ARNES_PIEZAS_MAX_BYTES` = 393 216 y `ARNES_EDIT_MAX_BUSQUEDA` = 2³²; `hooks/entrada.sh` nuevo con `unset POSIXLY_CORRECT; set +o posix` y una trampa de salida que emite `deny` fijo si el proceso termina sin juicio; R2 para códigos no declarados y puertas abandonadas. **SEC-130 no queda cubierto por R2** (su 0 es respuesta válida de su vocabulario): sigue como F-136-12, para 1.37.
 
@@ -93,8 +109,6 @@
 **Qué trabajo sigue mientras no se decida:** el write-back del analista de lo que no depende de (1) (R1/R2, plazo, tope del motivo, el estado de SEC-130) y el registro de las fichas; QA (fase 3) espera a (1), porque valida contra el contrato. **Agrupada con P-136-N** (QA-007-07), que sigue pendiente.
 
 **Espera:** elección del propietario.
-
-## Resueltas
 
 ### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-06) — **Plan autorizado: paso 6 de 1.36.0, SEC-115 y SEC-118 (CA-67, CA-68, CA-69; ADR-017), con la reparación de SEC-129 (`POSIXLY_CORRECT`)**
 
