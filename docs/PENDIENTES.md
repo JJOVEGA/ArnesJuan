@@ -2181,6 +2181,7 @@ ninguna mata al hook.»
 - **Dueños propuestos:** `desarrollador` (el caso del banco con su fail-before y el mecanismo), y
   `analista-requerimientos` si la autorización de la 2b pide escribir la propiedad en el contrato de REQ-007.
   **Forzador:** la autorización de la intervención 2b. **Ventana:** 1.36.0.
+- **Ventana (corrección de la coordinadora, 2026-10-06):** 1.37, por el ajuste de alcance del propietario del 2026-10-05 (F-136-6); cualquier mención a 1.36.0 en esta ficha es anterior a ese ajuste.
 
 ### PR-136-2 — Hallazgo de proceso, clase `instrumento`: una edición del banco por consola en la fase 1 de SEC-120 (2026-10-05)
 - **Qué:** el `desarrollador` usó `sed -i` sobre `tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh` para renombrar `$GJ` a `$GJ120` en cinco filas, contra la instrucción del encargo de editar sólo con Edit/Write. Lo declaró él mismo (`docs/arnes/v1.36.0-sec120-fase1.md`; commit `6759a8e`).

@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Borrador de las notas `[1.36.0]` (analista) en `docs/arnes/notas-1.36.0-borrador.md`, con huecos `[PENDIENTE: …]`; tres desajustes detectados para el cierre; F-136-5 corregida a 1.37
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~? k tokens) y la coordinadora.
+
+- **Borrador:** seis secciones calcadas de `[1.35.0]` más «Lo no medido»; siete cambios de compatibilidad con su decisión citada (incluido el plazo propio, que CA-68 y CA-69 p. 3 ya declaran); 12 límites declarados; 12 decisiones de riesgo; firmas por intervención con huecos para QA, seguridad y CI del paso 6; fichas a–e; una línea por commit. No dice «reparado» de SEC-115/118/129 ni QA-007-07 (CA-69 p. 5).
+- **Desajustes para el cierre:** (1) la nota de CA-54, la guía y el texto de QA-007-01 siguen poniendo la 2b «después de SEC-120» (es 1.37 desde el 2026-10-05): write-back del analista y de QA al cerrar; F-136-5 corregida ahora; (2) QA-023-10 sigue abierto con texto de 1.35.0: lo decide QA en la fase 3; (3) `AGENTS.md` §13, su plantilla y `requirements/README.md` declaran SEC-115/118 como limitaciones: su write-back necesita autorización expresa del propietario (el plan dice «No AGENTS.md»), se presenta en el paso 7.
+- **La guía** no tiene entradas para la entrada ilegible, `false`, `file_path` no textual, el motivo acotado, el plazo ni el modo POSIX: write-back del cierre, tras la validación.
+- **Avance (regla 6):** el cierre tiene su borrador; falta lo que la validación decida.
+
 ## [Interno] — 2026-10-06 · Paso 7, adelantado: `propuesta-v1.35.0/` pasa a `docs/historia/propuesta-v1.35.0/` (dos archivos con `git mv`, sin reescribir, con README); el borrador de las notas `[1.36.0]` lo escribe el analista en `docs/arnes/`
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora (texto y trazabilidad, dentro del plan de versión: «limpieza de `propuesta-v1.35.0/` a `docs/historia` o evidencia»).
 
