@@ -63,6 +63,35 @@
 **Espera:** elección del propietario.
 
 
+### [2026-10-05] (coordinadora) — P-136-I: QA-007-06 (`contrato`, baja, introducido por la pasada correctiva de SEC-120). Con la entrada estándar cerrada, los guardianes abortan sin decisión. No quedan pasadas: ¿cómo se cierra SEC-120?
+
+**Contexto.** Re-verificación de QA de la pasada correctiva única (`413c6bd`; `docs/qa/REQ-007.md`, «SEC-120: re-verificación de la pasada correctiva»; evidencia `qa2/`, commit `6d71b19`).
+- **Conforme:**
+  - QA-007-03 y QA-007-04, reparados y cerrados;
+  - 456 filas de ataque sin ningún movimiento de `deny` a `allow`, y 34 movimientos de «sin decisión» a `deny`, todos en las formas reparadas;
+  - sin falsos positivos;
+  - los hooks que no son guardianes, idénticos a v1.35.0;
+  - inventario 2 (a) sólo con un INCONCLUSO de reloj (2 (c));
+  - banco 2153/0/13, autoprueba 117/0, gates rc 0;
+  - +0 procesos en el camino común.
+- **QA-007-06:** `bash guard.sh <&-` → `lib.sh: line 37: ARNES_INPUT: unbound variable`, rc 1 y sin decisión, en los cuatro guardianes. v1.35.0 y `aba1c9b` salían con rc 0, también sin decisión, así que **ninguna decisión cambia**. No es alcanzable desde el host en lo observado.
+  - **Causa:** `read` falla y no asigna; con `guardian` el preludio ya no sale antes, y `set -u` corta.
+  - **Por qué es `contrato`:** el punto 20 promete `deny` cuando la entrada no se puede leer «por cualquier causa».
+- **Presupuesto:** la única pasada correctiva del plan de SEC-120 está gastada (§6: agotado el tope, se cierra con el residual declarado o se escala).
+
+**Pregunta.** ¿Cómo se trata QA-007-06?
+
+**Opciones.**
+- **(A) Una pasada más, sólo para QA-007-06**, más su re-verificación por QA. La reparación es de una línea: inicializar la variable o tratar el fallo de `read` como entrada ilegible. **Consecuencia:** de 30 a 60 minutos; excede el plan.
+- **(B) Cerrar SEC-120 con QA-007-06 como residual declarado** y repararlo dentro de SEC-127 (paso 5), que es una intervención corta sobre `hooks/lib.sh` con desarrollador, QA y seguridad, y que va antes de publicar. **Consecuencia:** no se abre ningún ciclo nuevo y se repara antes de la publicación; SEC-120 pasa a seguridad con este residual escrito.
+- **(C) Declararlo límite permanente** (entrada estándar cerrada → sin decisión, como en v1.35.0), con write-back del analista en el punto 20. **Consecuencia:** cero código, pero el punto 20 deja de prometer «por cualquier causa».
+
+**Recomendación de la coordinadora: (B).** Ninguna decisión cambia, no se alcanza desde el host, y SEC-127 ya toca el mismo archivo con su propio ciclo completo antes de publicar.
+
+**Qué trabajo sigue mientras no se decida:** ninguno del plan. La seguridad de SEC-120 (paso 3) espera a esta decisión y a P-136-H, porque QA no es favorable sin una de ellas. Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario. **Agrupada con P-136-H**, que está arriba.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-10-05, posterior a `d2880c1`) — **Ajuste de alcance de 1.36.0**: SEC-127 se repara sola, entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 como ficha; orden final de 1.36.0 en siete pasos; nada más entra

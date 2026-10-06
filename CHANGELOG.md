@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · SEC-120: re-verificación de QA sobre `413c6bd`, CON HALLAZGOS. QA-007-03/04 cerrados; QA-007-06 (`contrato`, baja) nuevo; ficha P-136-I agrupada con P-136-H; plan PARADO
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `6d71b19`) y la coordinadora.
+
+- **Conforme:**
+  - filas nuevas en verde, con fail-before en `aba1c9b`, `82ceb63` y v1.35.0;
+  - inventario 2 (a) sólo con un INCONCLUSO de reloj;
+  - banco 2153/0/13, autoprueba 117/0, gates rc 0;
+  - +0 procesos en el camino común;
+  - 456 filas de ataque sin ningún `deny` → `allow` y sin falsos positivos;
+  - los hooks que no son guardianes, idénticos a v1.35.0.
+- **QA-007-06:** con la entrada estándar cerrada (`<&-`), `set -u` aborta los guardianes con rc 1 y sin decisión. v1.35.0 tampoco decidía. No es alcanzable desde el host en lo observado.
+- **P-136-I** (recomendación (B): residual declarado y reparación dentro de SEC-127, antes de publicar), agrupada con P-136-H.
+- **Avance (regla 6):** SEC-120 reparado en lo esencial; falta la decisión del propietario para pasar a seguridad.
+
 ## [Interno] — 2026-10-05 · SEC-120: pasada correctiva de QA-007-03/04 en `413c6bd` (SIN VALIDAR); ESTADO a la re-verificación de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
