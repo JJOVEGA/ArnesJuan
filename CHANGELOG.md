@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 5: write-back del analista de P-136-J (SEC-128: un `file_path` que no es texto no deja pasar a nadie) y de P-136-K (SEC-127 acreditado con la sección 47 y la lectura del código; bash ≤ 5.0 en modo POSIX, no medido); ficha F-136-7 (O-52-3); `Archivos:` de REQ-007 corregido
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~160 k tokens) y la coordinadora.
+
+- **CA-47 p. 20:**
+  - SEC-128: en `guard-codigo`, fail-closed a todo agente; K5 pasa a esperar `deny`, con el movimiento declarado;
+  - SEC-127: «cómo se acredita» (LO1–LO4, LK y la lectura del código; bash ≤ 5.0 en modo POSIX, no medido).
+- **Guía «Hacia 1.36.0»:** el párrafo de SEC-127.
+- **`docs/PENDIENTES.md`:** F-136-7 (O-52-3), que clasifica el auditor; sin ventana en 1.36.0.
+- **`Archivos:` de REQ-007:** gana `47-lectura-fallida-y-locale.sh`; `47-decision-emitida.sh` queda como previsión de CA-67/68.
+- **Avance (regla 6):** el contrato del paso 5 está completo; sigue SEC-128 (desarrollador).
+
 ## [Interno] — 2026-10-06 · P-136-J (A, acotada), P-136-K (A) y P-136-L (A) resueltas por el propietario; encadenado sin parar hasta abrir SEC-115/118
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

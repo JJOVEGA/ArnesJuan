@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
-> **Plan autorizado vigente: paso 5 de 1.36.0, SEC-127 más QA-007-06 (por delegación del propietario del 2026-10-05), fase 3 de 4 (fase 2 en `a59917d`, evidencia `281869b`, SIN VALIDAR: SEC-127 guarda y restaura `LC_ALL` sin subshell; QA-007-06 vacía `ARNES_INPUT` antes del `read`; sección 47 32/0; inventario CA-69 2 (a) idéntico a `22-`; banco 2185/0/13; +0 procesos en el camino común). **P-136-J/K/L = (A)** (propietario, 2026-10-06). Siguiente acción, en serie y sin parar: (1) write-back del analista (J, K y la ficha O-52-3); (2) el desarrollador repara SEC-128 (`file_path` que no es texto → nadie pasa); (3) QA del paso 5 entero; (4) seguridad: la revisión corta de `POSIXLY_CORRECT` más SEC-127, SEC-128 y QA-007-06; (5) commit validado; (6) apertura de SEC-115/118.**  Plan literal en `PENDING_APPROVAL.md` § Resueltas. **SEC-120 está cerrado como intervención** (commit validado; R-053: `mitigado` en el candidato `413c6bd`, con el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR`). **P-136-J (SEC-128) está pendiente del propietario.** La fase 2 de SEC-127 espera esa decisión. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: paso 5 de 1.36.0, SEC-127 más QA-007-06 (por delegación del propietario del 2026-10-05), fase 3 de 4 (fase 2 en `a59917d`, evidencia `281869b`, SIN VALIDAR: SEC-127 guarda y restaura `LC_ALL` sin subshell; QA-007-06 vacía `ARNES_INPUT` antes del `read`; sección 47 32/0; inventario CA-69 2 (a) idéntico a `22-`; banco 2185/0/13; +0 procesos en el camino común). **P-136-J/K/L = (A)** (propietario, 2026-10-06). Siguiente acción, en serie y sin parar: (1) write-back del analista **hecho** (J, K, ficha F-136-7 de O-52-3 y `Archivos:` corregido); (2) **siguiente:** el desarrollador repara SEC-128 (`file_path` que no es texto → nadie pasa); (3) QA del paso 5 entero; (4) seguridad: la revisión corta de `POSIXLY_CORRECT` más SEC-127, SEC-128 y QA-007-06; (5) commit validado; (6) apertura de SEC-115/118.**  Plan literal en `PENDING_APPROVAL.md` § Resueltas. **SEC-120 está cerrado como intervención** (commit validado; R-053: `mitigado` en el candidato `413c6bd`, con el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR`). **P-136-J (SEC-128) está pendiente del propietario.** La fase 2 de SEC-127 espera esa decisión. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -550,7 +550,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-05 19:04
+## Estado derivado — 2026-10-06 08:15
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -560,9 +560,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `2e87e99` — limpio
+**Repositorio:** `cand/1.36.0` @ `c4f71e8` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 3
+**Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

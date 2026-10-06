@@ -2191,3 +2191,29 @@ ninguna mata al hook.»
 - **Qué:** la segunda pasada de CA-54 sale de 1.36.0 y pasa a 1.37 como ficha. Cubre las formas de QA-007-01 que quedaron fuera del criterio (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código; M0 y MD se miden en anfitrión sano antes de optimizar) y la recursión de F-136-5, con el caso de banco de destinos profundos y su fail-before primero.
 - **Origen:** `PENDING_APPROVAL.md` § Resueltas, «Ajuste de alcance de 1.36.0». **F-136-5 queda con destino 1.37** por la misma decisión.
 - **En 1.36.0:** CA-54 se cierra con QA-007-01 como límite declarado y la medición de seguridad de R-052 (hasta 2 040 niveles) como evidencia.
+
+## Ficha de seguridad de O-52-3 (P-136-K, 2026-10-06)
+
+**Origen, literal** (decisión del propietario sobre P-136-K, `PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA
+(propietario, 2026-10-06) — P-136-J (A, acotada), P-136-K (A) y P-136-L (A)…»): «O-52-3 pasa a ficha de seguridad.»
+
+### F-136-7 — La detección del estado terminal por la vía `Bash` depende del locale del proceso (O-52-3)
+
+- **Clase:** sin asignar. **La clasifica el `auditor-seguridad`.** No está en `Hallazgos abiertos:` de ningún REQ: R-052
+  lo anotó como observación, no como hallazgo (§5, «§13 declara esa vía como barandilla»).
+- **Qué se observó.** La detección ancha del estado terminal en la vía `Bash` de `guard-completado` depende del locale
+  del proceso, **también en v1.35.0** (R-052 §5). Con `LC_ALL=C` en el entorno, el cierre `TERMINÉ`/`terminé` —un
+  proyecto cuyo estado terminal es `terminé` y una escritura `sed -i` en `requirements/` que pone `TERMINÉ`— **sale
+  sin decisión** por `guard.sh` y por `guard-completado`, de la coordinadora y del `desarrollador`, en v1.35.0 y en
+  `413c6bd` (`docs/arnes/v1.36.0-sec127-fase1.md` §3). R-052 lo registró como `allow` en su simulación (`94-`).
+- **Qué no es.** No es SEC-127: allí el locale del entorno es UTF-8 y lo cambiaba el atajo; aquí el entorno arranca en
+  C. La reparación de SEC-127, que devuelve el locale de partida, no lo cambia (fase 1, §3, punto 3). No es movimiento
+  frente a v1.35.0.
+- **Qué no contrata nadie.** REQ-007 CA-47 punto 20 lo deja fuera de su criterio («Fuera de este criterio: O-52-3»).
+  Contratarlo —que el cierre con un estado no ASCII se deniegue sea cual sea el locale del proceso— sería un cambio de
+  contrato con un movimiento nuevo de «sin decisión» a `deny`; fue la opción (B) de P-136-K y **no** se eligió.
+- **Evidencia:** `docs/seguridad/registro-seguridad.md` § R-052, §5 (O-52-3) y §4 (`94-`); `docs/arnes/v1.36.0-sec127-fase1.md`
+  §3 (`cand-1.36.0/sec127/06-`).
+- **Dueños propuestos:** `auditor-seguridad` (clase y severidad); después, si se decide repararlo, `analista-requerimientos`
+  (contrato) y `desarrollador`.
+- **Ventana:** **ninguna en 1.36.0.**

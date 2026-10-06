@@ -1317,6 +1317,17 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   La reparación es una segunda pasada de CA-54, prevista después de SEC-120; si no llega antes de publicar, la
   versión sale con este límite. Sede: REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`», del arnés.
 
+- **No medido: la corrección de SEC-127 en bash 5.0 o anterior en modo POSIX (REQ-007 CA-47, punto 20, del arnés;
+  decisión P-136-K del propietario del arnés, 2026-10-06).** Esta entrada **no migra nada**: dice lo que la versión
+  que instalas **no** ha medido, para que no lo des por cubierto. El atajo de `guard-completado` cambiaba el locale
+  del proceso que juzga con una asignación delante de una llamada de función; en bash 5.0 o anterior, en modo POSIX,
+  esa asignación persiste al volver de la función, y el cierre por `Bash` de un REQ con un estado terminal no ASCII
+  escrito con otras mayúsculas podría pasar (consecuencia simulada, no reproducida). La reparación restaura el locale
+  sin esa forma. **SEC-127 se acredita con los casos de la sección 47 del banco (LO1 a LO4 y LK) y con la lectura del
+  código.** Esos casos se miden en bash 5.3 y allí no son fail-before. **La prueba en bash 5.0 o anterior en modo
+  POSIX queda declarada como no medida:** en ese intérprete la corrección se sostiene por lectura, no por medida.
+  Sede: REQ-007, CA-47, punto 20, «SEC-127 — cómo se acredita (P-136-K)», del arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas
