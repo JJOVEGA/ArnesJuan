@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista en CA-67/68/69 de lo que no depende de P-136-O (SIN VALIDAR); `hooks/entrada.sh` en `Archivos:` de REQ-007
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora.
+
+- CA-67: la técnica (motivo por la entrada estándar de `jq`, acotado a 16 384 bytes) y el tope medido. CA-68: el plazo de 30 s, `hooks/entrada.sh`, R2 y los dos techos con su cifra **y su alcance pendiente de P-136-O**. CA-69 p. 7: E1–E3 «no afecta» y SEC-130 no cubierto por R2 (F-136-12).
+- `Archivos:` gana `hooks/entrada.sh`; `tools/arnes-paralelo.sh REQ-007` lo lee.
+- **Avance (regla 6):** el contrato refleja lo construido salvo el movimiento de los techos, que espera la decisión del propietario.
+
 ## [GitHub] — 2026-10-06 · Paso 6, fase 2 registrada (`0efd3c2`, SIN VALIDAR): SEC-118, SEC-115 y SEC-129 reparados; E1–E3 sin «afecta»; parada P-136-O (techos que deniegan llamadas legítimas sobre `REQ-007.md`, y un FAIL no reproducido de la sección 24); fichas F-136-16 y PR-136-3
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (fase 2; evidencia `65092c8`) y la coordinadora.
 
