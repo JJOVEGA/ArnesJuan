@@ -47,6 +47,17 @@ _(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-06) — **PR #60 en borrador** de `cand/1.36.0` hacia `main` («SI hazlo» a la decisión propuesta del 2026-10-06); y despacho en paralelo de dos comisiones que no tocan los archivos de QA
+
+**Texto del propietario, literal:** «SI hazlo» (a la propuesta: «Abre un PR en borrador de `cand/1.36.0` hacia `main`, titulado "Candidato 1.36.0 (borrador)", con la descripción remitiendo a `docs/PLAN.md` § 1.36.0 y a las notas pendientes. No es decisión de fusión ni de publicación; sirve para que cada push tenga su corrida de CI. Fusionar, etiquetar y publicar siguen siendo míos.»). Y, acto seguido: «Si podemos trabajar con varios agentes hazlo».
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **PR #60** (https://github.com/JJOVEGA/ArnesJuan/pull/60), borrador, sobre la cabeza remota `f1ffac3`. El CI corre sobre cada push de la rama; el push sigue siendo del propietario.
+- **Paralelo, con los archivos declarados disjuntos por instrucción** (`tools/arnes-paralelo.sh` no puede declararlo: es el mismo REQ-007), y sin violar el orden de fases, porque ninguna de las dos acredita el código del paso 5:
+  1. QA del paso 5 (en curso): `docs/qa/REQ-007.md`, la cabecera de REQ-007 y `cand-1.36.0/sec127/qa/`;
+  2. `auditor-seguridad`, revisión corta de `POSIXLY_CORRECT` (P-136-L): sólo `docs/seguridad/registro-seguridad.md` (R-054) y `cand-1.36.0/sec127/seg-posix/`; **no toca REQ-007**; la reclasificación de SEC-127 y SEC-128 va después, con QA terminado;
+  3. `analista-requerimientos`, condición previa del paso 6: evaluación de CA-68 frente a REQ-017 CA-09, sólo en `docs/arnes/v1.36.0-sec115-118-ca68-vs-req017.md`; **no toca ningún REQ**.
+
 ### RESUELTA (propietario, 2026-10-06, sobre `df0b4f0`) — **Resumen del plan vigente de 1.36.0, fichas de 1.37.0 y 1.38.0, y objetivo rector del arnés** (la fuente sigue siendo `docs/PLAN.md`, la cola y ESTADO)
 
 **Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

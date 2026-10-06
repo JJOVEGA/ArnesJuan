@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · PR #60 en borrador (decisión del propietario); dos comisiones en paralelo con QA, sobre archivos disjuntos: `POSIXLY_CORRECT` (seguridad) y CA-68 frente a REQ-017 CA-09 (analista)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **PR #60**, borrador, `cand/1.36.0` → `main`, sobre `f1ffac3`. Sirve para el CI; fusionar, etiquetar y publicar son del propietario.
+- **Paralelo:** QA escribe en `docs/qa/REQ-007.md` y la cabecera de REQ-007; seguridad sólo en el registro (R-054) y su evidencia; el analista sólo en un documento nuevo de `docs/arnes/`. Ninguna de las dos últimas acredita el código del paso 5, así que no rompe el orden de fases.
+- **Avance (regla 6):** la rama tiene CI; el paso 6 adelanta su condición previa mientras QA valida el paso 5.
+
 ## [Interno] — 2026-10-06 · Resumen del plan vigente del propietario registrado literal; `docs/PLAN.md` gana el objetivo rector, la condición previa de CA-68 en el paso 6, el detalle del cierre y las fichas de 1.37.0 (a–e) y 1.38.0 (f–i)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
