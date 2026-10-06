@@ -1,0 +1,19 @@
+2026-10-06T08:17:55-06:00
+Linux sysvega-dev 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 GNU/Linux
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+LANG=C.UTF-8 LC_ALL=<sin definir>
+worktree 0ed5d61 + la reparacion de SEC-128 sin comitear
+ M docs/ESTADO.md
+ M hooks/guard-codigo.sh
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+ M tests/escenarios/hooks/secciones/47-lectura-fallida-y-locale.sh
+ hooks/guard-codigo.sh | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+6e1e360a80b233e515009c8d55bcf51e0b8a163d74877785dadb82c2cb79514e  /home/juan/dev/ArnesJuan-v1.36/hooks/guard-codigo.sh
+34ac33b63a4890eb1a02167d2cc7e817c95d0e54de3a515ca41cee421c9433b0  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/ta59/hooks/guard-codigo.sh
+1d309101dcdd98185f6413c24ce10e19ac0fe7a025634ed46489123b987df6a3  /home/juan/dev/ArnesJuan-v1.36/hooks/lib.sh
+1d309101dcdd98185f6413c24ce10e19ac0fe7a025634ed46489123b987df6a3  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/ta59/hooks/lib.sh
+v1.35.0 3956a6f; hooks/ y tools/ frente a 3956a6f: identicos

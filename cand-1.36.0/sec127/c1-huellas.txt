@@ -1,0 +1,5 @@
+6e1e360a80b233e515009c8d55bcf51e0b8a163d74877785dadb82c2cb79514e  hooks/guard-codigo.sh
+1d309101dcdd98185f6413c24ce10e19ac0fe7a025634ed46489123b987df6a3  hooks/lib.sh
+d7393ca9feda970662fe18b7a4396d2c16e6ce41699e41126a00dbfe000c6c19  tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh
+fe02bdcf5a97da30a187653fa4b9de24755554a3b054eb9f7a4aec675fffe590  tests/escenarios/hooks/secciones/47-lectura-fallida-y-locale.sh
+6bddeebcd6c9aff5e4690fc10526c4a7bdba841d6ce635aed4f973aae99fa7dc  tests/escenarios/hooks/run.sh
