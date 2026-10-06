@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 5, SEC-128 (P-136-J (A, acotada)): en `guard-codigo`, un `file_path` que no es texto no deja pasar a nadie — SIN VALIDAR por QA; un FAIL de reloj en el inventario 2 (a), declarado y sin repetir
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`, sección «SEC-128»; evidencia `cand-1.36.0/sec127/`, commit `f641380` del árbol de evidencia).
+
+- **Cambio:** en `hooks/guard-codigo.sh`, la salida del agente de código cuando el campo no es texto sólo vale ya para `Bash`. Con `Edit`, `Write` o `MultiEdit`, un `file_path` que no es texto deniega a todo agente, con el motivo de siempre. Sin procesos.
+- **Casos:**
+  - sección 47, bloque E (+12; `CASOS_ESPERADOS` 2198 → 2210): el vector de R-053 §4 por las tres herramientas, deny en la candidata, sin decisión en `a59917d` (fail-before) y deny por el enlace en v1.35.0 (control);
+  - K5 de la sección 44 pasa a esperar deny;
+  - sección 47 44/0, sección 44 363/0.
+- **CA-69 2 (a)** con la semilla 23062: 2038/1/11. El `diff` frente a `22-` es una sola línea: REQ-017 CA-08 (ii), «un REQ real de 6 líneas», pasa de INCONCLUSO a **FAIL** (1,251× frente al techo de 1,250×).
+  - Es un caso de reloj que ejecuta hooks: por P-136-E es motivo de parada.
+  - Por CA-69 2 (c) no se repite. Por lectura, el cambio no toca ese camino.
+  - Lo decide la coordinadora.
+- **Banco del worktree:** 2198/0/12, cuadre 2210. Autoprueba 117/0 y gates rc 0.
+- **Procesos:** el camino común es idéntico a `a59917d`.
+- **Avance (regla 6):** SEC-128 reparado, sin validar. Falta la decisión sobre el FAIL de reloj antes del QA del paso 5.
+
 ## [GitHub] — 2026-10-06 · Paso 5: write-back del analista de P-136-J (SEC-128: un `file_path` que no es texto no deja pasar a nadie) y de P-136-K (SEC-127 acreditado con la sección 47 y la lectura del código; bash ≤ 5.0 en modo POSIX, no medido); ficha F-136-7 (O-52-3); `Archivos:` de REQ-007 corregido
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~160 k tokens) y la coordinadora.
 

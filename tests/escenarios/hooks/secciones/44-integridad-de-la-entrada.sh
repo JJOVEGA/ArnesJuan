@@ -363,7 +363,7 @@ NT120="de esta llamada no es texto"; jf120() { jq -cn --arg c "$P" "{hook_event_
 fila120 "F1 (QA-007-04) Write de la coordinadora con file_path false"       deny allow "'file_path' $NT120" "$(jf120 '{tool_name:"Write",tool_input:{file_path:false,content:"x"}}')" $GJ120
 fila120 "F2 (QA-007-04) Bash de la coordinadora con command false"           deny allow "'command' $NT120" "$(jf120 '{tool_name:"Bash",tool_input:{command:false}}')" guard-git.sh $GJ120
 fila120 "F3 (QA-007-04) Edit del desarrollador con file_path false"         deny allow "'file_path' $NT120" "$FD120" guard.sh guard-completado.sh
-fila120 "K5 (QA-007-04) la puerta de código no juzga el destino del desarrollador: F3" allow allow - "$FD120" guard-codigo.sh
+fila120 "K5 (QA-007-04, SEC-128) la puerta de código deniega también al desarrollador un file_path que no es texto: F3" deny allow "'file_path' $NT120" "$FD120" guard-codigo.sh
 # I: V3 en modo inerte —sin jq en el PATH, o en un proyecto sin manifiesto—: sin decisión, y sin jq con aviso.
 VAC120="$RAIZ/vac120-$BASHPID"; Q120="$RAIZ/q120-$BASHPID"; mkdir -p "$VAC120" "$Q120/requirements"; cp "$R/REQ-900.md" "$Q120/requirements/"
 VQ120="$(cierre44 "$Q120" "$Q120/requirements/REQ-900.md")"; VQ120="${VQ120%?},\"x\":$HONDO120}"

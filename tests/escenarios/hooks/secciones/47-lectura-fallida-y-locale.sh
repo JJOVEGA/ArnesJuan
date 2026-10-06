@@ -16,7 +16,7 @@
 # DOS ÁRBOLES (RF, RL, LK): la CANDIDATA (`$HOOKS_DIR`) y v1.35.0 (3956a6f, REQ-007 CA-69 punto 1), por
 # SHA con `mat47` (copia de `mat46`); sin ella, SKIP y motivo, nunca PASS. LO sólo en la candidata: en
 # v1.35.0 el atajo no existe. Esto NO es la validación en el host.
-CASOS_ESPERADOS_SECCION=32
+CASOS_ESPERADOS_SECCION=44
 PISO_AUTONOMO_SECCION=63  # 21 preámbulo (líneas 1-21, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO47, mat47_reg y mat47, copia de mat46, líneas 22-45) + 18 bloque indivisible mayor (g47, líneas 57-74)
 seccion_nueva "--- 47 · lectura fallida de la entrada y locale tras el atajo (QA-007-06, SEC-127; REQ-007 CA-47 punto 20, CA-54) ---"
 REPO47="${SEC_DIR%/}/../../../.."; MAT47_RUTAS='hooks'; MAT47_REG=''; MAT47_T0=0; MAT47_REF='-'
@@ -140,4 +140,42 @@ for a47 in - desarrollador; do
     "$k47" guard.sh guard-completado.sh
 done
 PD47="$P47"
-rm -rf "$RV47" "$T47" "$DIR47"
+
+# --- SEC-128: en guard-codigo, un `file_path` que no es texto no deja pasar a nadie (E) ------------------
+# REQ-007 CA-47 punto 20, subviñeta de SEC-128; el vector de R-053 §4: el agente de código, `file_path: 5`
+# y el enlace `<raíz>/5 -> src/a.ts`, por Edit, Write y MultiEdit, a guard-codigo INVOCADO SOLO —y en la
+# candidata también por guard.sh—. TRES ÁRBOLES: la candidata, deny con el motivo del campo que no es texto;
+# a59917d (el código de SEC-127, antes de esta reparación), sin decisión: el fail-before; y v1.35.0, deny
+# por el enlace (control: allí no es fail-before, CA-69 punto 1). Sin a59917d, SKIP y motivo.
+RA59="$RAIZ/ra59-$BASHPID"; RA59_OK=no; RA59_MOT=''
+if mat47 a59917d "$RA59"; then RA59_OK=si
+else RA59_MOT="a59917d no se materializó (${MAT47_REG#*motivo=})"; RA59_MOT="${RA59_MOT%% corrida=*})"; fi
+: > "$P47/src/a.ts"; ln -s src/a.ts "$P47/5"; NT47="el campo 'file_path' de esta llamada no es texto"
+for t47 in Edit Write MultiEdit; do
+  case "$t47" in
+    Edit)  ti47='{file_path:5,old_string:"a",new_string:"b"}' ;;
+    Write) ti47='{file_path:5,content:"x"}' ;;
+    *)     ti47='{file_path:5,edits:[{old_string:"a",new_string:"b"}]}' ;;
+  esac
+  e47="$(jq -cn --arg c "$P47" "{hook_event_name:\"PreToolUse\",tool_name:\"$t47\",cwd:\$c,agent_id:\"a1\",agent_type:\"desarrollador\",tool_input:$ti47}")"
+  nom47="SEC-128 E $t47 del desarrollador con file_path 5 y <raíz>/5 -> src/a.ts"
+  json_no_vacio "$nom47" "$e47" || { FAIL=$((FAIL + 4)); continue; }
+  for s47 in guard-codigo.sh guard.sh; do
+    g47 "$HOOKS_DIR" "$s47" "$e47"
+    if [ "$D47" != deny ]; then v47 FAIL "$nom47 por $s47 candidata  esperado=deny got=$D47"
+    elif [[ "$M47" != *"$NT47"* ]]; then v47 FAIL "$nom47 por $s47 candidata  el motivo no cita «$NT47»  <${M47:0:200}>"
+    else v47 PASS "$nom47 por $s47 candidata  (deny)"; fi
+  done
+  if [ "$RA59_OK" != si ]; then v47 SKIP "$nom47 por guard-codigo.sh a59917d: fail-before  $RA59_MOT"
+  else g47 "$RA59/hooks" guard-codigo.sh "$e47"
+    if [ "$D47" = nada ]; then v47 PASS "$nom47 por guard-codigo.sh a59917d: fail-before: sin decisión  (nada)"
+    else v47 FAIL "$nom47 por guard-codigo.sh a59917d: fail-before  esperado=nada got=$D47  <${M47:0:160}>"; fi
+  fi
+  if [ "$RV47_OK" != si ]; then v47 SKIP "$nom47 por guard-codigo.sh v1.35.0: control, deniega por el enlace  $RV47_MOT"
+  else g47 "$RV47/hooks" guard-codigo.sh "$e47"
+    if [ "$D47" = deny ]; then v47 PASS "$nom47 por guard-codigo.sh v1.35.0: control, deniega por el enlace  (deny)"
+    else v47 FAIL "$nom47 por guard-codigo.sh v1.35.0: control, deniega por el enlace  esperado=deny got=$D47"; fi
+  fi
+done
+rm -f "$P47/5"
+rm -rf "$RV47" "$T47" "$DIR47" "$RA59"

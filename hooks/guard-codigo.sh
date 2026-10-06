@@ -33,11 +33,14 @@ arnes_guard_codigo() {
   arnes_parse_input
   arnes_deny_entrada_ilegible   # SEC-120: a todo agente
   # SEC-120 (REQ-007 CA-47, punto 20): el `file_path` o el `command` que esta puerta juzga no es texto.
-  # Como con un `tool_name` que no identifica ninguna herramienta (abajo), solo pasa el agente de codigo,
-  # al que esta puerta no le juzga el destino; el manifiesto se lee solo en este camino.
+  # Un `file_path` que no es texto NO DEJA PASAR A NADIE, tampoco al agente de codigo (SEC-128, CA-47
+  # punto 20, P-136-J): la regla del enlace de abajo (SEC-004, CA-49 (i)) le alcanza a el tambien, y
+  # sin el texto del destino no se puede aplicar. Un `command` que no es texto si deja pasar al agente de
+  # codigo, como un `tool_name` que no identifica ninguna herramienta (abajo): por `Bash` esta puerta no
+  # le juzga nada. El manifiesto se lee solo en este camino.
   if arnes_campo_no_texto; then
     arnes_parse_manifest
-    if [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+    if [ "$ARNES_TOOL" = Bash ] && [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
       return 0
     fi
     if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"

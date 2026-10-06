@@ -1675,7 +1675,12 @@ done
 # 413c6bd o de v1.35.0 las 8 columnas de la candidata de RF salen FAIL: es el fail-before de QA-007-06. LO y
 # LK no son fail-before de SEC-127 en bash 5.1 o posterior (docs/arnes/v1.36.0-sec127-fase1.md). Ninguna
 # sección existente cambia su número.
-CASOS_ESPERADOS=2198
+# Y 2198 → 2210 por SEC-128 (P-136-J (A, acotada); REQ-007 CA-47 punto 20): +12 en la sección 47 (32 → 44),
+# bloque E —el vector de R-053 §4, el agente de código con `file_path: 5` y `<raíz>/5 -> src/a.ts`, por Edit,
+# Write y MultiEdit—: guard-codigo y guard.sh en la candidata (deny), guard-codigo en a59917d (sin decisión, el
+# fail-before) y en v1.35.0 (deny por el enlace, control). K5 de la sección 44 pasa a esperar deny; su número
+# no cambia.
+CASOS_ESPERADOS=2210
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
