@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Paso 7, adelantado: `propuesta-v1.35.0/` pasa a `docs/historia/propuesta-v1.35.0/` (dos archivos con `git mv`, sin reescribir, con README); el borrador de las notas `[1.36.0]` lo escribe el analista en `docs/arnes/`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora (texto y trazabilidad, dentro del plan de versión: «limpieza de `propuesta-v1.35.0/` a `docs/historia` o evidencia»).
+
+- `TRASPASO.md` y `plan-implementacion.md` movidos con `git mv`; las citas históricas conservan la ruta antigua a propósito (lo dice el README nuevo). Los demás archivos de ese directorio estaban sin seguimiento y ya no existen en el disco.
+- En paralelo, sin tocar los archivos del desarrollador ni `CHANGELOG.md`: el analista redacta `docs/arnes/notas-1.36.0-borrador.md` con huecos `[PENDIENTE: …]` para QA, seguridad y CI del paso 6.
+- **Avance (regla 6):** dos tareas del cierre adelantadas mientras QA del paso 6 espera al desarrollador.
+
 ## [GitHub] — 2026-10-06 · Paso 6, write-back del analista por P-136-O/N: los techos como cambio de compatibilidad declarado (CA-68, CA-69 p. 3, guía, nota posterior en ADR-017); CA-68 (ii) sobre todo lo que el hook herede del entorno, con QA-007-07; observación de la sección 24 en CA-69 p. 7
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 
