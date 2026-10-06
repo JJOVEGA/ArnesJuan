@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-06 · Paso 6, fase 2 registrada (`0efd3c2`, SIN VALIDAR): SEC-118, SEC-115 y SEC-129 reparados; E1–E3 sin «afecta»; parada P-136-O (techos que deniegan llamadas legítimas sobre `REQ-007.md`, y un FAIL no reproducido de la sección 24); fichas F-136-16 y PR-136-3
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (fase 2; evidencia `65092c8`) y la coordinadora.
+
+- **Reparación**, por propiedad y sin procesos nuevos: motivo por la entrada estándar de `jq`, acotado a 16 384 bytes sin partir UTF-8 (tope medido en 273 casos); plazo propio a 30 s; techos de piezas (393 216 B) y de búsqueda (2³²) dentro de la restricción de la sonda 37/3; `hooks/entrada.sh` sale del modo POSIX y arma una trampa de salida que emite `deny` fijo; R2 deniega códigos no declarados y puertas abandonadas. **SEC-130 no queda cubierto por R2** y sigue como F-136-12.
+- **Medido:** sección 47 93/0; E1 sin cambio (104 ms, 0,3 s, 1,0 s), E2 12/12, E3 PASS; inventario sólo con 2 (c), INS-136-2 y F-136-16; banco 2290/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **Parada (P-136-O):** (1) el `Write` entero de `REQ-007.md` (660 431 B) y los `Edit` con `old_string` ≥ 7 000 B sobre él pasan a `deny`; v1.35.0 los dejaba (11,5 s). CA-69 p. 3 no declara ese movimiento. (2) Un FAIL de la sección 24 en la primera de tres corridas del inventario, no reproducido en ocho corridas más; el caso ejecuta `lib.sh`.
+- **Fichas:** F-136-16 (nombre de caso que depende del PID) y PR-136-3 (una edición por consola, deshecha y rehecha con `Edit`).
+- **Avance (regla 6):** SEC-115/118/129 construidos y medidos; faltan la decisión del propietario, el write-back y QA.
+
 ## [GitHub] — 2026-10-06 · Paso 6, fase 2 (desarrollador): la decisión se emite siempre — SEC-118, SEC-115 y SEC-129 reparados en `hooks/` — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (2, 3 y 7). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`; evidencia `cand-1.36.0/sec115-118/` (`65092c8`).
 

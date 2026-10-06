@@ -61,6 +61,39 @@
 **Espera:** elección del propietario.
 
 
+### [2026-10-06] (coordinadora) — P-136-O: la fase 2 del paso 6 (`0efd3c2`) cumple el contrato, pero (1) sus techos de tamaño deniegan dos llamadas legítimas sobre `REQ-007.md` (660 KB) que v1.35.0 dejaba pasar, y (2) un FAIL no reproducido en el inventario, en un caso que ejecuta código del delta
+
+**Contexto.** `docs/arnes/v1.36.0-sec115-118-fase2.md`; evidencia `cand-1.36.0/sec115-118/`, commit `65092c8`. **Conforme:** sección 47 93/0 (D y A con motivos de ≤ 16 384 bytes; T1–T3 en `deny` en 0,4–4,3 s; las 40 filas POSIX en `deny`); tope del motivo medido en 273 casos ASCII y multibyte; E1 sin cambio, E2 12/12 PASS, E3 PASS; inventario 2 (a) sólo con 2 (c), INS-136-2 y un nombre de caso que depende del PID; banco 2290/0/13; autoprueba 117/0; gates rc 0; +0 procesos. Técnica: el motivo va a `jq` por la entrada estándar y se acota a 16 384 bytes; plazo propio a 30 s (responde en ≤ 40); techos `ARNES_PIEZAS_MAX_BYTES` = 393 216 y `ARNES_EDIT_MAX_BUSQUEDA` = 2³²; `hooks/entrada.sh` nuevo con `unset POSIXLY_CORRECT; set +o posix` y una trampa de salida que emite `deny` fijo si el proceso termina sin juicio; R2 para códigos no declarados y puertas abandonadas. **SEC-130 no queda cubierto por R2** (su 0 es respuesta válida de su vocabulario): sigue como F-136-12, para 1.37.
+
+**(1) Las llamadas legítimas que pasan a `deny`** (`65-`), todas sobre `REQ-007.md`, 660 431 bytes:
+
+| Llamada | v1.35.0 | candidato |
+|---|---|---|
+| `Write` del archivo entero | sin decisión (allow), 11,5 s | `deny` por el techo de piezas (393 216 B) |
+| `Edit` con `old_string` de 3 000–6 400 B | sin decisión | sin decisión |
+| `Edit` con `old_string` de 7 000 o 12 000 B | sin decisión | `deny` por el presupuesto de búsqueda |
+
+`REQ-021.md` (296 976 B) y `REQ-023.md` siguen igual. Subir el techo de piezas costaría margen: un `Write` de 786 428 B tarda 15,7–18,4 s solo, y bajo carga roza los 40 s. Optimizar la normalización de transporte sería una mejora que se propone antes de hacerse y movería el perfil de la sonda 37/3. **Es un movimiento `allow` → `deny` que CA-69 p. 3 no declara:** cambio de contrato, del propietario.
+
+**Opciones para (1).**
+- **(A) Aceptar los techos como cambio de compatibilidad declarado,** con el write-back del analista en CA-68 y CA-69 p. 3 (el movimiento, sus dos cifras y la consecuencia: un REQ de más de 393 216 bytes no se escribe entero de una vez, y un `Edit` con `old_string` de más de ~6,5 KB sobre un documento de ese tamaño se deniega; se parte la edición), notas y guía. **Y una ficha para adelgazar `REQ-007.md`** (su historia a `historial/` con la rotación por sección que el arnés ya trae, `rotacion.artefactos`), porque 660 KB es el síntoma. **Consecuencia:** cero código; el margen de tiempo se conserva; en este repositorio los agentes editan REQ-007 con `Edit` de fragmentos pequeños, así que el trabajo diario no cambia.
+- **(B) Subir `ARNES_PIEZAS_MAX_BYTES` por encima de `REQ-007.md`** (p. ej. 1 MiB) y el presupuesto de búsqueda en proporción. **Consecuencia:** el `Write` de 660 KB vuelve a pasar, pero cuesta 15–18 s en reposo y bajo carga puede vencer el plazo de 30 s y salir `deny` igualmente, ahora por tiempo; T2a (2 MB) sigue en `deny`.
+- **(C) Optimizar la normalización de transporte** (la operación superlineal) en una intervención propia, propuesta antes de hacerse. **Consecuencia:** otra intervención con su ciclo; mueve el perfil de la sonda 37/3 (E1–E3 otra vez).
+
+**(2) El FAIL del inventario.** En la primera de tres corridas del banco de v1.35.0 con los hooks del candidato (`50-`–`52-`): sección 24, `arnes-lectura: …el contador no dice 1`. **No se reprodujo** en la sección 24 aislada (3 veces), en la segunda corrida, en la final ni en los tres bancos del worktree. El caso ejecuta `tools/arnes-lectura.sh`, que comparte `lib.sh` con los hooks: **ejecuta código del delta**, así que por P-136-E es parada. Un FAIL no se desmiente repitiendo.
+
+**Opciones para (2).**
+- **(A) Observación independiente de QA:** QA corre su propio inventario (lo hace de todos modos en la fase 3) y la sección 24 varias veces, con el anfitrión en reposo y anotando la carga. Si lo reproduce, es hallazgo contra el delta; si no, se registra como instrumento (INS-136-3) con las nueve corridas limpias y la única roja. **Consecuencia:** sin coste extra; la decisión queda medida por alguien que no escribió el código.
+- **(B) Que el desarrollador investigue la causa ahora** (¿el plazo propio o la trampa de salida afectan a `tools/`?), antes de QA. **Consecuencia:** de 30 a 60 minutos; puede no encontrar nada en un fallo que no se reproduce.
+
+**Recomendación de la coordinadora: (1) = (A) y (2) = (A).**
+
+**Decisión propuesta, lista para adoptar:** «P-136-O: (1) (A): los techos quedan como cambio de compatibilidad declarado; el analista lo escribe en CA-68, CA-69 p. 3, la guía y las notas; ficha para adelgazar `REQ-007.md` a `historial/` en 1.37. (2) (A): QA observa el FAIL de la sección 24 en su propio inventario y en varias corridas de la sección en reposo; si lo reproduce, es hallazgo; si no, INS-136-3. Nada más entra.»
+
+**Qué trabajo sigue mientras no se decida:** el write-back del analista de lo que no depende de (1) (R1/R2, plazo, tope del motivo, el estado de SEC-130) y el registro de las fichas; QA (fase 3) espera a (1), porque valida contra el contrato. **Agrupada con P-136-N** (QA-007-07), que sigue pendiente.
+
+**Espera:** elección del propietario.
+
 ## Resueltas
 
 ### RESUELTA (coordinadora, por delegación expresa del propietario del 2026-10-06) — **Plan autorizado: paso 6 de 1.36.0, SEC-115 y SEC-118 (CA-67, CA-68, CA-69; ADR-017), con la reparación de SEC-129 (`POSIXLY_CORRECT`)**

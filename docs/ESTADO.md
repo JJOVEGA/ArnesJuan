@@ -16,7 +16,7 @@
 
 > **Modelo de la coordinadora: Fable 5.1 desde el 2026-10-06, cabeza `098896c`** (prueba acotada decidida por el propietario; los subagentes conservan su modelo; el plan no cambia; al cerrar SEC-115/118 se entrega la comparación en tres cifras con CA-54 y SEC-120). **`cand/1.36.0` sigue sin push: el push es del propietario.**
 >
-> **Plan autorizado vigente: paso 6 de 1.36.0, SEC-115 y SEC-118 con SEC-129 (por delegación del propietario del 2026-10-06), fase 2 de 4 (fase 1 en `738b74d`, evidencia `86c4ff1`/`08751e4`: sección 47 con 93 casos, 57 FAIL esperados idénticos en `78a2f33` y v1.35.0; E1 medido: las tres entradas de la sonda 37/3 salen sin decisión en los dos árboles; T2b roza el plazo de 40 s; T1 no reproduce su fail-before), siguiente acción: el desarrollador repara SEC-118 (emisión siempre, motivo acotado), SEC-115 (plazo ≤ 40 s y techos dentro de la restricción) y SEC-129 (R1+R2), con 0 procesos añadidos, y mide E2/E3. QA-007-07 sólo si P-136-N = (A).** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **Paso 5 cerrado como intervención** (commit validado; R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-130 → F-136-12). **P-136-N pendiente del propietario** (QA-007-07: paso 6 o 1.37); el plan del paso 6 tiene las dos variantes. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
+> **Plan autorizado vigente: paso 6 de 1.36.0, SEC-115 y SEC-118 con SEC-129 (por delegación del propietario del 2026-10-06), fase 2 hecha en `0efd3c2` (evidencia `65092c8`; SIN VALIDAR: sección 47 93/0, E1–E3 sin «afecta», inventario sólo con 2 (c)/INS, banco 2290/0/13, +0 procesos; `hooks/entrada.sh` nuevo; SEC-130 no cubierto por R2 → sigue F-136-12). **PARADO por P-136-O** (agrupada con P-136-N): (1) los techos deniegan el `Write` entero de `REQ-007.md` (660 KB) y los `Edit` con `old_string` > ~6,5 KB, que v1.35.0 dejaba pasar: cambio de contrato; (2) un FAIL no reproducido de la sección 24 en el inventario. Sigue sólo el write-back del analista de lo que no depende de (1).** Plan literal en `PENDING_APPROVAL.md` § Resueltas. **Paso 5 cerrado como intervención** (commit validado; R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-130 → F-136-12). **P-136-N pendiente del propietario** (QA-007-07: paso 6 o 1.37); el plan del paso 6 tiene las dos variantes. **Si la sesión se corta, se continúa desde la última fase comiteada sin pedir la autorización.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -552,7 +552,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-06 10:28
+## Estado derivado — 2026-10-06 11:34
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -562,7 +562,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `738b74d` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `0efd3c2` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

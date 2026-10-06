@@ -2282,3 +2282,11 @@ ninguna mata al hook.»
 - **Qué lo resuelve:** opciones a evaluar en 1.37 con la ficha a) (plan de desarrollo con línea derivada): sacar el bloque derivado a un archivo propio (`docs/ESTADO-derivado.md`) enlazado desde ESTADO, o no reescribirlo cuando sólo cambian la hora y la cabeza. **Dueño propuesto:** `desarrollador`.
 
 **Observaciones sin ficha:** el tope de 16 384 bytes de `Hallazgos abiertos:` (SEC-113) obligó al proyecto a resumir un campo largo: es el diseño, y la puerta lo deniega en vez de leerlo mal; y un REQ cerrado con una cabecera ilegible sólo se puede corregir con las puertas en verde, que es el precio del fail-closed.
+
+## Fichas de la fase 2 del paso 6 (2026-10-06)
+
+### F-136-16 — El nombre de un caso de la sección 43 depende de las cifras del PID («una ruta de 4187 caracteres» sale 4185/4186)
+- **Qué:** `43-identidad-del-destino.sh:249` construye una ruta sobre `proj-$BASHPID` y pone su longitud en el nombre del caso, que cambia con el número de cifras del PID. El inventario caso a caso (CA-69 2 (a)) difiere en esa línea sin que cambie nada. Misma clase que F-136-3 (la semilla en el nombre). **Sin reparar;** dueño `desarrollador`; candidata a 1.37 con las fichas del inventario.
+
+### PR-136-3 — Hallazgo de proceso, clase `instrumento`: una edición de `hooks/guard-completado.sh` por consola (Python) en la fase 2 del paso 6, deshecha y rehecha con `Edit`
+- **Qué:** el desarrollador lo declaró él mismo: la comprobación del plazo antes de las gates se aplicó primero por consola, se deshizo y se volvió a aplicar con `Edit`; el contenido final es el mismo. Ninguna puerta midió la primera edición (§13). Tercera instancia (PR-136-1, PR-136-2): el control mecánico que lo cerraría es la ficha b) de 1.37.
