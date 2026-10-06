@@ -1,0 +1,9 @@
+ArnesJuan-v1.35.0-base |  > src/a.ts"}} | SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base | a.ts"}} basura | SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base |  > src/a.ts"}} | deny rc=0
+old |  > src/a.ts"}} | SIN-DECISION rc=0
+old | a.ts"}} basura | SIN-DECISION rc=0
+old |  > src/a.ts"}} | deny rc=0
+ArnesJuan-v1.36 |  > src/a.ts"}} | SIN-DECISION rc=0
+ArnesJuan-v1.36 | a.ts"}} basura | deny rc=0
+ArnesJuan-v1.36 |  > src/a.ts"}} | deny rc=0

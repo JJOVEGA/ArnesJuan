@@ -1,0 +1,8 @@
+fecha: 2026-10-05T18:31:40-06:00
+cabeza: 72a328e52b6b24944d832d3bf670638b5ee5db67
+hooks = 413c6bd (git diff --quiet rc 0); lib.sh sha256 3effa3c7fd6e93de
+82ceb63: git archive en scratch; v1.35.0: /home/juan/dev/ArnesJuan-v1.35.0-base (3956a6f)
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+6.18.33.2-microsoft-standard-WSL2
+proyecto: copia de sec120/proyecto, con enlace 5 -> src/a.ts

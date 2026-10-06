@@ -1,0 +1,41 @@
+== {"tool_name":"Edit","agent_id":"x","agent_type":"desarrollador","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a
+ArnesJuan-v1.35.0-base     guard-codigo.sh      deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+ArnesJuan-v1.35.0-base     guard-git.sh         SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard-completado.sh  deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+ArnesJuan-v1.35.0-base     guard.sh             deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+old                        guard-codigo.sh      deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+old                        guard-git.sh         SIN-DECISION rc=0
+old                        guard-completado.sh  deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+old                        guard.sh             deny rc=0 :: ARNES: '5' es un ENLACE SIMBOLICO situado dentro del proyecto, y no se escribe a traves de un enlace dentro de
+ArnesJuan-v1.36            guard-codigo.sh      SIN-DECISION rc=0
+ArnesJuan-v1.36            guard-git.sh         SIN-DECISION rc=0
+ArnesJuan-v1.36            guard-completado.sh  deny rc=0 :: ARNES: el campo 'file_path' de esta llamada no es texto, asi que esta puerta no puede saber si escribe en un R
+ArnesJuan-v1.36            guard.sh             deny rc=0 :: ARNES: el campo 'file_path' de esta llamada no es texto, asi que esta puerta no puede saber si escribe en un R
+== {"tool_name":"Bash","agent_id":"x","agent_type":"desarrollador","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a
+ArnesJuan-v1.35.0-base     guard-codigo.sh      SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard-git.sh         SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard-completado.sh  SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard.sh             SIN-DECISION rc=0
+old                        guard-codigo.sh      SIN-DECISION rc=0
+old                        guard-git.sh         SIN-DECISION rc=0
+old                        guard-completado.sh  SIN-DECISION rc=0
+old                        guard.sh             SIN-DECISION rc=0
+ArnesJuan-v1.36            guard-codigo.sh      SIN-DECISION rc=0
+ArnesJuan-v1.36            guard-git.sh         deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber que orden de git se 
+ArnesJuan-v1.36            guard-completado.sh  deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber si escribe en un REQ
+ArnesJuan-v1.36            guard.sh             deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber que orden de git se 
+== {"tool_name":"Bash","agent_id":"x","agent_type":"desarrollador","cwd":"/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a
+ArnesJuan-v1.35.0-base     guard-codigo.sh      SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard-git.sh         SIN-DECISION rc=0
+ArnesJuan-v1.35.0-base     guard-completado.sh  deny rc=0 :: ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+ArnesJuan-v1.35.0-base     guard.sh             deny rc=0 :: ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+old                        guard-codigo.sh      SIN-DECISION rc=0
+old                        guard-git.sh         SIN-DECISION rc=0
+old                        guard-completado.sh  deny rc=0 :: ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+old                        guard.sh             deny rc=0 :: ARNES: el cuerpo sin citar de un heredoc (o el texto del comando fuera de los heredocs) es demasiado grande pa
+ArnesJuan-v1.36            guard-codigo.sh      SIN-DECISION rc=0
+ArnesJuan-v1.36            guard-git.sh         deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber que orden de git se 
+ArnesJuan-v1.36            guard-completado.sh  deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber si escribe en un REQ
+ArnesJuan-v1.36            guard.sh             deny rc=0 :: ARNES: el campo 'command' de esta llamada no es texto, asi que esta puerta no puede saber que orden de git se 
+
+[exited with code 0]
