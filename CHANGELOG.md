@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · Paso 6: QA-007-07 reparado por el desarrollador en `8e11f87` (SIN VALIDAR); ESTADO a la fase 3 (QA del paso 6 entero)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** una línea en `hooks/lib.sh` vacía `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` al cargar la librería; dos casos en el bloque E de la sección 47 (95/0), con fail-before sobre `0efd3c2` (allí la trampa de salida daba un `deny` fijo sin el motivo de `guard-codigo`), `78a2f33` y v1.35.0; inventario sólo con F-136-16 e INS-136-2; banco 2292/1/12 (el FAIL es INS-136-2); autoprueba 117/0; gates rc 0; +0 procesos.
+- **Pista para QA:** otras variables de estado de `lib.sh` podrían heredarse del entorno; la propiedad de P-136-N las alcanza.
+- **Avance (regla 6):** el paso 6 está construido entero; sigue QA.
+
 ## [GitHub] — 2026-10-06 · Paso 6 (desarrollador): QA-007-07 — las marcas de «ya leído» de `lib.sh` no se heredan del entorno — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-N (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, sección «QA-007-07»; evidencia `8bd6626`.
 
