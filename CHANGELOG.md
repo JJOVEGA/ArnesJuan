@@ -2,6 +2,32 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 1: casos del banco y fail-before, sin reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase1.md`; evidencia `cand-1.36.0/sec127/`, commit `79f3908` del árbol de evidencia).
+
+- **Casos:** 32 en la sección 47, nueva, porque la 44 está a 4 líneas de su techo (`CASOS_ESPERADOS` 2166 → 2198).
+  - **RF:** el `read` de la entrada falla con error —entrada estándar cerrada y entrada estándar que es un directorio—, por los cuatro guardianes; se espera **deny**.
+  - **RL:** el límite sin `CLAUDE_PROJECT_DIR`; se espera sin decisión.
+  - **LO:** el locale leído después del atajo, en modo normal y en modo POSIX.
+  - **LK:** el cierre por `Bash` con `TERMINÉ` y el locale en UTF-8; se espera **deny**.
+- **Fail-before:**
+  - **QA-007-06:** las 8 columnas de la candidata de RF fallan con `413c6bd` y con v1.35.0, que sale sin decisión.
+  - **SEC-127:** LO y LK **no fallan** en bash 5.3.9; R-052 §4 ya decía que aquí no se puede materializar. No se pudo obtener un bash 5.0.
+- **Caso 2 tal como se pidió (`LC_ALL=C` en el entorno → `deny`): no construido; bloqueo con alcance.**
+  - En v1.35.0 da lo mismo: es O-52-3.
+  - Exigirlo es un movimiento que CA-69 punto 3 no admite.
+  - La reparación autorizada no puede ponerlo en verde.
+  - Hay tres opciones para la coordinadora en el registro, §3.
+- **Observaciones para la coordinadora:**
+  - con `POSIXLY_CORRECT=1`, la vía `Bash` de los guardianes no decide, ni en `413c6bd` ni en v1.35.0 (registro §4);
+  - el `env` de uutils abre el descriptor 0 sobre `/dev/null`, y por eso el banco lanza el hook sin `env`.
+- **Resto:**
+  - banco 2176/8/14, con la semilla 23062 y cuadre 2198;
+  - inventario igual al de la re-verificación de QA, salvo un caso de reloj no acreditado (CA-69 2 (c));
+  - autoprueba 117/0 y gates rc 0;
+  - `hooks/` y `tools/` sin cambios.
+- **Avance (regla 6):** QA-007-06 ya tiene sus casos con fail-before. Falta la decisión sobre el caso 2 de SEC-127 antes de su fase 2; la fase 2 de QA-007-06 no depende de ella.
+
 ## [GitHub] — 2026-10-05 · SEC-120: commit validado. Seguridad R-053 con hallazgos y sin veto: SEC-120 queda `mitigado` en el candidato (`413c6bd`); SEC-128 (`contrato`, baja) → P-136-J. Apertura del paso 5: SEC-127 más QA-007-06
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-053 en `docs/seguridad/registro-seguridad.md`; REQ-007: el paréntesis de `Seguridad:`, que sigue `pendiente`, y `Hallazgos abiertos:` con SEC-128; evidencia `seg-R053/`, commit `e837604`, hecho por la coordinadora; ~192 k tokens) y la coordinadora.
 

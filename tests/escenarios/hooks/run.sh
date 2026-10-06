@@ -1667,7 +1667,15 @@ done
 # —la entrada vacía, un NUL delante y un NUL detrás de un objeto (L7–L9), y `false` en `file_path` o en
 # `command` (F1–F3, con su control K5)—, cada caso en la candidata y en v1.35.0. Con los hooks de aba1c9b o de
 # v1.35.0 sus 21 columnas de la candidata que esperan deny salen FAIL: es su fail-before. Los 319 no cambian.
-CASOS_ESPERADOS=2166
+# Y 2166 → 2198 por SEC-127 y QA-007-06 (1.36.0, paso 5, fase 1, sin reparar): +32 en la sección 47, nueva
+# —la sección 44 está a 4 líneas de su techo—: RF, el `read` de la entrada que falla con error (la entrada
+# estándar cerrada y un directorio) por las cuatro puertas, y RL, el límite sin CLAUDE_PROJECT_DIR, cada caso
+# en la candidata y en v1.35.0; LO, el locale leído después del atajo de guard-completado, sólo en la
+# candidata; y LK, el cierre por Bash con estado no ASCII en UTF-8, en los dos árboles. Con los hooks de
+# 413c6bd o de v1.35.0 las 8 columnas de la candidata de RF salen FAIL: es el fail-before de QA-007-06. LO y
+# LK no son fail-before de SEC-127 en bash 5.1 o posterior (docs/arnes/v1.36.0-sec127-fase1.md). Ninguna
+# sección existente cambia su número.
+CASOS_ESPERADOS=2198
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
