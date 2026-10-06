@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-06 · P-136-M resuelta por el propietario: (A), medición dirigida de REQ-017 CA-08 (ii) en reposo sobre cinco commits
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** se mide para distinguir una regresión de coste del ruido del reloj.
+
 ## [GitHub] — 2026-10-06 · SEC-128 reparado por el desarrollador en `78a2f33` (SIN VALIDAR); parada por P-136-M: REQ-017 CA-08 (ii) pasa de INCONCLUSO a FAIL en el inventario CA-69 2 (a)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~45 k tokens; evidencia `f641380`) y la coordinadora.
 

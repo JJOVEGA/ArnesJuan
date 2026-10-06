@@ -43,8 +43,31 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-06] (coordinadora) — P-136-M: en el inventario de SEC-128, REQ-017 CA-08 (ii) («un REQ real de 6 líneas», de reloj, ejecuta hooks) pasa de INCONCLUSO a FAIL: «mín(r) 1,251× > techo 1,250×» en 5 de 5. ¿Ruido de anfitrión o regresión de coste?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-06) — **P-136-M: (A)**, medición dirigida de REQ-017 CA-08 (ii) con el anfitrión en reposo sobre cinco commits
+
+**Texto del propietario, literal** (mensaje del 2026-10-06 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-M: (A). Medición dirigida de REQ-017 CA-08 (ii) con el anfitrión en
+> reposo (carga < 0,5 antes de empezar, registrada), en este orden:
+> v1.35.0 → 82ceb63 → 413c6bd → a59917d → 78a2f33. Mismo método, mismas 5
+> mediciones por commit, sin repetir para buscar verde.
+> - Si aparece un escalón: la pasada correctiva del paso 5 va a ese commit,
+>   con la propiedad «el ratio vuelve al de v1.35.0», sin tocar el umbral
+>   de 1,25×.
+> - Si no hay escalón (los cinco oscilan igual alrededor del techo): se
+>   registra como instrumento con las cinco cifras, y sigue. En ese caso,
+>   ficha para REQ-017: un techo de 1,25× con el ratio en 1,20–1,30 en
+>   reposo es demasiado fino para acreditar nada; se revisa en 1.37, no
+>   ahora.
+> Después: QA del paso 5 entero, seguridad, commit validado, SEC-115/118.
+
+**Lo que añade la coordinadora:** la medición la hace el `desarrollador` de SEC-128, sin tocar código. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-06; entrada de arriba) — [2026-10-06] (coordinadora) — P-136-M: en el inventario de SEC-128, REQ-017 CA-08 (ii) («un REQ real de 6 líneas», de reloj, ejecuta hooks) pasa de INCONCLUSO a FAIL: «mín(r) 1,251× > techo 1,250×» en 5 de 5. ¿Ruido de anfitrión o regresión de coste?
 
 **Contexto.** SEC-128 (`78a2f33`; evidencia `f641380`, `cand-1.36.0/sec127/`, archivos 90- a c1-; registro `docs/arnes/v1.36.0-sec127-fase2.md`, «SEC-128»).
 - **Conforme:**
@@ -68,9 +91,6 @@
 **Qué trabajo sigue mientras no se decida:** ninguno del plan, porque QA del paso 5 depende de esto. Esta entrada impide marcar cualquier REQ como `completado`.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-06) — **P-136-J (A, acotada), P-136-K (A) y P-136-L (A)**; se encadena sin parar hasta abrir SEC-115/118
 
