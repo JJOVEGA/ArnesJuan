@@ -75,6 +75,7 @@ _(Vacía desde el 2026-10-06: P-136-M resuelta por el propietario, en § Resuelt
   - **SEC-120 (pasos 1–4):** decisiones escaladas: 3 (los tres puntos de la fase 2, en una sola entrada) + P-136-H + P-136-I = 5; paradas no previstas: 1 (la pausa por falta de créditos; las dos vueltas de hallazgos de QA estaban previstas por el plan como pasada correctiva); tokens: desarrollador ≈ 204 k + 90 k + 75 k ≈ 369 k, QA ≈ 203 k + 208 k ≈ 411 k, analista ≈ 132 k + 104 k ≈ 236 k, seguridad ≈ 192 k.
   - **Paso 5 (SEC-127, QA-007-06, SEC-128) y SEC-115/118:** se cuentan desde aquí, y las cifras se entregan al cerrar SEC-115/118, sin valoración.
 - **Recordatorio al propietario, como pide:** `cand/1.36.0` lleva todos sus commits en local, sin push. El push es suyo.
+- **Forma de las fichas desde aquí (petición del propietario, 2026-10-06):** cada ficha lleva, además de la forma de la regla 4, un bloque «Decisión propuesta, lista para adoptar», redactado como la escribiría el propietario, para que responda «adopto» o la corrija. La decisión sigue siendo suya y se registra literal con su respuesta.
 
 ### RESUELTA (propietario, 2026-10-06) — **P-136-M: (A)**, medición dirigida de REQ-017 CA-08 (ii) con el anfitrión en reposo sobre cinco commits
 
