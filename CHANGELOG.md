@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `c5bf6d4`: FAVORABLE. QA-007-14 cerrado; no queda ningún hallazgo de QA contra el código del paso 6 fuera de los límites declarados y los instrumentos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `c4afbde`) y la coordinadora.
+
+- **Medido:** sección 47 106/0 con fail-before sobre `39e6128`; 567 combinaciones con sólo las 40 de `.`/`[` por `guard.sh` (F-136-20) y 3 de `set` en guardianes sueltos; **900 combinaciones con 6 diferencias** (todas `set` en sueltos, F-136-20 (v)) frente a 156 en `39e6128`; 396 combinaciones nuevas con cuerpos agresivos (bucle sin fin, `kill -9 $$`, `deny` del atacante, `builtin exit 0`): 0 diferencias por `guard.sh`; análisis estático: `export`, `readonly` y `times` no aparecen en el código; coste de los 12 nombres añadidos ≈ 3 µs.
+- **Regresión:** matriz POSIX, `FUNCNEST`/`keyword`/`BASH_COMPAT`, `builtin`/`read` suplantadas, QA-007-10/12, T1–T3, tope 273/0, E1 sin cambio. Banco 2303/1/12 (el FAIL es INS-136-2); inventario 2037/0/13 sin movimientos; autoprueba 117/0; gates rc 0; +0 procesos.
+- **Dato para F-136-20 (v):** en los guardianes sueltos hace falta `set` junto con `return` suplantadas; el `set -uo pipefail` previo a `entrada.sh` llama a la `return` importada.
+- **Pendiente:** write-back de estado de QA-007-14 (analista) y el comentario del caso en la sección 47 («rc 139 o no termina» no es lo que da ese caso; texto de prueba, sin hallazgo).
+- **Avance (regla 6):** el paso 6 tiene QA favorable; sigue seguridad (fase 4).
+
 ## [Interno] — 2026-10-07 · P-136-R: QA-007-14 reparado por el desarrollador en `c5bf6d4` (18 min; 36 de los 60 del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
