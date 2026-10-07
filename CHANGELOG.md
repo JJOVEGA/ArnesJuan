@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `39e6128`: QA-007-13 cerrado; CON HALLAZGOS por QA-007-14 (`contrato`, baja): los builtins especiales quedan fuera de la lista estática y vuelven a ser suplantables tras `set +o posix`; P-136-R
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `84fbf80`, sin tocar `core.hooksPath`) y la coordinadora.
+
+- **Conforme:** bloque P 104/0 con fail-before (`03cbf5e` 102/2, 60 s); `builtin` 0 diferencias en 567 combinaciones; sin dependencia de `/proc/self/environ`; matriz POSIX, `FUNCNEST`/`keyword`/`BASH_COMPAT`, QA-007-10/12, T1–T3 y E1 sin cambio; tope 273 casos sin fallo; banco 2301/0/13; inventario 2038/0/12 (sólo una ruta que varía con `TMPDIR`); +0 procesos.
+- **QA-007-14:** con funciones importadas llamadas `return`, `exit`, `break`, `continue`, `set`, `shift` o `:`, 156 de 315 combinaciones salen sin decisión, con rc distinto de 0 o sin terminar; en `03cbf5e` eran 6 y en v1.35.0, 200. La reparación medida por QA es `unset -f` de esos nombres en modo POSIX (una línea). «Nada más entra» → decisión del propietario, P-136-R (recomendación (A)).
+- **Observación sin medir:** cómo trata el cliente una decisión con rc distinto de 0 o dos documentos JSON en la salida.
+- **Avance (regla 6):** el paso 6 queda a una línea y una re-verificación corta de estar validado.
+
 ## [Interno] — 2026-10-07 · P-136-Q: QA-007-13 reparado por el desarrollador en `39e6128` (18 minutos, dentro del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

@@ -43,7 +43,32 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-Q resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-07] (coordinadora) — P-136-R: QA-007-14 (`contrato`, baja): la lista estática de `entrada.sh` no retira los builtins **especiales** que el hook usa (`return`, `exit`, `break`, `continue`, `set`, `shift`, `:`); tras `set +o posix` vuelven a ser suplantables. Una línea lo repara. ¿Entra o es límite?
+
+**Contexto.** Re-verificación acotada de QA sobre `39e6128` (`docs/qa/REQ-007.md`, «Paso 6: re-verificación de la pasada acotada de P-136-Q»; evidencia `cand-1.36.0/sec115-118/qa3/`, `84fbf80`). **QA-007-13 cerrado:** `builtin` da 0 diferencias en 567 combinaciones; `ls -la` sin decisión en 110 ms y `Write` con `deny` en 111 ms donde `03cbf5e` moría a los 60 s; sin dependencia de `/proc/self/environ`; matriz POSIX, bloque P, QA-007-10/12, T1–T3 y E1 sin cambio; banco 2301/0/13; inventario 2038/0/12; +0 procesos.
+
+**QA-007-14.** P-136-Q dice «`unset -f` de una LISTA ESTÁTICA … (builtins **regulares** que el hook usa + externos que invoca)». El desarrollador siguió esa letra. Los builtins **especiales** (`return`, `exit`, `break`, `continue`, `set`, `shift`, `:`) quedaron fuera: el modo POSIX los protege sólo hasta el `set +o posix` del final del preludio, y después una función importada con ese nombre vuelve a suplantarlos. Medido por `guard.sh`:
+- `BASH_FUNC_return%%`: `Write` a `src/a.ts`, `Bash` que escribe en `src/`, `git reset --hard` y completar un REQ salen **sin decisión** (rc 139);
+- `BASH_FUNC_break%%`: el hook **no termina** (cortado a 10 s) y `git reset --hard` sale sin decisión;
+- `BASH_FUNC_exit%%`: la decisión sale con rc 1, 2 o 139; `continue` con `exit 0`: sin decisión en `Bash`.
+- Con esos 7 nombres difieren **156 de 315** combinaciones; en `03cbf5e` difieren 6 (las preexistentes de `set` en guardianes sueltos); en **v1.35.0, 200**. Es regresión frente a `03cbf5e` y mejora frente a lo publicado.
+- **Reparación medida por QA fuera del hook (`qa3/14-`):** en modo POSIX, `unset -f return exit break continue set shift :` retira esas funciones; sin procesos. Una línea en la lista estática.
+- **Resto preexistente:** `BASH_FUNC_set%%` en los guardianes ejecutados sueltos: ejecutan `set -uo pipefail` **antes** de cargar `entrada.sh` (`guard-codigo.sh:19`, `guard-git.sh:32`, `guard-completado.sh:18`); fuera del camino de producción (`hooks.json` sólo lanza `guard.sh`). F-136-20 no lo nombra.
+
+**Opciones.**
+- **(A) Completar la lista estática con los builtins especiales que el hook usa** (una línea; sigue siendo la técnica de P-136-Q, con la letra corregida: «builtins que el hook usa, regulares y especiales»), un caso de banco con `return` y `break` exportadas, y re-verificación acotada de QA. `BASH_FUNC_set%%` en guardianes sueltos → F-136-20 (preexistente; fuera del camino de producción). **Consecuencia:** ≈ 30–40 minutos; el candidato queda mejor que `03cbf5e` en todo lo medido.
+- **(B) Límite declarado** (F-136-20 ampliada): una función importada con el nombre de un builtin especial deja al hook sin decisión o colgado. **Consecuencia:** se publica una regresión frente a `03cbf5e` (aunque mejora frente a v1.35.0), y CA-68 (ii) queda contradicho por su propio ejemplo.
+- **(C) Volver a `03cbf5e`** (la limpieza por `/proc/self/environ`, que sí retiraba todo): recupera el cuelgue de 60 s con `builtin` suplantado. No.
+
+**Recomendación de la coordinadora: (A).** Es la misma reparación que ya autorizaste, con la palabra «regulares» corregida: la lista tiene que cubrir los builtins que el hook usa, sean regulares o especiales. El coste es una línea y una re-verificación corta.
+
+**Decisión propuesta, lista para adoptar:** «P-136-R: (A). La lista estática cubre los builtins que el hook usa, regulares y especiales (`return`, `exit`, `break`, `continue`, `set`, `shift`, `:`), retirados en modo POSIX; caso de banco con `return` y `break` exportadas, decisión en < 5 s; re-verificación acotada de QA. `BASH_FUNC_set%%` en guardianes sueltos → F-136-20. Nada más entra; contadores sin reiniciar.»
+
+**Qué trabajo sigue mientras no se decida:** nada del paso 6 (seguridad espera a QA favorable).
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
