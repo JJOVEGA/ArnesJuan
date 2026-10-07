@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Revert del código de cd63066 por P-136-U; hooks/ y tests/ = c5bf6d4
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-U (A), en `PENDING_APPROVAL.md` § Resueltas.
+
+- **Hecho:** `git revert --no-commit cd63066`, conservando de HEAD el registro técnico y este CHANGELOG. **SEC-132 (a) queda como límite declarado (F-136-22).**
+- **Motivos:** QA-007-15 (una gate roja podía escribir «0» en el canal del veredicto y cerrar el REQ), QA-007-16 y QA-007-17 (`docs/qa/REQ-007.md`).
+- **Comprobado:**
+  - `git diff c5bf6d4 -- hooks/ tests/` sale vacío: sección 47 con 106 casos y total 2316;
+  - `.claude-plugin/` sigue en 1.36.0;
+  - gates con rc 0;
+  - sección 47: 106/0.
+- La evidencia de `sec132a/` (`bb06d3c`) y la nota del registro se conservan como historia.
+- **Avance (regla 6):** el código de 1.36.0 vuelve a `c5bf6d4`, ya validado.
+
 ## [Interno] — 2026-10-07 · P-136-U (A) adoptada por el propietario: se revierte `cd63066`; SEC-132 (a) límite declarado con sus tres lecciones de diseño (F-136-22); QA-007-15/16/17 se cierran por reversión
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

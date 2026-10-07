@@ -22,7 +22,7 @@
 # FAIL en los dos, y los controles PASS (docs/arnes/v1.36.0-sec115-118-fase1.md). T1 y T2b (1 MB) no reproducen
 # su fail-before aquí (deciden antes de 60 s en los dos árboles) y quedan como CONTROLES; T2b, medida de 29 a 49 s,
 # roza el plazo de 40 s y antes de la reparación puede salir FAIL por (a). Esto NO es el host.
-CASOS_ESPERADOS_SECCION=110
+CASOS_ESPERADOS_SECCION=106
 PISO_AUTONOMO_SECCION=93  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 66 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-98)
 seccion_nueva "--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---"
 PD47="$RAIZ/de47-$BASHPID"; W47="$RAIZ/w47-$BASHPID"; mkdir -p "$W47"; BE47="$W47/bashenv"; printf 'set -o posix\n' > "$BE47"
@@ -313,29 +313,4 @@ for t47 in 'Bash|nada|ls -la' 'Write|deny|src/a.ts'; do
   j47 "QA-007-14 CA-68 P funciones return y break importadas, $h47 $o47, por guard.sh -> ${x47/nada/sin decisión} en menos de 5 s" \
     "$x47" guard.sh funciones-return-break 5000 "$c47"
 done
-# SEC-132 (a) (R-056, P-136-S): el plazo propio también corre DENTRO de las quality gates. Un cierre de REQ con todo en
-# verde y cuatro gates de 20 s -> deny por plazo en no más de 40 s; control: gates rápidas, el cierre pasa como antes.
-# Fail-before: c5bf6d4, el plazo sólo se miraba antes de las gates y el hook moría sin decisión a los 60 s.
-# (P-136-T (B)) La segunda forma: UNA gate colgada; y la gate cortada no deja huérfanos —su `sleep` lleva una marca de
-# esta corrida, para buscarlo después—. Con c5bf6d4 el hook muere y el `sleep` sigue: se retira al acabar el caso.
-M132="599.$BASHPID"
-for s132 in '["sleep 20","sleep 20","sleep 20","sleep 20"]|deny|SEC-132|intacto|cuatro gates de 20 s' \
-            "[\"sleep $M132\"]|deny|SEC-132|intacto|una gate colgada" '["true","true"]|nada||libre|control, dos gates rápidas'; do
-  IFS='|' read -r q47 x47 c47 e132 d47 <<< "$s132"
-  if ! pg47; then echo "  FAIL  SEC-132 $d47  no se pudo preparar el repositorio del proyecto (git)"; FAIL=$((FAIL + 1)); continue; fi
-  E47_C="$e132"   # pg47 lo deja en `intacto`; el control se cierra de verdad y no se mira
-  jq --argjson g "$q47" '.quality_gates = $g' "$PD47/.arnes/config.json" > "$W47/cfg" && cp "$W47/cfg" "$PD47/.arnes/config.json"
-  printf '# REQ-900\nEstado: en-revision\nQA: aprobado\nSeguridad: aprobado\nSensible a seguridad: si\n' > "$PD47/requirements/REQ-900.md"
-  E47_IN="$(jq -cn --arg c "$PD47" '{hook_event_name:"PreToolUse",tool_name:"Edit",cwd:$c,tool_input:{file_path:($c+"/requirements/REQ-900.md"),old_string:"Estado: en-revision",new_string:"Estado: completado"}}')"
-  E47_APLICA="sed -i 's/Estado: en-revision/Estado: completado/' requirements/REQ-900.md"
-  j47 "SEC-132 CA-68 P cierre de un REQ en verde con $d47, por guard.sh -> ${x47/nada/sin decisión} en no más de 40 s" \
-    "$x47" guard.sh normal 40000 "$c47"
-  if [ "$d47" = 'una gate colgada' ] && { [ -z "$FILTRO" ] || printf '%s' "SEC-132 huerfanos" | grep -qi -- "$FILTRO"; }; then
-    n132="$(pgrep -fc "sleep $M132" 2>/dev/null)"; n132="${n132:-0}"
-    if [ "$n132" = 0 ]; then echo "  PASS  SEC-132 CA-68 P la gate colgada que se corta no deja procesos huérfanos  (0 vivos)"; PASS=$((PASS + 1))
-    else echo "  FAIL  SEC-132 CA-68 P la gate colgada que se corta no deja procesos huérfanos  ($n132 vivos)"; FAIL=$((FAIL + 1))
-      pkill -f "sleep $M132" 2>/dev/null; fi
-  fi
-done
-E47_C=intacto
 rm -rf "$PD47" "$W47"
