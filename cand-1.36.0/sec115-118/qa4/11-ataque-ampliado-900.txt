@@ -1,0 +1,48 @@
+# 2026-10-07T12:52:38-06:00 bash 5.3.9(1)-release
+candidato BASE guard.sh:v1 deny|rc=0
+candidato BASE guard.sh:v3 deny|rc=0
+candidato BASE guard.sh:v4 deny|rc=0
+candidato BASE guard.sh:v5 deny|rc=0
+candidato BASE guard.sh:v8 nada|rc=0
+candidato BASE guard.sh:v9 aviso|rc=0
+candidato BASE guard-codigo.sh:v1 deny|rc=0
+candidato BASE guard-git.sh:v4 deny|rc=0
+candidato BASE guard-completado.sh:v5 deny|rc=0
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+# candidato: 900 combinaciones, 6 diferencias
+== candidato nombres raros (Write a src/a.ts y ls -la por guard.sh) ==
+candidato [jq=] v1 deny|rc=0
+candidato [jq=] v8 nada|rc=0
+candidato [a\ b] v1 deny|rc=0
+candidato [a\ b] v8 nada|rc=0
+candidato [$'j\nq'] v1 deny|rc=0
+candidato [$'j\nq'] v8 nada|rc=0
+candidato [jq%%x] v1 deny|rc=0
+candidato [jq%%x] v8 nada|rc=0
+candidato [-f] v1 deny|rc=0
+candidato [-f] v8 nada|rc=0
+candidato [--] v1 deny|rc=0
+candidato [--] v8 nada|rc=0
+candidato [\*] v1 deny|rc=0
+candidato [\*] v8 nada|rc=0
+candidato [jq\ ] v1 deny|rc=0
+candidato [jq\ ] v8 nada|rc=0
+candidato [\ jq] v1 deny|rc=0
+candidato [\ jq] v8 nada|rc=0
+candidato [\\\\jq] v1 deny|rc=0
+candidato [\\\\jq] v8 nada|rc=0
+candidato [/usr/bin/jq] v1 deny|rc=0
+candidato [/usr/bin/jq] v8 nada|rc=0
+candidato [é] v1 deny|rc=0
+candidato [é] v8 nada|rc=0
+candidato [rrrrrrrrrrrrrrrrrrrr] v1 deny|rc=0
+candidato [rrrrrrrrrrrrrrrrrrrr] v8 nada|rc=0
+candidato [jq=() sin %%, forma pre-shellshock] v1 deny|rc=0
+candidato [jq=() sin %%, forma pre-shellshock] v8 nada|rc=0
+candidato [BASH_FUNC_jq%% duplicada] v1 deny|rc=0
+candidato [BASH_FUNC_jq%% duplicada] v8 nada|rc=0

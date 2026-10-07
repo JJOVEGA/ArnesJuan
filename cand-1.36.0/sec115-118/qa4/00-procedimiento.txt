@@ -1,0 +1,26 @@
+# QA paso 6 — re-verificación ACOTADA de la línea de P-136-R (A) sobre QA-007-14 — procedimiento registrado ANTES de correr, 2026-10-07T12:48:51-06:00
+Árbol: worktree /home/juan/dev/ArnesJuan-v1.36, cabeza 94d2e56; hooks/tools/tests idénticos a c5bf6d4 (código del paso 6).
+Comparado (git archive en el scratchpad): 39e6128 (fail-before) y v1.35.0 (/home/juan/dev/ArnesJuan-v1.35.0-base).
+Plataforma: 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; LANG=C.UTF-8; nproc 12. Carga: 1.98 2.13 2.30 8/878 2672060
+
+Número de corridas, fijado AHORA (no se repite nada para obtener verde; una discrepancia se registra como tal):
+  1. Sección 47 aislada: 1 corrida sobre el candidato, 1 sobre 39e6128 (banco del candidato, ARNES_HOOKS_DIR).
+     Secciones 44 y 47-lectura-fallida-y-locale: dentro de 1 banco completo del worktree (punto 4).
+  2. Ataque a la limpieza, sobre el candidato, 1 corrida de cada uno:
+     a) qa2/40-limpieza-ataque.sh (21 nombres x 3 cuerpos x 9 vectores = 567), sin cambios;
+     b) qa3/10-ataque-ampliado.sh (20 nombres x 5 cuerpos x 9 vectores = 900), sin cambios;
+     c) 15-cuerpos-extra.sh (nuevo): los 11 especiales de la lista salvo '.' (F-136-20) x 4 cuerpos no medidos
+        (bucle sin fin, kill -9 $$, imprimir un deny, builtin exit 0) x 9 vectores = 396; más los 7 nombres de la
+        decisión exportados A LA VEZ con return 0 (9 vectores). timeout 10 s; >= 5 s se marca LENTO.
+     d) 14-estatico (nuevo): palabras en posición de orden en hooks/{entrada,guard,guard-*,lib}.sh frente a la lista
+        estática; y grep de export, readonly y times fuera de comentarios. 1 corrida.
+     Esperado: diferencias sólo en '.'/'[' (F-136-20) y en 'set' de los guardianes sueltos (F-136-20 (v)).
+  3. Regresión del preludio: matriz POSIX, FUNCNEST/BASH_COMPAT/compat*/keyword, builtin y read (QA-007-13),
+     QA-007-10, QA-007-12 y T1-T3: dentro de la corrida de sección 47 del punto 1. Tope: 1 corrida de 20-tope.sh.
+     E1: 3 mediciones intercaladas por tamaño (06-e1.sh).
+  4. Inventario CA-69 2 (a): 1 banco de v1.35.0 con hooks del candidato, ARNES_SEMILLA_41=23062, frente a
+     ca54/22-. Banco del worktree: 1 corrida, misma semilla, frente a qa00714/23- y qa3/23-. Autoprueba: 1.
+     Gates: 1. Procesos: 1 (30-procesos.sh, frente a 39e6128 y v1.35.0).
+  Todo en serie (corridas-qa4.sh), sin otras corridas mías en paralelo.
+  Regla: cualquier FAIL o diferencia fuera de lo declarado es hallazgo o, si es de reloj, se registra como tal; no se
+  añaden corridas para desmentirla.

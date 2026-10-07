@@ -1,0 +1,54 @@
+# 2026-10-07T12:51:31-06:00 bash 5.3.9(1)-release
+candidato BASE guard.sh:v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des
+candidato BASE guard.sh:v3 deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l
+candidato BASE guard.sh:v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue
+candidato BASE guard.sh:v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v
+candidato BASE guard.sh:v8 nada|rc=0|
+candidato BASE guard.sh:v9 aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como 
+candidato BASE guard-codigo.sh:v1 deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des
+candidato BASE guard-git.sh:v4 deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue
+candidato BASE guard-completado.sh:v5 deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard.sh:v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard.sh:v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como ] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=return0] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard.sh:v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard.sh:v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como ] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_[%%=exit0] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard.sh:v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard.sh:v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como ] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return0] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard.sh:v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard.sh:v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como ] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=return1] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard.sh:v3: base=[deny|rc=0|ARNES: el comando escribe en 'src/a.ts', que es código de l] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard.sh:v9: base=[aviso|rc=0|ARNES: 'requirements/REQ-900.md': 'QA: quizas' se lee como ] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_.%%=exit0] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0|ARNES: 'src/a.ts' es código de la app; sólo el agente 'des] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-git.sh:v4: base=[deny|rc=0|ARNES: 'git reset --hard' descarta o esconde trabajo que pue] con=[nada|rc=0|]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-completado.sh:v5: base=[deny|rc=0|ARNES: no se puede completar 'requirements/REQ-900.md': el v] con=[nada|rc=0|]
+# candidato: 567 combinaciones, 43 diferencias

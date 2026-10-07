@@ -1,0 +1,72 @@
+# 2026-10-07T12:51:28-06:00 lista estática (74 nombres):
+. : [ awk basename bash break builtin cat cd chmod cmp command continue cp cut date declare dirname echo enable env eval exec exit false find getopts git grep hash head iconv jq kill let ln local ls mapfile mkdir mktemp mv printf pwd read readarray readlink realpath return rm sed set sh shift shopt sleep sort source stat tail tee test timeout touch tr trap true type typeset umask unset wait wc 
+# los 7 de P-136-R en la lista:
+  return: sí
+  exit: sí
+  break: sí
+  continue: sí
+  set: sí
+  shift: sí
+  :: sí
+# builtins de bash (61) fuera de la lista, con apariciones como palabra fuera de comentarios:
+  alias=0   bg=0   bind=0   caller=0   compgen=0   complete=0   compopt=0   dirs=0   disown=0   export=0   fc=0   fg=0   help=1   history=0   jobs=0   logout=0   popd=0   pushd=0   readonly=0   suspend=0   times=0   ulimit=0   unalias=0 
+# export/readonly/times fuera de comentarios (líneas):
+  ninguna
+# palabras en posición de orden, fuera de la lista, que el shell resuelve a builtin/archivo/palabra clave:
+  then (keyword) x238
+  if (keyword) x230
+  fi (keyword) x221
+  esac (keyword) x159
+  case (keyword) x153
+  done (keyword) x70
+  do (keyword) x70
+  else (keyword) x50
+  for (keyword) x41
+  while (keyword) x28
+  elif (keyword) x20
+  join (file) x5
+  select (keyword) x4
+  yes (file) x1
+  xargs (file) x1
+  until (keyword) x1
+  time (keyword) x1
+  sudo (file) x1
+  strings (file) x1
+  stdbuf (file) x1
+  split (file) x1
+  setsid (file) x1
+  perl (file) x1
+  nohup (file) x1
+  nice (file) x1
+  ionice (file) x1
+  install (file) x1
+  in (keyword) x1
+  function (keyword) x1
+  dir (file) x1
+# dónde aparecen las de tipo archivo (no comentario):
+  [join] hooks/guard-completado.sh:475:    (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
+  [join] hooks/guard-completado.sh:485:     else ["W", ""] end) | [$ctl] + . | join("\u0001")' <<< "$ARNES_INPUT")"; then
+  [join] hooks/lib.sh:153:                      | map(tostring) | join(" ")),
+  [join] hooks/lib.sh:261:                                        | map(select(type == "string")) | join("\t")),
+  [join] hooks/lib.sh:273:                                        | join("\u0001"))]
+  [yes] hooks/lib.sh:2760:    si|s|true|x|yes|verdadero)  ARNES_SENS='si' ;;
+  [xargs] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [sudo] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [strings] hooks/guard-completado.sh:475:    (if ([.tool_input | .. | strings] | join("\n") | test("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f]"))
+  [stdbuf] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [split] hooks/lib.sh:260:                                         else ($gitdef | split("\t")) end)
+  [setsid] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [perl] hooks/lib.sh:2264:      sed|perl|*/sed|*/perl)
+  [nohup] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [nice] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [ionice] hooks/guard-git.sh:287:        *=*|sudo|command|exec|time|nice|ionice|env|builtin|nohup|setsid|stdbuf|doas|xargs|timeout) ;;
+  [install] hooks/guard-codigo.sh:199:    arnes_deny "ARNES: el comando escribe en '$objetivo', que es código de la app; sólo el agente '$ARNES_AGENTE_CODIGO' p
+  [install] hooks/lib.sh:2252:      cp|mv|install|*/cp|*/mv|*/install)
+  [dir] hooks/lib.sh:884:_arnes_id_propio() {   # <dir fisico> <resto 0|1> <base> <pid>
+  [dir] hooks/lib.sh:954:_arnes_lectura_fisica() {   # <ruta absoluta, sin barra final> <dir 0|1> -> ARNES_LF, ARNES_LF_DIR, ARNES_LF_RESTO ; 1 = no determina
+  [dir] hooks/lib.sh:959:  local dir="$1" base='' cur resto d orig="$PWD" CDPATH='' pasada=1 rc=0
+  [dir] hooks/lib.sh:960:  [[ $2 == 1 ]] || { base="${1##*/}"; dir="${1%/*}"; }
+  [dir] hooks/lib.sh:962:    cur="${dir:-/}"; resto=''
+  [dir] hooks/lib.sh:1021:_arnes_lf_nodet() {   # <recorrer <dir>|raiz|cwd>
+  [dir] hooks/lib.sh:1041:_arnes_lf_memo() {   # <ruta absoluta, sin barra final> <dir 0|1>
+  [help] hooks/guard-git.sh:261:      nota_cr=" El comando lleva un retorno de carro pegado a sus palabras: git no recibe esta orden tal cual, y lo que haga co

@@ -1,0 +1,21 @@
+# frente a qa00714/23-
+0a1
+> FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× N× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+887c888
+< PASS	REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+---
+> PASS	REQ-007 CA-66 una ruta de 4278 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+1467a1469
+> PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+2303d2304
+< SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de este árbol (N de N resueltas): N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N · presupuesto fijo, no se repite
+2306d2306
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
+# frente a qa3/23-
+0a1
+> FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× N× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+364a366,367
+> PASS	QA-007-14 CA-68 P funciones return y break importadas, Bash ls -la, por guard.sh -> sin decisión en menos de 5 s  (a) rc N en Nms, salida N bytes; (b) nada; (c) intacto
+> PASS	QA-007-14 CA-68 P funciones return y break importadas, Write src/a.ts, por guard.sh -> deny en menos de 5 s  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+2304d2306
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

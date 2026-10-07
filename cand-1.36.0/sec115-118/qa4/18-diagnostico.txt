@@ -1,0 +1,26 @@
+# 2026-10-07T13:06:39-06:00 (a) guardianes sueltos, cuerpos return 0
+guard-codigo.sh:v1 [ninguna] nada|rc=127
+guard-codigo.sh:v1 [set] deny|rc=0
+guard-codigo.sh:v1 [return] deny|rc=0
+guard-codigo.sh:v1 [set return] nada|rc=139
+guard-codigo.sh:v1 [return exit break continue shift :] deny|rc=0
+guard-codigo.sh:v1 [return exit break continue set shift :] nada|rc=139
+guard-git.sh:v4 [ninguna] nada|rc=127
+guard-git.sh:v4 [set] deny|rc=0
+guard-git.sh:v4 [return] deny|rc=0
+guard-git.sh:v4 [set return] nada|rc=139
+guard-git.sh:v4 [return exit break continue shift :] deny|rc=0
+guard-git.sh:v4 [return exit break continue set shift :] nada|rc=139
+guard-completado.sh:v5 [ninguna] nada|rc=127
+guard-completado.sh:v5 [set] deny|rc=0
+guard-completado.sh:v5 [return] deny|rc=0
+guard-completado.sh:v5 [set return] nada|rc=139
+guard-completado.sh:v5 [return exit break continue shift :] deny|rc=0
+guard-completado.sh:v5 [return exit break continue set shift :] nada|rc=139
+# (b) coste del unset -f: lista de 39e6128 (63 nombres) frente a la del candidato (75), 20000 vueltas, 3 alternadas
+rep=1 nombres=62 20000 vueltas: 0.402s
+rep=1 nombres=74 20000 vueltas: 0.439s
+rep=2 nombres=62 20000 vueltas: 0.377s
+rep=2 nombres=74 20000 vueltas: 0.434s
+rep=3 nombres=62 20000 vueltas: 0.401s
+rep=3 nombres=74 20000 vueltas: 0.479s
