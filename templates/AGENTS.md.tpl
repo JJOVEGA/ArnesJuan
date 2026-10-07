@@ -688,12 +688,13 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
      **acota a 16 384 bytes**.
 
    **Sus residuales, que siguen abiertos o declarados:**
-   - las **quality gates en serie** (SEC-132 (a)): en el código validado, el plazo se comprueba antes de la
-     primera gate y no entre una y la siguiente, y unas gates lentas pueden dejar el hook sin decisión. Su
-     reparación, decidida por el propietario del arnés, comprueba el plazo entre gates **y acota la gate en curso
-     al tiempo que queda del plazo**: una gate que no termina dentro de él —también una gate colgada— se
-     interrumpe y el cierre se deniega por plazo. Está en una pasada de 1.36.0 que, al escribir esto, **no está
-     validada**; mientras no lo esté, cuenta como residual;
+   - las **quality gates** (SEC-132 (a)), **límite declarado de 1.36.0 y sin reparar:** el plazo propio no
+     alcanza a las quality gates —se comprueba antes de la primera, y no entre una y la siguiente ni durante la
+     que está en curso—, así que cuatro gates de 20 s, o una sola gate colgada, dejan el hook **sin decisión** a
+     los 60 s (medido en Linux/WSL2). **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría
+     sin denegar. La reparación preparada en 1.36.0 se revirtió antes de publicar por los defectos que abría, uno
+     de ellos un cierre con una gate en rojo; la resolución es de 1.37, con tres lecciones de diseño (ficha
+     F-136-22 del repositorio del arnés);
    - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
      `Hallazgos abiertos:` repetidas en la cabecera **en disco** (SEC-132 (b)) y un REQ de varios MB con CRLF
      en disco (QA-007-09), límites declarados de 1.36.0;

@@ -1468,26 +1468,25 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   `hooks/hooks.json` que lanza el hook; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del
   arnés.
 
-- **Cambio de compatibilidad: un cierre cuyas quality gates en serie agotan el plazo del hook se deniega, también el
-  legítimo, y una gate que no termina dentro del plazo se interrumpe (SEC-132 (a); REQ-007 CA-68 y CA-69, punto 3,
-  del arnés; decisiones P-136-S y P-136-T del propietario del arnés, 2026-10-07). Su validación no está cerrada:** al
-  escribir esta entrada la reparación está en una pasada acotada, sin validar por QA ni por seguridad; se confirma o
-  se corrige antes de copiarla a las notas `[1.36.0]`. Esta entrada **no migra nada**. **Decisiones, literales:** «se
-  repara SEC-132 (a) en una pasada acotada con tope de una hora (plazo comprobado entre gates, caso de banco con gates
-  lentas, cambio de compatibilidad declarado, …)» y «El plazo se comprueba entre gates y la gate en curso se acota al
-  tiempo que queda del plazo […] Cambio de compatibilidad declarado: una gate que no termine dentro del plazo se
-  interrumpe y el cierre se deniega.» **Qué cambia:** el plazo propio del hook se comprobaba antes de la primera
-  quality gate y no entre una y la siguiente, así que unas gates lentas en serie —medido: cuatro de 20 s— dejaban el
-  cierre **sin decisión** a los 60 s. Con la reparación, el hook no lanza la siguiente gate si el plazo se ha agotado,
-  **acota la gate en curso al tiempo que queda del plazo** —si no termina dentro de él, la interrumpe— y **deniega**
-  con un motivo que lo dice, antes de los 40 s, también con una gate colgada. **Para tu proyecto:** si tus quality
-  gates suman más que el plazo del hook, o **una sola** de ellas tarda más que lo que queda de él —por ejemplo, una
-  gate de más de unos 30 s—, verás `deny` por plazo al cerrar un REQ donde antes el cierre pasaba —si terminaba dentro
-  de los 60 s del cliente— o quedaba sin decisión; **también con todas las gates en verde**. Una gate que no terminaba
-  dentro de los 60 s del cliente, en 1.35.0, dejaba que el cliente matara el hook sin decisión; ahora se interrumpe y
-  el cierre se deniega. Lo que la gate interrumpida haya lanzado por su cuenta puede seguir corriendo. Acelera o
-  reparte tus gates. El defecto está medido a nivel de hook en Linux/WSL2; el host y Windows/MSYS, sin medir. Sede:
-  REQ-007, CA-68, «SEC-132 (a)…», del arnés.
+- **Límite declarado: el plazo del hook no alcanza a tus quality gates, y unas gates lentas o una gate colgada dejan
+  sin decisión el cierre de un REQ (SEC-132 (a); REQ-007 CA-68, «SEC-132 (a) — el plazo propio no alcanza a las
+  quality gates», del arnés; decisión P-136-U del propietario del arnés, 2026-10-07; ficha F-136-22).** Esta entrada
+  **no migra nada**: dice lo que la versión que instalas **no** cumple. **«Límite declarado» no es «riesgo
+  aceptado», y la decisión no repara nada.** **Decisión, literal, en lo que toca a esta entrada:** «SEC-132 (a) queda
+  como límite declarado con (b) en F-136-22, para 1.37, con las tres lecciones de diseño escritas y la nota de que
+  v1.35.0 cerraba el REQ sin decisión en ese caso.» **Alcance:** el plazo propio del hook se comprueba antes de la
+  primera quality gate, y no entre una y la siguiente ni durante la que está en curso. Medido a nivel de hook en
+  Linux/WSL2, una corrida por punto: cuatro gates de 20 s, o una sola gate colgada, dejan el cierre **sin decisión**
+  a los 60 s. **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría sin denegar. Preexistente. Una
+  reparación preparada en 1.36.0 —acotar la gate en curso al tiempo que queda del plazo e interrumpirla— **se revirtió
+  antes de publicar** por los defectos que abría, uno de ellos un cierre con una gate en rojo; así que en 1.36.0
+  **ninguna gate se interrumpe** y ningún cierre legítimo pasa a `deny` por este motivo. **Consecuencia:** que el
+  cliente tome por permitir un hook sin decisión es inferido. **Para tu proyecto:** que tus quality gates, sumadas,
+  terminen con holgura dentro de los 60 s del cliente, y que ninguna pueda quedarse colgada. El host, Windows/MSYS y
+  otros bash, sin medir. Ficha para 1.37, que se propone antes de implementarse, con tres lecciones de diseño: el canal
+  por el que el hook lee el veredicto de una gate no puede ser escribible por la gate; el corte de una gate que agota
+  el plazo tiene que ser lineal; y la salida de la gate no puede retener el stderr del hook. Sede: REQ-007, CA-68,
+  «SEC-132 (a)…», del arnés.
 
 - **Límite declarado: una función heredada con el nombre de la orden de una quality gate, un límite de descriptores
   heredado y `PATH` (SEC-131; REQ-007 CA-68, «Límites declarados de 1.36.0», «Ampliación por P-136-S», del arnés;

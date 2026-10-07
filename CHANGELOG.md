@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · P-136-U ejecutada: reversión comprobada por QA (FAVORABLE; QA-007-15/16/17 cerrados por reversión; ningún hallazgo de QA contra el código de 1.36.0, `c5bf6d4`); write-back del límite SEC-132 (a) con sus lecciones (CA-68, `AGENTS.md` §13, guía); PR-136-6 (error de despacho de la coordinadora)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` «P-136-U: comprobación de la reversión»; cabecera de REQ-007; evidencia `69e541c`, con hooks de git intactos), `analista-requerimientos` (CA-68, CA-69 p. 3, pregunta abierta, `AGENTS.md` §13 y plantilla, guía, índice) y la coordinadora.
+
+- **QA:** `diff` vacío contra `c5bf6d4` en `hooks/`, `tests/` y `tools/`; `cmp` de los 11 archivos; versión 1.36.0 y `arnes_version` 1.33.0 con `jq -e .` rc 0; `arnes_corta_gate` en 0 archivos. Los vectores de QA-007-15 vuelven a lo de `c5bf6d4` (la roja deniega, la verde cierra), y sobre `cd63066` la sonda distingue (control positivo). La gate colgada vuelve a dejar al hook sin decisión a los 60 s: límite declarado. Humo: secciones 47 (106/0 y 44/0) y 44 (363/0); gates rc 0.
+- **PR-136-6** (`docs/PENDIENTES.md`): la coordinadora despachó a QA y al analista a la vez sobre `requirements/REQ-007.md`, contra §6; una línea de la cabecera quedó pegada y QA la reparó; la coordinadora comprobó la cabecera y el lector antes de comitear.
+- **Avance (regla 6):** el código de 1.36.0 queda en `c5bf6d4`, validado por QA; falta la determinación corta de seguridad sobre el estado final y el cierre.
+
 ## [GitHub] — 2026-10-07 · Revert del código de cd63066 por P-136-U; hooks/ y tests/ = c5bf6d4
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-U (A), en `PENDING_APPROVAL.md` § Resueltas.
 
