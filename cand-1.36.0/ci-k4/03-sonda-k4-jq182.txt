@@ -1,0 +1,33 @@
+jq en uso: /home/juan/.local/bin/jq -> jq-1.8.2
+niveles=254   jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=254   jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=254   jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=254   jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=255   jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=255   jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=255   jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=255   jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=256   jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=256   jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=256   jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=256   jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=1000  jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=1000  jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=1000  jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=1000  jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9000  jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9000  jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9000  jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9000  jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9998  jq_lee=si candidata guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9998  jq_lee=si candidata guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9998  jq_lee=si v1.35.0   guard.sh             deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9998  jq_lee=si v1.35.0   guard-completado.sh  deny  ARNES: no se puede completar 'requirements/REQ-900.md': el veredicto de QA es 'pendiente' 
+niveles=9999  jq_lee=no candidata guard.sh             deny  ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objet
+niveles=9999  jq_lee=no candidata guard-completado.sh  deny  ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objet
+niveles=9999  jq_lee=no v1.35.0   guard.sh             allow 
+niveles=9999  jq_lee=no v1.35.0   guard-completado.sh  allow 
+niveles=10001 jq_lee=no candidata guard.sh             deny  ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objet
+niveles=10001 jq_lee=no candidata guard-completado.sh  deny  ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objet
+niveles=10001 jq_lee=no v1.35.0   guard.sh             allow 
+niveles=10001 jq_lee=no v1.35.0   guard-completado.sh  allow 

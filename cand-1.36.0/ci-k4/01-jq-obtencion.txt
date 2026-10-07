@@ -1,0 +1,12 @@
+# jq 1.7.1 de Ubuntu 24.04 extraido sin instalar (dpkg-deb -x), y el binario estatico upstream
+http://security.ubuntu.com/ubuntu/pool/main/j/jq/jq_1.7.1-3ubuntu0.24.04.2_amd64.deb
+http://security.ubuntu.com/ubuntu/pool/main/j/jq/libjq1_1.7.1-3ubuntu0.24.04.2_amd64.deb
+http://archive.ubuntu.com/ubuntu/pool/main/libo/libonig/libonig5_6.9.9-1build1_amd64.deb
+https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-amd64
+f59183392f84fe67b407b494d8ba6185e9b0e4a106ffcb369490bd20a83fd40e  jq_1.7.1-3ubuntu0.24.04.2_amd64.deb
+078fbf38b2e7c3f24cc5dc894d1bb03b617894b887a6e13d5943e13818e724f3  libjq1_1.7.1-3ubuntu0.24.04.2_amd64.deb
+605f42287d2bcb6c84f5a02377c7cd777090c5e857259a4030a571989f19dde2  libonig5_6.9.9-1build1_amd64.deb
+5942c9b0934e510ee61eb3e30273f1b3fe2590df93933a93d7c58b81d19c8ff5  jq-up
+ubuntu: jq-1.7 (Debian/Ubuntu imprime jq-1.7 para 1.7.1)
+upstream: jq-1.7.1
+anfitrion: jq-1.8.2, GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu), 6.18.33.2-microsoft-standard-WSL2

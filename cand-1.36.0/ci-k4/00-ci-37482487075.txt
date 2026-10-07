@@ -1,0 +1,56 @@
+# Run 37482487075 (PR #60), merge 91dc5d3 = f1ffac3 sobre 3956a6f; extraido con gh run view --log el 2026-10-07
+Current runner version: '2.337.0'
+##[group]Runner Image Provisioner
+Hosted Compute Agent
+Version: 20260901.588
+Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+Build Date: 2026-09-01T19:56:44Z
+Worker ID: {cf8bcf30-0737-4bdb-8838-0ec59f8d63a4}
+Azure Region: eastus
+##[endgroup]
+##[group]Operating System
+Ubuntu
+24.04.5
+LTS
+##[endgroup]
+##[group]Runner Image
+Image: ubuntu-24.04
+Version: 20260927.320.1
+Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md
+Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260927.320
+##[endgroup]
+
+# bash del runner (citado por REQ-017 CA-10):
+bash 5.2.21(1)-release, locale del entorno C.UTF-8
+# jq del runner: el paso 'command -v jq || apt-get install jq' no imprime version; la imagen ubuntu24/20260927.320 declara (Ubuntu2404-Readme.md):
+17:- Bash 5.2.21(1)-release
+84:- jq 1.7
+285:| jq                     | 1.7.1-3ubuntu0.24.04.2        |
+
+# FAIL
+  FAIL  SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por guard.sh candidata  el motivo no cita «requirements/REQ-900.md': el veredicto de QA es 'pendiente'»  <ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objeto JSON del que sacar sus campos (por ejemplo, no es JSON valido, anida por encima del limite de jq o trae mas de un objeto). Sin leerla ninguna puerta>
+  FAIL  SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por guard.sh v1.35.0: control, decide igual  esperado=deny got=allow  <>
+  FAIL  SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por guard-completado.sh candidata  el motivo no cita «requirements/REQ-900.md': el veredicto de QA es 'pendiente'»  <ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objeto JSON del que sacar sus campos (por ejemplo, no es JSON valido, anida por encima del limite de jq o trae mas de un objeto). Sin leerla ninguna puerta>
+  FAIL  SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por guard-completado.sh v1.35.0: control, decide igual  esperado=deny got=allow  <>
+
+# Resultado
+Resultado: 2172 PASS, 4 FAIL, 34 SKIP (de ellos 2 INCONCLUSO: 2 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+
+# SKIP agrupados
+     18   SKIP  REQ-023 CA-08 (i) R* fail-before: allow en 713ac68 y en 1.33.2, deny en la candidata  no está la instalación estable 1.33.2 en /home/runner/.claude/plugins/cache/arnes-juan/arnes-juan/1.33.2
+      1   SKIP  ruta estilo Windows con backslashes -> deny  (sin cygpath: caso solo de Windows)
+      1   SKIP  REQ-030 CA-07 control WD (una cabecera de 200 líneas): envoltorio de pruebas con demora fija de 0.100s por llamada  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1;
+      1   SKIP  REQ-030 CA-07 control WD (un REQ real de 6 líneas): envoltorio de pruebas con demora fija de 0.040s por llamada  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; ú
+      1   SKIP  REQ-030 CA-07 control W0 (una cabecera de 200 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; última acreditación: e
+      1   SKIP  REQ-030 CA-07 control W0 (un REQ real de 6 líneas): envoltorio de pruebas con demora 0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; última acreditación: ensa
+      1   SKIP  REQ-030 CA-07 control I (una cabecera de 200 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; última acreditaci�
+      1   SKIP  REQ-030 CA-07 control I (un REQ real de 6 líneas): sujetos idénticos, razón verdadera 1,0  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; última acreditación:
+      1   SKIP  REQ-030 CA-07 control C3 (instrumento de CA-03): el cociente de duplicación de v1.32.1 con k=20 supera 2,6×  no se pide: control del instrumento, a demanda con ARNES_SONDA_CONTROLES=1; la de
+      1   SKIP  REQ-021 CA-08 (iii) calibrar sonda-reloj.sh no cuesta más de 6× una medición suya con los MISMOS mandos  reloj 1.995× (3048415µs sobre 1527675µs) cabe en el techo 6,000×, pero la mitad 
+      1   SKIP  REQ-017 CA-10 (iii) fail-before: la heredada bajo el locale del entorno NO cumple (i) o (ii), y se registra sin fallar por ello  36 entradas NO son clasificables: la heredada tampoco publica u
+      1   SKIP  REQ-017 CA-10 (ii) ...y esa decisión es la del ORÁCULO: la heredada bajo LC_ALL=C  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo LC_ALL=C, y un orá
+      1   SKIP  REQ-017 CA-10 (i) fuera del dominio este árbol decide siempre lo mismo, y lo mismo en los dos locales  36 entradas NO son clasificables: la heredada tampoco publica una decisión única bajo 
+      1   SKIP  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.197×, 1.295×] de 5 razo
+      1   SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.219×, 1.525×] de 5 razones
+      1   SKIP  REQ-017 CA-05 (ii) la comparación no se compra dejando de probar  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-07); es a
+      1   SKIP  REQ-017 CA-05 (i) la ruta crítica cuesta no más de 0,250× lo de v1.32.1  no se pide: evidencia acreditada en el Historial de REQ-017 (0,125× — 9,60 s frente a 76,19 s, medido el 2026-09-

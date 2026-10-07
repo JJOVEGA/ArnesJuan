@@ -1,0 +1,37 @@
+# {"a": N corchetes anidados}: rc de jq -c type
+== jq -> jq-1.8.2
+253 rc=0 
+254 rc=0 
+255 rc=0 
+256 rc=0 
+1000 rc=0 
+9000 rc=0 
+9997 rc=0 
+9998 rc=0 
+9999 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 10004
+10000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 10004
+10001 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 10004
+== /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/jq171/bin/jq -> jq-1.7
+253 rc=0 
+254 rc=0 
+255 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+256 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+1000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9997 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9998 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9999 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+10000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+10001 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+== /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/jq171/jq-up -> jq-1.7.1
+253 rc=0 
+254 rc=0 
+255 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+256 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+1000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9997 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9998 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+9999 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+10000 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
+10001 rc=5 jq: parse error: Exceeds depth limit for parsing at line 1, column 260
