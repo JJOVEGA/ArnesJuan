@@ -43,8 +43,30 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-Q resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-06] (coordinadora) — P-136-Q: QA-007-13 (`contrato`, baja): una función importada del entorno llamada `builtin` deja al hook sin decisión, y si devuelve 0 **toda llamada muere a los 60 s** (regresión de la pasada correctiva). No quedan pasadas en el plan. ¿Una pasada acotada más, o límite declarado?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-Q: (A), con tope de una hora y acotada a QA-007-13**; lista estática de `unset -f`; caso de banco con `builtin` y `read` exportadas y decisión en < 5 s; F-136-20 como límite declarado
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-Q: (A), con tope de una hora y acotada a QA-007-13:
+> - entrada.sh arranca con POSIXLY_CORRECT=y; `unset -f` de una LISTA ESTÁTICA
+>   escrita en el archivo (builtins regulares que el hook usa + externos que
+>   invoca), sin descubrir nombres con declare/compgen/read; bucle sin
+>   órdenes suplantables o con tope; `set +o posix` al terminar el preludio.
+> - Caso de banco: funciones `builtin` y `read` exportadas (la de `builtin`
+>   devolviendo 0), orden inocua, decisión emitida en < 5 s.
+> - Límites declarados (F-136-20, 1.37): `.`/`[` antes de entrada.sh,
+>   errexit, y BASH_ENV si no está ya cubierto; resolución desde hooks.json.
+> - Re-verificación de QA acotada; si no cabe en pocas líneas, (B). Nada más
+>   entra; contadores sin reiniciar.
+> PR-136-4 registrada; va con PR-136-1 a 3.
+
+**Lo que añade la coordinadora:** la pasada la hace el `desarrollador` con tope de una hora de reloj; la re-verificación de QA se acota al bloque nuevo, a la regresión y a una regresión corta del preludio. F-136-20 en `docs/PENDIENTES.md`. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-06] (coordinadora) — P-136-Q: QA-007-13 (`contrato`, baja): una función importada del entorno llamada `builtin` deja al hook sin decisión, y si devuelve 0 **toda llamada muere a los 60 s** (regresión de la pasada correctiva). No quedan pasadas en el plan. ¿Una pasada acotada más, o límite declarado?
 
 **Contexto.** Re-verificación de QA de `03cbf5e` (`docs/qa/REQ-007.md`, «Paso 6: re-verificación de la pasada correctiva»; evidencia `cand-1.36.0/sec115-118/qa2/`, `6cf1ba0`). **Conforme:** QA-007-10, QA-007-11 (a) y QA-007-12 **cerrados** (393 casos con bytes no UTF-8 sin fallo; 38 930 combinaciones de variables sin diferencias; 7 272 con `localvar_inherit`); T1–T3 y la matriz POSIX en `deny`; E1 igual; inventario sólo con INS-136-2 y 2 (c); banco 2299/0/13; autoprueba 117/0; gates rc 0; +0 procesos. QA-007-08 reclasificado a `instrumento` (INS-136-4).
 
@@ -67,9 +89,6 @@
 **Qué trabajo sigue mientras no se decida:** nada del paso 6 (seguridad espera a QA favorable). El borrador de las notas y la ficha F-136-20 se preparan.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-06) — **P-136-P: (1) (A) y (2) (A)** — adoptada la decisión propuesta, literal
 

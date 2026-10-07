@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-Q resuelta por el propietario: (A) con tope de una hora, acotada a QA-007-13 (lista estática de `unset -f`, sin descubrir nombres); F-136-20 (estado heredado que sólo `hooks.json` puede neutralizar)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con una pasada acotada y con tope; si no cabe en pocas líneas, QA-007-13 queda como límite declarado (B).
+
 ## [GitHub] — 2026-10-06 · Re-verificación de QA (Opus) de `03cbf5e`: CON HALLAZGOS. QA-007-10, QA-007-11 (a) y QA-007-12 cerrados; QA-007-08 → INS-136-4; **QA-007-13** (`contrato`, baja): función importada `builtin` → sin decisión, y cuelgue de 60 s por llamada (regresión); P-136-Q; PR-136-4
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `6cf1ba0`) y la coordinadora.
 
