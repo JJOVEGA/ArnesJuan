@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de P-136-R (analista): QA-007-13 cerrado en CA-68 (ii); QA-007-14 «en la pasada, sin validar» con la letra corregida («regulares y especiales»); F-136-20 (v)
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Avance (regla 6):** el contrato está al día con P-136-R; falta la línea del desarrollador (en curso) y su re-verificación.
+
 ## [Interno] — 2026-10-07 · P-136-R (A) adoptada por el propietario: la lista estática cubre también los builtins especiales; F-136-20 gana el `set` en guardianes sueltos
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
