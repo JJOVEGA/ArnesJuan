@@ -1454,12 +1454,15 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   resolución desde hooks.json.» **Alcance:** (i) una función exportada en el entorno del hook con el nombre `.` o
   `[` (`BASH_FUNC_.%%`, `BASH_FUNC_[%%`): el hook ejecuta esas dos órdenes para cargar su preludio, antes de que
   ninguna limpieza corra, así que la función las sustituye y las llamadas que deberían denegarse salen **sin
-  decisión**; (ii) `SHELLOPTS` exportada con `errexit`: el hook **deniega todo**, también lo legítimo —falla hacia el
+  decisión** —y si la función de `[` imprime un `allow`, reciben un **`allow` explícito**, que además salta el
+  diálogo de permisos del cliente (medido a nivel de hook en el candidato de 1.36.0; revisión de seguridad R-056 del
+  arnés)—; (ii) `SHELLOPTS` exportada con `errexit`: el hook **deniega todo**, también lo legítimo —falla hacia el
   lado cerrado, y la sesión no puede trabajar—; (iii) un `BASH_ENV` con cualquier contenido, que bash ejecuta
   **antes** que el hook, con sus permisos. Medido a nivel de hook en Linux/WSL2, bash 5.3.9, los dos primeros; el
   tercero se sostiene por cómo arranca bash. Los tres son preexistentes: también ocurren en 1.35.0. **Consecuencia:** quien
   controla el entorno del hook puede dejar sin decisión las llamadas que las puertas deberían denegar (que el cliente
-  lo tome por permitir es inferido), o bloquear la sesión entera. **Para tu proyecto:** no exportes funciones con
+  lo tome por permitir es inferido), **permitirlas de forma explícita** con una función `[` que imprime un `allow`,
+  o bloquear la sesión entera. **Para tu proyecto:** no exportes funciones con
   esos nombres, ni `SHELLOPTS` con `errexit`, ni `BASH_ENV`, en el entorno de la sesión. El host, Windows/MSYS y otros
   bash, sin medir. Es la misma frontera que la del párrafo anterior: sólo se resuelve en la orden de
   `hooks/hooks.json` que lanza el hook; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del

@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de estado tras R-056 (analista): CA-67, CA-68 y CA-69 p. 7 «construido en `c5bf6d4`; validado por QA; R-056 sin veto; SEC-115/118/129 `mitigado`»; F-136-20 (i) con el `allow` explícito; SEC-130 texto final; O-56-3 en «no acredita»
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~192 k tokens) y la coordinadora.
+
+- Nada de SEC-131, SEC-132, `AGENTS.md` ni el plazo entre gates: dependen de P-136-S. `Seguridad:` de REQ-007 sigue `pendiente`.
+- **Avance (regla 6):** el contrato refleja el paso 6 validado; el cierre espera P-136-S.
+
 ## [GitHub] — 2026-10-07 · Paso 6: COMMIT VALIDADO. R-056 conforme con hallazgos y sin veto; SEC-115, SEC-118 y SEC-129 `mitigado`; SEC-130 instrumento (texto corregido); SEC-131 (`contrato`, baja) y SEC-132 (`contrato`, media), preexistentes → P-136-S junto con las autorizaciones del cierre
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-056; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `4bd3464`; ~275 k tokens) y la coordinadora.
 
