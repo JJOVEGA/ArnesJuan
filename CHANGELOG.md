@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Modo 100755 de hooks/entrada.sh; el CI lo exige; sin cambio de contenido
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Causa: el CI del PR #60 (run 37695756807, sobre `19cf88e`) falló en «bit de ejecución en todo punto de entrada».
+
+- **Causa:** `hooks/entrada.sh` se creó en la fase 2 con la herramienta de edición, quedó en el índice como `100644` y nunca recibió el bit de ejecución. El workflow exige `100755` para todo `hooks/*.sh`. En runtime no tenía efecto, porque se carga con `source`, pero rompía la propiedad del CI y el banco no llegaba a arrancar.
+- **Cambio:** `chmod +x hooks/entrada.sh`, que queda en `100755`. El blob es el mismo, `bfa252c`.
+- **Comprobado:** el paso del workflow, reproducido en local, sale con todos los puntos de entrada en `100755` y las secciones del banco en `100644`. Gates de §7: rc 0.
+- **Avance (regla 6):** la propiedad de los modos del CI vuelve a cumplirse. Falta que el CI corra sobre la cabeza.
+
 ## [GitHub] — 2026-10-07 · CI del PR #60: causa medida (el `jq` 1.7.1 del runner lee 254 niveles); ajuste del caso K4 del banco sin tocar `hooks/`; QA-007-18 (`contrato`, baja) con write-back en CA-47 p. 20; nota §9 de R-057 (con jq 1.7.x el fail-open de SEC-120 en lo publicado empieza en 255 niveles); push de la candidata
 > Origen: GitHub (commit local y **push** autorizado por el propietario en P-136-S (3)) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; reproducción con el paquete `jq` 1.7.1 extraído sin instalar; `docs/qa/REQ-007.md` «CI del PR #60: K4 (V4) en Ubuntu»; sección 44; cabecera de REQ-007; evidencia `4e8b2e0`; ~165 k tokens), `auditor-seguridad` (R-057 §9; ~75 k), `analista-requerimientos` (CA-47 p. 20, CA-69 p. 2, notas, índice) y la coordinadora.
 
