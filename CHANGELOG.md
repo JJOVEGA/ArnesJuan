@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de estado (analista): QA-007-14 «construido en `c5bf6d4`; validado y cerrado por QA» en CA-68 (ii) y en el índice; F-136-20 (v) con el dato de QA
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Avance (regla 6):** el contrato refleja todo lo validado del paso 6; falta la determinación de seguridad (en curso).
+
 ## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `c5bf6d4`: FAVORABLE. QA-007-14 cerrado; no queda ningún hallazgo de QA contra el código del paso 6 fuera de los límites declarados y los instrumentos
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `c4afbde`) y la coordinadora.
 
