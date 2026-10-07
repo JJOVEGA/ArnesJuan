@@ -1,0 +1,13 @@
+1c1,2
+< FAIL	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo : el sensible base mide 146262µs y no llega a 150000µs;
+---
+> FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× N× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+> FAIL	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo : el insensible base mide 137335µs y no llega a 150000µs (es el que derivaba a N× del suelo);
+363a365,366
+> PASS	QA-007-13 CA-68 P funciones builtin y read importadas, Bash ls -la, por guard.sh -> sin decisión en menos de 5 s  (a) rc N en Nms, salida N bytes; (b) nada; (c) intacto
+> PASS	QA-007-13 CA-68 P funciones builtin y read importadas, Write src/a.ts, por guard.sh -> deny en menos de 5 s  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+1475a1479
+> PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+2302,2303d2305
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
+< SKIP	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× (#N:no-converge(N/N) ) · presupuesto fijo, no se repite
