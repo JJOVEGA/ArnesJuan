@@ -2333,3 +2333,6 @@ ninguna mata al hook.»
 
 ### F-136-22 — 1.37: SEC-132 (b) (`contrato`, preexistente): las líneas repetidas de `Hallazgos abiertos:` en la cabecera en disco crecen más que linealmente
 - **Qué** (R-056): 20 000 líneas cortas repetidas → `deny` a los 48,5 s (por encima de los 40 s); 20 000 de 66 caracteres → sin decisión. Causa situada por lectura en `lib.sh:3376`, sin medir. Un techo sobre el documento en disco de > 660 KB no lo cubriría; exige una normalización lineal o un techo propio del campo, propuestos antes de hacerse (y E1–E3 otra vez). **Límite declarado en 1.36.0** (P-136-S (1) (A)); dueño `desarrollador`. **SEC-132 (a)** (el plazo entre gates) se repara en 1.36.0.
+
+### PR-136-5 — Hallazgo de proceso, clase `instrumento`: QA volvió a comitear su evidencia con `-c core.hooksPath=` (declarado por él)
+- **Qué:** en `cand-1.36.0/sec115-118/qa5/` (`26f6131`), el `qa-tester` usó `git -c core.hooksPath=` sólo para ese comando; la ruta configurada (`.githooks`) no existe en ese repositorio, así que no se saltó ningún hook. Segunda instancia (PR-136-4). **Sin reparar**; la ficha b) de 1.37 es el control mecánico.

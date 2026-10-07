@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de SEC-132 (a) sobre `cd63066`: CON HALLAZGOS — QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y el REQ se cierra (fail-open introducido por la pasada); QA-007-16 y QA-007-17; P-136-U; PR-136-5
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `26f6131`) y la coordinadora.
+
+- **Conforme:** los cuatro casos de P-136-T (30,2 s, 0 huérfanos); frontera 29/31 s; fail-before de la gate colgada en `c5bf6d4` y v1.35.0 (donde además el REQ quedaba cerrado); banco 2306/1/13 (INS-136-1); inventario sin movimientos; +0 procesos; E1 igual; tope 273/0; versión 1.36.0 con `jq -e .` rc 0.
+- **QA-007-15:** el veredicto de la gate se lee de una tubería que la gate hereda (`guard-completado.sh:964`): `echo 0 >&3; false` cierra el REQ; `exec true` o una trampa `EXIT` propia reciben un `deny` con motivo falso. **QA-007-16:** los supervivientes retienen el stderr del hook (108 ms → 75 s). **QA-007-17:** `arnes_corta_gate` superlineal (9 000 descendientes → 50,9 s; 14 000 → sin decisión).
+- **P-136-U** en la cola: recomendación (A), revertir `cd63066` a `c5bf6d4` y declarar SEC-132 (a) como límite con las tres lecciones de diseño.
+- **PR-136-5:** QA comiteó su evidencia con `-c core.hooksPath=` (sin hooks que saltar; declarado).
+- **Avance (regla 6):** el intento de cubrir las gates con el plazo introdujo un fail-open; la coordinadora propone retirarlo y publicar la vía como límite declarado.
+
 ## [Interno] — 2026-10-07 · SEC-132 (a) reparado por el desarrollador en `cd63066` (39 min, dentro del tope; SIN VALIDAR) y versión 1.36.0 en `b43d7ea`; ESTADO a la re-verificación acotada de QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

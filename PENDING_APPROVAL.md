@@ -43,7 +43,29 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-T resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-07] (coordinadora) — P-136-U: la pasada de SEC-132 (a) (`cd63066`) introduce QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y **el REQ se cierra**; más QA-007-16 (stderr retenido) y QA-007-17 (corte superlineal). ¿Se revierte a `c5bf6d4` o se intenta otra pasada?
+
+**Contexto.** Re-verificación acotada de QA sobre `cd63066` (`docs/qa/REQ-007.md`, «SEC-132 (a): re-verificación acotada»; evidencia `cand-1.36.0/sec115-118/qa5/`, `26f6131`). **Conforme:** los cuatro casos de P-136-T pasan (cuatro gates de 20 s y una colgada → `deny` a los 30,2 s; 0 huérfanos; dos cierres a la vez no se interfieren); frontera 29 s pasa / 31 s se corta; fail-before de la gate colgada acreditado en `c5bf6d4` y v1.35.0 (sin decisión a los 60 s; en v1.35.0 el REQ queda cerrado); banco 2306/1/13 (INS-136-1); inventario sin movimientos; +0 procesos; E1 igual; versión 1.36.0 con `jq -e .` rc 0.
+
+**Los tres hallazgos, todos introducidos por `cd63066`:**
+- **QA-007-15 (`contrato`, media) — fail-open en la puerta de cierre.** El veredicto de la gate se lee de la tubería que la propia gate hereda (`guard-completado.sh:964`). Una gate roja con `echo 0 >&3; false`, o con `trap "echo 0" EXIT; false`, sale **sin decisión y el REQ queda `completado`**; `c5bf6d4` y v1.35.0 deniegan. Y una gate verde con `exec true`, o con su propia trampa `EXIT`, recibe `deny` con un motivo falso («falló la quality gate»). Son movimientos en las dos direcciones que CA-69 p. 3 no declara.
+- **QA-007-16 (`contrato`, baja; efecto en el cliente sin medir):** lo que sobrevive a una gate (también a una que pasa, con un bucle en segundo plano) mantiene abierto el **stderr** del hook después de que decide: en `c5bf6d4` cierra a los 108 ms, en el candidato sólo cerró al matar los procesos a los 75 s. Si el cliente espera a que cierre stderr, el `deny` no llega.
+- **QA-007-17 (`contrato`, baja):** `arnes_corta_gate` crece más que linealmente con el ancho del árbol (el tope 4096 limita las vueltas, no la cola): 9 000 descendientes → `deny` a los 50,9 s; 14 000 → sin decisión a los 60 s.
+
+**Opciones.**
+- **(A) Revertir el código de `cd63066`** (vuelta a `c5bf6d4`, que tiene QA favorable y R-056 sin veto), conservar la versión `b43d7ea`, y **SEC-132 (a) queda como límite declarado**, junto con (b), en F-136-22 para 1.37, con las tres lecciones de diseño escritas: el canal del veredicto no puede ser escribible por la gate (subshell anidado con el descriptor cerrado); el corte tiene que ser lineal (grupo de procesos, no recorrido del árbol); y la salida de la gate no puede retener el stderr del hook. QA-007-15/16/17 se cierran por reversión. **Consecuencia:** 1.36.0 publica SEC-115 mitigado en sus tres vías medidas y declara la de las gates (preexistente: v1.35.0 también moría a los 60 s, y además **cerraba el REQ** sin decisión, que es peor que lo que publica el candidato). Coste: la reversión del desarrollador (minutos) y una comprobación de QA de que `hooks/` = `c5bf6d4`.
+- **(B) Otra pasada acotada** (sería la sexta vuelta del paso 6), con las tres correcciones a la vez y re-verificación completa de QA y seguridad. **Consecuencia:** ≥ 1,5–2 h; el mecanismo necesita diseño (es exactamente el caso de «una mejora se propone antes de implementarse»), y cada pasada de esta serie ha abierto algo nuevo al atacar lo anterior.
+- **(C) Publicar con QA-007-15 declarado:** no es una opción: es un fail-open en la puerta de cierre introducido por la ventana.
+
+**Recomendación de la coordinadora: (A).** Un fail-open en `guard-completado` es el defecto más caro que este arnés puede tener, y lo introdujo la pasada. La vía de las gates era preexistente y en v1.35.0 era peor; declararla con sus lecciones es honesto y cabe en las notas. La sexta vuelta sobre el mismo paso contradice «calidad proporcional: sin cadena interminable».
+
+**Decisión propuesta, lista para adoptar:** «P-136-U: (A). Se revierte el código de `cd63066` (hooks y banco vuelven a `c5bf6d4`; se conservan el registro, la versión `b43d7ea` y la evidencia como historia); QA comprueba que `hooks/` es byte a byte `c5bf6d4`. SEC-132 (a) queda como límite declarado con (b) en F-136-22, para 1.37, con las tres lecciones de diseño escritas y la nota de que v1.35.0 cerraba el REQ sin decisión en ese caso. QA-007-15, 16 y 17 se cierran por reversión. El analista lo escribe en CA-68, CA-69 p. 3, `AGENTS.md` §13 y la guía. Nada más entra; contadores sin reiniciar.»
+
+**Qué trabajo sigue mientras no se decida:** nada del cierre que dependa del código. El borrador de notas espera.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
