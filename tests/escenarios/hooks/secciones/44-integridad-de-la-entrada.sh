@@ -352,27 +352,11 @@ fila120 "K1 (V1) la puerta de código no necesita las ediciones: REQ-900 no es c
 fila120 "K2 MultiEdit de la coordinadora a src/a.ts con las ediciones como cadena" deny deny "$SRC44" "$(me120 "$P/src/a.ts" '"x"')" guard-codigo.sh
 fila120 "K3 MultiEdit del desarrollador a src/a.ts con las ediciones como cadena" allow allow - \
   "$(me120 "$P/src/a.ts" '"x"' '{agent_id:"a1",agent_type:"desarrollador"}')" guard.sh
-# K4 sólo es CONTROL si el `jq` en uso lee 9000 niveles. Medido (docs/qa/REQ-007.md, «CI del PR #60: K4 (V4) en
-# Ubuntu»): jq 1.8.2 lee la clave con 9998 y no con 9999; el jq 1.7.1 de ubuntu-24.04 —el del CI— la lee con 254 y no
-# con 255. Con ese jq V4 es ILEGIBLE: la candidata tiene que denegar por IL120 (si no, FAIL) y el caso no mide el
-# control —SKIP con motivo, nunca PASS—; v1.35.0 se registra con lo que decida (allow es el fail-open de SEC-120).
-K4_120="${E120%?},\"x\":$MEDIO120}"
-if jq -e 'has("x")' <<< "$K4_120" >/dev/null 2>&1; then
-  fila120 "K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto" deny deny "$QA44" "$K4_120" guard.sh guard-completado.sh
-else
-  JQV120="$(jq --version 2>&1)"; JQV120="${JQV120:0:40}"
-  for s in guard.sh guard-completado.sh; do
-    nom="SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por $s"
-    g44 "$HOOKS_DIR" "$s" "$K4_120"
-    if [ "$D44" = deny ] && [[ "$M44" == *'[[[[[[[[[[[[[[[['* ]]; then v44 FAIL "$nom candidata  el motivo interpola la clave anidada  <${M44:0:120}>"
-    elif [ "$D44" = deny ] && [[ "$M44" == *"$IL120"* ]]; then
-      v44 SKIP "$nom candidata  el jq en uso ($JQV120) no lee 9000 niveles: V4 es ilegible y deniega por «$IL120»; el control no se mide (lo ilegible lo cubren L1-L9)"
-    else juicio44 "$nom candidata (V4 ilegible con $JQV120)" deny "$IL120"; fi   # sólo llega aquí lo que no deniega por IL120: FAIL
-    if [ "$RV135_OK" = si ]; then g44 "$RV135/hooks" "$s" "$K4_120"
-      v44 SKIP "$nom v1.35.0: control, decide igual  el jq en uso ($JQV120) no lee 9000 niveles: decide $D44 (allow es el fail-open de SEC-120); el control no se mide"
-    else v44 SKIP "$nom v1.35.0: control, decide igual  $RV135_MOT"; fi
-  done
-fi
+# K4 es CONTROL sólo si el jq en uso lee 9000 niveles (medido, docs/qa/REQ-007.md «CI del PR #60: K4 (V4) en Ubuntu»: 1.8.2 lee 9998 y no 9999; el 1.7.1 de ubuntu-24.04 lee 254 y no 255). Si no lo lee, V4 es ILEGIBLE: la candidata tiene que denegar por IL120 (si no, FAIL) y el caso no mide el control —SKIP con motivo, nunca PASS—; v1.35.0 se registra con lo que decida (allow es el fail-open de SEC-120).
+K4_120="${E120%?},\"x\":$MEDIO120}"; if jq -e 'has("x")' <<< "$K4_120" >/dev/null 2>&1; then fila120 "K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto" deny deny "$QA44" "$K4_120" guard.sh guard-completado.sh
+else JQV120="$(jq --version 2>&1)"; JQV120="${JQV120:0:40}"; for s in guard.sh guard-completado.sh; do nom="SEC-120 K4 (V4) el cierre de L1 con 9000 niveles: deniega por el veredicto por $s"; g44 "$HOOKS_DIR" "$s" "$K4_120"
+  if [ "$D44" = deny ] && [[ "$M44" == *'[[[[[[[[[[[[[[[['* ]]; then v44 FAIL "$nom candidata  el motivo interpola la clave anidada  <${M44:0:120}>"; elif [ "$D44" = deny ] && [[ "$M44" == *"$IL120"* ]]; then v44 SKIP "$nom candidata  el jq en uso ($JQV120) no lee 9000 niveles: V4 es ilegible y deniega por «$IL120»; el control no se mide (lo ilegible lo cubren L1-L9)"; else juicio44 "$nom candidata (V4 ilegible con $JQV120)" deny "$IL120"; fi
+  if [ "$RV135_OK" = si ]; then g44 "$RV135/hooks" "$s" "$K4_120"; v44 SKIP "$nom v1.35.0: control, decide igual  el jq en uso ($JQV120) no lee 9000 niveles: decide $D44 (allow es el fail-open de SEC-120); el control no se mide"; else v44 SKIP "$nom v1.35.0: control, decide igual  $RV135_MOT"; fi; done; fi
 # Pasada correctiva (QA-007-03 y QA-007-04): la entrada vacía o con un NUL —leída de un archivo: una variable no
 # guarda NUL— es ilegible; y `false` en `file_path` o en `command` no es texto. Fail-before también contra aba1c9b.
 F120="$RAIZ/f120-$BASHPID"; mkdir -p "$F120"; : > "$F120/vacia"; printf '\0%s' "$B120" > "$F120/nul-objeto"; printf '%s\0%s' "$B120" "$T6_120" > "$F120/objeto-nul-escritura"

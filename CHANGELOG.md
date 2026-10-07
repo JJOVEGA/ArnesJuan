@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Sección 44 bajo el techo de 400 líneas (CA-18) tras el ajuste de K4; sin cambio de casos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `qa-tester`. Causa: el CI del PR #60 (run 37696182726, sobre `f6b0a90`) pasa el banco de hooks pero la autoprueba del corredor falla en CA-18: `44-integridad-de-la-entrada.sh` tenía 416 líneas con techo 400 (396 antes del ajuste de K4).
+
+- **Cambio:** el bloque condicional de K4 pasa de 21 a 5 líneas, con la misma lógica, los mismos casos y los mismos motivos. La sección queda en **400** líneas (piso 62, techo 400). No toca `hooks/` ni ningún otro caso ni veredicto.
+- **Comprobado:** autoprueba del corredor 117 PASS, 0 FAIL, con «CA-18 ningún archivo excede max(N, piso × k)» en PASS. Sección 44: 363/0 con jq 1.8.2 y 359/0/4 SKIP (los de K4) con jq 1.7.1 de Ubuntu, con las mismas líneas de resultado que antes de compactar. Gates de §7: rc 0.
+- **Avance (regla 6):** con esto la autoprueba vuelve a verde. Falta que el CI corra sobre la cabeza.
+
 ## [GitHub] — 2026-10-07 · Modo 100755 de hooks/entrada.sh; el CI lo exige; sin cambio de contenido
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Causa: el CI del PR #60 (run 37695756807, sobre `19cf88e`) falló en «bit de ejecución en todo punto de entrada».
 
