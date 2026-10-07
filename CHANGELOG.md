@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · SEC-132 (a) reparado por el desarrollador en `cd63066` (39 min, dentro del tope; SIN VALIDAR) y versión 1.36.0 en `b43d7ea`; ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** antes de cada gate se calcula lo que queda del plazo; la gate corre en una sustitución de proceso que escribe su código por la tubería (también si hace `exit`); el hook la espera con `read -t` y, si vence, la corta (`arnes_corta_gate`: árbol de procesos por `/proc/<pid>/task/<pid>/children`, tope 4096, TERM a todos) y deniega con motivo que cita SEC-132 y la gate. Cuatro casos (sección 47 110/0; cuadre 2320): cuatro gates de 20 s y una colgada → `deny` a los 30,2 s (fail-before `c5bf6d4`: sin decisión a los 60 s); huérfanos 0 (en `c5bf6d4` también 0 porque `timeout` mata el grupo; una copia con `kill $!` deja 1 vivo); control de gates rápidas igual. Banco 2307/1/12 (INS-136-2); inventario diff vacío; autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **Límites declarados por el desarrollador:** sin `/proc` sólo se corta el subshell; un proceso que ignore TERM o se desligue del árbol sigue vivo.
+- **Versión:** `plugin.json` y `marketplace.json` en 1.36.0; `arnes_version` en 1.33.0; `jq -e .` rc 0. El banco corrió antes de la versión y sólo cambian esas cadenas.
+- **Avance (regla 6):** el código de 1.36.0 está completo; falta la validación de SEC-132 (a).
+
 ## [GitHub] — 2026-10-07 · Candidato 1.36.0: versión en los dos archivos de distribución
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Autorizado por el propietario (P-136-S, `PENDING_APPROVAL.md` § Resueltas).
 

@@ -16,7 +16,7 @@
 
 > **Modelo de la coordinadora: Fable 5.1 desde el 2026-10-06, cabeza `098896c`** (prueba acotada decidida por el propietario; los subagentes conservan su modelo; el plan no cambia; al cerrar SEC-115/118 se entrega la comparación en tres cifras con CA-54 y SEC-120). **`cand/1.36.0` sigue sin push: el push es del propietario.**
 >
-> **Paso 6 CERRADO como intervención (commit validado): código `c5bf6d4`; QA favorable (`c4afbde`); R-056 sin veto; SEC-115, SEC-118 y SEC-129 `mitigado`; SEC-130 → F-136-12.** Seguridad abrió **SEC-132** (`contrato`, media: el plazo no cubre las gates en serie ni las líneas repetidas en disco) y **SEC-131** (`contrato`, baja: estado heredado sin neutralizar ni declarar), los dos preexistentes. **P-136-S adoptada (2026-10-07).** En curso, en paralelo: el desarrollador repara **SEC-132 (a)** (plazo entre gates; tope de una hora) y sube la versión a **1.36.0** en `plugin.json` y `marketplace.json` (`arnes_version` se conserva en 1.33.0); el analista escribe los límites (SEC-131 → F-136-21; SEC-132 (b) → F-136-22) en CA-68 y actualiza **`AGENTS.md` §13 y `templates/AGENTS.md.tpl`** (SEC-115/118 `mitigado` con residuales). Write-back del analista **hecho** (CA-68, `AGENTS.md` §13 y plantilla, `requirements/README.md` y plantilla, guía). **P-136-T = (B)** (propietario, 2026-10-07): la gate en curso se acota al tiempo que queda del plazo; el caso de banco cubre cuatro gates de 20 s y una gate colgada. **Siguiente:** re-verificación acotada de QA; determinación corta de seguridad; notas finales `[1.36.0]`; **push** de la candidata (autorizado); CI; PR #60 fuera de borrador con el CI en verde. Fusión, tag y publicación: propietario. **Si la sesión se corta, se continúa desde aquí sin pedir la autorización ya dada.**
+> **Paso 6 CERRADO como intervención (commit validado): código `c5bf6d4`; QA favorable (`c4afbde`); R-056 sin veto; SEC-115, SEC-118 y SEC-129 `mitigado`; SEC-130 → F-136-12.** Seguridad abrió **SEC-132** (`contrato`, media: el plazo no cubre las gates en serie ni las líneas repetidas en disco) y **SEC-131** (`contrato`, baja: estado heredado sin neutralizar ni declarar), los dos preexistentes. **P-136-S adoptada (2026-10-07).** Hechos: **SEC-132 (a)** reparado (`cd63066`, evidencia `bb06d3c`; SIN VALIDAR: las dos formas dan `deny` por plazo a los 30,2 s; la gate cortada no deja procesos vivos; sección 47 110/0; inventario con diff vacío; +0 procesos; E1 igual) y **versión 1.36.0** en `plugin.json` y `marketplace.json` (`b43d7ea`; `arnes_version` sigue 1.33.0); los límites y `AGENTS.md` §13 escritos por el analista. **En curso: re-verificación acotada de QA (Opus, comisión nueva) de SEC-132 (a).** Write-back del analista **hecho** (CA-68, `AGENTS.md` §13 y plantilla, `requirements/README.md` y plantilla, guía). **P-136-T = (B)** (propietario, 2026-10-07): la gate en curso se acota al tiempo que queda del plazo; el caso de banco cubre cuatro gates de 20 s y una gate colgada. **Siguiente:** re-verificación acotada de QA; determinación corta de seguridad; notas finales `[1.36.0]`; **push** de la candidata (autorizado); CI; PR #60 fuera de borrador con el CI en verde. Fusión, tag y publicación: propietario. **Si la sesión se corta, se continúa desde aquí sin pedir la autorización ya dada.**
 >
 > **Intervención 1 (CA-54), cerrada en la décima autorización:** candidato `82ceb63` (`hooks/` igual tras el revert `74da4c5`). QA: «con hallazgos: QA-007-01 declarado como límite» (`docs/qa/REQ-007.md`; recuento corregido a 10 de 30). Seguridad: R-052, con hallazgos y sin veto, **SEC-127** (`contrato`, baja) → **P-136-G pendiente del propietario**. La 2b va después de SEC-120 (`docs/PLAN.md` § 1.36.0).
 
@@ -552,7 +552,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-07 14:10
+## Estado derivado — 2026-10-07 14:37
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -562,9 +562,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `88e3e78` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `b43d7ea` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
+**Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
