@@ -1,0 +1,14 @@
+1,2d0
+< FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× N× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+< FAIL	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo : el insensible base mide 137335µs y no llega a 150000µs (es el que derivaba a N× del suelo);
+887c885
+< PASS	REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+---
+> PASS	REQ-007 CA-66 una ruta de 4278 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+1479d1476
+< PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+1500a1498
+> PASS	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=N derivado de Nns/vuelta para N× el suelo de Nµs que declara el JUEZ —la sonda publica suelo=Nµs y no decide—; sensible Nµs · insensible Nµs, ninguno pegado al suelo)
+2305a2304,2305
+> SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
+> SKIP	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

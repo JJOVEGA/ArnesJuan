@@ -1,0 +1,198 @@
+# 2026-10-07T10:57:43-06:00 bash 5.3.9(1)-release
+candidato BASE guard.sh:v1 deny|rc=0
+candidato BASE guard.sh:v3 deny|rc=0
+candidato BASE guard.sh:v4 deny|rc=0
+candidato BASE guard.sh:v5 deny|rc=0
+candidato BASE guard.sh:v8 nada|rc=0
+candidato BASE guard.sh:v9 aviso|rc=0
+candidato BASE guard-codigo.sh:v1 deny|rc=0
+candidato BASE guard-git.sh:v4 deny|rc=0
+candidato BASE guard-completado.sh:v5 deny|rc=0
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v8: base=[nada|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v3: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_return%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=139]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=124 LENTO 10029ms]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10027ms]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return0] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=124 LENTO 10027ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=124 LENTO 10023ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=124 LENTO 10025ms]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=124 LENTO 10023ms]
+candidato DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=124 LENTO 10121ms]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=124 LENTO 10116ms]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=124 LENTO 10142ms]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[deny+allow|rc=124 LENTO 10177ms]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=124 LENTO 10122ms]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_break%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=124 LENTO 10148ms]
+candidato DIFIERE [BASH_FUNC_continue%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v8: base=[nada|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_continue%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=1]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=2]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=139]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_exit%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v8: base=[nada|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_shift%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+candidato DIFIERE [BASH_FUNC_:%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+# candidato: 900 combinaciones, 156 diferencias
+== candidato nombres raros (Write a src/a.ts y ls -la por guard.sh) ==
+candidato [jq=] v1 deny|rc=0
+candidato [jq=] v8 nada|rc=0
+candidato [a\ b] v1 deny|rc=0
+candidato [a\ b] v8 nada|rc=0
+candidato [$'j\nq'] v1 deny|rc=0
+candidato [$'j\nq'] v8 nada|rc=0
+candidato [jq%%x] v1 deny|rc=0
+candidato [jq%%x] v8 nada|rc=0
+candidato [-f] v1 deny|rc=0
+candidato [-f] v8 nada|rc=0
+candidato [--] v1 deny|rc=0
+candidato [--] v8 nada|rc=0
+candidato [\*] v1 deny|rc=0
+candidato [\*] v8 nada|rc=0
+candidato [jq\ ] v1 deny|rc=0
+candidato [jq\ ] v8 nada|rc=0
+candidato [\ jq] v1 deny|rc=0
+candidato [\ jq] v8 nada|rc=0
+candidato [\\\\jq] v1 deny|rc=0
+candidato [\\\\jq] v8 nada|rc=0
+candidato [/usr/bin/jq] v1 deny|rc=0
+candidato [/usr/bin/jq] v8 nada|rc=0
+candidato [é] v1 deny|rc=0
+candidato [é] v8 nada|rc=0
+candidato [rrrrrrrrrrrrrrrrrrrr] v1 deny|rc=0
+candidato [rrrrrrrrrrrrrrrrrrrr] v8 nada|rc=0
+candidato [jq=() sin %%, forma pre-shellshock] v1 deny|rc=0
+candidato [jq=() sin %%, forma pre-shellshock] v8 nada|rc=0
+candidato [BASH_FUNC_jq%% duplicada] v1 deny|rc=0
+candidato [BASH_FUNC_jq%% duplicada] v8 nada|rc=0

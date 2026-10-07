@@ -1,0 +1,30 @@
+return [() { return 0; }] nada|rc=139|1008ms|0B| / v8 nada|rc=139|911ms|0B|
+return [() { return 1; }] nada|rc=139|909ms|0B| / v8 nada|rc=139|909ms|0B|
+eval [() { return 0; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+eval [() { return 1; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|110ms|0B|
+exit [() { return 0; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+exit [() { return 1; }] deny|rc=1|106ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=1|106ms|0B|
+trap [() { return 0; }] deny|rc=0|110ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|106ms|0B|
+trap [() { return 1; }] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+set [() { return 0; }] deny|rc=0|110ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+set [() { return 1; }] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|110ms|0B|
+unset [() { return 0; }] deny|rc=0|107ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|107ms|0B|
+unset [() { return 1; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|109ms|0B|
+: [() { return 0; }] deny|rc=0|106ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|110ms|0B|
+: [() { return 1; }] deny|rc=0|108ms|344B|ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o u / v8 nada|rc=0|106ms|0B|
+shift [() { return 0; }] deny|rc=0|108ms|884B|ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio / v8 nada|rc=0|108ms|0B|
+shift [() { return 1; }] deny|rc=0|107ms|884B|ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio / v8 nada|rc=0|106ms|0B|
+export [() { return 0; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+export [() { return 1; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|109ms|0B|
+break [() { return 0; }] deny|rc=124|60014ms|344B|ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o u / v8 nada|rc=0|107ms|0B|
+break [() { return 1; }] deny|rc=124|60098ms|344B|ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o u / v8 nada|rc=0|108ms|0B|
+continue [() { return 0; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|106ms|0B|
+continue [() { return 1; }] deny|rc=0|106ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+exec [() { return 0; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+exec [() { return 1; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|106ms|0B|
+readonly [() { return 0; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|111ms|0B|
+readonly [() { return 1; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|107ms|0B|
+times [() { return 0; }] deny|rc=0|109ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|110ms|0B|
+times [() { return 1; }] deny|rc=0|108ms|331B|ARNES: 'src/a.ts' es código de la app; sólo el agente 'desarrollador' puede editarlo (in / v8 nada|rc=0|108ms|0B|
+
+[exited with code 0]

@@ -1,0 +1,289 @@
+# 2026-10-07T11:14:27-06:00 bash 5.3.9(1)-release
+03cbf5e BASE guard.sh:v1 deny|rc=0
+03cbf5e BASE guard.sh:v3 deny|rc=0
+03cbf5e BASE guard.sh:v4 deny|rc=0
+03cbf5e BASE guard.sh:v5 deny|rc=0
+03cbf5e BASE guard.sh:v8 nada|rc=0
+03cbf5e BASE guard.sh:v9 aviso|rc=0
+03cbf5e BASE guard-codigo.sh:v1 deny|rc=0
+03cbf5e BASE guard-git.sh:v4 deny|rc=0
+03cbf5e BASE guard-completado.sh:v5 deny|rc=0
+03cbf5e DIFIERE [BASH_FUNC_set%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+03cbf5e DIFIERE [BASH_FUNC_set%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+03cbf5e DIFIERE [BASH_FUNC_set%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+03cbf5e DIFIERE [BASH_FUNC_set%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+03cbf5e DIFIERE [BASH_FUNC_set%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+03cbf5e DIFIERE [BASH_FUNC_set%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+# 03cbf5e: 315 combinaciones, 6 diferencias
+== 03cbf5e nombres raros (Write a src/a.ts y ls -la por guard.sh) ==
+03cbf5e [jq=] v1 deny|rc=0
+03cbf5e [jq=] v8 nada|rc=0
+03cbf5e [a\ b] v1 deny|rc=0
+03cbf5e [a\ b] v8 nada|rc=0
+03cbf5e [$'j\nq'] v1 deny|rc=0
+03cbf5e [$'j\nq'] v8 nada|rc=0
+03cbf5e [jq%%x] v1 deny|rc=0
+03cbf5e [jq%%x] v8 nada|rc=0
+03cbf5e [-f] v1 deny|rc=0
+03cbf5e [-f] v8 nada|rc=0
+03cbf5e [--] v1 deny|rc=0
+03cbf5e [--] v8 nada|rc=0
+03cbf5e [\*] v1 deny|rc=0
+03cbf5e [\*] v8 nada|rc=0
+03cbf5e [jq\ ] v1 deny|rc=0
+03cbf5e [jq\ ] v8 nada|rc=0
+03cbf5e [\ jq] v1 deny|rc=0
+03cbf5e [\ jq] v8 nada|rc=0
+03cbf5e [\\\\jq] v1 deny|rc=0
+03cbf5e [\\\\jq] v8 nada|rc=0
+03cbf5e [/usr/bin/jq] v1 deny|rc=0
+03cbf5e [/usr/bin/jq] v8 nada|rc=0
+03cbf5e [é] v1 deny|rc=0
+03cbf5e [é] v8 nada|rc=0
+03cbf5e [rrrrrrrrrrrrrrrrrrrr] v1 deny|rc=0
+03cbf5e [rrrrrrrrrrrrrrrrrrrr] v8 nada|rc=0
+03cbf5e [jq=() sin %%, forma pre-shellshock] v1 deny|rc=0
+03cbf5e [jq=() sin %%, forma pre-shellshock] v8 nada|rc=0
+03cbf5e [BASH_FUNC_jq%% duplicada] v1 deny|rc=0
+03cbf5e [BASH_FUNC_jq%% duplicada] v8 nada|rc=0
+v1.35.0 BASE guard.sh:v1 deny|rc=0
+v1.35.0 BASE guard.sh:v3 deny|rc=0
+v1.35.0 BASE guard.sh:v4 deny|rc=0
+v1.35.0 BASE guard.sh:v5 deny|rc=0
+v1.35.0 BASE guard.sh:v8 nada|rc=0
+v1.35.0 BASE guard.sh:v9 aviso|rc=0
+v1.35.0 BASE guard-codigo.sh:v1 deny|rc=0
+v1.35.0 BASE guard-git.sh:v4 deny|rc=0
+v1.35.0 BASE guard-completado.sh:v5 deny|rc=0
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_:%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=124 LENTO 10025ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10023ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=124 LENTO 10023ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10023ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10025ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=124 LENTO 10026ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10027ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10025ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=124 LENTO 10025ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=124 LENTO 10027ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10023ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=124 LENTO 10138ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v3: base=[deny|rc=0] con=[otra+allow|rc=124 LENTO 10129ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=124 LENTO 10151ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[otra+allow|rc=124 LENTO 10124ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=124 LENTO 10123ms]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_break%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=124 LENTO 10136ms]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v8: base=[nada|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_continue%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=1]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=2]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[aviso|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[deny|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_exit%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return1] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v8: base=[nada|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=return2] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v3: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_return%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[otra+allow|rc=139]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v8: base=[nada|rc=0] con=[otra+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[aviso+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_set%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=return0] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=return1] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=return2] guard.sh:v9: base=[aviso|rc=0] con=[deny|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v3: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard.sh:v9: base=[aviso|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=exit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v3: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard.sh:v9: base=[aviso|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard-git.sh:v4: base=[deny|rc=0] con=[deny+allow|rc=0]
+v1.35.0 DIFIERE [BASH_FUNC_shift%%=allow] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+allow|rc=0]
+# v1.35.0: 315 combinaciones, 200 diferencias
+== v1.35.0 nombres raros (Write a src/a.ts y ls -la por guard.sh) ==
+v1.35.0 [jq=] v1 deny|rc=0
+v1.35.0 [jq=] v8 nada|rc=0
+v1.35.0 [a\ b] v1 deny|rc=0
+v1.35.0 [a\ b] v8 nada|rc=0
+v1.35.0 [$'j\nq'] v1 deny|rc=0
+v1.35.0 [$'j\nq'] v8 nada|rc=0
+v1.35.0 [jq%%x] v1 deny|rc=0
+v1.35.0 [jq%%x] v8 nada|rc=0
+v1.35.0 [-f] v1 deny|rc=0
+v1.35.0 [-f] v8 nada|rc=0
+v1.35.0 [--] v1 deny|rc=0
+v1.35.0 [--] v8 nada|rc=0
+v1.35.0 [\*] v1 deny|rc=0
+v1.35.0 [\*] v8 nada|rc=0
+v1.35.0 [jq\ ] v1 deny|rc=0
+v1.35.0 [jq\ ] v8 nada|rc=0
+v1.35.0 [\ jq] v1 deny|rc=0
+v1.35.0 [\ jq] v8 nada|rc=0
+v1.35.0 [\\\\jq] v1 deny|rc=0
+v1.35.0 [\\\\jq] v8 nada|rc=0
+v1.35.0 [/usr/bin/jq] v1 deny|rc=0
+v1.35.0 [/usr/bin/jq] v8 nada|rc=0
+v1.35.0 [é] v1 deny|rc=0
+v1.35.0 [é] v8 nada|rc=0
+v1.35.0 [rrrrrrrrrrrrrrrrrrrr] v1 deny|rc=0
+v1.35.0 [rrrrrrrrrrrrrrrrrrrr] v8 nada|rc=0
+v1.35.0 [jq=() sin %%, forma pre-shellshock] v1 deny|rc=0
+v1.35.0 [jq=() sin %%, forma pre-shellshock] v8 nada|rc=0
+v1.35.0 [BASH_FUNC_jq%% duplicada] v1 nada|rc=0
+v1.35.0 [BASH_FUNC_jq%% duplicada] v8 nada|rc=0

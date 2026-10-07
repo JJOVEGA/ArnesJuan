@@ -1,0 +1,24 @@
+# QA paso 6 — re-verificación ACOTADA de la pasada de P-136-Q (A) — procedimiento registrado ANTES de correr, 2026-10-07T10:40:37-06:00
+Árbol: worktree /home/juan/dev/ArnesJuan-v1.36, cabeza ef430ee; hooks/tools/tests idénticos a 39e6128.
+Comparado (git archive): 03cbf5e (fail-before) y v1.35.0 (/home/juan/dev/ArnesJuan-v1.35.0-base).
+Plataforma: 6.18.33.2-microsoft-standard-WSL2; bash 5.3.9(1)-release; jq-1.8.2; LANG=C.UTF-8; nproc 12. Carga: 0.24 1.43 1.76 1/798 2407152
+
+Número de corridas, fijado AHORA (no se repite nada para obtener verde; una discrepancia se registra):
+  1. Sección 47 aislada: 1 corrida sobre el candidato, 1 sobre 03cbf5e (banco del candidato, ARNES_HOOKS_DIR).
+     Secciones 44 y 47-lectura-fallida-y-locale: dentro de 1 banco completo del worktree.
+  2. Ataque a la limpieza: 1 corrida de qa2/40-limpieza-ataque.sh (21 nombres x 3 cuerpos x 9 = 567) sobre
+     candidato y 03cbf5e. 1 corrida de un ataque ampliado (10-): builtins ESPECIALES fuera de la lista, órdenes
+     que usan hooks/ y tools/ fuera de la lista, nombres raros, cuerpos con rc distinto de 0 y que escriben en
+     stdout; sobre candidato, y las filas que difieran 1 vez sobre 03cbf5e y v1.35.0. 1 corrida de la
+     comprobación de /proc/self/environ (copia con /proc inaccesible no aplica: se busca la ruta en el código).
+  3. Regresión del preludio: matriz POSIX, FUNCNEST/BASH_COMPAT/compat*/keyword, QA-007-10, QA-007-12 y T1-T3:
+     dentro de la corrida de sección 47 del punto 1. Tope: 1 corrida de 20-tope.sh. E1: 3 mediciones
+     intercaladas por tamaño (06-e1.sh).
+  4. Inventario CA-69 2 (a): 1 banco de v1.35.0 con hooks del candidato, ARNES_SEMILLA_41=23062, frente a
+     ca54/22-. Banco del worktree: 1 corrida, misma semilla. Autoprueba: 1. Gates: 1. Procesos: 1.
+  Regla: cualquier FAIL o diferencia fuera de lo declarado es hallazgo; no se añaden corridas para desmentirla.
+  Añadido ANTES de correr (2026-10-07T10:44:42-06:00): el ataque ampliado (10-) usa timeout 10 s, no 60 (el techo de CA-68 es 5 s; lo que
+  pasa de 5 s se marca LENTO y es cuelgue). Su lista: 14 builtins especiales que el hook usa y la lista no retira + 6 de la
+  lista como control; 5 cuerpos (return 0/1/2, exit 0, imprimir un "allow" en stdout); 9 vectores = 900 combinaciones.
+  La exploración previa de 28 combinaciones (return/eval/.../times, cuerpos return 0/1, Write a src/a.ts y ls -la)
+  se hizo antes de registrar este añadido y queda en 05-exploracion.txt; no sustituye a la corrida registrada.

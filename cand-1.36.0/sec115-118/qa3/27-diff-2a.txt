@@ -1,0 +1,4 @@
+854c854
+< PASS	REQ-007 CA-66 una ruta de 4187 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)
+---
+> PASS	REQ-007 CA-66 una ruta de 4278 caracteres: no determinable, y el motivo cita 200 bytes y cabe con holgura  (N bytes)

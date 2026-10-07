@@ -1,0 +1,16 @@
+# 2026-10-07T11:20:55-06:00 alcance de una reparación (sólo dato, no reparo): unset -f en modo POSIX retira funciones importadas con nombre de builtin especial
+$ env 'BASH_FUNC_return%%=() { echo HIJ; }' 'BASH_FUNC_exit%%=() { echo HIJ; }' bash -c 'POSIXLY_CORRECT=y; unset -f return exit break continue set shift : ; echo rc=$?; unset POSIXLY_CORRECT; set +o posix; f(){ return 3; }; f; echo f=$?; declare -F | grep -c .'
+rc=0
+f=3
+1
+--- /proc/self/environ en hooks/ y tools/ (código, sin comentarios):
+ninguna
+--- orden de los guardianes sueltos (set antes de entrada.sh):
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-codigo.sh:19:set -uo pipefail
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-codigo.sh:24:[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-git.sh:32:set -uo pipefail
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-git.sh:37:[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-completado.sh:18:set -uo pipefail
+/home/juan/dev/ArnesJuan-v1.36/hooks/guard-completado.sh:26:[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
+--- hooks.json PreToolUse:
+[{"matcher":"Edit|Write|MultiEdit|Bash","hooks":[{"type":"command","command":"\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh"}]}]
