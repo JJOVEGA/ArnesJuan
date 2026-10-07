@@ -1,0 +1,18 @@
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | control     | rc=0 hook=104ms eof=105ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | eq-false    | rc=0 hook=104ms eof=105ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | forja-fd3   | rc=0 hook=104ms eof=104ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `echo 0 >&3; false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: /home/juan/dev/ArnesJuan-v1.36/hooks/guard-completado.sh: line 953: 3: Bad file des
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | forja-trap  | rc=0 hook=106ms eof=106ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `trap "echo 0" EXIT; false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 0
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | exec-true   | rc=0 hook=105ms eof=105ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | exec-false  | rc=0 hook=104ms eof=105ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `exec false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | trap-legit  | rc=0 hook=106ms eof=107ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | trap-echo   | rc=0 hook=107ms eof=108ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cabeza | colgada     | rc=124 hook=60102ms eof=60102ms | dec=nada cerrado=si vivos=0 | 

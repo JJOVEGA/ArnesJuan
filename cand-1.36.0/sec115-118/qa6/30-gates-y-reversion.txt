@@ -1,0 +1,19 @@
+# gates §7 sobre 986ea6a
+bash -n rc=0
+hooks.json rc=0
+plugin+marketplace rc=0
+versiones: plugin 1.36.0 marketplace 1.36.0 arnes_version 1.33.0; config jq rc: 0
+git diff c5bf6d4 HEAD -- hooks/ tests/ (lineas): 0
+git diff c5bf6d4 HEAD -- tools/ (lineas): 0
+arnes_corta_gate en hooks/ tools/ tests/: 0 archivos; en cd63066: 2
+cmp igual hooks/campos-req.awk
+cmp igual hooks/entrada.sh
+cmp igual hooks/estado-derivado.sh
+cmp igual hooks/guard-codigo.sh
+cmp igual hooks/guard-completado.sh
+cmp igual hooks/guard-git.sh
+cmp igual hooks/guard.sh
+cmp igual hooks/hooks.json
+cmp igual hooks/lib.sh
+cmp igual hooks/rotar-artefactos.sh
+cmp igual hooks/stop.sh

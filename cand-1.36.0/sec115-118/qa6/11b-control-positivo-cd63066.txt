@@ -1,0 +1,6 @@
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cd63066 | forja-fd3   | rc=0 hook=105ms eof=106ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cd63066 | forja-trap  | rc=0 hook=105ms eof=105ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 62: unset: SHELLOPTS: cannot unset: readonly variable
+cd63066 | exec-true   | rc=0 hook=104ms eof=104ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `exec true`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 

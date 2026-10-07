@@ -1,0 +1,2 @@
+cabeza | gate={ while :; do sleep 1.@M@; done; } & true | rc=0 hook=211ms eof-stdout=211ms eof-stderr=211ms | dec=nada | vivos ahora=1
+nota: el superviviente es el bash bifurcado de la gate (args 'bash .../hooks/guard.sh', pid 3320607) con su bucle; QA lo mató -9 tras la medida. Se halló además otro igual vivo desde 15:05:33 (pid 3136916, hooks de c5bf6d4 en el scratchpad de la corrida qa5), resto de la sesión anterior: también muerto -9. Es el superviviente de 'No acredita' de CA-68, no QA-007-16: stderr cerró a 211 ms con el hook.
