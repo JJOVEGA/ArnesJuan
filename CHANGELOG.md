@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-13 — la limpieza de `entrada.sh` ya no se puede suplantar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-Q (A), con tope de una hora; empleados unos 20 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-13»; evidencia `b255dd2`.
+
+- **Cambio en `hooks/entrada.sh`:**
+  - arranca con `POSIXLY_CORRECT=y`;
+  - aplica `unset -f` a una lista estática de builtins regulares y órdenes externas;
+  - quita el bucle sobre `/proc/self/environ`;
+  - sale del modo POSIX al terminar su preludio, antes de cargar `lib.sh`.
+- **Casos:** 2 en la sección 47, con funciones `builtin` y `read` importadas: `ls -la` sin decisión y un `Write` a `src/` con `deny`, los dos en menos de 5 s. Con `03cbf5e`, los dos mueren a los 60 s. La sección pasa de 102 a 104 y el total de 2312 a 2314.
+- **Medidas:**
+  - sección 47: 104/0;
+  - banco del worktree: 2301/2/11; los dos FAIL son INS-136-1 e INS-136-2;
+  - 2 (a): 2037/1/12; el FAIL es INS-136-2;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** QA-007-13 está reparado y con casos. Falta la validación de QA.
+
 ## [GitHub] — 2026-10-07 · Write-back de P-136-Q (analista): F-136-20 como límite declarado en CA-68 y en la guía; QA-007-13 (`builtin`) «en la pasada acotada, sin validar»; QA-007-10, QA-007-11 (a) y QA-007-12 pasan a «validados y cerrados por QA»
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~155 k tokens) y la coordinadora.
 

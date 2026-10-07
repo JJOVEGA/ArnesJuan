@@ -1690,7 +1690,9 @@ done
 # Y 2305 → 2312 por la pasada correctiva del paso 6 (P-136-P (2) (A)): +7 en 47-decision-emitida.sh (95 → 102),
 # bloque P —QA-007-10 (ARNES_CWD_VISTO heredada), QA-007-12 (motivo con bytes no UTF-8 en el tope) y QA-007-11 (a)
 # (FUNCNEST, SHELLOPTS=keyword, BASH_FUNC_jq%%, BASH_COMPAT, BASHOPTS=compat40)—; con 8e11f87 los 7 salen FAIL.
-CASOS_ESPERADOS=2312
+# Y 2312 → 2314 por QA-007-13 (P-136-Q (A)): +2 en 47-decision-emitida.sh (102 → 104) —funciones `builtin` y `read`
+# importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
+CASOS_ESPERADOS=2314
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

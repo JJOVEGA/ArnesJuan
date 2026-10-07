@@ -22,8 +22,8 @@
 # FAIL en los dos, y los controles PASS (docs/arnes/v1.36.0-sec115-118-fase1.md). T1 y T2b (1 MB) no reproducen
 # su fail-before aquí (deciden antes de 60 s en los dos árboles) y quedan como CONTROLES; T2b, medida de 29 a 49 s,
 # roza el plazo de 40 s y antes de la reparación puede salir FAIL por (a). Esto NO es el host.
-CASOS_ESPERADOS_SECCION=102
-PISO_AUTONOMO_SECCION=91  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 64 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-96)
+CASOS_ESPERADOS_SECCION=104
+PISO_AUTONOMO_SECCION=92  # 27 preámbulo (líneas 1-27, con seccion_nueva) + 0 maquinaria compartida duplicada (ninguna) + 65 bloque indivisible mayor (r47, h47 y j47, el brazo y el juez de los casos, líneas 33-97)
 seccion_nueva "--- 47 · la decisión se emite siempre (SEC-118, SEC-115, SEC-129; REQ-007 CA-67, CA-68) ---"
 PD47="$RAIZ/de47-$BASHPID"; W47="$RAIZ/w47-$BASHPID"; mkdir -p "$W47"; BE47="$W47/bashenv"; printf 'set -o posix\n' > "$BE47"
 O47=''; RC47=0; MS47=0; E47_IN=''; E47_APLICA=':'; E47_F=''; E47_C=intacto
@@ -45,6 +45,7 @@ r47() {
       BASH_ENV) BASH_ENV="$BE47" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       ARNES_INPUT_LISTO=1|ARNES_MANIFEST_LISTO=1) env "$m" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       env:*)    env "${m#env:}" timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
+      funciones-builtin-read) env 'BASH_FUNC_builtin%%=() { return 0; }' 'BASH_FUNC_read%%=() { return 0; }' timeout 60 "$BASH" "$HOOKS_DIR/$s" ;;
       --posix)  timeout 60 "$BASH" --posix "$HOOKS_DIR/$s" ;;
       *)        exit 98 ;;
     esac < "$3" 2>>"$ERRLOG")"; RC47=$?
@@ -293,5 +294,16 @@ E47_C=abierto
 for f47 in 'BASH_COMPAT=31' 'BASHOPTS=compat40'; do
   trozos47 '# REQ-950\nEstado: en-revisión\n' 'QA: pendiente' 'QA: quizas' "\nSeguridad: pendiente$POST47"; e47
   j47 "QA-007-11 CA-68 P $f47 heredada, 'QA: quizas' por Edit sin cerrar -> aviso emitido, sin decisión" aviso guard.sh "env:$f47" -
+done
+# QA-007-13 (P-136-Q (A)): funciones `builtin` y `read` importadas del entorno, las dos devolviendo 0. La decisión
+# que toque, emitida en menos de 5 s. Fail-before: 03cbf5e, el bucle de entrada.sh no avanza y el hook muere a los 60 s.
+E47_C=intacto
+for t47 in 'Bash|nada|ls -la' 'Write|deny|src/a.ts'; do
+  IFS='|' read -r h47 x47 o47 <<< "$t47"
+  if ! pg47; then echo "  FAIL  QA-007-13 $h47  no se pudo preparar el repositorio del proyecto (git)"; FAIL=$((FAIL + 1)); continue; fi
+  if [ "$h47" = Bash ]; then E47_IN="$(jq -cn --arg c "$PD47" --arg k "$o47" '{hook_event_name:"PreToolUse",tool_name:"Bash",cwd:$c,tool_input:{command:$k}}')"; E47_APLICA="$o47"; c47=''
+  else E47_IN="$(jq -cn --arg c "$PD47" '{hook_event_name:"PreToolUse",tool_name:"Write",cwd:$c,tool_input:{file_path:($c+"/src/a.ts"),content:"x"}}')"; E47_APLICA='printf x > src/a.ts'; c47='es código de la app'; fi
+  j47 "QA-007-13 CA-68 P funciones builtin y read importadas, $h47 $o47, por guard.sh -> ${x47/nada/sin decisión} en menos de 5 s" \
+    "$x47" guard.sh funciones-builtin-read 5000 "$c47"
 done
 rm -rf "$PD47" "$W47"
