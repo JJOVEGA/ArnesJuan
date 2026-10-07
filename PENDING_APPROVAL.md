@@ -43,8 +43,19 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-U resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-07] (coordinadora) — P-136-U: la pasada de SEC-132 (a) (`cd63066`) introduce QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y **el REQ se cierra**; más QA-007-16 (stderr retenido) y QA-007-17 (corte superlineal). ¿Se revierte a `c5bf6d4` o se intenta otra pasada?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-U: (A)** — se revierte el código de `cd63066`; SEC-132 (a) queda como límite declarado con (b) en F-136-22; QA-007-15/16/17 se cierran por reversión
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> «P-136-U: (A). Se revierte el código de cd63066 (hooks y banco vuelven a c5bf6d4; se conservan el registro, la versión b43d7ea y la evidencia como historia); QA comprueba que hooks/ es byte a byte c5bf6d4. SEC-132 (a) queda como límite declarado con (b) en F-136-22, para 1.37, con las tres lecciones de diseño escritas y la nota de que v1.35.0 cerraba el REQ sin decisión en ese caso. QA-007-15, 16 y 17 se cierran por reversión. El analista lo escribe en CA-68, CA-69 p. 3, AGENTS.md §13 y la guía. Nada más entra; contadores sin reiniciar.»
+
+**Lo que añade la coordinadora:** la reversión la hace el `desarrollador` (`git revert --no-commit cd63066` sobre `hooks/` y `tests/`, conservando `docs/arnes/` y `CHANGELOG.md`), con la comprobación `git diff c5bf6d4 -- hooks/ tests/` vacía; QA la comprueba; el analista escribe el límite y las lecciones; después seguridad (determinación corta sobre el estado final), notas finales, push, CI y PR fuera de borrador. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-07] (coordinadora) — P-136-U: la pasada de SEC-132 (a) (`cd63066`) introduce QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y **el REQ se cierra**; más QA-007-16 (stderr retenido) y QA-007-17 (corte superlineal). ¿Se revierte a `c5bf6d4` o se intenta otra pasada?
 
 **Contexto.** Re-verificación acotada de QA sobre `cd63066` (`docs/qa/REQ-007.md`, «SEC-132 (a): re-verificación acotada»; evidencia `cand-1.36.0/sec115-118/qa5/`, `26f6131`). **Conforme:** los cuatro casos de P-136-T pasan (cuatro gates de 20 s y una colgada → `deny` a los 30,2 s; 0 huérfanos; dos cierres a la vez no se interfieren); frontera 29 s pasa / 31 s se corta; fail-before de la gate colgada acreditado en `c5bf6d4` y v1.35.0 (sin decisión a los 60 s; en v1.35.0 el REQ queda cerrado); banco 2306/1/13 (INS-136-1); inventario sin movimientos; +0 procesos; E1 igual; versión 1.36.0 con `jq -e .` rc 0.
 
@@ -65,9 +76,6 @@
 **Qué trabajo sigue mientras no se decida:** nada del cierre que dependa del código. El borrador de notas espera.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-07) — **P-136-T: (B)** — la gate en curso se acota al tiempo que queda del plazo; cambio de compatibilidad declarado; caso de banco con las dos formas
 

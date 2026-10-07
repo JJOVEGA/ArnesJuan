@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-U (A) adoptada por el propietario: se revierte `cd63066`; SEC-132 (a) límite declarado con sus tres lecciones de diseño (F-136-22); QA-007-15/16/17 se cierran por reversión
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía. F-136-22 ampliada con SEC-132 (a) y las lecciones.
+- **Avance (regla 6):** el código de 1.36.0 vuelve a ser el validado (`c5bf6d4`); sigue el cierre.
+
 ## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de SEC-132 (a) sobre `cd63066`: CON HALLAZGOS — QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y el REQ se cierra (fail-open introducido por la pasada); QA-007-16 y QA-007-17; P-136-U; PR-136-5
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `26f6131`) y la coordinadora.
 
