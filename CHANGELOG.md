@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-Q: QA-007-13 reparado por el desarrollador en `39e6128` (18 minutos, dentro del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** `entrada.sh` arranca con `POSIXLY_CORRECT=y` (ninguna función suplanta `unset`, `set` ni `trap`); `unset -f` de una lista estática de 27 builtins regulares y 36 externas inventariadas del hook (con margen); desaparece el bucle sobre `/proc/self/environ`; la limpieza sin `builtin` delante; `unset POSIXLY_CORRECT; set +o posix` al final del preludio de `entrada.sh`, antes de cargar `lib.sh` (que no se puede leer en modo POSIX, R-054). Dos casos (bloque P; sección 47 104/0; cuadre 2314) con fail-before sobre `03cbf5e` (60 s, rc 124): `ls -la` sin decisión en 110 ms y `Write` a `src/a.ts` con `deny` en 112 ms.
+- **Los dos restos de QA-007-13** que P-136-Q no nombraba quedan resueltos por construcción: ya no hay bucle sobre `/proc/self/environ`, y `set` está protegido por el modo POSIX. QA lo comprueba.
+- **Avance (regla 6):** la pasada acotada está construida; falta su re-verificación.
+
 ## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-13 — la limpieza de `entrada.sh` ya no se puede suplantar — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-Q (A), con tope de una hora; empleados unos 20 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-13»; evidencia `b255dd2`.
 
