@@ -690,8 +690,10 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
    **Sus residuales, que siguen abiertos o declarados:**
    - las **quality gates en serie** (SEC-132 (a)): en el código validado, el plazo se comprueba antes de la
      primera gate y no entre una y la siguiente, y unas gates lentas pueden dejar el hook sin decisión. Su
-     reparación está en una pasada de 1.36.0 que, al escribir esto, **no está validada**; mientras no lo esté,
-     cuenta como residual;
+     reparación, decidida por el propietario del arnés, comprueba el plazo entre gates **y acota la gate en curso
+     al tiempo que queda del plazo**: una gate que no termina dentro de él —también una gate colgada— se
+     interrumpe y el cierre se deniega por plazo. Está en una pasada de 1.36.0 que, al escribir esto, **no está
+     validada**; mientras no lo esté, cuenta como residual;
    - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
      `Hallazgos abiertos:` repetidas en la cabecera **en disco** (SEC-132 (b)) y un REQ de varios MB con CRLF
      en disco (QA-007-09), límites declarados de 1.36.0;

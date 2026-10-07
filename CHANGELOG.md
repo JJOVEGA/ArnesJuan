@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de P-136-T (analista): la propiedad de SEC-132 (a) con la gate en curso acotada, en CA-68, CA-69 p. 3, `AGENTS.md` §13 y plantilla, y guía; pregunta abierta resuelta
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Dos añadidos del analista para QA:** «lo que una gate interrumpida lanzó por su cuenta puede seguir corriendo» (sin medir; sale de un comentario del código); y «antes el cliente mataba el hook a los 60 s sin decisión», que R-056 midió con cuatro gates y para la gate colgada lo tiene que acreditar el fail-before.
+- **Avance (regla 6):** el contrato de SEC-132 (a) está completo; falta el código del desarrollador (en curso) y su validación.
+
 ## [Interno] — 2026-10-07 · P-136-T (B) adoptada por el propietario: la gate en curso se acota al tiempo que queda del plazo; cambio de compatibilidad declarado; el caso de banco cubre las dos formas
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
