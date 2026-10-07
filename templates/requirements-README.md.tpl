@@ -102,7 +102,7 @@ gobierna —una variante, o una declaración exacta que no es la primera— y la
 existe, se deniega toda edición **de ese alcance** que conserve esa línea mientras la cabecera siga
 siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshace la ambigüedad no se
 deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
-su limitación SEC-118 («Clases de hallazgo», abajo).
+los límites que esa regla declara («Clases de hallazgo», abajo).
 
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
 `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
@@ -211,16 +211,21 @@ paréntesis**, tras la clase y una coma: `QA-006 (instrumento, REQ-007)`, no
 del primer `## `— cuya clave reconoce su lector como `Hallazgos abiertos` (también decorada,
 `**Hallazgos abiertos:**`, o sangrada). **Si hay más de una, deniega** y las nombra: no elige la
 primera ni la última y no las fusiona; se deja una sola línea con todos los hallazgos. **Aparte de esa
-regla, su limitación conocida y sin reparar (SEC-118 del repositorio del arnés):** el motivo cita los
-primeros 60 caracteres de cada línea repetida y viaja como un argumento de línea de órdenes, cuyo
-límite es de **bytes**; por encima, el hook sale **sin decisión** y no deniega. Medido a nivel de hook
-en Linux/WSL2, una corrida por punto —cifras operativas: mediciones, no umbrales—: con líneas **ASCII**
-de 60 caracteres o más, 1 601 deniegan (motivo de 121 061 bytes) y 1 801 salen sin decisión; con líneas
-**ASCII** cortas, 2 501 deniegan (111 961 bytes) y 3 000 salen sin decisión; con caracteres
-**multibyte** en la parte citada, bajo `C.UTF-8`, salen sin decisión 1 601 líneas con `ñ`, 1 001 con
-caracteres de 4 bytes y 2 501 cortas con `ñ`. No hay cifra para otros caracteres, hosts ni tamaños; en
-Windows/MSYS no está medido, y que el cliente trate como permitir un hook sin decisión es inferido.
-Dentro de esa
+regla, sus límites.** En 1.36.0 esa denegación **llega al cliente**: el motivo cita los primeros 60
+caracteres de cada línea repetida, viaja por la entrada estándar de `jq` y no como argumento, y se acota
+a 16 384 bytes (SEC-118 del repositorio del arnés, **`mitigado`** en 1.36.0; Windows/MSYS y el host, sin
+medir). **Su residual, límite declarado de 1.36.0 y sin reparar (SEC-132 (b) del mismo repositorio):**
+con miles de líneas repetidas en la cabecera **en disco**, el juicio crece más que linealmente y puede
+pasar del plazo del hook (40 s) o quedarse **sin decisión**. Medido a nivel de hook en Linux/WSL2, una
+corrida por punto —cifras operativas: mediciones, no umbrales—: con líneas de 66 caracteres, 12 000
+deniegan en 32,8 s y 20 000 salen sin decisión a los 60 s; con líneas cortas, 20 000 deniegan a los
+48,5 s. Que el cliente trate como permitir un hook sin decisión es inferido. *(Medido en 1.35.0, y
+historia de esa versión, no límite de 1.36.0: el motivo viajaba como un argumento de línea de órdenes,
+cuyo límite es de **bytes**, y por encima el hook salía **sin decisión**; con líneas **ASCII** de 60
+caracteres o más, 1 601 deniegan (motivo de 121 061 bytes) y 1 801 salían sin decisión; con líneas
+**ASCII** cortas, 2 501 deniegan (111 961 bytes) y 3 000 salían sin decisión; con caracteres
+**multibyte** en la parte citada, bajo `C.UTF-8`, salían sin decisión 1 601 líneas con `ñ`, 1 001 con
+caracteres de 4 bytes y 2 501 cortas con `ñ`.)* Dentro de esa
 línea, ningún hallazgo que bloquea queda sin leer por el sitio que ocupa en la lista ni por el
 carácter que lo separa del anterior. **Lo que el lector no reconoce como esa línea no se lee.** Si es
 una **variante** de la clave —`Hallazgos  abiertos:`, `HALLAZGOS ABIERTOS:`, la clave con un carácter
@@ -237,16 +242,22 @@ deja pasar. Con 16 384 bytes o menos decide la clase, como arriba. La evidencia 
 del hallazgo y en el paréntesis queda la referencia. **El techo se mide en el lector, antes de
 normalizar el valor**: por encima, el valor no se normaliza, no se recorta y ningún lector lo toma por
 «sin hallazgos» (el bloque derivado de `docs/ESTADO.md` lo muestra como `(no medido: N bytes, techo
-16384)`). **Esa denegación se promete hasta lo medido, y no más allá**, porque el hook tiene que
+16384)`). **En 1.36.0** (SEC-115 del repositorio del arnés, **`mitigado`**): el hook lleva un plazo
+propio y techos de tamaño —un `Write` cuyo contenido pasa de unos 393 216 bytes se deniega antes de la
+operación que crecía más que linealmente—, y un juicio que agota el plazo deniega, con la respuesta en
+no más de 40 s, salvo sus residuales; la propiedad, esos residuales y sus límites declarados están en
+REQ-007 CA-68 del mismo repositorio,
+en `AGENTS.md` §13, cláusula 1, y en las notas de 1.36.0. *(Medido en 1.35.0, y historia de esa
+versión:)* **Esa denegación se promete hasta lo medido, y no más allá**, porque el hook tiene que
 decidir dentro del límite del cliente (60 s) y un hook muerto no deniega. Medido en Linux/WSL2, una
 corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega por tamaño en 0,21 s;
 255 371 bytes → 0,31 s por `Edit` y `MultiEdit` y 1,6 s por `Write`. Por encima de 255 371 bytes **no
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
 28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
-Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. Es una
-limitación aparte de la regla —SEC-115 del mismo repositorio— y no forma parte de lo que la regla
-promete.
+Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. En 1.35.0
+era una limitación aparte de la regla —SEC-115 del mismo repositorio, `mitigado` en 1.36.0 (arriba)— y
+no formaba parte de lo que la regla promete.
 
 | Clase | Qué es | Efecto en el cierre |
 |---|---|---|

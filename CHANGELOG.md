@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de P-136-S (analista): límites SEC-131 y SEC-132 (b) en CA-68; SEC-132 (a) «en la pasada, sin validar»; **`AGENTS.md` §13 y `templates/AGENTS.md.tpl`** (autorizados): SEC-115 y SEC-118 `mitigado` con residuales, filas nuevas de CA-68 (ii) y SEC-120; `requirements/README.md` y su plantilla; guía. Pregunta P-136-T sobre la gate en curso
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **`AGENTS.md` §13:** la cláusula 1 deja de decir «limitaciones conocidas y sin reparar» para SEC-115/118 y dice `mitigado` con sus residuales (SEC-132 (a) sin validar, SEC-132 (b), QA-007-09, F-136-20/SEC-131, Windows y el host, `kill -9`); las cifras de SEC-118 quedan como historia de 1.35.0; filas nuevas de CA-68 (ii) y SEC-120; párrafo de cierre fechado. Mismo texto en la plantilla (+36 −11 líneas cada uno, estimado). Gates de §7 con rc 0; lector sin anomalías.
+- **P-136-T:** la coordinadora amplió en su encargo la letra de P-136-S («entre gates») con «acotar la gate en curso»; el analista lo detectó. Se devuelve al propietario con la decisión propuesta (B).
+- **Avance (regla 6):** las sedes de la promesa dicen lo que es cierto en el candidato; QA del cierre espera P-136-T.
+
 ## [Interno] — 2026-10-07 · P-136-S adoptada por el propietario: SEC-132 (a) se repara (tope de una hora); SEC-132 (b) y SEC-131 límites declarados (F-136-22, F-136-21); autorizados el write-back de `AGENTS.md` §13, la versión 1.36.0 y el push
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 

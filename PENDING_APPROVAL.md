@@ -43,7 +43,22 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-S resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-07] (coordinadora) — P-136-T: SEC-132 (a) — ¿«plazo comprobado entre gates» (literal de P-136-S) o «la gate en curso se acota al tiempo que queda del plazo» (lo que el código construye)? Cambia el límite declarado y el alcance del cambio de compatibilidad
+
+**Contexto.** P-136-S (1) (A) dice «plazo comprobado entre gates». El encargo de la coordinadora al desarrollador añadió «y, si cabe sin procesos, acota la gate en curso al tiempo que quede del plazo»: eso fue ampliar la letra del propietario, y aquí se corrige. El analista, al escribir CA-68, lo vio y lo dejó como pregunta abierta en REQ-007 («SEC-132 (a): la gate en curso y el techo de 40 s»), sin recomendación.
+- **(A) Literal: el plazo se comprueba entre gates.** No interrumpe la gate en curso. Con cuatro gates de 20 s, el `deny` llega hacia los 40 s, **justo en el techo** de respuesta; una sola gate que cuelgue deja al hook **sin decisión** a los 60 s (queda como límite declarado: «el plazo no alcanza a una gate en curso»). Cambio de compatibilidad: sólo los cierres cuyas gates **en conjunto** pasen del plazo.
+- **(B) La gate en curso se acota al tiempo que queda del plazo** (lo que el código sin comitear hace: espera con `read -t` y corta con `kill`). Garantiza la decisión antes de los 40 s en todos los casos, incluida una gate colgada. Cambio de compatibilidad mayor: **una sola gate legítima de más de ~30 s**, que en `c5bf6d4` y en v1.35.0 pasa, pasa a `deny` por plazo (en el cliente, de todos modos, un hook de más de 60 s muere sin decisión).
+- **Coste:** (B) ya está construido y es lo que QA mediría; (A) exige quitar la interrupción.
+
+**Recomendación de la coordinadora: (B).** La promesa del paso 6 es «el hook siempre emite decisión», y una gate colgada es el caso que (A) no cubre. El plazo propio de 30 s ya es la cifra que decidiste en P-136-C; que las gates lo respeten en conjunto es coherente con ella. El precio es declarar que una gate de más de ~30 s no cabe, y hoy tampoco cabía: la mataba el cliente a los 60 s sin decir nada.
+
+**Decisión propuesta, lista para adoptar:** «P-136-T: (B). El plazo se comprueba entre gates y la gate en curso se acota al tiempo que queda del plazo: un cierre cuyas gates agotan el plazo se deniega por plazo con motivo propio, antes de los 40 s, incluida una gate colgada. Cambio de compatibilidad declarado: una gate que no termine dentro del plazo se interrumpe y el cierre se deniega (en v1.35.0 el cliente mataba el hook a los 60 s sin decisión). El caso de banco cubre las dos formas: cuatro gates de 20 s y una gate colgada. Nada más entra.»
+
+**Qué trabajo sigue mientras no se decida:** el desarrollador termina y comitea su pasada y la versión; QA **espera** a esta decisión para saber qué propiedad valida. El write-back de `AGENTS.md` §13 sigue, con la frase de SEC-132 (a) marcada «sin validar».
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 
