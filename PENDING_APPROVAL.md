@@ -43,8 +43,19 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-T resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-07] (coordinadora) — P-136-T: SEC-132 (a) — ¿«plazo comprobado entre gates» (literal de P-136-S) o «la gate en curso se acota al tiempo que queda del plazo» (lo que el código construye)? Cambia el límite declarado y el alcance del cambio de compatibilidad
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-T: (B)** — la gate en curso se acota al tiempo que queda del plazo; cambio de compatibilidad declarado; caso de banco con las dos formas
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisión propuesta, lista para adoptar: «P-136-T: (B). El plazo se comprueba entre gates y la gate en curso se acota al tiempo que queda del plazo: un cierre cuyas gates agotan el plazo se deniega por plazo con motivo propio, antes de los 40 s, incluida una gate colgada. Cambio de compatibilidad declarado: una gate que no termine dentro del plazo se interrumpe y el cierre se deniega. El caso de banco cubre las dos formas: cuatro gates de 20 s y una gate colgada. Nada más entra.»
+
+**Lo que añade la coordinadora:** el desarrollador añade la forma «gate colgada» al caso de banco dentro de su tope; el analista cierra la pregunta abierta de REQ-007 y escribe la propiedad y el cambio de compatibilidad en CA-68, CA-69 p. 3, `AGENTS.md` §13 (ya autorizado) y la guía. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-07] (coordinadora) — P-136-T: SEC-132 (a) — ¿«plazo comprobado entre gates» (literal de P-136-S) o «la gate en curso se acota al tiempo que queda del plazo» (lo que el código construye)? Cambia el límite declarado y el alcance del cambio de compatibilidad
 
 **Contexto.** P-136-S (1) (A) dice «plazo comprobado entre gates». El encargo de la coordinadora al desarrollador añadió «y, si cabe sin procesos, acota la gate en curso al tiempo que quede del plazo»: eso fue ampliar la letra del propietario, y aquí se corrige. El analista, al escribir CA-68, lo vio y lo dejó como pregunta abierta en REQ-007 («SEC-132 (a): la gate en curso y el techo de 40 s»), sin recomendación.
 - **(A) Literal: el plazo se comprueba entre gates.** No interrumpe la gate en curso. Con cuatro gates de 20 s, el `deny` llega hacia los 40 s, **justo en el techo** de respuesta; una sola gate que cuelgue deja al hook **sin decisión** a los 60 s (queda como límite declarado: «el plazo no alcanza a una gate en curso»). Cambio de compatibilidad: sólo los cierres cuyas gates **en conjunto** pasen del plazo.
@@ -58,9 +69,6 @@
 **Qué trabajo sigue mientras no se decida:** el desarrollador termina y comitea su pasada y la versión; QA **espera** a esta decisión para saber qué propiedad valida. El write-back de `AGENTS.md` §13 sigue, con la frase de SEC-132 (a) marcada «sin validar».
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-07) — **P-136-S: (1) (A), (2) (A) y (3)** — adoptada la decisión propuesta, literal; autoriza el write-back de `AGENTS.md` §13, la versión 1.36.0 en los dos archivos de distribución y el push de la candidata
 

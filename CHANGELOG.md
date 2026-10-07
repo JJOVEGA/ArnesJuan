@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-T (B) adoptada por el propietario: la gate en curso se acota al tiempo que queda del plazo; cambio de compatibilidad declarado; el caso de banco cubre las dos formas
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** SEC-132 (a) tiene su propiedad fijada; falta el caso de la gate colgada, la validación y el write-back.
+
 ## [GitHub] — 2026-10-07 · Write-back de P-136-S (analista): límites SEC-131 y SEC-132 (b) en CA-68; SEC-132 (a) «en la pasada, sin validar»; **`AGENTS.md` §13 y `templates/AGENTS.md.tpl`** (autorizados): SEC-115 y SEC-118 `mitigado` con residuales, filas nuevas de CA-68 (ii) y SEC-120; `requirements/README.md` y su plantilla; guía. Pregunta P-136-T sobre la gate en curso
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 
