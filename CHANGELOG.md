@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · CI VERDE sobre `789a6f9` (run 37696987137); PR #60 fuera de borrador; dos rojos previos corregidos sin tocar el contenido del código
+> Origen: GitHub (commits locales con push autorizado) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (modo `100755` de `hooks/entrada.sh`, `f6b0a90`), `qa-tester` (sección 44 compactada a 400 líneas, `789a6f9`; ~181 k tokens en la comisión del CI) y la coordinadora.
+
+- **Tres corridas del CI sobre la rama hoy:** `19cf88e` rojo en «bit de ejecución» (`hooks/entrada.sh` en `100644`; sin efecto en runtime porque se carga con `source`; corregido a `100755`, mismo blob); `f6b0a90` rojo sólo en la autoprueba (CA-18: la sección 44 con 416 líneas tras el ajuste de K4; compactada a 400 sin cambiar casos), **con el banco de hooks ya en verde**; `789a6f9` **verde entero**.
+- **Lección menor:** la autoprueba local no comprueba los modos de archivo; el CI sí. Los dos rojos los detectó el CI y ninguno tocó el contenido de `hooks/`.
+- **PR #60** sale de borrador (P-136-S (3)); fusionar, etiquetar y publicar siguen siendo del propietario.
+- **Avance (regla 6):** la candidata tiene CI verde; faltan P-136-V y las notas finales en el CHANGELOG.
+
 ## [GitHub] — 2026-10-07 · Sección 44 bajo el techo de 400 líneas (CA-18) tras el ajuste de K4; sin cambio de casos
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `qa-tester`. Causa: el CI del PR #60 (run 37696182726, sobre `f6b0a90`) pasa el banco de hooks pero la autoprueba del corredor falla en CA-18: `44-integridad-de-la-entrada.sh` tenía 416 líneas con techo 400 (396 antes del ajuste de K4).
 
