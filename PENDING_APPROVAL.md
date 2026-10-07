@@ -43,7 +43,25 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-U resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-07] (coordinadora) — P-136-V: SEC-133 (`contrato`, media, preexistente): una quality gate que lee su entrada estándar se come la lista de las gates siguientes, y el cierre sale sin decisión aunque una gate posterior esté en rojo. ¿Límite declarado para 1.37 o un arreglo de una línea antes de publicar?
+
+**Contexto.** R-057 (`docs/seguridad/registro-seguridad.md`; evidencia `cand-1.36.0/sec115-118/seg-R057/`, `1f73698`): **determinación final de 1.36.0: conforme con hallazgos, sin veto.** Publicar no empeora nada; retener retendría seis hallazgos mitigados (SEC-115 ×3 vías, SEC-118, SEC-120, SEC-127, SEC-128, SEC-129). El código final es el de R-056 (`c5bf6d4`); la pasada revertida no deja rastro.
+
+**SEC-133.** `hooks/guard-completado.sh:951-958` lee la lista de gates con `done <<< "$ARNES_GATES"` y cada gate (`:953`) hereda esa entrada estándar. Una gate que la lea (`cat >/dev/null`, `read -r x; true`) consume la lista: las gates siguientes no se ejecutan y el cierre sale **sin decisión** aunque una de ellas esté en rojo. **Medido igual en v1.35.0.** Con `</dev/null` en la gate deniega. Es la propiedad que el auditor llama **L4** («la gate es código no confiable dentro del proceso del hook: su veredicto es sólo su código de salida; nada de lo que hereda puede alimentar la lista, el veredicto ni la salida»), de la que QA-007-15 y SEC-131 (a) son otras instancias. También contradice la fila de `AGENTS.md` §13 «No completar un REQ con quality gates en rojo», que promete más de lo medido.
+
+**Opciones.**
+- **(A) Límite declarado para 1.37** (ficha F-136-23, con F-136-21/22 y las lecciones L4 y L5 de R-057), y la fila de §13 acotada en el write-back («…salvo las formas declaradas: una gate que lee su entrada estándar, SEC-133; una función importada con el nombre de su orden, SEC-131»). **Consecuencia:** 1.36.0 publica un fail-open **preexistente** más, declarado; no se toca el bucle de gates, que P-136-U acaba de cerrar; cero vueltas. Recomendación del auditor.
+- **(B) Arreglo de una línea ahora** (`</dev/null` en la ejecución de cada gate) con caso de banco, re-verificación acotada de QA y determinación corta de seguridad. **Consecuencia:** otra vuelta sobre el mismo bucle (la que P-136-U cortó), ≈ 1 h, y los vectores adversarios de L5 (QA-007-15 y SEC-133) tendrían que entrar al banco antes, como pide el auditor para cualquier intento.
+
+**Recomendación de la coordinadora: (A).** Es preexistente, está medido igual en lo publicado, y el auditor pide que cualquier intento sobre las gates lleve primero los vectores adversarios al banco: eso es una intervención de 1.37, no una línea de hoy.
+
+**Decisión propuesta, lista para adoptar:** «P-136-V: (A). SEC-133 queda como límite declarado, ficha F-136-23 para 1.37 junto con F-136-21/22 y las lecciones L4 y L5 de R-057; la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y su plantilla se acota a las formas declaradas (SEC-133, SEC-131 (a)). SEC-134 se corrige como texto antes del tag. Nada más entra.»
+
+**Qué trabajo sigue mientras no se decida:** la corrección de texto de SEC-134 (analista, en curso) y las notas finales; QA investiga el CI rojo. El push espera a esta decisión sólo por el texto de §13.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 

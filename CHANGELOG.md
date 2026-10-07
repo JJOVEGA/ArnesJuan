@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · R-057, determinación final de 1.36.0: conforme con hallazgos, sin veto; SEC-131 y SEC-132 abiertos como límites declarados; SEC-133 (`contrato`, media, preexistente) → P-136-V; SEC-134 (`contrato`, baja, texto) → corrección; CI rojo del PR #60 en investigación
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-057; REQ-007: `Hallazgos abiertos:` con SEC-131/132 en su estado final y SEC-133/134; paréntesis de `Seguridad:`; evidencia `1f73698`; ~105 k tokens) y la coordinadora.
+
+- **Lo que publica 1.36.0:** SEC-115 (tres vías), SEC-118, SEC-120, SEC-127, SEC-128 y SEC-129 `mitigado`, y las propiedades (i) y (ii) de CA-68. **Lo que declara:** SEC-132 (a) y (b), SEC-131, QA-007-09, QA-007-11, QA-007-01 (fichas F-136-18 a F-136-22; todo vence en 1.37). **Lo que devuelve la publicación al propietario:** los `contrato` abiertos (QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, SEC-133, SEC-134; los heredados QA-114/116/117 y SEC-124; y los de otros REQ: SEC-014, SEC-020, SEC-033, SEC-038 a 045, QA-021-10/11).
+- **La pasada revertida no deja rastro** en el código; los vectores de QA-007-15 reciben `deny` en la cabeza actual. Lecciones L4 y L5 (F-136-23).
+- **SEC-133:** `guard-completado.sh:951-958`, `done <<< "$ARNES_GATES"`; una gate que lee stdin consume la lista. Igual en v1.35.0. **SEC-134:** la frase «en 1.35.0, además, el REQ quedaba completado» es falsa en el sentido que sugiere (los dos árboles salen sin decisión a los 60 s y el cierre se aplica); está en `AGENTS.md`, su plantilla, la guía, CA-68 y PENDIENTES (corregida aquí).
+- **`AGENTS.md` §13:** conforme salvo SEC-134 y la fila «No completar un REQ con quality gates en rojo», que promete más de lo medido (SEC-133, SEC-131 (a)).
+- **Avance (regla 6):** 1.36.0 tiene su determinación final; faltan P-136-V, la corrección de SEC-134, las notas, el CI y el push.
+
 ## [GitHub] — 2026-10-07 · P-136-U ejecutada: reversión comprobada por QA (FAVORABLE; QA-007-15/16/17 cerrados por reversión; ningún hallazgo de QA contra el código de 1.36.0, `c5bf6d4`); write-back del límite SEC-132 (a) con sus lecciones (CA-68, `AGENTS.md` §13, guía); PR-136-6 (error de despacho de la coordinadora)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` «P-136-U: comprobación de la reversión»; cabecera de REQ-007; evidencia `69e541c`, con hooks de git intactos), `analista-requerimientos` (CA-68, CA-69 p. 3, pregunta abierta, `AGENTS.md` §13 y plantilla, guía, índice) y la coordinadora.
 

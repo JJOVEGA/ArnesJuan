@@ -10915,3 +10915,143 @@ Medido en `04-`: coordinadora con `Write` y `Bash` a `src/` y con la entrada cer
 - un motivo fuera de la entrada estándar.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-056**; último hallazgo **SEC-132** (`SEC-121` y `SEC-144`, reservados a los ejemplos de `requirements/README.md`); próximos libres **R-057** y **SEC-133**.
+
+## Revisión R-057 — **Estado final del candidato 1.36.0: determinación corta de seguridad para la decisión de publicar** (código de `c5bf6d4` tras la reversión de `cd63066` por P-136-U; versión `b43d7ea`). `cand/1.36.0` @ `4610004` — 2026-10-07 — **DETERMINACIÓN SOBRE EL CANDIDATO, NO FIRMA DEL REQ**
+
+- **Pedido:** encargo de la coordinadora del 2026-10-07 (determinación corta sobre el estado final, para que el propietario decida publicar con las notas delante), tras P-136-S, P-136-T y P-136-U (`PENDING_APPROVAL.md` § Resueltas, literales).
+- **Orden de fases:** QA comprobó la reversión con veredicto favorable (`docs/qa/REQ-007.md`, «P-136-U: comprobación de la reversión»; evidencia `qa6/`, `69e541c`). Esta revisión va después y no mira las quality gates.
+- **Evidencia:** `cand-1.36.0/sec115-118/seg-R057/` (`00-comprobaciones.txt`, `01-stdin-gates.*`, `02-vectores-qa00715.*`, `h.sh` de R-056), commit `1f73698` del repositorio de evidencia. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook por `guard.sh`, una corrida por punto. **No corrí el banco** (encargo).
+
+### 1. ¿El código final es el que determinó R-056?
+
+**Sí.** `git diff c5bf6d4 HEAD -- hooks/ tools/ tests/` vacío, y también `.github/`, `agents/` y `playbooks/`. `plugin.json` y `marketplace.json` en 1.36.0; `arnes_version` de `.arnes/config.json` en 1.33.0 (`00-`). Lo que cambió desde `c5bf6d4` es sólo documentación, plantillas, la skill de migración, el REQ y los registros. R-056 se mantiene sobre el código que se publicaría.
+
+### 2. SEC-131 y SEC-132: estado final
+
+Declararlos límite con ficha **no cambia su clase ni su estado**. Es la regla de la casa desde F-136-18 (R-056 §5): un límite declarado no es un riesgo aceptado ni un reparado.
+- **Qué sí cambia:** el write-back existe —CA-68, «Límites declarados de 1.36.0», con su ficha— y `AGENTS.md` §13 los nombra. Su promesa ya no excede lo medido, salvo lo de SEC-134 (§5). Ya no son «sin declarar».
+- **SEC-131:** `contrato`, baja, **`abierto` — límite declarado** por P-136-S (2) (A), ficha F-136-21 con F-136-20. **No aceptado. Vence en 1.37.**
+- **SEC-132 (a) y (b):** `contrato`, media, **`abierto` — límite declarado**. (a) por P-136-U (A), (b) por P-136-S (1) (A), ficha F-136-22. **No aceptado. Vence en 1.37.**
+- **Efecto:** los dos impiden **cerrar** REQ-007 (`guard-completado`, §6 y §13). Abiertos, devuelven **publicar** al propietario (§4); es efecto de la regla vigente, no un veto.
+
+### 3. El intento revertido (`cd63066`)
+
+- **Rastro en el código: ninguno.** `arnes_corta_gate` y `arnes_deny_plazo_gate` no aparecen en lo distribuido (`00-`, §3). El bucle de gates es el de `c5bf6d4` (`hooks/guard-completado.sh:951-958`).
+- **Medido de nuevo** (`02-`): los vectores de QA-007-15 —una gate roja que escribe en un descriptor heredado, que pone una trampa `EXIT` o que imprime un `allow` en su salida— reciben `deny`.
+- **Lecciones que el registro conserva además de las tres de F-136-22:**
+  - **L4 — La gate es código no confiable dentro del proceso del hook.** Su veredicto es sólo su código de salida, observado por el hook. Nada de lo que hereda —entrada estándar, descriptores, salidas, trampas, funciones— puede alimentar la lista, el veredicto ni la salida del hook. Son instancias de esta propiedad, ejemplos **no exhaustivos**:
+    - QA-007-15, por un descriptor (revertido);
+    - SEC-131 (a), por funciones (límite declarado);
+    - **SEC-133** (§4), por la entrada estándar, preexistente y abierto.
+  - **L5 — Reparar la vivacidad no debe romper la integridad.** Una reparación de «siempre emite decisión» se valida también contra «nunca pasa una gate roja», con casos adversarios en el banco.
+    - Los vectores de QA-007-15 y los de SEC-133 salieron del banco con la reversión, o nunca estuvieron.
+    - Deben entrar **antes** del intento de 1.37.
+    - Regresión a vigilar.
+
+### 4. SEC-133 — `contrato` (REQ-007) · **abierto** · severidad **media** · preexistente (igual en v1.35.0) · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (contrato)
+
+**Una quality gate que lee su entrada estándar consume la lista de las gates siguientes; éstas no se ejecutan, y el cierre sale sin decisión con una gate posterior en rojo.**
+- **Causa:** el bucle lee la lista de gates de la entrada estándar (`done <<< "$ARNES_GATES"`, `hooks/guard-completado.sh:958`), y cada gate la hereda (`:953`).
+- **Medido** (`01-`), en el candidato y en v1.35.0:
+  - con `cat >/dev/null` o con `read -r x; true` seguidas de `false`, el cierre sale **sin decisión** (nada, rc 0);
+  - controles: la gate roja sola, `true` seguida de `false`, y la misma `cat` con `</dev/null` dan `deny`.
+- **Alcance:** cualquier orden de gate que lea de la entrada estándar sin necesitarlo. No hace falta ningún ataque. No medí qué órdenes reales lo hacen.
+- **Por qué `contrato`:** contradice la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y §7, y ningún límite lo declara.
+- **Por qué media:** es un fail-open de la puerta de cierre con configuración ordinaria. Depende de que una gate que lee stdin vaya delante de una roja, y es preexistente.
+- **Remediación, por propiedad (L4):** ninguna gate hereda un canal del que el hook lea. Por ejemplo, la lista por otro descriptor o cada gate con la entrada desde `/dev/null`. Con caso de banco y su fail-before.
+- **Decisión del propietario:** reparar en 1.36.0 o declarar el límite para 1.37 (regla 4). P-136-U dice «Nada más entra». **No aceptado.**
+
+### 5. SEC-134 — `contrato` (REQ-007, CA-68 y su sede en `AGENTS.md` §13) · **abierto** · severidad **baja** · dueño `analista-requerimientos`
+
+**La nota de P-136-U sugiere una mejora de 1.36.0 que no está medida en el cliente.**
+- **Dónde está la frase** —sedes encontradas por búsqueda, ejemplos **no exhaustivos**, `00-` §4—: la cláusula 1 de `AGENTS.md` §13 (`:730`), su plantilla (`templates/AGENTS.md.tpl:694`), `skills/arnes-upgrade/SKILL.md:1480`, CA-68 (`requirements/REQ-007.md:2455`) y `docs/PENDIENTES.md:2336`.
+- **Qué dice:** con las gates de SEC-132 (a), «en 1.35.0, **además**, el REQ quedaba `completado`». El «además» da a entender que en 1.36.0 no queda cerrado.
+- **Lo medido en `c5bf6d4`:**
+  - cuatro gates de 20 s y una de 70 s salen **sin salida** a los 60 s (`seg-R056/07-`), igual que v1.35.0;
+  - en la gate colgada, el `deny` fijo sale **después** de que `timeout` señalara al hook (QA, «SEC-132 (a): re-verificación acotada» §4), de un hook que el cliente ya mató.
+  - En el cliente los dos casos son «sin decisión», y que eso cuente como permitir es inferido (REQ-031 CA-A12): el REQ **puede** quedar `completado` también en 1.36.0.
+- **Remediación:** decir que en 1.36.0 el hook también queda sin decisión, y que el REQ puede quedar cerrado igual que en 1.35.0. La nota del propietario («v1.35.0 cerraba el REQ sin decisión») se conserva: es cierta. Lo que sobra es el contraste.
+- **Recomiendo corregirlo antes del tag**, porque es texto que heredan los consumidores. Si no se corrige, las notas lo dicen.
+
+### 6. `AGENTS.md` §13 (y su plantilla): ¿dice lo que es cierto en el candidato?
+
+- **Cláusula 1, sí, con dos salvedades.**
+  - **La salvedad de SEC-134.**
+  - **«los techos de tamaño deniegan antes de las operaciones que crecen más que linealmente»** es más ancho que lo medido. Los residuales de la misma cláusula (SEC-132 (b), QA-007-09) lo desmienten en dos operaciones. Observación O-57-1: no es hallazgo porque el texto declara la excepción al lado.
+  - **Lo demás está medido** (QA y R-056): el plazo de 30 s y los 40 s con sus residuales, la trampa, el motivo por la entrada estándar de `jq` acotado a 16 384 bytes, y SEC-115/118 `mitigado`.
+- **Fila de SEC-120:** conforme con R-053, incluido el límite sin `CLAUDE_PROJECT_DIR`.
+- **Fila de CA-68 (ii):** conforme. Declara `.` y `[` (con el `allow` explícito de R-056 §3), las opciones, `BASH_ENV`, la función con nombre de gate, el límite de descriptores y `PATH`.
+- **Fila de los hallazgos:** conforme. Sus cifras de 1.35.0 van fechadas como historia.
+- **Fila «No completar un REQ con quality gates en rojo»:** **excede lo medido** y no tiene residual en la tabla.
+  - SEC-133 (§4) la contradice.
+  - SEC-131 (a) también, y sólo está declarado en otra fila.
+  - Es parte del write-back de SEC-133.
+- **Plantilla:** §13 coincide con `AGENTS.md` en estas filas y en la cláusula 1. Sólo difiere en dos párrafos de redacción propia de la plantilla.
+
+### 7. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el estado final del candidato 1.36.0: CONFORME CON HALLAZGOS, SIN VETO.**
+  - El código es el de R-056: ningún `deny` pasa a `allow` ni a «sin decisión» frente a v1.35.0 en lo medido.
+  - La reversión no deja rastro.
+  - Los dos hallazgos nuevos son preexistentes (SEC-133) o de redacción (SEC-134). Ninguno es una regresión de 1.36.0.
+  - Publicar 1.36.0 no empeora ninguno; retenerla retiene SEC-115/118/120/127/128/129 `mitigado`.
+- **Qué publica** (en el candidato, sin publicar):
+  - **`mitigado`:** SEC-115 en sus tres vías, SEC-118, SEC-120, SEC-127, SEC-128 y SEC-129;
+  - las propiedades (i) y (ii) de CA-68.
+- **Qué declara** —límites, ni aceptados ni reparados, todos para 1.37—:
+  - SEC-132 (a) y (b), F-136-22;
+  - SEC-131, F-136-21 con F-136-20;
+  - QA-007-09, F-136-18;
+  - QA-007-11, F-136-19;
+  - QA-007-01, P-136-F.
+- **Qué impide**, ejemplos **no exhaustivos**:
+  - **(i) Acción:** **cerrar** REQ-007, por `guard-completado` con hallazgos `contrato` abiertos (§6 y §13).
+  - **(ii) Parte:** el cierre de REQ-007; la publicación no por delegación.
+  - **(iii) Evidencia:** §2, §4 y §5, con `seg-R057/`.
+  - **(iv) Qué lo resuelve:** la reparación, o la declaración como límite por decisión del propietario con su write-back.
+- **Qué devuelve la publicación al propietario** (§4, no por delegación): los `contrato` abiertos.
+  - **Del delta:** QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, y los nuevos SEC-133 y SEC-134.
+  - **Heredados en REQ-007:** QA-114, QA-116, QA-117 y SEC-124.
+  - **Heredados en otros REQ**, por búsqueda de la forma `ID (contrato`, no exhaustivo; la sede es la lectura de la puerta:
+    - REQ-013: SEC-014 y SEC-020;
+    - REQ-019: SEC-033;
+    - REQ-020: SEC-038 a SEC-045;
+    - REQ-021: QA-021-10 y QA-021-11.
+  - **`instrumento` abiertos** (no bloquean cierre): SEC-130, SEC-123, SEC-125, QA-023-23, QA-007-08.
+- **No impide:** implementar, probar, ni el write-back de SEC-133/SEC-134.
+- **Firma:** esta revisión no firma REQ-007. `Seguridad:` sigue en `pendiente`, con R-057 en su paréntesis.
+- **Decisiones que conviene presentar ya al propietario** (regla 4), con la de publicar:
+  - **(1) SEC-133:** reparar en 1.36.0 o declararlo para 1.37.
+    - Recomendación: **declararlo** y repararlo en 1.37 junto con F-136-22 bajo L4.
+    - Motivo: es preexistente, y una pasada más sobre el bucle de gates, tras P-136-U, repite el patrón que P-136-U cortó.
+    - La reparación mínima, la entrada desde `/dev/null`, es pequeña. Si se quiere en 1.36.0, sería otra vuelta con QA y seguridad.
+  - **(2) SEC-134:** corrección de texto por el analista antes del tag.
+
+### 8. Estado tras R-057
+
+| Hallazgo | Clase | Estado | Vence | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-131`** | `contrato` (REQ-007) | **`abierto` — límite declarado** (F-136-21, P-136-S), no aceptado | 1.37 | **REQ-007** |
+| **`SEC-132`** | `contrato` (REQ-007) | **`abierto` — límite declarado** en (a) y (b) (F-136-22, P-136-S y P-136-U), no aceptado | 1.37 | **REQ-007** |
+| **`SEC-133`** | `contrato` (REQ-007) | **`abierto`**, nuevo, preexistente, no aceptado | decide el propietario | **REQ-007** |
+| **`SEC-134`** | `contrato` (REQ-007) | **`abierto`**, nuevo, de redacción | antes del tag (recomendado) | **REQ-007** |
+| `SEC-115`, `SEC-118`, `SEC-129` | — | `mitigado` en el candidato (R-056 §10), sin cambio | — | no |
+| `SEC-130` | `instrumento` | `abierto`, F-136-12 | 1.37 | no |
+
+- **No revisado:**
+  - el host (`claude -p`) y lo que hace con «sin decisión» o con salida tras una señal;
+  - Windows/MSYS y otros bash;
+  - qué órdenes de gate reales leen la entrada estándar;
+  - SEC-133 por `Write` y `MultiEdit` (mismo bucle, por lectura);
+  - el banco completo;
+  - el borrador de notas `docs/arnes/notas-1.36.0-borrador.md`, que estaba en redacción. Antes de publicar debe decir lo de §7 y no repetir SEC-134.
+- **Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Demás REQ:** sin cambio.
+- **Regresiones a vigilar** (no exhaustivo):
+  - un canal heredado por la gate del que el hook lea (L4);
+  - una reparación de plazo sin casos adversarios de integridad (L5);
+  - y las de R-056 §12.
+- **`docs/seguridad/gobernanza-datos.md`:** sin cambios.
+- **Numeración vigente:**
+  - última revisión **R-057**; último hallazgo **SEC-134**;
+  - `SEC-121` y `SEC-144` siguen reservados a los ejemplos de `requirements/README.md`;
+  - próximos libres **R-058** y **SEC-135**.
