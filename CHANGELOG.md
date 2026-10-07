@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Candidato 1.36.0: versión en los dos archivos de distribución
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Autorizado por el propietario (P-136-S, `PENDING_APPROVAL.md` § Resueltas).
+
+- `.claude-plugin/plugin.json` (`version`) y `.claude-plugin/marketplace.json` (`metadata.version` y `plugins[0].version`) pasan de `1.35.0` a `1.36.0`.
+- `.arnes/config.json` conserva `arnes_version` en `1.33.0`, sin tocar.
+- Gates de §7 (`jq -e .` sobre los dos archivos): rc 0.
+- **Avance (regla 6):** la versión del candidato está fijada. Lo que falta para publicar es de la coordinadora y del propietario.
+
 ## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): SEC-132 (a) — el plazo propio también corre dentro de las quality gates — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-S y P-136-T (B), con tope de una hora; empleados unos 38 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «SEC-132 (a)»; evidencia `bb06d3c`.
 
