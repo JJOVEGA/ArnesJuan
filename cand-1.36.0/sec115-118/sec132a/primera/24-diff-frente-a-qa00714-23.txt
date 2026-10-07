@@ -1,0 +1,7 @@
+1467a1468
+> PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+2036a2038,2039
+> PASS	SEC-132 CA-68 P cierre de un REQ en verde con control, dos gates rápidas, por guard.sh -> sin decisión en no más de 40 s  (a) rc N en Nms, salida N bytes; (b) nada; (c) -
+> PASS	SEC-132 CA-68 P cierre de un REQ en verde con cuatro gates de 20 s, por guard.sh -> deny en no más de 40 s  (a) rc N en Nms, salida N bytes; (b) deny; (c) intacto
+2303d2305
+< SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de este árbol (N de N resueltas): N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N · presupuesto fijo, no se repite

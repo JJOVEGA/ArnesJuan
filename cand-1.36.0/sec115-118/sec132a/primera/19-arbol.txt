@@ -1,0 +1,21 @@
+# 2026-10-07T14:07:58-06:00 cabeza ed34143 + cambios
+ M AGENTS.md
+ M docs/ESTADO.md
+ M hooks/guard-completado.sh
+ M hooks/lib.sh
+ M requirements/README.md
+ M requirements/REQ-007.md
+ M templates/AGENTS.md.tpl
+ M templates/requirements-README.md.tpl
+ M tests/escenarios/hooks/README.md
+ M tests/escenarios/hooks/run.sh
+ M tests/escenarios/hooks/secciones/47-decision-emitida.sh
+5efc1ff0cecdccaef048ff8d9fe8c725de604262ac5d8ac07ae354cffb7f04cd  hooks/entrada.sh
+4a641cac9d1a2afeec87f5f6547528d19b9f423ce97b37912985f45ffa2acb39  hooks/estado-derivado.sh
+528ba686d7364f29123ca599ff77b7e2bee898ec0882458c64596051668ac684  hooks/guard-codigo.sh
+43842d621f4f91dbd20c24587d33c658e599d46ec6e8579f0ec26ec59977ebe6  hooks/guard-completado.sh
+45a11d8df3a965f719850dae3ac370cdd33b7e84443f59ba3078c251021ede13  hooks/guard-git.sh
+f4b1f8a1a4fdc927fd87fb452f287bec8a59d4c2bda9001de068f46aa264b959  hooks/guard.sh
+cc78a6cb849a193a18f09089a919dbdd281496d1b1cf4c80c6eb3adecc9c36c6  hooks/lib.sh
+dd9e6dcf62c79336bd749f5b19b697a9b00509337882811de0d877b3b58e902a  hooks/rotar-artefactos.sh
+0570ec9dd0edf14523e812bb53a247d967c261b9eaf781a6c80f5d1d36c532ca  hooks/stop.sh

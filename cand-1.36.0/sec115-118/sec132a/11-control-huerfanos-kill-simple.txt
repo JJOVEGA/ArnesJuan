@@ -1,0 +1,5 @@
+# Control del caso de huerfanos: COPIA de los hooks del candidato con el corte reducido a 'kill $!' (sin el arbol); 2026-10-07T14:24:01-06:00
+  PASS  SEC-132 CA-68 P cierre de un REQ en verde con cuatro gates de 20 s, por guard.sh -> deny en no más de 40 s  (a) rc 0 en 30171ms, salida 594 bytes; (b) deny; (c) intacto
+  PASS  SEC-132 CA-68 P cierre de un REQ en verde con una gate colgada, por guard.sh -> deny en no más de 40 s  (a) rc 0 en 30158ms, salida 603 bytes; (b) deny; (c) intacto
+  FAIL  SEC-132 CA-68 P la gate colgada que se corta no deja procesos huérfanos  (1 vivos)
+  PASS  SEC-132 CA-68 P cierre de un REQ en verde con control, dos gates rápidas, por guard.sh -> sin decisión en no más de 40 s  (a) rc 0 en 107ms, salida 0 bytes; (b) nada; (c) -
