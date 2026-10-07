@@ -43,7 +43,32 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-R resuelta por el propietario, en § Resueltas.)_
+
+### [2026-10-07] (coordinadora) — P-136-S: con el paso 6 validado (QA favorable, R-056 sin veto), seguridad abrió SEC-132 (`contrato`, media) y SEC-131 (`contrato`, baja), los dos preexistentes; y el cierre (paso 7) necesita tres autorizaciones tuyas. ¿Qué entra antes de publicar 1.36.0?
+
+**Contexto.** R-056 (`docs/seguridad/registro-seguridad.md`; evidencia `cand-1.36.0/sec115-118/seg-R056/`, `4bd3464`) sobre `c5bf6d4`: en 3 162 combinaciones de entorno más la matriz POSIX, ningún `deny` pasa a `allow` ni a «sin decisión»; todos los movimientos van hacia `deny` y están declarados. **SEC-115, SEC-118 y SEC-129 → `mitigado` en el candidato.** SEC-130 → `instrumento`, F-136-12 (texto corregido). Un control del proveedor detuvo una sonda del auditor (O-56-2); sin reintentar.
+
+**(1) SEC-132 — `contrato`, media, preexistente: el plazo propio no alcanza dos recorridos.**
+- **(a) Las quality gates en serie:** el plazo se comprueba **antes** del bucle (`guard-completado.sh:946`), no dentro. Cuatro gates de 20 s → sin decisión a los 60 s. **Alcanzable con una configuración normal** del manifiesto. La reparación es comprobar el plazo entre gates (una línea) y denegar si se agota; es un cambio de compatibilidad (un proyecto con gates lentas verá `deny` por plazo donde antes veía «sin decisión»).
+- **(b) `Hallazgos abiertos:` repetida en la cabecera en disco** crece más que linealmente (`lib.sh:3376`, situado por lectura): 20 000 líneas cortas → `deny` a los 48,5 s; 20 000 de 66 caracteres → sin decisión. Un techo sobre el disco de > 660 KB no lo cubriría.
+- **Opciones:** **(A)** reparar **(a)** ahora, en una pasada acotada y con tope (una línea, un caso de banco con gates lentas simuladas, re-verificación acotada; cambio de compatibilidad declarado), y **(b)** como límite declarado con ficha para 1.37; **(B)** los dos como límites declarados, ficha para 1.37; **(C)** reparar los dos (b exige otro techo o una normalización lineal: no cabe sin diseño).
+- **Recomendación: (A).** (a) contradice la promesa central del paso 6 («el hook siempre emite decisión») con una configuración que cualquier proyecto puede tener; (b) exige diseño.
+
+**(2) SEC-131 — `contrato`, baja, preexistente: estado heredado sin neutralizar ni declarar.** (i) una función importada con el nombre de la orden de una gate hace pasar una gate roja (`guard-completado.sh:953`, el único `eval` del hook); (ii) `ulimit -n` 4 o 5 → el preludio falla y se lee como inerte; (iii) `PATH` (y `#!/usr/bin/env bash` lo resuelve antes de la primera línea). El auditor recomienda para 1.37 declarar la **frontera de confianza del entorno del host** por propiedad y resolver F-136-20 con una **lista blanca** del entorno en `hooks.json`, no con una lista negra.
+- **Opciones:** **(A)** límite declarado ahora, ficha F-136-21 para 1.37 junto con F-136-20 (misma frontera); **(B)** reparar (ii) ahora (que el fallo del preludio deniegue en vez de leerse inerte) y declarar (i) y (iii).
+- **Recomendación: (A).** Es la misma frontera que ya declaraste en F-136-20; partirla en reparaciones sueltas no la cierra.
+
+**(3) Autorizaciones del cierre (paso 7) que el plan reserva a ti:**
+- **(a) `AGENTS.md` §13 y `templates/AGENTS.md.tpl`:** las filas que declaran SEC-115 y SEC-118 como limitaciones tienen que decir lo que hoy es cierto (`mitigado`, con los residuales de R-056). El plan dice «No AGENTS.md», así que necesita tu autorización expresa; lo escribe el analista.
+- **(b) La subida de versión** a 1.36.0 en `.claude-plugin/plugin.json` y `marketplace.json` (archivos protegidos: el desarrollador), y `arnes_version` de `.arnes/config.json` **se conserva** en 1.33.0 como en 1.35.0 (es la migración del proyecto), salvo que digas otra cosa.
+- **(c) Push** de la candidata para que el PR #60 tenga CI sobre la cabeza final, y después el PR fuera de borrador. Fusionar, etiquetar y publicar siguen siendo tuyos.
+
+**Decisión propuesta, lista para adoptar:** «P-136-S: (1) (A): se repara SEC-132 (a) en una pasada acotada con tope de una hora (plazo comprobado entre gates, caso de banco con gates lentas, cambio de compatibilidad declarado, re-verificación acotada de QA y determinación corta de seguridad); SEC-132 (b) límite declarado, ficha 1.37. (2) (A): SEC-131 límite declarado, ficha F-136-21 con F-136-20 (frontera de confianza del entorno; lista blanca en `hooks.json` en 1.37). (3) autorizo el write-back de `AGENTS.md` §13 y su plantilla por el analista, la subida de versión a 1.36.0 en los dos archivos de distribución (`arnes_version` se conserva en 1.33.0), y el push de la candidata al terminar; el PR sale de borrador cuando el CI esté en verde. Fusión, tag y publicación los decido yo con las notas finales delante. Nada más entra; contadores sin reiniciar.»
+
+**Qué trabajo sigue mientras no se decida:** el commit validado del paso 6 (hecho con esta entrada), el write-back de estado del analista (SEC-115/118/129 `mitigado`; F-136-20 (i) corregida con el `allow` explícito), las notas finales y la guía en lo que no depende de (1) y (3). Esta entrada impide marcar cualquier REQ como `completado`.
+
+**Espera:** elección del propietario.
+
 
 ## Resueltas
 

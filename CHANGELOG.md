@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Paso 6: COMMIT VALIDADO. R-056 conforme con hallazgos y sin veto; SEC-115, SEC-118 y SEC-129 `mitigado`; SEC-130 instrumento (texto corregido); SEC-131 (`contrato`, baja) y SEC-132 (`contrato`, media), preexistentes → P-136-S junto con las autorizaciones del cierre
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-056; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `4bd3464`; ~275 k tokens) y la coordinadora.
+
+- **R-056:** 3 162 combinaciones de entorno más la matriz POSIX sin ningún `deny` → `allow`/«sin decisión»; SEC-118: el aviso de 140 KB sale en 16 403 bytes y el `deny` en 16 494; `ulimit -f` heredado → `deny` fijo de la trampa; SEC-129: las seis formas de llegada al modo POSIX deciden igual que en modo normal; funciones importadas: 2 448 combinaciones, 37 diferencias, todas `.`/`[` (F-136-20 (i); **dato nuevo:** `[` importada que imprime `allow` produce un `allow` explícito); la lista estática cubre todo lo que el hook ejecuta por sí mismo (único `eval`: las gates). Inferido, sin medir en el host: rc ≠ 0 (salvo 2) o dos JSON = «sin decisión».
+- **SEC-132** (media): (a) el plazo se comprueba antes del bucle de gates, no dentro: cuatro gates de 20 s → sin decisión a los 60 s, con configuración normal; (b) `Hallazgos abiertos:` repetida en disco, superlineal (20 000 líneas → 48,5 s o sin decisión). **SEC-131** (baja): función importada con el nombre de la orden de una gate hace pasar una gate roja; `ulimit -n` 4–5 → preludio inerte; `PATH`.
+- **Observaciones:** O-56-1 comentarios desfasados (`guard-completado.sh:66-70`, `lib.sh:1466`, `:3048`); O-56-2 control del proveedor en una sonda, sin reintentar; O-56-3 el recorte del motivo puede ocultar lo que va detrás de un identificador largo. Propuesta para 1.37: la trampa también con código 2 y motivo por stderr; frontera de confianza del entorno por propiedad y lista blanca en `hooks.json`.
+- **Pendiente:** las entradas de SEC-118 en REQ-023 y SEC-115 en REQ-031 (instrumento, no bloquean) y las sedes de la promesa (`AGENTS.md` §13, plantillas, `requirements/README.md`) según CA-69 p. 5: en P-136-S.
+- **Avance (regla 6):** los tres pasos de código de 1.36.0 están validados; el cierre espera P-136-S.
+
 ## [GitHub] — 2026-10-07 · Write-back de estado (analista): QA-007-14 «construido en `c5bf6d4`; validado y cerrado por QA» en CA-68 (ii) y en el índice; F-136-20 (v) con el dato de QA
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 
