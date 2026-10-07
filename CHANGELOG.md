@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-R (A) adoptada por el propietario: la lista estática cubre también los builtins especiales; F-136-20 gana el `set` en guardianes sueltos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con una línea y una re-verificación corta.
+
 ## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `39e6128`: QA-007-13 cerrado; CON HALLAZGOS por QA-007-14 (`contrato`, baja): los builtins especiales quedan fuera de la lista estática y vuelven a ser suplantables tras `set +o posix`; P-136-R
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `84fbf80`, sin tocar `core.hooksPath`) y la coordinadora.
 

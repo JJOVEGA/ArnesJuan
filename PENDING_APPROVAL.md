@@ -43,8 +43,19 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-R resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-07] (coordinadora) — P-136-R: QA-007-14 (`contrato`, baja): la lista estática de `entrada.sh` no retira los builtins **especiales** que el hook usa (`return`, `exit`, `break`, `continue`, `set`, `shift`, `:`); tras `set +o posix` vuelven a ser suplantables. Una línea lo repara. ¿Entra o es límite?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-R: (A)** — adoptada la decisión propuesta, literal
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisión propuesta, lista para adoptar: «P-136-R: (A). La lista estática cubre los builtins que el hook usa, regulares y especiales (return, exit, break, continue, set, shift, :), retirados en modo POSIX; caso de banco con return y break exportadas, decisión en < 5 s; re-verificación acotada de QA. BASH_FUNC_set%% en guardianes sueltos → F-136-20. Nada más entra; contadores sin reiniciar.»
+
+**Lo que añade la coordinadora:** la línea la añade el `desarrollador` (sigue dentro del tope de P-136-Q: 18 minutos usados de 60); F-136-20 gana el `set` suplantado en guardianes sueltos; el analista corrige en CA-68 (ii) la letra «regulares» → «regulares y especiales». La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-07] (coordinadora) — P-136-R: QA-007-14 (`contrato`, baja): la lista estática de `entrada.sh` no retira los builtins **especiales** que el hook usa (`return`, `exit`, `break`, `continue`, `set`, `shift`, `:`); tras `set +o posix` vuelven a ser suplantables. Una línea lo repara. ¿Entra o es límite?
 
 **Contexto.** Re-verificación acotada de QA sobre `39e6128` (`docs/qa/REQ-007.md`, «Paso 6: re-verificación de la pasada acotada de P-136-Q»; evidencia `cand-1.36.0/sec115-118/qa3/`, `84fbf80`). **QA-007-13 cerrado:** `builtin` da 0 diferencias en 567 combinaciones; `ls -la` sin decisión en 110 ms y `Write` con `deny` en 111 ms donde `03cbf5e` moría a los 60 s; sin dependencia de `/proc/self/environ`; matriz POSIX, bloque P, QA-007-10/12, T1–T3 y E1 sin cambio; banco 2301/0/13; inventario 2038/0/12; +0 procesos.
 
@@ -68,9 +79,6 @@
 **Qué trabajo sigue mientras no se decida:** nada del paso 6 (seguridad espera a QA favorable).
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-07) — **P-136-Q: (A), con tope de una hora y acotada a QA-007-13**; lista estática de `unset -f`; caso de banco con `builtin` y `read` exportadas y decisión en < 5 s; F-136-20 como límite declarado
 
