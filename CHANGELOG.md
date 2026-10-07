@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-R: QA-007-14 reparado por el desarrollador en `c5bf6d4` (18 min; 36 de los 60 del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** la lista estática empieza ahora por los builtins especiales que el hook usa (`return exit break continue set shift : eval trap unset exec .`); `export`, `readonly` y `times` no aparecen en el código. Dos casos (bloque P; sección 47 106/0; cuadre 2316) con fail-before sobre `39e6128` (allí el síntoma era un `deny` del plazo, no el rc 139 que midió QA, pero fallan igual). Banco 2302/0/14; inventario sólo con INS-136-1 y 2 (c); autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **Avance (regla 6):** la última línea del paso 6 está construida; falta su re-verificación.
+
 ## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-14 — los builtins especiales entran en la lista estática de `entrada.sh` — SIN VALIDAR por QA
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-R (A), dentro del tope de una hora de P-136-Q. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-14»; evidencia `70a2083`.
 
