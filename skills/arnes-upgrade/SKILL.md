@@ -1314,8 +1314,8 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   30 corridas entre 5,0 y 5,8 s; las otras dos, sin cifra sobre el código del candidato. No es un fallo abierto: la
   corrida más lenta medida queda a más de 54 s del límite de 60 s del cliente. Un margen no es una garantía: en un
   equipo más lento o más cargado, el hook podría agotar el tiempo, y eso ya es SEC-115. En Windows/MSYS, sin medir.
-  La reparación es una segunda pasada de CA-54, prevista después de SEC-120; si no llega antes de publicar, la
-  versión sale con este límite. Sede: REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`», del arnés.
+  La reparación, una segunda pasada de CA-54 (la 2b), es de 1.37 por el ajuste de alcance del propietario del arnés
+  del 2026-10-05 (ficha F-136-6): 1.36.0 sale con este límite. Sede: REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`», del arnés.
 
 - **No medido: la corrección de SEC-127 en bash 5.0 o anterior en modo POSIX (REQ-007 CA-47, punto 20, del arnés;
   decisión P-136-K del propietario del arnés, 2026-10-06).** Esta entrada **no migra nada**: dice lo que la versión
@@ -1372,10 +1372,9 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
   de `allow` a `deny` en `guard-codigo`; por `guard.sh` no cambia ninguna decisión, porque `guard-completado` ya lo
   denegaba. Sede: REQ-007, CA-47, punto 20, y su subviñeta SEC-128, del arnés.
 
-*Las tres entradas siguientes son del paso 6 de 1.36.0. **Al escribirlas, su validación no está cerrada:** QA validó
-lo construido con hallazgos, la pasada correctiva está en curso y la revisión de seguridad, pendiente. Se confirman o
-se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, del arnés: ninguna sede dice
-«reparado» antes de validar).*
+*Las tres entradas siguientes son del paso 6 de 1.36.0, y su validación está cerrada: QA, favorable sobre el código
+de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, SEC-118 y SEC-129 en `mitigado` —no
+«reparado»— y sus residuales declarados, entre ellos SEC-132 (a) (REQ-007 CA-69, punto 5, del arnés).*
 
 - **Cambio de compatibilidad: el motivo de una denegación y el texto de un aviso salen acotados a 16 384 bytes
   (SEC-118; REQ-007 CA-67 del arnés; decisión P-136-B del propietario del arnés, 2026-10-03).** Esta entrada **no
@@ -1384,8 +1383,8 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   salida:** un motivo o un aviso de más de 16 384 bytes llega cortado, con su comienzo —que nombra la causa—, la
   nota «[...] (ARNES: motivo acortado: medía N bytes y el tope es 16384; se conserva su comienzo)» y sin un carácter
   UTF-8 partido. Con 1.35.0, por encima del límite de un argumento no llegaba **nada** y el hook salía sin
-  decisión. **La decisión no cambia** por acotar: cambia el texto. Con contenido que no es UTF-8 válido, que el tope
-  se cumpla es parte de la pasada correctiva en curso (QA-007-12). Medido a nivel de hook en Linux/WSL2; el host y
+  decisión. **La decisión no cambia** por acotar: cambia el texto. Con contenido que no es UTF-8 válido el tope
+  también se cumple: QA lo midió y cerró QA-007-12. Medido a nivel de hook en Linux/WSL2; el host y
   Windows/MSYS, sin medir. Sede: REQ-007, CA-67, del arnés.
 
 - **Cambio de compatibilidad: un juicio que agota el plazo propio del hook se deniega, también el legítimo (SEC-115;
@@ -1395,8 +1394,9 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   con un motivo que lo dice; la respuesta llega en no más de 40 s. **Lo legítimo que agote el plazo se deniega
   igual**: con 1.35.0, un juicio así podía pasar de los 60 s del cliente y salir sin decisión. Medido en una llamada
   real: el cierre por `Edit` de un REQ de 3 MB con CRLF en disco recibe `deny` por el plazo a los 36,3 s. El plazo
-  no corta una quality gate en curso —se comprueba antes de lanzarla— ni una sola operación que no termina (abajo,
-  el límite de QA-007-09). Sede: REQ-007, CA-68, «Un plazo propio del hook de 40 s», y CA-69, punto 3, del arnés.
+  sólo se comprueba antes de la primera quality gate —no entre una y la siguiente ni durante la que está en curso—,
+  así que no alcanza a las gates (SEC-132 (a), límite declarado, abajo); tampoco a una sola operación que no termina
+  (abajo, el límite de QA-007-09). Sede: REQ-007, CA-68, «Un plazo propio del hook de 40 s», y CA-69, punto 3, del arnés.
 
 - **Cambio de compatibilidad: con el modo POSIX heredado del entorno, las puertas de `Bash` vuelven a decidir, y un
   final que no es un juicio deniega (SEC-129; REQ-007 CA-68, partes (i) y (ii), del arnés; decisiones P-136-L y
@@ -1477,7 +1477,9 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   v1.35.0 cerraba el REQ sin decisión en ese caso.» **Alcance:** el plazo propio del hook se comprueba antes de la
   primera quality gate, y no entre una y la siguiente ni durante la que está en curso. Medido a nivel de hook en
   Linux/WSL2, una corrida por punto: cuatro gates de 20 s, o una sola gate colgada, dejan el cierre **sin decisión**
-  a los 60 s. **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría sin denegar. Preexistente. Una
+  a los 60 s, y el cierre se aplica. **1.36.0 no cambia ese caso:** el límite es el mismo que en 1.35.0, donde el hook
+  moría sin denegar y el REQ quedaba `completado`; el `deny` fijo de la trampa de salida llega después de que el
+  cliente ya mató el hook. Preexistente. Una
   reparación preparada en 1.36.0 —acotar la gate en curso al tiempo que queda del plazo e interrumpirla— **se revirtió
   antes de publicar** por los defectos que abría, uno de ellos un cierre con una gate en rojo; así que en 1.36.0
   **ninguna gate se interrumpe** y ningún cierre legítimo pasa a `deny` por este motivo. **Consecuencia:** que el

@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Cierre: notas `[1.36.0]` completas en el borrador (con R-057; huecos sólo para la fecha, P-136-V y el CI); SEC-134 corregido en seis sedes; la guía al día en cuatro puntos; F-136-22 y la fila del paso 6 de PLAN con P-136-U y R-057
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` ×2 (notas ≈ 334 k tokens; SEC-134 y guía) y la coordinadora.
+
+- **Notas** (`docs/arnes/notas-1.36.0-borrador.md`): siete cambios de compatibilidad con su decisión; 19 límites declarados (SEC-133 presentado como hallazgo abierto pendiente de P-136-V; SEC-134 corregido: 1.36.0 **no** cambia el caso de la gate colgada); decisiones de riesgo P-136-A a P-136-U; firmas por intervención y PR-136-1 a 6; «Hacia 1.37.0»; 18 commits en la Historia. La determinación de R-057 con su literal («conforme con hallazgos, sin veto; publicar 1.36.0 no empeora ninguno»). El recuadro de aviso del principio **no** se copia al CHANGELOG.
+- **SEC-134:** la frase «en 1.35.0, además, el REQ quedaba completado» corregida en CA-68, CA-69 p. 5, `AGENTS.md` §13, su plantilla y la guía: en los dos árboles el hook sale sin decisión a los 60 s y el cierre se aplica. Queda su cita dentro de la propia entrada de SEC-134 en `Hallazgos abiertos:` (la cierra seguridad).
+- **Guía:** la 2b a 1.37; el paso 6 validado; QA-007-12 cerrado; el plazo sólo se comprueba antes de la primera gate.
+- **Avance (regla 6):** el cierre documental está hecho salvo P-136-V y el CI; falta QA con el CI rojo.
+
 ## [GitHub] — 2026-10-07 · R-057, determinación final de 1.36.0: conforme con hallazgos, sin veto; SEC-131 y SEC-132 abiertos como límites declarados; SEC-133 (`contrato`, media, preexistente) → P-136-V; SEC-134 (`contrato`, baja, texto) → corrección; CI rojo del PR #60 en investigación
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-057; REQ-007: `Hallazgos abiertos:` con SEC-131/132 en su estado final y SEC-133/134; paréntesis de `Seguridad:`; evidencia `1f73698`; ~105 k tokens) y la coordinadora.
 

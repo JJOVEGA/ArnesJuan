@@ -727,8 +727,9 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
    - las **quality gates** (SEC-132 (a)), **límite declarado de 1.36.0 y sin reparar:** el plazo propio no
      alcanza a las quality gates —se comprueba antes de la primera, y no entre una y la siguiente ni durante la
      que está en curso—, así que cuatro gates de 20 s, o una sola gate colgada, dejan el hook **sin decisión** a
-     los 60 s (medido en Linux/WSL2). **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría
-     sin denegar. La reparación preparada en 1.36.0 se revirtió antes de publicar por los defectos que abría, uno
+     los 60 s (medido en Linux/WSL2), y el cierre se aplica. **1.36.0 no cambia ese caso:** el límite es el mismo
+     que en 1.35.0, donde el hook moría sin denegar y el REQ quedaba `completado`; el `deny` fijo de la trampa sale
+     después de que el cliente ya mató el hook. La reparación preparada en 1.36.0 se revirtió antes de publicar por los defectos que abría, uno
      de ellos un cierre con una gate en rojo; la resolución es de 1.37, con tres lecciones de diseño (ficha
      F-136-22 del repositorio del arnés);
    - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
