@@ -1446,6 +1446,25 @@ se corrigen antes de copiarlas a las notas `[1.36.0]` (REQ-007 CA-69, punto 5, d
   hook, o declarar la frontera del entorno del host; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de
   1.36.0», del arnés.
 
+- **Límite declarado: estado heredado del entorno que corre antes de cualquier limpieza del hook (QA-007-13; REQ-007
+  CA-68, «Límites declarados de 1.36.0», «Ampliación por P-136-Q: F-136-20», del arnés; decisión P-136-Q del
+  propietario del arnés, 2026-10-07).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no**
+  cumple. **«Límite declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:**
+  «Límites declarados (F-136-20, 1.37): `.`/`[` antes de entrada.sh, errexit, y BASH_ENV si no está ya cubierto;
+  resolución desde hooks.json.» **Alcance:** (i) una función exportada en el entorno del hook con el nombre `.` o
+  `[` (`BASH_FUNC_.%%`, `BASH_FUNC_[%%`): el hook ejecuta esas dos órdenes para cargar su preludio, antes de que
+  ninguna limpieza corra, así que la función las sustituye y las llamadas que deberían denegarse salen **sin
+  decisión**; (ii) `SHELLOPTS` exportada con `errexit`: el hook **deniega todo**, también lo legítimo —falla hacia el
+  lado cerrado, y la sesión no puede trabajar—; (iii) un `BASH_ENV` con cualquier contenido, que bash ejecuta
+  **antes** que el hook, con sus permisos. Medido a nivel de hook en Linux/WSL2, bash 5.3.9, los dos primeros; el
+  tercero se sostiene por cómo arranca bash. Los tres son preexistentes: también ocurren en 1.35.0. **Consecuencia:** quien
+  controla el entorno del hook puede dejar sin decisión las llamadas que las puertas deberían denegar (que el cliente
+  lo tome por permitir es inferido), o bloquear la sesión entera. **Para tu proyecto:** no exportes funciones con
+  esos nombres, ni `SHELLOPTS` con `errexit`, ni `BASH_ENV`, en el entorno de la sesión. El host, Windows/MSYS y otros
+  bash, sin medir. Es la misma frontera que la del párrafo anterior: sólo se resuelve en la orden de
+  `hooks/hooks.json` que lanza el hook; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del
+  arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

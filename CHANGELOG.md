@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Write-back de P-136-Q (analista): F-136-20 como límite declarado en CA-68 y en la guía; QA-007-13 (`builtin`) «en la pasada acotada, sin validar»; QA-007-10, QA-007-11 (a) y QA-007-12 pasan a «validados y cerrados por QA»
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~155 k tokens) y la coordinadora.
+
+- `.`/`[` antes de `entrada.sh` (`guard.sh:35-37`), `errexit` (causa inferida) y `BASH_ENV` (remite a F-136-9): límites con alcance, causa, consecuencia y lo no medido.
+- **Dos restos de QA-007-13 sin escribir ni clasificar**, porque P-136-Q no los nombra: `/proc/self/environ` ilegible (sólo lo declara un comentario del código) y `BASH_FUNC_set%%` en guardianes sueltos. Se resuelven o se declaran con la entrega de la pasada: la técnica del propietario (`POSIXLY_CORRECT=y` protege a `set`; la lista estática elimina el bucle) puede cubrirlos por construcción.
+- **Avance (regla 6):** el contrato está al día con P-136-Q; falta la pasada del desarrollador (en curso, tope de una hora).
+
 ## [Interno] — 2026-10-07 · P-136-Q resuelta por el propietario: (A) con tope de una hora, acotada a QA-007-13 (lista estática de `unset -f`, sin descubrir nombres); F-136-20 (estado heredado que sólo `hooks.json` puede neutralizar)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
