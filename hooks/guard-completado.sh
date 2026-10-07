@@ -943,14 +943,32 @@ arnes_guard_completado() {
   fi
 
   # --- Gate A3: quality gates en verde antes de completar ---
-  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas: lo que tarde una gate no lo interrumpe.
+  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas, y DURANTE cada una (SEC-132, R-056): hasta 1.36.0 una
+  # gate no se interrumpia, y cuatro gates de 20 s dejaban el hook sin decision a los 60 s. Cada gate corre, como
+  # siempre, en UN subshell —ahora el de una sustitucion de proceso, sin procesos de mas—, que escribe su codigo de
+  # salida por la tuberia al terminar; el hook lo espera con `read -t` el tiempo que le QUEDA del plazo. Si no llega,
+  # la gate en curso se corta con lo que haya lanzado (`arnes_corta_gate`, P-136-T (B); sus limites, alli) y el hook
+  # deniega por plazo, nombrando la gate. Tambien una gate colgada: el `read -t` no espera mas que el plazo. Fuera de un punto de entrada no hay plazo
+  # (`ARNES_EN_HOOK`) y se espera sin tope, como antes.
   arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
   tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
+  local gfd grc resto
   while IFS= read -r cmd; do
     [ -n "$cmd" ] || continue
-    if ! ( cd "$ARNES_PROJ" && eval "$cmd" ) >"$tmp" 2>&1; then
+    resto=''; [ -z "${ARNES_EN_HOOK:-}" ] || resto=$(( ARNES_PLAZO_S - SECONDS ))
+    if [ -n "$resto" ] && [ "$resto" -le 0 ]; then
+      rm -f "$tmp"; arnes_deny_plazo_gate "$cmd" "no llego a empezar"
+    fi
+    exec {gfd}< <(exec 3>&1; trap 'printf "%s\n" "$?" >&3' EXIT; { cd "$ARNES_PROJ" && eval "$cmd"; } >"$tmp" 2>&1)
+    grc=''; IFS= read -r ${resto:+-t "$resto"} -u "$gfd" grc
+    if [ "$?" -gt 128 ]; then   # `read -t` vencido: la gate sigue en curso
+      arnes_corta_gate "$!"; exec {gfd}<&-; rm -f "$tmp"
+      arnes_deny_plazo_gate "$cmd" "seguia ejecutandose y se corto"
+    fi
+    exec {gfd}<&-
+    if [ "$grc" != 0 ]; then
       out="$(tail -c 600 "$tmp" 2>/dev/null)"
       rm -f "$tmp"
       arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"

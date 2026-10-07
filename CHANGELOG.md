@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): SEC-132 (a) — el plazo propio también corre dentro de las quality gates — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-S y P-136-T (B), con tope de una hora; empleados unos 38 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «SEC-132 (a)»; evidencia `bb06d3c`.
+
+- **Cambio:** cada quality gate se espera con `read -t` sólo el tiempo que le queda al plazo. Al vencer, `arnes_corta_gate` manda TERM a la gate y a lo que lanzó (leyendo `/proc/…/children`, sin procesos) y el hook deniega por plazo, citando SEC-132 y la gate. Es un **cambio de compatibilidad declarado**: una gate que no termina dentro del plazo se interrumpe y el cierre se deniega.
+- **Casos:** 4 en la sección 47 —cuatro gates de 20 s, una gate colgada, la ausencia de huérfanos y un control—. La sección pasa de 106 a 110 y el total de 2316 a 2320. Con `c5bf6d4`, las dos primeras mueren a los 60 s.
+- **Medidas:**
+  - sección 47: 110/0;
+  - banco del worktree: 2307/1/12; el FAIL es INS-136-2;
+  - 2 (a): 2038/0/12, con el `diff` vacío;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** SEC-132 (a) está reparado y con casos. Falta la validación de QA.
+
 ## [GitHub] — 2026-10-07 · Write-back de P-136-T (analista): la propiedad de SEC-132 (a) con la gate en curso acotada, en CA-68, CA-69 p. 3, `AGENTS.md` §13 y plantilla, y guía; pregunta abierta resuelta
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 

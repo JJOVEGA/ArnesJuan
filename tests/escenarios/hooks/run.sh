@@ -1694,7 +1694,10 @@ done
 # importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
 # Y 2314 → 2316 por QA-007-14 (P-136-R (A)): +2 en 47-decision-emitida.sh (104 → 106) —funciones `return` y `break`
 # importadas: `ls -la` sin decisión y un Write a src/ con deny, en menos de 5 s—; con 39e6128 mueren o no terminan.
-CASOS_ESPERADOS=2316
+# Y 2316 → 2320 por SEC-132 (a) (R-056, P-136-S y P-136-T (B)): +4 en 47-decision-emitida.sh (106 → 110) —un cierre
+# en verde con cuatro gates de 20 s y con una gate colgada, deny por plazo en no más de 40 s; la gate cortada no deja
+# huérfanos; y el control con gates rápidas—; con c5bf6d4, sin decisión a los 60 s y el `sleep` huérfano.
+CASOS_ESPERADOS=2320
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

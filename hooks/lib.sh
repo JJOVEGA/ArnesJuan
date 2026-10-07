@@ -449,6 +449,31 @@ arnes_plazo() {
 # R2 (SEC-129): un codigo del analizador de escrituras de Bash fuera de su vocabulario declarado —0, y
 # los cuatro de «no analice»: ARNES_RC_EXCESO, ARNES_RC_CR, ARNES_RC_CUERPO_CR y ARNES_RC_LC10— no es «no
 # escribe nada»: es un analisis que no termino. Los dos guardianes que lo leen deniegan, a todo agente.
+# SEC-132 (a) (R-056; REQ-007 CA-68): las quality gates agotaron el plazo propio del hook. <gate> <que le paso>
+# Es un cambio de compatibilidad declarado: un proyecto cuyas gates tarden mas que el plazo ve este deny donde antes
+# el cliente mataba el hook sin decision.
+#
+# arnes_corta_gate <pid>: corta la gate en curso Y lo que ella lanzó (P-136-T (B): sin dejar huérfanos). Recorre el
+# árbol de procesos desde el subshell de la gate leyendo `/proc/<pid>/task/<pid>/children` con `read` —sin procesos—,
+# con tope de 4096 procesos, y les manda TERM a todos de una vez; primero se recoge el árbol entero, porque un hijo cuyo
+# padre ya murió deja de colgar de él. LÍMITE DECLARADO: sin ese archivo (fuera de Linux, o un núcleo sin
+# CONFIG_PROC_CHILDREN) sólo se corta el subshell; un proceso que ignore TERM, o que se haya desligado (nuevo grupo,
+# `setsid`), sigue vivo.
+arnes_corta_gate() {
+  local cola="$1" p hijos todos='' n=0
+  while [ -n "$cola" ] && [ "$n" -lt 4096 ]; do
+    p="${cola%% *}"; cola="${cola#"$p"}"; cola="${cola# }"; n=$((n + 1))
+    todos+=" $p"; hijos=''
+    { read -r hijos < "/proc/$p/task/$p/children"; } 2>/dev/null
+    [ -z "$hijos" ] || cola+="${cola:+ }${hijos% }"
+  done
+  # shellcheck disable=SC2086
+  kill $todos 2>/dev/null
+}
+arnes_deny_plazo_gate() {
+  arnes_deny "ARNES (SEC-132): las quality gates no terminaron dentro del plazo propio del hook ($ARNES_PLAZO_S s desde que arranco; el cliente lo mata a los 60 s y un hook muerto no deniega). La gate \`$1\` $2. No es un veredicto sobre el REQ: es que la puerta no pudo terminar de medirlo, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Para corregirlo, acelera las quality gates de .arnes/config.json o mueve las lentas al CI (AGENTS.md §7)."
+}
+
 arnes_deny_rc_analizador() {   # <codigo> <puerta>
   arnes_deny "ARNES: el analisis de escrituras de este comando termino con un codigo que no esta en su vocabulario declarado ($1), en $2: el analisis no concluyo, y no se puede saber si el comando escribe algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68)."
 }
