@@ -1,0 +1,18 @@
+# control: una sola gate roja
+control-roja                 cand  e-900: deny rc=0 113ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+control-roja                 v135  e-900: deny rc=0 113ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+# control: gate verde que no lee stdin, luego roja
+verde-luego-roja             cand  e-900: deny rc=0 112ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+verde-luego-roja             v135  e-900: deny rc=0 112ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+# gate verde que LEE stdin (cat), luego roja
+cat-luego-roja               cand  e-900: nada rc=0 113ms <>                                   estado en disco tras la llamada: Estado: en-revisión
+cat-luego-roja               v135  e-900: nada rc=0 118ms <>                                   estado en disco tras la llamada: Estado: en-revisión
+# gate verde que lee una linea (read), luego roja
+read-luego-roja              cand  e-900: nada rc=0 112ms <>                                   estado en disco tras la llamada: Estado: en-revisión
+read-luego-roja              v135  e-900: nada rc=0 113ms <>                                   estado en disco tras la llamada: Estado: en-revisión
+# gate verde con un programa que lee stdin por defecto (sh -s sin script: lee ordenes de stdin)
+sh-s-luego-roja              cand  e-900: deny rc=0 113ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+sh-s-luego-roja              v135  e-900: deny rc=0 114ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+# control: misma gate con </dev/null explicito, luego roja
+cat-devnull-luego-roja       cand  e-900: deny rc=0 113ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión
+cat-devnull-luego-roja       v135  e-900: deny rc=0 113ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>                                   estado en disco tras la llamada: Estado: en-revisión

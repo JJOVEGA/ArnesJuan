@@ -1,0 +1,34 @@
+# R-057 — comprobaciones sobre cand/1.36.0 @ 4610004 — 2026-10-07T16:02:15-06:00
+## 1. Código final = c5bf6d4
+$ git diff --stat c5bf6d4 HEAD -- hooks/ tools/ tests/   (vacío = idéntico)
+(fin; rc=0)
+$ git diff --stat c5bf6d4 HEAD -- .github/ agents/ playbooks/ hooks/hooks.json
+(fin)
+$ jq versiones
+{"plugin_version":"1.36.0"}
+[{"name":"arnes-juan","version":"1.36.0"}]
+{"arnes_version":"1.33.0"}
+## 3. Rastro de cd63066 en lo distribuido (funciones nuevas de la pasada revertida)
+$ git grep -n 'arnes_corta_gate\|arnes_deny_plazo_gate' HEAD -- hooks tools tests templates skills agents playbooks .github .claude-plugin
+(fin; sin coincidencias si vacío)
+## 3b. Bucle de gates en HEAD
+953:    if ! ( cd "$ARNES_PROJ" && eval "$cmd" ) >"$tmp" 2>&1; then
+958:  done <<< "$ARNES_GATES"
+## 4. Sedes de la frase «En 1.35.0, además, el REQ quedaba completado» (fuera de docs/qa y del borrador de notas)
+AGENTS.md:730:     los 60 s (medido en Linux/WSL2). **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría
+templates/AGENTS.md.tpl:694:     los 60 s (medido en Linux/WSL2). **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría
+skills/arnes-upgrade/SKILL.md:1480:  a los 60 s. **En 1.35.0, además, el REQ quedaba `completado`**, porque el hook moría sin denegar. Preexistente. Una
+docs/PENDIENTES.md:2336:- **Ampliación (P-136-U (A), 2026-10-07): SEC-132 (a) también queda aquí.** El plazo propio no alcanza a las quality gates: cuatro ga
+requirements/REQ-007.md:2455:      evidencia `qa5/11e-` y `qa5/02-`, commit `26f6131`)—. **En v1.35.0, además, el REQ quedaba `completado`**,
+requirements/REQ-007.md:2463:        gate roja con `echo 0 >&3; false` salía sin decisión **y el REQ quedaba `completado`**, donde `c5bf6d4` y
+requirements/REQ-007.md:3167:     SEC-132 (a) se nombra como **límite declarado**, con la nota de que en 1.35.0 el REQ quedaba `completado` y la
+requirements/REQ-007.md:4763:| 2026-10-07 | **Registro de P-136-U (A)** (decisión del propietario del 2026-10-07). Cambio **menor**: retira de 1.36.0 una repar
+## 4b. R-056 07- (c5bf6d4): 4x20 s y 1x70 s
+cand 4x20s: nada rc=124 60070ms <>
+cand 1x70s: nada rc=124 60114ms <>
+
+[exited with code 0]
+## entorno
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+6.18.33.2-microsoft-standard-WSL2
