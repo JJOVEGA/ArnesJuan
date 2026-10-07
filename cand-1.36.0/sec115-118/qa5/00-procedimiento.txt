@@ -1,0 +1,13 @@
+# qa5 — re-verificación acotada de SEC-132 (a) (P-136-S (1) (A), P-136-T (B)) — qa-tester, 2026-10-07
+Árbol: /home/juan/dev/ArnesJuan-v1.36, cabeza b3e727e (código de hooks = cd63066; b43d7ea sólo versión).
+Linux/WSL2, bash 5.3.9. Fail-before: c5bf6d4 (git archive en scratchpad q5t/c5bf6d4) y v1.35.0 (/home/juan/dev/ArnesJuan-v1.35.0-base).
+
+Corridas fijadas ANTES de ejecutar (no se repite nada para obtener verde; un resultado inconsistente se reporta como flaky):
+ 1. Sección 47 completa: 1 corrida candidato, 1 corrida c5bf6d4 (ARNES_HOOKS_DIR).                 -> 01-, 02-
+ 2. Sondas propias a nivel de hook (10-sondas.sh): cada caso 1 vez por árbol indicado; los dos casos de
+    frontera (gate de 29 s y de 31 s con el plazo a 30) 2 veces cada uno en el candidato.             -> 11-
+ 3. Fail-before puntual de la gate colgada: c5bf6d4 1 vez, v1.35.0 1 vez (dentro de 11-).
+ 4. Regresión: banco completo del worktree ARNES_SEMILLA_41=23062 1 vez + inventario; CA-69 2 (a) 1 vez
+    frente a ca54/22-; autoprueba; gates; procesos (30-procesos.sh); E1 (06-e1.sh, 3 corridas, como antes);
+    tope (20-tope.sh); ataques del bloque P de qa2/qa3/qa4 1 vez.                                    -> 20- a 30-
+Todo en serie, sin otras corridas de QA en paralelo.

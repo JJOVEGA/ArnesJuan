@@ -1,0 +1,4 @@
+# 14-corte-aislado.sh: coste de arnes_corta_gate fuera del hook, árbol ancho de N sleeps, 2026-10-07T15:12:29-06:00, una corrida cada N
+N=4500 corta_gate=6.399627 s vivos=405
+N=9000 corta_gate=23.769056 s vivos=4905
+N=2000 corta_gate=1.660902 s vivos=0

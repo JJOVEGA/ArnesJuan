@@ -1,0 +1,20 @@
+# 2026-10-07T15:14:53-06:00 cabeza b3e727e
+ M docs/ESTADO.md
+5efc1ff0cecdccaef048ff8d9fe8c725de604262ac5d8ac07ae354cffb7f04cd  hooks/entrada.sh
+4a641cac9d1a2afeec87f5f6547528d19b9f423ce97b37912985f45ffa2acb39  hooks/estado-derivado.sh
+528ba686d7364f29123ca599ff77b7e2bee898ec0882458c64596051668ac684  hooks/guard-codigo.sh
+4fa1363ca72b7865c996c6338eb6dccbefe4eb920c850ec4712810a2ee528a98  hooks/guard-completado.sh
+45a11d8df3a965f719850dae3ac370cdd33b7e84443f59ba3078c251021ede13  hooks/guard-git.sh
+f4b1f8a1a4fdc927fd87fb452f287bec8a59d4c2bda9001de068f46aa264b959  hooks/guard.sh
+70024cfcfec9344b3490d7eb1f4ba321ab371a90504959b208140e493ce06e5a  hooks/lib.sh
+dd9e6dcf62c79336bd749f5b19b697a9b00509337882811de0d877b3b58e902a  hooks/rotar-artefactos.sh
+0570ec9dd0edf14523e812bb53a247d967c261b9eaf781a6c80f5d1d36c532ca  hooks/stop.sh
+# frente a cd63066 (hooks tools tests):
+# frente a c5bf6d4:
+ hooks/guard-completado.sh                          | 22 ++++++++++++++++--
+ hooks/lib.sh                                       | 25 ++++++++++++++++++++
+ tests/escenarios/hooks/README.md                   |  1 +
+ tests/escenarios/hooks/run.sh                      |  5 +++-
+ .../hooks/secciones/47-decision-emitida.sh         | 27 +++++++++++++++++++++-
+ 5 files changed, 76 insertions(+), 4 deletions(-)
+# fin 2026-10-07T15:32:31-06:00

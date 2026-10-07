@@ -1,0 +1,34 @@
+# 2026-10-07T14:56:47-06:00 caso term-ign del candidato, 0: el hook ya salió (tsal escrito); quedan vivos:
+3132355     583 3132345     554 bash /home/juan/dev/ArnesJuan-v1.36/hooks/guard.sh
+3132356 3132355 3132345     554 sleep 598.73132329
+## fd de 3132355
+total 0
+0 -> pipe:[62909595]
+1 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/tmp.yyz0Wu3yft (deleted)
+10 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa5p-term-ign-3132329.in
+11 -> pipe:[62909596]
+12 -> pipe:[62904222]
+2 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/tmp.yyz0Wu3yft (deleted)
+3 -> pipe:[62909596]
+## fd de 3132356
+total 0
+0 -> pipe:[62909595]
+1 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/tmp.yyz0Wu3yft (deleted)
+2 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/tmp.yyz0Wu3yft (deleted)
+3 -> pipe:[62909596]
+## fd de 3133601
+total 0
+0 -> /dev/null
+1 -> /home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa5/12-term-ign-fd.txt
+10 -> socket:[62956060]
+11 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/tasks/b5mpln619.output
+12 -> /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/tasks/b5mpln619.output
+2 -> /home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa5/12-term-ign-fd.txt
+## fd del corredor de sondas (3 = lectura de la sustitución que captura stdout+stderr del hook)
+total 0
+0 -> /dev/null
+1 -> pipe:[62900691]
+2 -> pipe:[62900691]
+255 -> /home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec115-118/qa5/10-sondas.sh
+3 -> pipe:[62904222]
+# 2026-10-07T14:56:53-06:00 QA mata con -9 los dos supervivientes (3132355, 3132356) para que el lote siga; el eof de term-ign en 11d- es, por tanto, el instante de este kill, no un cierre natural

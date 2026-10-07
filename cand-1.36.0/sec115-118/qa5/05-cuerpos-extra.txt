@@ -1,0 +1,33 @@
+# 2026-10-07T15:22:39-06:00 bash 5.3.9(1)-release
+candidato BASE guard.sh:v1 deny|rc=0
+candidato BASE guard.sh:v3 deny|rc=0
+candidato BASE guard.sh:v4 deny|rc=0
+candidato BASE guard.sh:v5 deny|rc=0
+candidato BASE guard.sh:v8 nada|rc=0
+candidato BASE guard.sh:v9 aviso|rc=0
+candidato BASE guard-codigo.sh:v1 deny|rc=0
+candidato BASE guard-git.sh:v4 deny|rc=0
+candidato BASE guard-completado.sh:v5 deny|rc=0
+candidato DIFIERE [BASH_FUNC_set%%=bucle] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=124 LENTO 10022ms]
+candidato DIFIERE [BASH_FUNC_set%%=bucle] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_set%%=bucle] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=124 LENTO 10024ms]
+candidato DIFIERE [BASH_FUNC_set%%=kill9] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=137]
+candidato DIFIERE [BASH_FUNC_set%%=kill9] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=137]
+candidato DIFIERE [BASH_FUNC_set%%=kill9] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=137]
+candidato DIFIERE [BASH_FUNC_set%%=deny] guard-codigo.sh:v1: base=[deny|rc=0] con=[deny+atacante|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=deny] guard-git.sh:v4: base=[deny|rc=0] con=[deny+atacante|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=deny] guard-completado.sh:v5: base=[deny|rc=0] con=[deny+atacante|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=bexit0] guard-codigo.sh:v1: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=bexit0] guard-git.sh:v4: base=[deny|rc=0] con=[nada|rc=0]
+candidato DIFIERE [BASH_FUNC_set%%=bexit0] guard-completado.sh:v5: base=[deny|rc=0] con=[nada|rc=0]
+# candidato: 396 combinaciones, 12 diferencias
+== candidato los 7 de P-136-R exportados a la vez, return 0 ==
+candidato SIETE guard.sh:v1 base=[deny|rc=0] con=[deny|rc=0] igual
+candidato SIETE guard.sh:v3 base=[deny|rc=0] con=[deny|rc=0] igual
+candidato SIETE guard.sh:v4 base=[deny|rc=0] con=[deny|rc=0] igual
+candidato SIETE guard.sh:v5 base=[deny|rc=0] con=[deny|rc=0] igual
+candidato SIETE guard.sh:v8 base=[nada|rc=0] con=[nada|rc=0] igual
+candidato SIETE guard.sh:v9 base=[aviso|rc=0] con=[aviso|rc=0] igual
+candidato SIETE guard-codigo.sh:v1 base=[deny|rc=0] con=[nada|rc=139] DIFIERE
+candidato SIETE guard-git.sh:v4 base=[deny|rc=0] con=[nada|rc=139] DIFIERE
+candidato SIETE guard-completado.sh:v5 base=[deny|rc=0] con=[nada|rc=139] DIFIERE

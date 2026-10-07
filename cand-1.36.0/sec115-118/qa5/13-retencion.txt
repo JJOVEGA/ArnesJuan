@@ -1,0 +1,6 @@
+cand | gate=trap "" TERM; sleep 598.@M@ | rc=0 hook=30166ms eof-stdout=30167ms eof-stderr=75194ms | dec=deny | vivos ahora=0 (QA mató -9 a los 75 s: 1 vivos)
+cand | gate={ while :; do sleep 1.@M@; done; } & true | rc=0 hook=108ms eof-stdout=108ms eof-stderr=75159ms | dec=nada | vivos ahora=1 (QA mató -9 a los 75 s: 1 vivos)
+cand | gate={ while :; do sleep 1.@M@; done; } & sleep 600.@M@ | rc=0 hook=30164ms eof-stdout=30165ms eof-stderr=30165ms | dec=deny | vivos ahora=0
+c5bf6d4 | gate=trap "" TERM; sleep 598.@M@ | rc=124 hook=60034ms eof-stdout=60035ms eof-stderr=60035ms | dec=deny | vivos ahora=1
+c5bf6d4 | gate={ while :; do sleep 1.@M@; done; } & true | rc=0 hook=107ms eof-stdout=108ms eof-stderr=108ms | dec=nada | vivos ahora=1
+c5bf6d4 | gate={ while :; do sleep 1.@M@; done; } & sleep 600.@M@ | rc=124 hook=60059ms eof-stdout=60059ms eof-stderr=60059ms | dec=nada | vivos ahora=0

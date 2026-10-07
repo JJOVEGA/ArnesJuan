@@ -1,0 +1,29 @@
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | control     | rc=0 hook=106ms eof=106ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-false    | rc=0 hook=105ms eof=106ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-cd       | rc=0 hook=106ms eof=106ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `cd /no/existe/qa5 && true`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: /home/juan/dev/ArnesJuan-v1.36/hooks/guard-completado.sh: line 964: cd: /no
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-exit3    | rc=0 hook=107ms eof=108ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `exit 3`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-sub3     | rc=0 hook=106ms eof=107ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `(exit 3)`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-exit0    | rc=0 hook=106ms eof=106ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | eq-salida   | rc=0 hook=106ms eof=107ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `echo hola; echo adios >&2; exit 4`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: hola
+adios
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | trap-legit  | rc=0 hook=106ms eof=106ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `trap "rm -f /tmp/qa5-no-existe" EXIT; true`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | trap-echo   | rc=0 hook=105ms eof=105ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `trap "echo limpieza" EXIT; true`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | exec-true   | rc=0 hook=105ms eof=105ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `exec true`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | exec-false  | rc=0 hook=105ms eof=106ms | dec=deny cerrado=no vivos=0 | ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado': falló la quality gate `exec false`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | forja-trap  | rc=0 hook=105ms eof=106ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | forja-fd3   | rc=0 hook=106ms eof=107ms | dec=nada cerrado=si vivos=0 | 
+10-sondas.sh: line 60: unset: SHELLOPTS: cannot unset: readonly variable
+cand | bg-sale0    | rc=0 hook=106ms eof=106ms | dec=nada cerrado=si vivos=1 | 
