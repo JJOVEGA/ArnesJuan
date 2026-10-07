@@ -1,0 +1,7 @@
+R-056, 2026-10-07. Linux/WSL2 6.18.33.2-microsoft-standard-WSL2
+GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)
+jq-1.8.2
+candidato: hooks de c5bf6d4 (git archive; diff -r con el worktree cand/1.36.0 @ af0cc04: vacio)
+base: /home/juan/dev/ArnesJuan-v1.35.0-base @ 3956a6f (v1.35.0)
+Invocacion: env -i PATH=<p>/bin:~/.local/bin:/usr/local/bin:/usr/bin:/bin HOME LANG=C.UTF-8 CLAUDE_PROJECT_DIR=<p> [extra] timeout 60 bash <hooks>/guard.sh, cwd en el proyecto (funcion corre de h.sh).
+Una corrida por punto. Nivel de hook, no host.

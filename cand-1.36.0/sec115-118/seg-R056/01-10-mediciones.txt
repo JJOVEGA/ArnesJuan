@@ -1,0 +1,100 @@
+R-056 — salidas de las sondas a nivel de hook, copiadas de la corrida del 2026-10-07 (la orden de cada bloque
+usa las funciones de h.sh: `proyecto`, `entrada`, `corre`, `clasif`). Formato: decision rc ms <motivo, 70 car.>.
+decision: deny | aviso | nada (sin salida) | otra (un JSON que no es deny ni aviso) | DOSJSON(n) | NOJSON.
+
+== 01 — Base del proyecto (gate `true`), candidato frente a v1.35.0
+w-src     cand: deny rc=0 113ms   v135: deny rc=0 113ms
+b-src     cand: deny rc=0 116ms   v135: deny rc=0 114ms
+b-git     cand: deny rc=0 114ms   v135: deny rc=0 112ms
+b-sed     cand: deny rc=0 115ms   v135: deny rc=0 115ms
+b-ls      cand: nada rc=0 112ms   v135: nada rc=0 115ms
+e-901     cand: deny rc=0 113ms   v135: deny rc=0 115ms
+e-900     cand: nada rc=0 113ms   v135: nada rc=0 113ms
+e-aviso   cand: aviso rc=0 113ms  v135: aviso rc=0 113ms
+(w-src-dev: el campo `agent_type` solo no identifica al agente en esta sonda; no se usa.)
+
+== 02 — SEC-129: modo POSIX por las cinco formas de llegada (candidato)
+b-src    normal:deny PC=1:deny PC=:deny SO=posix:deny BASH_ENV(set -o posix):deny --posix:deny
+b-git    normal:deny PC=1:deny PC=:deny SO=posix:deny BASH_ENV:deny --posix:deny
+b-sed    normal:deny PC=1:deny PC=:deny SO=posix:deny BASH_ENV:deny --posix:deny
+e-901    normal:deny PC=1:deny PC=:deny SO=posix:deny BASH_ENV:deny --posix:deny
+w-src    normal:deny PC=1:deny PC=:deny SO=posix:deny BASH_ENV:deny --posix:deny
+b-ls     normal:nada PC=1:nada PC=:nada SO=posix:nada BASH_ENV:nada --posix:nada
+e-aviso  normal:aviso PC=1:aviso PC=:aviso SO=posix:aviso BASH_ENV:aviso --posix:aviso
+Motivos con POSIXLY_CORRECT=1 (los de cada puerta, no el fijo de la trampa), y fail-before:
+b-src cand: deny <ARNES: el comando escribe en 'src/a.ts', que es código de la app; só>   v135: nada
+b-git cand: deny <ARNES: 'git reset --hard' descarta o esconde trabajo que puede no ser >  v135: nada
+b-sed cand: deny <ARNES: este comando escribe en 'requirements/REQ-900.md' y menciona 'c> v135: nada
+
+== 03 — Opciones heredadas: cada `shopt` por BASHOPTS y cada `set -o` por SHELLOPTS, 6 vectores (candidato)
+total=516 dif=12 — todas F-136-19 o F-136-20 (ii):
+SHELLOPTS=errexit b-ls: deny (base nada); e-aviso: deny (base aviso)
+SHELLOPTS=noexec  b-sed, w-src, b-git, e-901: nada (base deny); e-aviso: nada (base aviso)
+SHELLOPTS=onecmd  b-sed, w-src, b-git, e-901: nada (base deny); e-aviso: nada (base aviso)
+
+== 03b — Variables heredadas (candidato): IFS=x, IFS=, CDPATH=/tmp, CDPATH=.., GLOBIGNORE=*, TMPDIR=/nonexistent,
+TMPDIR=/proc, LC_ALL=C|POSIX|tr_TR.UTF-8, LANG=C, LC_CTYPE=C, EXECIGNORE=*, BASH_XTRACEFD=1, PS4=x, TIMEFORMAT=x,
+GLOBSORT=-name, BASH_LOADABLES_PATH=/tmp, HOME=/nonexistent, SECONDS=999, ARNES_PLAZO_S=0, ARNES_EN_HOOK=,
+ARNES_JUICIO=fin, ARNES_PUERTA_FIN=guard-git, ARNES_MOTIVO_MAX_BYTES=0, ARNES_JQ_ACOTA='def x: 1;',
+ARNES_PIEZAS_MAX_BYTES=999999999, ARNES_EDIT_MAX_BUSQUEDA=0, ARNES_AVISOS=x, POSIXLY_CORRECT=y, BASH_COMPAT=50,
+FUNCNEST=1, ARNES_ENTRADA_V=1; 6 vectores: total=198 dif=0
+
+== 04 — Funciones importadas: ver 04-funciones-importadas.txt. 102 nombres (la lista estatica, los builtins que no
+estan en ella, y id diff xargs locale install) x 4 cuerpos (exit 0, return 0, return 1, printf de un `allow`) x 6
+vectores = 2448; 37 diferencias, todas de `.` o `[` (F-136-20 (i)). Con el cuerpo que imprime un `allow`:
+`[` -> la salida es UN JSON valido con permissionDecision "allow" en los 6 vectores (`otra`); `.` -> cinco documentos
+JSON (DOSJSON(5)), que el cliente no lee como decision (inferido).
+
+== 05 — SEC-131 (a): funcion importada con el nombre de la orden de una quality gate
+Proyecto con gate `mitest` (script en <p>/bin que sale con 1); cierre de REQ-900 (QA y Seguridad aprobados) por Edit.
+cand sin:                         deny rc=0 112ms <ARNES: no se puede marcar 'requirements/REQ-900.md' como 'completado':>
+cand BASH_FUNC_mitest%%=return 0: nada rc=0 113ms <>
+cand BASH_FUNC_sh%%=return 0:     deny rc=0 113ms  (control: `sh` esta en la lista y se retira)
+v135 sin:                         deny rc=0 113ms
+v135 BASH_FUNC_mitest%%=return 0: nada rc=0 113ms
+Gate `npm test` (npm de <p>/bin sale con 1): sin: deny; BASH_FUNC_npm%%=return 0: nada rc=0.
+
+== 06 — Limites de recursos heredados
+ulimit -n heredado (bash -c 'ulimit -n N; exec bash guard.sh'):
+c5bf n=3  b-sed nada rc=127 | b-ls nada rc=127        v135 igual
+c5bf n=4  b-sed nada rc=0   | b-ls nada rc=0          v135 igual
+c5bf n=5  b-sed nada rc=0   | b-ls nada rc=0          v135 igual
+c5bf n=6  b-sed deny <no se pudo determinar a que archivo escribe> | b-ls nada   v135 igual
+c5bf n>=7 b-sed deny <este comando escribe en 'requirements/REQ-9...> | b-ls nada v135 igual
+ulimit -f heredado, Edit de un QA: de ~140 KB (aviso) y cierre con QA: de ~140 KB (deny):
+c5bf in-aviso f=unlimited aviso rc=0 bytes=16403 | f=1,8,64: deny fijo de la trampa (519 bytes), rc=0
+c5bf in-deny  f=unlimited deny  rc=0 bytes=16494 | f=1,8,64: deny fijo de la trampa (519 bytes), rc=0
+v135 in-aviso y in-deny: nada en todas (f=unlimited: «jq: Argument list too long»; f>0: «cannot create temp file»)
+
+== 07 — Quality gates lentas en serie: ver 07-gates-lentas.txt
+4 gates `sleep 20`: nada rc=124 60070ms (sin salida: ni deny del plazo, ni el fijo de la trampa)
+1 gate `sleep 70`: nada rc=124 60114ms
+
+== 08 — Lineas `Hallazgos abiertos:` repetidas en la cabecera EN DISCO + Edit pequeno de cierre (REQ-901, LF)
+linea de 66 caracteres ASCII («QA-1 (instrumento, r x40)»):
+ 3000   243117 B cand: deny rc=0  4627ms
+ 5000   405117 B cand: deny rc=0  9734ms
+ 8000   648117 B cand: deny rc=0 16346ms
+12000   972117 B cand: deny rc=0 32777ms
+20000  1620117 B cand: deny rc=124 60038ms <ARNES: el hook termino sin concluir el juicio...> (fijo de la trampa, tras el SIGTERM de timeout: tarde)
+20000  1620117 B v135: nada rc=124 60039ms
+100000 8100117 B cand: deny rc=124 60041ms (idem)   v135: nada rc=124
+linea corta «(ninguno)»:
+12000   360117 B cand: deny rc=0 19241ms
+20000   600117 B cand: deny rc=0 48492ms   (por encima de los 40 s del plazo de CA-68)
+Controles, lineales: 20000/40000 lineas «Nota: x» 6,3 s / 13,1 s; 20000/40000 lineas sin dos puntos 3,2 s / 6,4 s;
+10000/20000 `Rigor: critico` repetidas (cabecera ambigua) 3,6 s / 7,7 s (v135 3,9 / 8,3).
+Cuerpo LF grande con cabecera normal: 6,9 MB 3,3 s (v135 3,1 s); 20,9 MB 10,0 s (v135 9,3 s).
+El perfil por traza (`set -x` con marcas de tiempo) lo detuvo un control del proveedor y no se reintento: la
+operacion superlineal NO esta localizada por medida.
+
+== 10 — Inventario propio de la lista estatica (09-*.txt)
+Palabras de hooks/*.sh y campos-req.awk que son orden en este anfitrion (compgen -c): 124. Fuera de la lista
+estatica: alias as case clear coreutils dd diff dir do done editor elif else esac export fi for function id if in
+install ionice join locale make manifest nice nohup patch perl red reset rev script select setsid split stdbuf
+strings su sudo then time ulimit until vi while xargs yes. Ninguna aparece en posicion de orden fuera de un
+comentario (grep por posicion de orden: inicio de linea, tras ; & | ( { $( then do else elif if while until ! time).
+Son palabras clave, nombres dentro de patrones del detector (dd, sudo, perl, install...) o texto.
+Invocacion dinamica: la unica es `eval "$cmd"` de las quality gates (guard-completado.sh:953) -> 05.
+Ninguna funcion que deniega o comprueba el plazo corre dentro de una sustitucion de comandos
+(_arnes_cd_resolucion, arnes_agente_legible y arnes_bash_escrituras no llaman a arnes_deny ni a arnes_plazo).
