@@ -251,6 +251,11 @@ contradicen.
 **Un proyecto que actualiza el plugin y no migra** tendrá la puerta nueva con el texto viejo de §13, que todavía llama a
 SEC-115 y SEC-118 «limitaciones conocidas y sin reparar», como en 1.35.0.
 
+**Lo que mide V4 depende del `jq` del anfitrión** (REQ-007 CA-47 p. 20, «Medida» y «No acredita»; QA-007-18): su
+límite de profundidad de lectura decide si V4 es un control o una entrada ilegible. Con el `jq` de serie de Ubuntu
+24.04 (1.7.x; medido con 1.7.1, que lee hasta 254 niveles), en 1.35.0 el fail-open de SEC-120 se alcanzaba desde
+**255 niveles**, y 1.36.0 deniega esa entrada por ilegible.
+
 #### Cambios de compatibilidad
 
 1. **SEC-120: una entrada ilegible se deniega.** Norma: REQ-007 CA-47, punto 20.
@@ -514,7 +519,9 @@ esté aquí no queda por ello cubierto.
     vectores de F-136-20 (R-056 §2).
 13. **Fronteras de SEC-120 que no se contratan** (registro, R-053 §5): O-53-1, un `tool_name` que no es texto sale sin
     decisión en v1.35.0 y en el candidato; queda fuera de la letra del punto 20 y el `matcher` lo hace inalcanzable
-    desde el host.
+    desde el host. Y lo que mide V4 depende del límite de profundidad del `jq` del anfitrión: con el `jq` de serie de
+    Ubuntu 24.04 (1.7.x), en 1.35.0 el fail-open de SEC-120 se alcanzaba desde 255 niveles, y 1.36.0 deniega por
+    entrada ilegible (REQ-007 CA-47 p. 20, «No acredita»; QA-007-18).
 14. **Heredados de 1.35.0, fuera de 1.36.0 por decisión del propietario** («Alcance de 1.36.0…», literal: «Fuera de
     alcance: hueco C, P-119-A (F2/F5/F7), SEC-123 mecanismo.»): siguen **abiertos y no aceptados como riesgo**, con su
     descripción en las notas `[1.35.0]`, «Límites declarados»:
@@ -651,7 +658,8 @@ vencimiento en 1.37 (R-057 §2).
 
 **Lo que devuelve la publicación al propietario** (`AGENTS.md` §4; R-057 §7, «Qué devuelve la publicación al
 propietario»): los `contrato` abiertos, que impiden hacerlo por delegación.
-- **Del delta:** QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, y los nuevos SEC-133 y SEC-134.
+- **Del delta:** QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, los nuevos SEC-133 y SEC-134, y QA-007-18
+  (`contrato`, baja; `docs/qa/REQ-007.md`, «CI del PR #60: K4 (V4) en Ubuntu»).
 - **Heredados en REQ-007:** QA-114, QA-116, QA-117 y SEC-124.
 - **Heredados en otros REQ** (por búsqueda de R-057, **no exhaustiva**; la sede es la lectura de la puerta): REQ-013,
   SEC-014 y SEC-020; REQ-019, SEC-033; REQ-020, SEC-038 a SEC-045; REQ-021, QA-021-10 y QA-021-11.
@@ -683,6 +691,12 @@ REQ, y así se rotulan en su sede. Estas notas no anticipan ningún cierre.
 
 - R-057 tampoco firma REQ-007: «`Seguridad:` sigue en `pendiente`, con R-057 en su paréntesis» (R-057 §7).
 - [PENDIENTE: P-136-V].
+- **El CI del PR #60 sobre `f1ffac3` estuvo rojo por K4** (run `37482487075`: 4 FAIL, los cuatro de K4, por `guard.sh`
+  y por `guard-completado.sh`). La causa es el `jq` del runner (1.7.1, inferido de la imagen), que no lee V4: la
+  candidata la deniega por entrada ilegible, conforme con CA-47 p. 20, y v1.35.0 la deja pasar (SEC-120). El ajuste del
+  caso (sólo K4 de la sección 44) lo deja, con ese `jq`, en **SKIP con motivo** que exige el `deny` por ilegible —y en
+  FAIL con los hooks de v1.35.0 como candidata—; con un `jq` que lee V4 corre como antes (`docs/qa/REQ-007.md`, «CI del
+  PR #60…», §3). Ninguno de los SKIP del CI acredita (REQ-007 CA-69 p. 2).
 - [PENDIENTE: CI sobre la cabeza final].
 - Los controles del proveedor que detuvieron una línea de trabajo se registraron y no se reintentaron: los locales
   GB18030 y BIG5 de QA (P-136-F, punto 4), la sonda de `$'…'` (O-54-3), una búsqueda del auditor (O-55-1) y la sonda de

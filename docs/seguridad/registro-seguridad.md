@@ -11055,3 +11055,35 @@ Declararlos límite con ficha **no cambia su clase ni su estado**. Es la regla d
   - última revisión **R-057**; último hallazgo **SEC-134**;
   - `SEC-121` y `SEC-144` siguen reservados a los ejemplos de `requirements/README.md`;
   - próximos libres **R-058** y **SEC-135**.
+
+### 9. Nota posterior a R-057 — **SEC-120 con el `jq` de serie de Ubuntu 24.04** (2026-10-07) — **SÓLO REGISTRO: NO REVISIÓN, NO FIRMA, NO RECLASIFICA**
+
+- **Por qué existe.** QA reprodujo el CI rojo del PR #60 (run `37482487075`): `docs/qa/REQ-007.md`, sección «CI del PR #60: K4 (V4) en Ubuntu». Evidencia en el repositorio de evidencia, `cand-1.36.0/ci-k4/`, commit `4e8b2e0`. No medí nada nuevo: leí esos archivos.
+- **Qué está medido y qué inferido** (de QA):
+  - **Inferido de la imagen:** el `jq` del runner `ubuntu-24.04` es 1.7.1 (paquete `1.7.1-3ubuntu0.24.04.2`). El paso del CI no imprime la versión (`00-ci-37482487075.txt`).
+  - **Medido:** con ese paquete extraído sin instalar y con el binario upstream 1.7.1 (`01-jq-obtencion.txt`, con sha256), `jq` lee 254 niveles y no lee 255. El 1.8.2 del anfitrión lee 9 998 y no lee 9 999 (`02-jq-profundidad.txt`).
+  - **Medido:** las decisiones por árbol (`03-sonda-k4.sh`, `03-sonda-k4-jq171.txt`, `03-sonda-k4-jq182.txt`), iguales por `guard.sh` y por `guard-completado.sh`.
+- **Precisión de lo registrado, sin reescribirlo.** R-045-A §4 y R-046 dicen «10 001 niveles → allow; con 9 000, deny». **Esas cifras valen sólo con `jq` 1.8**, que es el que se usó. Con `jq` 1.7.1 no son verdad (siguiente punto). Lo mismo vale para toda cita de «9 000 niveles → deny por el veredicto» en este registro.
+
+**(1) La exposición real de SEC-120 en lo publicado era mayor que la declarada.**
+- Con `jq` 1.7.1, v1.35.0 deja pasar el cierre de un REQ `critico` con QA pendiente a partir de **255 niveles**: una clave extra de unos **510 bytes** de corchetes. No hacen falta 10 001 niveles (≈ 20 KB). La medición es de 255, 9 000, 9 999 y 10 001 niveles: todos dan `allow` (`03-sonda-k4-jq171.txt`).
+- Afecta a todo consumidor de **v1.35.0 y anteriores** que corra el `jq` de serie de Ubuntu 24.04. La base tenía la misma conducta (R-045-A §4: «igual en la candidata y en la base»).
+- **Sin medir:** otras 1.7.x y versiones anteriores a 1.7. No afirmo su límite.
+
+**(2) En 1.36.0, SEC-120 sigue `mitigado`.**
+- Con `jq` 1.7.1, la candidata `c5bf6d4` deniega desde 255 niveles por «la entrada de esta llamada no se pudo leer», que es lo que pide CA-47 punto 20. Con 1.8.2 deniega por el veredicto hasta 9 998 niveles y por ilegible desde 9 999.
+- **Las dos ramas cierran.** Cambia el motivo, no la decisión. El banco completo con `jq` 1.7.1 da 0 FAIL (`20-banco-despues-jq171.txt`).
+- La dependencia del límite de `jq` no abre nada en 1.36.0. Sólo cambia qué rama mide V4.
+- El estado de R-053 §7 y R-057 §8 no cambia.
+
+**(3) Severidad de SEC-120 en lo publicado (v1.35.0): se mantiene `baja`, sin reclasificar hacia abajo.**
+- El factor que la fijó sigue igual: **no se ha observado que el host la alcance**, y eso **no está verificado** (R-045-A §4). Los guardianes sólo juzgan `Edit|Write|MultiEdit|Bash` (`hooks/hooks.json`), herramientas de esquema fijo. En lo observado, el host entrega sólo las claves del esquema, y sus valores anidables son cadenas.
+- **Lo que cambia es el coste de la entrada, no su alcance.** Con el `jq` de serie, la barrera de tamaño desaparece: medio kilobyte cabe en cualquier techo. Por eso «no verificado» pesa más de lo que pesaba.
+- **Condición de subida, declarada:** si algún canal que pueda medirse entrega anidamiento a esos hooks (otra versión del host, un cliente que no valide el esquema, invocar el hook fuera de Claude Code), SEC-120 en v1.35.0 pasa a **alta**. Sería un fail-open de la puerta de cierre con ~510 bytes y una dependencia de serie.
+
+**(4) Recomendación para las notas `[1.36.0]`** (`docs/arnes/notas-1.36.0-borrador.md`; la redacción es del analista y la coordinadora). Va con QA-007-18 (`contrato`, de QA), sin sustituirlo.
+- **V4 depende del `jq`.** Su resultado «deny por el veredicto» exige un `jq` que lea 9 000 niveles (medido: 1.8.2). Con `jq` 1.7.1, el de serie de Ubuntu 24.04 y el del CI que es puerta de `main`, V4 se deniega por entrada ilegible y el banco lo registra como SKIP con motivo. **Ninguna cifra de V4 se da como medida en el CI.**
+- **En la línea de SEC-120, decir la exposición real de lo publicado:** con `jq` 1.7.1, v1.35.0 y anteriores dejan pasar desde **255 niveles**, y actualizar a 1.36.0 lo cierra con cualquier `jq` medido.
+- Ninguna de las dos frases se escribe como «con 9 000 niveles, deny» sin la versión de `jq`.
+
+- **Estado tras esta nota:** sin hallazgos nuevos. SEC-120 sigue `abierto` en lo publicado (v1.35.0), con severidad baja y la condición de subida de (3), y `mitigado` en el candidato. No cambia ninguna firma; `Seguridad:` de REQ-007 sigue en `pendiente`. **Numeración vigente:** sin cambio; próximos libres **R-058** y **SEC-135**.

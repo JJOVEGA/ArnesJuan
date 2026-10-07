@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · CI del PR #60: causa medida (el `jq` 1.7.1 del runner lee 254 niveles); ajuste del caso K4 del banco sin tocar `hooks/`; QA-007-18 (`contrato`, baja) con write-back en CA-47 p. 20; nota §9 de R-057 (con jq 1.7.x el fail-open de SEC-120 en lo publicado empieza en 255 niveles); push de la candidata
+> Origen: GitHub (commit local y **push** autorizado por el propietario en P-136-S (3)) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; reproducción con el paquete `jq` 1.7.1 extraído sin instalar; `docs/qa/REQ-007.md` «CI del PR #60: K4 (V4) en Ubuntu»; sección 44; cabecera de REQ-007; evidencia `4e8b2e0`; ~165 k tokens), `auditor-seguridad` (R-057 §9; ~75 k), `analista-requerimientos` (CA-47 p. 20, CA-69 p. 2, notas, índice) y la coordinadora.
+
+- **Medido:** jq 1.8.2 lee hasta 9 998 niveles; jq 1.7.1 (Ubuntu y upstream) falla desde 255. Con V4, `c5bf6d4` → `deny` «la entrada no se pudo leer» (CA-47 p. 20) y v1.35.0 → `allow`. Sección 44 bajo 1.7.1: 359/4 antes del ajuste, 359/0/4 SKIP después; bajo 1.8.2, 363/0 igual que antes; control positivo con los hooks de v1.35.0: K4 en FAIL. Banco completo con 1.7.1: 2299/0/17; con 1.8.2: 2304/0/12. Los 34 SKIP del CI: 12 locales + 18 por falta de la instalación 1.33.2 + 3 de REQ-017 CA-10 (bash 5.2.21, inferido) + 1 INCONCLUSO de reloj; ninguno viene del `jq` y ninguno acredita.
+- **QA-007-18:** la Medida de CA-47 p. 20 («V4 control, 9 000 niveles → deny por el veredicto, como hoy») no declaraba la dependencia del `jq`. Write-back del analista; «No acredita» gana la dependencia y los 255 niveles. CA-69 p. 2 anota lo que el CI no acredita.
+- **R-057 §9:** precisa R-045-A §4 y R-046 (valen con jq 1.8); SEC-120 sigue `mitigado` en el candidato; severidad en lo publicado se mantiene `baja` con condición de subida a `alta` declarada.
+- **Avance (regla 6):** el CI tiene su causa y su ajuste; el push lanza la corrida sobre esta cabeza.
+
 ## [GitHub] — 2026-10-07 · Cierre: notas `[1.36.0]` completas en el borrador (con R-057; huecos sólo para la fecha, P-136-V y el CI); SEC-134 corregido en seis sedes; la guía al día en cuatro puntos; F-136-22 y la fila del paso 6 de PLAN con P-136-U y R-057
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` ×2 (notas ≈ 334 k tokens; SEC-134 y guía) y la coordinadora.
 
