@@ -1692,7 +1692,9 @@ done
 # (FUNCNEST, SHELLOPTS=keyword, BASH_FUNC_jq%%, BASH_COMPAT, BASHOPTS=compat40)—; con 8e11f87 los 7 salen FAIL.
 # Y 2312 → 2314 por QA-007-13 (P-136-Q (A)): +2 en 47-decision-emitida.sh (102 → 104) —funciones `builtin` y `read`
 # importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
-CASOS_ESPERADOS=2314
+# Y 2314 → 2316 por QA-007-14 (P-136-R (A)): +2 en 47-decision-emitida.sh (104 → 106) —funciones `return` y `break`
+# importadas: `ls -la` sin decisión y un Write a src/ con deny, en menos de 5 s—; con 39e6128 mueren o no terminan.
+CASOS_ESPERADOS=2316
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

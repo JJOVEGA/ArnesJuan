@@ -20,7 +20,7 @@
 #       - las FUNCIONES importadas del entorno (`BASH_FUNC_<nombre>%%`) con el nombre de una orden que el hook
 #         usa: una `jq`, `printf`, `read` o `builtin` importada sustituía a la orden y el hook salía sin decisión,
 #         o no terminaba (QA-007-11, QA-007-13). Se retiran con `unset -f` de una LISTA ESTÁTICA escrita aquí
-#         —los builtins regulares y las órdenes externas que usan este archivo, `guard.sh`, los guardianes y
+#         —los builtins, regulares y especiales, y las órdenes externas que usan este archivo, `guard.sh`, los guardianes y
 #         `lib.sh`, y otras comunes—, sin descubrir nombres en tiempo de ejecución (P-136-Q (A)). Una función
 #         importada con otro nombre no la llama nadie: la librería define las suyas después;
 #       - `FUNCNEST` (con 1 o 2 el preludio fallaba y se leía como «inerte»);
@@ -30,12 +30,16 @@
 #     suplantarlo. En modo POSIX ninguna función suplanta a los builtins ESPECIALES (`unset`, `set`, `trap`,
 #     `exit`, `.`, `eval`, `export`…), así que esta limpieza arranca con `POSIXLY_CORRECT=y` —una asignación,
 #     que nada puede suplantar— y usa sólo especiales hasta haber retirado la lista; después sale del modo
-#     POSIX (R1), antes de cargar `lib.sh`.
+#     POSIX (R1), antes de cargar `lib.sh`. Fuera del modo POSIX, en cambio, una función SÍ suplanta a un
+#     especial: por eso la lista lleva también los especiales que el hook usa —`return exit break continue set
+#     shift : eval trap unset exec .`— (QA-007-14, P-136-R (A)): con `return` o `break` importadas el hook
+#     moría o no terminaba.
 #     LÍMITES, DECLARADOS (QA-007-11 (b), F-136-19 y F-136-20): `noexec`, `onecmd` y `xtrace` hacia la salida
 #     estándar actúan antes de la primera línea útil y no se deshacen desde aquí; `.` y `[` en el punto de entrada
 #     corren antes de este archivo; y `errexit` y `BASH_ENV`.
 POSIXLY_CORRECT=y
-unset -f builtin shopt printf read '[' test echo local declare typeset type command cd pwd true false kill \
+unset -f return exit break continue set shift : eval trap unset exec . \
+  builtin shopt printf read '[' test echo local declare typeset type command cd pwd true false kill \
   mapfile readarray let wait hash enable getopts umask source \
   jq grep git readlink realpath mktemp cat tail head sed awk tr cut sort wc find ls cp mv rm ln mkdir \
   dirname basename stat date sleep touch chmod tee cmp iconv timeout env sh bash

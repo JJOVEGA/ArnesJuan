@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-14 — los builtins especiales entran en la lista estática de `entrada.sh` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-R (A), dentro del tope de una hora de P-136-Q. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-14»; evidencia `70a2083`.
+
+- **Cambio:** el `unset -f` estático de `hooks/entrada.sh` incluye, mientras sigue en modo POSIX, los especiales `return exit break continue set shift : eval trap unset exec .`.
+- **Casos:** 2 en la sección 47, con funciones `return` y `break` importadas: `ls -la` sin decisión y un `Write` a `src/` con `deny`, los dos en menos de 5 s. Con `39e6128` fallan los dos, por un `deny` del plazo. La sección pasa de 104 a 106 y el total de 2314 a 2316.
+- **Medidas:**
+  - sección 47: 106/0;
+  - banco del worktree: 2302/0/14;
+  - 2 (a): 2035/1/14; el FAIL es INS-136-1;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** QA-007-14 está reparado y con casos. Falta la validación de QA.
+
 ## [GitHub] — 2026-10-07 · Write-back de P-136-R (analista): QA-007-13 cerrado en CA-68 (ii); QA-007-14 «en la pasada, sin validar» con la letra corregida («regulares y especiales»); F-136-20 (v)
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
 
