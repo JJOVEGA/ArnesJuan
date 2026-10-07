@@ -43,8 +43,19 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-S resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-07] (coordinadora) — P-136-S: con el paso 6 validado (QA favorable, R-056 sin veto), seguridad abrió SEC-132 (`contrato`, media) y SEC-131 (`contrato`, baja), los dos preexistentes; y el cierre (paso 7) necesita tres autorizaciones tuyas. ¿Qué entra antes de publicar 1.36.0?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-S: (1) (A), (2) (A) y (3)** — adoptada la decisión propuesta, literal; autoriza el write-back de `AGENTS.md` §13, la versión 1.36.0 en los dos archivos de distribución y el push de la candidata
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Decisión propuesta, lista para adoptar: «P-136-S: (1) (A): se repara SEC-132 (a) en una pasada acotada con tope de una hora (plazo comprobado entre gates, caso de banco con gates lentas, cambio de compatibilidad declarado, re-verificación acotada de QA y determinación corta de seguridad); SEC-132 (b) límite declarado, ficha 1.37. (2) (A): SEC-131 límite declarado, ficha F-136-21 con F-136-20. (3) autorizo el write-back de AGENTS.md §13 y su plantilla por el analista, la subida de versión a 1.36.0 en los dos archivos de distribución (arnes_version se conserva en 1.33.0), y el push de la candidata al terminar; el PR sale de borrador cuando el CI esté en verde. Fusión, tag y publicación los decido yo con las notas finales delante. Nada más entra; contadores sin reiniciar.»
+
+**Lo que añade la coordinadora:** en paralelo sobre archivos disjuntos, el `desarrollador` repara SEC-132 (a) con tope de una hora y sube la versión en `.claude-plugin/plugin.json` y `marketplace.json` (archivos protegidos), y el `analista-requerimientos` escribe los límites en CA-68, `AGENTS.md` §13 y `templates/AGENTS.md.tpl`. Fichas F-136-21 (SEC-131, con F-136-20) y F-136-22 (SEC-132 (b)) en `docs/PENDIENTES.md`. Después: re-verificación acotada de QA, determinación corta de seguridad, notas finales, push, CI y PR fuera de borrador. La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-07] (coordinadora) — P-136-S: con el paso 6 validado (QA favorable, R-056 sin veto), seguridad abrió SEC-132 (`contrato`, media) y SEC-131 (`contrato`, baja), los dos preexistentes; y el cierre (paso 7) necesita tres autorizaciones tuyas. ¿Qué entra antes de publicar 1.36.0?
 
 **Contexto.** R-056 (`docs/seguridad/registro-seguridad.md`; evidencia `cand-1.36.0/sec115-118/seg-R056/`, `4bd3464`) sobre `c5bf6d4`: en 3 162 combinaciones de entorno más la matriz POSIX, ningún `deny` pasa a `allow` ni a «sin decisión»; todos los movimientos van hacia `deny` y están declarados. **SEC-115, SEC-118 y SEC-129 → `mitigado` en el candidato.** SEC-130 → `instrumento`, F-136-12 (texto corregido). Un control del proveedor detuvo una sonda del auditor (O-56-2); sin reintentar.
 
@@ -68,9 +79,6 @@
 **Qué trabajo sigue mientras no se decida:** el commit validado del paso 6 (hecho con esta entrada), el write-back de estado del analista (SEC-115/118/129 `mitigado`; F-136-20 (i) corregida con el `allow` explícito), las notas finales y la guía en lo que no depende de (1) y (3). Esta entrada impide marcar cualquier REQ como `completado`.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-07) — **P-136-R: (A)** — adoptada la decisión propuesta, literal
 

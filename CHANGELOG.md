@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-S adoptada por el propietario: SEC-132 (a) se repara (tope de una hora); SEC-132 (b) y SEC-131 límites declarados (F-136-22, F-136-21); autorizados el write-back de `AGENTS.md` §13, la versión 1.36.0 y el push
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** empieza el cierre con una pasada acotada y el write-back de las sedes de la promesa.
+
 ## [GitHub] — 2026-10-07 · Write-back de estado tras R-056 (analista): CA-67, CA-68 y CA-69 p. 7 «construido en `c5bf6d4`; validado por QA; R-056 sin veto; SEC-115/118/129 `mitigado`»; F-136-20 (i) con el `allow` explícito; SEC-130 texto final; O-56-3 en «no acredita»
 > Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~192 k tokens) y la coordinadora.
 
