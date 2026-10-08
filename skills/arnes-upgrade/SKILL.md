@@ -1522,6 +1522,26 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
   proyecto:** una sola línea `Hallazgos abiertos:` por REQ, que es además lo que la regla exige. Ficha para 1.37: una
   normalización lineal o un techo propio del campo. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
 
+- **Límite declarado: una quality gate que lee su entrada estándar se come la lista de las gates siguientes, y el
+  cierre de un REQ puede salir sin decisión con una gate posterior en rojo (SEC-133; REQ-007 CA-68, «Límites
+  declarados de 1.36.0», «Ampliación por P-136-V», del arnés; decisión P-136-V del propietario del arnés, 2026-10-07;
+  ficha F-136-23).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no** cumple. **«Límite
+  declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:** «P-136-V: límite
+  declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia).» **Alcance:** cualquier orden de
+  quality gate que lea de su entrada estándar, la necesite o no; no hace falta ningún ataque. El hook lee la lista de
+  gates por su entrada estándar y cada gate la hereda, así que la que lee consume las líneas que quedaban. Medido a
+  nivel de hook en Linux/WSL2, bash 5.3.9, una corrida por punto: con `cat >/dev/null` o `read -r x; true` delante de
+  `false`, las gates siguientes **no se ejecutan** y el cierre sale **sin decisión**; la misma gate con `</dev/null`,
+  `deny`. Preexistente: igual en 1.35.0. **Consecuencia:** un REQ puede cerrarse con una quality gate en rojo; que el
+  cliente tome por permitir un hook sin decisión es inferido. La fila «No completar un REQ con quality gates en rojo»
+  de §13 lo dice ahora como lo que no cubre, junto con la función heredada con el nombre de la orden de una gate
+  (SEC-131, entrada anterior). **Para tu proyecto:** que ninguna de tus quality gates lea su entrada estándar —si una
+  puede hacerlo, dale la entrada desde `/dev/null` en su orden del manifiesto, que es el control medido—. Qué órdenes reales lo hacen, por `Write` o `MultiEdit`, el host,
+  Windows/MSYS y otros bash, sin medir. Ficha para 1.37, en una sola intervención sobre el bucle de gates con F-136-21
+  y F-136-22, que se propone antes de implementarse: la gate es código no confiable y nada de lo que hereda puede
+  alimentar la lista, el veredicto ni la salida del hook; y los casos adversarios entran al banco antes del intento.
+  Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

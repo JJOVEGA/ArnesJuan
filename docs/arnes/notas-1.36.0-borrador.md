@@ -1,13 +1,19 @@
 # BORRADOR — notas de versión `[1.36.0]`
 
-> **Esto es un borrador y no es la entrada del CHANGELOG.** Lo escribió el `analista-requerimientos` el 2026-10-06 y
-> lo completó el 2026-10-07, por encargo de la coordinadora (paso 7 del plan de 1.36.0). Al cerrar, la coordinadora lo
-> copia a la entrada `[1.36.0]` de `CHANGELOG.md`. Se leyó del disco del worktree `ArnesJuan-v1.36` (rama
-> `cand/1.36.0`, cabeza `4610004`). **El analista no tuvo acceso a `git` en estas comisiones:** los commits se citan
-> por las entradas del `CHANGELOG.md` y por las sedes que los nombran, no por `git log`.
+> **ESTE RECUADRO NO SE COPIA.** Al CHANGELOG va sólo lo que hay desde la línea `> **Copiado al `CHANGELOG.md` el 2026-10-07 como entrada `[1.36.0]`** (con los huecos de la cabeza final resueltos allí por la coordinadora). Lo que sigue es el borrador tal como quedó.
+
+## [1.36.0]` hasta el final del
+> archivo; el título del borrador, este recuadro y la raya que lo cierra se quedan aquí.
 >
-> **Los huecos van marcados `[PENDIENTE: …]`** y no se rellenan por adelantado. Ningún veredicto que no esté escrito
-> en su sede se afirma aquí.
+> **Esto es un borrador y no es la entrada del CHANGELOG.** Lo escribió el `analista-requerimientos` el 2026-10-06 y
+> lo completó el 2026-10-07, por encargo de la coordinadora (paso 7 del plan de 1.36.0), la última vez tras P-136-V.
+> Al cerrar, la coordinadora lo copia a la entrada `[1.36.0]` de `CHANGELOG.md`. Se leyó del disco del worktree
+> `ArnesJuan-v1.36` (rama `cand/1.36.0`; cabeza `4610004` en la redacción, `c0dfc47` en el cierre). **El analista no
+> tuvo acceso a `git` en estas comisiones:** los commits se citan por las entradas del `CHANGELOG.md` y por las sedes
+> que los nombran, no por `git log`.
+>
+> **Queda un solo hueco, `[PENDIENTE: cabeza final]`**, en cada sitio donde se cita el último commit; no se rellena por
+> adelantado. Ningún veredicto que no esté escrito en su sede se afirma aquí.
 >
 > **Regla que este borrador no puede saltarse** (REQ-007 CA-69, punto 5): las sedes de la promesa —entre ellas estas
 > notas— cambian «sólo cuando esté construido y validado, y sólo hasta lo medido». El paso 6 ya está construido y
@@ -20,21 +26,25 @@
 
 ---
 
-## [1.36.0] — [PENDIENTE: fecha de publicación] · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
+## [1.36.0] — 2026-10-07 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
 
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) y Opus 5.5 (subagentes) ·
+> agentes: `desarrollador` (Opus 5.5), `qa-tester` (Opus 5.5, por la decisión del propietario de `AGENTS.md` §5),
+> `analista-requerimientos` (Opus 5.5), `auditor-seguridad` (Opus 5.5) y la coordinadora (Fable 5.1) ·
 > gobernado por la instalación estable **1.35.0**
 
 **Estas notas no publican nada.** El propietario lo dejó escrito: «Fusión, tag y publicación los decido yo con las
-notas finales delante.» (P-136-S (3), `PENDING_APPROVAL.md` § Resueltas). La cabeza que se publique tendrá su propia
-corrida de CI, y estas notas no afirman su resultado por adelantado: [PENDIENTE: CI sobre la cabeza final].
+notas finales delante.» (P-136-S (3), `PENDING_APPROVAL.md` § Resueltas). **CI verde sobre `789a6f9`, run
+`37696987137`: 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la instalación 1.33.2 ausente en el runner, 4 de
+K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, el resto de reloj) y autoprueba 117/0; la cabeza final
+llevará su propia corrida**, y estas notas no afirman su resultado por adelantado: [PENDIENTE: cabeza final].
 
 **De dónde salen.** Las decisiones del propietario están literales en `PENDING_APPROVAL.md` § Resueltas:
 - «Alcance de 1.36.0 y apertura de la ventana» (2026-10-03, «Encargo 2»);
 - la décima autorización (2026-10-03), con P-136-A, P-136-B y P-136-C;
 - P-136-D a P-136-O (2026-10-05 y 2026-10-06), el «Ajuste de alcance de 1.36.0» (2026-10-05), los tres puntos de
   SEC-120 (2026-10-05), la decisión posterior a `39e68bb` (M0 y MD) y el «Resumen del plan vigente» (2026-10-06);
-- P-136-P (2026-10-06) y P-136-Q a P-136-U (2026-10-07).
+- P-136-P (2026-10-06) y P-136-Q a P-136-V (2026-10-07).
 
 El contrato vive en `requirements/REQ-007.md` —nota de CA-54 del 2026-10-03, CA-47 punto 20, CA-67 a CA-69— y en
 [ADR-017](../decisions/ADR-017-la-puerta-que-no-puede-leer-terminar-o-emitir-no-deja-pasar.md).
@@ -219,7 +229,7 @@ El orden es el del propietario (`docs/PLAN.md` § 1.36.0, «Orden final de 1.36.
 #### Qué recibe un consumidor al actualizar
 
 **Con el plugin, sin migrar nada.** Actúa desde que se actualiza. Lista según las sedes; la lista exacta de archivos
-es [PENDIENTE: `git diff --stat v1.35.0..<cabeza final> -- hooks/ tools/ templates/ skills/ requirements/README.md`]:
+es la de `git diff --stat v1.35.0..` [PENDIENTE: cabeza final] `-- hooks/ tools/ templates/ skills/ requirements/README.md`:
 - `hooks/lib.sh`: CA-54 (análisis único, tokens en C sobre ASCII, atajo), SEC-120, SEC-127, QA-007-06, QA-007-07,
   QA-007-10, el motivo acotado, el plazo, los techos y R2.
 - `hooks/entrada.sh` (**nuevo**): R1, la limpieza del estado heredado con su lista estática, el arranque del plazo y la
@@ -240,13 +250,16 @@ es [PENDIENTE: `git diff --stat v1.35.0..<cabeza final> -- hooks/ tools/ templat
 de los hallazgos, la de la cabecera ambigua y dos filas nuevas —la parte (ii) de CA-68 y SEC-120—, con el mismo texto en
 `templates/AGENTS.md.tpl`; y `requirements/README.md` § «Veredictos de validación» y § «Clases de hallazgo», con su
 plantilla. Dicen **`mitigado`**, nunca «reparado», con sus residuales; lo medido en 1.35.0 queda fechado como historia
-de esa versión; y SEC-132 (a) se nombra como **límite declarado**, con la remisión a F-136-22. **Salvedad abierta
-(SEC-134, `contrato`, baja; R-057 §5):** esas sedes —la cláusula 1 de `AGENTS.md` §13, su plantilla, la guía, CA-68 y
-F-136-22— contrastan SEC-132 (a) con 1.35.0 de un modo que sugiere que en 1.36.0 el REQ ya no queda cerrado; no está
-medido así: en 1.36.0 el hook también sale sin decisión y el REQ puede quedar cerrado igual. R-057 recomienda
-corregir ese texto antes del tag. [PENDIENTE: P-136-V, y la corrección de SEC-134 en esas sedes]. Y la fila «No
-completar un REQ con quality gates en rojo» de §13 **excede lo medido** (R-057 §6): SEC-133 y SEC-131 (a) la
-contradicen.
+de esa versión; y SEC-132 (a) se nombra como **límite declarado**, con la remisión a F-136-22. **SEC-134 (`contrato`,
+baja; R-057 §5):** esas sedes —la cláusula 1 de `AGENTS.md` §13, su plantilla, la guía, CA-68, CA-69 p. 5 y
+F-136-22— contrastaban SEC-132 (a) con 1.35.0 de un modo que sugería que en 1.36.0 el REQ ya no queda cerrado; no está
+medido así. El texto está **corregido** antes del tag (REQ-007, Historial, 2026-10-07, «Corrección de SEC-134»; y el
+índice de `requirements/README.md`, en la comisión de P-136-V): en 1.36.0 el hook también sale sin decisión y el REQ
+puede quedar cerrado igual. El hallazgo lo cierra quien lo abrió. **Y la fila «No completar un REQ con quality gates
+en rojo» de §13**, que **excedía lo medido** (R-057 §6), queda **acotada por P-136-V**, con el mismo texto en
+`AGENTS.md` y en su plantilla: dice lo que no cubre —una gate que lee su entrada estándar (SEC-133) y una función
+heredada con el nombre de la orden de una gate (SEC-131 (a))— y su consecuencia —el cierre puede salir sin decisión
+con una gate en rojo—, como límites declarados para 1.37.
 
 **Un proyecto que actualiza el plugin y no migra** tendrá la puerta nueva con el texto viejo de §13, que todavía llama a
 SEC-115 y SEC-118 «limitaciones conocidas y sin reparar», como en 1.35.0.
@@ -549,9 +562,12 @@ esté aquí no queda por ello cubierto.
     canal de inyección indirecta preexistente que el tope acota y no crea. Y **O-57-1** (R-057 §6): «los techos de
     tamaño deniegan antes de las operaciones que crecen más que linealmente», en §13, es más ancho que lo medido; no es
     hallazgo porque la misma cláusula declara al lado las dos excepciones (SEC-132 (b) y QA-007-09).
-18. **SEC-133 (`contrato`, media, preexistente e igual en v1.35.0; abierto, no aceptado): una quality gate que lee su
-    entrada estándar se come la lista de las gates siguientes** (registro, R-057 §4; evidencia `seg-R057/01-`, commit
-    `1f73698`).
+18. **SEC-133 (`contrato`, media, preexistente e igual en v1.35.0; límite declarado por P-136-V, ni aceptado ni
+    reparado): una quality gate que lee su entrada estándar se come la lista de las gates siguientes** (REQ-007 CA-68,
+    «Límites declarados de 1.36.0», «Ampliación por P-136-V: SEC-133»; ficha **F-136-23**; registro, R-057 §4;
+    evidencia `seg-R057/01-`, commit `1f73698`). Decisión (P-136-V, literal): «P-136-V: límite declarado para 1.37,
+    con la fila de §13 acotada (qué no cubre y su consecuencia). Write-back de §13, notas [1.36.0] con fecha, último
+    commit, push. Nada más entra.»
     - **Qué pasa:** el bucle lee la lista de gates de la entrada estándar (`hooks/guard-completado.sh:958`) y cada gate
       la hereda (`:953`). Una gate que lee su entrada —medido con `cat >/dev/null` o `read -r x; true`— consume la lista:
       las gates siguientes **no se ejecutan**, y el cierre sale **sin decisión** aunque una posterior esté en rojo.
@@ -559,16 +575,23 @@ esté aquí no queda por ello cubierto.
     - **Alcance:** cualquier orden de gate que lea de la entrada estándar sin necesitarlo; no hace falta ningún ataque.
       **No medido:** qué órdenes de gate reales lo hacen; por `Write` y `MultiEdit` (mismo bucle, por lectura); el host,
       Windows/MSYS y otros bash.
-    - **Consecuencia:** es un fail-open de la puerta de cierre con configuración ordinaria. Contradice la fila «No
-      completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y §7. No lo introduce 1.36.0.
-    - **Lo que decide el propietario:** si se declara como límite para 1.37 o se repara antes de publicar. La
-      coordinadora recomienda límite declarado, con ficha F-136-23 y las lecciones L4 y L5 de R-057; R-057 §7 recomienda
-      lo mismo. [PENDIENTE: P-136-V — su decisión, la ficha F-136-23 si se crea, y el write-back en CA-68 y en §13].
-      Hasta entonces **no es un límite declarado**: es un hallazgo abierto y sin decidir.
-19. **SEC-134 (`contrato`, baja, de redacción; abierto): una frase de las sedes de la promesa sugiere una mejora que no
-    está medida** (registro, R-057 §5). Es la de SEC-132 (a) sobre 1.35.0, que estas notas no repiten (cabecera de este
-    borrador y límite 1). Su corrección es del `analista-requerimientos`, y R-057 la recomienda antes del tag.
-    [PENDIENTE: P-136-V y la corrección de texto en las sedes].
+    - **Consecuencia:** es un fail-open de la puerta de cierre con configuración ordinaria: un REQ puede cerrarse con
+      una quality gate en rojo (que el cliente tome por permitir un hook sin decisión es inferido). No lo introduce
+      1.36.0. Contradecía la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y §7; por P-136-V
+      esa fila, en `AGENTS.md` y en su plantilla, lo declara como lo que no cubre, con SEC-131 (a) y su consecuencia.
+    - **Para un proyecto:** que ninguna quality gate lea su entrada estándar; si una puede hacerlo, la entrada desde
+      `/dev/null` en su orden del manifiesto, que es el control medido (guía, «Hacia 1.36.0»).
+    - **Qué lo resolvería, en 1.37 y propuesto antes de hacerse** (F-136-23, en una sola intervención sobre el bucle de
+      gates con F-136-21 y F-136-22): **L4** —la gate es código no confiable dentro del proceso del hook: su veredicto es
+      sólo su código de salida, y nada de lo que hereda puede alimentar la lista, el veredicto ni la salida del hook— y
+      **L5** —integridad antes que vivacidad: los vectores adversarios de QA-007-15 y de SEC-133 entran al banco, con su
+      fail-before, **antes** del intento—. El candidato **no tiene caso de banco** para este vector.
+19. **SEC-134 (`contrato`, baja, de redacción; abierto): una frase de las sedes de la promesa sugería una mejora que no
+    está medida** (registro, R-057 §5). Es la de SEC-132 (a) sobre 1.35.0, que estas notas no repiten (límite 1). **El
+    texto está corregido antes del tag** en CA-68, CA-69 p. 5, `AGENTS.md` §13, su plantilla, la guía y F-136-22
+    (REQ-007, Historial, 2026-10-07, «Corrección de SEC-134»), y en el índice de `requirements/README.md` en la
+    comisión de P-136-V. El hallazgo lo cierra quien lo abrió; lo que diga `Hallazgos abiertos:` sobre la cabeza que se
+    publique es lo que vale.
 
 ---
 
@@ -590,8 +613,10 @@ listas son **no exhaustivas**, y que algo no aparezca **no lo hace medido**.
 - **Las expansiones `$'…'` en modo POSIX:** sin medir; un control del proveedor detuvo la sonda (O-54-3).
 - **Límites de recursos heredados** `ulimit -v`, `-s` y `-t`: sin medir (R-056 §11).
 - **El banco completo sobre la cabeza final:** lo da el CI. QA no lo corrió sobre `986ea6a` porque su código es
-  `c5bf6d4` byte a byte, ya validado con el banco entero (`docs/qa/REQ-007.md`, «P-136-U…», §3).
-  [PENDIENTE: CI sobre la cabeza final].
+  `c5bf6d4` byte a byte, ya validado con el banco entero (`docs/qa/REQ-007.md`, «P-136-U…», §3). CI verde sobre
+  `789a6f9`, run `37696987137`: 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la instalación 1.33.2 ausente en
+  el runner, 4 de K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, el resto de reloj) y autoprueba 117/0; la
+  cabeza final llevará su propia corrida: [PENDIENTE: cabeza final].
 
 ---
 
@@ -640,21 +665,22 @@ Literales en `PENDING_APPROVAL.md` § Resueltas, en la entrada que se cita. **Ni
     publicación los decido yo con las notas finales delante.»
 14. **Fuera de 1.36.0:** el hueco C, P-119-A (F2, F5, F7) y el mecanismo de SEC-123 («Alcance de 1.36.0…»).
 15. **Lo que se publica sin reparar**, por las decisiones de arriba y por lo que sigue abierto: SEC-132 (a) y (b),
-    SEC-131, QA-007-09, QA-007-11 (b), F-136-20, QA-007-01 (límites); SEC-133 y SEC-134 (abiertos; [PENDIENTE:
-    P-136-V]); SEC-130 (`instrumento`); F-136-5, F-136-7, F-136-9; SEC-030; los heredados del límite 14 y los hallazgos
+    SEC-131, QA-007-09, QA-007-11 (b), F-136-20, QA-007-01 y, por P-136-V, SEC-133 (límites); SEC-134 (abierto, con
+    su texto corregido); SEC-130 (`instrumento`); F-136-5, F-136-7, F-136-9; SEC-030; los heredados del límite 14 y los hallazgos
     del límite 15. **SEC-115, SEC-118 y SEC-129 salen `mitigado`, no reparados sin residuo** (R-056 §10).
-16. **SEC-133 y SEC-134:** [PENDIENTE: P-136-V]. La propuesta de la coordinadora, que no es decisión hasta que el
-    propietario la adopte: «P-136-V: (A). SEC-133 queda como límite declarado, ficha F-136-23 para 1.37 junto con
-    F-136-21/22 y las lecciones L4 y L5 de R-057; la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md`
-    §13 y su plantilla se acota a las formas declaradas (SEC-133, SEC-131 (a)). SEC-134 se corrige como texto antes del
-    tag. Nada más entra.» (`PENDING_APPROVAL.md`, § Pendientes).
+16. **SEC-133 como límite declarado para 1.37, con la fila de §13 acotada** (P-136-V, 2026-10-07, literal): «P-136-V:
+    límite declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia). Write-back de §13, notas
+    [1.36.0] con fecha, último commit, push. Nada más entra.» Es la opción (A) de su ficha, la que recomendaban la
+    coordinadora y R-057 §7. Ficha **F-136-23**, con F-136-21 y F-136-22 y las lecciones L4 y L5 de R-057 (límite 18).
+    La fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y su plantilla dice ahora lo que no
+    cubre (SEC-133 y SEC-131 (a)) y su consecuencia. SEC-134 se corrigió como texto antes del tag (límite 19).
 
 **Quién decide publicar.** El propietario, por su propia letra (P-136-S (3), arriba). La determinación de seguridad
 sobre el estado final es **R-057**, literal: «Determinación sobre el estado final del candidato 1.36.0: CONFORME CON
 HALLAZGOS, SIN VETO.» —el código es el de R-056, la reversión no deja rastro, los dos hallazgos nuevos son preexistentes
 (SEC-133) o de redacción (SEC-134) y «Publicar 1.36.0 no empeora ninguno; retenerla retiene SEC-115/118/120/127/128/129
 `mitigado`» (registro, R-057 §7)—. SEC-131 y SEC-132 siguen **abiertos como límites declarados**, no aceptados, con
-vencimiento en 1.37 (R-057 §2).
+vencimiento en 1.37 (R-057 §2), y SEC-133 también, desde P-136-V.
 
 **Lo que devuelve la publicación al propietario** (`AGENTS.md` §4; R-057 §7, «Qué devuelve la publicación al
 propietario»): los `contrato` abiertos, que impiden hacerlo por delegación.
@@ -690,14 +716,22 @@ REQ, y así se rotulan en su sede. Estas notas no anticipan ningún cierre.
 | Reversión (`986ea6a`) y estado final (`4610004`) | **FAVORABLE**: «No queda ningún hallazgo de QA contra el código de 1.36.0 (`c5bf6d4`).» («P-136-U: comprobación de la reversión») | **R-057: conforme con hallazgos, sin veto**; «Publicar 1.36.0 no empeora ninguno»; abre SEC-133 y SEC-134; evidencia `seg-R057/`, commit `1f73698` |
 
 - R-057 tampoco firma REQ-007: «`Seguridad:` sigue en `pendiente`, con R-057 en su paréntesis» (R-057 §7).
-- [PENDIENTE: P-136-V].
+- P-136-V (2026-10-07) **no cambia ninguna firma**: declara SEC-133 como límite para 1.37 y acota la fila de §13
+  (límite 18 y decisión 16). R-057 sigue siendo la determinación sobre el estado final, y SEC-133 sigue en `Hallazgos
+  abiertos:` de REQ-007 con su clase `contrato`, sin aceptar.
 - **El CI del PR #60 sobre `f1ffac3` estuvo rojo por K4** (run `37482487075`: 4 FAIL, los cuatro de K4, por `guard.sh`
   y por `guard-completado.sh`). La causa es el `jq` del runner (1.7.1, inferido de la imagen), que no lee V4: la
   candidata la deniega por entrada ilegible, conforme con CA-47 p. 20, y v1.35.0 la deja pasar (SEC-120). El ajuste del
   caso (sólo K4 de la sección 44) lo deja, con ese `jq`, en **SKIP con motivo** que exige el `deny` por ilegible —y en
   FAIL con los hooks de v1.35.0 como candidata—; con un `jq` que lee V4 corre como antes (`docs/qa/REQ-007.md`, «CI del
   PR #60…», §3). Ninguno de los SKIP del CI acredita (REQ-007 CA-69 p. 2).
-- [PENDIENTE: CI sobre la cabeza final].
+- **Dos rojos previos, corregidos sin tocar el contenido del código:** el bit `+x` de `hooks/entrada.sh`, que estaba
+  en `100644` y el workflow exige en `100755` (`f6b0a90`; el blob es el mismo); y la sección 44 del banco, que tras el
+  ajuste de K4 tenía 416 líneas sobre un techo de 400 de la autoprueba (CA-18), compactada a 400 sin cambiar casos
+  (`789a6f9`).
+- **CI verde sobre `789a6f9`, run `37696987137`:** 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la
+  instalación 1.33.2 ausente en el runner, 4 de K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, el resto de
+  reloj) y autoprueba 117/0; la cabeza final llevará su propia corrida: [PENDIENTE: cabeza final].
 - Los controles del proveedor que detuvieron una línea de trabajo se registraron y no se reintentaron: los locales
   GB18030 y BIG5 de QA (P-136-F, punto 4), la sonda de `$'…'` (O-54-3), una búsqueda del auditor (O-55-1) y la sonda de
   perfil de SEC-132 (b) (O-56-2).
@@ -752,7 +786,9 @@ recursión sin tope de la lectura léxica (F-136-5, con el caso de banco de dest
 propietario, aunque varias caen dentro de ellas):
 - **F-136-6**, la 2b, y **F-136-5**, la recursión (dentro de e));
 - **F-136-22**, SEC-132 (a) y (b), con las tres lecciones de diseño, más L4 y L5 de R-057 §3;
-- SEC-133, si el propietario lo declara para 1.37: [PENDIENTE: P-136-V y la ficha F-136-23];
+- **F-136-23**, SEC-133 (la gate que lee su entrada estándar), declarado para 1.37 por P-136-V; con F-136-21 y
+  F-136-22, una sola intervención sobre el bucle de gates bajo L4 y L5, con los vectores adversarios en el banco antes
+  del intento;
 - **F-136-20**, el estado heredado que sólo la orden de `hooks/hooks.json` puede neutralizar, que agrupa **F-136-9**
   (`BASH_ENV`) y **F-136-19** (QA-007-11 (b)); y **F-136-21**, SEC-131, la frontera de confianza del entorno del host,
   con la lista blanca del entorno que propone el auditor (R-056 §3 y §6);
@@ -774,8 +810,8 @@ en la salida de errores, un canal de bloqueo que no depende de la salida estánd
 ### Historia
 
 **Una línea por commit de código**, en el orden del `CHANGELOG.md`, con la entrada que lo registra. No se reescribe
-nada. Cada cifra es de la cabeza que nombra. La lista exacta, para contrastarla: [PENDIENTE: `git log --first-parent
-v1.35.0..<cabeza final> -- hooks/ tools/ tests/ .claude-plugin/`].
+nada. Cada cifra es de la cabeza que nombra. La lista exacta, para contrastarla, es la de `git log --first-parent
+v1.35.0..` [PENDIENTE: cabeza final] `-- hooks/ tools/ tests/ .claude-plugin/`.
 
 | Commit | Qué trae | ¿En 1.36.0? | Registro (`CHANGELOG.md`) |
 |---|---|---|---|
@@ -797,6 +833,9 @@ v1.35.0..<cabeza final> -- hooks/ tools/ tests/ .claude-plugin/`].
 | `cd63066` | P-136-S/T: SEC-132 (a), el plazo dentro de las quality gates (`arnes_corta_gate`); introduce QA-007-15, 16 y 17 | **no: revertido** | «Paso 6 (desarrollador): SEC-132 (a)…» |
 | `b43d7ea` | Versión 1.36.0 en `.claude-plugin/plugin.json` y `marketplace.json`; `arnes_version` sigue en 1.33.0 | sí (distribución) | «Candidato 1.36.0: versión en los dos archivos de distribución» |
 | `986ea6a` | Revert del código de `cd63066` por P-136-U; `hooks/` y `tests/` = `c5bf6d4` | sí (lo deshace) | «Revert del código de cd63066 por P-136-U…» |
+| `19cf88e` | Ajuste del caso K4 de la sección 44 por el `jq` 1.7.1 del runner (lee 254 niveles): con él, SKIP con motivo que exige `deny` por entrada ilegible; con un `jq` que lee V4, como antes; sin tocar `hooks/` (QA-007-18) | sí (banco) | «CI del PR #60: causa medida (el `jq` 1.7.1 del runner lee 254 niveles); ajuste del caso K4…» |
+| `f6b0a90` | Modo `100755` de `hooks/entrada.sh`, que exige el CI; el blob es el mismo | sí (modo, sin cambio de contenido) | «Modo 100755 de hooks/entrada.sh; el CI lo exige; sin cambio de contenido» |
+| `789a6f9` | Sección 44 compactada de 416 a 400 líneas, el techo de la autoprueba (CA-18), sin cambiar casos | sí (banco) | «Sección 44 bajo el techo de 400 líneas (CA-18) tras el ajuste de K4; sin cambio de casos» |
 
 **La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** Ningún CI verde
 acredita rendimiento, conducta ni ahorro (notas `[1.35.0]`, «Historia»).
