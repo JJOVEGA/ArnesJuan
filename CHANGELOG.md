@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · P-136-V resuelta por el propietario: SEC-133 límite declarado para 1.37 (F-136-23) con la fila de §13 acotada; se cierran las notas y la candidata
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía. Nada más entra en 1.36.0.
+- **Avance (regla 6):** última decisión de la ventana tomada; faltan el write-back de §13, las notas en el CHANGELOG, el último commit y el push.
+
 ## [GitHub] — 2026-10-07 · CI VERDE sobre `789a6f9` (run 37696987137); PR #60 fuera de borrador; dos rojos previos corregidos sin tocar el contenido del código
 > Origen: GitHub (commits locales con push autorizado) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (modo `100755` de `hooks/entrada.sh`, `f6b0a90`), `qa-tester` (sección 44 compactada a 400 líneas, `789a6f9`; ~181 k tokens en la comisión del CI) y la coordinadora.
 

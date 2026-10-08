@@ -43,8 +43,21 @@
 
 ## Pendientes
 
+_(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resueltas.)_
 
-### [2026-10-07] (coordinadora) — P-136-V: SEC-133 (`contrato`, media, preexistente): una quality gate que lee su entrada estándar se come la lista de las gates siguientes, y el cierre sale sin decisión aunque una gate posterior esté en rojo. ¿Límite declarado para 1.37 o un arreglo de una línea antes de publicar?
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-07) — **P-136-V: SEC-133 límite declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia)**; write-back de §13, notas `[1.36.0]` con fecha, último commit, push. Nada más entra
+
+**Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-136-V: límite declarado para 1.37, con la fila de §13 acotada (qué no
+> cubre y su consecuencia). Write-back de §13, notas [1.36.0] con fecha,
+> último commit, push. Nada más entra.
+
+**Lo que añade la coordinadora:** F-136-23 queda confirmada como ficha de 1.37 (con F-136-21/22 y las lecciones L4/L5). El analista acota la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y su plantilla (qué no cubre: una gate que lea su entrada estándar, SEC-133; una función importada con el nombre de la orden de una gate, SEC-131 (a); consecuencia: el cierre puede salir sin decisión aunque una gate esté en roja), escribe SEC-133 como límite en CA-68 y en la guía, y cierra las notas con la fecha. La coordinadora copia las notas al `CHANGELOG.md`, hace el último commit y el push. **Fusión, tag y publicación: propietario.** La cola queda vacía.
+
+### RESUELTA (propietario, 2026-10-07; entrada de arriba) — [2026-10-07] (coordinadora) — P-136-V: SEC-133 (`contrato`, media, preexistente): una quality gate que lee su entrada estándar se come la lista de las gates siguientes, y el cierre sale sin decisión aunque una gate posterior esté en rojo. ¿Límite declarado para 1.37 o un arreglo de una línea antes de publicar?
 
 **Contexto.** R-057 (`docs/seguridad/registro-seguridad.md`; evidencia `cand-1.36.0/sec115-118/seg-R057/`, `1f73698`): **determinación final de 1.36.0: conforme con hallazgos, sin veto.** Publicar no empeora nada; retener retendría seis hallazgos mitigados (SEC-115 ×3 vías, SEC-118, SEC-120, SEC-127, SEC-128, SEC-129). El código final es el de R-056 (`c5bf6d4`); la pasada revertida no deja rastro.
 
@@ -61,9 +74,6 @@
 **Qué trabajo sigue mientras no se decida:** la corrección de texto de SEC-134 (analista, en curso) y las notas finales; QA investiga el CI rojo. El push espera a esta decisión sólo por el texto de §13.
 
 **Espera:** elección del propietario.
-
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-07) — **P-136-U: (A)** — se revierte el código de `cd63066`; SEC-132 (a) queda como límite declarado con (b) en F-136-22; QA-007-15/16/17 se cierran por reversión
 
