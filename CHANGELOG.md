@@ -2,29 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
-## [1.36.0]` hasta el final del
-> archivo; el título del borrador, este recuadro y la raya que lo cierra se quedan aquí.
->
-> **Esto es un borrador y no es la entrada del CHANGELOG.** Lo escribió el `analista-requerimientos` el 2026-10-06 y
-> lo completó el 2026-10-07, por encargo de la coordinadora (paso 7 del plan de 1.36.0), la última vez tras P-136-V.
-> Al cerrar, la coordinadora lo copia a la entrada `[1.36.0]` de `CHANGELOG.md`. Se leyó del disco del worktree
-> `ArnesJuan-v1.36` (rama `cand/1.36.0`; cabeza `4610004` en la redacción, `c0dfc47` en el cierre). **El analista no
-> tuvo acceso a `git` en estas comisiones:** los commits se citan por las entradas del `CHANGELOG.md` y por las sedes
-> que los nombran, no por `git log`.
->
-> **Queda un solo hueco, `la cabeza final es el commit que contiene estas notas, el último de `cand/1.36.0` antes de la fusión, y se identifica en el PR #60; estas notas no afirman el resultado de su corrida de CI, que llega con el push`**, en cada sitio donde se cita el último commit; no se rellena por
-> adelantado. Ningún veredicto que no esté escrito en su sede se afirma aquí.
->
-> **Regla que este borrador no puede saltarse** (REQ-007 CA-69, punto 5): las sedes de la promesa —entre ellas estas
-> notas— cambian «sólo cuando esté construido y validado, y sólo hasta lo medido». El paso 6 ya está construido y
-> validado: QA favorable sobre el código de `c5bf6d4`, R-056 sin veto y R-057 sin veto sobre el estado final. Por eso
-> aquí se dice **`mitigado`**, la palabra de R-056, y en ningún sitio «reparado».
->
-> **Lo que estas notas no repiten (SEC-134, R-057 §5):** la frase «en 1.35.0, además, el REQ quedaba `completado`»
-> sugiere que 1.36.0 lo evita, y no está medido así. Con las gates de SEC-132 (a), los dos árboles salen sin decisión a
-> los 60 s y el cierre se aplica: 1.36.0 no cambia ese caso.
+## [Interno] — 2026-10-07 · Corrección del commit `da0525b`: el recuadro de aviso del borrador se había copiado al CHANGELOG delante de la entrada `[1.36.0]` (un `index` que casó con una frase partida); retirado; ESTADO cerrado; borrador con su nota en el sitio correcto
+> Origen: GitHub (commit local con push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
----
+- La entrada `[1.36.0]` queda una sola vez, desde su encabezado hasta el final del texto del borrador; su contenido no cambia.
+- ESTADO: «Plan autorizado vigente: ninguno en ejecución»; el cierre de 1.36.0 queda en manos del propietario.
+- **Avance (regla 6):** candidata completa; el CI corre sobre esta cabeza.
 
 ## [1.36.0] — 2026-10-07 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
 

@@ -1,8 +1,6 @@
 # BORRADOR — notas de versión `[1.36.0]`
 
-> **ESTE RECUADRO NO SE COPIA.** Al CHANGELOG va sólo lo que hay desde la línea `> **Copiado al `CHANGELOG.md` el 2026-10-07 como entrada `[1.36.0]`** (con los huecos de la cabeza final resueltos allí por la coordinadora). Lo que sigue es el borrador tal como quedó.
-
-## [1.36.0]` hasta el final del
+> **ESTE RECUADRO NO SE COPIA.** Al CHANGELOG va sólo lo que hay desde la línea `## [1.36.0]` hasta el final del
 > archivo; el título del borrador, este recuadro y la raya que lo cierra se quedan aquí.
 >
 > **Esto es un borrador y no es la entrada del CHANGELOG.** Lo escribió el `analista-requerimientos` el 2026-10-06 y
@@ -25,6 +23,8 @@
 > los 60 s y el cierre se aplica: 1.36.0 no cambia ese caso.
 
 ---
+
+> **Copiado al `CHANGELOG.md` el 2026-10-07 como entrada `[1.36.0]`** (con los huecos de la cabeza final resueltos allí por la coordinadora). Lo que sigue es el borrador tal como quedó.
 
 ## [1.36.0] — 2026-10-07 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
 
