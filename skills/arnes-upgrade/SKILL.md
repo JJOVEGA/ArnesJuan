@@ -1288,6 +1288,260 @@ el corredor necesita **después** del `source` lleva prefijo `ARNES_`.
     sobre los roles**. Así se publica. La corrección del comentario de SEC-126 tampoco lleva firma: así lo decidió
     el propietario del arnés. Detalle en las notas de 1.35.0, «Firmas ausentes, y por qué».
 
+### Hacia 1.36.0
+
+- **Plantilla nueva: `templates/autorizacion.md`.** Es la forma de una autorización del propietario que
+  encarga un trabajo en varias fases para que se ejecute entero, sin parar entre fases: cuatro bloques
+  —«Plan autorizado» (las fases, cada una con su commit local, y la siguiente empieza sin pedir permiso),
+  «Lo que decide la coordinadora sola», «Cuándo paras y me preguntas (solo esto)» y «Si la sesión se
+  corta»—, la línea que `docs/ESTADO.md` lleva mientras haya un plan vigente («Plan autorizado vigente:
+  <id>, fase N de M, siguiente acción: …») y un ejemplo rotulado como tal.
+  **No migra nada por sí sola:** no es un archivo que `arnes-init` copie al proyecto ni que este
+  procedimiento clasifique —no tiene base en `.arnes/plantillas-origen/`—, y su presencia en el plugin
+  no cambia una coma de tu `AGENTS.md`, de tu `PENDING_APPROVAL.md` ni de tu `docs/ESTADO.md`. Usarla
+  es decisión del propietario de tu proyecto. Tampoco autoriza nada ni retira ninguna revisión, firma
+  ni aprobación humana que tus reglas exijan: decide cuándo se para y se pregunta, no qué se valida.
+
+- **Límite declarado: el análisis de un comando de `Bash` en el máximo puede tardar 5 s o más con cuatro formas
+  (REQ-007 CA-54 del arnés, QA-007-01; decisión P-136-F del propietario del arnés, 2026-10-05).** Esta entrada **no
+  migra nada**: dice lo que la versión que instalas **no** promete, para que no lo des por cubierto. **«Límite
+  declarado» no es «riesgo aceptado», y la decisión no repara nada.** CA-54 se cumple en su medición: en el máximo
+  declarado (131 072 bytes), en Linux/WSL2 y a nivel de hook, las 35 corridas de sus dos sondas terminan en menos de
+  5 s, con la misma decisión que 1.35.0. Quedan **fuera** del criterio cuatro formas: un comando que menciona el
+  estado terminal con todos sus destinos fuera de `requirements/`; uno que lleva un carácter no ASCII; un proyecto
+  sin globs de código; y el agente de código cuyo primer destino es código protegido. **Consecuencia:** un comando
+  con esas formas, en el máximo, **se juzga igual pero puede tardar 5 s o más**. Medido en las dos primeras: 10 de
+  30 corridas entre 5,0 y 5,8 s; las otras dos, sin cifra sobre el código del candidato. No es un fallo abierto: la
+  corrida más lenta medida queda a más de 54 s del límite de 60 s del cliente. Un margen no es una garantía: en un
+  equipo más lento o más cargado, el hook podría agotar el tiempo, y eso ya es SEC-115. En Windows/MSYS, sin medir.
+  La reparación, una segunda pasada de CA-54 (la 2b), es de 1.37 por el ajuste de alcance del propietario del arnés
+  del 2026-10-05 (ficha F-136-6): 1.36.0 sale con este límite. Sede: REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`», del arnés.
+
+- **No medido: la corrección de SEC-127 en bash 5.0 o anterior en modo POSIX (REQ-007 CA-47, punto 20, del arnés;
+  decisión P-136-K del propietario del arnés, 2026-10-06).** Esta entrada **no migra nada**: dice lo que la versión
+  que instalas **no** ha medido, para que no lo des por cubierto. El atajo de `guard-completado` cambiaba el locale
+  del proceso que juzga con una asignación delante de una llamada de función; en bash 5.0 o anterior, en modo POSIX,
+  esa asignación persiste al volver de la función, y el cierre por `Bash` de un REQ con un estado terminal no ASCII
+  escrito con otras mayúsculas podría pasar (consecuencia simulada, no reproducida). La reparación restaura el locale
+  sin esa forma. **SEC-127 se acredita con los casos de la sección 47 del banco (LO1 a LO4 y LK) y con la lectura del
+  código.** Esos casos se miden en bash 5.3 y allí no son fail-before. **La prueba en bash 5.0 o anterior en modo
+  POSIX queda declarada como no medida:** en ese intérprete la corrección se sostiene por lectura, no por medida.
+  Sede: REQ-007, CA-47, punto 20, «SEC-127 — cómo se acredita (P-136-K)», del arnés.
+
+- **Cambio de compatibilidad: un REQ muy grande no se escribe entero de una vez, y un `Edit` con un `old_string`
+  grande sobre él se deniega (REQ-007 CA-68 del arnés; decisión P-136-O del propietario del arnés, 2026-10-06).**
+  Esta entrada **no migra nada**: dice qué llamadas legítimas que la versión anterior dejaba pasar **deniega** la
+  que instalas, para que no te sorprenda. Para que un hook que no termina de juzgar a tiempo no deje pasar,
+  `guard-completado` mide el tamaño antes de las operaciones que crecen más que linealmente, y deniega a todo
+  agente por encima de dos techos. **(1)** El `Write` de un REQ cuyo `content` pasa de unos **393 216 bytes** (el
+  techo cuenta el texto troceado: el `content` más 4 bytes, sin el salto final; medido, 393 213 bytes pasan y
+  393 214 deniegan) **se deniega**: un REQ de ese tamaño no se escribe entero de una vez. **(2)** Un `Edit` cuyo
+  producto (bytes del documento más los de los `new_string`) × (bytes de los `old_string`) pasa de **2³²** **se
+  deniega**; en un `MultiEdit` cuentan todas sus ediciones. La frontera depende del tamaño del REQ: sobre uno de
+  660 431 bytes, un `old_string` de 3 000 a 6 400 bytes pasa y uno de 7 000 o más deniega. **Consecuencia y
+  salida:** con 1.35.0 esas llamadas salían sin decisión; ahora el motivo del `deny` lo dice y dice cómo salir:
+  edita el REQ por fragmentos con `Edit`, usa un `old_string` más corto —basta con el trozo que identifica el
+  sitio— o parte la edición en varias llamadas. Los REQ por debajo de esos tamaños no cambian (medido: un `Write`
+  de 296 973 bytes sigue igual). Medido en Linux/WSL2, una corrida por punto; Windows/MSYS y el host, sin medir. Si
+  tus REQ crecen hasta ahí, puedes archivar su historia con la rotación por sección que el arnés ya trae
+  (`rotacion.artefactos`, apagada por defecto). Sede: REQ-007, CA-68, «Techos de tamaño», «Cambio de compatibilidad declarado…», y
+  CA-69, punto 3, del arnés.
+
+- **Cambio de compatibilidad: una entrada del hook que no se puede leer se deniega (SEC-120; REQ-007 CA-47, punto
+  20, del arnés).** Esta entrada **no migra nada**: dice qué deja de pasar con la versión que instalas. **Decisión
+  del propietario del arnés** (2026-10-03, alcance de 1.36.0, punto 2, literal): «SEC-120 (vence 2026-10-29): fallo
+  de jq al leer o trocear la entrada → deny en las herramientas que las puertas juzgan.» Y qué es ilegible (2026-10-05,
+  literal): «todo lo que no sea exactamente un objeto JSON (null, número, vacío, dos objetos seguidos). Fail-closed;
+  es el principio del arnés.» **Qué cambia:** con 1.35.0 esas entradas salían sin decisión; ahora reciben `deny`, a
+  todo agente, con un motivo que dice que la entrada no se pudo leer. También una entrada que no llega porque falla
+  su lectura —por ejemplo, la entrada estándar cerrada—. Una entrada bien formada decide como antes. **Frontera:**
+  sin `CLAUDE_PROJECT_DIR`, el hook es inerte si no puede obtener el proyecto, y deniega si del `cwd` de la entrada
+  obtiene uno con manifiesto (decisión P-136-H del propietario del arnés). Medido a nivel de hook en Linux/WSL2; el
+  host y Windows/MSYS, sin medir. Sede: REQ-007, CA-47, punto 20, del arnés.
+
+- **Cambio de compatibilidad: un valor que la puerta necesita y no puede leer como texto se deniega, también
+  `false`; y en `guard-codigo`, un `file_path` que no es texto se deniega también al agente de código (SEC-120 y
+  SEC-128; REQ-007 CA-47, punto 20, del arnés).** Esta entrada **no migra nada**. **Decisiones:** la del párrafo
+  anterior («leer **o trocear**»), y para SEC-128 la del propietario del arnés P-136-J (2026-10-06, literal): «la
+  reparación es únicamente que un file_path que no es texto no deje pasar a nadie (fail-closed), con su caso de
+  banco.» **No hay una decisión del propietario que nombre `false`:** lo midió QA (`file_path` o `command` en
+  `false` salían sin decisión) y la pasada correctiva de SEC-120 lo reparó dentro de su plan autorizado, porque el
+  criterio ya decidía esos casos. **Qué cambia:** unas ediciones de `MultiEdit` que no son una lista, un número o
+  `false` donde va texto, reciben `deny` de la puerta que necesita ese valor; una puerta que no lo necesita decide
+  como siempre. Y para el agente de código, un `Edit`, `Write` o `MultiEdit` con un `file_path` que no es texto pasa
+  de `allow` a `deny` en `guard-codigo`; por `guard.sh` no cambia ninguna decisión, porque `guard-completado` ya lo
+  denegaba. Sede: REQ-007, CA-47, punto 20, y su subviñeta SEC-128, del arnés.
+
+*Las tres entradas siguientes son del paso 6 de 1.36.0, y su validación está cerrada: QA, favorable sobre el código
+de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, SEC-118 y SEC-129 en `mitigado` —no
+«reparado»— y sus residuales declarados, entre ellos SEC-132 (a) (REQ-007 CA-69, punto 5, del arnés).*
+
+- **Cambio de compatibilidad: el motivo de una denegación y el texto de un aviso salen acotados a 16 384 bytes
+  (SEC-118; REQ-007 CA-67 del arnés; decisión P-136-B del propietario del arnés, 2026-10-03).** Esta entrada **no
+  migra nada**. **Decisión, literal:** «criterio por propiedad: toda denegación decidida llega al cliente, entera o
+  acotada, nunca perdida; el desarrollador elige la técnica; los avisos entran.» **Qué cambia para quien lee la
+  salida:** un motivo o un aviso de más de 16 384 bytes llega cortado, con su comienzo —que nombra la causa—, la
+  nota «[...] (ARNES: motivo acortado: medía N bytes y el tope es 16384; se conserva su comienzo)» y sin un carácter
+  UTF-8 partido. Con 1.35.0, por encima del límite de un argumento no llegaba **nada** y el hook salía sin
+  decisión. **La decisión no cambia** por acotar: cambia el texto. Con contenido que no es UTF-8 válido el tope
+  también se cumple: QA lo midió y cerró QA-007-12. Medido a nivel de hook en Linux/WSL2; el host y
+  Windows/MSYS, sin medir. Sede: REQ-007, CA-67, del arnés.
+
+- **Cambio de compatibilidad: un juicio que agota el plazo propio del hook se deniega, también el legítimo (SEC-115;
+  REQ-007 CA-68 del arnés; decisión P-136-C del propietario del arnés, 2026-10-03).** Esta entrada **no migra nada**.
+  **Decisión, literal:** «techos de tamaño más plazo propio de 40 s, sin procesos.» **Qué cambia:** el hook comprueba
+  su plazo entre unidades de trabajo, sin lanzar procesos, y al vencer deja de juzgar y emite `deny`, a todo agente,
+  con un motivo que lo dice; la respuesta llega en no más de 40 s. **Lo legítimo que agote el plazo se deniega
+  igual**: con 1.35.0, un juicio así podía pasar de los 60 s del cliente y salir sin decisión. Medido en una llamada
+  real: el cierre por `Edit` de un REQ de 3 MB con CRLF en disco recibe `deny` por el plazo a los 36,3 s. El plazo
+  sólo se comprueba antes de la primera quality gate —no entre una y la siguiente ni durante la que está en curso—,
+  así que no alcanza a las gates (SEC-132 (a), límite declarado, abajo); tampoco a una sola operación que no termina
+  (abajo, el límite de QA-007-09). Sede: REQ-007, CA-68, «Un plazo propio del hook de 40 s», y CA-69, punto 3, del arnés.
+
+- **Cambio de compatibilidad: con el modo POSIX heredado del entorno, las puertas de `Bash` vuelven a decidir, y un
+  final que no es un juicio deniega (SEC-129; REQ-007 CA-68, partes (i) y (ii), del arnés; decisiones P-136-L y
+  P-136-N del propietario del arnés, 2026-10-06).** Esta entrada **no migra nada**. **Decisiones, literales:**
+  P-136-L, «la reparación va dentro de SEC-115/118, que ya trata «el hook siempre emite decisión».»; y P-136-N,
+  texto adoptado: «ninguna decisión del hook depende de nada que herede del entorno (modo del intérprete, variables
+  `ARNES_*`; `BASH_ENV` queda como ficha F-136-9).» **Qué cambia:** con `POSIXLY_CORRECT` exportada —también
+  vacía—, `SHELLOPTS` con `posix`, un `BASH_ENV` que hace `set -o posix` o `bash --posix`, la vía `Bash` de
+  `guard-codigo`, `guard-completado` y `guard-git` salía **sin decisión** para toda llamada desde 1.30.3, también el
+  git destructivo. Ahora recibe la misma decisión que sin ese estado: `deny` donde se deniega, y `ls -la` sigue sin
+  decisión. Lo mismo con `ARNES_INPUT_LISTO` o `ARNES_MANIFEST_LISTO` heredadas. Y un error del intérprete, una
+  puerta abandonada a mitad o un código del analizador fuera de su vocabulario **deniegan** en vez de dejar pasar.
+  **Para tu proyecto:** si tu entorno exporta `POSIXLY_CORRECT`, dejarás de ver pasar sin decisión escrituras por
+  shell a código protegido, cierres por shell y git destructivo; sobre lo legítimo no se espera movimiento. Medido a
+  nivel de hook en Linux/WSL2, bash 5.3.9; el host, Windows/MSYS y otros bash, sin medir. Sede: REQ-007, CA-68, «Un
+  final que no es un juicio no deja pasar…», y CA-69, punto 3, del arnés.
+
+- **Límite declarado: un REQ grande con CRLF en disco puede dejar sin decisión el `Edit` que lo cierra (QA-007-09;
+  REQ-007 CA-68, «Límites declarados de 1.36.0», del arnés; decisión P-136-P del propietario del arnés,
+  2026-10-06).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no** cumple, para que no lo des
+  por cubierto. **«Límite declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:**
+  «QA-007-11 (b) y QA-007-09 quedan como límites declarados con ficha para 1.37.» **Alcance:** un `Edit` que cierra
+  un REQ cuyo documento en disco tiene finales de línea CRLF. La normalización de esos finales en
+  `guard-completado` crece más que linealmente y no tiene techo, porque el techo de tamaño mide la entrada de la
+  herramienta y no el disco; y el plazo no interrumpe una sola operación. Medido a nivel de hook en Linux/WSL2, una
+  corrida por punto: con 3 MB, `deny` por el plazo a los 36,3 s; con 3,3 MB, `deny` a los 50,9 s, por encima de los
+  40 s del plazo; con **3,6 MB o más, sin decisión** a los 60 s. **Consecuencia:** por encima de unos 3,6 MB en CRLF,
+  ese cierre puede no recibir decisión, y que el cliente lo tome por permitir es inferido; lo alcanza cualquiera que
+  agrande el REQ y después lo cierre por `Edit`. Es preexistente y peor en 1.35.0, que ya salía sin decisión desde
+  3 MB. En Windows/MSYS la normalización es más lenta y el umbral sería más bajo: sin medir; por `Write` o
+  `MultiEdit`, sin medir. **Si tus REQ crecen hasta ahí,** guárdalos con finales LF o archiva su historia con la
+  rotación por sección (`rotacion.artefactos`). Ficha para 1.37: un techo sobre el documento en disco o una
+  normalización lineal. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
+
+- **Límite declarado: tres estados del intérprete heredados del entorno no se pueden neutralizar desde dentro del
+  hook (QA-007-11 (b); REQ-007 CA-68, «Límites declarados de 1.36.0», del arnés; decisión P-136-P del propietario
+  del arnés, 2026-10-06).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no** cumple.
+  **«Límite declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:** la del párrafo
+  anterior. **Alcance:** `SHELLOPTS` exportada con `noexec` o con `onecmd`, y con `xtrace` junto con
+  `BASH_XTRACEFD=1`, en el entorno en que corre el hook. Con `noexec` el intérprete no ejecuta ninguna línea; con
+  `onecmd` sale tras la primera orden; y `xtrace` escribe la traza en la salida estándar antes de que el hook pueda
+  apagarlo. Medido a nivel de hook en Linux/WSL2: con los dos primeros, **sin decisión** en las llamadas que se
+  deniegan; con el tercero, una salida que no es un JSON válido, y por tanto sin decisión para el cliente
+  (inferido). Igual en 1.35.0. **Consecuencia:** quien controla el entorno del hook puede dejar sin decisión las
+  llamadas que las puertas deberían denegar. **Para tu proyecto:** no exportes esas opciones en el entorno de la
+  sesión. Es la misma frontera que `BASH_ENV`: sólo se podría actuar en la orden de `hooks/hooks.json` que lanza el
+  hook, o declarar la frontera del entorno del host; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de
+  1.36.0», del arnés.
+
+- **Límite declarado: estado heredado del entorno que corre antes de cualquier limpieza del hook (QA-007-13; REQ-007
+  CA-68, «Límites declarados de 1.36.0», «Ampliación por P-136-Q: F-136-20», del arnés; decisión P-136-Q del
+  propietario del arnés, 2026-10-07).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no**
+  cumple. **«Límite declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:**
+  «Límites declarados (F-136-20, 1.37): `.`/`[` antes de entrada.sh, errexit, y BASH_ENV si no está ya cubierto;
+  resolución desde hooks.json.» **Alcance:** (i) una función exportada en el entorno del hook con el nombre `.` o
+  `[` (`BASH_FUNC_.%%`, `BASH_FUNC_[%%`): el hook ejecuta esas dos órdenes para cargar su preludio, antes de que
+  ninguna limpieza corra, así que la función las sustituye y las llamadas que deberían denegarse salen **sin
+  decisión** —y si la función de `[` imprime un `allow`, reciben un **`allow` explícito**, que además salta el
+  diálogo de permisos del cliente (medido a nivel de hook en el candidato de 1.36.0; revisión de seguridad R-056 del
+  arnés)—; (ii) `SHELLOPTS` exportada con `errexit`: el hook **deniega todo**, también lo legítimo —falla hacia el
+  lado cerrado, y la sesión no puede trabajar—; (iii) un `BASH_ENV` con cualquier contenido, que bash ejecuta
+  **antes** que el hook, con sus permisos. Medido a nivel de hook en Linux/WSL2, bash 5.3.9, los dos primeros; el
+  tercero se sostiene por cómo arranca bash. Los tres son preexistentes: también ocurren en 1.35.0. **Consecuencia:** quien
+  controla el entorno del hook puede dejar sin decisión las llamadas que las puertas deberían denegar (que el cliente
+  lo tome por permitir es inferido), **permitirlas de forma explícita** con una función `[` que imprime un `allow`,
+  o bloquear la sesión entera. **Para tu proyecto:** no exportes funciones con
+  esos nombres, ni `SHELLOPTS` con `errexit`, ni `BASH_ENV`, en el entorno de la sesión. El host, Windows/MSYS y otros
+  bash, sin medir. Es la misma frontera que la del párrafo anterior: sólo se resuelve en la orden de
+  `hooks/hooks.json` que lanza el hook; ficha para 1.37. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del
+  arnés.
+
+- **Límite declarado: el plazo del hook no alcanza a tus quality gates, y unas gates lentas o una gate colgada dejan
+  sin decisión el cierre de un REQ (SEC-132 (a); REQ-007 CA-68, «SEC-132 (a) — el plazo propio no alcanza a las
+  quality gates», del arnés; decisión P-136-U del propietario del arnés, 2026-10-07; ficha F-136-22).** Esta entrada
+  **no migra nada**: dice lo que la versión que instalas **no** cumple. **«Límite declarado» no es «riesgo
+  aceptado», y la decisión no repara nada.** **Decisión, literal, en lo que toca a esta entrada:** «SEC-132 (a) queda
+  como límite declarado con (b) en F-136-22, para 1.37, con las tres lecciones de diseño escritas y la nota de que
+  v1.35.0 cerraba el REQ sin decisión en ese caso.» **Alcance:** el plazo propio del hook se comprueba antes de la
+  primera quality gate, y no entre una y la siguiente ni durante la que está en curso. Medido a nivel de hook en
+  Linux/WSL2, una corrida por punto: cuatro gates de 20 s, o una sola gate colgada, dejan el cierre **sin decisión**
+  a los 60 s, y el cierre se aplica. **1.36.0 no cambia ese caso:** el límite es el mismo que en 1.35.0, donde el hook
+  moría sin denegar y el REQ quedaba `completado`; el `deny` fijo de la trampa de salida llega después de que el
+  cliente ya mató el hook. Preexistente. Una
+  reparación preparada en 1.36.0 —acotar la gate en curso al tiempo que queda del plazo e interrumpirla— **se revirtió
+  antes de publicar** por los defectos que abría, uno de ellos un cierre con una gate en rojo; así que en 1.36.0
+  **ninguna gate se interrumpe** y ningún cierre legítimo pasa a `deny` por este motivo. **Consecuencia:** que el
+  cliente tome por permitir un hook sin decisión es inferido. **Para tu proyecto:** que tus quality gates, sumadas,
+  terminen con holgura dentro de los 60 s del cliente, y que ninguna pueda quedarse colgada. El host, Windows/MSYS y
+  otros bash, sin medir. Ficha para 1.37, que se propone antes de implementarse, con tres lecciones de diseño: el canal
+  por el que el hook lee el veredicto de una gate no puede ser escribible por la gate; el corte de una gate que agota
+  el plazo tiene que ser lineal; y la salida de la gate no puede retener el stderr del hook. Sede: REQ-007, CA-68,
+  «SEC-132 (a)…», del arnés.
+
+- **Límite declarado: una función heredada con el nombre de la orden de una quality gate, un límite de descriptores
+  heredado y `PATH` (SEC-131; REQ-007 CA-68, «Límites declarados de 1.36.0», «Ampliación por P-136-S», del arnés;
+  decisión P-136-S del propietario del arnés, 2026-10-07; ficha F-136-21).** Esta entrada **no migra nada**: dice lo
+  que la versión que instalas **no** cumple. **«Límite declarado» no es «riesgo aceptado», y la decisión no repara
+  nada.** **Decisión, literal:** «SEC-131 límite declarado, ficha F-136-21 con F-136-20 (frontera de confianza del
+  entorno; lista blanca en `hooks.json` en 1.37)». **Alcance:** (i) una función exportada en el entorno del hook con
+  el nombre de la orden de una de tus quality gates hace que una gate **roja pase**, y el cierre sale sin decisión;
+  (ii) un `ulimit -n` de 4 o 5 heredado hace fallar el preludio del hook, que se lee como «inerte», y un cierre por
+  shell sale sin decisión; (iii) `PATH` decide qué intérprete y qué herramientas corre el hook, antes de su primera
+  línea. Medido a nivel de hook en Linux/WSL2, bash 5.3.9, (i) y (ii); (iii) es la raíz de confianza, no un vector
+  medido. Preexistentes: también en 1.35.0. **Consecuencia:** quien controla el entorno del hook puede hacer pasar un
+  cierre con una gate en rojo o dejarlo sin decisión (que el cliente lo tome por permitir es inferido). **Para tu
+  proyecto:** no exportes funciones con los nombres de tus gates ni límites de descriptores tan bajos en el entorno
+  de la sesión, y fija tu `PATH`. El host, Windows/MSYS y otros bash, sin medir. Ficha para 1.37, con F-136-20:
+  declarar la frontera de confianza del entorno del host y resolverla con una lista blanca del entorno en la orden de
+  `hooks/hooks.json`. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
+
+- **Límite declarado: miles de líneas `Hallazgos abiertos:` repetidas en la cabecera en disco pueden dejar sin
+  decisión el `Edit` que cierra el REQ (SEC-132 (b); REQ-007 CA-68, «Límites declarados de 1.36.0», «Ampliación por
+  P-136-S», del arnés; decisión P-136-S del propietario del arnés, 2026-10-07; ficha F-136-22).** Esta entrada **no
+  migra nada**: dice lo que la versión que instalas **no** cumple. **«Límite declarado» no es «riesgo aceptado», y la
+  decisión no repara nada.** **Decisión, literal:** «SEC-132 (b) límite declarado, ficha 1.37». **Alcance:** un
+  `Edit` que cierra un REQ cuya cabecera en disco lleva la línea `Hallazgos abiertos:` repetida miles de veces. El
+  juicio de esas líneas crece más que linealmente y no tiene techo delante. Medido a nivel de hook en Linux/WSL2, una
+  corrida por punto: con líneas de 66 caracteres, 12 000 líneas, `deny` en 32,8 s; 20 000, **sin decisión** a los
+  60 s; con líneas cortas, 20 000, `deny` a los 48,5 s, por encima de los 40 s del plazo. **Consecuencia:** lo alcanza
+  quien agranda la cabecera —por ejemplo, con un `Bash` que no menciona el estado— y después la cierra por `Edit`;
+  que el cliente tome por permitir un hook sin decisión es inferido. Preexistente: en 1.35.0 esos casos salen sin
+  decisión. En Windows/MSYS el umbral sería más bajo, sin medir; por `Write` o `MultiEdit`, sin medir. **Para tu
+  proyecto:** una sola línea `Hallazgos abiertos:` por REQ, que es además lo que la regla exige. Ficha para 1.37: una
+  normalización lineal o un techo propio del campo. Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
+
+- **Límite declarado: una quality gate que lee su entrada estándar se come la lista de las gates siguientes, y el
+  cierre de un REQ puede salir sin decisión con una gate posterior en rojo (SEC-133; REQ-007 CA-68, «Límites
+  declarados de 1.36.0», «Ampliación por P-136-V», del arnés; decisión P-136-V del propietario del arnés, 2026-10-07;
+  ficha F-136-23).** Esta entrada **no migra nada**: dice lo que la versión que instalas **no** cumple. **«Límite
+  declarado» no es «riesgo aceptado», y la decisión no repara nada.** **Decisión, literal:** «P-136-V: límite
+  declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia).» **Alcance:** cualquier orden de
+  quality gate que lea de su entrada estándar, la necesite o no; no hace falta ningún ataque. El hook lee la lista de
+  gates por su entrada estándar y cada gate la hereda, así que la que lee consume las líneas que quedaban. Medido a
+  nivel de hook en Linux/WSL2, bash 5.3.9, una corrida por punto: con `cat >/dev/null` o `read -r x; true` delante de
+  `false`, las gates siguientes **no se ejecutan** y el cierre sale **sin decisión**; la misma gate con `</dev/null`,
+  `deny`. Preexistente: igual en 1.35.0. **Consecuencia:** un REQ puede cerrarse con una quality gate en rojo; que el
+  cliente tome por permitir un hook sin decisión es inferido. La fila «No completar un REQ con quality gates en rojo»
+  de §13 lo dice ahora como lo que no cubre, junto con la función heredada con el nombre de la orden de una gate
+  (SEC-131, entrada anterior). **Para tu proyecto:** que ninguna de tus quality gates lea su entrada estándar —si una
+  puede hacerlo, dale la entrada desde `/dev/null` en su orden del manifiesto, que es el control medido—. Qué órdenes reales lo hacen, por `Write` o `MultiEdit`, el host,
+  Windows/MSYS y otros bash, sin medir. Ficha para 1.37, en una sola intervención sobre el bucle de gates con F-136-21
+  y F-136-22, que se propone antes de implementarse: la gate es código no confiable y nada de lo que hereda puede
+  alimentar la lista, el veredicto ni la salida del hook; y los casos adversarios entran al banco antes del intento.
+  Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

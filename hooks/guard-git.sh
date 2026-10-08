@@ -32,6 +32,9 @@
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# Ejecutado por su cuenta es un punto de entrada: R1, plazo y trampa de salida (entrada.sh, SEC-129/115).
+# shellcheck source=/dev/null
+[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
@@ -168,7 +171,11 @@ arnes_guard_git() {
   local -a t reglas args palabras sincr
 
   arnes_parse_input
+  arnes_deny_entrada_ilegible   # SEC-120: a todo agente
   [ "$ARNES_TOOL" = "Bash" ] || return 0
+  if arnes_campo_no_texto; then
+    arnes_deny_no_texto "esta puerta no puede saber que orden de git se ejecutaria" "no se permite a ningun agente; "
+  fi
   [ -n "$ARNES_CMD" ] || return 0
   # Barato y PRIMERO: un `ls -la` o un `npm test` no llegan a leer el manifiesto ni
   # arrancan `jq`. El camino comun de Bash es el mas frecuente que hay y no puede pagar
@@ -345,7 +352,10 @@ arnes_guard_git() {
 # Ejecutado directamente (no `source`): hace su propio preludio y corre. Produccion y
 # banco ejecutan LA MISMA funcion, no dos copias que puedan desfasarse.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio || exit 0
-  arnes_guard_git
+  arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+  arnes_plazo
+  { arnes_guard_git; ARNES_PUERTA_FIN=guard-git; }
+  arnes_juicio_puerta guard-git
+  ARNES_JUICIO=fin
   exit 0
 fi

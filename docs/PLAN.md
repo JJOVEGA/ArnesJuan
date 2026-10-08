@@ -414,7 +414,53 @@ cuando deben.
 
 ---
 
-## 1.36.0 — el working set explícito
+## Objetivo rector del arnés (propietario, 2026-10-06; literal en `PENDING_APPROVAL.md` § Resueltas)
+
+Que el arnés ayude a construir aplicaciones **más rápido, con menos coste y sin perder el control** de cinco cosas: **fidelidad al encargo** (los agentes no cambian requisitos ni alcance sin autorización); **un plan de desarrollo** (qué va primero, qué depende de qué, cuándo una entrega está terminada); **autonomía útil** (continuar lo autorizado sin pararse por cada ajuste menor); **calidad y seguridad proporcionales** (detectar errores sin convertir cada corrección en una cadena interminable); y **medición real** (tiempo, tokens y coste hasta una entrega aprobada; ningún ahorro se presume sin evidencia). Toda ficha de 1.37 y 1.38 se juzga contra esto.
+
+## 1.36.0 — plan vigente por intervenciones (decisiones del propietario del 2026-10-03 y del 2026-10-05)
+
+**Este es el plan de versión vigente de 1.36.0.** Lo escribe la coordinadora con las decisiones del propietario, literales en `PENDING_APPROVAL.md` § Resueltas: «Alcance de 1.36.0», la décima autorización y P-136-A a P-136-F. Cada intervención lleva su propia autorización con la forma de `templates/autorizacion.md`. El contrato vive en `requirements/REQ-007.md`.
+
+**Orden final de 1.36.0** (ajuste de alcance del propietario, 2026-10-05, posterior a `d2880c1`; literal en la cola). Nada más entra; lo nuevo se registra como ficha.
+
+| Paso | Qué | Estado |
+|---|---|---|
+| — | **CA-54 / QA-023-10** (intervención 1) | **Cerrada:** candidato `82ceb63`. QA-007-01 es límite declarado, y la medición de seguridad sobre la recursión (R-052, hasta 2 040 niveles, `deny` y rc 0) es la evidencia |
+| 1 | **SEC-120** (REQ-007 CA-47 p. 20; vence el 2026-10-29): write-back del analista con las decisiones del propietario sobre la fase 2 | **Hecho** (`af362fd`, `72a328e`) |
+| 2 | SEC-120: QA (Opus, comisión nueva) sobre `aba1c9b` | **Hecho:** con hallazgos; una pasada correctiva (`413c6bd`); QA-007-06 como residual (P-136-I) |
+| 3 | SEC-120: seguridad, con QA favorable | **Hecho:** R-053, con hallazgos y sin veto; SEC-120 `mitigado`; SEC-128 → P-136-J |
+| 4 | SEC-120: commit validado | **Hecho** |
+| 5 | **SEC-127, sola** (intervención corta), **más QA-007-06** (entrada estándar cerrada → `deny`; P-136-I), con un caso de banco para cada uno, y las cuatro condiciones de P-136-G: sin subshell (`local LC_ALL=C` o guardar y restaurar); caso de banco del locale tras el atajo y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado; seguridad lo reclasifica al cerrarlo; la versión de bash no se declara como límite | **Hecho** (`78a2f33`; QA conforme sin hallazgos contra el código; R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-129 → paso 6; SEC-130 → F-136-12; QA-007-07 → P-136-N) |
+| 6 | **SEC-115 y SEC-118** (fail-closed: tiempo y motivo; REQ-007 CA-67 a CA-69, ADR-017; plazo propio de 40 s; tope del motivo; los avisos entran, P-136-B/C). **Incluye la reparación de `POSIXLY_CORRECT`** (P-136-L). **Antes de construir:** evaluar CA-68 frente a REQ-017 CA-09; si afecta, parar y presentarlo al propietario con §9. **Incluye QA-007-07** (P-136-N (A)) y los **techos como cambio de compatibilidad declarado** (P-136-O (1) (A)) | **Hecho** (código `c5bf6d4`; QA favorable; R-056 sin veto; SEC-115/118/129 `mitigado`; SEC-130 → F-136-12; SEC-131 y SEC-132 → límites declarados F-136-21/22). **La pasada de SEC-132 (a) (`cd63066`) se revirtió en `986ea6a` por P-136-U** (QA-007-15/16/17). R-057: determinación final sin veto; SEC-133 → P-136-V; SEC-134 texto |
+| 7 | **Cierre:** notas `[1.36.0]`, límites declarados, decisiones de riesgo, limpieza de `propuesta-v1.35.0/` a `docs/historia` o a la evidencia, PR fuera de borrador y CI verde. **Fusión, tag y publicación: propietario** | — |
+
+## 1.37.0 — fichas registradas (propietario, 2026-10-06); no se construyen ahora
+
+| Ficha | Qué |
+|---|---|
+| **a)** | **Plan de desarrollo:** `docs/PLAN.md` como fuente; la coordinadora continúa sola salvo gates; línea derivada en ESTADO (recoge la ficha del campo derivado de `docs/PENDIENTES.md`) |
+| **b)** | **Post-condición de filesystem:** foto antes, comparación después y reversión; el hueco C pasa de límite declarado a detección |
+| **c)** | **Adelgazamiento:** roles, gates y la tabla de §13 a `.arnes/config.json`; `AGENTS.md` a la mitad; la historia a `docs/`; rigor proporcional como regla por defecto; el analista en un modelo más barato y `/compact` entre fases |
+| **d)** | **Spike «ArnesJuan como mod»:** `guard-git` como mod, medido contra el banco |
+| **e)** | **2b de CA-54** (QA-007-01 y la recursión, F-136-5/F-136-6); **push de la candidata por el agente**; **límite declarado de mods** (un mod de usuario puede aprobar lo que las puertas niegan; mitigación `allowManagedModsOnly`) |
+
+## 1.38.0 — fichas registradas (propietario, 2026-10-06)
+
+| Ficha | Qué |
+|---|---|
+| **f)** | Frontmatter YAML en los REQ |
+| **g)** | Veredictos con hash de árbol, comando y rc, comprobados por `guard-completado` |
+| **h)** | Sección adversarial permanente del banco (t3/t4/t5/t5b/t9 por referencia; entornos desde archivos) |
+| **i)** | `runs/` por corrida (observabilidad) |
+
+**Sale a 1.37 como ficha (detalle de e):** la **2b de CA-54**: las formas de QA-007-01 (casos M y N, proyecto sin globs de código, desarrollador con el primer destino en código, M0 y MD medidos en anfitrión sano antes de optimizar) y la recursión sin tope de la lectura léxica (F-136-5, con el caso de banco de destinos profundos primero).
+
+**Fuera de 1.36.0, por decisión del propietario:** el hueco C, P-119-A (F2, F5 y F7) y el mecanismo de SEC-123.
+
+*(Lo que sigue es la planificación anterior de 1.36.0, «el working set explícito». Queda como historia y no está en el alcance vigente.)*
+
+### Historia — 1.36.0, el working set explícito (planificación anterior)
 
 **Qué entra:** archivar los REQ cerrados a `requirements/archive/`, con índice **derivado** y un
 resolutor de identificadores, sin subcarpetas por año y sin que `archivado` sea un estado.

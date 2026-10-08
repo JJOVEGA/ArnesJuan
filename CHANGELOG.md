@@ -2,6 +2,1969 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-07 · Corrección del commit `da0525b`: el recuadro de aviso del borrador se había copiado al CHANGELOG delante de la entrada `[1.36.0]` (un `index` que casó con una frase partida); retirado; ESTADO cerrado; borrador con su nota en el sitio correcto
+> Origen: GitHub (commit local con push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- La entrada `[1.36.0]` queda una sola vez, desde su encabezado hasta el final del texto del borrador; su contenido no cambia.
+- ESTADO: «Plan autorizado vigente: ninguno en ejecución»; el cierre de 1.36.0 queda en manos del propietario.
+- **Avance (regla 6):** candidata completa; el CI corre sobre esta cabeza.
+
+## [1.36.0] — 2026-10-07 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
+
+> Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) y Opus 5.5 (subagentes) ·
+> agentes: `desarrollador` (Opus 5.5), `qa-tester` (Opus 5.5, por la decisión del propietario de `AGENTS.md` §5),
+> `analista-requerimientos` (Opus 5.5), `auditor-seguridad` (Opus 5.5) y la coordinadora (Fable 5.1) ·
+> gobernado por la instalación estable **1.35.0**
+
+**Estas notas no publican nada.** El propietario lo dejó escrito: «Fusión, tag y publicación los decido yo con las
+notas finales delante.» (P-136-S (3), `PENDING_APPROVAL.md` § Resueltas). **CI verde sobre `789a6f9`, run
+`37696987137`: 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la instalación 1.33.2 ausente en el runner, 4 de
+K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, y 13 de reloj e instrumento: los 12 que también salen en local más un INCONCLUSO de rendimiento) y autoprueba 117/0; la cabeza final
+llevará su propia corrida**, y estas notas no afirman su resultado por adelantado: la cabeza final es el commit que contiene estas notas, el último de `cand/1.36.0` antes de la fusión, y se identifica en el PR #60; estas notas no afirman el resultado de su corrida de CI, que llega con el push.
+
+**De dónde salen.** Las decisiones del propietario están literales en `PENDING_APPROVAL.md` § Resueltas:
+- «Alcance de 1.36.0 y apertura de la ventana» (2026-10-03, «Encargo 2»);
+- la décima autorización (2026-10-03), con P-136-A, P-136-B y P-136-C;
+- P-136-D a P-136-O (2026-10-05 y 2026-10-06), el «Ajuste de alcance de 1.36.0» (2026-10-05), los tres puntos de
+  SEC-120 (2026-10-05), la decisión posterior a `39e68bb` (M0 y MD) y el «Resumen del plan vigente» (2026-10-06);
+- P-136-P (2026-10-06) y P-136-Q a P-136-V (2026-10-07).
+
+El contrato vive en `requirements/REQ-007.md` —nota de CA-54 del 2026-10-03, CA-47 punto 20, CA-67 a CA-69— y en
+[ADR-017](../decisions/ADR-017-la-puerta-que-no-puede-leer-terminar-o-emitir-no-deja-pasar.md).
+
+**Cómo están ordenadas** (calcado de las notas `[1.35.0]`):
+- **Qué cambia:** por intervención, qué recibe un consumidor, los cambios de compatibilidad y Semver.
+- **Límites declarados, con alcance y consecuencia.**
+- **Lo no medido: el host y Windows/MSYS.**
+- **Decisiones de riesgo del propietario.**
+- **Firmas**, con lo que esta ventana midió sobre sí misma.
+- **Hacia 1.37.0.**
+- **Historia.**
+
+---
+
+### Qué cambia
+
+**El código de 1.36.0 es el de `c5bf6d4`.** Los commits de código que lo componen, en orden: `82ceb63`, `413c6bd`,
+`a59917d`, `78a2f33`, `0efd3c2`, `8e11f87`, `03cbf5e`, `39e6128` y `c5bf6d4`; la versión, en `b43d7ea`. Lo comprobó
+QA sobre la cabeza `986ea6a`: `git diff c5bf6d4 986ea6a -- hooks/ tests/` vacío y los 11 archivos de `hooks/` iguales
+byte a byte (`docs/qa/REQ-007.md`, «P-136-U: comprobación de la reversión», §1). Una pasada posterior (`cd63066`) se
+revirtió antes de publicar y no está en la versión: va en «Historia».
+
+**Los cambios de compatibilidad, en una línea cada uno** (detalle y decisión citada, en «Cambios de compatibilidad»,
+abajo). En todos el movimiento va **hacia `deny`**; ninguno pasa de `deny` a `allow` (REQ-007 CA-69, punto 3, y
+CA-24):
+1. Una entrada del hook que no es exactamente un objeto JSON, o que no se puede leer, se deniega (SEC-120).
+2. Un valor de `tool_input` que la puerta necesita y no puede trocear como texto —también `false`— se deniega.
+3. En `guard-codigo`, un `file_path` que no es texto se deniega también al agente de código (SEC-128).
+4. Dos techos de tamaño deniegan llamadas legítimas sobre un REQ muy grande (P-136-O).
+5. El motivo de una denegación y el texto de un aviso salen acotados a 16 384 bytes (SEC-118).
+6. Un juicio que agota el plazo propio del hook se deniega, también el legítimo (SEC-115).
+7. Con el modo POSIX u otro estado del intérprete heredado del entorno, las puertas vuelven a decidir lo mismo que sin
+   él, y un final que no es un juicio concluido deniega (SEC-129).
+
+**Y uno que NO está:** las quality gates no se interrumpen por el plazo. La pasada que lo hacía se revirtió (P-136-U),
+así que ningún cierre pasa a `deny` por plazo a causa de sus gates. Es un **límite declarado** (SEC-132 (a), abajo).
+
+#### Por intervención: lo construido y lo validado
+
+El orden es el del propietario (`docs/PLAN.md` § 1.36.0, «Orden final de 1.36.0»; literal en `PENDING_APPROVAL.md`
+§ Resueltas, «Ajuste de alcance de 1.36.0»).
+
+- **Intervención 1 — CA-54 / QA-023-10 (código de `82ceb63`).** *Cerrada como intervención* (`docs/PLAN.md` § 1.36.0,
+  fila «—»).
+  - **Qué hace:** el análisis de un comando de `Bash` en el máximo declarado (131 072 bytes) termina en menos de 5 s en
+    Linux/WSL2, con la misma decisión que v1.35.0 y sin subir el umbral ni reducir la entrada (REQ-007, nota de CA-54
+    del 2026-10-03, «Propiedad»). Es una optimización: cada juicio da el de v1.35.0 y sólo cambia lo que tarda.
+  - **Cómo** (`CHANGELOG.md`, entrada «Décima autorización, fase 2 (CA-54)…», y R-052 §6):
+    - el comando se analiza **una vez** por invocación (`arnes_escrituras_de`);
+    - la fase de tokens del detector corre en **locale C sólo sobre texto ASCII**;
+    - las ramas de «no determinable» salen de las funciones calientes;
+    - el **atajo de `guard-completado`** omite sólo el recorrido de destinos cuando el comando entero no menciona el
+      estado terminal, y sale **después** de toda denegación por forma (`ARNES_RC_EXCESO`, `ARNES_RC_CR`,
+      `ARNES_RC_CUERPO_CR`, `ARNES_RC_LC10`). Lo admite la decisión P-136-D del propietario, con la aclaración de
+      CA-54 (c), literal: «comprobar primero una condición necesaria de una regla, leyendo la entrada entera, no es
+      analizar menos, siempre que ninguna denegación que no dependa de esa condición deje de emitirse».
+  - **Medido por QA sobre `82ceb63`** (`docs/qa/REQ-007.md`, «Décima autorización, fase 3: CA-54», §1, §3, §4 y §6;
+    repetido en REQ-007, nota de CA-54, «Límite declarado del candidato `82ceb63`»):
+    - las 35 corridas de las sondas S1 y S2 por debajo de 5 000 ms, la más lenta en 4 513 ms, con decisión, rc,
+      `bytes=` y `destinos=` iguales a v1.35.0;
+    - 0 procesos añadidos (P-136-A);
+    - inventario del banco de v1.35.0: 2 049 de 2 050 casos idénticos y 1 no acreditado por un INCONCLUSO de
+      rendimiento (CA-69, punto 2 (c));
+    - equivalencia del atajo: 6 148 ejecuciones sin ninguna diferencia de decisión, rc, stdout ni stderr.
+  - **Línea base:** en v1.35.0, 30 de esas 35 corridas pasaban de 5 s (`CHANGELOG.md`, entrada «Décima autorización,
+    fase 1 (CA-54)…»).
+  - **QA-023-10, cerrado por QA en su medición** (REQ-007, nota de CA-54, «QA-023-10, cerrado por QA en su medición»;
+    `docs/qa/REQ-007.md`, «Paso 6: validación…», §9 y §10): lo cierran las 35 corridas sobre `82ceb63` y la decisión
+    P-136-F, punto 3. Una corrida posterior, sobre el código de `8e11f87`, se hizo con el anfitrión degradado: **no
+    acredita los 5 s**, se registró como tal y no se repitió (misma nota).
+  - **Recursión:** `82ceb63` da `deny` y rc 0 hasta 2 040 niveles, con tres tamaños de pila (R-052, citado en
+    `CHANGELOG.md`, entrada «Décima autorización, fase 4…»). La pasada correctiva `dee5932`, que introducía una
+    recursión sin tope (QA-007-02), se **revirtió** en `74da4c5`, con `hooks/` igual a `82ceb63` (P-136-F, punto 1).
+  - **Lo que no:** QA-007-01 —cuatro formas que pueden tardar 5 s o más— sale como **límite declarado** (abajo). La
+    segunda pasada (la «2b») sale a 1.37 (abajo, «Decisiones de riesgo»).
+  - **Determinaciones de la intervención:** QA «con hallazgos: QA-007-01 declarado como límite»; seguridad R-052 «con
+    hallazgos, sin veto», que abrió SEC-127 (registro, R-052 §6).
+
+- **Pasos 1 a 4 — SEC-120 (código de `413c6bd`).** *Cerrada como intervención; SEC-120 `mitigado` en el candidato*
+  (registro de seguridad, R-053 §7).
+  - **Qué hace:** una entrada que `jq` no puede leer, o que no es exactamente un objeto JSON, se deniega a todo agente;
+    un valor de `tool_input` que una puerta necesita y no puede trocear lo deniega esa puerta; ninguna variable conserva
+    la lectura anterior (REQ-007 CA-47, punto 20).
+  - **Qué es «ilegible»** (decisión del propietario sobre la fase 2 de SEC-120, punto 2, literal): «todo lo que no sea
+    exactamente un objeto JSON (null, número, vacío, dos objetos seguidos). Fail-closed; es el principio del arnés.»
+  - **Coste** (misma decisión, punto 1): «0 procesos añadidos» rige sobre el camino común; en una entrada ilegible, el
+    `jq` que emite el `deny` «es el coste de decidir». Medido: normal +0; ilegible +1 (REQ-007 CA-47 p. 20, «Las dos
+    cifras medidas»).
+  - **Pasada correctiva** (`413c6bd`): la entrada vacía, la que empieza por NUL y la que trae algo detrás del objeto
+    pasan a ilegibles (QA-007-03), y `false` en `file_path` o en `command` se deniega como `true` (QA-007-04)
+    (`CHANGELOG.md`, entrada «SEC-120, pasada correctiva única…»).
+  - **Medido por QA en la re-verificación** (`docs/qa/REQ-007.md`, «SEC-120: re-verificación de la pasada
+    correctiva»; resumido en R-053 §7): sección 44, 363/0, con fail-before 314/49; 456 filas de ataque sin ningún
+    `deny` a `allow` y sin falsos positivos; +0 procesos en el camino común.
+  - **Determinaciones de la intervención:** QA «con hallazgos» (QA-007-06 como residual, P-136-I); seguridad R-053
+    «con hallazgos, sin veto», SEC-120 `mitigado`, SEC-128 abierto (registro, R-053 §6 y §7).
+  - **Vencimiento:** el de SEC-120, 2026-10-29, se refiere a la reparación; llega a los proyectos sólo al publicar.
+
+- **Paso 5 — SEC-127, QA-007-06 y SEC-128 (código de `a59917d` y `78a2f33`).** *Cerrado como intervención*
+  (`CHANGELOG.md`, entrada «Paso 5: commit validado…»).
+  - **SEC-127:** el atajo de `guard-completado` ya no cambia el locale con una asignación delante de una llamada de
+    función: guarda `LC_ALL`, lo pone en C y lo restaura con sentencias sueltas, sin subshell y sin procesos
+    (`a59917d`). Seguridad: no queda ninguna asignación de ese tipo en el proceso que juzga; «la reparación elimina la
+    premisa de versión por construcción» (registro, R-055 §2).
+  - **QA-007-06:** un `read` fallido de la entrada —la entrada estándar cerrada, entre otras causas— deja la entrada
+    vacía, que es ilegible, y recibe `deny` en los cuatro guardianes (REQ-007 CA-47 p. 20, «Reparado en SEC-127…»).
+  - **SEC-128:** en `guard-codigo`, un `file_path` que no es texto deniega a todo agente, también al agente de código,
+    en `Edit`, `Write` y `MultiEdit` (`78a2f33`; REQ-007 CA-47 p. 20, subviñeta SEC-128). Por `guard.sh` no cambia
+    ninguna decisión: `guard-completado` ya lo denegaba (R-053 §4).
+  - **Medido:** sección 47, 44/0, con su fail-before; R-055: `LC_ALL` restaurado en 24 combinaciones y la condición
+    nueva de `guard-codigo` en `deny` en 72 (`CHANGELOG.md`, entrada «Paso 5: commit validado…»).
+  - **Determinaciones de la intervención:** QA «código conforme; con hallazgos de contrato» —QA-007-06, cerrado
+    después por su write-back, y QA-007-07, nuevo y preexistente— (`docs/qa/REQ-007.md`, «Paso 5…»). Seguridad R-055
+    «conforme, sin veto»: SEC-127 y SEC-128 `mitigado` en el candidato; SEC-130 abierto (`instrumento`, baja)
+    (registro, R-055 §7 y §9).
+
+- **Paso 6 — SEC-118, SEC-115 y SEC-129, con QA-007-07 y las pasadas de P-136-P, P-136-Q y P-136-R (código de
+  `0efd3c2`, `8e11f87`, `03cbf5e`, `39e6128` y `c5bf6d4`).** *Validado:* QA favorable sobre el código de `c5bf6d4` y
+  R-056 «conforme con hallazgos, sin veto»; **SEC-115, SEC-118 y SEC-129 `mitigado`** en el candidato (REQ-007 CA-67,
+  CA-68 y CA-69 p. 7, «Estado»; registro, R-056 §9 y §10).
+  - **SEC-118 (CA-67):** el motivo de una denegación y el texto de un aviso viajan a `jq` por la entrada estándar, sin
+    ningún dato variable en la línea de órdenes, y se acotan a **16 384 bytes** (`ARNES_MOTIVO_MAX_BYTES`, operativo),
+    conservando el comienzo, con una nota de que se acortó y sin partir un carácter UTF-8. Desde `03cbf5e` se acota
+    **después** de sanear el UTF-8, también con bytes que no lo son (QA-007-12, cerrado). Medido por QA: con UTF-8
+    válido, motivos de 16 382 a 16 384 bytes; con bytes no UTF-8 leídos del disco, 0 casos mal de 393 a nivel de hook,
+    donde `8e11f87` llegaba a 48 872 bytes (`docs/qa/REQ-007.md`, «Paso 6: validación…», §2, y «Paso 6: re-verificación
+    de la pasada correctiva», §2). R-056: un `QA:` de unos 140 KB da el aviso en un JSON de 16 403 bytes y el `deny` en
+    uno de 16 494, donde v1.35.0 no emitía nada (R-056 §1).
+  - **SEC-115 (CA-68):**
+    - plazo propio: **30 s** (`ARNES_PLAZO_S`), comprobado sin procesos entre unidades de trabajo, para que la
+      respuesta llegue en **no más de 40 s** (el plazo de P-136-C); al vencer, `deny` a todo agente con motivo propio;
+    - dos techos: piezas de la escritura, **393 216 bytes** (`ARNES_PIEZAS_MAX_BYTES`), y presupuesto de búsqueda de
+      `old_string`, **2³²** (`ARNES_EDIT_MAX_BUSQUEDA`), los dos operativos;
+    - `hooks/entrada.sh`, nuevo: una **trampa de salida** que emite un `deny` fijo si el proceso termina sin un juicio
+      concluido;
+    - medido por QA sobre `8e11f87`: T1 a T3 en `deny` en 0,4 a 2,6 s, y T2b en 0,2 a 0,4 s, donde v1.35.0 tardaba 32
+      a 38 s; el plazo actúa en una llamada real: el cierre por `Edit` de un REQ de 3 MB con CRLF en disco recibe
+      `deny` a los 36,3 s (`docs/qa/REQ-007.md`, «Paso 6: validación…»; resumen en `PENDING_APPROVAL.md` § Resueltas,
+      P-136-P, «Contexto»);
+    - `mitigado` en sus tres vías registradas —el valor grande, el `Write` grande y la búsqueda de `old_string`— (R-056
+      §10), con residuales: QA-007-09, SEC-132 y la operación única que no termina.
+  - **SEC-129 (CA-68 (i) y (ii)):** `hooks/entrada.sh` sale del modo POSIX al arrancar (R1), arranca el reloj y arma la
+    trampa; una puerta abandonada a mitad o un código del analizador fuera de su vocabulario deniegan (R2). Medido por
+    R-056 (bloque 02): con `POSIXLY_CORRECT=1`, `POSIXLY_CORRECT` vacía, `SHELLOPTS=posix`, un `BASH_ENV` con `set -o
+    posix` y `bash --posix`, la decisión es la del modo normal en los 7 vectores, donde v1.35.0 sale sin decisión.
+  - **La parte (ii) de CA-68 —ninguna decisión depende de nada que el hook herede del entorno—**, por P-136-N (A), con
+    sus pasadas:
+    - QA-007-07 (`8e11f87`): `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` heredadas dejan de apagar las puertas;
+    - QA-007-10 (`03cbf5e`): `ARNES_CWD_VISTO` heredada deja de cambiar la decisión;
+    - QA-007-11 (a) (`03cbf5e`): `FUNCNEST`, `BASH_COMPAT`, `compat31` a `compat44`, `keyword` y las funciones
+      importadas del entorno se neutralizan en `hooks/entrada.sh`;
+    - QA-007-13, la parte de `builtin` (`39e6128`): la limpieza ya no se puede suplantar; lista estática de `unset -f`
+      escrita en el archivo, sin descubrir nombres;
+    - QA-007-14 (`c5bf6d4`): la lista cubre también los builtins **especiales** que el hook usa (`return`, `exit`,
+      `break`, `continue`, `set`, `shift`, `:`).
+
+    Todos validados y cerrados por QA (REQ-007 CA-68 (ii), una viñeta por hallazgo con su sede). R-056: 516
+    combinaciones de opciones heredadas con 12 diferencias, todas límites declarados (F-136-19, F-136-20 (ii)); 198 de
+    variables, 0 diferencias; 2 448 de funciones importadas, 37 diferencias, todas de `.` o `[` (F-136-20 (i))
+    (R-056 §3).
+  - **CA-68 frente a REQ-017 CA-09** (CA-69, punto 7): **«no afecta»**. E1 sin cambio, medido por el desarrollador y
+    por QA, y re-medido por QA hasta el código de `c5bf6d4`. El FAIL de E2 que midió QA (1 de 6, 0,962×, el candidato
+    más rápido) es instrumento, INS-136-4, por decisión del propietario (P-136-P (1) (A)); REQ-017 no se reabre.
+  - **SEC-130:** R2 **no** lo cubre, medido por QA y confirmado por R-056; sigue abierto (abajo, límites).
+  - **Medido por QA sobre `c5bf6d4`** (`docs/qa/REQ-007.md`, «Paso 6: re-verificación de la línea de P-136-R»;
+    evidencia `qa4/`, commit `c4afbde`): sección 47, 106/0; banco del worktree 2 303 PASS, 1 FAIL y 12 SKIP, con cuadre
+    2 316 —el FAIL es INS-136-2, instrumento, y sigue escrito (CA-69, punto 2 (c))—; inventario de CA-69 2 (a), 2 037/0/13,
+    sin movimientos de `deny` a `allow`; autoprueba 117/0; gates rc 0; +0 procesos.
+  - **Veredicto de QA, literal:** «No queda ningún hallazgo de QA contra el código del paso 6 fuera de los límites
+    declarados (F-136-19, F-136-20) y de los registros de instrumento (INS-136-1 a 4).» (misma sección). Y tras la
+    reversión de `cd63066`: «No queda ningún hallazgo de QA contra el código de 1.36.0 (`c5bf6d4`).»
+    (`docs/qa/REQ-007.md`, «P-136-U: comprobación de la reversión»).
+  - **Determinación de seguridad, R-056** (registro, R-056 §9; evidencia `seg-R056/`, commit `4bd3464`): «Determinación
+    sobre el delta del paso 6: CONFORME CON HALLAZGOS, SIN VETO.» En 3 162 combinaciones de entorno más la matriz POSIX,
+    ningún `deny` pasa a `allow` ni a «sin decisión» a nivel de hook; los movimientos son sólo hacia `deny` y están
+    declarados en CA-69, punto 3. Abrió **SEC-131** y **SEC-132**, los dos `contrato` y preexistentes (abajo, límites).
+
+**Sin cambiar ningún hook:** la plantilla `templates/autorizacion.md` (décima autorización; `CHANGELOG.md`, entrada
+«Décima autorización, fase 0…»), con la regla de parada afinada por P-136-E.
+
+#### Qué recibe un consumidor al actualizar
+
+**Con el plugin, sin migrar nada.** Actúa desde que se actualiza. Lista según las sedes; la lista exacta de archivos
+es la de `git diff --stat v1.35.0..<cabeza final> -- hooks/ tools/ templates/ skills/ requirements/README.md`, que sobre el commit de estas notas da «11 files changed, 1231 insertions(+), 255 deletions(-)»; y hasta él hay 107 commits en la rama (20 tocan `hooks/`, `tools/` o `tests/`):
+- `hooks/lib.sh`: CA-54 (análisis único, tokens en C sobre ASCII, atajo), SEC-120, SEC-127, QA-007-06, QA-007-07,
+  QA-007-10, el motivo acotado, el plazo, los techos y R2.
+- `hooks/entrada.sh` (**nuevo**): R1, la limpieza del estado heredado con su lista estática, el arranque del plazo y la
+  trampa de salida. Lo cargan `guard.sh` y, cuando se ejecutan por su cuenta, los tres guardianes (REQ-007 CA-68,
+  «Estado»).
+- `hooks/guard.sh`, `hooks/guard-codigo.sh`, `hooks/guard-completado.sh` y `hooks/guard-git.sh`: la carga de
+  `entrada.sh`, la marca de puerta terminada y, en `guard-codigo` y `guard-completado`, el código no declarado del
+  analizador (R2); en `guard-codigo`, SEC-128; en `guard-completado`, el atajo de CA-54 (R-056, «Delta»).
+- `tools/arnes-lectura.sh`: carga `lib.sh`, así que recibe sus cambios, cambie o no su propio texto (lo dirá el diff).
+- `hooks/hooks.json`: ninguna sede de esta ventana dice que cambie; tocarlo es lo que F-136-9, F-136-19, F-136-20 y
+  F-136-21 dejan para 1.37.
+- `templates/autorizacion.md` (**nuevo**): no migra nada por sí sola (guía, «Hacia 1.36.0», primera entrada).
+- La guía `arnes-upgrade`, § «Hacia 1.36.0»: una entrada por cada cambio de compatibilidad y por cada límite declarado
+  de esta ventana. **Ninguna migra nada**: dicen lo que deniega la versión que se instala y lo que no cumple.
+
+**Sólo si el proyecto migra con `arnes-upgrade`.** Las sedes de la promesa que el proyecto hereda dicen ya lo validado
+(REQ-007 CA-69, punto 5, «Estado», escrito por P-136-S (3)): la cláusula 1 de los límites de `AGENTS.md` §13, la fila
+de los hallazgos, la de la cabecera ambigua y dos filas nuevas —la parte (ii) de CA-68 y SEC-120—, con el mismo texto en
+`templates/AGENTS.md.tpl`; y `requirements/README.md` § «Veredictos de validación» y § «Clases de hallazgo», con su
+plantilla. Dicen **`mitigado`**, nunca «reparado», con sus residuales; lo medido en 1.35.0 queda fechado como historia
+de esa versión; y SEC-132 (a) se nombra como **límite declarado**, con la remisión a F-136-22. **SEC-134 (`contrato`,
+baja; R-057 §5):** esas sedes —la cláusula 1 de `AGENTS.md` §13, su plantilla, la guía, CA-68, CA-69 p. 5 y
+F-136-22— contrastaban SEC-132 (a) con 1.35.0 de un modo que sugería que en 1.36.0 el REQ ya no queda cerrado; no está
+medido así. El texto está **corregido** antes del tag (REQ-007, Historial, 2026-10-07, «Corrección de SEC-134»; y el
+índice de `requirements/README.md`, en la comisión de P-136-V): en 1.36.0 el hook también sale sin decisión y el REQ
+puede quedar cerrado igual. El hallazgo lo cierra quien lo abrió. **Y la fila «No completar un REQ con quality gates
+en rojo» de §13**, que **excedía lo medido** (R-057 §6), queda **acotada por P-136-V**, con el mismo texto en
+`AGENTS.md` y en su plantilla: dice lo que no cubre —una gate que lee su entrada estándar (SEC-133) y una función
+heredada con el nombre de la orden de una gate (SEC-131 (a))— y su consecuencia —el cierre puede salir sin decisión
+con una gate en rojo—, como límites declarados para 1.37.
+
+**Un proyecto que actualiza el plugin y no migra** tendrá la puerta nueva con el texto viejo de §13, que todavía llama a
+SEC-115 y SEC-118 «limitaciones conocidas y sin reparar», como en 1.35.0.
+
+**Lo que mide V4 depende del `jq` del anfitrión** (REQ-007 CA-47 p. 20, «Medida» y «No acredita»; QA-007-18): su
+límite de profundidad de lectura decide si V4 es un control o una entrada ilegible. Con el `jq` de serie de Ubuntu
+24.04 (1.7.x; medido con 1.7.1, que lee hasta 254 niveles), en 1.35.0 el fail-open de SEC-120 se alcanzaba desde
+**255 niveles**, y 1.36.0 deniega esa entrada por ilegible.
+
+#### Cambios de compatibilidad
+
+1. **SEC-120: una entrada ilegible se deniega.** Norma: REQ-007 CA-47, punto 20.
+   - **Decisión del propietario:** «2. SEC-120 (vence 2026-10-29): fallo de jq al leer o trocear la entrada → deny en
+     las herramientas que las puertas juzgan.» («Alcance de 1.36.0…», Encargo 2, punto 2); y qué es ilegible: «todo
+     lo que no sea exactamente un objeto JSON (null, número, vacío, dos objetos seguidos)» (tres puntos de SEC-120,
+     punto 2). Para el `read` fallido: P-136-I (B), «SEC-120 se cierra con QA-007-06 como residual declarado … Se
+     repara dentro de SEC-127».
+   - **Qué deja de pasar:** las entradas que v1.35.0 dejaba sin decisión porque `jq` no las leía o no eran un objeto,
+     y las que no se pueden leer por un `read` fallido. Ahora reciben `deny`, a todo agente, con motivo propio.
+   - **Frontera, por decisión del propietario (P-136-H (A), literal):** «sin CLAUDE_PROJECT_DIR, el hook es inerte si
+     no puede obtener el proyecto; si del cwd de la entrada obtiene uno con manifiesto, deniega». En límites, abajo.
+   - **Lo que se sabe del host:** «no alcanzable desde el host en lo observado», sin verificar (REQ-007 CA-47 p. 20,
+     «No acredita»). Y QA dejó escrito, sin medirlo, que si el host entregara alguna vez una entrada estándar no
+     bloqueante, «el candidato denegaría todo, mientras v1.35.0 dejaba pasar todo sin decidir» (`docs/qa/REQ-007.md`,
+     «Paso 5…», §8).
+2. **Un valor de `tool_input` que la puerta necesita y no puede trocear como texto se deniega; también `false`.**
+   Norma: REQ-007 CA-47 p. 20, segunda viñeta («un valor que debía ser texto y es un número», ejemplo no exhaustivo).
+   - **Decisión:** la del cambio 1, Encargo 2, punto 2 («leer **o trocear**»). **No hay una decisión del propietario
+     que nombre `false`:** QA-007-04 lo midió (`file_path` o `command` en `false` salían sin decisión) y la pasada
+     correctiva que lo repara la decidió la coordinadora dentro del plan autorizado de SEC-120, porque «el contrato ya
+     decide esos casos» (`CHANGELOG.md`, entrada «SEC-120, paso 2: QA (Opus) CON HALLAZGOS…»).
+   - **Qué deja de pasar:** unas ediciones de `MultiEdit` que no son una lista, un número donde va texto, `false` en
+     `file_path` o en `command`. Una puerta que no necesita esa parte decide como siempre.
+3. **SEC-128: un `file_path` que no es texto se deniega también al agente de código.** Norma: REQ-007 CA-47 p. 20,
+   subviñeta SEC-128.
+   - **Decisión del propietario (P-136-J (A), literal):** «la reparación es únicamente que un file_path que no es texto
+     no deje pasar a nadie (fail-closed), con su caso de banco. Nada más entra en esta fase 2 corta.»
+   - **Qué deja de pasar:** para el agente de código, en `Edit`, `Write` y `MultiEdit`, de `allow` a `deny` cuando el
+     texto del campo no nombra un enlace dentro de la raíz (v1.35.0 lo leía como texto y lo dejaba pasar; «por lectura
+     de R-053 §4, no medido aparte», REQ-007 CA-47 p. 20). **Por `guard.sh` no cambia ninguna decisión.**
+4. **Los techos de tamaño: un REQ muy grande no se escribe entero de una vez, y un `Edit` con un `old_string` grande
+   sobre él se deniega.** Norma: REQ-007 CA-68, «Techos de tamaño», «Cambio de compatibilidad declarado…», y CA-69,
+   punto 3.
+   - **Decisión del propietario (P-136-O (1) (A), texto adoptado):** «los techos de tamaño (`ARNES_PIEZAS_MAX_BYTES` =
+     393 216 y `ARNES_EDIT_MAX_BUSQUEDA` = 2³²) quedan como **cambio de compatibilidad declarado** …».
+   - **Texto de la guía** (`skills/arnes-upgrade/SKILL.md`, «Hacia 1.36.0»; copiado): Para que un hook que no termina
+     de juzgar a tiempo no deje pasar, `guard-completado` mide el tamaño antes de las operaciones que crecen más que
+     linealmente, y deniega a todo agente por encima de dos techos. **(1)** El `Write` de un REQ cuyo `content` pasa de
+     unos **393 216 bytes** (el techo cuenta el texto troceado: el `content` más 4 bytes, sin el salto final; medido,
+     393 213 bytes pasan y 393 214 deniegan) **se deniega**: un REQ de ese tamaño no se escribe entero de una vez.
+     **(2)** Un `Edit` cuyo producto (bytes del documento más los de los `new_string`) × (bytes de los `old_string`)
+     pasa de **2³²** **se deniega**; en un `MultiEdit` cuentan todas sus ediciones. La frontera depende del tamaño del
+     REQ: sobre uno de 660 431 bytes, un `old_string` de 3 000 a 6 400 bytes pasa y uno de 7 000 o más deniega.
+     **Consecuencia y salida:** con 1.35.0 esas llamadas salían sin decisión; ahora el motivo del `deny` lo dice y dice
+     cómo salir: edita el REQ por fragmentos con `Edit`, usa un `old_string` más corto —basta con el trozo que
+     identifica el sitio— o parte la edición en varias llamadas. Los REQ por debajo de esos tamaños no cambian
+     (medido: un `Write` de 296 973 bytes sigue igual). Medido en Linux/WSL2, una corrida por punto; Windows/MSYS y el
+     host, sin medir.
+   - **Caso legítimo medido** (REQ-007 CA-68, misma viñeta): el `Write` de `REQ-007.md` entero, 660 431 bytes, salía
+     sin decisión en 11,5 s con v1.35.0 y sale con `deny` en el candidato. QA reprodujo las fronteras y no encontró
+     ningún movimiento fuera de lo declarado (`docs/qa/REQ-007.md`, «Paso 6: validación…»).
+   - **Dirección admitida:** las cifras son operativas; bajarlas es cambio menor con su Historial, y **subirlas queda
+     fuera**: «el propietario no eligió las opciones (B) ni (C) de P-136-O» (REQ-007 CA-68, misma viñeta).
+   - **El síntoma**, un REQ de 660 KB, va a F-136-17, para 1.37 (abajo).
+5. **SEC-118: el motivo y el aviso salen acotados a 16 384 bytes.** Norma: REQ-007 CA-67.
+   - **Decisión del propietario (P-136-B, literal):** «criterio por propiedad: toda denegación decidida llega al
+     cliente, entera o acotada, nunca perdida; el desarrollador elige la técnica; los avisos entran.»
+   - **Qué cambia para quien lee la salida:** un motivo o un aviso de más de 16 384 bytes llega cortado, con su
+     comienzo —que nombra la causa— y la nota «[...] (ARNES: motivo acortado: medía N bytes y el tope es 16384; se
+     conserva su comienzo)» (REQ-007 CA-67, «Estado»), sin un carácter UTF-8 partido, también cuando el contenido
+     interpolado no es UTF-8 válido. En v1.35.0, por encima del límite de un argumento, no llegaba **nada** y el hook
+     salía sin decisión (SEC-118). **La decisión no cambia** por acotar; lo que cambia es el texto, y lo que puede
+     perderse es lo que va **detrás** del contenido interpolado (O-56-3, abajo).
+6. **SEC-115: un juicio que agota el plazo propio se deniega, también el legítimo.** Norma: REQ-007 CA-68, «Un plazo
+   propio del hook de 40 s», y CA-69, punto 3.
+   - **Decisión del propietario (P-136-C, literal):** «techos de tamaño más plazo propio de 40 s, sin procesos.»
+   - **Qué deja de pasar:** «Lo legítimo que agote el plazo se deniega igual, a todo agente» (CA-68). Construido con
+     el plazo en 30 s para responder en no más de 40 s.
+   - **Medido en una llamada real** (QA, sobre `8e11f87`): el cierre por `Edit` de un REQ de 3 MB con CRLF en disco
+     recibe `deny` por el plazo a los 36,3 s, donde v1.35.0 salía sin decisión.
+   - **Lo que el plazo no alcanza:** las quality gates (SEC-132 (a)) y una sola operación que no termina —ejemplos
+     **no exhaustivos**: QA-007-09 y SEC-132 (b)—; los tres, límites declarados (abajo).
+7. **SEC-129 y el estado heredado: las puertas deciden lo mismo que sin él, y un final que no es un juicio deniega.**
+   Norma: REQ-007 CA-68, partes (i) y (ii); ADR-017, notas posteriores del 2026-10-06.
+   - **Decisiones del propietario, literales:** P-136-L (A), «Revisión corta de seguridad ahora, para fijar qué apaga
+     exactamente POSIXLY_CORRECT=1 y desde cuándo (también en v1.35.0: no es regresión); la reparación va dentro de
+     SEC-115/118, que ya trata «el hook siempre emite decisión».»; P-136-N (A), texto adoptado: «ninguna decisión del
+     hook depende de nada que herede del entorno (modo del intérprete, variables `ARNES_*`; `BASH_ENV` queda como
+     ficha F-136-9). Caso de banco para cada variable. Nada más entra.»; y P-136-P (2) (A), P-136-Q (A) y P-136-R (A),
+     que repararon QA-007-10, QA-007-11 (a), QA-007-12, la parte de `builtin` de QA-007-13 y QA-007-14 dentro de esa
+     propiedad.
+   - **Qué cambia:** con `POSIXLY_CORRECT` exportada (también vacía), `SHELLOPTS` con `posix`, un `BASH_ENV` que hace
+     `set -o posix` o `bash --posix`, la vía `Bash` de `guard-codigo`, `guard-completado` y `guard-git` salía **sin
+     decisión** para toda llamada —también el git destructivo—, medido desde v1.30.3 (registro, R-054 §1 y §2). Ahora
+     recibe la misma decisión que en modo normal: `deny` donde el modo normal deniega, y `ls -la` sigue sin decisión.
+     Lo mismo con las variables `ARNES_*` y el estado del intérprete de la parte (ii). Un error del intérprete, una
+     puerta abandonada o un código del analizador fuera de su vocabulario deniegan.
+   - **Para un consumidor:** si su entorno exporta `POSIXLY_CORRECT` —una variable estándar que algunos usuarios
+     exportan, según R-054 §3, «Lectura de amenaza»—, dejará de ver pasar sin decisión escrituras por shell a código
+     protegido, cierres por shell y git destructivo. **Sobre lo legítimo no se espera movimiento**, porque (ii) exige la
+     misma decisión que sin ese estado (ADR-017, nota posterior SEC-129, «Consecuencias»); las variables `ARNES_*`
+     heredadas, en particular, «es protección, no compatibilidad» (REQ-007 CA-69, punto 3).
+   - **Hacia el lado cerrado, dos estados heredados deniegan lo legítimo:** `SHELLOPTS` con `errexit` (preexistente;
+     F-136-20 (ii), abajo) y un `ulimit -f` heredado bajo, que convierte el aviso en `deny` (R-056 §1 y §3).
+
+**Retirado antes de publicar: las quality gates interrumpidas por el plazo (SEC-132 (a)).** P-136-S (1) (A) y P-136-T
+(B) decidieron repararlo en 1.36.0 como cambio de compatibilidad —una gate que no termina dentro del plazo se
+interrumpe y el cierre se deniega—, y la pasada `cd63066` lo construyó. P-136-U (A) la **revirtió** (`986ea6a`) por los
+tres hallazgos que abría. **En 1.36.0 ninguna gate se interrumpe y ningún cierre pasa a `deny` por plazo a causa de sus
+gates, tampoco lo legítimo** (REQ-007 CA-69, punto 3, «Retirado…»). No es un cambio de compatibilidad: es un límite
+declarado, abajo.
+
+#### Semver: `minor` por la convención de este arnés
+
+El número `1.36.0` es el de la ventana que abrió el propietario («Encargo 2 — Apertura de v1.36.0», `PENDING_APPROVAL.md`
+§ Resueltas, «Alcance de 1.36.0…»), y la subida la autorizó él: «la subida de versión a 1.36.0 en los dos archivos de
+distribución (arnes_version se conserva en 1.33.0)» (P-136-S (3)). Hecha en `b43d7ea`; QA la comprobó sobre `986ea6a`:
+`.claude-plugin/plugin.json` y `marketplace.json` en 1.36.0, `arnes_version` en 1.33.0, `jq -e .` rc 0
+(`docs/qa/REQ-007.md`, «P-136-U: comprobación de la reversión», §1).
+
+**En SemVer estricto no es `minor` pura:** los cambios 3, 4 y 6 deniegan llamadas que v1.35.0 dejaba pasar sin esconder
+ningún bloqueante —sobre todo el 4, medido sobre un REQ legítimo—, y el 5 cambia el texto que recibe el cliente.
+Aplicada a la letra, esa regla pediría una versión mayor. La convención de este arnés publica como `minor` o `patch`
+los cambios que cierran un fail-open de la puerta, aunque hagan denegar lo que antes pasaba, y declara una por una las
+incompatibilidades que no esconden nada (notas `[1.35.0]`, «Semver»). Por eso van **declaradas arriba, una por una**.
+
+---
+
+### Límites declarados, con alcance y consecuencia
+
+**«Límite declarado» no es «riesgo aceptado», y declarar no repara.** Lo que sigue se publica abierto. **SKIP e
+INCONCLUSO no acreditan** (decisión 7 de 1.35.0; REQ-007 CA-69, punto 2 (c)). La lista es **no exhaustiva**: lo que no
+esté aquí no queda por ello cubierto.
+
+1. **SEC-132 (a): el plazo propio no alcanza a las quality gates** (REQ-007 CA-68, «SEC-132 (a) — el plazo propio no
+   alcanza a las quality gates»; ficha F-136-22, «Ampliación (P-136-U (A), 2026-10-07)»).
+   - **Decisión del propietario (P-136-U (A), literal):** «P-136-U: (A). Se revierte el código de cd63066 (hooks y
+     banco vuelven a c5bf6d4; se conservan el registro, la versión b43d7ea y la evidencia como historia); QA comprueba
+     que hooks/ es byte a byte c5bf6d4. SEC-132 (a) queda como límite declarado con (b) en F-136-22, para 1.37, con las
+     tres lecciones de diseño escritas y la nota de que v1.35.0 cerraba el REQ sin decisión en ese caso. QA-007-15, 16
+     y 17 se cierran por reversión. El analista lo escribe en CA-68, CA-69 p. 3, AGENTS.md §13 y la guía. Nada más
+     entra; contadores sin reiniciar.»
+   - **Alcance:** un cierre por `Edit` cuyas quality gates no terminan dentro de los 60 s del cliente. Medido a nivel de
+     hook, por `guard.sh`, Linux/WSL2, bash 5.3.9, una corrida por punto: **cuatro gates de 20 s** en serie, o **una
+     sola gate colgada**, dejan el hook **sin decisión** a los 60 s. Alcanzable con una configuración ordinaria del
+     manifiesto, también con todas las gates en verde.
+   - **Causa:** el plazo se comprueba antes de la primera gate (`hooks/guard-completado.sh:946` en `c5bf6d4`; R-056 §7
+     (a)), y no entre una gate y la siguiente ni durante la que está en curso.
+   - **1.36.0 no cambia este caso frente a v1.35.0** (R-057 §5, SEC-134): con cuatro gates de 20 s o una colgada, los
+     dos árboles salen **sin decisión** a los 60 s y el cierre se aplica. En v1.35.0 el hook moría sin salida (rc 124 a
+     60 028 ms; `docs/qa/REQ-007.md`, «SEC-132 (a): re-verificación acotada», §4); en el candidato, lo único que sale es
+     el `deny` fijo de la trampa **después** de que `timeout` señalara al hook, de un hook que el cliente ya mató. En el
+     cliente los dos son «sin decisión», y que eso cuente como permitir es inferido: **el REQ puede quedar `completado`
+     también en 1.36.0**.
+   - **La pasada revertida:** `cd63066` acotaba la gate en curso y daba `deny` por plazo hacia los 30,2 s, pero QA
+     abrió tres hallazgos introducidos por ella: **QA-007-15** (`contrato`, media) —una gate roja con `echo 0 >&3;
+     false` salía sin decisión **y cerraba el REQ**, donde `c5bf6d4` y v1.35.0 deniegan—; **QA-007-16** (`contrato`,
+     baja) —lo que sobrevivía a una gate retenía el stderr del hook—; y **QA-007-17** (`contrato`, baja) —el corte del
+     árbol era superlineal: 14 000 descendientes, sin decisión a los 60 s—. Los tres, cerrados por reversión.
+   - **Tres lecciones de diseño para 1.37** (F-136-22): (1) el canal por el que el hook lee el veredicto de una gate
+     **no puede ser escribible por la gate**; (2) el corte de una gate que agota el plazo tiene que ser **lineal**
+     (grupo de procesos, no recorrido del árbol), con límite declarado para lo que se desligue o ignore TERM; (3) la
+     salida de la gate **no puede retener el stderr del hook** después de decidir. Se propone antes de implementarse.
+   - **Dos lecciones más, de R-057 §3:** **L4** —la gate es código no confiable dentro del proceso del hook: su
+     veredicto es sólo su código de salida, y nada de lo que hereda (entrada estándar, descriptores, salidas, trampas,
+     funciones) puede alimentar la lista, el veredicto ni la salida del hook—; y **L5** —reparar la vivacidad no debe
+     romper la integridad: una reparación de «siempre emite decisión» se valida también contra «nunca pasa una gate
+     roja», con casos adversarios en el banco **antes** del intento de 1.37—.
+   - **Consecuencia:** que el cliente tome por permitir un hook sin decisión es inferido. El candidato **no tiene caso de
+     banco** que mida este vector: se fue con la reversión.
+   - **No medido:** el host, Windows/MSYS, bash distinto de 5.3.9, gates de otras duraciones o en otro número, y los
+     cierres por `Write` o `MultiEdit`.
+2. **SEC-132 (b): miles de líneas `Hallazgos abiertos:` repetidas en la cabecera en disco** (REQ-007 CA-68, «Ampliación
+   por P-136-S»; F-136-22). Decisión (P-136-S (1) (A)): «SEC-132 (b) límite declarado, ficha 1.37.»
+   - **Alcance y medida** (R-056 §7 (b)): un `Edit` pequeño que cierra un REQ con esa línea repetida. Con líneas de 66
+     caracteres: 12 000, `deny` en 32,8 s; 20 000 (1,6 MB), **sin decisión** a los 60 s. Con líneas cortas, 20 000
+     (600 KB), `deny` a los **48,5 s**, por encima de los 40 s del plazo. En v1.35.0, sin decisión.
+   - **Causa:** superlineal y sin techo delante; por lectura y **sin localizar por medida** (un control del proveedor
+     detuvo la sonda de perfil, O-56-2). **No es QA-007-09**, y un techo sobre el disco por encima de 660 KB no lo
+     cubriría (R-056 §5).
+3. **QA-007-09: un REQ grande con CRLF en disco deja sin decisión el `Edit` que lo cierra** (REQ-007 CA-68, «Límites
+   declarados de 1.36.0»; ficha **F-136-18**). Decisión (P-136-P (2) (A), literal): «QA-007-11 (b) y QA-007-09 quedan
+   como límites declarados con ficha para 1.37.»
+   - **Alcance y medida** (QA, sobre `8e11f87`, una corrida por punto): 3 MB, `deny` por el plazo en 36,3 s; 3,3 MB,
+     `deny` en **50,9 s**, por encima de los 40 s; **3,6 MB y 4 MB, sin decisión** a los 60 s. En v1.35.0, sin decisión
+     **desde 3 MB**.
+   - **Causa:** la normalización del CRLF del disco (`hooks/guard-completado.sh:604` en `8e11f87`) es superlineal y no
+     tiene techo: el techo de piezas mide la entrada, no el disco; y el plazo no interrumpe una sola operación.
+   - **No medido:** Windows/MSYS, donde el umbral bajaría; por `Write` o `MultiEdit`.
+4. **QA-007-11 (b): `SHELLOPTS` con `noexec` u `onecmd`, y `xtrace` con `BASH_XTRACEFD=1`, heredados** (REQ-007 CA-68,
+   «Límites declarados de 1.36.0»; ficha **F-136-19**, agrupada en F-136-20). Misma decisión que el 3.
+   - Con `noexec` u `onecmd`, **sin decisión** en todos los vectores que deniegan; con `xtrace` hacia la salida
+     estándar, la salida no es un JSON válido. Igual en v1.35.0. No se neutraliza desde dentro del hook.
+5. **F-136-20: estado heredado que corre antes de cualquier limpieza del hook** (REQ-007 CA-68, «Ampliación por
+   P-136-Q: F-136-20»). Decisión (P-136-Q, literal): «Límites declarados (F-136-20, 1.37): `.`/`[` antes de
+   entrada.sh, errexit, y BASH_ENV si no está ya cubierto; resolución desde hooks.json.» Y P-136-R: «BASH_FUNC_set%% en
+   guardianes sueltos → F-136-20.»
+   - **(i) Funciones importadas con el nombre de `.` o de `[`:** `guard.sh` ejecuta esas órdenes para cargar
+     `hooks/entrada.sh`, antes de cualquier limpieza. Las llamadas que deberían denegarse salen **sin decisión**; y,
+     dato de R-056 (§3, `seg-R056/04-`), **con una función `[` que imprime un `allow`, el hook emite un `allow`
+     explícito** —un único JSON válido— en los 6 vectores del barrido, que además salta el diálogo de permisos del
+     cliente. Con ese entorno el efecto puede ser **cualquier decisión, también `allow`**.
+   - **(ii) `SHELLOPTS` con `errexit`:** deniega todo, también lo legítimo —falla hacia el lado cerrado, y la sesión no
+     puede trabajar—; la orden en la que termina, **inferida**, no localizada.
+   - **(iii) `BASH_ENV` con cualquier contenido** corre antes que el hook, con sus permisos (F-136-9, O-54-1).
+   - **(v) `BASH_FUNC_set%%` en los guardianes ejecutados sueltos**, fuera del camino de producción: `hooks/hooks.json`
+     sólo lanza `guard.sh`.
+   - **Preexistentes** y medidos a nivel de hook en Linux/WSL2, bash 5.3.9, salvo (iii), que se sostiene por cómo arranca
+     bash. Su frontera es la orden con que `hooks/hooks.json` lanza bash.
+6. **SEC-131: una función heredada con el nombre de la orden de una quality gate, un `ulimit -n` heredado y `PATH`**
+   (REQ-007 CA-68, «Ampliación por P-136-S»; ficha **F-136-21**). Decisión (P-136-S (2) (A), literal): «SEC-131 límite
+   declarado, ficha F-136-21 con F-136-20.»
+   - (i) con una función que devuelve 0, una gate **roja** pasa y el cierre sale **sin decisión** (el `eval` de las
+     gates hereda las funciones, `hooks/guard-completado.sh:953`); (ii) con `ulimit -n` de 4 o 5, el preludio falla, se
+     lee como «inerte» y un cierre por `sed -i` sale sin decisión; (iii) `PATH` se resuelve antes de la primera línea
+     del hook y es la raíz de confianza, no un vector medido. Igual en v1.35.0 (R-056 §6).
+7. **QA-007-01: el análisis de `Bash` en el máximo puede tardar 5 s o más con cuatro formas** (REQ-007, nota de CA-54,
+   «Límite declarado del candidato `82ceb63`»; decisión P-136-F, punto 3, literal: «QA-007-01 queda como LÍMITE
+   DECLARADO del candidato: CA-54 se cumple en su medición (las 35 corridas), y las formas que QA añadió (sus casos
+   M/N, un proyecto sin globs de código, el desarrollador con primer destino en código) quedan fuera del criterio y
+   escritas en las notas. La medición en anfitrión degradado se registra como tal, no se repite.»).
+   - **Las cuatro formas,** en el máximo declarado (131 072 bytes), Linux/WSL2, a nivel de hook:
+     - **M**, el comando menciona el estado terminal y todos sus destinos quedan fuera de `requirements/`: 2 de 15
+       corridas en 5 s o más (5 214 y 5 814 ms);
+     - **N**, el comando lleva un carácter no ASCII: 8 de 15, entre 5 012 y 5 613 ms;
+     - **M0**, un proyecto sin globs de código, y **MD**, el agente de código con su primer destino en código
+       protegido: **sin cifra sobre `82ceb63`** (decisión del propietario posterior a `39e68bb`, punto 1, literal:
+       «M0 y MD: límite declarado «sin cifra sobre 82ceb63»; se miden en la intervención 2b, en anfitrión sano, antes
+       de cualquier optimización.»).
+
+     En total, 10 de 30 corridas de M y N entre 5 012 y 5 814 ms, con decisión y rc iguales a v1.35.0 en las 30.
+   - **La medición con el anfitrión degradado** fue sobre `dee5932`, no sobre el candidato: M0 14 de 15 (máximo
+     11 529 ms) y MD 5 de 15 (máximo 8 534 ms). «No acredita ni desmiente nada sobre `82ceb63`.»
+   - **Consecuencia:** un comando con esas formas, en el máximo, **se juzga igual pero puede tardar 5 s o más**. No hay
+     fallo en abierto medido: la corrida más lenta queda a más de 54 s de los 60 s del cliente. Un margen no es una
+     garantía: en un equipo más lento o más cargado, el hook podría agotar el tiempo. Windows/MSYS, sin medir.
+   - **Reparación:** la 2b, que sale a 1.37 (abajo, «Decisiones de riesgo»). QA-007-01 sigue en `Hallazgos abiertos:`
+     de REQ-007 con su clase `contrato`.
+8. **SEC-127: la corrección en bash 5.0 o anterior en modo POSIX, no medida** (REQ-007 CA-47 p. 20, «SEC-127 — cómo
+   se acredita (P-136-K)»; decisión P-136-K (A), literal: «SEC-127 se acredita con los casos de la sección 47 y la
+   lectura del código; la prueba en bash 5.0 en modo POSIX queda declarada como no medida en CA-47 y en las notas.»).
+   - **Texto de la guía** («Hacia 1.36.0», copiado): El atajo de `guard-completado` cambiaba el locale del proceso que
+     juzga con una asignación delante de una llamada de función; en bash 5.0 o anterior, en modo POSIX, esa asignación
+     persiste al volver de la función, y el cierre por `Bash` de un REQ con un estado terminal no ASCII escrito con
+     otras mayúsculas podría pasar (consecuencia simulada, no reproducida). La reparación restaura el locale sin esa
+     forma. **SEC-127 se acredita con los casos de la sección 47 del banco (LO1 a LO4 y LK) y con la lectura del
+     código.** Esos casos se miden en bash 5.3 y allí no son fail-before. **La prueba en bash 5.0 o anterior en modo
+     POSIX queda declarada como no medida:** en ese intérprete la corrección se sostiene por lectura, no por medida.
+   - **Estado:** SEC-127 `mitigado` en el candidato, «laguna declarada, no acreditada» (registro, R-055 §2).
+9. **Sin `CLAUDE_PROJECT_DIR`, el hook es inerte cuando no obtiene el proyecto** (REQ-007 CA-47 p. 20, «Límite
+   declarado…»; P-136-H (A), literal arriba, cambio 1).
+   - **Consecuencia:** una entrada ilegible sin esa variable de la que no se obtiene un proyecto **no recibe `deny`**
+     de este hook. Que el host fije siempre la variable está «observado y **no verificado**».
+10. **SEC-130 (`instrumento`, baja): abierto, no aceptado** (REQ-007 CA-69 p. 7, «Texto final, según R-056»; ficha
+    **F-136-12**, 1.37). El atajo de `guard-completado` afirma «el comando no menciona el estado terminal» sin
+    comprobarlo si la redirección de su grupo falla. R2 **no** lo cubre: el guardián termina y escribe su marca (medido
+    por QA y confirmado por R-056 §4). **Desde fuera del proceso no se alcanza**: con el límite de descriptores
+    heredado en 3, rc 127; en 4 y 5, la vía inerte de SEC-131; en 6 o más, la decisión normal. Sólo se alcanza
+    cambiando el límite **dentro** del proceso. Lo introduce `a59917d`.
+    - **Efecto sobre la publicación:** no bloquea cerrar REQ-007, por su clase; abierto, «devuelve **publicar** al
+      propietario» (R-056 §4).
+11. **O-52-3: con `LC_ALL=C` en el entorno desde el arranque, el cierre por `Bash` con `TERMINÉ`/`terminé` sale sin
+    decisión, también en v1.35.0** (ficha **F-136-7**; REQ-007 CA-47 p. 20, «Fuera de este criterio»). Sin clase
+    asignada: la clasifica el auditor. Sin ventana en 1.36.0 (P-136-K: «O-52-3 pasa a ficha de seguridad»).
+12. **Lo que CA-68 no puede prometer** (REQ-007 CA-68, «Lo que esta propiedad no puede prometer»): si el cliente mata
+    el proceso, nada que el hook haga deniega (SEC-030, abierto aparte); y sin un proceso aparte, una sola operación que
+    se bloquea por dentro no se interrumpe: el plazo se comprueba entre unidades de trabajo. Y, por la documentación de
+    los hooks, un código de salida distinto de 0 o dos documentos JSON en la salida equivalen a «sin decisión»
+    —**inferido, no medido en el host**—; en el candidato sólo aparecen cuando el cliente ya mató el hook o con los
+    vectores de F-136-20 (R-056 §2).
+13. **Fronteras de SEC-120 que no se contratan** (registro, R-053 §5): O-53-1, un `tool_name` que no es texto sale sin
+    decisión en v1.35.0 y en el candidato; queda fuera de la letra del punto 20 y el `matcher` lo hace inalcanzable
+    desde el host. Y lo que mide V4 depende del límite de profundidad del `jq` del anfitrión: con el `jq` de serie de
+    Ubuntu 24.04 (1.7.x), en 1.35.0 el fail-open de SEC-120 se alcanzaba desde 255 niveles, y 1.36.0 deniega por
+    entrada ilegible (REQ-007 CA-47 p. 20, «No acredita»; QA-007-18).
+14. **Heredados de 1.35.0, fuera de 1.36.0 por decisión del propietario** («Alcance de 1.36.0…», literal: «Fuera de
+    alcance: hueco C, P-119-A (F2/F5/F7), SEC-123 mecanismo.»): siguen **abiertos y no aceptados como riesgo**, con su
+    descripción en las notas `[1.35.0]`, «Límites declarados»:
+    - **el hueco C:** las escrituras por intérpretes o scripts no se detectan. Esta ventana lo volvió a medir sobre sí
+      misma (abajo, «Firmas», PR-136-1 a 3) y un proyecto consumidor también (F-136-13). La ficha b) de 1.37 propone
+      convertirlo en detección;
+    - **P-119-A (F2, F5, F7) y SEC-123.**
+15. **Hallazgos que siguen en `Hallazgos abiertos:` de REQ-007** (cabecera, leída del disco en la cabeza `4610004`,
+    antes de R-057; lista sin juzgar, con la clase que declara el campo): QA-114 (`contrato`), QA-116 (`contrato`),
+    QA-117 (`contrato`), SEC-123 (`instrumento`), SEC-124 (`contrato`, «reparado en su alcance (validación manual del
+    propietario)»), SEC-125 (`instrumento`), QA-023-23 (`instrumento`), QA-007-01 (`contrato`), SEC-130
+    (`instrumento`), SEC-131 (`contrato`), SEC-132 (`contrato`), QA-007-08 (`instrumento`, INS-136-4), QA-007-09
+    (`contrato`) y QA-007-11 (`contrato`). R-057 añade **SEC-133** y **SEC-134**, los dos `contrato` (R-057 §8).
+    Salieron del campo en esta ventana, cerrados por quien los firmó: QA-023-10, QA-007-07, SEC-129, QA-007-15,
+    QA-007-16 y QA-007-17, entre otros. Lo que diga el campo sobre la cabeza que se publique es lo que vale.
+16. **Ruido de instrumento, sin reparar** (`docs/PENDIENTES.md`): INS-136-1 (la calibración de `sonda-reloj.sh` sale
+    fuera de banda; F-136-4), INS-136-2 (REQ-017 CA-08 (ii) oscila alrededor de su techo de 1,25×; F-136-8), INS-136-3
+    (el FAIL de la sección 24 que no se reprodujo en 16 corridas de QA), INS-136-4 (E2 de REQ-017 CA-09; F-136-8
+    ampliada) y F-136-16 (el nombre de un caso de la sección 43 depende del PID). Un inventario puede diferir en esos
+    casos sin que cambie el código; el FAIL sigue escrito y **no se desmiente repitiendo**.
+17. **Observaciones de seguridad sin hallazgo** (R-056 §8): **O-56-1**, comentarios del código publicado
+    (`hooks/guard-completado.sh:66-70`, `hooks/lib.sh:1466` y `:3048`) que todavía dicen que el motivo viaja «como UN
+    argumento» de `jq`; **O-56-3**, el recorte del motivo no cambia ninguna decisión, pero puede perder lo que va detrás
+    del contenido interpolado; **O-56-4**, los motivos interpolan contenido del disco en el contexto del modelo, un
+    canal de inyección indirecta preexistente que el tope acota y no crea. Y **O-57-1** (R-057 §6): «los techos de
+    tamaño deniegan antes de las operaciones que crecen más que linealmente», en §13, es más ancho que lo medido; no es
+    hallazgo porque la misma cláusula declara al lado las dos excepciones (SEC-132 (b) y QA-007-09).
+18. **SEC-133 (`contrato`, media, preexistente e igual en v1.35.0; límite declarado por P-136-V, ni aceptado ni
+    reparado): una quality gate que lee su entrada estándar se come la lista de las gates siguientes** (REQ-007 CA-68,
+    «Límites declarados de 1.36.0», «Ampliación por P-136-V: SEC-133»; ficha **F-136-23**; registro, R-057 §4;
+    evidencia `seg-R057/01-`, commit `1f73698`). Decisión (P-136-V, literal): «P-136-V: límite declarado para 1.37,
+    con la fila de §13 acotada (qué no cubre y su consecuencia). Write-back de §13, notas [1.36.0] con fecha, último
+    commit, push. Nada más entra.»
+    - **Qué pasa:** el bucle lee la lista de gates de la entrada estándar (`hooks/guard-completado.sh:958`) y cada gate
+      la hereda (`:953`). Una gate que lee su entrada —medido con `cat >/dev/null` o `read -r x; true`— consume la lista:
+      las gates siguientes **no se ejecutan**, y el cierre sale **sin decisión** aunque una posterior esté en rojo.
+      Controles: la gate roja sola, `true` seguida de `false`, y la misma `cat` con `</dev/null`, dan `deny`.
+    - **Alcance:** cualquier orden de gate que lea de la entrada estándar sin necesitarlo; no hace falta ningún ataque.
+      **No medido:** qué órdenes de gate reales lo hacen; por `Write` y `MultiEdit` (mismo bucle, por lectura); el host,
+      Windows/MSYS y otros bash.
+    - **Consecuencia:** es un fail-open de la puerta de cierre con configuración ordinaria: un REQ puede cerrarse con
+      una quality gate en rojo (que el cliente tome por permitir un hook sin decisión es inferido). No lo introduce
+      1.36.0. Contradecía la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y §7; por P-136-V
+      esa fila, en `AGENTS.md` y en su plantilla, lo declara como lo que no cubre, con SEC-131 (a) y su consecuencia.
+    - **Para un proyecto:** que ninguna quality gate lea su entrada estándar; si una puede hacerlo, la entrada desde
+      `/dev/null` en su orden del manifiesto, que es el control medido (guía, «Hacia 1.36.0»).
+    - **Qué lo resolvería, en 1.37 y propuesto antes de hacerse** (F-136-23, en una sola intervención sobre el bucle de
+      gates con F-136-21 y F-136-22): **L4** —la gate es código no confiable dentro del proceso del hook: su veredicto es
+      sólo su código de salida, y nada de lo que hereda puede alimentar la lista, el veredicto ni la salida del hook— y
+      **L5** —integridad antes que vivacidad: los vectores adversarios de QA-007-15 y de SEC-133 entran al banco, con su
+      fail-before, **antes** del intento—. El candidato **no tiene caso de banco** para este vector.
+19. **SEC-134 (`contrato`, baja, de redacción; abierto): una frase de las sedes de la promesa sugería una mejora que no
+    está medida** (registro, R-057 §5). Es la de SEC-132 (a) sobre 1.35.0, que estas notas no repiten (límite 1). **El
+    texto está corregido antes del tag** en CA-68, CA-69 p. 5, `AGENTS.md` §13, su plantilla, la guía y F-136-22
+    (REQ-007, Historial, 2026-10-07, «Corrección de SEC-134»), y en el índice de `requirements/README.md` en la
+    comisión de P-136-V. El hallazgo lo cierra quien lo abrió; lo que diga `Hallazgos abiertos:` sobre la cabeza que se
+    publique es lo que vale.
+
+---
+
+### Lo no medido: el host y Windows/MSYS
+
+**La regla, la de 1.35.0:** una conducta está medida sólo en la capa y la plataforma en que se ejecutó su caso. Las
+listas son **no exhaustivas**, y que algo no aparezca **no lo hace medido**.
+
+- **Medido:** a nivel de hook en Linux/WSL2, bash 5.3.9 (las sedes de cada intervención, arriba).
+- **El host (`claude -p`):** no ejercido para nada de 1.36.0 en las sedes leídas; «no comprobado en el host» en cada
+  criterio: CA-47 p. 20 («No acredita»), CA-67, CA-68 y CA-69, punto 4. Tampoco la interpretación que el cliente hace
+  del código de salida, de dos documentos JSON o del `deny` fijo que la trampa emite después de una señal (R-056 §11).
+- **Windows/MSYS:** declarado no medido en CA-54 (allí se midió 20,4–28,9 s sobre `3bc7d3c`, sin promesa en esta
+  ventana; nota de CA-54, «No acredita»), en CA-47 p. 20, en CA-67 —que el límite de `CreateProcess` ya no alcance al
+  motivo, al ir por la entrada estándar, es inferido— y en CA-68 —allí la retirada del transporte es superlineal y un
+  mismo juicio tarda varias veces más—. Los límites de tiempo de arriba tendrían allí umbrales más bajos, sin cifra.
+- **Otros intérpretes:** bash 5.0 o anterior en modo POSIX (límite 8); de 4.3 a 5.2, la conducta de SEC-129 es
+  inferida (R-054 §2); bash 3.2, no medido.
+- **Las expansiones `$'…'` en modo POSIX:** sin medir; un control del proveedor detuvo la sonda (O-54-3).
+- **Límites de recursos heredados** `ulimit -v`, `-s` y `-t`: sin medir (R-056 §11).
+- **El banco completo sobre la cabeza final:** lo da el CI. QA no lo corrió sobre `986ea6a` porque su código es
+  `c5bf6d4` byte a byte, ya validado con el banco entero (`docs/qa/REQ-007.md`, «P-136-U…», §3). CI verde sobre
+  `789a6f9`, run `37696987137`: 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la instalación 1.33.2 ausente en
+  el runner, 4 de K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, y 13 de reloj e instrumento: los 12 que también salen en local más un INCONCLUSO de rendimiento) y autoprueba 117/0; la
+  cabeza final llevará su propia corrida: la cabeza final es el commit que contiene estas notas, el último de `cand/1.36.0` antes de la fusión, y se identifica en el PR #60; estas notas no afirman el resultado de su corrida de CI, que llega con el push.
+
+---
+
+### Decisiones de riesgo del propietario
+
+Literales en `PENDING_APPROVAL.md` § Resueltas, en la entrada que se cita. **Ninguna repara lo que decide.**
+
+1. **La 2b de CA-54 sale a 1.37** («Ajuste de alcance de 1.36.0», 2026-10-05, literal): «La 2b de CA-54 sale de
+   1.36.0 y pasa a 1.37 como ficha. CA-54 queda cerrado con QA-007-01 como límite declarado y la medición de seguridad
+   sobre la recursión (hasta 2040 niveles) como evidencia.» Ficha F-136-6.
+2. **La recursión de la lectura léxica sale a 1.37** (P-136-F, punto 2, y el mismo ajuste de alcance): QA-007-02
+   «CERRADO POR REVERSIÓN en el candidato», con la ficha F-136-5 y su condición literal: «Antes de cualquier
+   intervención que la toque, el banco recibe primero el caso de destinos profundos (≈1500 niveles, < 3 KB) con
+   fail-before, y la propiedad es: toda ruta por debajo del límite de entrada recibe una decisión; ninguna mata al
+   hook.»
+3. **QA-007-01, M0 y MD como límites declarados** (P-136-F, punto 3, y la decisión posterior a `39e68bb`, punto 1;
+   literales en el límite 7). QA-007-01 «mantiene la clase `contrato` hasta que QA decida» (misma decisión, punto 2).
+4. **El límite sin `CLAUDE_PROJECT_DIR`** (P-136-H (A)) y **QA-007-06 como residual que se repara antes de publicar**
+   (P-136-I (B)); ya reparado y cerrado en el paso 5.
+5. **SEC-127 sin medir en bash ≤ 5.0 en modo POSIX** (P-136-K (A)), y **O-52-3 a ficha de seguridad** (F-136-7).
+6. **Los instrumentos de reloj, como instrumento:** las calibraciones (P-136-E (A): INS-136-1, «no atribuible al
+   cambio», y F-136-4); REQ-017 CA-08 (ii) (P-136-M (A), rama «sin escalón»: «se registra como instrumento con las
+   cinco cifras, y sigue. … ficha para REQ-017 … se revisa en 1.37, no ahora.»; INS-136-2, F-136-8); y E2 de REQ-017
+   CA-09 (P-136-P (1) (A), literal: «QA-007-08 es INS-136-4; F-136-8 se amplía a CA-09; REQ-017 no se reabre.»).
+7. **Los techos como cambio de compatibilidad, no como riesgo** (P-136-O (1) (A)), con la ficha para adelgazar
+   `REQ-007.md` (F-136-17, 1.37); y el FAIL de la sección 24, observado por QA y registrado como INS-136-3 (P-136-O (2)
+   (A)).
+8. **QA-007-07 dentro del paso 6, y `BASH_ENV` fuera** (P-136-N (A), texto adoptado: «`BASH_ENV` queda como ficha
+   F-136-9»).
+9. **QA-007-09 y QA-007-11 (b) como límites declarados** (P-136-P (2) (A), literal: «la pasada correctiva repara
+   QA-007-10, QA-007-12 y QA-007-11 (a); QA-007-11 (b) y QA-007-09 quedan como límites declarados con ficha para 1.37.
+   Nada más entra.»): F-136-18 y F-136-19.
+10. **Una pasada acotada más, con tope, y F-136-20 como límite** (P-136-Q (A), «con tope de una hora y acotada a
+    QA-007-13»), y la lista estática completada con los builtins especiales (P-136-R (A), literal: «La lista estática
+    cubre los builtins que el hook usa, regulares y especiales (return, exit, break, continue, set, shift, :), retirados
+    en modo POSIX; … BASH_FUNC_set%% en guardianes sueltos → F-136-20. Nada más entra; contadores sin reiniciar.»).
+11. **SEC-131 y SEC-132 (b) como límites declarados** (P-136-S (1) (A) y (2) (A)): F-136-21, con F-136-20, y F-136-22.
+12. **SEC-132 (a): reparar, precisar y, al final, revertir.** P-136-S (1) (A) decidió repararlo en una pasada acotada;
+    P-136-T (B) fijó su forma —«la gate en curso se acota al tiempo que queda del plazo», con su cambio de
+    compatibilidad—; y P-136-U (A), literal en el límite 1, revirtió `cd63066` y lo dejó como **límite declarado** en
+    F-136-22, con las tres lecciones y la nota de 1.35.0. QA-007-15, 16 y 17, cerrados por reversión. La nota del
+    propietario es cierta; lo que R-057 abre como SEC-134 es el contraste que algunas sedes añadieron («además»).
+13. **Las autorizaciones del cierre** (P-136-S (3), literal): «autorizo el write-back de AGENTS.md §13 y su plantilla
+    por el analista, la subida de versión a 1.36.0 en los dos archivos de distribución (arnes_version se conserva en
+    1.33.0), y el push de la candidata al terminar; el PR sale de borrador cuando el CI esté en verde. Fusión, tag y
+    publicación los decido yo con las notas finales delante.»
+14. **Fuera de 1.36.0:** el hueco C, P-119-A (F2, F5, F7) y el mecanismo de SEC-123 («Alcance de 1.36.0…»).
+15. **Lo que se publica sin reparar**, por las decisiones de arriba y por lo que sigue abierto: SEC-132 (a) y (b),
+    SEC-131, QA-007-09, QA-007-11 (b), F-136-20, QA-007-01 y, por P-136-V, SEC-133 (límites); SEC-134 (abierto, con
+    su texto corregido); SEC-130 (`instrumento`); F-136-5, F-136-7, F-136-9; SEC-030; los heredados del límite 14 y los hallazgos
+    del límite 15. **SEC-115, SEC-118 y SEC-129 salen `mitigado`, no reparados sin residuo** (R-056 §10).
+16. **SEC-133 como límite declarado para 1.37, con la fila de §13 acotada** (P-136-V, 2026-10-07, literal): «P-136-V:
+    límite declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia). Write-back de §13, notas
+    [1.36.0] con fecha, último commit, push. Nada más entra.» Es la opción (A) de su ficha, la que recomendaban la
+    coordinadora y R-057 §7. Ficha **F-136-23**, con F-136-21 y F-136-22 y las lecciones L4 y L5 de R-057 (límite 18).
+    La fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y su plantilla dice ahora lo que no
+    cubre (SEC-133 y SEC-131 (a)) y su consecuencia. SEC-134 se corrigió como texto antes del tag (límite 19).
+
+**Quién decide publicar.** El propietario, por su propia letra (P-136-S (3), arriba). La determinación de seguridad
+sobre el estado final es **R-057**, literal: «Determinación sobre el estado final del candidato 1.36.0: CONFORME CON
+HALLAZGOS, SIN VETO.» —el código es el de R-056, la reversión no deja rastro, los dos hallazgos nuevos son preexistentes
+(SEC-133) o de redacción (SEC-134) y «Publicar 1.36.0 no empeora ninguno; retenerla retiene SEC-115/118/120/127/128/129
+`mitigado`» (registro, R-057 §7)—. SEC-131 y SEC-132 siguen **abiertos como límites declarados**, no aceptados, con
+vencimiento en 1.37 (R-057 §2), y SEC-133 también, desde P-136-V.
+
+**Lo que devuelve la publicación al propietario** (`AGENTS.md` §4; R-057 §7, «Qué devuelve la publicación al
+propietario»): los `contrato` abiertos, que impiden hacerlo por delegación.
+- **Del delta:** QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, los nuevos SEC-133 y SEC-134, y QA-007-18
+  (`contrato`, baja; `docs/qa/REQ-007.md`, «CI del PR #60: K4 (V4) en Ubuntu»).
+- **Heredados en REQ-007:** QA-114, QA-116, QA-117 y SEC-124.
+- **Heredados en otros REQ** (por búsqueda de R-057, **no exhaustiva**; la sede es la lectura de la puerta): REQ-013,
+  SEC-014 y SEC-020; REQ-019, SEC-033; REQ-020, SEC-038 a SEC-045; REQ-021, QA-021-10 y QA-021-11.
+- **`instrumento` abiertos, que no bloquean cierre:** SEC-130, SEC-123, SEC-125, QA-023-23 y QA-007-08.
+
+---
+
+### Firmas
+
+**Lo que una firma cubre:** la cabeza sobre la que se emitió. Su cobertura sobre la cabeza que se publique se identifica
+en el PR del candidato (PR #60, en borrador; `PENDING_APPROVAL.md` § Resueltas, «PR #60 en borrador…»).
+
+**REQ-007 no está firmado.** Su cabecera dice `QA: pendiente` y `Seguridad: pendiente`, y su `Estado:` es
+`en-progreso` (`requirements/REQ-007.md`, líneas 2, 8 y 9, en la cabeza `4610004`). Esos dos campos **cubren todo el
+REQ**, no esta ventana: QA lo deja pendiente por lo ajeno al delta —los bloques B y C sin rendir y los hallazgos
+`contrato` abiertos— y seguridad lo dice en R-056 §9: «la firma no procede: el REQ tiene QA pendiente en su conjunto y
+hallazgos `contrato` abiertos». Las revisiones de esta ventana son **determinaciones sobre un delta**, no la firma del
+REQ, y así se rotulan en su sede. Estas notas no anticipan ningún cierre.
+
+| Intervención | QA (sede: `docs/qa/REQ-007.md`) | Seguridad (sede: `docs/seguridad/registro-seguridad.md`) |
+|---|---|---|
+| CA-54 (`82ceb63`) | con hallazgos: QA-007-01 declarado como límite («Décima autorización, fase 3»; re-verificación de `dee5932`, con hallazgos, revertida) | R-052: con hallazgos, sin veto; abre SEC-127 |
+| SEC-120 (`413c6bd`) | con hallazgos, en la validación y en la re-verificación («SEC-120: …») | R-053: con hallazgos, sin veto; SEC-120 `mitigado`; abre SEC-128 |
+| Paso 5 (`78a2f33`) | código conforme; con hallazgos de contrato (QA-007-06, cerrado después; QA-007-07, nuevo) («Paso 5…») | R-054: registro y clasificación de SEC-129, no determinación; R-055: conforme, sin veto; SEC-127 y SEC-128 `mitigado`; abre SEC-130 |
+| Paso 6 (`8e11f87`, `03cbf5e`, `39e6128`) | con hallazgos en las tres: QA-007-08 a 12; QA-007-13; QA-007-14 («Paso 6: validación…», «…re-verificación de la pasada correctiva», «…re-verificación de la pasada acotada de P-136-Q») | — (seguridad va después de QA favorable) |
+| Paso 6 (`c5bf6d4`) | **FAVORABLE** («Paso 6: re-verificación de la línea de P-136-R»; evidencia `c4afbde`) | **R-056: conforme con hallazgos, sin veto**; SEC-115, SEC-118 y SEC-129 `mitigado`; abre SEC-131 y SEC-132 |
+| SEC-132 (a) (`cd63066`, revertido) | con hallazgos: QA-007-15, 16 y 17 («SEC-132 (a): re-verificación acotada»; evidencia `26f6131`) | — (revertido antes de la revisión de seguridad) |
+| Reversión (`986ea6a`) y estado final (`4610004`) | **FAVORABLE**: «No queda ningún hallazgo de QA contra el código de 1.36.0 (`c5bf6d4`).» («P-136-U: comprobación de la reversión») | **R-057: conforme con hallazgos, sin veto**; «Publicar 1.36.0 no empeora ninguno»; abre SEC-133 y SEC-134; evidencia `seg-R057/`, commit `1f73698` |
+
+- R-057 tampoco firma REQ-007: «`Seguridad:` sigue en `pendiente`, con R-057 en su paréntesis» (R-057 §7).
+- P-136-V (2026-10-07) **no cambia ninguna firma**: declara SEC-133 como límite para 1.37 y acota la fila de §13
+  (límite 18 y decisión 16). R-057 sigue siendo la determinación sobre el estado final, y SEC-133 sigue en `Hallazgos
+  abiertos:` de REQ-007 con su clase `contrato`, sin aceptar.
+- **El CI del PR #60 sobre `f1ffac3` estuvo rojo por K4** (run `37482487075`: 4 FAIL, los cuatro de K4, por `guard.sh`
+  y por `guard-completado.sh`). La causa es el `jq` del runner (1.7.1, inferido de la imagen), que no lee V4: la
+  candidata la deniega por entrada ilegible, conforme con CA-47 p. 20, y v1.35.0 la deja pasar (SEC-120). El ajuste del
+  caso (sólo K4 de la sección 44) lo deja, con ese `jq`, en **SKIP con motivo** que exige el `deny` por ilegible —y en
+  FAIL con los hooks de v1.35.0 como candidata—; con un `jq` que lee V4 corre como antes (`docs/qa/REQ-007.md`, «CI del
+  PR #60…», §3). Ninguno de los SKIP del CI acredita (REQ-007 CA-69 p. 2).
+- **Dos rojos previos, corregidos sin tocar el contenido del código:** el bit `+x` de `hooks/entrada.sh`, que estaba
+  en `100644` y el workflow exige en `100755` (`f6b0a90`; el blob es el mismo); y la sección 44 del banco, que tras el
+  ajuste de K4 tenía 416 líneas sobre un techo de 400 de la autoprueba (CA-18), compactada a 400 sin cambiar casos
+  (`789a6f9`).
+- **CI verde sobre `789a6f9`, run `37696987137`:** 2278 PASS, 0 FAIL, 38 SKIP (ninguno acredita: 18 por la
+  instalación 1.33.2 ausente en el runner, 4 de K4 por el `jq` 1.7.1, 3 de REQ-017 CA-10 con bash 5.2.21, el resto de
+  reloj) y autoprueba 117/0; la cabeza final llevará su propia corrida: la cabeza final es el commit que contiene estas notas, el último de `cand/1.36.0` antes de la fusión, y se identifica en el PR #60; estas notas no afirman el resultado de su corrida de CI, que llega con el push.
+- Los controles del proveedor que detuvieron una línea de trabajo se registraron y no se reintentaron: los locales
+  GB18030 y BIG5 de QA (P-136-F, punto 4), la sonda de `$'…'` (O-54-3), una búsqueda del auditor (O-55-1) y la sonda de
+  perfil de SEC-132 (b) (O-56-2).
+
+#### Lo que esta ventana midió sobre sí misma: seis hallazgos de proceso
+
+Los seis son clase `instrumento`, están en `docs/PENDIENTES.md` y ninguno se reparó en esta ventana. Ninguno cambia lo
+que el código hace —eso lo juzgan el inventario, el banco, QA y seguridad—; cambian lo que el proceso puede acreditar
+de cómo se hizo.
+- **Tres ediciones de código protegido o del banco por consola, que ninguna puerta midió** (`AGENTS.md` §13, «La
+  invariante manda sobre cualquier preferencia de herramienta»): **PR-136-1**, dos ediciones de `hooks/` con `python3`
+  en la fase 2 de CA-54; **PR-136-2**, un `sed -i` sobre la sección 44 del banco en la fase 1 de SEC-120; **PR-136-3**,
+  una edición de `hooks/guard-completado.sh` por consola en la fase 2 del paso 6, deshecha y rehecha con `Edit`. Las
+  tres del `desarrollador`; PR-136-2 y PR-136-3 las declaró él mismo, y PR-136-1 consta en la entrada del
+  `CHANGELOG.md` que la ficha cita.
+- **Dos commits de evidencia con el camino de los hooks de git anulado:** **PR-136-4** (`core.hooksPath=/dev/null`) y
+  **PR-136-5** (`-c core.hooksPath=`), los dos del `qa-tester` en el árbol de evidencia, declarados por él. La ruta
+  configurada no existía en ese repositorio, así que no se saltó ningún hook; aun así es la forma del bypass.
+- **Un error de despacho de la coordinadora:** **PR-136-6**, dos comisiones a la vez sobre `requirements/REQ-007.md`,
+  contra `AGENTS.md` §6 («dos comisiones que tocan el mismo archivo»). Una línea de la cabecera quedó pegada y la
+  cabecera sin `Rigor:`; QA lo detectó y lo reparó, y la coordinadora comprobó la cabecera y el lector antes de
+  comitear.
+- **Qué lo cerraría:** para las ediciones por consola, la ficha b) de 1.37 (post-condición de filesystem); para el
+  despacho, no declarar disjuntas dos comisiones que nombren el mismo archivo —`tools/arnes-paralelo.sh` compara REQ,
+  no comisiones—.
+
+---
+
+### Hacia 1.37.0
+
+**Las fichas del propietario, tal como las dejó** (`docs/PLAN.md` § «1.37.0 — fichas registradas»; literales en
+`PENDING_APPROVAL.md` § Resueltas, «Resumen del plan vigente de 1.36.0…», 2026-10-06). Se juzgan contra el objetivo
+rector del arnés (`docs/PLAN.md` § «Objetivo rector del arnés»). **No se construyen en 1.36.0.**
+
+> a) Plan de desarrollo (docs/PLAN.md como fuente; la coordinadora continúa
+>    sola salvo gates; línea derivada en ESTADO).
+> b) Post-condición de filesystem (foto antes / comparación después /
+>    reversión; hueco C pasa de límite a detección).
+> c) Adelgazamiento: roles, gates y tabla §13 a .arnes/config.json; AGENTS.md
+>    a la mitad; historia a docs/; rigor proporcional como regla por
+>    defecto; analista en modelo más barato y /compact entre fases.
+> d) Spike «ArnesJuan como mod»: guard-git como mod medido contra el banco.
+> e) 2b de CA-54 (QA-007-01, recursión), push de candidata por el agente,
+>    límite declarado de mods (un mod de usuario puede aprobar lo que las
+>    puertas niegan; mitigación allowManagedModsOnly).
+
+**Detalle de e), de `docs/PLAN.md`:** «la **2b de CA-54**: las formas de QA-007-01 (casos M y N, proyecto sin globs de
+código, desarrollador con el primer destino en código, M0 y MD medidos en anfitrión sano antes de optimizar) y la
+recursión sin tope de la lectura léxica (F-136-5, con el caso de banco de destinos profundos primero).»
+
+**Fichas registradas con destino 1.37, rotuladas como tales** (`docs/PENDIENTES.md`; no son fichas a–e del
+propietario, aunque varias caen dentro de ellas):
+- **F-136-6**, la 2b, y **F-136-5**, la recursión (dentro de e));
+- **F-136-22**, SEC-132 (a) y (b), con las tres lecciones de diseño, más L4 y L5 de R-057 §3;
+- **F-136-23**, SEC-133 (la gate que lee su entrada estándar), declarado para 1.37 por P-136-V; con F-136-21 y
+  F-136-22, una sola intervención sobre el bucle de gates bajo L4 y L5, con los vectores adversarios en el banco antes
+  del intento;
+- **F-136-20**, el estado heredado que sólo la orden de `hooks/hooks.json` puede neutralizar, que agrupa **F-136-9**
+  (`BASH_ENV`) y **F-136-19** (QA-007-11 (b)); y **F-136-21**, SEC-131, la frontera de confianza del entorno del host,
+  con la lista blanca del entorno que propone el auditor (R-056 §3 y §6);
+- **F-136-18**, QA-007-09 (un techo sobre el disco o una normalización lineal del CRLF);
+- **F-136-12**, SEC-130;
+- **F-136-17**, adelgazar `REQ-007.md`;
+- **F-136-8**, las tres sondas de reloj de REQ-017 (CA-03, CA-08 (ii) y CA-09);
+- **candidatas:** F-136-14 (la rotación del CHANGELOG sin aviso), F-136-15 (el bloque derivado de `docs/ESTADO.md`) y
+  F-136-16 (el nombre de un caso que depende del PID).
+
+**Sin ventana:** F-136-4 («para después»), F-136-7 (O-52-3, la clasifica el auditor) y F-136-1 a F-136-3. Y una
+propuesta del auditor sin ficha, para proponerse antes de hacerse: que la trampa salga además con código 2 y el motivo
+en la salida de errores, un canal de bloqueo que no depende de la salida estándar (R-056 §2).
+
+*(1.38.0: fichas f–i en `docs/PLAN.md` § «1.38.0 — fichas registradas».)*
+
+---
+
+### Historia
+
+**Una línea por commit de código**, en el orden del `CHANGELOG.md`, con la entrada que lo registra. No se reescribe
+nada. Cada cifra es de la cabeza que nombra. La lista exacta, para contrastarla, es la de `git log --first-parent
+v1.35.0..<cabeza final> -- hooks/ tools/ tests/ .claude-plugin/` («13 files changed, 1458 insertions(+), 218 deletions(-)» sobre el commit de estas notas).
+
+| Commit | Qué trae | ¿En 1.36.0? | Registro (`CHANGELOG.md`) |
+|---|---|---|---|
+| `82ceb63` | CA-54: análisis de `Bash` en el máximo por debajo de 5 s (35/35, máx. 3 711 ms según el desarrollador; 4 513 ms según QA) con las mismas decisiones; atajo de `guard-completado` readmitido por P-136-D | sí | «Décima autorización, fase 2 (CA-54)…» |
+| `dee5932` | Pasada correctiva de QA-007-01; introduce QA-007-02 (recursión sin tope, SIGSEGV) | **no: revertido** | «Décima autorización: pasada correctiva de QA-007-01 comiteada…» |
+| `74da4c5` | Revert del código de `dee5932` por P-136-F; `hooks/` = `82ceb63` | sí (lo deshace) | «Revert del código de `dee5932` por P-136-F…» |
+| `6759a8e` | SEC-120, fase 1: 28 casos del banco con fail-before, sin reparar | sí (banco) | «SEC-120, fase 1 hecha por el desarrollador en `6759a8e`…» |
+| `aba1c9b` | SEC-120, fase 2: una entrada que `jq` no puede leer o trocear no pasa | sí | «Intervención 2 (SEC-120), fase 2…» |
+| `413c6bd` | SEC-120, pasada correctiva única: QA-007-03 (entrada vacía o con NUL) y QA-007-04 (`false` en `file_path` o en `command`) | sí | «SEC-120, pasada correctiva única…» |
+| `ab52c9b` | Paso 5, fase 1: casos de QA-007-06 con su fail-before, sin reparar | sí (banco) | «Paso 5, fase 1 (`ab52c9b`, SIN VALIDAR)…» |
+| `a59917d` | Paso 5, fase 2: SEC-127 (locale sin asignación delante de una función) y QA-007-06 (`read` fallido → ilegible) | sí | «Paso 5 (SEC-127 y QA-007-06), fase 2…» |
+| `78a2f33` | SEC-128: en `guard-codigo`, un `file_path` que no es texto no deja pasar a nadie | sí | «Paso 5, SEC-128 (P-136-J (A, acotada))…» |
+| `738b74d` | Paso 6, fase 1: 93 casos de SEC-118, SEC-115 y SEC-129 con fail-before, sin reparar | sí (banco) | «Paso 6, fase 1 registrada (`738b74d`…)…» |
+| `0efd3c2` | Paso 6, fase 2: SEC-118 (motivo por la entrada estándar, acotado a 16 384 bytes), SEC-115 (plazo, techos y trampa) y SEC-129 (`hooks/entrada.sh`, R1 y R2) | sí | «Paso 6, fase 2 (desarrollador)…» |
+| `8e11f87` | QA-007-07: las marcas de «ya leído» de `lib.sh` no se heredan del entorno | sí | «Paso 6 (desarrollador): QA-007-07…» |
+| `03cbf5e` | Pasada correctiva única del paso 6: QA-007-10, QA-007-12 y QA-007-11 (a); introduce QA-007-13 | sí | «Paso 6, pasada correctiva (desarrollador)…» |
+| `39e6128` | P-136-Q: QA-007-13, la limpieza de `entrada.sh` ya no se puede suplantar; introduce QA-007-14 | sí | «Paso 6 (desarrollador): QA-007-13…» |
+| `c5bf6d4` | P-136-R: QA-007-14, los builtins especiales entran en la lista estática de `entrada.sh`. **Es el código de 1.36.0** | sí | «Paso 6 (desarrollador): QA-007-14…» |
+| `cd63066` | P-136-S/T: SEC-132 (a), el plazo dentro de las quality gates (`arnes_corta_gate`); introduce QA-007-15, 16 y 17 | **no: revertido** | «Paso 6 (desarrollador): SEC-132 (a)…» |
+| `b43d7ea` | Versión 1.36.0 en `.claude-plugin/plugin.json` y `marketplace.json`; `arnes_version` sigue en 1.33.0 | sí (distribución) | «Candidato 1.36.0: versión en los dos archivos de distribución» |
+| `986ea6a` | Revert del código de `cd63066` por P-136-U; `hooks/` y `tests/` = `c5bf6d4` | sí (lo deshace) | «Revert del código de cd63066 por P-136-U…» |
+| `19cf88e` | Ajuste del caso K4 de la sección 44 por el `jq` 1.7.1 del runner (lee 254 niveles): con él, SKIP con motivo que exige `deny` por entrada ilegible; con un `jq` que lee V4, como antes; sin tocar `hooks/` (QA-007-18) | sí (banco) | «CI del PR #60: causa medida (el `jq` 1.7.1 del runner lee 254 niveles); ajuste del caso K4…» |
+| `f6b0a90` | Modo `100755` de `hooks/entrada.sh`, que exige el CI; el blob es el mismo | sí (modo, sin cambio de contenido) | «Modo 100755 de hooks/entrada.sh; el CI lo exige; sin cambio de contenido» |
+| `789a6f9` | Sección 44 compactada de 416 a 400 líneas, el techo de la autoprueba (CA-18), sin cambiar casos | sí (banco) | «Sección 44 bajo el techo de 400 líneas (CA-18) tras el ajuste de K4; sin cambio de casos» |
+
+**La certificación de una cabeza es la corrida que se ejecutó sobre ella, y nada más amplio.** Ningún CI verde
+acredita rendimiento, conducta ni ahorro (notas `[1.35.0]`, «Historia»).
+
+## [Interno] — 2026-10-07 · P-136-V resuelta por el propietario: SEC-133 límite declarado para 1.37 (F-136-23) con la fila de §13 acotada; se cierran las notas y la candidata
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía. Nada más entra en 1.36.0.
+- **Avance (regla 6):** última decisión de la ventana tomada; faltan el write-back de §13, las notas en el CHANGELOG, el último commit y el push.
+
+## [GitHub] — 2026-10-07 · CI VERDE sobre `789a6f9` (run 37696987137); PR #60 fuera de borrador; dos rojos previos corregidos sin tocar el contenido del código
+> Origen: GitHub (commits locales con push autorizado) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (modo `100755` de `hooks/entrada.sh`, `f6b0a90`), `qa-tester` (sección 44 compactada a 400 líneas, `789a6f9`; ~181 k tokens en la comisión del CI) y la coordinadora.
+
+- **Tres corridas del CI sobre la rama hoy:** `19cf88e` rojo en «bit de ejecución» (`hooks/entrada.sh` en `100644`; sin efecto en runtime porque se carga con `source`; corregido a `100755`, mismo blob); `f6b0a90` rojo sólo en la autoprueba (CA-18: la sección 44 con 416 líneas tras el ajuste de K4; compactada a 400 sin cambiar casos), **con el banco de hooks ya en verde**; `789a6f9` **verde entero**.
+- **Lección menor:** la autoprueba local no comprueba los modos de archivo; el CI sí. Los dos rojos los detectó el CI y ninguno tocó el contenido de `hooks/`.
+- **PR #60** sale de borrador (P-136-S (3)); fusionar, etiquetar y publicar siguen siendo del propietario.
+- **Avance (regla 6):** la candidata tiene CI verde; faltan P-136-V y las notas finales en el CHANGELOG.
+
+## [GitHub] — 2026-10-07 · Sección 44 bajo el techo de 400 líneas (CA-18) tras el ajuste de K4; sin cambio de casos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `qa-tester`. Causa: el CI del PR #60 (run 37696182726, sobre `f6b0a90`) pasa el banco de hooks pero la autoprueba del corredor falla en CA-18: `44-integridad-de-la-entrada.sh` tenía 416 líneas con techo 400 (396 antes del ajuste de K4).
+
+- **Cambio:** el bloque condicional de K4 pasa de 21 a 5 líneas, con la misma lógica, los mismos casos y los mismos motivos. La sección queda en **400** líneas (piso 62, techo 400). No toca `hooks/` ni ningún otro caso ni veredicto.
+- **Comprobado:** autoprueba del corredor 117 PASS, 0 FAIL, con «CA-18 ningún archivo excede max(N, piso × k)» en PASS. Sección 44: 363/0 con jq 1.8.2 y 359/0/4 SKIP (los de K4) con jq 1.7.1 de Ubuntu, con las mismas líneas de resultado que antes de compactar. Gates de §7: rc 0.
+- **Avance (regla 6):** con esto la autoprueba vuelve a verde. Falta que el CI corra sobre la cabeza.
+
+## [GitHub] — 2026-10-07 · Modo 100755 de hooks/entrada.sh; el CI lo exige; sin cambio de contenido
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Causa: el CI del PR #60 (run 37695756807, sobre `19cf88e`) falló en «bit de ejecución en todo punto de entrada».
+
+- **Causa:** `hooks/entrada.sh` se creó en la fase 2 con la herramienta de edición, quedó en el índice como `100644` y nunca recibió el bit de ejecución. El workflow exige `100755` para todo `hooks/*.sh`. En runtime no tenía efecto, porque se carga con `source`, pero rompía la propiedad del CI y el banco no llegaba a arrancar.
+- **Cambio:** `chmod +x hooks/entrada.sh`, que queda en `100755`. El blob es el mismo, `bfa252c`.
+- **Comprobado:** el paso del workflow, reproducido en local, sale con todos los puntos de entrada en `100755` y las secciones del banco en `100644`. Gates de §7: rc 0.
+- **Avance (regla 6):** la propiedad de los modos del CI vuelve a cumplirse. Falta que el CI corra sobre la cabeza.
+
+## [GitHub] — 2026-10-07 · CI del PR #60: causa medida (el `jq` 1.7.1 del runner lee 254 niveles); ajuste del caso K4 del banco sin tocar `hooks/`; QA-007-18 (`contrato`, baja) con write-back en CA-47 p. 20; nota §9 de R-057 (con jq 1.7.x el fail-open de SEC-120 en lo publicado empieza en 255 niveles); push de la candidata
+> Origen: GitHub (commit local y **push** autorizado por el propietario en P-136-S (3)) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; reproducción con el paquete `jq` 1.7.1 extraído sin instalar; `docs/qa/REQ-007.md` «CI del PR #60: K4 (V4) en Ubuntu»; sección 44; cabecera de REQ-007; evidencia `4e8b2e0`; ~165 k tokens), `auditor-seguridad` (R-057 §9; ~75 k), `analista-requerimientos` (CA-47 p. 20, CA-69 p. 2, notas, índice) y la coordinadora.
+
+- **Medido:** jq 1.8.2 lee hasta 9 998 niveles; jq 1.7.1 (Ubuntu y upstream) falla desde 255. Con V4, `c5bf6d4` → `deny` «la entrada no se pudo leer» (CA-47 p. 20) y v1.35.0 → `allow`. Sección 44 bajo 1.7.1: 359/4 antes del ajuste, 359/0/4 SKIP después; bajo 1.8.2, 363/0 igual que antes; control positivo con los hooks de v1.35.0: K4 en FAIL. Banco completo con 1.7.1: 2299/0/17; con 1.8.2: 2304/0/12. Los 34 SKIP del CI: 12 locales + 18 por falta de la instalación 1.33.2 + 3 de REQ-017 CA-10 (bash 5.2.21, inferido) + 1 INCONCLUSO de reloj; ninguno viene del `jq` y ninguno acredita.
+- **QA-007-18:** la Medida de CA-47 p. 20 («V4 control, 9 000 niveles → deny por el veredicto, como hoy») no declaraba la dependencia del `jq`. Write-back del analista; «No acredita» gana la dependencia y los 255 niveles. CA-69 p. 2 anota lo que el CI no acredita.
+- **R-057 §9:** precisa R-045-A §4 y R-046 (valen con jq 1.8); SEC-120 sigue `mitigado` en el candidato; severidad en lo publicado se mantiene `baja` con condición de subida a `alta` declarada.
+- **Avance (regla 6):** el CI tiene su causa y su ajuste; el push lanza la corrida sobre esta cabeza.
+
+## [GitHub] — 2026-10-07 · Cierre: notas `[1.36.0]` completas en el borrador (con R-057; huecos sólo para la fecha, P-136-V y el CI); SEC-134 corregido en seis sedes; la guía al día en cuatro puntos; F-136-22 y la fila del paso 6 de PLAN con P-136-U y R-057
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` ×2 (notas ≈ 334 k tokens; SEC-134 y guía) y la coordinadora.
+
+- **Notas** (`docs/arnes/notas-1.36.0-borrador.md`): siete cambios de compatibilidad con su decisión; 19 límites declarados (SEC-133 presentado como hallazgo abierto pendiente de P-136-V; SEC-134 corregido: 1.36.0 **no** cambia el caso de la gate colgada); decisiones de riesgo P-136-A a P-136-U; firmas por intervención y PR-136-1 a 6; «Hacia 1.37.0»; 18 commits en la Historia. La determinación de R-057 con su literal («conforme con hallazgos, sin veto; publicar 1.36.0 no empeora ninguno»). El recuadro de aviso del principio **no** se copia al CHANGELOG.
+- **SEC-134:** la frase «en 1.35.0, además, el REQ quedaba completado» corregida en CA-68, CA-69 p. 5, `AGENTS.md` §13, su plantilla y la guía: en los dos árboles el hook sale sin decisión a los 60 s y el cierre se aplica. Queda su cita dentro de la propia entrada de SEC-134 en `Hallazgos abiertos:` (la cierra seguridad).
+- **Guía:** la 2b a 1.37; el paso 6 validado; QA-007-12 cerrado; el plazo sólo se comprueba antes de la primera gate.
+- **Avance (regla 6):** el cierre documental está hecho salvo P-136-V y el CI; falta QA con el CI rojo.
+
+## [GitHub] — 2026-10-07 · R-057, determinación final de 1.36.0: conforme con hallazgos, sin veto; SEC-131 y SEC-132 abiertos como límites declarados; SEC-133 (`contrato`, media, preexistente) → P-136-V; SEC-134 (`contrato`, baja, texto) → corrección; CI rojo del PR #60 en investigación
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-057; REQ-007: `Hallazgos abiertos:` con SEC-131/132 en su estado final y SEC-133/134; paréntesis de `Seguridad:`; evidencia `1f73698`; ~105 k tokens) y la coordinadora.
+
+- **Lo que publica 1.36.0:** SEC-115 (tres vías), SEC-118, SEC-120, SEC-127, SEC-128 y SEC-129 `mitigado`, y las propiedades (i) y (ii) de CA-68. **Lo que declara:** SEC-132 (a) y (b), SEC-131, QA-007-09, QA-007-11, QA-007-01 (fichas F-136-18 a F-136-22; todo vence en 1.37). **Lo que devuelve la publicación al propietario:** los `contrato` abiertos (QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, SEC-133, SEC-134; los heredados QA-114/116/117 y SEC-124; y los de otros REQ: SEC-014, SEC-020, SEC-033, SEC-038 a 045, QA-021-10/11).
+- **La pasada revertida no deja rastro** en el código; los vectores de QA-007-15 reciben `deny` en la cabeza actual. Lecciones L4 y L5 (F-136-23).
+- **SEC-133:** `guard-completado.sh:951-958`, `done <<< "$ARNES_GATES"`; una gate que lee stdin consume la lista. Igual en v1.35.0. **SEC-134:** la frase «en 1.35.0, además, el REQ quedaba completado» es falsa en el sentido que sugiere (los dos árboles salen sin decisión a los 60 s y el cierre se aplica); está en `AGENTS.md`, su plantilla, la guía, CA-68 y PENDIENTES (corregida aquí).
+- **`AGENTS.md` §13:** conforme salvo SEC-134 y la fila «No completar un REQ con quality gates en rojo», que promete más de lo medido (SEC-133, SEC-131 (a)).
+- **Avance (regla 6):** 1.36.0 tiene su determinación final; faltan P-136-V, la corrección de SEC-134, las notas, el CI y el push.
+
+## [GitHub] — 2026-10-07 · P-136-U ejecutada: reversión comprobada por QA (FAVORABLE; QA-007-15/16/17 cerrados por reversión; ningún hallazgo de QA contra el código de 1.36.0, `c5bf6d4`); write-back del límite SEC-132 (a) con sus lecciones (CA-68, `AGENTS.md` §13, guía); PR-136-6 (error de despacho de la coordinadora)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` «P-136-U: comprobación de la reversión»; cabecera de REQ-007; evidencia `69e541c`, con hooks de git intactos), `analista-requerimientos` (CA-68, CA-69 p. 3, pregunta abierta, `AGENTS.md` §13 y plantilla, guía, índice) y la coordinadora.
+
+- **QA:** `diff` vacío contra `c5bf6d4` en `hooks/`, `tests/` y `tools/`; `cmp` de los 11 archivos; versión 1.36.0 y `arnes_version` 1.33.0 con `jq -e .` rc 0; `arnes_corta_gate` en 0 archivos. Los vectores de QA-007-15 vuelven a lo de `c5bf6d4` (la roja deniega, la verde cierra), y sobre `cd63066` la sonda distingue (control positivo). La gate colgada vuelve a dejar al hook sin decisión a los 60 s: límite declarado. Humo: secciones 47 (106/0 y 44/0) y 44 (363/0); gates rc 0.
+- **PR-136-6** (`docs/PENDIENTES.md`): la coordinadora despachó a QA y al analista a la vez sobre `requirements/REQ-007.md`, contra §6; una línea de la cabecera quedó pegada y QA la reparó; la coordinadora comprobó la cabecera y el lector antes de comitear.
+- **Avance (regla 6):** el código de 1.36.0 queda en `c5bf6d4`, validado por QA; falta la determinación corta de seguridad sobre el estado final y el cierre.
+
+## [GitHub] — 2026-10-07 · Revert del código de cd63066 por P-136-U; hooks/ y tests/ = c5bf6d4
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-U (A), en `PENDING_APPROVAL.md` § Resueltas.
+
+- **Hecho:** `git revert --no-commit cd63066`, conservando de HEAD el registro técnico y este CHANGELOG. **SEC-132 (a) queda como límite declarado (F-136-22).**
+- **Motivos:** QA-007-15 (una gate roja podía escribir «0» en el canal del veredicto y cerrar el REQ), QA-007-16 y QA-007-17 (`docs/qa/REQ-007.md`).
+- **Comprobado:**
+  - `git diff c5bf6d4 -- hooks/ tests/` sale vacío: sección 47 con 106 casos y total 2316;
+  - `.claude-plugin/` sigue en 1.36.0;
+  - gates con rc 0;
+  - sección 47: 106/0.
+- La evidencia de `sec132a/` (`bb06d3c`) y la nota del registro se conservan como historia.
+- **Avance (regla 6):** el código de 1.36.0 vuelve a `c5bf6d4`, ya validado.
+
+## [Interno] — 2026-10-07 · P-136-U (A) adoptada por el propietario: se revierte `cd63066`; SEC-132 (a) límite declarado con sus tres lecciones de diseño (F-136-22); QA-007-15/16/17 se cierran por reversión
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía. F-136-22 ampliada con SEC-132 (a) y las lecciones.
+- **Avance (regla 6):** el código de 1.36.0 vuelve a ser el validado (`c5bf6d4`); sigue el cierre.
+
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de SEC-132 (a) sobre `cd63066`: CON HALLAZGOS — QA-007-15 (`contrato`, media): una gate roja puede escribir «0» en el canal del veredicto y el REQ se cierra (fail-open introducido por la pasada); QA-007-16 y QA-007-17; P-136-U; PR-136-5
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `26f6131`) y la coordinadora.
+
+- **Conforme:** los cuatro casos de P-136-T (30,2 s, 0 huérfanos); frontera 29/31 s; fail-before de la gate colgada en `c5bf6d4` y v1.35.0 (donde además el REQ quedaba cerrado); banco 2306/1/13 (INS-136-1); inventario sin movimientos; +0 procesos; E1 igual; tope 273/0; versión 1.36.0 con `jq -e .` rc 0.
+- **QA-007-15:** el veredicto de la gate se lee de una tubería que la gate hereda (`guard-completado.sh:964`): `echo 0 >&3; false` cierra el REQ; `exec true` o una trampa `EXIT` propia reciben un `deny` con motivo falso. **QA-007-16:** los supervivientes retienen el stderr del hook (108 ms → 75 s). **QA-007-17:** `arnes_corta_gate` superlineal (9 000 descendientes → 50,9 s; 14 000 → sin decisión).
+- **P-136-U** en la cola: recomendación (A), revertir `cd63066` a `c5bf6d4` y declarar SEC-132 (a) como límite con las tres lecciones de diseño.
+- **PR-136-5:** QA comiteó su evidencia con `-c core.hooksPath=` (sin hooks que saltar; declarado).
+- **Avance (regla 6):** el intento de cubrir las gates con el plazo introdujo un fail-open; la coordinadora propone retirarlo y publicar la vía como límite declarado.
+
+## [Interno] — 2026-10-07 · SEC-132 (a) reparado por el desarrollador en `cd63066` (39 min, dentro del tope; SIN VALIDAR) y versión 1.36.0 en `b43d7ea`; ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** antes de cada gate se calcula lo que queda del plazo; la gate corre en una sustitución de proceso que escribe su código por la tubería (también si hace `exit`); el hook la espera con `read -t` y, si vence, la corta (`arnes_corta_gate`: árbol de procesos por `/proc/<pid>/task/<pid>/children`, tope 4096, TERM a todos) y deniega con motivo que cita SEC-132 y la gate. Cuatro casos (sección 47 110/0; cuadre 2320): cuatro gates de 20 s y una colgada → `deny` a los 30,2 s (fail-before `c5bf6d4`: sin decisión a los 60 s); huérfanos 0 (en `c5bf6d4` también 0 porque `timeout` mata el grupo; una copia con `kill $!` deja 1 vivo); control de gates rápidas igual. Banco 2307/1/12 (INS-136-2); inventario diff vacío; autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **Límites declarados por el desarrollador:** sin `/proc` sólo se corta el subshell; un proceso que ignore TERM o se desligue del árbol sigue vivo.
+- **Versión:** `plugin.json` y `marketplace.json` en 1.36.0; `arnes_version` en 1.33.0; `jq -e .` rc 0. El banco corrió antes de la versión y sólo cambian esas cadenas.
+- **Avance (regla 6):** el código de 1.36.0 está completo; falta la validación de SEC-132 (a).
+
+## [GitHub] — 2026-10-07 · Candidato 1.36.0: versión en los dos archivos de distribución
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Autorizado por el propietario (P-136-S, `PENDING_APPROVAL.md` § Resueltas).
+
+- `.claude-plugin/plugin.json` (`version`) y `.claude-plugin/marketplace.json` (`metadata.version` y `plugins[0].version`) pasan de `1.35.0` a `1.36.0`.
+- `.arnes/config.json` conserva `arnes_version` en `1.33.0`, sin tocar.
+- Gates de §7 (`jq -e .` sobre los dos archivos): rc 0.
+- **Avance (regla 6):** la versión del candidato está fijada. Lo que falta para publicar es de la coordinadora y del propietario.
+
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): SEC-132 (a) — el plazo propio también corre dentro de las quality gates — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-S y P-136-T (B), con tope de una hora; empleados unos 38 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «SEC-132 (a)»; evidencia `bb06d3c`.
+
+- **Cambio:** cada quality gate se espera con `read -t` sólo el tiempo que le queda al plazo. Al vencer, `arnes_corta_gate` manda TERM a la gate y a lo que lanzó (leyendo `/proc/…/children`, sin procesos) y el hook deniega por plazo, citando SEC-132 y la gate. Es un **cambio de compatibilidad declarado**: una gate que no termina dentro del plazo se interrumpe y el cierre se deniega.
+- **Casos:** 4 en la sección 47 —cuatro gates de 20 s, una gate colgada, la ausencia de huérfanos y un control—. La sección pasa de 106 a 110 y el total de 2316 a 2320. Con `c5bf6d4`, las dos primeras mueren a los 60 s.
+- **Medidas:**
+  - sección 47: 110/0;
+  - banco del worktree: 2307/1/12; el FAIL es INS-136-2;
+  - 2 (a): 2038/0/12, con el `diff` vacío;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** SEC-132 (a) está reparado y con casos. Falta la validación de QA.
+
+## [GitHub] — 2026-10-07 · Write-back de P-136-T (analista): la propiedad de SEC-132 (a) con la gate en curso acotada, en CA-68, CA-69 p. 3, `AGENTS.md` §13 y plantilla, y guía; pregunta abierta resuelta
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Dos añadidos del analista para QA:** «lo que una gate interrumpida lanzó por su cuenta puede seguir corriendo» (sin medir; sale de un comentario del código); y «antes el cliente mataba el hook a los 60 s sin decisión», que R-056 midió con cuatro gates y para la gate colgada lo tiene que acreditar el fail-before.
+- **Avance (regla 6):** el contrato de SEC-132 (a) está completo; falta el código del desarrollador (en curso) y su validación.
+
+## [Interno] — 2026-10-07 · P-136-T (B) adoptada por el propietario: la gate en curso se acota al tiempo que queda del plazo; cambio de compatibilidad declarado; el caso de banco cubre las dos formas
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** SEC-132 (a) tiene su propiedad fijada; falta el caso de la gate colgada, la validación y el write-back.
+
+## [GitHub] — 2026-10-07 · Write-back de P-136-S (analista): límites SEC-131 y SEC-132 (b) en CA-68; SEC-132 (a) «en la pasada, sin validar»; **`AGENTS.md` §13 y `templates/AGENTS.md.tpl`** (autorizados): SEC-115 y SEC-118 `mitigado` con residuales, filas nuevas de CA-68 (ii) y SEC-120; `requirements/README.md` y su plantilla; guía. Pregunta P-136-T sobre la gate en curso
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **`AGENTS.md` §13:** la cláusula 1 deja de decir «limitaciones conocidas y sin reparar» para SEC-115/118 y dice `mitigado` con sus residuales (SEC-132 (a) sin validar, SEC-132 (b), QA-007-09, F-136-20/SEC-131, Windows y el host, `kill -9`); las cifras de SEC-118 quedan como historia de 1.35.0; filas nuevas de CA-68 (ii) y SEC-120; párrafo de cierre fechado. Mismo texto en la plantilla (+36 −11 líneas cada uno, estimado). Gates de §7 con rc 0; lector sin anomalías.
+- **P-136-T:** la coordinadora amplió en su encargo la letra de P-136-S («entre gates») con «acotar la gate en curso»; el analista lo detectó. Se devuelve al propietario con la decisión propuesta (B).
+- **Avance (regla 6):** las sedes de la promesa dicen lo que es cierto en el candidato; QA del cierre espera P-136-T.
+
+## [Interno] — 2026-10-07 · P-136-S adoptada por el propietario: SEC-132 (a) se repara (tope de una hora); SEC-132 (b) y SEC-131 límites declarados (F-136-22, F-136-21); autorizados el write-back de `AGENTS.md` §13, la versión 1.36.0 y el push
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** empieza el cierre con una pasada acotada y el write-back de las sedes de la promesa.
+
+## [GitHub] — 2026-10-07 · Write-back de estado tras R-056 (analista): CA-67, CA-68 y CA-69 p. 7 «construido en `c5bf6d4`; validado por QA; R-056 sin veto; SEC-115/118/129 `mitigado`»; F-136-20 (i) con el `allow` explícito; SEC-130 texto final; O-56-3 en «no acredita»
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~192 k tokens) y la coordinadora.
+
+- Nada de SEC-131, SEC-132, `AGENTS.md` ni el plazo entre gates: dependen de P-136-S. `Seguridad:` de REQ-007 sigue `pendiente`.
+- **Avance (regla 6):** el contrato refleja el paso 6 validado; el cierre espera P-136-S.
+
+## [GitHub] — 2026-10-07 · Paso 6: COMMIT VALIDADO. R-056 conforme con hallazgos y sin veto; SEC-115, SEC-118 y SEC-129 `mitigado`; SEC-130 instrumento (texto corregido); SEC-131 (`contrato`, baja) y SEC-132 (`contrato`, media), preexistentes → P-136-S junto con las autorizaciones del cierre
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-056; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `4bd3464`; ~275 k tokens) y la coordinadora.
+
+- **R-056:** 3 162 combinaciones de entorno más la matriz POSIX sin ningún `deny` → `allow`/«sin decisión»; SEC-118: el aviso de 140 KB sale en 16 403 bytes y el `deny` en 16 494; `ulimit -f` heredado → `deny` fijo de la trampa; SEC-129: las seis formas de llegada al modo POSIX deciden igual que en modo normal; funciones importadas: 2 448 combinaciones, 37 diferencias, todas `.`/`[` (F-136-20 (i); **dato nuevo:** `[` importada que imprime `allow` produce un `allow` explícito); la lista estática cubre todo lo que el hook ejecuta por sí mismo (único `eval`: las gates). Inferido, sin medir en el host: rc ≠ 0 (salvo 2) o dos JSON = «sin decisión».
+- **SEC-132** (media): (a) el plazo se comprueba antes del bucle de gates, no dentro: cuatro gates de 20 s → sin decisión a los 60 s, con configuración normal; (b) `Hallazgos abiertos:` repetida en disco, superlineal (20 000 líneas → 48,5 s o sin decisión). **SEC-131** (baja): función importada con el nombre de la orden de una gate hace pasar una gate roja; `ulimit -n` 4–5 → preludio inerte; `PATH`.
+- **Observaciones:** O-56-1 comentarios desfasados (`guard-completado.sh:66-70`, `lib.sh:1466`, `:3048`); O-56-2 control del proveedor en una sonda, sin reintentar; O-56-3 el recorte del motivo puede ocultar lo que va detrás de un identificador largo. Propuesta para 1.37: la trampa también con código 2 y motivo por stderr; frontera de confianza del entorno por propiedad y lista blanca en `hooks.json`.
+- **Pendiente:** las entradas de SEC-118 en REQ-023 y SEC-115 en REQ-031 (instrumento, no bloquean) y las sedes de la promesa (`AGENTS.md` §13, plantillas, `requirements/README.md`) según CA-69 p. 5: en P-136-S.
+- **Avance (regla 6):** los tres pasos de código de 1.36.0 están validados; el cierre espera P-136-S.
+
+## [GitHub] — 2026-10-07 · Write-back de estado (analista): QA-007-14 «construido en `c5bf6d4`; validado y cerrado por QA» en CA-68 (ii) y en el índice; F-136-20 (v) con el dato de QA
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Avance (regla 6):** el contrato refleja todo lo validado del paso 6; falta la determinación de seguridad (en curso).
+
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `c5bf6d4`: FAVORABLE. QA-007-14 cerrado; no queda ningún hallazgo de QA contra el código del paso 6 fuera de los límites declarados y los instrumentos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `c4afbde`) y la coordinadora.
+
+- **Medido:** sección 47 106/0 con fail-before sobre `39e6128`; 567 combinaciones con sólo las 40 de `.`/`[` por `guard.sh` (F-136-20) y 3 de `set` en guardianes sueltos; **900 combinaciones con 6 diferencias** (todas `set` en sueltos, F-136-20 (v)) frente a 156 en `39e6128`; 396 combinaciones nuevas con cuerpos agresivos (bucle sin fin, `kill -9 $$`, `deny` del atacante, `builtin exit 0`): 0 diferencias por `guard.sh`; análisis estático: `export`, `readonly` y `times` no aparecen en el código; coste de los 12 nombres añadidos ≈ 3 µs.
+- **Regresión:** matriz POSIX, `FUNCNEST`/`keyword`/`BASH_COMPAT`, `builtin`/`read` suplantadas, QA-007-10/12, T1–T3, tope 273/0, E1 sin cambio. Banco 2303/1/12 (el FAIL es INS-136-2); inventario 2037/0/13 sin movimientos; autoprueba 117/0; gates rc 0; +0 procesos.
+- **Dato para F-136-20 (v):** en los guardianes sueltos hace falta `set` junto con `return` suplantadas; el `set -uo pipefail` previo a `entrada.sh` llama a la `return` importada.
+- **Pendiente:** write-back de estado de QA-007-14 (analista) y el comentario del caso en la sección 47 («rc 139 o no termina» no es lo que da ese caso; texto de prueba, sin hallazgo).
+- **Avance (regla 6):** el paso 6 tiene QA favorable; sigue seguridad (fase 4).
+
+## [Interno] — 2026-10-07 · P-136-R: QA-007-14 reparado por el desarrollador en `c5bf6d4` (18 min; 36 de los 60 del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** la lista estática empieza ahora por los builtins especiales que el hook usa (`return exit break continue set shift : eval trap unset exec .`); `export`, `readonly` y `times` no aparecen en el código. Dos casos (bloque P; sección 47 106/0; cuadre 2316) con fail-before sobre `39e6128` (allí el síntoma era un `deny` del plazo, no el rc 139 que midió QA, pero fallan igual). Banco 2302/0/14; inventario sólo con INS-136-1 y 2 (c); autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **Avance (regla 6):** la última línea del paso 6 está construida; falta su re-verificación.
+
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-14 — los builtins especiales entran en la lista estática de `entrada.sh` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-R (A), dentro del tope de una hora de P-136-Q. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-14»; evidencia `70a2083`.
+
+- **Cambio:** el `unset -f` estático de `hooks/entrada.sh` incluye, mientras sigue en modo POSIX, los especiales `return exit break continue set shift : eval trap unset exec .`.
+- **Casos:** 2 en la sección 47, con funciones `return` y `break` importadas: `ls -la` sin decisión y un `Write` a `src/` con `deny`, los dos en menos de 5 s. Con `39e6128` fallan los dos, por un `deny` del plazo. La sección pasa de 104 a 106 y el total de 2314 a 2316.
+- **Medidas:**
+  - sección 47: 106/0;
+  - banco del worktree: 2302/0/14;
+  - 2 (a): 2035/1/14; el FAIL es INS-136-1;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** QA-007-14 está reparado y con casos. Falta la validación de QA.
+
+## [GitHub] — 2026-10-07 · Write-back de P-136-R (analista): QA-007-13 cerrado en CA-68 (ii); QA-007-14 «en la pasada, sin validar» con la letra corregida («regulares y especiales»); F-136-20 (v)
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Avance (regla 6):** el contrato está al día con P-136-R; falta la línea del desarrollador (en curso) y su re-verificación.
+
+## [Interno] — 2026-10-07 · P-136-R (A) adoptada por el propietario: la lista estática cubre también los builtins especiales; F-136-20 gana el `set` en guardianes sueltos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con una línea y una re-verificación corta.
+
+## [GitHub] — 2026-10-07 · Re-verificación acotada de QA (Opus) de `39e6128`: QA-007-13 cerrado; CON HALLAZGOS por QA-007-14 (`contrato`, baja): los builtins especiales quedan fuera de la lista estática y vuelven a ser suplantables tras `set +o posix`; P-136-R
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `84fbf80`, sin tocar `core.hooksPath`) y la coordinadora.
+
+- **Conforme:** bloque P 104/0 con fail-before (`03cbf5e` 102/2, 60 s); `builtin` 0 diferencias en 567 combinaciones; sin dependencia de `/proc/self/environ`; matriz POSIX, `FUNCNEST`/`keyword`/`BASH_COMPAT`, QA-007-10/12, T1–T3 y E1 sin cambio; tope 273 casos sin fallo; banco 2301/0/13; inventario 2038/0/12 (sólo una ruta que varía con `TMPDIR`); +0 procesos.
+- **QA-007-14:** con funciones importadas llamadas `return`, `exit`, `break`, `continue`, `set`, `shift` o `:`, 156 de 315 combinaciones salen sin decisión, con rc distinto de 0 o sin terminar; en `03cbf5e` eran 6 y en v1.35.0, 200. La reparación medida por QA es `unset -f` de esos nombres en modo POSIX (una línea). «Nada más entra» → decisión del propietario, P-136-R (recomendación (A)).
+- **Observación sin medir:** cómo trata el cliente una decisión con rc distinto de 0 o dos documentos JSON en la salida.
+- **Avance (regla 6):** el paso 6 queda a una línea y una re-verificación corta de estar validado.
+
+## [Interno] — 2026-10-07 · P-136-Q: QA-007-13 reparado por el desarrollador en `39e6128` (18 minutos, dentro del tope; SIN VALIDAR); ESTADO a la re-verificación acotada de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** `entrada.sh` arranca con `POSIXLY_CORRECT=y` (ninguna función suplanta `unset`, `set` ni `trap`); `unset -f` de una lista estática de 27 builtins regulares y 36 externas inventariadas del hook (con margen); desaparece el bucle sobre `/proc/self/environ`; la limpieza sin `builtin` delante; `unset POSIXLY_CORRECT; set +o posix` al final del preludio de `entrada.sh`, antes de cargar `lib.sh` (que no se puede leer en modo POSIX, R-054). Dos casos (bloque P; sección 47 104/0; cuadre 2314) con fail-before sobre `03cbf5e` (60 s, rc 124): `ls -la` sin decisión en 110 ms y `Write` a `src/a.ts` con `deny` en 112 ms.
+- **Los dos restos de QA-007-13** que P-136-Q no nombraba quedan resueltos por construcción: ya no hay bucle sobre `/proc/self/environ`, y `set` está protegido por el modo POSIX. QA lo comprueba.
+- **Avance (regla 6):** la pasada acotada está construida; falta su re-verificación.
+
+## [GitHub] — 2026-10-07 · Paso 6 (desarrollador): QA-007-13 — la limpieza de `entrada.sh` ya no se puede suplantar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-Q (A), con tope de una hora; empleados unos 20 minutos. Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «QA-007-13»; evidencia `b255dd2`.
+
+- **Cambio en `hooks/entrada.sh`:**
+  - arranca con `POSIXLY_CORRECT=y`;
+  - aplica `unset -f` a una lista estática de builtins regulares y órdenes externas;
+  - quita el bucle sobre `/proc/self/environ`;
+  - sale del modo POSIX al terminar su preludio, antes de cargar `lib.sh`.
+- **Casos:** 2 en la sección 47, con funciones `builtin` y `read` importadas: `ls -la` sin decisión y un `Write` a `src/` con `deny`, los dos en menos de 5 s. Con `03cbf5e`, los dos mueren a los 60 s. La sección pasa de 102 a 104 y el total de 2312 a 2314.
+- **Medidas:**
+  - sección 47: 104/0;
+  - banco del worktree: 2301/2/11; los dos FAIL son INS-136-1 e INS-136-2;
+  - 2 (a): 2037/1/12; el FAIL es INS-136-2;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** QA-007-13 está reparado y con casos. Falta la validación de QA.
+
+## [GitHub] — 2026-10-07 · Write-back de P-136-Q (analista): F-136-20 como límite declarado en CA-68 y en la guía; QA-007-13 (`builtin`) «en la pasada acotada, sin validar»; QA-007-10, QA-007-11 (a) y QA-007-12 pasan a «validados y cerrados por QA»
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~155 k tokens) y la coordinadora.
+
+- `.`/`[` antes de `entrada.sh` (`guard.sh:35-37`), `errexit` (causa inferida) y `BASH_ENV` (remite a F-136-9): límites con alcance, causa, consecuencia y lo no medido.
+- **Dos restos de QA-007-13 sin escribir ni clasificar**, porque P-136-Q no los nombra: `/proc/self/environ` ilegible (sólo lo declara un comentario del código) y `BASH_FUNC_set%%` en guardianes sueltos. Se resuelven o se declaran con la entrega de la pasada: la técnica del propietario (`POSIXLY_CORRECT=y` protege a `set`; la lista estática elimina el bucle) puede cubrirlos por construcción.
+- **Avance (regla 6):** el contrato está al día con P-136-Q; falta la pasada del desarrollador (en curso, tope de una hora).
+
+## [Interno] — 2026-10-07 · P-136-Q resuelta por el propietario: (A) con tope de una hora, acotada a QA-007-13 (lista estática de `unset -f`, sin descubrir nombres); F-136-20 (estado heredado que sólo `hooks.json` puede neutralizar)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con una pasada acotada y con tope; si no cabe en pocas líneas, QA-007-13 queda como límite declarado (B).
+
+## [GitHub] — 2026-10-06 · Re-verificación de QA (Opus) de `03cbf5e`: CON HALLAZGOS. QA-007-10, QA-007-11 (a) y QA-007-12 cerrados; QA-007-08 → INS-136-4; **QA-007-13** (`contrato`, baja): función importada `builtin` → sin decisión, y cuelgue de 60 s por llamada (regresión); P-136-Q; PR-136-4
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007; evidencia `6cf1ba0`) y la coordinadora.
+
+- **Conforme:** bloque P 7/7 con fail-before; 393 casos de bytes no UTF-8 sin fallo (`8e11f87` fallaba 119); 38 930 combinaciones de variables y 7 272 con `localvar_inherit` sin diferencias; T1–T3, T2b (206–308 ms) y la matriz POSIX en `deny`; E1 igual; fronteras de los techos idénticas; inventario sólo con INS-136-2 y 2 (c); banco 2299/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **QA-007-13:** al suplantar con funciones importadas 21 órdenes del preludio (567 combinaciones por árbol): `builtin` (regresión: sin decisión, y 60 100 ms con rc 124 si la función devuelve 0), `.` y `[` (preexistentes: `guard.sh` los usa antes de `entrada.sh`), `SHELLOPTS=errexit` (preexistente, deniega todo). `POSIXLY_CORRECT=y` protege a los builtins especiales (medido fuera del hook).
+- **`Hallazgos abiertos:`** de REQ-007: 14 elementos, 11 875 bytes, legible.
+- **PR-136-4:** QA comiteó su evidencia con `core.hooksPath=/dev/null` (no había hooks que saltar; declarado por él). Tres defectos de su instrumento, corregidos, con las corridas malas descartadas.
+- **P-136-Q** en la cola: recomendación (A), una pasada acotada con tope de una hora; si no cabe, límite declarado.
+- **Avance (regla 6):** el paso 6 queda a una decisión de cerrarse; el cuelgue de 60 s es lo único que la coordinadora no quiere publicar como límite.
+
+## [Interno] — 2026-10-06 · Paso 6: pasada correctiva única en `03cbf5e` (SIN VALIDAR): QA-007-10, QA-007-12 y QA-007-11 (a) reparados; ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** `lib.sh` vacía `ARNES_CWD_VISTO` al cargar; el motivo se acota dentro de la misma llamada a `jq`, después de sustituir los bytes inválidos por U+FFFD, por caracteres enteros (desaparece `arnes_acota`); `entrada.sh` retira funciones importadas (`BASH_FUNC_*%%` leídas de `/proc/self/environ`), `FUNCNEST`, `BASH_COMPAT`, `compat31`–`compat44` y `keyword`, con `builtin`. Bloque P: 7 casos (sección 47 102/0; `8e11f87` 95/7; cuadre 2312). Inventario 2 (a) sólo con INS-136-2 y 2 (c); banco 2298/1/13 (el FAIL es INS-136-1); autoprueba 117/0; gates rc 0; +0 procesos; E1 igual.
+- **No comprobado por el desarrollador:** sin `/proc/self/environ` legible las funciones importadas no se retiran; `PATH`; una función importada con el nombre de una orden de la propia limpieza.
+- **Avance (regla 6):** el paso 6 está reparado entero; falta la re-verificación.
+
+## [GitHub] — 2026-10-06 · Paso 6, pasada correctiva (desarrollador): QA-007-10, QA-007-12 y QA-007-11 (a) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-P (2) (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, «Pasada correctiva»; evidencia `1adeffc`.
+
+- **QA-007-10:** `lib.sh` vacía `ARNES_CWD_VISTO` al cargarse.
+- **QA-007-12:** el motivo y el aviso se acotan en la misma llamada a `jq`, después de sanear el UTF-8 (`ARNES_JQ_ACOTA`). El motivo no pasa nunca de 16 384 bytes.
+- **QA-007-11 (a):** `entrada.sh` retira las funciones importadas, `FUNCNEST`, `BASH_COMPAT` y `compat*`, y la opción `keyword`. `noexec`, `onecmd` y `xtrace` quedan como límite declarado.
+- **Casos:** 7 en la sección 47 (bloque P). La sección pasa de 95 a 102 y el total de 2305 a 2312. Los 7 fallan con `8e11f87` y con v1.35.0.
+- **Medidas:**
+  - sección 47: 102/0;
+  - banco del worktree: 2298/1/13; el FAIL es INS-136-1;
+  - 2 (a): 2037/1/12; el FAIL es INS-136-2;
+  - procesos +0, E1 sin cambios, tope 273/0, autoprueba 117/0 y gates con rc 0.
+- **Avance (regla 6):** los tres hallazgos de la pasada correctiva están reparados y con casos. Falta la validación de QA.
+
+## [GitHub] — 2026-10-06 · Write-back de P-136-P (analista): INS-136-4 en CA-69 p. 7 con la regla de «afecta» intacta y su precisión; límites declarados QA-007-09 y QA-007-11 (b) en CA-68; QA-007-10/11 (a)/12 «en la pasada, sin validar»; la guía gana los cinco párrafos de compatibilidad que faltaban
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- La regla «un FAIL en E2 → §9» sigue vigente; el propietario resolvió esta instancia por la dirección de la cifra y por E1.
+- La guía («Hacia 1.36.0») tiene ahora: entrada ilegible, `false` y `file_path` no textual, motivo acotado, plazo propio, modo POSIX heredado, techos, QA-007-01, SEC-127, y los dos límites nuevos; los del paso 6 marcados «su validación no está cerrada».
+- **Avance (regla 6):** el contrato y la guía están al día con P-136-P; falta la pasada correctiva (en curso) y su validación.
+
+## [Interno] — 2026-10-06 · P-136-P (1) (A) y (2) (A) adoptadas por el propietario: INS-136-4; F-136-8 ampliada a CA-09; F-136-18 (QA-007-09) y F-136-19 (QA-007-11 (b)) como límites declarados; la pasada correctiva del paso 6 y el write-back, en paralelo
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** el paso 6 reanuda con su única pasada correctiva acotada a QA-007-10, QA-007-12 y QA-007-11 (a).
+
+## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista tras QA (QA-007-07 construido y validado; punteros de `lib.sh` a `8e11f87`; QA-023-10 cerrado en la nota de CA-54; sección 24 → INS-136-3; SEC-130 no cubierto; la 2b → 1.37 en la nota de CA-54)
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~204 k tokens) y la coordinadora.
+
+- Nada de QA-007-08 a QA-007-12 ni de E2: dependen de P-136-P. CA-67 y CA-68 siguen «SIN VALIDAR» en conjunto por lo mismo.
+- Pendiente de seguridad (fase 4): el texto de SEC-130 en `Hallazgos abiertos:` dice «no alcanzado a nivel de hook», y la medición de QA sobre una copia (`ulimit -n 3`) lo desmiente.
+- **Avance (regla 6):** el contrato refleja lo validado; falta la decisión P-136-P.
+
+## [GitHub] — 2026-10-06 · QA del paso 6 (Opus) sobre `8e11f87`: CON HALLAZGOS y parada por P-136-P — E2 dio 1 FAIL en 6 (QA-007-08); cinco `contrato` más (QA-007-09 a QA-007-12); QA-007-07 y QA-023-10 cerrados; INS-136-3
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` y el paréntesis de `QA:`; evidencia `e19b708`) y la coordinadora.
+
+- **Conforme:** sección 47 95/0 con su fail-before; SEC-118 con UTF-8 válido; SEC-115 (T1–T3 y T2b en `deny` en < 3 s; el plazo actúa en una llamada real de 3 MB a los 36,3 s); E1 sin cambio; E3 PASS; techos reproducidos y sin efecto fuera de `requirements/`; matriz POSIX; R2 ante `exit` y códigos no declarados; banco 2292/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **QA-007-08 (`contrato`):** E2 con 1 FAIL en 6 corridas (0,962×); por CA-69 p. 7, parada. **QA-007-09:** CRLF en disco ≥ 3,6 MB → sin decisión a los 60 s (preexistente; `guard-completado.sh:604`). **QA-007-10:** `ARNES_CWD_VISTO` heredada cambia la decisión. **QA-007-11:** estado del intérprete heredado (`FUNCNEST`, `BASH_COMPAT`, `SHELLOPTS=noexec/onecmd`, `xtrace`, funciones importadas). **QA-007-12:** con bytes no UTF-8 el motivo llega a 48 781 bytes. **SEC-130:** R2 no lo cubre, medido.
+- **Cerrados:** QA-007-07 y QA-023-10 (en su medición). **INS-136-3** registrado (la sección 24 no se reproduce en 15 corridas).
+- **P-136-P** en la cola, con la decisión propuesta: (1) QA-007-08 como instrumento (INS-136-4, F-136-8 ampliada a CA-09), sin reabrir REQ-017; (2) la pasada repara QA-007-10, QA-007-12 y QA-007-11 (a); QA-007-11 (b) y QA-007-09, límites declarados con ficha para 1.37.
+- **Avance (regla 6):** el paso 6 está validado en lo esencial; faltan la decisión del propietario, la pasada y seguridad.
+
+## [Interno] — 2026-10-06 · Paso 6: QA-007-07 reparado por el desarrollador en `8e11f87` (SIN VALIDAR); ESTADO a la fase 3 (QA del paso 6 entero)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Según el desarrollador:** una línea en `hooks/lib.sh` vacía `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` al cargar la librería; dos casos en el bloque E de la sección 47 (95/0), con fail-before sobre `0efd3c2` (allí la trampa de salida daba un `deny` fijo sin el motivo de `guard-codigo`), `78a2f33` y v1.35.0; inventario sólo con F-136-16 e INS-136-2; banco 2292/1/12 (el FAIL es INS-136-2); autoprueba 117/0; gates rc 0; +0 procesos.
+- **Pista para QA:** otras variables de estado de `lib.sh` podrían heredarse del entorno; la propiedad de P-136-N las alcanza.
+- **Avance (regla 6):** el paso 6 está construido entero; sigue QA.
+
+## [GitHub] — 2026-10-06 · Paso 6 (desarrollador): QA-007-07 — las marcas de «ya leído» de `lib.sh` no se heredan del entorno — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Decisión: P-136-N (A). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`, sección «QA-007-07»; evidencia `8bd6626`.
+
+- **Cambio:** `hooks/lib.sh` vacía `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` al cargarse. Es una línea y no lanza procesos.
+- **Casos:** dos en la sección 47 (bloque E, uno por variable), que exigen el `deny` de guard-codigo con su motivo. La sección pasa de 93 a 95 y el total de 2303 a 2305.
+- **Fail-before:**
+  - en `78a2f33` y v1.35.0, sin decisión;
+  - en `0efd3c2`, `deny`, pero con el motivo fijo de la trampa de la fase 2, así que el caso falla igual.
+- **Medidas:**
+  - sección 47: 95/0;
+  - banco del worktree: 2292/1/12. El FAIL es REQ-017 CA-08 (ii), de reloj (INS-136-2), y no lo atribuyo al cambio;
+  - 2 (a): 2037/0/13, con sólo las diferencias de instrumento y de 2 (c);
+  - autoprueba 117/0, gates con rc 0 y procesos +0.
+- **Avance (regla 6):** QA-007-07 queda reparado y con casos. Falta la validación de QA.
+
+## [GitHub] — 2026-10-06 · Borrador de las notas `[1.36.0]` (analista) en `docs/arnes/notas-1.36.0-borrador.md`, con huecos `[PENDIENTE: …]`; tres desajustes detectados para el cierre; F-136-5 corregida a 1.37
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~? k tokens) y la coordinadora.
+
+- **Borrador:** seis secciones calcadas de `[1.35.0]` más «Lo no medido»; siete cambios de compatibilidad con su decisión citada (incluido el plazo propio, que CA-68 y CA-69 p. 3 ya declaran); 12 límites declarados; 12 decisiones de riesgo; firmas por intervención con huecos para QA, seguridad y CI del paso 6; fichas a–e; una línea por commit. No dice «reparado» de SEC-115/118/129 ni QA-007-07 (CA-69 p. 5).
+- **Desajustes para el cierre:** (1) la nota de CA-54, la guía y el texto de QA-007-01 siguen poniendo la 2b «después de SEC-120» (es 1.37 desde el 2026-10-05): write-back del analista y de QA al cerrar; F-136-5 corregida ahora; (2) QA-023-10 sigue abierto con texto de 1.35.0: lo decide QA en la fase 3; (3) `AGENTS.md` §13, su plantilla y `requirements/README.md` declaran SEC-115/118 como limitaciones: su write-back necesita autorización expresa del propietario (el plan dice «No AGENTS.md»), se presenta en el paso 7.
+- **La guía** no tiene entradas para la entrada ilegible, `false`, `file_path` no textual, el motivo acotado, el plazo ni el modo POSIX: write-back del cierre, tras la validación.
+- **Avance (regla 6):** el cierre tiene su borrador; falta lo que la validación decida.
+
+## [Interno] — 2026-10-06 · Paso 7, adelantado: `propuesta-v1.35.0/` pasa a `docs/historia/propuesta-v1.35.0/` (dos archivos con `git mv`, sin reescribir, con README); el borrador de las notas `[1.36.0]` lo escribe el analista en `docs/arnes/`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora (texto y trazabilidad, dentro del plan de versión: «limpieza de `propuesta-v1.35.0/` a `docs/historia` o evidencia»).
+
+- `TRASPASO.md` y `plan-implementacion.md` movidos con `git mv`; las citas históricas conservan la ruta antigua a propósito (lo dice el README nuevo). Los demás archivos de ese directorio estaban sin seguimiento y ya no existen en el disco.
+- En paralelo, sin tocar los archivos del desarrollador ni `CHANGELOG.md`: el analista redacta `docs/arnes/notas-1.36.0-borrador.md` con huecos `[PENDIENTE: …]` para QA, seguridad y CI del paso 6.
+- **Avance (regla 6):** dos tareas del cierre adelantadas mientras QA del paso 6 espera al desarrollador.
+
+## [GitHub] — 2026-10-06 · Paso 6, write-back del analista por P-136-O/N: los techos como cambio de compatibilidad declarado (CA-68, CA-69 p. 3, guía, nota posterior en ADR-017); CA-68 (ii) sobre todo lo que el hook herede del entorno, con QA-007-07; observación de la sección 24 en CA-69 p. 7
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` y la coordinadora.
+
+- **Cambio de compatibilidad** (clasificado de fondo por el analista → nota posterior fechada en ADR-017, sin ADR nuevo): un documento de más de 393 216 bytes no se escribe entero de una vez, y un `Edit` cuyo producto (documento + `new_string`) × `old_string` supera 2³² se deniega; fronteras medidas 393 213/393 214 (`65-`). `REQ-021.md` y `REQ-023.md` no cambian.
+- **CA-68 (ii):** «nada que el hook herede del entorno» (modo del intérprete, `ARNES_INPUT_LISTO`, `ARNES_MANIFEST_LISTO`), con un caso por variable. **Precisión del analista, aceptada por la coordinadora e informada al propietario:** quedan fuera `CLAUDE_PROJECT_DIR` y las entradas que el host da por contrato, porque si no (ii) contradiría CA-47 p. 20.
+- **Otras precisiones:** la regla del producto en vez de «~6,5 KB» (esa cifra sólo vale para un documento de 660 KB); QA fija cuántas corridas de la sección 24 hará antes de correrlas.
+- **Avance (regla 6):** el contrato del paso 6 está completo; falta QA-007-07 (desarrollador, en curso) y la validación.
+
+## [Interno] — 2026-10-06 · P-136-O (1) (A), (2) (A) y P-136-N (A) adoptadas por el propietario; ficha F-136-17 (adelgazar `REQ-007.md`); el paso 6 sigue con QA-007-07 y el write-back de los techos en paralelo
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** («Decisión propuesta, lista para adoptar: …») y el texto adoptado, en la cola; la cola queda vacía.
+- **`docs/PLAN.md`**, paso 6: incluye QA-007-07 y los techos como cambio de compatibilidad declarado.
+- **F-136-17:** adelgazar `REQ-007.md` a `historial/` en 1.37 con la rotación por sección.
+- **Avance (regla 6):** quedan resueltas las dos paradas del paso 6; faltan QA-007-07 (una línea y dos casos), el write-back y la validación.
+
+## [GitHub] — 2026-10-06 · Paso 6: write-back de estado del analista en CA-67/68/69 de lo que no depende de P-136-O (SIN VALIDAR); `hooks/entrada.sh` en `Archivos:` de REQ-007
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora.
+
+- CA-67: la técnica (motivo por la entrada estándar de `jq`, acotado a 16 384 bytes) y el tope medido. CA-68: el plazo de 30 s, `hooks/entrada.sh`, R2 y los dos techos con su cifra **y su alcance pendiente de P-136-O**. CA-69 p. 7: E1–E3 «no afecta» y SEC-130 no cubierto por R2 (F-136-12).
+- `Archivos:` gana `hooks/entrada.sh`; `tools/arnes-paralelo.sh REQ-007` lo lee.
+- **Avance (regla 6):** el contrato refleja lo construido salvo el movimiento de los techos, que espera la decisión del propietario.
+
+## [GitHub] — 2026-10-06 · Paso 6, fase 2 registrada (`0efd3c2`, SIN VALIDAR): SEC-118, SEC-115 y SEC-129 reparados; E1–E3 sin «afecta»; parada P-136-O (techos que deniegan llamadas legítimas sobre `REQ-007.md`, y un FAIL no reproducido de la sección 24); fichas F-136-16 y PR-136-3
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (fase 2; evidencia `65092c8`) y la coordinadora.
+
+- **Reparación**, por propiedad y sin procesos nuevos: motivo por la entrada estándar de `jq`, acotado a 16 384 bytes sin partir UTF-8 (tope medido en 273 casos); plazo propio a 30 s; techos de piezas (393 216 B) y de búsqueda (2³²) dentro de la restricción de la sonda 37/3; `hooks/entrada.sh` sale del modo POSIX y arma una trampa de salida que emite `deny` fijo; R2 deniega códigos no declarados y puertas abandonadas. **SEC-130 no queda cubierto por R2** y sigue como F-136-12.
+- **Medido:** sección 47 93/0; E1 sin cambio (104 ms, 0,3 s, 1,0 s), E2 12/12, E3 PASS; inventario sólo con 2 (c), INS-136-2 y F-136-16; banco 2290/0/13; autoprueba 117/0; gates rc 0; +0 procesos.
+- **Parada (P-136-O):** (1) el `Write` entero de `REQ-007.md` (660 431 B) y los `Edit` con `old_string` ≥ 7 000 B sobre él pasan a `deny`; v1.35.0 los dejaba (11,5 s). CA-69 p. 3 no declara ese movimiento. (2) Un FAIL de la sección 24 en la primera de tres corridas del inventario, no reproducido en ocho corridas más; el caso ejecuta `lib.sh`.
+- **Fichas:** F-136-16 (nombre de caso que depende del PID) y PR-136-3 (una edición por consola, deshecha y rehecha con `Edit`).
+- **Avance (regla 6):** SEC-115/118/129 construidos y medidos; faltan la decisión del propietario, el write-back y QA.
+
+## [GitHub] — 2026-10-06 · Paso 6, fase 2 (desarrollador): la decisión se emite siempre — SEC-118, SEC-115 y SEC-129 reparados en `hooks/` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (2, 3 y 7). Registro: `docs/arnes/v1.36.0-sec115-118-fase2.md`; evidencia `cand-1.36.0/sec115-118/` (`65092c8`).
+
+- **SEC-118:** el motivo y los avisos viajan a `jq` por la entrada estándar y se acotan a 16 384 bytes, sin partir un carácter UTF-8 (`arnes_acota`). Medido en 273 casos, ninguno falla.
+- **SEC-115:** plazo propio que deniega a los 30 s, para responder en no más de 40 s, comprobado entre unidades de trabajo. Dos techos:
+  - piezas de una escritura de un REQ: 393 216 bytes;
+  - búsqueda de `old_string`: 4 294 967 296.
+
+  Ninguno lanza procesos, y los dos cumplen la restricción del paso 6.
+- **SEC-129:** `hooks/entrada.sh` (nuevo) sale del modo POSIX (R1), arranca el reloj y pone una trampa que emite un `deny` fijo si el proceso termina sin juicio concluido. Además, una puerta abandonada a mitad o un código del analizador fuera de su vocabulario deniega (R2). SEC-130 no queda cubierto por R2.
+- **Medidas:**
+  - sección 47: 93/0;
+  - banco del worktree: 2290/0/13;
+  - autoprueba 117/0 y gates con rc 0;
+  - procesos: +0 en el camino común;
+  - E1 sin cambios, E2 12/12 PASS y E3 PASS: nada «afecta»;
+  - 2 (a) final: 2037/0/13. La 1.ª corrida dio **1 FAIL no atribuido** (sección 24, `arnes-lectura`).
+- **Movimientos legítimos que se declaran y decide el propietario:** el `Write` de `REQ-007.md` entero (660 KB) y los `Edit` de `REQ-007.md` con un `old_string` de más de unos 6,5 KB pasan a `deny`.
+- **Incidencia:** una edición de `hooks/` se hizo una vez por consola, contra el encargo. Se deshizo y se rehízo con `Edit`.
+- **Avance (regla 6):** reparación construida y medida. Faltan QA, la decisión sobre los techos y el write-back del analista.
+
+## [Interno] — 2026-10-06 · Paso 6, fase 1 registrada (`738b74d`, SIN VALIDAR): 93 casos de SEC-118/115/129 con fail-before idéntico en `78a2f33` y v1.35.0; E1 medido; T2b roza los 40 s; un FAIL de calibración de reloj (INS-136-1); ESTADO a la fase 2
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Lo que fallaba y se ve ahora medido:** SEC-118, el hook intenta emitir motivos de 134–155 KB y avisos de ≈ 287 KB y sale sin decisión; SEC-115, T2a (2 MB) y T3 (256 KB) no responden en 60 s; SEC-129, 40 filas de `Bash` en los cinco modos POSIX sin decisión. Los controles (D, T1/T2b, M en modo normal) pasan.
+- **E1:** las tres entradas de la sonda 37/3 salen sin decisión, sin motivo y con rc 0 en los dos árboles (106 ms, 0,4–0,6 s, 1,3–2,0 s): son cierres legítimos que la fase 2 tiene que seguir dejando pasar.
+- **Riesgo para la fase 2:** T2b tarda entre 29 y 49 s según la carga, y el plazo propio es de 40 s como máximo.
+- **Banco:** 2231/59/13; 57 FAIL esperados, T2b por el plazo bajo carga, y `REQ-021 CA-03 (c)` (calibración de reloj: clase de INS-136-1, se registra y se sigue). Autoprueba 117/0; gates rc 0.
+- **Avance (regla 6):** los fallos de SEC-115/118/129 están medidos como casos; sigue la reparación.
+
+## [GitHub] — 2026-10-06 · Paso 6, fase 1 (desarrollador): casos del banco con fail-before para SEC-118, SEC-115 y SEC-129, SIN reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`. Contrato: REQ-007 CA-67, CA-68 y CA-69 (puntos 1 y 7, E1). Registro: `docs/arnes/v1.36.0-sec115-118-fase1.md`; evidencia `cand-1.36.0/sec115-118/` (`08751e4`, el procedimiento de T3 antes de medir, y `86c4ff1`).
+
+- **Sección nueva `47-decision-emitida.sh`, 93 casos** (`CASOS_ESPERADOS` 2210 → 2303). Cada caso con las tres comprobaciones de CA-A15 punto 4, por `guard.sh` bajo `timeout 60`.
+  - **D, SEC-118:** 9 puntos que salen sin decisión y 2 controles.
+  - **A:** 6 avisos de unos 140 KB.
+  - **T, SEC-115:** T1, T2a, T2b y T3, con el plazo de 40 s.
+  - **M, SEC-129:** la matriz de `02-matriz.sh` en 6 modos.
+- **Fail-before:** con los hooks de `78a2f33` y con los de v1.35.0, **36 PASS y 57 FAIL**, con veredictos idénticos caso a caso.
+  - Ningún caso que espera `deny` lo da sobre `78a2f33`.
+  - T1 y T2b no reproducen y quedan como controles del fail-before. T2b, de 29 a 49 s, roza el plazo.
+- **E1:** las tres entradas de la sonda 37/3 salen sin decisión (allow), con rc 0, en los dos árboles: de 0,1 a 2,0 s.
+- **Banco del worktree:** 2231 PASS, 59 FAIL, 13 SKIP, con el cuadre bien. Los FAIL son los 57, T2b por el plazo en paralelo y un FAIL de la calibración de la 38/2, que no atribuyo. Autoprueba 117/0. Gates rc 0.
+- **Avance (regla 6):** los casos que la reparación tiene que poner en verde existen y fallan donde deben. Sigue la fase 2, la reparación.
+
+## [Interno] — 2026-10-06 · Informe de uso real de 1.35.0 por un proyecto consumidor: tres agentes en paralelo sin chocar; tres debilidades registradas como fichas F-136-13 a F-136-15 (consola sin puerta, rotación sin aviso, ESTADO siempre modificado)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora. Fuente: informe recibido por el propietario por canal privado; aquí sólo lo que describe el arnés.
+
+- **Funcionó:** paralelo real (3 agentes, ~30 commits limpios), lectura estricta de campos y `arnes-lectura.sh`, la puerta de `Edit` con las firmas.
+- **Sigue débil:** escribir por consola (→ ficha b) de 1.37), la rotación del CHANGELOG sin aviso y sin control en `pre-commit` (F-136-14), y el bloque derivado de ESTADO siempre modificado (F-136-15).
+- **Avance (regla 6):** sin cambio en el trabajo del paso 6; las fichas alimentan 1.37.
+
+## [GitHub] — 2026-10-06 · Paso 6, fase 0 (analista): CA-68 gana la propiedad de SEC-129 y la restricción de los techos; CA-69 punto 7 con E1–E3 y la comprobación de SEC-130; nota posterior fechada en ADR-017
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (~213 k tokens) y la coordinadora.
+
+- **CA-68:** (i) sólo un juicio terminado puede salir sin decisión; (ii) ninguna decisión depende del modo heredado del intérprete. Medida: la matriz de `seg-posix/02-matriz.sh` por las tres puertas de `Bash`, con fail-before contra `78a2f33` y v1.35.0. QA-007-07 queda pendiente de P-136-N. Techos: la restricción de la evaluación, con los 296 976 bytes como cota de contrato.
+- **CA-69 p. 3:** declara el movimiento de esas filas de «sin decisión» a `deny`. **CA-69 p. 7:** E1, E2, E3, la regla de «afecta» (basta un caso; para por §9) y la comprobación de QA sobre SEC-130.
+- **ADR-017:** nota posterior (2026-10-06), sin reescribir. Historial, Correspondencia e índice.
+- **Precisión del analista:** la evaluación de CA-68 frente a CA-09 dice «no se puede saber sin medir», no «no afecta»; la obligación de medir E1–E3 no cambia.
+- **Incidencia de la coordinadora:** el analista arrancó antes de que el plan del paso 6 quedara comiteado (mi primer commit falló por el CHANGELOG), y declaró «fuente no disponible»; corregido en una segunda pasada corta con la sede `2cf0934`.
+- **Avance (regla 6):** el contrato del paso 6 está escrito; sigue la fase 1 (casos y fail-before).
+
+## [GitHub] — 2026-10-06 · Paso 5: commit validado. R-055 sin veto; SEC-127 y SEC-128 `mitigado`; SEC-129 anotado en REQ-007; SEC-130 (`instrumento`, baja) → F-136-12. Apertura del paso 6 (SEC-115/118 con SEC-129) por delegación
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-055; REQ-007: `Hallazgos abiertos:` y el paréntesis de `Seguridad:`, que sigue `pendiente`; evidencia `2d676d1`; ~197 k tokens) y la coordinadora.
+
+- **R-055:** a nivel de hook ningún `deny` pasa a `allow` ni a «sin decisión»; los dos movimientos van hacia `deny` y están declarados. `LC_ALL` se restaura en 24 combinaciones; la condición nueva de `guard-codigo` deniega en 72. SEC-127: no queda ninguna asignación delante de una función ni de un builtin especial en el proceso que juzga; premisa de versión eliminada por construcción; bash ≤ 5.0 en modo POSIX, laguna declarada. SEC-128: cubre el vector y no abre otro.
+- **SEC-130** (`instrumento`, baja): camino latente en `arnes_estado_ausente` si falla la redirección del grupo; no alcanzable a nivel de hook. Ficha F-136-12; QA y seguridad comprueban en el paso 6 si R2 lo cubre.
+- **Control del proveedor (O-55-1):** detuvo una búsqueda del auditor; sin reintentar.
+- **Paso 6 abierto:** plan en la cola con fases 0–4, la restricción de los techos frente a REQ-017 CA-09, E1–E3 y las dos variantes de P-136-N.
+- **Recordatorio:** la candidata lleva commits locales sin push desde `f1ffac3`; el push es del propietario.
+- **Avance (regla 6):** el paso 5 está cerrado; empieza el paso 6, fase 0.
+
+## [GitHub] — 2026-10-06 · QA-007-06 cerrado: write-back de estado del analista en CA-47 p. 20 y cierre por QA; el paso 5 pasa a seguridad
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (viñeta «Reparado en SEC-127…», Historial; ~59 k tokens), `qa-tester` (cierre en `Hallazgos abiertos:` y nota fechada) y la coordinadora.
+
+- La viñeta de CA-47 p. 20 ya dice que QA-007-06 está construido en `a59917d` y validado en el paso 5, con el límite sin `CLAUDE_PROJECT_DIR` conservado; el texto anterior queda como «Antes».
+- `Hallazgos abiertos:` de REQ-007 queda con QA-007-01 (límite declarado), SEC-127, SEC-128 y QA-007-07, además de los anteriores a esta ventana. El lector no ve valores anómalos.
+- **Avance (regla 6):** el paso 5 queda con QA hecho y sin hallazgos contra su código; sigue la determinación de seguridad.
+
+## [GitHub] — 2026-10-06 · QA del paso 5 (Opus) sobre `78a2f33`: el código cumple el contrato, sin hallazgos contra él; QA-007-05 cerrado; QA-007-06 validado y pendiente del write-back; QA-007-07 (preexistente) → F-136-11 y P-136-N
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `qa-tester` (Opus; `docs/qa/REQ-007.md` y la cabecera de REQ-007; evidencia `ba474ae`) y la coordinadora.
+
+- **Conforme:**
+  - sección 47 44/0 y sección 44 363/0, con fail-before de E y K5 sobre `a59917d` y de RF sobre `413c6bd`;
+  - SEC-127 por lectura: la única asignación delante de una función que queda corre dentro de `$(…)`; la restauración con `LC_ALL` no definida está medida;
+  - inventario 2 (a) sólo con una línea de 2 (c) (INS-136-2);
+  - banco 2197/0/13, autoprueba 117/0, gates rc 0;
+  - +0 procesos en el camino común;
+  - ataques: 462 combinaciones de `file_path` no textual, 264 de `command`, varias causas más de `read` fallido, 160 combinaciones de locale y 192 cierres: ninguna regresión.
+- **Hallazgos:** QA-007-05 **cerrado**; QA-007-06 reparado y validado, **abierto sólo hasta que el analista actualice la viñeta** «Pendiente hasta SEC-127» de CA-47 p. 20 (no hace falta otra corrida); **QA-007-07** (`contrato`, baja, preexistente): `ARNES_INPUT_LISTO=1` o `ARNES_MANIFEST_LISTO=1` heredadas del entorno dejan a las puertas sin decidir.
+- **No medido:** bash ≤ 5.0 en modo POSIX (P-136-K); `POSIXLY_CORRECT` (SEC-129); el host; Windows/MSYS; el CI sobre la cabeza final.
+- **Avance (regla 6):** el código del paso 5 está validado; faltan el write-back, el cierre de QA-007-06 y la determinación de seguridad.
+
+## [GitHub] — 2026-10-06 · R-054 (P-136-L): `POSIXLY_CORRECT` y sus equivalentes apagan la vía `Bash` de las tres puertas desde v1.30.3; SEC-129 (`contrato`, media), se repara en el paso 6; fichas F-136-9 y F-136-10; un control del proveedor detuvo una sonda
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `auditor-seguridad` (R-054; evidencia `2713c21`) y la coordinadora.
+
+- **Qué apaga:** con `POSIXLY_CORRECT` exportada (con cualquier valor), `SHELLOPTS` con `posix`, `BASH_ENV` con `set -o posix` o `bash --posix`, la vía `Bash` de `guard-codigo`, `guard-completado` y `guard-git` sale con rc 0 y sin decisión para cualquier comando. `Edit`, `Write` y `MultiEdit` siguen denegando.
+- **Mecanismo:** en modo POSIX la comilla simple deja de ser especial dentro de `"${x//'$('/…}"` (cuatro sitios: `lib.sh:2099`, `:1773`, `:1776`, `guard-git.sh:231`); el detector devuelve rc 1 con la lista vacía, que las puertas leen como «no escribe», y `guard-git` se abandona a mitad.
+- **Desde cuándo:** idéntico en `78a2f33`, v1.35.0, v1.34.0, v1.33.2 y v1.30.3 (donde entró la forma `'$('`, `6c1b58a`). No es regresión de esta ventana. Un padre en modo POSIX **no** lo propaga; una variable exportada sí.
+- **Propiedad que CA-68 tiene que exigir** (para el write-back del analista en el paso 6): el hook sólo sale sin decisión cuando terminó un juicio que concluye que la llamada no toca nada protegido; cualquier otro final emite `deny` con motivo propio, y ninguna decisión depende del modo del intérprete heredado. Remediación R1 (`set +o posix` al arrancar, probado en copia: `deny` en los cinco modos) y R2 (código no declarado o puerta abandonada → `deny`).
+- **SEC-129 tapa a SEC-127** en modo POSIX (sale antes del atajo); la reclasificación va en la determinación del paso 5.
+- **Control del proveedor:** detuvo la sonda de las expansiones `$'…'` en modo POSIX; registrada como O-54-3, sin reintentar.
+- **Fichas:** F-136-9 (`BASH_ENV` corre antes que el hook) y F-136-10 (O-54-2, O-54-3).
+- **Avance (regla 6):** el paso 6 tiene ya su hallazgo medido y su propiedad propuesta; falta QA del paso 5.
+
+## [GitHub] — 2026-10-06 · Condición previa del paso 6 evaluada: leyendo, CA-68 no afecta a REQ-017 CA-09; sin parada; restricción de techos y mediciones E1–E3 para la fase 2 de SEC-115/118
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `analista-requerimientos` (evaluación, `docs/arnes/v1.36.0-sec115-118-ca68-vs-req017.md`) y la coordinadora.
+
+- **Conclusión:** «no se puede saber sin medir»; por lectura, el plazo de 40 s y el paso a `deny` no afectan (la sonda 37/3 descarta la decisión y su `timeout` va fuera del hook). Lo que podría afectar es la **colocación de los techos de tamaño**.
+- **Lo que entra en el plan de SEC-115/118:** techos que no caigan sobre las entradas de la sonda; y en la fase 2, E1, E2 y E3. «Afecta» = un motivo de techo o plazo en E1, o un SKIP estructural o un FAIL en E2 o E3; entonces se para y se presenta al propietario con §9 (ficha ya redactada, con su «Decisión propuesta»).
+- **Aviso del analista:** el caso «el coste sube el ratio» cae en REQ-017 CA-08 (ii), que ya oscila alrededor de 1,25× (INS-136-2); las comprobaciones del plazo no deben ir en el camino común, o se mide antes y después como en P-136-M.
+- **Avance (regla 6):** el paso 6 puede abrirse en cuanto cierre el paso 5; su plan ya tiene la restricción medible.
+
+## [Interno] — 2026-10-06 · PR #60 en borrador (decisión del propietario); dos comisiones en paralelo con QA, sobre archivos disjuntos: `POSIXLY_CORRECT` (seguridad) y CA-68 frente a REQ-017 CA-09 (analista)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **PR #60**, borrador, `cand/1.36.0` → `main`, sobre `f1ffac3`. Sirve para el CI; fusionar, etiquetar y publicar son del propietario.
+- **Paralelo:** QA escribe en `docs/qa/REQ-007.md` y la cabecera de REQ-007; seguridad sólo en el registro (R-054) y su evidencia; el analista sólo en un documento nuevo de `docs/arnes/`. Ninguna de las dos últimas acredita el código del paso 5, así que no rompe el orden de fases.
+- **Avance (regla 6):** la rama tiene CI; el paso 6 adelanta su condición previa mientras QA valida el paso 5.
+
+## [Interno] — 2026-10-06 · Resumen del plan vigente del propietario registrado literal; `docs/PLAN.md` gana el objetivo rector, la condición previa de CA-68 en el paso 6, el detalle del cierre y las fichas de 1.37.0 (a–e) y 1.38.0 (f–i)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- La fuente sigue siendo `docs/PLAN.md`, la cola y ESTADO; el resumen del propietario queda literal en la cola por si difieren.
+- **Nada se construye de 1.37 ni 1.38:** son fichas. La 2b de CA-54 (F-136-6) queda dentro de la ficha e).
+- **Avance (regla 6):** el plan queda completo hasta la publicación; sigue QA del paso 5, ya en curso.
+
+## [GitHub] — 2026-10-06 · P-136-M medido: REQ-017 CA-08 (ii) no tiene escalón entre v1.35.0 y `78a2f33` (medianas 1,207–1,228); INS-136-2 y F-136-8; el paso 5 sigue a QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agentes: `desarrollador` (medición, ~25 k tokens; evidencia `a16f3f8`) y la coordinadora.
+
+- **Medición** (una corrida por commit, 5 mediciones, carga inicial 0,41): las cinco medianas se separan 0,021 y v1.35.0 ya llega a 1,285. El FAIL del inventario de SEC-128 se midió con el anfitrión cargado. Tabla completa en `docs/PENDIENTES.md`, INS-136-2.
+- **Por la rama «sin escalón» de P-136-M:** se registra como `instrumento` (INS-136-2) y se abre F-136-8 para REQ-017 en 1.37. Nadie toca el umbral.
+- **Avance (regla 6):** la parada queda resuelta por medida; sigue QA del paso 5 (SEC-127, QA-007-06 y SEC-128).
+
+## [Interno] — 2026-10-06 · La coordinadora pasa a Fable 5.1 como prueba acotada (decisión del propietario, cabeza `098896c`); el plan no cambia
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas, con las cifras de referencia de CA-54 y SEC-120 para la comparación que se entregará al cerrar SEC-115/118 (decisiones escaladas, paradas no previstas y tokens por rol).
+- Los subagentes conservan su modelo. Las reglas no cambian: `hooks/` sólo lo toca el desarrollador; un control del proveedor que detenga algo se registra y no se reintenta; publicar, fusionar y etiquetar son del propietario.
+- **Forma de las fichas desde aquí** (petición del propietario): cada ficha lleva además un bloque «Decisión propuesta, lista para adoptar», redactado como la escribiría él; la decisión sigue siendo suya.
+- **Push:** el propietario ordenó el push de `cand/1.36.0` el 2026-10-06, con esta cabeza; y confirmó que el push anterior de `0ed5d61` (08:17 CR) fue suyo, así que no hay hallazgo de proceso.
+- **Avance (regla 6):** sin cambios en el trabajo; la medición dirigida de P-136-M sigue en curso.
+
+## [Interno] — 2026-10-06 · P-136-M resuelta por el propietario: (A), medición dirigida de REQ-017 CA-08 (ii) en reposo sobre cinco commits
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; la cola queda vacía.
+- **Avance (regla 6):** se mide para distinguir una regresión de coste del ruido del reloj.
+
+## [GitHub] — 2026-10-06 · SEC-128 reparado por el desarrollador en `78a2f33` (SIN VALIDAR); parada por P-136-M: REQ-017 CA-08 (ii) pasa de INCONCLUSO a FAIL en el inventario CA-69 2 (a)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~45 k tokens; evidencia `f641380`) y la coordinadora.
+
+- **SEC-128:**
+  - con `Edit`, `Write` o `MultiEdit`, un `file_path` que no es texto deniega a todo agente; `Bash` conserva la conducta de siempre;
+  - bloque E de la sección 47 (+12; cuadre 2210) 44/0, con fail-before sobre `a59917d`; K5 pasa a esperar `deny`;
+  - banco 2198/0/12; autoprueba 117/0; gates rc 0;
+  - procesos iguales en el camino común.
+- **Parada:** en el inventario de v1.35.0 con los hooks del candidato, REQ-017 CA-08 (ii) «6 líneas» sale FAIL, «mín(r) 1,251× > techo 1,250×» en 5 de 5, con el anfitrión cargado. Ejecuta hooks, así que se aplica la regla de P-136-E. **No se repitió.** P-136-M está en la cola (recomendación (A): medición dirigida por commits con el anfitrión en reposo).
+- **Avance (regla 6):** SEC-128 construido; la validación espera a la decisión.
+
+## [GitHub] — 2026-10-06 · Paso 5, SEC-128 (P-136-J (A, acotada)): en `guard-codigo`, un `file_path` que no es texto no deja pasar a nadie — SIN VALIDAR por QA; un FAIL de reloj en el inventario 2 (a), declarado y sin repetir
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`, sección «SEC-128»; evidencia `cand-1.36.0/sec127/`, commit `f641380` del árbol de evidencia).
+
+- **Cambio:** en `hooks/guard-codigo.sh`, la salida del agente de código cuando el campo no es texto sólo vale ya para `Bash`. Con `Edit`, `Write` o `MultiEdit`, un `file_path` que no es texto deniega a todo agente, con el motivo de siempre. Sin procesos.
+- **Casos:**
+  - sección 47, bloque E (+12; `CASOS_ESPERADOS` 2198 → 2210): el vector de R-053 §4 por las tres herramientas, deny en la candidata, sin decisión en `a59917d` (fail-before) y deny por el enlace en v1.35.0 (control);
+  - K5 de la sección 44 pasa a esperar deny;
+  - sección 47 44/0, sección 44 363/0.
+- **CA-69 2 (a)** con la semilla 23062: 2038/1/11. El `diff` frente a `22-` es una sola línea: REQ-017 CA-08 (ii), «un REQ real de 6 líneas», pasa de INCONCLUSO a **FAIL** (1,251× frente al techo de 1,250×).
+  - Es un caso de reloj que ejecuta hooks: por P-136-E es motivo de parada.
+  - Por CA-69 2 (c) no se repite. Por lectura, el cambio no toca ese camino.
+  - Lo decide la coordinadora.
+- **Banco del worktree:** 2198/0/12, cuadre 2210. Autoprueba 117/0 y gates rc 0.
+- **Procesos:** el camino común es idéntico a `a59917d`.
+- **Avance (regla 6):** SEC-128 reparado, sin validar. Falta la decisión sobre el FAIL de reloj antes del QA del paso 5.
+
+## [GitHub] — 2026-10-06 · Paso 5: write-back del analista de P-136-J (SEC-128: un `file_path` que no es texto no deja pasar a nadie) y de P-136-K (SEC-127 acreditado con la sección 47 y la lectura del código; bash ≤ 5.0 en modo POSIX, no medido); ficha F-136-7 (O-52-3); `Archivos:` de REQ-007 corregido
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~160 k tokens) y la coordinadora.
+
+- **CA-47 p. 20:**
+  - SEC-128: en `guard-codigo`, fail-closed a todo agente; K5 pasa a esperar `deny`, con el movimiento declarado;
+  - SEC-127: «cómo se acredita» (LO1–LO4, LK y la lectura del código; bash ≤ 5.0 en modo POSIX, no medido).
+- **Guía «Hacia 1.36.0»:** el párrafo de SEC-127.
+- **`docs/PENDIENTES.md`:** F-136-7 (O-52-3), que clasifica el auditor; sin ventana en 1.36.0.
+- **`Archivos:` de REQ-007:** gana `47-lectura-fallida-y-locale.sh`; `47-decision-emitida.sh` queda como previsión de CA-67/68.
+- **Avance (regla 6):** el contrato del paso 5 está completo; sigue SEC-128 (desarrollador).
+
+## [Interno] — 2026-10-06 · P-136-J (A, acotada), P-136-K (A) y P-136-L (A) resueltas por el propietario; encadenado sin parar hasta abrir SEC-115/118
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisiones literales** en la cola, con las fichas debajo; la cola queda vacía.
+- **Orden en serie:** write-back del analista → SEC-128 → QA del paso 5 → seguridad (`POSIXLY_CORRECT` más el paso 5) → commit validado → SEC-115/118.
+- **Avance (regla 6):** no queda ninguna decisión pendiente en el paso 5.
+
+## [Interno] — 2026-10-05 · Paso 5, fase 2 (`a59917d`, SIN VALIDAR): SEC-127 y QA-007-06 reparados por el desarrollador; QA espera a P-136-J y P-136-K
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Según el desarrollador** (~60 k tokens; sólo `hooks/lib.sh`, sin subshell y sin procesos nuevos):
+  - `arnes_estado_ausente` guarda `LC_ALL`, lo pone en C y lo restaura, sin asignarlo delante de una llamada de función; vale también en bash ≤ 5.0 en modo POSIX, sostenido por lectura (NEWS de bash-5.1, punto «o»);
+  - `arnes_preludio` vacía `ARNES_INPUT` antes del `read`, así que un `read` fallido da entrada vacía, que es ilegible, y `deny`.
+  - Resultados: sección 47 32/0; inventario CA-69 2 (a) idéntico a `22-`; banco 2185/0/13; autoprueba 117/0; gates rc 0. Procesos: +0 en el camino común (nueve entradas) y +1 en stdin cerrado o directorio, que es el coste de decidir.
+- **Avance (regla 6):** SEC-127 y QA-007-06 construidos; QA espera las decisiones P-136-J y P-136-K.
+
+## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 2: reparación en `hooks/lib.sh` — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase2.md`; evidencia `cand-1.36.0/sec127/`, commits `42cd8a9` y `281869b` del árbol de evidencia).
+
+- **SEC-127:** `arnes_estado_ausente` deja de usar una asignación delante de una llamada de función.
+  - Ahora guarda `LC_ALL`, lo pone en C, llama y lo restaura (o lo borra si no estaba definido), con sentencias sueltas, sin subshell y sin procesos.
+  - Funciona también en bash 5.0 o anterior en modo POSIX porque el punto «o» de NEWS de bash-5.1 sólo afecta a las asignaciones delante de una función, y ya no queda ninguna.
+- **QA-007-06:** `arnes_preludio` vacía `ARNES_INPUT` antes del `read`.
+  - Un `read` que falla con error no asigna nada, así que deja la entrada vacía, que es ilegible: deny a todo agente.
+  - El límite sin `CLAUDE_PROJECT_DIR` y los hooks de parada no cambian.
+- **Casos:** sección 47 32/0 (RF1 y RF2 en verde; LO, LK, RL siguen en verde); `413c6bd` 24/8; v1.35.0 20/8/4; sección 44 363/0.
+- **CA-69 2 (a)** con la semilla 23062: 2038/0/12, y el `diff` frente a `ca54/22-` está **vacío**.
+- **Banco del worktree:** 2185/0/13, cuadre 2198. Autoprueba 117/0 y gates rc 0.
+- **Procesos:**
+  - camino común (n1–n9): +0 frente a `413c6bd` y no más que v1.35.0, en la sonda y en el recuento exacto;
+  - entrada estándar cerrada o directorio: +1, el `jq` que emite el deny (coste de decidir).
+- **Fuera:** P-136-K, P-136-L y SEC-128.
+- **Avance (regla 6):** el paso 5 queda listo para la fase 3, QA (Opus).
+
+## [GitHub] — 2026-10-05 · Paso 5, fase 1 (`ab52c9b`, SIN VALIDAR): casos de QA-007-06 con su fail-before; los de SEC-127 no pueden fallar en bash 5.3.9; fichas P-136-K (cómo se acredita SEC-127) y P-136-L (`POSIXLY_CORRECT=1` apaga la vía `Bash`, preexistente)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (~105 k tokens; sección 47, 32 casos; evidencia `79f3908`) y la coordinadora.
+
+- **Sección 47:**
+  - RF1 y RF2 (stdin cerrado o que es un directorio, en los 4 guardianes) fallan en `413c6bd`, que es el fail-before, y salen sin decisión en v1.35.0;
+  - RL1 y RL2 (el límite sin `CLAUDE_PROJECT_DIR`), en verde;
+  - LO1–LO4 (el locale después del atajo) y LK (el cierre fiel en UTF-8), en verde y **sin fail-before** en bash 5.3.9.
+  - Banco 2176/8/14 (los 8 FAIL son los RF); cuadre 2198; autoprueba 117/0; gates rc 0.
+  - El banco lanza ahora el hook sin `env`, porque el `env` de uutils abre el descriptor 0 sobre `/dev/null`.
+- **P-136-K:** el caso 2 que pidió el propietario no es construible como fail-before, porque O-52-3 ya ocurre en v1.35.0 y la reparación restaura C.
+- **P-136-L:** con `POSIXLY_CORRECT=1`, la vía `Bash` no decide en ningún árbol. Es preexistente y está sin clasificar.
+- **Las tres fichas están agrupadas con P-136-J.** La fase 2 sigue, porque no depende de ellas.
+- **Avance (regla 6):** QA-007-06 está medido como fallo; la acreditación de SEC-127 queda pendiente del propietario.
+
+## [GitHub] — 2026-10-05 · Paso 5 (SEC-127 y QA-007-06), fase 1: casos del banco y fail-before, sin reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec127-fase1.md`; evidencia `cand-1.36.0/sec127/`, commit `79f3908` del árbol de evidencia).
+
+- **Casos:** 32 en la sección 47, nueva, porque la 44 está a 4 líneas de su techo (`CASOS_ESPERADOS` 2166 → 2198).
+  - **RF:** el `read` de la entrada falla con error —entrada estándar cerrada y entrada estándar que es un directorio—, por los cuatro guardianes; se espera **deny**.
+  - **RL:** el límite sin `CLAUDE_PROJECT_DIR`; se espera sin decisión.
+  - **LO:** el locale leído después del atajo, en modo normal y en modo POSIX.
+  - **LK:** el cierre por `Bash` con `TERMINÉ` y el locale en UTF-8; se espera **deny**.
+- **Fail-before:**
+  - **QA-007-06:** las 8 columnas de la candidata de RF fallan con `413c6bd` y con v1.35.0, que sale sin decisión.
+  - **SEC-127:** LO y LK **no fallan** en bash 5.3.9; R-052 §4 ya decía que aquí no se puede materializar. No se pudo obtener un bash 5.0.
+- **Caso 2 tal como se pidió (`LC_ALL=C` en el entorno → `deny`): no construido; bloqueo con alcance.**
+  - En v1.35.0 da lo mismo: es O-52-3.
+  - Exigirlo es un movimiento que CA-69 punto 3 no admite.
+  - La reparación autorizada no puede ponerlo en verde.
+  - Hay tres opciones para la coordinadora en el registro, §3.
+- **Observaciones para la coordinadora:**
+  - con `POSIXLY_CORRECT=1`, la vía `Bash` de los guardianes no decide, ni en `413c6bd` ni en v1.35.0 (registro §4);
+  - el `env` de uutils abre el descriptor 0 sobre `/dev/null`, y por eso el banco lanza el hook sin `env`.
+- **Resto:**
+  - banco 2176/8/14, con la semilla 23062 y cuadre 2198;
+  - inventario igual al de la re-verificación de QA, salvo un caso de reloj no acreditado (CA-69 2 (c));
+  - autoprueba 117/0 y gates rc 0;
+  - `hooks/` y `tools/` sin cambios.
+- **Avance (regla 6):** QA-007-06 ya tiene sus casos con fail-before. Falta la decisión sobre el caso 2 de SEC-127 antes de su fase 2; la fase 2 de QA-007-06 no depende de ella.
+
+## [GitHub] — 2026-10-05 · SEC-120: commit validado. Seguridad R-053 con hallazgos y sin veto: SEC-120 queda `mitigado` en el candidato (`413c6bd`); SEC-128 (`contrato`, baja) → P-136-J. Apertura del paso 5: SEC-127 más QA-007-06
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-053 en `docs/seguridad/registro-seguridad.md`; REQ-007: el paréntesis de `Seguridad:`, que sigue `pendiente`, y `Hallazgos abiertos:` con SEC-128; evidencia `seg-R053/`, commit `e837604`, hecho por la coordinadora; ~192 k tokens) y la coordinadora.
+
+- **R-053:**
+  - por `guard.sh` no hay ningún `deny` que pase a `allow` ni a «sin decisión»;
+  - ninguna entrada legible normal se deniega;
+  - el residual QA-007-06 y el límite sin `CLAUDE_PROJECT_DIR` encajan. QA-007-06 se reproduce también con stdin como directorio, y su reparación se enuncia por propiedad;
+  - **SEC-120 queda `mitigado` en el candidato**, con la entrada original intacta;
+  - observaciones O-53-1 (`tool_name` que no es texto, fuera del `matcher`) y O-53-2.
+- **SEC-128:** `guard-codigo` deja pasar al agente de código con un `file_path` que no es texto, antes de la regla del enlace (SEC-004). `guard-codigo` solo, sin decisión; por `guard.sh`, sin efecto. La fila K5 lo daba por bueno con un rótulo falso. **P-136-J** (recomendación (A): repararlo dentro de SEC-127).
+- **Evidencia:** la de R-052 (CA-54), que había quedado sin commit, también se comitea (`cand-1.36.0/ca54/seg-R052/`).
+- **Paso 5 abierto por delegación:** plan de SEC-127 más QA-007-06 en la cola; la fase 1 empieza ya, y la fase 2 espera P-136-J.
+- **Avance (regla 6):** SEC-120 cerrado como intervención y mitigado antes de su vencimiento (2026-10-29).
+
+## [GitHub] — 2026-10-05 · P-136-H (A) y P-136-I (B) resueltas por el propietario; write-back del analista en CA-47 p. 20; el plan de SEC-127 gana QA-007-06
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~104 k tokens) y la coordinadora.
+
+- **Decisiones literales** en la cola, con las fichas debajo; la cola queda vacía.
+- **Punto 20:**
+  - el límite lleva el texto literal del propietario (inerte si no puede obtener el proyecto; deniega si obtiene uno con manifiesto desde el `cwd` de la entrada);
+  - QA-007-06 queda como «pendiente hasta SEC-127, no límite», y se conserva «deny por cualquier causa».
+  - En `Hallazgos abiertos:`, QA-007-05 lleva «texto corregido; lo cierra QA» y QA-007-06 «residual declarado, se repara en SEC-127», sin cambiar clases.
+  - Historial, Correspondencia e índice.
+- **`docs/PLAN.md`, paso 5:** SEC-127 más QA-007-06, con un caso de banco para cada uno.
+- **Avance (regla 6):** SEC-120 queda listo para seguridad.
+
+## [GitHub] — 2026-10-05 · SEC-120: re-verificación de QA sobre `413c6bd`, CON HALLAZGOS. QA-007-03/04 cerrados; QA-007-06 (`contrato`, baja) nuevo; ficha P-136-I agrupada con P-136-H; plan PARADO
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `6d71b19`) y la coordinadora.
+
+- **Conforme:**
+  - filas nuevas en verde, con fail-before en `aba1c9b`, `82ceb63` y v1.35.0;
+  - inventario 2 (a) sólo con un INCONCLUSO de reloj;
+  - banco 2153/0/13, autoprueba 117/0, gates rc 0;
+  - +0 procesos en el camino común;
+  - 456 filas de ataque sin ningún `deny` → `allow` y sin falsos positivos;
+  - los hooks que no son guardianes, idénticos a v1.35.0.
+- **QA-007-06:** con la entrada estándar cerrada (`<&-`), `set -u` aborta los guardianes con rc 1 y sin decisión. v1.35.0 tampoco decidía. No es alcanzable desde el host en lo observado.
+- **P-136-I** (recomendación (B): residual declarado y reparación dentro de SEC-127, antes de publicar), agrupada con P-136-H.
+- **Avance (regla 6):** SEC-120 reparado en lo esencial; falta la decisión del propietario para pasar a seguridad.
+
+## [Interno] — 2026-10-05 · SEC-120: pasada correctiva de QA-007-03/04 en `413c6bd` (SIN VALIDAR); ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Según el desarrollador** (≈ 75 k tokens):
+  - la entrada vacía, la que empieza por NUL y la que trae algo detrás del objeto se dan por ilegibles y reciben `deny`;
+  - `false` en `file_path` y en `command` se deniega;
+  - 44 casos nuevos (sección 44, 363/0; cuadre 2166), con fail-before sobre `aba1c9b` y v1.35.0;
+  - el inventario CA-69 2 (a) es idéntico a `22-`;
+  - banco 2154/0/12, autoprueba 117/0 y gates rc 0;
+  - 0 procesos añadidos en el camino común.
+- **Avance (regla 6):** quedan reparados los dos defectos de borde; falta la re-verificación de QA y P-136-H.
+
+## [GitHub] — 2026-10-05 · SEC-120, pasada correctiva única: QA-007-03 (entrada vacía o con NUL) y QA-007-04 (`false` en `file_path` o en `command`) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro `docs/arnes/v1.36.0-sec120-fase2.md`, «Pasada correctiva (QA-007-03/04)»; evidencia `cand-1.36.0/sec120/correctiva/`, commit `1be81c3` del árbol de evidencia).
+
+- **QA-007-03:** la entrada vacía, la que empieza por NUL y la que trae algo detrás del objeto, NUL incluido, son ilegibles y van a `deny` a todo agente.
+  - El preludio de los guardianes detecta el NUL con el código de `read`, sin procesos.
+  - Sin `CLAUDE_PROJECT_DIR` y sin proyecto, el hook sigue inerte.
+  - Los hooks de parada no cambian.
+- **QA-007-04:** `false` en `file_path` o en `command` se deniega como `true`, porque `null` → `""` sustituye a `// ""`.
+- **Casos:** +44 en la sección 44 (2122 → 2166). Con `aba1c9b` fallan 21 y con v1.35.0, 49: los 21 nuevos y los 28 originales.
+- **Resto:**
+  - CA-69 2 (a): el inventario sale idéntico a `22-`.
+  - Banco 2154/0/12; autoprueba 117/0; gates rc 0.
+  - Procesos de las entradas normales: iguales a `aba1c9b`.
+- **Avance (regla 6):** los dos hallazgos están reparados; falta la re-verificación de QA. QA-007-05 sigue pendiente del propietario.
+
+## [GitHub] — 2026-10-05 · SEC-120, paso 2: QA (Opus) CON HALLAZGOS sobre `aba1c9b`: la reparación funciona (0 de `deny` a `allow`, sin falsos positivos, +0/+1 procesos), y hay tres `contrato` de severidad baja. Pasada correctiva para QA-007-03/04; P-136-H para QA-007-05
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; registro en `docs/qa/REQ-007.md` y `Hallazgos abiertos:` de REQ-007; evidencia `7a967e2`) y la coordinadora.
+
+- **Conforme:**
+  - 28 casos en verde, con fail-before idéntico en `82ceb63` y en v1.35.0;
+  - inventario 2 (a) sólo con CA-08 (ii) INCONCLUSO;
+  - autoprueba 117/0 y gates rc 0;
+  - procesos +0 y +1;
+  - 259 entradas de ataque propias: 0 de `deny` a `allow` y ningún falso positivo;
+  - PR-136-2 conforme.
+- **Banco del worktree:** 2106/3/13. Los 3 FAIL son INS-136-1 (calibración de `sonda-reloj`); se registran y se sigue. El verde de CA-69 2 (b) lo tiene que dar el CI sobre la cabeza final.
+- **Hallazgos:**
+  - **QA-007-03:** una entrada vacía o que empieza por NUL sale sin decisión, y un objeto más NUL y basura se juzga sólo por el objeto;
+  - **QA-007-04:** `file_path` o `command` con valor `false` salen sin decisión;
+  - **QA-007-05:** el límite sin `CLAUDE_PROJECT_DIR` no es exacto; el código deniega del lado seguro.
+- **Decisión de la coordinadora:** la pasada correctiva única del plan es para QA-007-03 y QA-007-04, porque el contrato ya decide esos casos. QA-007-05 pasa al propietario en **P-136-H**, con la recomendación de corregir el texto.
+- **Avance (regla 6):** SEC-120 funciona; quedan dos defectos de borde y una decisión de texto.
+
+## [GitHub] — 2026-10-05 · SEC-120, paso 1: write-back del analista en REQ-007 CA-47 punto 20 con las tres decisiones del propietario
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (~132 k tokens) y la coordinadora. Uso: cuenta del plan Team, por indicación del propietario.
+
+- **Punto 20:**
+  - «Coste» sobre el camino común: normal +0, ilegible +1, que es el coste de decidir;
+  - «Qué es no poder leer la entrada»: todo lo que no sea exactamente un objeto JSON;
+  - límite declarado: sin `CLAUDE_PROJECT_DIR`, una entrada ilegible deja el hook inerte, como en v1.35.0.
+  - Historial, Correspondencia y la fila del índice.
+- **Precisiones del analista, conformes con la decisión según la coordinadora:**
+  - el +1 del troceo fallido también es «coste de decidir»;
+  - el límite sin `CLAUDE_PROJECT_DIR` se acota a las entradas ilegibles.
+- **Avance (regla 6):** el contrato refleja lo construido; sigue QA (paso 2).
+
+## [Interno] — 2026-10-05 · Ajuste de alcance de 1.36.0 por el propietario: SEC-127 sola entre SEC-120 y SEC-115/118; la 2b de CA-54 sale a 1.37 (F-136-6); orden final en siete pasos
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en la cola; sustituye la ubicación de SEC-127 de `d2880c1`, y sus condiciones no cambian.
+- **`docs/PLAN.md` § 1.36.0:** la tabla del orden final (1 write-back de SEC-120 · 2 QA · 3 seguridad · 4 commit validado · 5 SEC-127 · 6 SEC-115/118 · 7 cierre y publicación). La 2b sale a 1.37.
+- **`docs/PENDIENTES.md`:** F-136-6 (la 2b en 1.37); F-136-5 pasa a tener destino 1.37.
+- **ESTADO:** el orden final.
+- **Avance (regla 6):** el alcance de 1.36.0 queda cerrado; el plan espera a que vuelvan los créditos.
+
+## [Interno] — 2026-10-05 · P-136-G (SEC-127) resuelta por el propietario: se repara dentro de la 2b de CA-54, sin subshell; la premisa de versión de bash no se declara como límite
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas, con la ficha debajo; la cola queda vacía.
+- **Condiciones** (en la fila 2b de `docs/PLAN.md`):
+  - `local LC_ALL=C` o guardar y restaurar, a elección del desarrollador;
+  - caso de banco del locale tras el atajo, y del cierre TERMINÉ/terminé con `LC_ALL=C` simulado;
+  - seguridad reclasifica SEC-127 al cerrarlo;
+  - publicar 1.36.0 sigue en manos del propietario mientras SEC-127 esté abierto.
+- **Avance (regla 6):** no queda ninguna decisión pendiente; el plan espera a que vuelvan los créditos.
+
+## [Interno] — 2026-10-05 · SEC-120: el propietario resuelve los tres puntos de la fase 2 (procesos sobre el camino común, qué es ilegible, inerte sin `CLAUDE_PROJECT_DIR`) y fija el orden hasta SEC-115/118 sin pedir autorización
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisiones literales** en `PENDING_APPROVAL.md` § Resueltas. Sin incumplimiento de contrato: «0 procesos añadidos» rige sobre el camino común, y la entrada ilegible cuesta +1, que es el coste de decidir.
+- **Orden** (ESTADO): write-back del analista en CA-47 p. 20 → QA → seguridad → commit validado → 2b → SEC-115/118.
+- **Pausa** por falta de créditos de uso. P-136-G sigue pendiente; su texto se entrega al propietario.
+- **Avance (regla 6):** las dependencias de contrato de SEC-120 quedan resueltas; falta el write-back y la validación.
+
+## [Interno] — 2026-10-05 · SEC-120, fase 2 hecha por el desarrollador en `aba1c9b` (SIN VALIDAR); tres puntos para QA y el analista; pausa por falta de créditos de uso
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Reparación**, según el desarrollador (≈ 90 k tokens en esta fase; todo editado con Edit/Write):
+  - `arnes_parse_input` comprueba el código de salida de `jq`, y una entrada ilegible se deniega a todo agente con motivo propio;
+  - si el troceo falla, la puerta que lo necesita deniega y `ARNES_JQ` se vacía;
+  - los modos inertes no cambian.
+  - Resultados: los 28 casos en verde, y la sección 44 da 319/0 frente a 291/28 en `82ceb63` y en v1.35.0. El inventario CA-69 2 (a) sólo difiere en REQ-017 CA-08 (ii) (INCONCLUSO, 2 (c)). Banco 2110/0/12 con la semilla fijada; autoprueba 117/0; gates rc 0. Evidencia `2d50c55`.
+- **Puntos abiertos para QA y el analista** (no son parada del desarrollador, pero sí de contrato si QA los juzga así):
+  1. **Procesos:** las entradas normales quedan iguales a `82ceb63` y nunca por encima de v1.35.0. En las entradas de SEC-120 hay **+1**: el `jq` con el que `arnes_deny` emite la decisión donde antes no había ninguna. Se contrasta con «sin procesos nuevos» (pedido del propietario) y con «0 procesos añadidos» (CA-47 p. 20).
+  2. **Decisión del desarrollador:** cuenta como ilegible lo que no es exactamente un objeto (`null`, un número, la entrada vacía, dos objetos). Lo confirma el analista.
+  3. **Frontera:** sin `CLAUDE_PROJECT_DIR`, una entrada ilegible deja el hook inerte, como en v1.35.0. Denegar ahí afectaría a proyectos sin el arnés. Lo decide el analista.
+- **Pausa:** `/usage-credits` informa de que la organización no tiene créditos de uso. La fase 3 (QA) no se despacha hasta que los haya; se retoma desde ESTADO sin pedir autorización.
+- **Avance (regla 6):** SEC-120 está construido; faltan QA y seguridad.
+
+## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 2: una entrada que `jq` no puede leer o trocear no pasa (REQ-007 CA-47 punto 20) — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase2.md`; evidencia `cand-1.36.0/sec120/`, commit `2d50c55` del árbol de evidencia).
+
+- **Reparación**, con el código de salida de las llamadas a `jq` que ya existían:
+  - Una entrada que `jq` no puede leer, o que no es exactamente un objeto, se deniega a todo agente.
+  - Unas ediciones o un valor de `tool_input` que la puerta no puede trocear como texto los deniega esa puerta, con su motivo.
+  - El troceo de `guard-completado` ya no reutiliza la lectura anterior.
+  - Los modos inertes no cambian.
+- **Casos:** los 28 de SEC-120 pasan; con los hooks de `82ceb63` y de v1.35.0 siguen fallando. Las filas L y T exigen ya el motivo propio, y P3 tiene un testigo de fin. Sin casos nuevos (2122).
+- **CA-69 2 (a):** el banco de v1.35.0 con estos hooks da 2037/0/13. Su inventario difiere sólo en un caso de reloj no acreditado (2 (c)), sin movimientos de decisión.
+- **Resto:** banco del worktree 2108/0/14 (3 INCONCLUSO de reloj); autoprueba 117/0; gates rc 0.
+- **Procesos:** las entradas normales, iguales a `82ceb63` (0 añadidos). Las de SEC-120, +1: el `jq` que emite el `deny`.
+- **Frontera para el analista:** sin `CLAUDE_PROJECT_DIR` y con la entrada ilegible, el hook sigue inerte.
+- **Avance (regla 6):** la reparación está construida y medida; falta la fase 3 (QA).
+
+## [Interno] — 2026-10-05 · SEC-120, fase 1 hecha por el desarrollador en `6759a8e` (SIN VALIDAR): 28 casos que fallan en `82ceb63` y en v1.35.0, controles en verde; PR-136-2 registrado; ESTADO a la fase 2
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Sección 44:** de 247 a 319 casos, y `CASOS_ESPERADOS` pasa de 2050 a 2122. Hay filas L1–L6 (V3 y una entrada truncada, por `Edit`, `Write`, `MultiEdit` y `Bash`) y T1–T4 (V1 y V2: la forma de `edits` que `jq` no puede trocear). Cada una falla con `allow` en los dos árboles. Los controles K, I y P3 pasan.
+- **Banco con la semilla fijada:** 2083 PASS, 28 FAIL (los de SEC-120) y 11 SKIP. Autoprueba 117/0; gates rc 0. **El banco queda en rojo a propósito hasta la fase 2.**
+- **Evidencia:** `cand-1.36.0/sec120/`, commit `c6a8e7f` del árbol de evidencia.
+- **PR-136-2** (`instrumento`, `docs/PENDIENTES.md`): una edición por consola (`sed -i`) en la sección 44.
+- **Avance (regla 6):** SEC-120 está medido como fallo en abierto en los dos árboles; sigue la reparación.
+
+## [GitHub] — 2026-10-05 · Intervención 2 (SEC-120), fase 1: casos del banco de REQ-007 CA-47 punto 20 y fail-before medido, sin reparar — SIN VALIDAR por QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (registro técnico `docs/arnes/v1.36.0-sec120-fase1.md`; evidencia `cand-1.36.0/sec120/`, commit `c6a8e7f` del árbol de evidencia).
+
+- **Casos:** 72 nuevos en la sección 44 (247 → 319; `CASOS_ESPERADOS` 2050 → 2122), con los vectores V1–V4 de R-045-A §4 por propiedad:
+  - L: una entrada que `jq` no puede leer (V3 por las cuatro herramientas del `matcher`, coordinadora y `desarrollador`, más una entrada truncada), por `guard.sh` y por cada guardián.
+  - T: unas ediciones de `MultiEdit` que no se pueden trocear (V1, V2, objeto y lista de cadenas).
+  - Controles K (la puerta que no las necesita y V4), I (sin `jq`, sin manifiesto) y P3.
+  - Cada caso, en la candidata y en v1.35.0 (`3956a6f`, por SHA).
+- **Fail-before:** con `ARNES_HOOKS_DIR` en los hooks de `82ceb63` y en los de v1.35.0, la sección da 291 PASS y 28 FAIL.
+  - Los 28 FAIL son las columnas de la candidata de L y T.
+  - Los controles pasan en los dos árboles.
+  - Ningún vector deniega ya, así que no hay parada de contrato.
+- **Resto del banco:**
+  - Banco completo: 2083/28/11 con la semilla 23062. Sin SEC-120, su inventario es igual al de `82ceb63` salvo un caso de reloj no acreditado (CA-69 2 (c)).
+  - Autoprueba 117/0, con la sección 44 en 385 de 400 líneas, y gates rc 0.
+  - El banco queda en rojo a propósito hasta la fase 2.
+- **Sin cambios** en `hooks/`, `tools/`, `requirements/`, ESTADO ni la cola.
+- **Avance (regla 6):** la medida de CA-47 punto 20 existe y falla donde debe; falta la reparación (fase 2).
+
+## [GitHub] — 2026-10-05 · Décima autorización, fase 4: seguridad R-052 sobre `82ceb63`, con hallazgos y sin veto (SEC-127, `contrato`, baja → P-136-G); cierre de la intervención 1 (CA-54); apertura de la intervención 2 (SEC-120) por delegación del propietario
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `auditor-seguridad` (R-052 en `docs/seguridad/registro-seguridad.md`; REQ-007: `Hallazgos abiertos:` gana SEC-127 y `Seguridad:` sigue `pendiente` con la referencia; evidencia `cand-1.36.0/ca54/seg-R052/`; ~252 k tokens) y la coordinadora (ficha, plan de SEC-120, ESTADO y PLAN).
+
+- **R-052:** el delta de CA-54 no convierte ningún `deny` de v1.35.0 en `allow` ni en «sin decisión», salvo SEC-127.
+  - El atajo equivale a la regla (muestra propia de 200 ejecuciones más las 3 600 de QA).
+  - El análisis compartido no reutiliza nada de otra entrada (O-52-1: la memoria no tiene clave de manifiesto).
+  - **Sin recursión:** hasta 2 040 niveles con tres tamaños de pila, `82ceb63` da `deny` y rc 0, y `dee5932` da SIGSEGV.
+  - QA-007-01 encaja como límite; el delta reduce la exposición a SEC-115.
+  - Observaciones O-52-1 a O-52-3.
+- **SEC-127 (`contrato`, baja, lo introduce `82ceb63`):** con bash 5.0 o anterior en modo POSIX, la asignación `LC_ALL=C` del atajo persistiría y un cierre con estado no ASCII pasaría. Simulado, no reproducido. **P-136-G** está en la cola (recomendación: repararlo dentro de la 2b). Impide cerrar REQ-007; la publicación de 1.36.0 vuelve al propietario mientras siga abierto.
+- **Intervención 1 cerrada** con QA y seguridad «con hallazgos» y sus límites declarados. No se cierra ningún REQ.
+- **Intervención 2, SEC-120, abierta:** plan de cuatro fases y bloques calcados de la décima, en `PENDING_APPROVAL.md` § Resueltas. `docs/PLAN.md` y ESTADO al día.
+- **Gasto real de la intervención 1** (dato para calibrar): desarrollador ≈ 682 k, QA ≈ 494 k (425 k más la corrección de 69 k), analista ≈ 954 k en cinco comisiones y seguridad ≈ 252 k. Lo propuesto era 300–400 k, 250–300 k y 150–200 k. El plan de SEC-120 ya usa rangos calibrados.
+- **Avance (regla 6):** CA-54 está cerrado como intervención; empieza SEC-120, fase 1 (casos y fail-before).
+
+## [GitHub] — 2026-10-05 · QA corrige su propio recuento de QA-007-01: 10 de 30, no 8 de 30 (error de suma, no de medición)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus, comisión nueva; ~69 k tokens) y la coordinadora (registro).
+
+- **Recuento:** M-B 2, N-A 2, N-B 4 y N-C 2 corridas de 5 000 ms o más, en `qa/21-casos-propios-tiempo.txt` sobre `82ceb63`. Coincide con la precisión del analista.
+- **Dónde se corrigió:** en `docs/qa/REQ-007.md` (tres sitios, con «antes: 8 de 30» y una nota fechada de QA) y en el texto de QA-007-01 en `Hallazgos abiertos:` de REQ-007. No cambian la clase (`contrato`), ni `QA:`, ni ninguna medición.
+- **La red:** retomar la comisión de QA anterior seguía devolviendo el 403 de Zscaler después de que el propietario resolviera la red; una comisión nueva conectó a la primera.
+- **Avance (regla 6):** el registro de QA ya es correcto; sigue la fase 4 (seguridad sobre `82ceb63`).
+
+## [Interno] — 2026-10-05 · Decisiones del propietario: M0 y MD como límite «sin cifra sobre `82ceb63`», que se miden en la 2b; QA-007-01 sigue como `contrato`; el 403 de Zscaler es del anfitrión
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- Las tres decisiones van literales en `PENDING_APPROVAL.md` § Resueltas.
+- `docs/PLAN.md` § 1.36.0, fila 2b: M0 y MD se miden en anfitrión sano antes de optimizar.
+- ESTADO: el impedimento queda atribuido al anfitrión, y el orden de reanudación sigue sin pedir autorización.
+- **Avance (regla 6):** quedan decididos los dos avisos del analista; la reanudación depende de la red.
+
+## [Interno] — 2026-10-05 · Impedimento de red: dos comisiones de QA (corrección de su recuento) terminaron con un 403 de Zscaler al autenticar contra la API, sin cambiar nada; la fase 4 queda pendiente
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Error literal:** «Agent terminated early due to an API error: Failed to authenticate. API Error: 403 Internet Security by Zscaler (error type authentication_failed, HTTP 403, model sent to the API: claude-opus-5-5)». Ocurrió dos veces seguidas en la comisión de QA. El árbol no cambió: sólo se movió el bloque derivado de ESTADO.
+- **Qué es:** un fallo de red o del proxy de esta máquina, **no** un control del proveedor sobre el contenido. Se reintentó una vez, porque era infraestructura, y no se insiste más.
+- **Qué queda pendiente:**
+  - la corrección de QA de su recuento: «8 de 30» → 10 de 30, según el analista;
+  - la seguridad sobre `82ceb63` (fase 4);
+  - el commit validado;
+  - la apertura de SEC-120.
+  El plan se retoma desde ESTADO sin volver a pedir la autorización.
+- **Avance (regla 6):** sin cambios desde `33f46ff`; el plan espera a que la red permita las comisiones.
+
+## [GitHub] — 2026-10-05 · P-136-F, write-back: QA-007-02 cerrado por reversión (`74da4c5`); ficha F-136-5 (recursión de la lectura léxica, `instrumento`, alta); QA-007-01 como límite declarado de CA-54; plan de versión de 1.36.0 en `docs/PLAN.md`
+> Origen: GitHub (commit local, sin push; sin código) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (REQ-007, `docs/PENDIENTES.md`, guía e índice; ~204 k tokens) y la coordinadora (`docs/PLAN.md`, ESTADO y la comprobación del revert).
+
+- **Revert comprobado por la coordinadora:** `git diff 82ceb63 74da4c5 -- hooks/` da 0 bytes, y `cmp` sale idéntico en cada archivo de `hooks/`. El desarrollador corrió además las gates (rc 0) y la sección 46 (263/0).
+- **REQ-007:**
+  - QA-007-02 sale de `Hallazgos abiertos:`, con su rastro en el Historial;
+  - QA-007-01 queda como «límite declarado (P-136-F)», sin cambiar su clase (`contrato`);
+  - la nota de CA-54 gana «Límite declarado del candidato `82ceb63`»: cumple en las 35 corridas; los casos M y N, el proyecto sin globs de código y el desarrollador con el primer destino en código quedan fuera del criterio; la medición sobre un anfitrión degradado se registra como tal;
+  - el bloqueo del proveedor queda registrado;
+  - Historial y Correspondencia.
+- **F-136-5** (`docs/PENDIENTES.md`): «la lectura léxica de rutas es recursiva por segmento y sin tope», con la condición del propietario (primero el caso de banco con fail-before). Sobre `82ceb63` sólo está medido que 1 990 niveles dan `deny` por `guard.sh`.
+- **Guía** («Hacia 1.36.0»): un párrafo de límite declarado, listo para copiar a las notas.
+- **`docs/PLAN.md` § 1.36.0:** plan vigente por intervenciones (1 CA-54, 2 SEC-120, 2b la segunda pasada de CA-54, 3 SEC-115/118); la planificación anterior queda como historia.
+- **Avisos del analista:**
+  - el recuento de QA es **10 de 30**, no 8 de 30 (lo corrige QA en su registro);
+  - M0 y MD no tienen cifra sobre `82ceb63`, sólo sobre `dee5932` con el anfitrión degradado;
+  - QA-007-01 sigue como `contrato`, así que REQ-007 no puede cerrarse (no se iba a cerrar);
+  - el cambio se clasifica como menor, sin ADR, por el precedente de P-119-A.
+- **Avance (regla 6):** el contrato refleja el candidato `82ceb63`. Falta la seguridad (fase 4).
+
+## [GitHub] — 2026-10-05 · Revert del código de `dee5932` por P-136-F; `hooks/` = `82ceb63`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Qué:** se revierte sólo el código (`hooks/lib.sh`, `hooks/guard-codigo.sh`, `hooks/guard-completado.sh`) de la pasada correctiva de QA-007-01 (`dee5932`).
+  - Se hizo con `git revert --no-commit`.
+  - El registro técnico y este CHANGELOG se conservan como historia: se devolvieron a HEAD tras el conflicto del revert.
+  - `git diff 82ceb63 -- hooks/` queda vacío.
+- **Por qué:** QA-007-02. La lectura léxica por directorio de `dee5932` recurre una vez por segmento, sin tope; con unos 1 500 niveles de `..`, el hook muere por SIGSEGV y abre las dos puertas. Lo decidió el propietario en P-136-F (C): el candidato de CA-54 es `82ceb63`.
+- **Humo:** gates de §7 rc 0; sección 46 del banco, 263 PASS y 0 FAIL. El banco completo de `82ceb63` lo validó QA.
+- **No se repara la recursión** (intervención 2b). Nota en `docs/arnes/v1.36.0-ca54-fase2.md`, «Revertida por P-136-F (2026-10-05)».
+
+## [GitHub] — 2026-10-05 · P-136-F resuelta por el propietario: opción (C). El candidato de CA-54 es `82ceb63` y se revierte `dee5932`; QA-007-02 queda cerrado por reversión, con ficha; QA-007-01 queda como límite declarado; segunda pasada como intervención 2b, después de SEC-120
+> Origen: GitHub (commit local, sin push; **sin código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión literal** en `PENDING_APPROVAL.md` § Resueltas; la cola queda vacía.
+- **Alcance de la reversión, comprobado:** entre `82ceb63` y `dee5932^` no cambia `hooks/`, `tools/` ni `tests/`.
+- **«El plan de versión» no existía como documento:** la coordinadora lo escribe en `docs/PLAN.md` § 1.36.0, en el commit del cierre.
+- **Avance (regla 6):** el camino de cierre de CA-54 queda decidido. Siguen la reversión, el write-back y la seguridad.
+
+## [GitHub] — 2026-10-05 · Décima autorización, re-verificación de QA sobre `dee5932`: CON HALLAZGOS — QA-007-02 (`contrato`, alta), nuevo e introducido por la pasada: un destino con unos 1 500 niveles mata el hook por SIGSEGV y abre las dos puertas; QA-007-01 sigue abierto; ficha P-136-F; plan PARADO
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; registro en `docs/qa/REQ-007.md`; `Hallazgos abiertos:` de REQ-007 con QA-007-01 y QA-007-02, y `QA:` sigue `pendiente`; evidencia `a6f5b32`) y la coordinadora (ficha y registro).
+
+- **QA-007-02:**
+  - en la lectura léxica, `_arnes_lectura_lexica` recurre por segmento sin tope;
+  - con un destino de `..` y unos 1 500 niveles (≈ 3 KB, por debajo de `ARNES_ID_MAX`), el hook termina con rc 139 y sin decisión;
+  - la coordinadora escribe entonces en `src/a.ts` y un REQ se cierra por `sed -i`, cuando v1.35.0 y `82ceb63` lo deniegan;
+  - el banco no tiene ningún caso de destinos profundos;
+  - **no hay exposición fuera del worktree** (commits locales sin push; instalación estable 1.35.0).
+- **QA-007-01:** sigue abierto. El anfitrión se degradó durante la medición (v1.35.0 hasta 4 veces más lento que por la mañana), y QA registró los FAIL con su carga, sin repetirlos. M0 y MD son formas que la pasada no ataca por construcción.
+- **Conforme:** 0 procesos añadidos; inventario sólo con CA-69 2 (c); banco 2037/0/13; autoprueba 117/0; gates rc 0.
+- **Control del proveedor:** detuvo a QA al construir los locales GB18030 y BIG5. No se reintentó, y el ataque de equivalencia sobre `dee5932` quedó sin ejecutar.
+- **Fase 4:** no se despachó, porque no hay QA favorable. **P-136-F** está en la cola (opciones A, B y C; la coordinadora recomienda C: revertir ahora a `82ceb63` y hacer la segunda pasada como intervención nueva).
+- **Avance (regla 6):** la pasada redujo tiempos pero abrió un fallo en abierto; el candidato necesita la decisión P-136-F.
+
+## [Interno] — 2026-10-05 · Décima autorización: pasada correctiva de QA-007-01 comiteada por el desarrollador en `dee5932` (SIN VALIDAR); decisión de la coordinadora sobre el SKIP de REQ-017 CA-09; ESTADO a la re-verificación de QA
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Banco del worktree** con la pasada: 2036/0/14, autoprueba 117/0 y gates rc 0, según el desarrollador. INS-136-1 no se reprodujo en esa corrida.
+- **REQ-017 CA-09** (ejecuta hooks) pasó de PASS a SKIP. Es una abstención de la sonda de reloj: los rangos se solapan, por la dispersión que se atribuye a SEC-030. Con el mismo código dio PASS (1,910×) en `40-`. **La coordinadora no lo trata como parada:** CA-69 2 (c), «Un SKIP o un INCONCLUSO no acredita» (decisión 7 de 1.35.0). Se declara con su motivo y no se repite. Un FAIL en ese caso sí sería parada. Así se informó al propietario.
+- **Avance (regla 6):** la pasada correctiva está comiteada; falta la re-verificación de QA.
+
+## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 (CA-54): casos M, N y MR de QA por debajo de 5 s (45/45, máx. 4 713 ms) y las 35 corridas (máx. 4 011 ms), con las mismas decisiones — **SIN VALIDAR por QA**
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico). Evidencia en el árbol `ArnesJuan-evidencia`, `cand-1.36.0/ca54/` (commit de esta pasada). Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`, sección «Pasada correctiva (QA-007-01)».
+
+- **Código (`hooks/`), por propiedad**, todo editado con la herramienta de edición:
+  - la pertenencia a `requirements/` se juzga en la misma llamada que la de código (`_arnes_id_adelanta`), y `guard-completado` sólo reutiliza el «fuera»: ningún destino deja de juzgarse;
+  - la fase de tokens corre en locale C también cuando el locale es UTF-8;
+  - `_arnes_lf_memo` cubre un nivel que no existe sobre un directorio ya resuelto;
+  - la lectura léxica de `D/B` se deriva de la de `D`, memorizada.
+  - El atajo de P-136-D sigue en su sitio, después de las denegaciones por forma.
+- **Procesos:**
+  - `sonda-procesos.sh` da la misma cuenta en los dos árboles: 0 procesos añadidos;
+  - el recuento exacto da uno menos en S1, M, N y MR, e igual en S2.
+- **Inventario** con `ARNES_SEMILLA_41=23062` frente a `22-`, sólo con casos declarados:
+  - REQ-021 CA-03, CA-10 y CA-10.2 en FAIL, de INS-136-1: es `instrumento`, no atribuible al cambio (P-136-E);
+  - REQ-017 CA-08 (ii) «6 líneas», de CA-69 2 (c).
+- **Banco del worktree:** 2036 PASS, 0 FAIL, 14 SKIP. Declarados uno por uno:
+  - el SKIP de REQ-017 CA-09, una abstención que no acredita (dio PASS en `40-` con el mismo código);
+  - REQ-017 CA-08 (ii) «200 líneas», de CA-69 2 (c);
+  - el nombre con semilla de la sección 41.
+- **Autoprueba** 117/0. **Gates de §7:** rc 0.
+- **Sin medir:** Windows/MSYS, el host, el CI, los locales en_US y tr_TR, y formas de comando distintas de S1, S2, M, N y MR.
+- **Avance (regla 6):** QA-007-01 reparado por el desarrollador; falta re-validación de QA y después seguridad.
+
+## [GitHub] — 2026-10-05 · P-136-E resuelta por el propietario: opción (A); hallazgo `instrumento` INS-136-1, no atribuible al cambio; regla de parada afinada también en `templates/autorizacion.md`; ficha F-136-4 (REQ-021)
+> Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (texto y trazabilidad, dentro de lo que la décima autorización le deja decidir).
+
+- **Cola:** P-136-E literal en § Resueltas, con la ficha debajo. La cola queda vacía.
+- **`docs/PENDIENTES.md`:**
+  - INS-136-1: REQ-021 CA-03, CA-10 y CA-10.2 pasan de PASS a FAIL por la calibración de `sonda-reloj.sh`, que no ejecuta hooks. Va con la prueba estática y la corroboración del propietario;
+  - F-136-4: una calibración fuera de banda debería abstenerse en lugar de dar FAIL. Es para después; cambia el contrato de REQ-021 y lo fija el analista.
+- **`templates/autorizacion.md`:** el bloque «Cuándo paras» gana una guía: «un veredicto del banco que cambia» = un caso que ejecuta el código del cambio o lee archivos del delta; un caso de calibración de un instrumento que cambia se registra y el plan sigue. El ejemplo de la décima lleva la precisión fechada.
+- **Avance (regla 6):** el plan sigue con los commits del desarrollador, el banco y la autoprueba, y después la re-verificación de QA.
+
+## [GitHub] — 2026-10-05 · Décima autorización, pasada correctiva de QA-007-01 PARADA: los tiempos cumplen (35/35 y 45/45 por debajo de 5 s), pero el inventario cambia en 3 casos de calibración del reloj que no ejecutan los hooks; ficha P-136-E; código SIN COMITEAR
+> Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (pasada correctiva; tramo de ~60 k tokens, ~655 k acumulados en la comisión) y la coordinadora (comprobación estática y este registro).
+
+- **Pasada correctiva** (por propiedad; no omite ningún destino):
+  - la pertenencia a `requirements/` se juzga en la misma llamada que la de código, y `guard-completado` reutiliza sólo los destinos «fuera»;
+  - la fase de tokens corre en locale C también con locale UTF-8;
+  - memo de lectura física de un nivel inexistente;
+  - lectura léxica de `D/B` derivada de la de `D`.
+  - El atajo de P-136-D se queda donde estaba. Todas las ediciones se hicieron con Edit.
+- **Tiempos** (a nivel de hook, Linux/WSL2):
+  - S1/S2: 35 de 35 por debajo de 5 s (máx. 4 011 ms);
+  - casos de QA M, N y MR: 45 de 45 por debajo de 5 s (máx. 4 713 ms);
+  - decisiones idénticas a v1.35.0 y 0 procesos añadidos (medida del contrato y recuento complementario).
+- **Inventario:** 3 casos PASS → FAIL, de la calibración de `sonda-reloj.sh` (REQ-021 CA-03, CA-10 y CA-10.2), más 1 caso de CA-69 2 (c). La coordinadora comprobó en el disco que esa calibración **no ejecuta los hooks**. Aun así, la regla de la autorización («un veredicto del banco que cambia») manda parar. No se repitió nada.
+- **Sin hacer:** el banco del worktree, la autoprueba, las gates (sólo `bash -n`), el registro técnico y los commits del código y de la evidencia.
+- **Avance (regla 6):** QA-007-01 está reparado en tiempos según el desarrollador, pero sin validar; falta la decisión P-136-E.
+
+## [GitHub] — 2026-10-05 · Décima autorización, fase 3: QA (Opus) CON HALLAZGOS sobre `82ceb63` — QA-007-01 (`contrato`, media): la propiedad de CA-54 no se cumple con comandos propios en el máximo (hasta 5 814 ms); las 35 corridas, procesos, inventario, banco, autoprueba y equivalencia del atajo, conformes
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `qa-tester` (Opus; ~312 k tokens; registro `docs/qa/REQ-007.md`; cabecera de REQ-007: `Hallazgos abiertos:` gana QA-007-01, y `QA:` sigue `pendiente` con la referencia en su paréntesis; evidencia `cand-1.36.0/ca54/qa/`, commit `1209970`) y la coordinadora (este registro).
+
+- **Conforme:**
+  - las 35 corridas, con un máximo de 4 513 ms y decisiones, rc, `bytes=` y `destinos=` iguales a v1.35.0;
+  - 0 procesos añadidos;
+  - inventario: 2049 de 2050 casos idénticos. La diferencia es «REQ-017 CA-08 (ii), 200 líneas», que sale INCONCLUSO y queda no acreditado por CA-69 2 (c);
+  - banco 2038/0/12; autoprueba 117/0; gates rc 0;
+  - **equivalencia del atajo:** 6 148 ejecuciones idénticas byte a byte frente a v1.35.0, incluidas HC5a, HC9.6 y LC10.1–LC10.9 por `guard-completado`, los locales en_US y tr_TR construidos con `localedef`, y el estado terminal con el destino dentro y fuera de `requirements/`. Las denegaciones por forma salen antes del atajo.
+- **QA-007-01:** en el máximo, un comando que menciona el estado terminal con todos los destinos fuera (M), o con un solo carácter no ASCII (N), tarda 5 s o más en 8 de 30 corridas (máx. 5 814 ms). La decisión es idéntica y no hay fallo en abierto. QA-023-10 sigue abierto.
+- **Decisión de la coordinadora** (dentro de la décima autorización): se usa la **única pasada correctiva** del plan, sin reiniciar contadores.
+- **No medido:** Windows/MSYS, el host, el CI, otros locales y un `grep` que no sea GNU.
+- **Avance (regla 6):** CA-54 se cumple en las 35 corridas del instrumento, pero no en la propiedad. Sigue la pasada correctiva del desarrollador y su re-verificación por QA.
+
+## [Interno] — 2026-10-05 · Décima autorización: fase 2 cerrada por el desarrollador en `82ceb63` (SIN VALIDAR); ESTADO pasa a la fase 3 (QA)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Resultado de la fase 2 según el desarrollador:**
+  - 35 de 35 corridas por debajo de 5 000 ms (máx. 3 711 ms);
+  - decisiones, rc y salidas idénticas a v1.35.0;
+  - 0 procesos añadidos;
+  - inventario idéntico a la referencia (`f35c9c04…`, semilla 23062);
+  - banco 2038/0/12; autoprueba 117/0; gates rc 0.
+  - El atajo va en la línea 400 de `guard-completado.sh`, después de todas las denegaciones por forma (líneas 334–355).
+  - Nada de esto lo ha validado QA todavía.
+- **Avance (regla 6):** construido y medido por el desarrollador; falta la validación de QA (fase 3).
+
+## [GitHub] — 2026-10-05 · Décima autorización, fase 2 (CA-54): análisis de `Bash` en el máximo por debajo de 5 s (35/35, máx. 3 711 ms) con las mismas decisiones e inventario idéntico; atajo de `guard-completado` readmitido por P-136-D — **SIN VALIDAR por QA**
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (código, medición y registro técnico; presupuesto superado, aceptado por el propietario en P-136-D). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `cb3cb80`, `cand-1.36.0/ca54/`. Registro técnico: `docs/arnes/v1.36.0-ca54-fase2.md`.
+
+- **Código (`hooks/lib.sh`, `guard-codigo.sh`, `guard-completado.sh`), por propiedad.** Cada juicio da el de v1.35.0 y sólo cambia lo que tarda:
+  - el comando se analiza una vez por invocación (`arnes_escrituras_de`);
+  - la fase de tokens del detector se resuelve en locale C sólo sobre texto ASCII y escribe los destinos de una vez;
+  - identidad y pertenencia recorren menos sentencias por destino: las ramas de «no determinable» van aparte y no se copian en cada llamada;
+  - el atajo de `guard-completado` (`arnes_estado_ausente`) omite sólo el recorrido de destinos cuando es seguro que el comando entero no menciona el estado terminal.
+- **Colocación del atajo (P-136-D):** análisis, `ARNES_RC_EXCESO`, `ARNES_RC_CR`, `ARNES_RC_CUERPO_CR`, `ARNES_RC_LC10` y manifiesto roto salen antes (líneas 333–366), en el orden de v1.35.0; el atajo está en la 400. Detalle en el registro, § 2.
+- **Medida** (Linux/WSL2, a nivel de hook, carga 1,11–1,52), mediana del candidato frente a v1.35.0:
+  - S1: A 3 009 frente a 8 620 ms, B 3 411 frente a 8 418, C 3 610 frente a 8 118;
+  - S2: original 1 908 frente a 2 408,5, controles 3 111–3 410 frente a 5 413–5 564;
+  - **0 de 35 corridas llegan a 5 000 ms** (en v1.35.0 eran 30);
+  - salida completa idéntica en las 10 entradas.
+- **Procesos:**
+  - `sonda-procesos.sh` da la misma cuenta en los dos árboles: 0 procesos añadidos;
+  - el recuento exacto en un espacio de PID propio da uno menos en S1 e igual en S2.
+- **Inventario** (CA-69 2 (a), `ARNES_SEMILLA_41=23062`): idéntico a la referencia, 2050 líneas, `f35c9c04…`, diff vacío.
+  - Banco del worktree: 2038 PASS, 0 FAIL, 12 SKIP. Autoprueba: 117/0. Gates de §7: rc 0.
+- **Registrado, sin reparar:**
+  - la semilla volátil de la sección 41 en el nombre del caso (instrumento);
+  - las dos ediciones de `hooks/` hechas por consola el 2026-10-03 (PR-136-1). Esta vuelta se editó con las herramientas de edición.
+- **Sin medir:** Windows/MSYS, el host, el CI, los locales en_US/tr_TR y entradas de QA con el estado mencionado.
+- **Avance (regla 6):** CA-54 construido y medido por el desarrollador. Falta la validación de QA, con los ataques de P-136-D punto 4, y después la de seguridad.
+
+## [GitHub] — 2026-10-05 · P-136-D resuelta por el propietario: opción (A) con condición de equivalencia; CA-54 (c) aclarada con su texto literal; semilla de la sección 41 fijada en la invocación; fichas F-136-1 a F-136-3 y hallazgo de proceso PR-136-1 (`instrumento`)
+> Origen: GitHub (commit local, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (decisión literal en la cola, ficha a § Resueltas, ESTADO, índice) y `analista-requerimientos` (REQ-007 y `docs/PENDIENTES.md`; ~147 k tokens).
+
+- **Decisión del propietario, literal** en `PENDING_APPROVAL.md` § Resueltas:
+  - el atajo puede omitir **el recorrido de destinos** cuando el comando entero no menciona el estado terminal, nunca el análisis ni las denegaciones por forma (presupuesto, CR del delimitador, SEC-124, LC10), que salen antes, como en v1.35.0;
+  - prueba: inventario idéntico al de referencia, con la semilla fijada;
+  - QA ataca la equivalencia;
+  - acepta el exceso de presupuesto del desarrollador (586 k), y la pasada correctiva sigue siendo una.
+  - La cola queda vacía.
+- **REQ-007:**
+  - CA-54 (c) gana la aclaración del propietario, palabra por palabra;
+  - los puntos 1 y 2 de la decisión quedan citados como decisión sobre la implementación;
+  - CA-69 2 (a): la comparación fija `ARNES_SEMILLA_41` al valor de la referencia (`23062`), y el banco no cambia;
+  - Historial y Correspondencia. Cabecera sin cambios.
+  - **Tensión anotada por el analista:** (c) sigue nombrando «omitir destinos» como ejemplo prohibido. La aclaración y la decisión acotan la excepción, y sólo se entiende leyéndolas juntas.
+- **`docs/PENDIENTES.md`:**
+  - F-136-1: `sonda-procesos.sh` no ve subshells;
+  - F-136-2: la columna vacía de S2;
+  - F-136-3: la semilla va en el nombre del caso;
+  - PR-136-1 (`instrumento`): dos ediciones de `hooks/` por consola, sin reparar.
+- **Semilla (decide la coordinadora por delegación):** se fija en la invocación y no en el banco. Fijarla dentro de la sección 41 quitaría el sorteo de entradas que ese caso ejerce.
+- **Índice:** la fila de REQ-007 pasa a decir P-136-A a P-136-D resueltas y ADR-017 aceptada.
+- **Avance (regla 6):** contrato listo para cerrar la fase 2. Sigue el desarrollador: readmitir el atajo detrás de las denegaciones por forma, 35 corridas, inventario, banco, autoprueba y commit.
+
+## [GitHub] — 2026-10-03 · Décima autorización, fase 2 (CA-54) PARADA: con el atajo de `guard-completado`, 0 de 35 corridas ≥ 5 s; sin él, 1 de 35 (5 213 ms). Ficha P-136-D para el propietario; código SIN COMITEAR y SIN VALIDAR
+> Origen: GitHub (commit local de registro, sin push; **no incluye código**) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (optimización y medición; ≈ 586 k tokens en dos tramos, **por encima** del presupuesto orientativo de 300–400 k) y la coordinadora (decisiones de la parada y este registro).
+
+- **Optimización** (por propiedad: cada juicio da lo mismo y sólo baja el coste):
+  - el comando se analiza una vez por invocación;
+  - la fase de tokens corre en locale C cuando el texto es todo ASCII;
+  - las ramas raras de identidad y pertenencia salen a funciones propias;
+  - 0 procesos añadidos (`sonda-procesos.sh`), y uno menos en S1 con el recuento exacto complementario.
+  - stdout, rc y stderr son idénticos a v1.35.0 en las 10 entradas.
+- **Primera parada del desarrollador, resuelta por la coordinadora:**
+  - el inventario difería en una línea del caso aleatorio de la sección 41, con PASS en las dos corridas: la semilla va en el nombre del caso. Se decidió repetir con `ARNES_SEMILLA_41=23062`, y no llegó a hacerse por la segunda parada. **Defecto de instrumento registrado:** CA-69 2 (a) necesita fijar esa semilla;
+  - el atajo de `guard-completado` se retiró porque choca con el texto literal de CA-54 (c), «omitir destinos».
+- **Segunda parada:** sin el atajo, S1 B da 5 213 ms en 1 de 5 corridas. Es una condición de parada de la autorización, y la decide el propietario en **P-136-D** (opciones A, B y C; la coordinadora recomienda A). No se repitieron corridas buscando verde.
+- **Sin hacer:** el inventario con la semilla fijada, el banco del worktree, la autoprueba y los commits de código y de evidencia.
+- **Registro (§13):** dos ediciones de `hooks/` se hicieron por consola (`python3`), así que ninguna puerta las midió.
+- **Avance (regla 6):** CA-54 se puede alcanzar con margen sólo con el atajo; falta la decisión P-136-D. Las fases 3 y 4 no han empezado.
+
+## [GitHub] — 2026-10-03 · Décima autorización, fase 1 (CA-54): sondas S1 y S2 restauradas (sólo rutas), línea base de las 35 corridas sobre v1.35.0 (30 de 35 pasan de 5 s) e inventario de referencia del banco de v1.35.0 (2050 casos); sin optimizar
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `desarrollador` (medición y registro técnico, < 200 k tokens) y la coordinadora (este commit). Evidencia en el árbol `ArnesJuan-evidencia`, rama `evidencia/prueba-despacho-2026-09-14`, commit `4e8757e`, `cand-1.36.0/ca54/`.
+
+- **Sondas:** 9 líneas cambiadas, todas rutas (`source` y `Q`/`CAND`/`BASE`/`T43` de cada `qa-lib.sh`). El diff se registró antes de medir. Las 10 entradas son idénticas por sha256 a las de `cand-1.35.0/`. El desarrollador cambió también las rutas de los árboles, además de la de la biblioteca: lo autoriza la nota de CA-54, y sin ellas las sondas no corren.
+- **Línea base** (a nivel de hook, Linux/WSL2, carga entre 0,40 y 1,95; mín/mediana/máx en ms, v1.35.0):
+  - S1 A: 8 118 / 9 621 / 11 023;
+  - S1 B: 7 717 / 8 319 / 8 419;
+  - S1 C: 7 415 / 8 117 / 9 521;
+  - S2 original: 2 208 / 2 208 / 2 309;
+  - controles de S2: ≈ 5,2–6,4 s.
+  - Decisiones esperadas en las 35 corridas (S1 allow, S2 deny, rc 0); procesos 3 (S1) y 4 (S2).
+  - **30 de las 35 corridas pasan de 5 000 ms.** Detalle en `docs/arnes/v1.36.0-ca54-fase1.md`.
+- **Inventario de referencia:** banco de v1.35.0 con sus hooks, desde el worktree `/home/juan/dev/ArnesJuan-v1.35.0-base` (`3956a6f`). Resultado: 2038 PASS, 0 FAIL, 12 SKIP (1 INCONCLUSO). `22-inventario-v1.35.0.txt` tiene 2050 líneas, sha256 `f35c9c04f348148a608ba821bdd744c827fc48d9a5b8c433edf7569ea527c436`.
+- **Defectos registrados, sin reparar:**
+  - **(i) instrumento:** `tests/util/sonda-procesos.sh` sólo cuenta los binarios de su lista, no los subshells ni las `$( )` de bash, así que no puede acreditar por sí sola «0 procesos añadidos» (P-136-A). La propiedad sigue en pie, y la fase 2 la cumple sin añadir forks de ninguna clase.
+  - **(ii)** REQ-017 CA-08 (ii), «6 líneas» y «200 líneas», alternan entre PASS e INCONCLUSO de una corrida a otra; por CA-69 2 (c), no acreditan.
+  - **(iii)** en S2, `BASE` y `T43` apuntan a la misma ruta, y la columna `43b948a` sale vacía. Sólo cambia el rótulo.
+  - **(iv)** una corrida inválida del banco, por invocación: `ARNES_HOOKS_DIR` sin `tools/` hermano. Se conserva rotulada `20-INVALIDA-` y no es un veredicto.
+- **Avance (regla 6):** línea base e inventario de referencia tomados. Sigue la fase 2 (optimización).
+
+## [GitHub] — 2026-10-03 · Décima autorización, fase 0: P-136-A/B/C resueltas por el propietario; plantilla `templates/autorizacion.md`; ficha del campo derivado; índice de REQ-001 y REQ-031 al día; ADR-017 aceptada
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: la coordinadora (registro literal de la décima autorización en `PENDING_APPROVAL.md` § Resueltas; fichas movidas allí sin cambiar su texto; línea de plan vigente en ESTADO) y `analista-requerimientos` (resto; ~202 k tokens). Hooks 1.35.0 vigentes, comprobado con la sonda LC10 tras el reinicio.
+
+- **Decisiones del propietario** (literales en la cola): P-136-A, 0 procesos añadidos; P-136-B, toda denegación decidida llega al cliente, entera o acotada, y los avisos entran; P-136-C, techos de tamaño más un plazo propio de 40 s, sin procesos; CA-68 / REQ-017 CA-09, se evalúa al construir SEC-115. La cola queda vacía.
+- **`templates/autorizacion.md`** (nuevo), con los cuatro bloques y la décima autorización como ejemplo. Se enlaza desde la guía («Hacia 1.36.0» de `skills/arnes-upgrade/SKILL.md`) y desde la cabecera de `PENDING_APPROVAL.md`. `templates/PENDING_APPROVAL.md.tpl` no se toca: cambiar su cabecera pediría una migración propia.
+- **REQ-007:**
+  - P-136-A/B/C pasan a resueltas;
+  - la nota de CA-54 recibe «Coste en procesos: 0 añadidos»;
+  - CA-67 se escribe por propiedad y recibe «Los avisos entran»;
+  - CA-68 recibe techos de tamaño y un plazo ≤ 40 s, medido a nivel de hook;
+  - CA-69 p. 3, Historial y Correspondencia.
+  - **ADR-017 pasa a `aceptada`.** Cabeceras y contadores sin cambios.
+- **Índice:** veredictos de REQ-001 y REQ-031 copiados de sus cabeceras. **`docs/PENDIENTES.md`:** ficha del campo derivado del plan vigente, sin implementar (es `hooks/`).
+- **Lecturas del analista que el propietario puede querer revisar** (no cambian CA-54):
+  - el plazo de 40 s se lee como techo operativo, que se puede bajar con medición;
+  - se mide con la emisión incluida.
+- **Comprobaciones mecánicas de la coordinadora:** gates de §7 con rc 0; cola en 0; sin rutas protegidas.
+- **Avance (regla 6):** fase 0 hecha. Sigue la fase 1 (desarrollador: sondas, línea base e inventario).
+
+## [GitHub] — 2026-10-03 · Instalación estable actualizada a 1.35.0 en este host (WSL2), por petición expresa del propietario
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora. Sin comisiones.
+
+- `claude plugin marketplace update arnes-juan`, y después `claude plugin update arnes-juan@arnes-juan` con los alcances `user` y `project` (`/mnt/c/Users/JVega`). Resultado: **1.33.2 → 1.35.0**, `gitCommitSha` `3956a6f`.
+- **Verificado:** `installed_plugins.json` muestra 1.35.0 en los dos alcances, y `plugin.json` de la caché también dice 1.35.0. Cada `hooks/*.sh`, `hooks/*.awk` y `hooks/hooks.json` de la caché es idéntico (`cmp`) al de `git show v1.35.0:`.
+- **Rige desde el próximo reinicio de Claude Code.** La sesión que abrió 1.36.0 corrió con los hooks de 1.33.2.
+- Cierra la discrepancia anotada en `8a7064e`: `docs/ESTADO.md` y `PENDING_APPROVAL.md` quedan al día.
+- **Avance (regla 6):** la instalación estable es 1.35.0. Siguen faltando las fichas P-136-A, P-136-B y P-136-C.
+
+## [GitHub] — 2026-10-03 · Apertura de v1.36.0: contrato por propiedad y medida en REQ-007 (CA-54, CA-47 punto 20, CA-67 a CA-69) y ADR-017 en `propuesta`; tres fichas para el propietario en la cola; SIN VALIDAR y sin código
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agentes: `analista-requerimientos` (contrato, fichas, ADR; ~398 k tokens, 129 herramientas, ~24 min) y la coordinadora (registro). Encargo del propietario del 2026-10-03, «Encargo 2», ahora literal en `PENDING_APPROVAL.md` § Resueltas. Gobernado, en este host, por la instalación **1.33.2** (ver la corrección de abajo).
+
+- **REQ-007:**
+  - nota de CA-54 del 2026-10-03 (CA-54 / QA-023-10): < 5 s en 131 072 bytes en Linux/WSL2, sin cambiar veredictos, sin subir el umbral ni reducir la entrada, y la medida caso a caso con `inventario.sh`;
+  - CA-47 punto 20 (SEC-120);
+  - bloque L: CA-67 (SEC-118), CA-68 (SEC-115) y CA-69 (evidencia común);
+  - Notas / alcance de 1.36.0, P-136-A a P-136-C, Trazabilidad con «Correspondencia con el encargo» e Historial.
+  - Sin cambios: `Estado:`, `QA:`, `Seguridad:`, `Rigor:`, sensibilidad, `Hallazgos abiertos:` y contadores.
+- **ADR-017** (nuevo, `propuesta`): la puerta que no puede leer, terminar o emitir no deja pasar.
+- **Índice:** la fila de REQ-007.
+- **Cola:** tres fichas en Pendientes (P-136-A, P-136-B y P-136-C), así que hoy no se puede marcar ningún REQ como `completado`. En § Resueltas queda el pedido literal del «Encargo 2», que el analista señaló sin sede.
+- **Corrección a la entrada anterior (`5f85bef`):** decía «gobernado por la instalación estable 1.35.0» y «Plugin instalado: 1.35.0». En este host, `installed_plugins.json` registra **1.33.2** (`10eac80`). La discrepancia se anota en `PENDING_APPROVAL.md` y en `docs/ESTADO.md`; la entrada anterior no se reescribe.
+- **Comprobaciones de la coordinadora (mecánicas, no de contenido):** gates de §7 con rc 0; `tools/arnes-lectura.sh .` cuenta 3 pendientes; no se tocan `hooks/`, `tools/` ni `tests/`. **Nadie ha validado el contrato:** no se despachó a QA ni a seguridad, por instrucción del propietario.
+- **Avance (regla 6):** el contrato de 1.36.0 está escrito. Faltan las tres decisiones del propietario y su autorización de implementar CA-54.
+
+## [GitHub] — 2026-10-03 · Registro de la publicación de v1.35.0: notas `[1.35.0]` de candidato a publicada, ESTADO abre el bloque de 1.36.0, la cola cierra la publicación; lectura del propietario sobre el impedimento del proveedor
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por encargo del propietario (mensaje del 2026-10-03 a la sesión del worktree `ArnesJuan-v1.36`, «Encargo 1»). Sin comisiones. Rama `cand/1.36.0`, desde `3956a6f`. Gobernado por la instalación estable **1.35.0**.
+
+- **Datos de la publicación, comprobados por la coordinadora con `git` y `gh`:** `main` en `3956a6f` (fusión del PR #59, `state: MERGED`, `mergedAt` 2026-10-04T02:08:55Z = 2026-10-03 en Costa Rica); tag `v1.35.0` sobre `3956a6f`; CI final run `37169938675` (`banco`), `conclusion: success`, `headSha` `c0f8493`, que es la cabeza del PR.
+- **Notas `[1.35.0]`:** la fecha del encabezado pasa a 2026-10-03 y se añade la línea «PUBLICADA» con esos datos. El contenido de las notas no se reescribe.
+- **`docs/ESTADO.md`:** bloque vigente nuevo de 1.36.0 (1.35.0 publicada, cabeza de partida, alcance decidido, próximo paso); el bloque de 1.35.0 pasa a «Historia» sin cambiar su texto, salvo el encabezado y una línea que dice que ya no es vigente.
+- **`PENDING_APPROVAL.md`:** entrada resuelta «Publicación de v1.35.0 ejecutada». La cola ya estaba vacía antes de este commit (desde las decisiones de publicación del 2026-10-03): no había una entrada pendiente de publicación que mover, así que el cierre se registra como entrada nueva en § Resueltas. La cola sigue vacía.
+- **Índice (`requirements/README.md`):** en la fila de REQ-025, «la entrada de `arnes-upgrade` **preparada, no publicada**» gana «(publicada con v1.35.0 el 2026-10-03)». Sin otro cambio: README, guía de `arnes-upgrade` y `docs/gobernanza/` no declaraban «candidato» ni «1.33.2 estable» como vigente (búsqueda de la coordinadora).
+- **Lectura del propietario, literal:** «El impedimento del proveedor de la novena autorización fue sobre el contenido del despacho de SEC-124/125 y la lectura de su diff, no sobre los roles. Los encargos de 1.36.0 se redactan por propiedad y medida.» Registrada en `PENDING_APPROVAL.md` (entrada de la publicación) y en el bloque de 1.36.0 de `docs/ESTADO.md`.
+- **Sin cambios:** código, banco, contratos, veredictos, contadores, `AGENTS.md`. `.arnes/config.json` conserva `arnes_version: "1.33.0"`, por la decisión del propietario registrada en `5d810f0`.
+- **Avance (regla 6):** la publicación de 1.35.0 queda registrada y la ventana 1.36.0 abierta en el tablero; falta el contrato de 1.36.0 (encargo 2, analista).
+
 ## [Interno] — 2026-10-03 · Notas `[1.35.0]`: la prueba en el host del CLI 2.1.285 dentro de WSL2 queda en «Lo no medido» › «El host»
 > Origen: Interno (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por decisión expresa del propietario. Sin comisiones.
 
@@ -1097,8 +3060,10 @@ La entrada pendiente «Decisión de publicación de 1.35.0» suma la ficha 3, QA
 - **Clasificación de la coordinadora (regla 3):** QA-023-01, -03 y -04 son defectos de esta entrega y se reparan en la vuelta 2 de 3, con write-back del analista y comentarios del desarrollador. QA-023-02 es preexistente e independiente del alcance de REQ-023: es una urgencia de seguridad y se escala por la regla 4, **no** se repara aquí. El margen de CA-08 (ii) no se optimiza sin proponerlo antes.
 - **Avance (regla 6):** validación hecha; falta el write-back de los tres `contrato`, la reverificación de QA, la auditoría y la decisión del propietario sobre QA-023-02.
 
-## [1.35.0] — 2026-09-29 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
+## [1.35.0] — 2026-10-03 · La puerta de cierre deja de tomar por ausencia lo que no entiende y deniega, y deja de permitir lo que no puede reconstruir; y las dos puertas juzgan el archivo que se escribe, no la forma de su ruta: cuatro cambios de compatibilidad, con sus límites a la vista
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador` (preparación de la versión); el contenido que describe viene de los cinco merges de `main` desde `v1.34.0` y de REQ-023 en la rama `cand/1.35.0` · gobernado por la instalación estable **1.33.2**.
+
+> **PUBLICADA el 2026-10-03.** `main` en `3956a6f` (fusión del PR #59, `cand/1.35.0`), tag `v1.35.0` sobre esa fusión. CI final: run `37169938675` (`banco`), **success**, sobre `c0f8493`, la cabeza fusionada. Preparada como candidato el 2026-09-29 (fecha anterior de este encabezado). Registro de la publicación añadido el 2026-10-03 por la coordinadora, por encargo del propietario; el texto de las notas de abajo no se reescribe, y donde dice «candidato» o «la cabeza que se publique» se lee en el tiempo en que se escribió.
 
 > Notas finales de versión, reordenadas el 2026-10-03 (cierre de v1.35.0, tramo 3) por `analista-requerimientos`, por encargo del propietario. Se reordena sin quitar ninguna promesa ni limitación declarada: lo que cambió de sitio dice adónde fue, y lo que se resumió conserva su contenido en otra frase.
 

@@ -10099,3 +10099,991 @@ Es el mismo precedente que R-050. **El `auditor-seguridad` no ha revisado, medid
 - **Estado de seguridad aprobado por REQ: sin cambio.** REQ-007 sigue sin firma.
 
 **`docs/seguridad/gobernanza-datos.md`: sin cambios.** **Numeración vigente:** última revisión **R-051**; último hallazgo **SEC-126** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-052** y **SEC-127**.
+
+## Revisión R-052 — **Décima autorización, fase 4: determinación de seguridad del delta de CA-54** (`hooks/`, `v1.35.0`..`82ceb63`). `cand/1.36.0` @ `643385b`, con el código de `82ceb63` — 2026-10-05 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** Mismo método que en R-047 y R-048: `git grep` de `R-052` y `SEC-127` en todas las ramas locales y remotas y en las etiquetas, y búsqueda en los worktrees. Sólo aparecían como «próximo libre». Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, P-136-F, punto 5 (literal): «Fase 4: seguridad sobre 82ceb63 con el veredicto de QA "con hallazgos: QA-007-01 declarado como límite". Commit validado.». Y P-136-D, puntos 1 a 4. Leídos literales.
+- **Orden:** QA se pronunció antes sobre este código: `docs/qa/REQ-007.md`, «Décima autorización, fase 3: CA-54», veredicto «con hallazgos: QA-007-01 declarado como límite». No miré las quality gates ni rehíce su trabajo.
+- **Delta revisado:** `git diff v1.35.0 82ceb63 -- hooks/`: `guard-codigo.sh`, `guard-completado.sh` y `lib.sh`, con +411 y −173 líneas. **`hooks/` de la cabeza es el de `82ceb63`:** `git diff --quiet 82ceb63 HEAD -- hooks/` da rc 0, y `cmp` de los tres archivos contra un `git archive` de `82ceb63` también (`lib.sh` sha256 `d43d374b…`).
+- **Ningún control del proveedor me detuvo.** Leí el diff entero.
+- **Contrato:** REQ-007, la nota de CA-54 del 2026-10-03 con sus tres añadidos de P-136-D y P-136-F, y CA-69.
+- **Método:**
+  - lectura del delta frente a v1.35.0, función por función;
+  - un detector de autollamadas, con control positivo sobre `dee5932`;
+  - tres corridas propias a nivel de hook, rotuladas abajo.
+
+  **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/ca54/seg-R052/` (`90-` a `94-`), sin commit allí. Plataforma: Linux/WSL2, bash 5.3.9 y GNU grep 3.12. En este anfitrión sólo hay un bash.
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 en `allow` o en «sin decisión»?
+
+**Respuesta: no en bash 5.1 o posterior, ni en ningún bash fuera del modo POSIX. Sí, por derivación, en bash 5.0 o anterior en modo POSIX: es SEC-127 (§4).**
+
+**1.1 El atajo de `guard-completado` (`hooks/guard-completado.sh:400`) equivale a la regla.**
+- **El bucle sólo deniega si `grep` encuentra el estado terminal** (líneas 401–412, `grep -iqE` en la 405). Las funciones que recorre —`arnes_identidad`, `arnes_id_pertenece` y sus auxiliares, también las nuevas del delta— no llaman a `arnes_deny` ni hacen `exit`. Lo leí, y QA llegó a lo mismo.
+- **La misma entrada en los dos lados:** el atajo lee `$bash_cmd`, el texto crudo del comando, que es lo que recibe `grep`.
+- **El atajo sólo afirma «ausente» con tres condiciones a la vez** (`lib.sh:2135`):
+  1. el estado es `[A-Za-z0-9_-]+`;
+  2. el texto es todo ASCII;
+  3. el texto en minúsculas ASCII no **contiene** el estado en minúsculas.
+- **Por qué no hay falso «ausente»:**
+  - Con texto y estado ASCII, `grep -i` en cualquier juego de caracteres compatible con ASCII sólo puede casar una letra con su pareja de mayúscula o minúscula ASCII. El plegado de Unicode de `ſ`, `K` (Kelvin) o `İ` necesita un byte que no es ASCII, y ese texto se descarta en la condición 2.
+  - En `tr_TR`, `grep -i` **no** iguala `i` con `I`: ahí el atajo es más estricto que `grep` y le deja la decisión.
+  - «Contener» es condición necesaria para casar, y el atajo nunca la usa como suficiente.
+  - Las mayúsculas se tratan en los dos lados: ambos se pasan a minúsculas en locale C.
+  - Un estado con un acento, un punto o vacío devuelve 1: decide `grep`, como siempre.
+- **Colocación:** después de las cuatro denegaciones por forma (presupuesto, CR del delimitador, SEC-124 y LC10, líneas 334–355) y de `arnes_deny_manifiesto_roto` (366), y antes del bucle. Cumple los puntos 1 y 3 de P-136-D: el atajo comprueba una condición necesaria leyendo la entrada entera, y ninguna denegación que no dependa de ella deja de emitirse.
+- **Medido:**
+  - QA: 3 600 ejecuciones del bloque `estado`, con los locales construidos y su control positivo, y 0 diferencias.
+  - **Mi muestra** (`92-`/`93-`): 200 ejecuciones, todas iguales a v1.35.0 en stdout, stderr y rc.
+    - Estados: `completado`, `COMPLETADO`, `Fin_2-x`, `terminé` e `i`.
+    - Diez formas de mención, entre ellas mayúsculas, prefijo, texto no ASCII, `..`, ninguna mención y los plegados `İ ı K ſ`.
+    - Por `guard.sh` y por `guard-completado.sh`, como coordinadora y como desarrollador.
+    - 116 `deny` y 84 `allow` en v1.35.0: la muestra separa las dos decisiones.
+
+**1.2 El análisis compartido (`arnes_escrituras_de`, `lib.sh:2159`) no reutiliza nada calculado con otra entrada.**
+- **La memoria vive en un proceso, y cada proceso juzga una sola llamada.** Se vacía al cargar `lib.sh` (2158), y `hooks.json` registra un solo comando, `guard.sh`, que se arranca una vez por llamada.
+- **Sólo la usan las dos puertas** (`guard-codigo.sh:62` y `guard-completado.sh:333`). Las dos juzgan la misma entrada JSON, así que tienen el mismo `cwd`, el mismo manifiesto y el mismo agente.
+- **El análisis no depende del `cwd` ni del agente.** Depende del texto, con su clave exacta, y del techo. El techo sale del mismo manifiesto, y la reutilización se limita a los casos en que repetir no escribiría nada en stderr.
+- **Repetirlo daría lo mismo:** v1.35.0 también lo corría en un subshell, con el mismo estado del padre.
+- **Medido por QA:** 868 ejecuciones del bloque `techo`, con seis manifiestos (también el que excede y uno roto), stderr incluido, y 0 diferencias.
+- **Frontera de la memoria:** no tiene clave de manifiesto, y eso es correcto mientras un proceso juzgue una sola llamada (O-52-1).
+
+**1.3 El cambio de locale y su restauración.**
+- **En la fase de tokens no queda nada:** `LC_ALL=C _arnes_escrituras_texto` (`lib.sh:2021`) corre **dentro** de la sustitución de comandos de `arnes_escrituras_de` (2168). Nada de ese subshell llega al proceso que juzga.
+- **En el atajo, sí corre en el proceso que juzga:** `LC_ALL=C _arnes_estado_ausente_c` (`lib.sh:2133`). Medí en bash 5.3.9 que la asignación **se restaura**, con y sin modo POSIX: `${#x}` sobre `ñandú` da 5 antes y después, y `LC_ALL` queda sin definir.
+- **Pero en bash 5.0 y anteriores, en modo POSIX, persiste.** Lo dice `/usr/share/doc/bash/NEWS`, bash-5.1, punto «o»: «Bash posix mode now treats assignment statements preceding shell function [calls] the same as in its default mode, since POSIX … no longer requires those assignments to persist after the function returns». Ésa es la única vía por la que el delta deja un estado que altere un juicio posterior: **SEC-127**.
+- **v1.35.0 no tenía esa forma en el proceso padre.** Busqué asignaciones temporales delante de una llamada en los dos `lib.sh`: sólo hay `IFS= read`, que es un builtin regular y no persiste.
+
+**1.4 El resto del delta: equivalente por lectura, con la medición de QA.**
+- **Previas de `_arnes_id_calcula`:** la condición de entrada cubre las cinco que puede disparar; las del salto y del CR exigen las dos `ARNES_TOOL != Bash` y `p = ARNES_FP`.
+- **Ancla relativa:** el atajo de `cwd` sólo pasa si `ARNES_CWD` es igual a `ARNES_CWD_VISTO`, que sólo guarda un `cwd` ya comprobado.
+- **Rutas limpias:** `_arnes_id_texto` sólo se salta en una ruta que no lleva `//`, `/./`, `/../` ni `\`. Es la misma condición del camino rápido de `_arnes_lectura_lexica` (748), y los pasos que se saltan sólo actúan sobre esas formas.
+- **Lectura física:**
+  - `_arnes_lf_memo` (886) publica lo mismo que la rama de memoria de `_arnes_lectura_fisica`.
+  - `[[ -e $cur ]] && cd -P` (814) es equivalente porque `stat` es condición necesaria de `chdir`.
+- **Lo demás:** `_arnes_propio` en línea, `_arnes_ambito` con `ARNES_AMB_NT` (fijado en el único final de la función), `_arnes_id_ln` (idempotente), la vía (c), `_arnes_id_v`, el techo y la emisión acumulada (mismo orden; `printf` es builtin, sin límite de argumentos).
+- **`set -u`:** las variables nuevas que se leen sin valor por defecto están inicializadas (`ARNES_RAICES_LISTAS` en la 608, `ARNES_ESCR_*` en la 2158).
+- **Medido por QA:** 1 216 ejecuciones de `identidad` y 464 de `s46`, con 0 diferencias; y el inventario de CA-69 2 (a), con 2 049 de 2 050 casos iguales y 1 INCONCLUSO no acreditado.
+
+### 2. Recursión, bucles sin tope y pila
+
+**Respuesta: el delta no introduce recursión ni bucles sin tope, y `82ceb63` no tiene la recursión de F-136-5. Lo confirmo leyendo el código y midiendo.**
+- **Lectura, con control positivo.** Un detector de funciones que se llaman a sí mismas (awk sobre `lib.sh`):
+  - sobre `dee5932` encuentra `_arnes_lectura_lexica` en la línea 764, el bloque «POR DIRECTORIO» de F-136-5;
+  - sobre `82ceb63` y sobre v1.35.0, ninguna.
+- **Recursión mutua: no hay.** Las funciones nuevas forman un grafo sin ciclos (`_arnes_id_calcula` → previas, ancla, texto, `lf_memo`, lectura física, dos lecturas → `_arnes_nodet`). `arnes_identidad`, `_arnes_id_calcula` y `arnes_id_pertenece` sólo se llaman desde las puertas y desde `lib.sh` 2276, 2324 y 2329, que están fuera de la identidad.
+- **Bucles:**
+  - `_arnes_lectura_lexica` itera sobre los segmentos ya partidos;
+  - `_arnes_lf_resto` recorre una cadena que acorta en cada vuelta;
+  - en `_arnes_lectura_fisica`, el bucle exterior da como mucho dos pasadas (`rc=2` sólo en la primera), y el interior es el de v1.35.0 sin cambio de terminación.
+- **Medición del auditor, a nivel de hook** (`90-`/`91-`). Dos escrituras por `guard.sh`: primero un destino profundo, y después una escritura protegida que v1.35.0 deniega.
+  - **Entradas:** tres formas con `..` y con `//`, hasta 2 040 niveles y 4 089 caracteres, el máximo por debajo de `ARNES_ID_MAX` (4 096). Detrás, `src/a.ts` como coordinadora, o el cierre de un REQ por `sed -i` como desarrollador.
+  - **Pila:** 8 192, 1 024 y 256 KiB.
+
+  | Árbol | Filas | Resultado |
+  |---|---|---|
+  | **`82ceb63`** | 15 | `deny`, rc 0, en las 15, también con 256 KiB de pila |
+  | v1.35.0 | 15 | `deny` en las 15 |
+  | `dee5932` (control positivo) | 15 | **SIGSEGV, rc 139, sin decisión** en 10 de las 12 filas con `..`: todas menos las dos de 300 niveles con 8 192 KiB, y también a 300 niveles con 1 024 KiB de pila; las 3 con `//` deciden |
+
+  Que el resultado no dependa de la pila es la firma de que no hay recursión por segmento.
+- **Lo que esto da para F-136-5:** en estas formas, `82ceb63` ya cumple la propiedad del punto 2 de P-136-F: «toda ruta por debajo del límite de entrada recibe una decisión; ninguna mata al hook». **Es una muestra, no la acreditación de esa propiedad,** que sigue exigiendo su caso en el banco con fail-before antes de cualquier intervención que toque la lectura léxica.
+
+### 3. QA-007-01 frente a la política de la casa y a SEC-115
+
+**Respuesta: encaja, y no añado ningún hallazgo.**
+- **Es un incumplimiento declarado de un contrato de rendimiento, no un fallo en abierto.**
+  - Las 90 corridas de M, N y MR tienen la decisión, el rc, el stdout y el stderr de v1.35.0.
+  - El umbral de 5 s es de CA-54. El borde de seguridad es otro: el hook que muere a los 60 s, SEC-115, que CA-68 vigila con un plazo de 40 s.
+- **El delta reduce la exposición a SEC-115:** en las mismas formas, v1.35.0 tardó entre 7,7 y 9,4 s (con un extremo de 22,5 s) y el candidato entre 4,0 y 5,8 s (QA §2). El margen medido hasta los 60 s es de 54 s o más en Linux/WSL2.
+- **Dónde está la exposición real:** en Windows/MSYS, sin medir en esta ventana (20,4 a 28,9 s sobre `3bc7d3c`). Es preexistente, está declarada y el delta no la agrava (P-136-A: 0 procesos añadidos, medido por QA).
+- **Conforme con la política:**
+  - «Límite declarado» no es «riesgo aceptado» ni repara nada, y la nota de CA-54 lo dice con esas palabras.
+  - QA-007-01 sigue en `Hallazgos abiertos:` como `contrato`, así que sigue impidiendo **cerrar** REQ-007.
+  - La relación con SEC-115 está escrita con su límite: «un margen no es una garantía».
+- **Lo que no determino:** M0 y MD no tienen cifra sobre `82ceb63`. La nota lo dice así y lo remite a la intervención 2b.
+
+### 4. SEC-127 — `contrato` (REQ-007) · **abierto** · severidad **baja** · **introducido por `82ceb63`** · dueños `desarrollador` (`arnes_estado_ausente`, `hooks/lib.sh`) y `analista-requerimientos` (nota de CA-54 y CA-69 punto 3, si se decide declarar la premisa)
+
+**El atajo de `guard-completado` cambia el locale del proceso que juzga con una asignación temporal delante de una llamada de función. En bash 5.0 o anterior, en modo POSIX, esa asignación no se deshace, y el recorrido de destinos corre después en locale C.**
+- **Dónde:** `hooks/lib.sh:2133`, `{ LC_ALL=C _arnes_estado_ausente_c "$1" "$2"; } 2>/dev/null`, llamada desde `hooks/guard-completado.sh:400` en el proceso que juzga, y no en un subshell.
+- **Mecanismo, derivado:** el punto «o» de bash-5.1 en NEWS (§1.3). En esas versiones y en ese modo, la asignación persiste al volver de la función. Cuando el atajo responde 1, el recorrido de las líneas 401–412 corre con `LC_ALL=C`, y `grep -i` deja de plegar las mayúsculas que no son ASCII.
+- **Consecuencia, simulada** (`94-`). Es una simulación del estado que dejaría la persistencia, **no una reproducción de la fuga**:
+  - manifiesto con el estado terminal `terminé`;
+  - comando `sed -i 's/en-revision/TERMINÉ/' requirements/REQ-900.md`;
+  - con `LANG=C.UTF-8`, `deny` en v1.35.0 y en `82ceb63`; con el entorno en `LC_ALL=C`, `allow` en los dos.
+
+  El lector de campos pasa el valor a minúsculas (`arnes_norm_campo`, `${v,,}`), así que esa escritura cerraría el REQ desde la shell, que es lo que la vía `Bash` de `guard-completado` existe para impedir. Frente a v1.35.0 en el mismo entorno, es un movimiento de `deny` a `allow` que CA-69, punto 3, prohíbe («CA-54 no mueve nada»).
+- **Condiciones, todas a la vez:**
+  - bash 5.0 o anterior, por ejemplo el de Ubuntu 20.04;
+  - el hook arranca en modo POSIX (`POSIXLY_CORRECT` o `SHELLOPTS` con `posix` en el entorno);
+  - un comando con algún byte que no es ASCII, para que el atajo responda 1 y no salga antes;
+  - una mención del estado que sólo casa con plegado Unicode. En la práctica es un estado terminal que no es ASCII escrito con otras mayúsculas, o un plegado exótico de una letra ASCII del estado (`ſ`, `K`). El valor por defecto, `completado`, no tiene letras con esos plegados.
+- **No reproducido:** este anfitrión sólo tiene bash 5.3.9, y no hay contenedores. **Tampoco sé si v1.35.0 decide bien en ese modo** con bash 5.0: no usa sustitución de procesos, que es la incompatibilidad conocida, pero no lo he medido. Si v1.35.0 tampoco deniega allí, el movimiento no existe, y este hallazgo **se cierra por medición, no por lectura**.
+- **Por qué `contrato` y baja:** tiene la forma de SEC-124. El commit del candidato introduce un movimiento de `deny` a `allow` que descansa en una premisa no declarada, aquí la versión y el modo del intérprete. El contrato de CA-54 promete «la misma decisión que v1.35.0» en Linux sin nombrar esa premisa. Severidad baja por la conjunción de condiciones y porque la vía `Bash` de `guard-completado` es, por §13, una barandilla contra el descuido.
+- **Remediación, por propiedad:** ningún cambio de locale que hagan el análisis o el atajo sobrevive a la llamada que lo hizo, en ninguna versión ni modo del intérprete que el arnés admita, con 0 procesos añadidos (P-136-A). El mecanismo es del `desarrollador`. Ejemplos **no exhaustivos**:
+  - salir del modo POSIX al entrar en el hook;
+  - no apoyar la restauración en la asignación delante de una función en el proceso que juzga.
+
+  **Alternativa, que decide el propietario:** declarar la premisa (bash 5.1 o posterior, o hook fuera de modo POSIX) como límite en la nota de CA-54 y en CA-69. Eso no repara nada.
+- **Fail-before:** no se puede materializar en este anfitrión. Por CA-69, punto 1, el caso sale SKIP con su motivo y nunca PASS, salvo que se mida en un anfitrión con bash 5.0.
+- **Write-back (§9):** hace falta, sea cual sea la vía. Un NFR o un criterio que diga la propiedad de arriba, o la premisa declarada. En este repositorio lo transcribe el `analista-requerimientos` (§6 no declara la vía proporcional).
+- **Forzador:** la intervención 2b de CA-54, que ya va a tocar el atajo y la fase de tokens, o antes, si el propietario lo decide. **No encadeno reparación.**
+- **Vencimiento propuesto:** antes de publicar 1.36.0. **No aceptado.**
+
+### 5. Observaciones (no hallazgos)
+
+- **O-52-1 — La memoria de `arnes_escrituras_de` no tiene clave de manifiesto.** Es correcto mientras cada proceso juzgue una sola llamada, que es como lo arranca `hooks.json`. Si en el futuro un consumidor llamara a esa función con dos manifiestos en el mismo proceso, tendría que vaciar la memoria. Regresión a vigilar.
+- **O-52-2 — `2>/dev/null` sobre la fase de tokens en ASCII** (`lib.sh:2021`). Si un error de ejecución de bash ocurriera ahí, su diagnóstico se perdería. La decisión no cambia: rc y stdout son los de siempre, y QA comparó stderr byte a byte. Pierde observabilidad, no protección.
+- **O-52-3 — Preexistente, fuera del delta.** La detección ancha del estado terminal depende del locale del proceso. Con el usuario en locale C, v1.35.0 tampoco deniega `TERMINÉ` frente a `terminé` (filas de `94-`). No lo registro como hallazgo, porque §13 declara esa vía como barandilla. Lo anoto para que el analista decida si su frontera debe nombrarlo.
+
+### 6. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta: CON HALLAZGOS, SIN VETO.** Las cuatro propiedades del encargo se cumplen en bash 5.1 o posterior y fuera del modo POSIX: análisis una vez por invocación, fase de tokens en C sólo con texto ASCII, ramas raras fuera de las funciones calientes, y atajo que omite sólo el recorrido y sale después de toda denegación por forma. La única excepción es SEC-127.
+- **SEC-127:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007. Está en su `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre (§6 y §13).
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por la delegación del propietario y vuelve a él (§4 y política de autoalojamiento), como ya pasa con QA-007-01.
+    - **No impide** implementar, probar ni el commit de registro de `82ceb63` (P-136-F, punto 5).
+  - **(ii) Qué parte afecta:** la vía `Bash` de `guard-completado`, sólo en el intérprete y modo descritos.
+  - **(iii) Evidencia:** `hooks/lib.sh:2133`, `hooks/guard-completado.sh:400–412`, el punto «o» de bash-5.1 en NEWS, y `seg-R052/94-simulacion-locale-c.txt`.
+  - **(iv) Qué lo resuelve:** la remediación medida con su write-back; la premisa declarada por decisión del propietario con su write-back; o la medición que demuestre que v1.35.0 tampoco deniega en ese modo.
+- **QA-007-01:** sin cambio de clase ni de alcance. Sigue siendo el que decidió el propietario en P-136-F.
+
+### 7. Firmas y cobertura
+
+- **`Seguridad:` de REQ-007 sigue en `pendiente`.** Añado sólo la referencia a R-052 dentro de su paréntesis. **`Hallazgos abiertos:` de REQ-007** recibe SEC-127.
+- **Lo que acredita esta revisión:**
+  - que el delta no convierte ningún `deny` en `allow` ni en «sin decisión» en bash 5.1 o posterior, ni fuera del modo POSIX;
+  - que `82ceb63` no tiene recursión, con lectura y medición propia hasta el máximo de `ARNES_ID_MAX`;
+  - que QA-007-01, como límite declarado, encaja con la política de la casa.
+- **Lo que NO acredita:**
+  - las quality gates, que son de QA;
+  - el anfitrión, `claude -p`;
+  - Windows/MSYS;
+  - bash anterior a 5.1, que no he medido;
+  - los locales GB18030 y BIG5, que sólo he razonado: con texto todo ASCII cada byte es un carácter, y con texto que no es ASCII se decide en el locale del proceso, como en v1.35.0;
+  - el tiempo de M0 y MD sobre `82ceb63`;
+  - SEC-120, SEC-115 y SEC-118, más allá de la relación del §3.
+
+### 8. Estado tras R-052
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-127`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, no reproducido (derivado + consecuencia simulada) | `desarrollador`; `analista-requerimientos` si se declara la premisa | **REQ-007** |
+| `QA-007-01` | `contrato` (REQ-007) | sin cambio: límite declarado por P-136-F | `desarrollador` (2b) | REQ-007 |
+| F-136-5 / QA-007-02 | `instrumento` (ficha) | sin cambio: fuera del candidato; `82ceb63` sin la recursión (§2) | `desarrollador` | No |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una asignación temporal de una variable especial (`LC_*`, `LANG`, `IFS`) delante de una llamada de función en el proceso que juzga;
+- una memoria sin clave que cruce de una llamada a otra o de un manifiesto a otro;
+- una lectura de rutas que recurra por segmento (F-136-5).
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-052**; último hallazgo **SEC-127** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-053** y **SEC-128**.
+
+---
+
+## Revisión R-053 — **Intervención 2 de 1.36.0, fase 4: determinación de seguridad del delta de SEC-120** (`hooks/`, `82ceb63`..`413c6bd`: la reparación y su pasada correctiva). `cand/1.36.0` @ `72a328e`, con el código de `413c6bd` — 2026-10-05 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** `git grep` de `R-053` y `SEC-128` en todas las ramas locales y remotas y en las etiquetas, y búsqueda en los worktrees: sólo aparecían como «próximos libres» en la línea final de R-052. Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «Plan autorizado: intervención 2 de 1.36.0, SEC-120 sola», fase 4; y la entrada «RESUELTA (propietario, 2026-10-05) — P-136-H: (A) … y P-136-I: (B)», leída literal: «Continúa sin pararte: write-back de QA-007-05, seguridad de SEC-120, commit validado, SEC-127».
+- **Orden:** QA se pronunció antes sobre este código: `docs/qa/REQ-007.md`, «SEC-120: validación (fase 3)» y «SEC-120: re-verificación de la pasada correctiva», veredicto con hallazgos (QA-007-03 y QA-007-04 cerrados; QA-007-05 con su texto corregido por P-136-H; QA-007-06 residual por P-136-I). No miré las quality gates ni rehíce su trabajo.
+- **Delta revisado:** `git diff 82ceb63 413c6bd -- hooks/`: `guard.sh`, `guard-git.sh`, `guard-codigo.sh`, `guard-completado.sh` y `lib.sh` (+115 −22). **`hooks/` y `tools/` de la cabeza son los de `413c6bd`** (`git diff --quiet` rc 0; `lib.sh` sha256 `3effa3c7fd6e93de…`). `tools/` no cambia en el delta. Leí el diff entero. **Ningún control del proveedor me detuvo.**
+- **Contrato:** REQ-007 CA-47 punto 20, con las decisiones del propietario ya transcritas (coste +0 en el camino común y +1 en lo ilegible; ilegible = todo lo que no sea exactamente un objeto JSON; el límite sin `CLAUDE_PROJECT_DIR` en el texto literal de P-136-H; QA-007-06 pendiente hasta SEC-127), y CA-69 punto 3.
+- **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec120/seg-R053/` (`00-` y `90-` a `93-`), sin commit allí. Árboles: el candidato, `82ceb63` por `git archive` y v1.35.0 en `/home/juan/dev/ArnesJuan-v1.35.0-base`. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook. `92-` se repitió y salió idéntico.
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 o de `82ceb63` en `allow` o en «sin decisión»?
+
+**Respuesta: por `guard.sh`, que es el único guardián que registra `hooks/hooks.json`, no. En `guard-codigo.sh` invocado aislado, sí, en una forma estrecha: es SEC-128 (§4).**
+
+**Todo lo que añade el delta en los guardianes es una denegación, salvo una rama.** `arnes_deny_entrada_ilegible`, `arnes_deny_no_texto` y la denegación del troceo terminan el proceso con `deny`. La única salida nueva que no es `deny` es el `return 0` del agente de código en `guard-codigo.sh:40-41`. Eso es SEC-128. En `guard-completado` no hay ninguna salida antes de la lectura, así que su denegación «no es texto» alcanza a todo agente.
+
+**1.1 `arnes_preludio guardian` en hooks que no son guardianes.**
+- Sólo pasan `guardian` `guard.sh` y los tres guardianes. `stop.sh`, `estado-derivado.sh` y `rotar-artefactos.sh` llaman a `arnes_preludio` sin argumento. En ellos la condición `[ -n "${ARNES_INPUT:-}" ] || [ "${1:-}" = guardian ] || return 1` es la de siempre (lectura, `grep -rn arnes_preludio hooks/`).
+- Ningún hook de parada llama a `arnes_parse_input`, así que `ARNES_INPUT_NUL` no decide nada en ellos. `tools/` no usa ni el preludio ni la lectura.
+- QA midió los tres hooks de parada con 8 entradas y obtuvo un árbol idéntico al de v1.35.0 (`qa2/50-`). Con stdin cerrado o con un directorio, `stop.sh` sigue con rc 0 (`seg-R053/91-`).
+
+**1.2 `null` → `""` frente a `// ""`.**
+- Para `file_path` y `command`, `if . == null then "" else . end` se diferencia de `// ""` en dos cosas:
+  - **`false`** ya no se lee como ausente: se marca como no texto y la puerta que necesita el campo deniega. Es QA-007-04, en dirección `allow` → `deny`.
+  - **Un `tool_input` que no es un objeto** hace fallar a `jq`. `//` se tragaba el error y dejaba el campo vacío. Ahora la entrada se marca ilegible y deniega. También es dirección `allow` → `deny`, y el host no lo envía.
+- Para una cadena o un `null`, el valor es el mismo que antes. Los demás campos (`tool_name`, `agent_id` y `agent_type`) conservan `// ""`, y `cwd` conserva su filtro: sin cambio.
+- La cabecera pasa de 8 a 10 cifras. La comprobé contra el `read`: 5 de saltos, 3 de retornos de carro y 2 de no texto, en el mismo orden.
+
+**1.3 El vaciado de `ARNES_JQ`.**
+- En `arnes_parse_input`, `ARNES_JQ=''` e `ARNES_INPUT_ILEGIBLE=1` se fijan **antes** de llamar a `jq`. Sólo una salida con rc 0 y no vacía los cambia. Una salida parcial de un `jq` que falla queda en la `local out` y no se reparte.
+- En el troceo de `guard-completado` (`:463`), `arnes_jq_str` no toca `ARNES_JQ` si `jq` falla. La rama del fallo lo vacía y llama a `arnes_deny`, que hace `exit`. Ninguna línea posterior puede leer la lectura anterior.
+- `texto`, `no-lista` y `no-objeto` sólo convierten en error lo que antes era un valor coaccionado o un fallo ignorado. Con cadenas, `null` o `edits: []`, las piezas son las de antes.
+- El único otro `arnes_jq_*` de los guardianes lee el manifiesto (`:916`), y eso es CA-51, fuera del punto 20.
+- El motivo nuevo del troceo interpola `$rel`, que la identidad acota a `ARNES_ID_MAX=4096` caracteres (`lib.sh:656`). Queda por debajo del límite de un argumento: CA-67 conforme.
+
+**1.4 La detección de NUL por el código de salida de `read`.**
+- `read -d ''` devuelve 0 **sólo** si encuentra el delimitador, el NUL. Con un fin de archivo sin NUL devuelve 1 y asigna lo leído. Con un error de lectura devuelve 1 y **no asigna**: de ahí QA-007-06 (§3).
+- Ningún JSON que emite el host lleva un NUL crudo, así que en una entrada legible la detección nunca dispara: no hay falso positivo posible.
+- Un NUL en cualquier posición detiene la lectura en el primero y marca la entrada. No hay forma de esconderlo detrás de otro.
+- La variable heredada no cuenta: el preludio fija `ARNES_INPUT_NUL=0` antes de leer (`qa2/53-`).
+
+### 2. ¿Puede una entrada legible y normal acabar denegada?
+
+**No, en lo que el host envía.** Lo nuevo sólo deniega cuando falta alguna de estas condiciones:
+- exactamente un objeto JSON y ningún NUL;
+- `file_path` o `command` como cadena o `null`;
+- en el REQ, `content`, `old_string` y `new_string` como cadena o `null`, y `edits` como lista de objetos.
+
+El esquema de herramientas del host produce siempre esa forma. QA midió las legibles normales (`git status`, `ls`, los `Edit` y `MultiEdit` literales, el `Write` vacío, el salto final, los blancos, el multilínea y el BOM) sin ningún falso positivo (`qa2/40-` a `qa2/42-`), y `null` sigue siendo ausencia. El coste en el camino común es +0, medido por QA con la sonda del contrato (`qa2/52-`).
+
+**Lo único que puede denegar sin necesitarlo** es un `tool_input` que no es un objeto: deniega en todas las puertas, también en la que no juzga esa herramienta. Ninguna llamada legítima lo produce. **Observación O-53-2.**
+
+### 3. ¿Encajan QA-007-06 como residual y el límite sin `CLAUDE_PROJECT_DIR`? ¿Queda algún fallo en abierto de SEC-120 sin cubrir?
+
+**QA-007-06 como residual declarado: encaja.**
+- **Lo reproduje y tiene más de una causa** (`seg-R053/91-`). Con stdin cerrado (`EBADF`) **y con stdin que es un directorio (`EISDIR`)**, los cuatro guardianes salen con rc 1 y sin decisión. v1.35.0 y `82ceb63` salen con rc 0 y sin decisión, y con `/dev/null` el candidato deniega.
+- **Ninguna decisión cambia:** el host trata rc 1 como error no bloqueante. **No hay movimiento.**
+- **Tiene los tres elementos que exige §6, «Loop de error»:**
+  - **dueño:** `desarrollador` y `analista-requerimientos`;
+  - **forzador medido:** sigue en `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre de REQ-007 mientras esté. Además, la publicación por delegación exige todo en verde;
+  - **vencimiento:** dentro de SEC-127, antes de publicar.
+- **El punto 20 no lo convierte en frontera,** y eso es lo correcto.
+- **Condición que añado:** la reparación en SEC-127 se enuncia **por propiedad** —«`read` falla con error, por cualquier causa; ejemplos **no exhaustivos**: descriptor cerrado, directorio»— y no sólo como «entrada estándar cerrada». El caso de banco debe incluir al menos las dos causas medidas.
+
+**El límite sin `CLAUDE_PROJECT_DIR`: encaja con la política.**
+- CA-23 deja inerte un proyecto sin arnés, y sin proyecto no hay regla que aplicar.
+- Donde se obtiene un proyecto con manifiesto, el candidato deniega más que v1.35.0. Es la dirección segura.
+- **Medí el lado inerte** (`seg-R053/93-`):
+  - dos objetos seguidos con `cwd` de un proyecto con manifiesto salen sin decisión en los tres árboles: `arnes_project_dir` devuelve dos líneas, que no son un proyecto;
+  - un objeto seguido de basura deniega en el candidato.
+
+  Las dos cosas coinciden con el texto de P-136-H («inerte si no puede obtener el proyecto»).
+- **El residuo está escrito,** con «observado y **no verificado**» para el host.
+
+**Fallos en abierto de SEC-120 sin cubrir: ninguno en lo que el punto 20 promete y el host puede enviar.**
+- Los vectores de R-045-A §4 (V1–V3) deniegan, y V4 sigue denegando por el veredicto: sección 44, QA.
+- Lo que queda fuera son tres cosas:
+  - el residual QA-007-06;
+  - el límite sin la variable;
+  - la cláusula 1 de §13: si `jq` no arranca para emitir el `deny`, no hay decisión. Es la familia de SEC-118 y no es nueva.
+- **Fuera de la letra del punto 20 registro O-53-1,** que no es movimiento y que el `matcher` hace inalcanzable.
+
+### 4. SEC-128 — `contrato` (REQ-007) · **abierto** · severidad **baja** · introducido por `aba1c9b` (por lectura de `git show aba1c9b:hooks/guard-codigo.sh`; no medido en ese árbol), sin cambio en `413c6bd` · dueños `desarrollador` (`hooks/guard-codigo.sh`) y `analista-requerimientos` (CA-47 punto 20 y el caso K5)
+
+**`guard-codigo.sh`, invocado aislado, ya no deniega al agente de código la escritura a través de un enlace dentro de la raíz cuando `file_path` no es texto.**
+
+**El mecanismo.** La rama de SEC-120 (`guard-codigo.sh:37-42`) devuelve `return 0` al agente de código **antes** de `arnes_deny_enlace` (`:67`). Esa regla, la de SEC-004 (REQ-007 CA-49 (i)), alcanza a **todo agente**. En v1.35.0 y `82ceb63`, un `file_path` numérico se leía con `tostring`, y si su texto nombraba un enlace dentro de la raíz, esta puerta denegaba también al agente de código.
+
+**Medido** (`seg-R053/90-`, `92-`):
+- **Entrada:** el agente de código, con `file_path: 5` y `<raíz>/5 -> src/a.ts`.
+- **v1.35.0 y `82ceb63`:** `deny` por enlace en `Edit`, `Write` y `MultiEdit`.
+- **Candidato:** **sin decisión** en las tres.
+- **Por `guard.sh` y por `guard-completado.sh`:** `deny` en los tres árboles («no es texto» en el candidato).
+- **La coordinadora** sigue recibiendo `deny` de `guard-codigo` (`E5c`).
+- **`file_path` como cadena `"5"`** sigue denegando (`Es`).
+
+**Por qué es `contrato`, y no sólo una nota.**
+- CA-69 punto 3 dice: «Ningún movimiento de `deny` a `allow` (CA-24): uno es hallazgo».
+- La Medida del punto 20 se hace «por `guard.sh` y por cada guardián que juzga la herramienta».
+- La fila K5 de la sección 44 (`44-integridad-de-la-entrada.sh:366`) lo da por conforme con el rótulo «la puerta de código no juzga el destino del desarrollador». Desde SEC-004, en v1.35.0, sí lo juzga, para la regla del enlace.
+- El requerimiento afirma algo falso sobre lo construido. Las 456 filas de QA no traían un `file_path` no textual que nombrara un enlace.
+
+**Efecto:** ninguno por la entrada registrada. `guard.sh` ejecuta `guard-completado`, que deniega a todo agente un campo que no es texto y no tiene ninguna salida antes de esa denegación. Además, el host valida `file_path` como cadena contra el esquema (observado, **no verificado**). **No justifica veto.**
+
+**Remediación** (decisión de alcance, no la encadeno):
+- **(a) Preferida:** que `guard-codigo` deniegue también al agente de código cuando el campo que juzga no es texto. Es lo que ya hace `guard-completado`, y lo que dice la segunda viñeta del punto 20 («esa puerta deniega»). K5 pasa a `deny`, y se añade un caso con enlace.
+- **(b)** Aplicar `arnes_deny_enlace` antes de la excepción.
+- **(c)** Declarar el movimiento como límite en el punto 20 y en CA-69 punto 3.
+
+Cualquiera de las tres necesita write-back del `analista-requerimientos` (§9: §6 no declara la vía proporcional).
+
+**Forzador:** la intervención de SEC-127, que vuelve a tocar los guardianes antes de publicar, o la que decida la coordinadora. **Vencimiento propuesto:** antes de publicar 1.36.0. **No aceptado.**
+
+### 5. Observaciones (no hallazgos)
+
+- **O-53-1 — Un `tool_name` que no es texto** (`5`, `false`) sale sin decisión en v1.35.0, en `82ceb63` y en el candidato, por `guard.sh` y por cada guardián (`92-`, `TN5` y `TNf`).
+  - No es movimiento.
+  - Queda fuera de la letra del punto 20, que trocea `tool_input`.
+  - El `matcher` de `hooks.json` lo hace inalcanzable: el host sólo invoca el hook con un nombre que casa.
+  - Lo anoto para que el analista valore, cuando vuelva a abrir el punto 20, si la propiedad «un valor que la puerta necesita y no es texto» debe alcanzar también a `tool_name`.
+- **O-53-2 — El motivo de entrada ilegible es inexacto para un `tool_input` que no es un objeto** («no la interpreta como un unico objeto JSON»). Ya lo vio QA. Pierde precisión en el motivo, no protección.
+- **O-53-3 — Variables heredadas del entorno** (`ARNES_INPUT` con un error de lectura, `ARNES_INPUT_LISTO`): son preexistentes y quedan fuera del modelo de amenaza, porque quien fija el entorno del hook ya controla el hook. No son movimiento.
+
+### 6. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta: CON HALLAZGOS, SIN VETO.** La propiedad de SEC-120 se cumple por la entrada registrada: una entrada que `jq` no puede leer o trocear no pasa. Las únicas excepciones son el residual QA-007-06 y el límite declarado. No hay movimiento de `deny` a `allow` por `guard.sh` ni falsos positivos en lo legible.
+- **SEC-128:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007. Está en su `Hallazgos abiertos:` como `contrato`, y `guard-completado` deniega el cierre (§6 y §13).
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por delegación y vuelve al propietario (§4 y política de autoalojamiento).
+    - **No impide** implementar, probar ni el commit validado de SEC-120.
+  - **(ii) Qué parte afecta:** `guard-codigo.sh` invocado aislado, rama de SEC-120, agente de código, `Edit`, `Write` y `MultiEdit`.
+  - **(iii) Evidencia:** `hooks/guard-codigo.sh:37-42` y `:67`, `tests/escenarios/hooks/secciones/44-integridad-de-la-entrada.sh:366`, y `seg-R053/90-` y `92-`.
+  - **(iv) Qué lo resuelve:** la remediación (a), (b) o (c) del §4, con su write-back.
+- **QA-007-06:** residual declarado conforme (§3), con la condición de enunciarlo por propiedad en SEC-127. Su clase y su sitio no cambian.
+- **QA-007-05:** el texto de P-136-H dice la verdad sobre lo que medí (§3). Lo cierra QA, como fija la cola.
+
+### 7. SEC-120 → **`mitigado`** en el candidato (`413c6bd`, sin publicar)
+
+- **Qué queda reparado y medido:**
+  - una entrada que `jq` no puede leer, o que no es exactamente un objeto JSON, se deniega a todo agente;
+  - unas ediciones o un contenido que la puerta no puede trocear se deniegan;
+  - ninguna variable conserva la lectura anterior.
+
+  Evidencia: QA, sección 44, 363/0 y fail-before 314/49; y este §1.
+- **Residual declarado:** QA-007-06 (`contrato`, en REQ-007), que se repara en SEC-127 antes de publicar.
+- **Límite declarado:** sin `CLAUDE_PROJECT_DIR`, inerte si no se obtiene el proyecto (CA-47 punto 20, texto de P-136-H).
+- **No acreditado:** el anfitrión, Windows/MSYS y el CI sobre la cabeza final.
+- La entrada original (R-045-A §4) se conserva sin cambios.
+
+### 8. Firmas y cobertura
+
+- **`Seguridad:` de REQ-007 sigue en `pendiente`.** Añado sólo la referencia a R-053 dentro de su paréntesis. **`Hallazgos abiertos:` de REQ-007** recibe SEC-128.
+- **Lo que acredita esta revisión:**
+  - que el delta no mueve ningún `deny` a `allow` ni a «sin decisión» por `guard.sh`;
+  - que los hooks de parada conservan su conducta;
+  - que lo legible normal no se deniega;
+  - que el residual y el límite encajan con la política de la casa.
+- **Lo que NO acredita:**
+  - las quality gates ni el coste, que son de QA (cito su +0);
+  - el anfitrión (`claude -p`);
+  - Windows/MSYS y el `jq` de Windows;
+  - el CI;
+  - SEC-127, SEC-115 y SEC-118;
+  - bash anterior a 5.1, que no he medido.
+
+### 9. Estado tras R-053
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-120`** | `instrumento` | **`mitigado`** en el candidato `413c6bd`; residual QA-007-06 y límite sin `CLAUDE_PROJECT_DIR`, declarados | `desarrollador` | No (el residual bloquea por su cuenta) |
+| **`SEC-128`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+| `QA-007-06` | `contrato` (REQ-007) | residual declarado (P-136-I); se repara en SEC-127, por propiedad | `desarrollador`; `analista-requerimientos` | REQ-007 |
+| `SEC-127` | `contrato` (REQ-007) | sin cambio | `desarrollador` | REQ-007 |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una salida temprana de un guardián que exceptúe a un agente **antes** de una regla que alcanza a todo agente;
+- una comprobación de presencia de la entrada que use `${X:-}` y una lectura posterior que no lo use (`set -u`);
+- un `// ""` que vuelva a tratar `false` como ausencia en un campo que decide.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: el delta no cambia los datos que se manejan. **Numeración vigente:** última revisión **R-053**; último hallazgo **SEC-128** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-054** y **SEC-129**.
+
+---
+
+## Revisión R-054 — **Revisión corta de `POSIXLY_CORRECT` (P-136-L, opción A)**: qué apaga el modo POSIX del intérprete en los hooks, desde cuándo y desde dónde puede llegar. `cand/1.36.0` @ `3d9c416`, con el código de `78a2f33` — 2026-10-06 — **REGISTRO Y CLASIFICACIÓN, NO FIRMA, NO DETERMINACIÓN SOBRE UN DELTA**
+
+**Numeración.** `R-054` y `SEC-129` sólo aparecían como «próximos libres» (R-053, línea final) y como reserva de este encargo en `PENDING_APPROVAL.md`, `CHANGELOG.md` y `docs/ESTADO.md` (`git grep` en ramas locales, remotas y etiquetas). Los tomo.
+
+**Base, alcance y orden de fases.**
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «RESUELTA (propietario, 2026-10-06) — P-136-J (A, acotada), P-136-K (A) y P-136-L (A)», literal: «P-136-L: (A). Revisión corta de seguridad ahora, para fijar qué apaga exactamente POSIXLY_CORRECT=1 y desde cuándo (también en v1.35.0: no es regresión); la reparación va dentro de SEC-115/118, que ya trata «el hook siempre emite decisión».»
+- **Punto de partida:** el hallazgo lateral del desarrollador, `docs/arnes/v1.36.0-sec127-fase1.md` §4 y `cand-1.36.0/sec127/08-`/`09-`.
+- **Orden:** no firmo nada ni me pronuncio sobre el delta del paso 5, que QA está validando en paralelo; esta revisión no mira quality gates. **No toco `requirements/REQ-007.md`:** la anotación de SEC-129 en `Hallazgos abiertos:` va en la determinación del paso 5.
+- **Código:** `hooks/` y `tools/` de la cabeza son los de `78a2f33` (`git diff --quiet 78a2f33 HEAD -- hooks tools` rc 0; `lib.sh` sha256 `1d309101dcdd9818…`).
+- **Mi evidencia:** `/home/juan/dev/ArnesJuan-evidencia/cand-1.36.0/sec127/seg-posix/` (`00-` a `09-`), con su commit allí. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook, invocaciones sueltas, **sin el banco**. Árboles: el candidato; v1.35.0 en `/home/juan/dev/ArnesJuan-v1.35.0-base` (`3956a6f`); v1.34.0, v1.33.2 y v1.30.3 por `git archive` en un temporal.
+- **Un control del proveedor me detuvo una vez** (una sonda de las expansiones `$'…'` en modo POSIX; §5, O-54-3). Paré esa línea y no la reintenté.
+
+### 1. Qué apaga, y el mecanismo
+
+**El modo POSIX de bash deja sin decisión la vía `Bash` de las tres puertas —`guard-codigo`, `guard-completado` y `guard-git`— para toda llamada. `Edit`, `Write` y `MultiEdit` siguen decidiendo.** Medido en el candidato y en v1.35.0 (`03-`):
+
+| Llamada (coordinadora) | modo normal | modo POSIX, por cualquiera de las cinco vías de §3 |
+|---|---|---|
+| `Write` a `src/a.ts` | `deny` | `deny` |
+| `Write` de un REQ a `completado` | `deny` | `deny` |
+| `Edit` de un REQ a `completado` | `deny` | `deny` |
+| `Bash` `echo x > src/a.ts` · `printf x \| tee src/a.ts` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `sed -i s/en-revision/completado/ requirements/REQ-900.md` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `git reset --hard` · `git clean -fd` | `deny` | **sin decisión**, rc 0 |
+| `Bash` `ls -la` (control) | sin decisión | sin decisión |
+
+**El mecanismo, dos piezas que se suman:**
+1. **Una forma de expansión que en modo POSIX no se analiza igual.** El manual de bash (`/usr/share/doc/bash/POSIX`, punto 8; `COMPAT`, punto 47 y `compat42`): dentro de un `${…}` entre comillas dobles, en modo POSIX, **la comilla simple no es especial** al analizarlo. Así, `"${x//'$('/ }"` abre una sustitución de comandos que no cierra («unexpected EOF while looking for matching `''»), y `"${x//'"'/Q}"` da «bad substitution» (`00-`, F1 y F4; F2, F3 y la sustitución `$'\n'` del reemplazo, F5, no cambian). Sitios, los mismos cuatro en todos los árboles medidos (`00-`, `git grep`):
+   - `hooks/lib.sh:2099` — `_arnes_escrituras_texto`, `limpio="${limpio//'$('/ }"`, **incondicional**: falla con cualquier comando;
+   - `hooks/lib.sh:1773` y `:1776` — `_arnes_expansiones` (cuerpos de heredoc con `$(`), `'$('` y `'"'`;
+   - `hooks/guard-git.sh:231` — `limpio="${limpio//'$('/$'\n'}"`.
+2. **El fallo se lee como «nada que juzgar».** (a) El detector de escrituras que comparten `guard-codigo` y `guard-completado` corre en una sustitución de comandos (`arnes_escrituras_de`, `lib.sh:2242`); en modo POSIX el error de expansión es fatal para ese subshell, que sale con **rc 1 y la lista vacía** (`05-`). Los dos guardianes sólo reconocen los códigos especiales 2 a 5 (`guard-codigo.sh:78-99`, `guard-completado.sh:339-362`), y con cualquier otro código y la lista vacía **siguen como si el comando no escribiera nada** (`[ -n "$escrituras" ] || return 0`): es un **fallo en abierto ante un código de salida fuera del vocabulario del analizador**. (b) En `guard-git` el error aborta `arnes_guard_git` a mitad de juicio y `guard.sh` pasa a la puerta siguiente; el hook acaba en `exit 0` sin salida (`09-`).
+
+**Una diferencia de diagnóstico, no de decisión:** v1.35.0 deja el error en stderr; el candidato no, en los comandos ASCII, porque el grupo `{ LC_ALL=C _arnes_escrituras_texto …; } 2>/dev/null` de CA-54 (`lib.sh:2083`) se lo traga (`03-`, columna `e`). Ver O-54-2.
+
+**Lo que no se recorrió:** las demás diferencias del modo POSIX (el manual enumera más de sesenta) sólo se cubren por los casos de la tabla; el `git grep` busca la clase «comilla simple en el patrón de un `${…}` entre comillas dobles», no todas. `stop.sh` y `tools/` no deciden permisos; no los medí (`git grep` no encuentra la forma en `tools/`).
+
+### 2. Desde cuándo: **no es regresión de 1.36.0**
+
+Misma conducta, sin decisión por `Bash` en los cinco modos, en **78a2f33, v1.35.0, v1.34.0, v1.33.2 y v1.30.3** (`03-`). El `'$('` del detector entró en `6c1b58a` (`git log -S`; la primera etiqueta que lo contiene es v1.30.3). Antes de v1.30.3 **no está medido**: pudo haber otra forma con el mismo efecto. En v1.30.3 `guard-git` tampoco deniega en modo normal con el manifiesto de la prueba (sin `git.prohibidos`), así que esa fila no informa sobre `guard-git` en ese árbol.
+
+**Versiones de bash:** medido sólo en 5.3.9. Por `COMPAT` (`compat42`), la comilla simple dejó de ser especial en ese contexto en bash 4.3, así que en 4.3–5.2 —y en el bash 5.0 de Ubuntu 20.04— **se infiere** la misma conducta. En bash 3.2 (macOS) se infiere que este mecanismo no aplica; el arnés no está medido allí por otras razones. Windows/MSYS: no medido.
+
+### 3. Desde dónde puede llegar el modo POSIX al hook
+
+`hooks.json` lanza `"${CLAUDE_PLUGIN_ROOT}"/hooks/guard.sh`, cuyo shebang es `#!/usr/bin/env bash`: el hook es **un bash nuevo**, que sólo entra en modo POSIX por lo que hereda al arrancar. Medido (`07-`, y por hook en `03-`):
+- **Sí lo activan, las cinco medidas por hook:** `POSIXLY_CORRECT` exportada **con cualquier valor, también vacía**; `SHELLOPTS` exportada con `posix`; `BASH_ENV` apuntando a un archivo que hace `set -o posix`; y `bash --posix guard.sh` (sólo si alguien invoca así el hook).
+- **No lo propagan:** un padre en modo POSIX por `set -o posix`, por `bash --posix` o por bash invocado como `sh`. Bash define entonces `POSIXLY_CORRECT=y` **sin exportarla**, y el hijo arranca normal. Tampoco `/bin/sh` (dash) como intermediario.
+- **Este anfitrión:** el entorno de la herramienta `Bash` de esta sesión no tiene ninguna de las cuatro variables (`00-`).
+
+**Inferido, no medido desde el host (`claude -p` no ejercido):**
+- el hook hereda el entorno del proceso de Claude Code: el del shell del usuario que lo arranca, el de un contenedor, una imagen de CI o un servicio;
+- la clave `env` de los ajustes de Claude Code (de usuario, de proyecto en `.claude/settings.json` o local) también llega a los hooks;
+- un agente **no** puede activarlo para la llamada en curso desde su herramienta `Bash`: cada llamada es un proceso aparte y el hook lo lanza el cliente, no ese shell. Sí podría escribirlo en los ajustes del proyecto para sesiones futuras, si esa clave llega a los hooks. En este repositorio `.claude/` no está en `codigo_app.globs`.
+
+**Lectura de amenaza.** No hace falta un adversario: `POSIXLY_CORRECT` es una variable estándar que algunos usuarios exportan para que las herramientas GNU se comporten según POSIX, y con ella **el arnés apaga sus tres puertas de `Bash` en todos los proyectos de ese usuario, en silencio**. Eso es exactamente el descuido contra el que §13 dice proteger. Por eso no aplica el criterio de O-53-3 («quien fija el entorno del hook ya controla el hook»), que se refería a variables internas del arnés (`ARNES_*`) que nadie fija sin querer.
+
+### 4. SEC-129 — `contrato` (REQ-007) · **abierto** · severidad **media** · preexistente: medido desde v1.30.3 (§2), no es movimiento de 1.36.0 · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (CA-68, write-back)
+
+**Con el hook en modo POSIX, la vía `Bash` de `guard-codigo`, `guard-completado` y `guard-git` no emite decisión para ninguna llamada: un error del intérprete en el análisis se lee como «el comando no escribe nada» o abandona la puerta, y el hook termina con rc 0 y sin salida.**
+- **Efecto:** con una sola condición de entorno, ninguna escritura por shell a código protegido, ningún cierre de REQ por shell y ningún git destructivo (`reset --hard`, `clean -f`…, el único daño irreversible de los tres) recibe `deny`. Que el cliente tome por permitida una llamada sin decisión es inferido (REQ-031 CA-A12, nota), como en SEC-118.
+- **Por qué `contrato`:** CA-67/CA-68 prometen que un hook del arnés no deja una llamada sin decisión cuando no puede juzgarla, y `AGENTS.md` §1, «una puerta que no puede medir no deja pasar». Aquí la puerta no midió —su analizador falló— y dejó pasar. El propietario ya lo situó dentro de SEC-115/118 (P-136-L).
+- **Por qué media, y no baja como SEC-127:** basta **una** condición, y no exótica (§3); alcanza a las tres puertas de `Bash` y al git destructivo; es silenciosa —en el candidato, sin rastro en stderr en lo ASCII—; y lleva al menos cinco versiones publicada. **No alta**, porque la condición está en el entorno del operador, fuera del alcance de un agente en la llamada en curso (inferido, §3), y porque `Edit`/`Write`/`MultiEdit` siguen decidiendo.
+- **Remediación, por propiedad (el mecanismo es del `desarrollador`, dentro de SEC-115/118):**
+  - **(R1) Ninguna decisión del arnés depende del modo del intérprete que herede del entorno.** El hook sale del modo POSIX al arrancar, antes de cargar `lib.sh`, sin procesos. Ejemplo **no exhaustivo**, exploratorio y no es la reparación: `set +o posix` delante de `set -uo pipefail` en una copia de `guard.sh` devuelve `deny` en los cinco modos y deja `ls` sin decisión (`06-`). Lo mismo vale para todo hook o herramienta que comparta el lector. `BASH_ENV` corre **antes** de la primera línea del hook: R1 neutraliza su `set -o posix`, no cualquier otro contenido (O-54-1).
+  - **(R2) Un juicio que no termina con un resultado reconocido no deja pasar.** Un código de salida del analizador fuera de su vocabulario declarado (hoy, cualquier código distinto de 0, 2, 3, 4 y 5 de `arnes_escrituras_de`) deniega con motivo propio, a todo agente, en los dos guardianes que lo leen. Y una puerta que se abandona a mitad de juicio (como `arnes_guard_git` en `09-`) no se confunde con una que concluyó «no protegido». Sin procesos. R2 es la red general y R1 evita que, sin ella, en modo POSIX se deniegue **todo** comando, también `ls`.
+  - **(R3, opcional)** Escribir los cuatro patrones en una forma que no dependa del modo (`\$\(`, `\"`). Quita el mecanismo concreto pero no la clase, así que no sustituye a R1 ni a R2.
+- **Fail-before:** está ya materializado. Sin decisión en v1.35.0 y en el candidato, en los cinco modos (`03-`), y v1.35.0 es la línea base de CA-69.
+- **Write-back (§9):** hace falta. Es la propiedad del §6 en CA-68 (o en un punto nuevo del Bloque L) y, si se adopta R1, una premisa explícita del intérprete. En este repositorio lo transcribe el `analista-requerimientos` (§6 no declara la vía proporcional).
+- **Forzador:** la intervención de SEC-115/118, paso 6 de 1.36.0 (CA-67, CA-68, CA-69; ADR-017). **Vencimiento propuesto:** dentro de SEC-115/118, **antes de publicar 1.36.0**. **No aceptado.**
+
+### 5. Relación con SEC-127 y con SEC-115/118
+
+- **SEC-127 (R-052 §4):** su premisa es «el hook arranca en modo POSIX». En ese modo, el detector falla en `lib.sh:2099` y `guard-completado` sale en `[ -n "$escrituras" ] || return 0` **antes** de llegar al atajo `arnes_estado_ausente` (`guard-completado.sh:406`). Por eso la vía `Bash` no deniega ningún cierre, en ningún árbol: medido en bash 5.3, e **inferido** en bash 4.3–5.2 por §2. **SEC-129 enmascara a SEC-127:** mientras SEC-129 exista, el movimiento de `deny` a `allow` de SEC-127 no tiene línea base de la que moverse. Si se repara con R1, desaparece también la premisa de SEC-127, cuya remediación ya nombraba «salir del modo POSIX al entrar en el hook». **No reclasifico SEC-127 aquí:** va después, con QA terminado, como fija la cola.
+- **SEC-115/118 (CA-67, CA-68):** «el hook siempre emite decisión» **no cubre a SEC-129 tal como está escrito**:
+  - CA-67 habla de una denegación **decidida** que no llega a emitirse; aquí no se llega a decidir.
+  - CA-68 habla de un hook que no termina **antes de que el cliente lo mate**; aquí termina en milisegundos, con rc 0.
+
+  **La propiedad que CA-68 tiene que exigir para que SEC-129 quede dentro**, como propuesta al analista:
+
+  > Dado un hook del arnés que juzga una llamada de las que el `matcher` le hace llegar, **el hook sólo sale sin decisión cuando ha terminado un juicio que concluye que la llamada no toca nada que proteja**. Cualquier otro final de un juicio emite `deny` con motivo propio, a todo agente. Ejemplos **no exhaustivos** de ese otro final: un error del intérprete, una expansión abortada, una puerta abandonada a mitad, un analizador que devuelve un código fuera de su vocabulario declarado, y un estado del intérprete heredado del entorno que cambia el significado del código —el modo POSIX por `POSIXLY_CORRECT`, `SHELLOPTS` o `BASH_ENV`—. Además, **ninguna decisión depende del modo del intérprete heredado**.
+
+  **Medida propuesta:** los casos de `03-` a nivel de hook —las cinco vías de entrada al modo POSIX × la vía `Bash` de las tres puertas, con controles `Edit`/`Write` que siguen en `deny` y `ls` sin decisión en todos los modos (sin falsos positivos)—, con las tres comprobaciones de REQ-031 CA-A15 punto 4, y fail-before en v1.35.0. La herramienta de `02-matriz.sh` se puede reutilizar.
+
+### 6. Observaciones (no hallazgos)
+
+- **O-54-1 — `BASH_ENV` con cualquier contenido.** Corre antes de la primera línea de todo hook. Puede definir funciones con el nombre de un programa que el hook llama, o terminar el proceso: nada de eso se puede neutralizar desde dentro del script, sólo en la orden de `hooks.json`. Por ejemplo, `env -u BASH_ENV -u SHELLOPTS -u POSIXLY_CORRECT bash …`: se **infiere** que no añade procesos frente al `env bash` del shebang actual, pero no está medido. Sólo medí el caso `set -o posix`. Propongo ficha a la coordinadora; **no lo meto en SEC-129**, cuya reparación decidió el propietario dentro de SEC-115/118.
+- **O-54-2 — El candidato oculta el error del analizador en los comandos ASCII.** Es el `2>/dev/null` de CA-54, `lib.sh:2083`; v1.35.0 lo dejaba en stderr (`03-`, columna `e`). No cambia ninguna decisión, pero quita la única pista visible de SEC-129. Cuando R2 esté, el motivo del `deny` la sustituye.
+- **O-54-3 — Expansiones `$'…'` en el patrón de un `${…}` entre comillas dobles en modo POSIX** (el plegado de `lib.sh:2505` y siguientes, `:444` y `:1434`): **no medido**. Un control del proveedor detuvo la sonda y no la reintenté. Sólo está medido `$'\n'` como **reemplazo** (F5, igual en los dos modos). Con R1, deja de importar.
+
+### 7. Alcance (`AGENTS.md` §6, regla 2)
+
+- **Esta revisión no veta ni firma.** `Seguridad:` de REQ-007 no cambia y **REQ-007 no se toca** (encargo).
+- **SEC-129:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007, en cuanto figure en su `Hallazgos abiertos:` como `contrato`; `guard-completado` deniega el cierre (§6 y §13). La anotación queda **pendiente**: la hago en la determinación del paso 5. Hasta entonces la puerta no la ve, y eso no la levanta.
+    - **Publicar:** no la veto. Mientras siga abierto, la publicación de 1.36.0 no puede hacerse por delegación y vuelve al propietario (§4 y política de autoalojamiento).
+    - **No impide** implementar ni probar el paso 5 ni su commit validado: es preexistente y no es movimiento.
+  - **(ii) Qué parte afecta:** la vía `Bash` de las tres puertas, en todo proyecto cuyo cliente arranque con el entorno de §3.
+  - **(iii) Evidencia:** `seg-posix/00-`, `03-`, `05-`, `07-` y `09-`; `hooks/lib.sh:2099`, `:1773`, `:1776` y `:2242`; `hooks/guard-git.sh:231`; `hooks/guard-codigo.sh:78-99`; `hooks/guard-completado.sh:339-362`.
+  - **(iv) Qué lo resuelve:** R1 y R2 (§4) con su write-back en CA-68 y su medida (§5).
+
+### 8. Estado tras R-054
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-129`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido; preexistente (≥ v1.30.3) | `desarrollador`; `analista-requerimientos` | **REQ-007**, cuando se anote (paso 5) |
+| `SEC-127` | `contrato` (REQ-007) | sin cambio aquí; enmascarado por SEC-129 (§5); se reclasifica después de QA | `desarrollador` | REQ-007 |
+| `SEC-115`, `SEC-118` | sin cambio | sin cambio; su vehículo (CA-67/CA-68) recibe SEC-129 | `desarrollador`; `analista-requerimientos` | sin cambio |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- un analizador cuyo código de salida no reconocido se trate como «nada que juzgar»;
+- un patrón entrecomillado con comilla simple dentro de un `${…}` entre comillas dobles en el código de una puerta;
+- una puerta cuya función pueda abandonarse a mitad sin que `guard.sh` lo distinga de un juicio terminado.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-054**; último hallazgo **SEC-129** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-055** y **SEC-130**.
+
+---
+
+## Revisión R-055 — **Paso 5 de 1.36.0, fase 4: determinación de seguridad del delta de SEC-127, QA-007-06 y SEC-128** (`hooks/`, `413c6bd`..`78a2f33`). `cand/1.36.0` @ `e02f8e3`, con el código de `78a2f33` — 2026-10-06 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** `git grep` de `R-055` y `SEC-130` en las ramas locales y remotas y en las etiquetas, y búsqueda en los `.md` del worktree: sólo aparecían como «próximos libres» en la última línea de R-054.
+
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «Plan autorizado: paso 5 de 1.36.0, SEC-127 más QA-007-06», fase 4, ampliado con SEC-128 (P-136-J).
+- **Orden de fases:** QA ya validó el código de `78a2f33` (`docs/qa/REQ-007.md`, «Paso 5: validación de SEC-127, QA-007-06 y SEC-128»: conforme, sin hallazgos contra el contrato; QA-007-05 y QA-007-06 cerrados; QA-007-07 abierto). Esta revisión va después, y no mira las quality gates.
+- **Contrato:** REQ-007 CA-47 punto 20 —subviñeta SEC-128, «Reparado en SEC-127» (QA-007-06), «SEC-127 — cómo se acredita (P-136-K)» y el límite sin `CLAUDE_PROJECT_DIR`— y CA-69 punto 3.
+- **Delta:** `hooks/lib.sh` (`arnes_preludio`: `ARNES_INPUT=''` antes del `read`; `arnes_estado_ausente`: el locale se guarda y se restaura con asignaciones sueltas) y `hooks/guard-codigo.sh` (la excepción del agente de código ante un campo que no es texto sólo vale en `Bash`). Los `hooks/` del worktree son idénticos a `78a2f33` (`diff -r` vacío).
+- **Evidencia:** árbol de evidencia, `cand-1.36.0/sec127/seg-R055/`, commit `2d676d1`: `01-` a `05-`, entorno en `00-`. Linux/WSL2, bash 5.3.9, a nivel de librería y de hook. **No corrí el banco** (encargo; QA lo corrió: `qa/30-`, 2197/0/13).
+
+### 1. ¿Algún camino del delta convierte un `deny` de v1.35.0 o de `413c6bd` en `allow` o en «sin decisión»?
+
+**Respuesta: a nivel de hook, no, en nada de lo medido ni de lo leído. A nivel de función, sí, un camino latente: es SEC-130 (§4), que no cambia ninguna decisión medida.**
+
+- **`arnes_estado_ausente` y `LC_ALL`** (`hooks/lib.sh:2198-2208`). `local rc=0 habia="${LC_ALL+1}" antes="${LC_ALL-}"` es seguro bajo `set -u`, porque las dos expansiones tienen valor por defecto. La restauración distingue «no definida» de «definida y vacía». Medido en `01-` A con cuatro estados de partida (no definida, vacía y exportada, `C.UTF-8` exportada y `C.UTF-8` sin exportar), en modo normal y en modo POSIX, con `set -u` y con tres textos. En las 24 filas, después de la llamada `LC_ALL` queda como estaba: definida o no, con el mismo valor y con el mismo atributo de exportación. Las respuestas son las esperadas: `ls -la` da 0; `x completado` y `TERMINÉ` dan 1.
+  - **El camino latente:** si la redirección `2>/dev/null` del grupo falla, el grupo no corre, `rc` se queda en 0 y la función afirma «no menciona el estado terminal» sin haberlo comprobado. En `413c6bd` esa misma falla devolvía 1 y el recorrido seguía. Medido en `01-` B: con el límite de descriptores en 3 o 4 y un comando que **sí** menciona `completado`, `413c6bd` responde 1 y `78a2f33` responde 0.
+  - **A nivel de hook no se alcanza en lo medido** (`02-`). Barrí `ulimit -n` en 3–14, 16, 20 y 32 con el cierre de la coordinadora por `sed -i`, por `guard.sh` y por `guard-completado.sh`. La decisión es **idéntica en v1.35.0, `413c6bd` y `78a2f33`** en todas las filas: con 3 a 5, sin decisión en los tres —preexistente, falla antes la carga de `lib.sh` o `arnes_require_jq`—; con 6 o más, `deny`. Las redirecciones anteriores del mismo hook piden lo mismo o más y fallan antes.
+- **`ARNES_INPUT=''` en `arnes_preludio`** (`hooks/lib.sh:40`). Un `read` que termina con fin de archivo o con NUL asigna igual que antes, así que lo legible no cambia. Uno que falla con error deja la entrada vacía: en los guardianes, eso es «ilegible» → `deny` (QA, `qa/52-`), donde `413c6bd` salía sin decisión; en los hooks de parada, inerte. Con un `ARNES_INPUT` heredado del entorno y la entrada cerrada, `413c6bd` juzgaba el heredado y `78a2f33` deniega por ilegible (`04-`). No hay ningún movimiento hacia `allow`.
+- **`guard-codigo`, campo que no es texto** (`hooks/guard-codigo.sh:41-49`). `arnes_campo_no_texto` sólo responde que sí en `Bash`, `Edit`, `Write` y `MultiEdit`, que es exactamente el `matcher` de `hooks/hooks.json`. La condición nueva **estrecha** la única salida con permiso del bloque: sólo pasa el agente de código, y sólo en `Bash`. No deja fuera ninguna herramienta ni ningún agente:
+  - en `Edit`, `Write` y `MultiEdit` deniega a todos, también a `arnes-juan:desarrollador`;
+  - en `Bash`, el agente de código pasa como en `413c6bd`;
+  - un `tool_name` con salto o retorno de carro no entra en este bloque y sigue en el del punto 13, sin cambio.
+
+  Medido en `03-`/`03b-`, con 72 combinaciones de `file_path` no textual: seis formas, cuatro agentes y tres herramientas. Todas dan `deny` en `78a2f33`, por `guard-codigo.sh` solo y por `guard.sh`. Los controles con texto (`src/a.ts`) dan la misma decisión en los tres árboles.
+- **Movimientos frente a v1.35.0 (CA-69 punto 3):** sólo hacia `deny`, y los dos están declarados en CA-47 punto 20:
+  - la entrada que no se puede leer, de «sin decisión» a `deny`;
+  - el `file_path` no textual del agente de código, de `allow` a `deny`.
+
+### 2. SEC-127: ¿queda alguna asignación delante de una función o de un builtin especial en el proceso que juzga?
+
+**No.** La búsqueda, por lectura con `grep` sobre el texto de `78a2f33`, cubrió las asignaciones (sin comillas, con comillas simples o dobles, y `$'…'`) seguidas de cualquiera de las 157 funciones definidas en `lib.sh` y los guardianes, o de un builtin especial. **Sólo queda una: `hooks/lib.sh:2083`** (`{ LC_ALL=C _arnes_escrituras_texto …; } 2>/dev/null`, CA-54).
+- Su único llamador es `arnes_escrituras_de`, que la invoca dentro de una sustitución de comandos (`hooks/lib.sh:2242`, `ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"`).
+- La llamada es la última orden de esa subshell. Aunque la asignación persistiera, moriría con la subshell, sin llegar al proceso que juzga.
+- Los `local LC_ALL=C` (`lib.sh:1372`, `:2963`, `:3010`, `:3051`; `guard-completado.sh:53`, `:272`) son otro mecanismo, no forman parte del delta y son iguales en v1.35.0.
+
+**La reparación elimina la premisa de versión por construcción.** Lo que queda en el proceso que juzga son asignaciones y un `unset` sueltos, cuyo alcance no cambia entre versiones ni modos del intérprete. La forma que NEWS de bash-5.1, punto «o», hace depender de la versión ya no está (`05-`). En el anfitrión, ningún `BASH_COMPAT` (50, 44, 43) reproduce la persistencia de 5.0, así que el fail-before sigue sin poder medirse aquí. Además, SEC-129 enmascara hoy la premisa (R-054 §5).
+
+**Reclasificación: SEC-127 → `mitigado` (cerrado por reparación) en el candidato `78a2f33`, sin publicar.**
+- **Laguna declarada, no acreditada:** bash 5.0 o anterior en modo POSIX está **no medido**. Ni el fail-before ni la conducta del candidato se midieron en ese intérprete; en él, la corrección se sostiene **por lectura**, como fija P-136-K.
+- **Acreditación:** la de P-136-K, la sección 47 (LO1–LO4 y LK, por QA) y la lectura de arriba.
+- **Write-back:** existe en CA-47 punto 20, «SEC-127 — cómo se acredita».
+- **Regresión a vigilar:** el retorno de una asignación delante de una función, o de un builtin especial, en código que corra en el proceso que juzga.
+
+### 3. SEC-128: ¿cubre el vector de R-053 §4 y no abre otro?
+
+**Sí, lo cubre, y no abre otro.** Con el vector de R-053 §4 —agente de código, `file_path: 5` y el enlace `<raíz>/5 → src/a.ts`—, `guard-codigo.sh` invocado solo pasa de «sin decisión» en `413c6bd` a `deny`, por el motivo del campo que no es texto, en `Edit`, `Write` y `MultiEdit`. Lo mismo ocurre con `true` y otro enlace, con el nombre prefijado del agente y con objeto, lista, `5.0` y `-1` (`03-`). Por `guard.sh` la decisión ya era `deny` y sigue siéndolo.
+
+No abre nada: el cambio sólo estrecha un `return 0`. El `Bash` del agente de código con `command` no textual queda igual que en `413c6bd`: `guard-codigo` no decide y `guard.sh` deniega por `guard-completado`. Los `file_path` de texto no cambian. QA validó también la fila K5 (`qa/15-`).
+
+**Reclasificación: SEC-128 → `mitigado` en el candidato `78a2f33`, sin publicar.**
+- **Write-back:** existe en CA-47 punto 20, subviñeta SEC-128.
+- **Regresión a vigilar:** cualquier excepción por agente colocada antes de la regla del enlace.
+
+### 4. SEC-130 — `instrumento` (REQ-007) · **abierto** · severidad **baja** · introducido por `a59917d` (reparación de SEC-127) · dueño `desarrollador` (`hooks/lib.sh:2198-2208`)
+
+**El atajo afirma una ausencia que no ha comprobado cuando su grupo no llega a ejecutarse.**
+- **El defecto:** `arnes_estado_ausente` inicia `rc=0`, que en esta función significa «el comando no menciona el estado terminal». Si la redirección `2>/dev/null` del grupo `{ …; }` falla, el grupo no corre y la función devuelve ese 0. `guard-completado.sh:406` sale entonces con `return 0` y se salta el recorrido de destinos. Contradice la propiedad literal de P-136-D, punto 1: el atajo omite el recorrido sólo «cuando el comando entero no menciona el estado terminal».
+- **Medido** a nivel de librería (`01-` B): `413c6bd` responde 1 y `78a2f33` responde 0 con un comando que menciona `completado`.
+- **No alcanzado** a nivel de hook en lo medido (`02-`): la decisión es idéntica en los tres árboles con cualquier límite de descriptores del barrido.
+- **No es movimiento de CA-69 punto 3** en lo medido.
+- **Por qué `instrumento` y baja:** es un defecto interno del guardián sin efecto medido sobre ninguna decisión, y la condición que lo dispara hace fallar antes al propio hook. **No bloquea el cierre de REQ-007.**
+- **Remediación, por propiedad:** el atajo sólo afirma la ausencia que ha comprobado, y un grupo que no llega a correr no afirma nada. Ejemplo **no exhaustivo**: iniciar `rc` en 1 y tomarlo de `_arnes_estado_ausente_c` dentro del grupo. Sin procesos.
+- **Relación con SEC-129:** es otra instancia de la clase que R-054 §4 (R2) y la propiedad propuesta para CA-68 (R-054 §5) ya nombran: un juicio que no termina no deja pasar. Si esa propiedad se adopta, SEC-130 cae dentro y se mide allí.
+- **Destino:** la reparación que se encargue, y en qué entrega, lo clasifica la coordinadora (`AGENTS.md` §6, regla 3). **No aceptado.**
+
+### 5. QA-007-07 y SEC-129: el paso 5 no los empeora
+
+Medido en `04-`: coordinadora con `Write` y `Bash` a `src/` y con la entrada cerrada, en v1.35.0, `413c6bd` y `78a2f33`.
+- **QA-007-07:**
+  - Con `ARNES_INPUT_LISTO=1`, la decisión es idéntica en los tres árboles: sin decisión.
+  - Con `ARNES_MANIFEST_LISTO=1`, lo legible es idéntico (sin decisión), y la entrada cerrada pasa de sin decisión a `deny` en `78a2f33`.
+  - El delta no toca esas variables y quita una de las heredadas que pesaban sobre la lectura: `ARNES_INPUT` ya no sobrevive a un `read` fallido.
+- **SEC-129:**
+  - Con `POSIXLY_CORRECT=1`, la vía `Bash` sale sin decisión en los tres árboles y `Write` deniega en los tres.
+  - La restauración del locale funciona igual en modo POSIX (`01-` A).
+  - La condición nueva de `guard-codigo` no usa la forma que R-054 §1 identificó: no hay comilla simple dentro de un `${…}` entre comillas dobles.
+  - Las filas `SHELLOPTS=posix` de `04-` son **inválidas** por un defecto de la sonda —`SHELLOPTS` es de solo lectura en el bash que la lanza— y no se usan. Están anotadas en el propio archivo.
+- **No los reparo ni decido su destino.** SEC-129 queda **anotado** en `Hallazgos abiertos:` de REQ-007, como se anunció en R-054 §7.
+
+### 6. Observaciones (no hallazgos)
+
+- **O-55-1 — Control del proveedor.** Detuvo una búsqueda sobre el código normalizado con `declare -f`, cuyo script retiraba un temporal. No la reintenté. La búsqueda de §2 se hizo sólo por lectura del texto, y es la que cuenta.
+- **O-55-2 — Hooks de parada.** Con un `read` fallido y un `ARNES_INPUT` heredado, `413c6bd` derivaba el bloque de continuidad desde la entrada heredada, y `78a2f33` queda inerte. No decide nada y es la dirección correcta. Lo dejo dicho porque no figura en CA-47 punto 20.
+
+### 7. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta del paso 5: CONFORME, SIN VETO.**
+  - Ningún `deny` pasa a `allow` ni a «sin decisión» a nivel de hook.
+  - Los movimientos son sólo hacia `deny`, y están declarados.
+  - SEC-127 y SEC-128 quedan mitigados.
+- **Esta revisión no firma REQ-007.** `Seguridad:` sigue en `pendiente`: añado sólo R-055 dentro de su paréntesis. La firma no procede, porque QA del REQ sigue pendiente y hay hallazgos `contrato` abiertos.
+- **SEC-129, ahora anotado como `contrato`:**
+  - **(i) Qué acción impide:** **cerrar** REQ-007; `guard-completado` deniega el cierre con un hallazgo `contrato` abierto (§6 y §13). Con él abierto, **publicar** no puede hacerse por delegación y vuelve al propietario (§4); eso es efecto de la regla vigente, no un veto mío.
+  - **(ii) Qué parte afecta:** la vía `Bash` de las tres puertas.
+  - **(iii) Evidencia:** R-054 §4 y `seg-posix/03-`; sin cambio en `seg-R055/04-`.
+  - **(iv) Qué lo resuelve:** la reparación del paso 6 (R1 y R2), con su write-back en CA-68.
+- **SEC-130:**
+  - **(i) Qué acción impide:** ninguna por su clase; no bloquea **cerrar**. Abierto, devuelve **publicar** al propietario por la misma regla de §4.
+  - **(ii) Qué parte afecta:** el atajo de la vía `Bash` de `guard-completado`.
+  - **(iii) Evidencia:** `hooks/lib.sh:2199` y `:2203-2207`; `seg-R055/01-` B y `02-`.
+  - **(iv) Qué lo resuelve:** la propiedad de §4, con un caso a nivel de librería que falle en `78a2f33` (el de `01-` B sirve), o su inclusión en la propiedad de CA-68 del paso 6.
+- **No impide** implementar ni probar el paso 6, ni el commit validado del paso 5.
+
+### 8. Firmas y cobertura
+
+- **Revisado:** el delta de `hooks/` entre `413c6bd` y `78a2f33`, por lectura y a nivel de librería y de hook en Linux/WSL2, con bash 5.3.9.
+- **No revisado o no medido:**
+  - bash 5.0 o anterior en modo POSIX (laguna declarada de SEC-127);
+  - el host (`claude -p`);
+  - Windows/MSYS;
+  - el banco completo (lo corrió QA);
+  - la restauración de los `local LC_ALL=C` en intérpretes antiguos (preexistente, fuera del delta);
+  - `ENFILE` y otros fallos transitorios del sistema como disparadores de SEC-130.
+
+### 9. Estado tras R-055
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-127`** | `contrato` (REQ-007) | **`mitigado`** en `78a2f33`, sin publicar; bash ≤ 5.0 en modo POSIX **no medido** (laguna declarada, P-136-K) | `desarrollador` | no (sale de `Hallazgos abiertos:`) |
+| **`SEC-128`** | `contrato` (REQ-007) | **`mitigado`** en `78a2f33`, sin publicar | `desarrollador`; `analista-requerimientos` | no (sale de `Hallazgos abiertos:`) |
+| **`SEC-129`** | `contrato` (REQ-007) | `abierto`, no aceptado; **anotado** ahora en `Hallazgos abiertos:` de REQ-007; se repara en el paso 6 | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+| **`SEC-130`** | **`instrumento`** (REQ-007) | **`abierto`**, no aceptado, medido a nivel de librería, no alcanzado a nivel de hook | `desarrollador` | no |
+| `QA-007-07` | `contrato` (REQ-007) | sin cambio; no empeora (§5); su destino es P-136-N | `desarrollador`; `analista-requerimientos` | REQ-007 |
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una asignación delante de una función o de un builtin especial en el proceso que juzga;
+- una excepción por agente colocada antes de la regla del enlace;
+- una función de atajo o de lectura cuyo valor por defecto sea la respuesta que deja pasar.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-055**; último hallazgo **SEC-130** (`SEC-121` reservado al ejemplo de `requirements/README.md`); próximos libres **R-056** y **SEC-131**.
+
+## Revisión R-056 — **Paso 6 de 1.36.0, fase 4: determinación de seguridad del delta de SEC-115, SEC-118 y SEC-129** (`hooks/`, `78a2f33`..`c5bf6d4`, con las pasadas de QA-007-07, de P-136-P, de P-136-Q y de P-136-R). `cand/1.36.0` @ `9d725db`, con el código de `c5bf6d4` — 2026-10-07 — **DETERMINACIÓN SOBRE EL DELTA, NO FIRMA DEL REQ**
+
+**Numeración.** `R-056`, `SEC-131` y `SEC-132` sólo aparecían como «próximos libres» en la última línea de R-055 (búsqueda en los `.md` del worktree y `git grep` en ramas y etiquetas). `SEC-144` lo usa el ejemplo de `requirements/README.md` y no se toma.
+
+- **Pedido:** `PENDING_APPROVAL.md` § Resueltas, «Plan autorizado: paso 6 de 1.36.0, SEC-115 y SEC-118 … con la reparación de SEC-129», fase 4, ampliado por P-136-N, P-136-O, P-136-P, P-136-Q y P-136-R.
+- **Orden de fases:** QA es favorable para el código de `c5bf6d4` (`docs/qa/REQ-007.md`, las cinco secciones del paso 6, la última «Paso 6: re-verificación de la línea de P-136-R»). Esta revisión va después y no mira las quality gates.
+- **Contrato:** REQ-007 CA-67; CA-68 con sus «Límites declarados de 1.36.0» (F-136-18, F-136-19, F-136-20 (i) a (v)) y la parte (ii) sobre el entorno heredado; CA-69 puntos 3 y 7; ADR-017 y sus notas.
+- **Delta:** `hooks/entrada.sh` (nuevo), `hooks/guard.sh`, los tres guardianes y `hooks/lib.sh`. Los `hooks/` del worktree son idénticos a `c5bf6d4` (`diff -r` vacío).
+- **Evidencia:** `cand-1.36.0/sec115-118/seg-R056/`, commit `4bd3464` (entorno en `00-`, salidas en `01-10-mediciones.txt`, barrido de funciones en `04-`, gates en `07-`, inventario en `09-`). Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook por `guard.sh`, una corrida por punto. **No corrí el banco** (encargo; QA lo corrió).
+
+### 1. SEC-118 (CA-67): ¿toda denegación decidida llega al cliente?
+
+**Sí, en todo lo medido y lo leído: ningún tamaño ni ningún byte del motivo pierde la decisión.**
+- **El mecanismo** (`hooks/lib.sh:381-386`): el motivo va a `jq -cRs` por un here-string, se acota dentro de `jq` después de que `-R` sustituya los bytes inválidos, y sólo un `jq` que termina bien escribe `ARNES_JUICIO=fin`. Si `jq` no escribe, la trampa de `hooks/entrada.sh:50` emite la denegación fija. Una variable de bash no puede llevar un NUL, así que ningún byte llega a `jq` truncado. Ningún dato variable cruza la línea de órdenes.
+- **Medido** (`01-10`, bloque 06): con un `QA:` de unos 140 KB, el aviso sale en un JSON de 16 403 bytes y el `deny` en uno de 16 494, donde v1.35.0 salía sin nada («Argument list too long»). Con `ulimit -f` heredado de 1, 8 o 64 bloques el here-string no puede crear su temporal: el candidato da el `deny` fijo de la trampa y v1.35.0 sale sin decisión. QA midió el tope con bytes inválidos (393 casos, máximo 16 384 bytes).
+- **Lo que queda no es de tamaño sino de tiempo:** un motivo construido con decenas de miles de líneas repetidas tarda más que el plazo. Es SEC-132 (b), familia de SEC-115.
+- **¿El recorte oculta algo que el lector necesita?** No cambia ninguna decisión, ni puede hacer que un `deny` se lea como permiso: conserva el comienzo, que en todos los motivos nombra la causa, y dice que se acortó. Lo que puede perderse es lo que va **detrás** del contenido interpolado. Ejemplos **no exhaustivos**:
+  - la clase en «el hallazgo '<id>' es de clase '<c>'» cuando el id mide cerca del techo de 16 384 bytes de CA-A13;
+  - la salida que propone el motivo tras un `Sensible a seguridad:` de 140 KB;
+  - las líneas citadas a partir de unas 200 repeticiones de `Hallazgos abiertos:`.
+
+  Observación O-56-3, no hallazgo.
+
+### 2. SEC-115 (CA-68): plazo, techos y trampa
+
+- **Caminos que terminan sin decisión y sin pasar por la trampa:**
+  - **`kill -9`:** por definición; es la frontera declarada («si el cliente mata el proceso, nada que el hook haga deniega»).
+  - **Una señal terminante:** mientras corre una quality gate, el hook sale **sin salida** (`07-`, rc 124). En otro punto, la trampa emite pero el código de salida es el de la señal (QA, G3 y G4; aquí, bloque 08 con 20 000 líneas: el `deny` fijo sale a los 60 s con rc 124). Las dos cosas sólo ocurren cuando el cliente ya mató el hook, así que no cambian nada.
+  - **Desbordamiento de pila real:** sin salida, rc 139 (QA, G8). QA no encontró recursión alcanzable desde la entrada; no lo re-verifiqué.
+  - **`exec`:** sólo dentro de una sustitución de comandos (`hooks/lib.sh:1290`), y la función `exec` importada se retira.
+  - **Subshells:** ninguna función que deniega o comprueba el plazo corre dentro de una sustitución (`_arnes_cd_resolucion`, `arnes_agente_legible` y `arnes_bash_escrituras` no llaman a ninguna de las dos). Verificado leyendo.
+  - **Un final que pasa por `ARNES_JUICIO=fin` sin juicio:** la salida inerte del preludio cuando el preludio **falla**. Medido con `ulimit -n` de 4 o 5 heredado: el `sed -i` de cierre sale sin decisión, igual que en v1.35.0 (bloque 06). Es SEC-131 (b).
+- **El `deny` fijo** es JSON válido —`jq` lo lee, bloque 06— y lleva `hookEventName`, `permissionDecision: "deny"` y su motivo. Según el esquema de los hooks, basta; en el host, sin medir.
+- **rc distinto de 0, o dos documentos JSON en la salida.** Según el contrato documentado de los hooks, el cliente sólo lee el JSON de la salida estándar con código 0. Con otro código —salvo 2— es un error que no bloquea, y la llamada sigue. Dos documentos no son un JSON. Así que **ninguno de los dos casos se toma como `deny`: los dos equivalen a «sin decisión»**. Esto es **inferido de la documentación, no medido en el host**.
+  - En el candidato sólo aparecen después de que el cliente mate el hook (señales), o con los vectores de F-136-20 (`.` importada que imprime: cinco documentos, `04-`).
+  - **Propuesta para 1.37, que se propone antes de hacerse:** que la trampa salga además con código 2 y el motivo en la salida de errores, un canal de bloqueo que no depende de la salida estándar (cubriría también `xtrace` hacia ella, F-136-19). Una señal sigue imponiendo su código.
+- **Fallos en abierto del plazo que no estaban declarados:** SEC-132.
+
+### 3. SEC-129 y la propiedad (ii) (CA-68)
+
+- **SEC-129, medido** (bloque 02): con `POSIXLY_CORRECT=1`, `POSIXLY_CORRECT` vacía, `SHELLOPTS=posix` (lanzada con `env`), `BASH_ENV` con `set -o posix` y `bash --posix`, la decisión es la del modo normal en los 7 vectores. Las filas de `Bash` deniegan con el motivo de su puerta y no con el fijo de la trampa, donde v1.35.0 sale sin decisión. `ls -la` sale sin decisión y el aviso sigue saliendo.
+- **Opciones heredadas** (bloque 03): cada `shopt` por `BASHOPTS` y cada `set -o` por `SHELLOPTS`, sobre 6 vectores: **516 combinaciones, 12 diferencias**, todas de `errexit` (F-136-20 (ii)) o de `noexec` y `onecmd` (F-136-19).
+- **Variables heredadas** (bloque 03b), entre ellas `IFS`, `CDPATH`, `GLOBIGNORE`, `TMPDIR`, locales, `EXECIGNORE`, `SECONDS` y las `ARNES_*` nuevas del paso (`ARNES_JUICIO=fin`, `ARNES_PUERTA_FIN`, `ARNES_PLAZO_S=0`, `ARNES_EN_HOOK=`, `ARNES_JQ_ACOTA`, los techos): **198 combinaciones, 0 diferencias**.
+- **Funciones importadas** (`04-`): los nombres de la lista estática, los builtins que no están en ella, y `id`, `diff`, `xargs`, `locale` e `install`. Cada uno con cuatro cuerpos —`exit 0`, `return 0`, `return 1` y un `printf` que imprime un `allow`— sobre 6 vectores: **2 448 combinaciones, 37 diferencias, todas de `.` o `[`** (F-136-20 (i)).
+  - **Dato nuevo:** con el cuerpo que imprime, `[` produce **un `allow` explícito** —un único JSON válido— en los 6 vectores.
+  - F-136-20 (i) dice «sin decisión» y deja sin medir los demás cuerpos. Con ese entorno, el efecto puede ser **cualquier decisión, también `allow`**, que además salta el diálogo de permisos del cliente. Lo anoto para que la ficha lo diga; no cambia su frontera.
+- **Inventario propio de la lista estática** (`09-`): 124 palabras de `hooks/` son órdenes en este anfitrión. Las que no están en la lista no aparecen en posición de orden fuera de un comentario: son palabras clave, nombres dentro de los patrones del detector (`dd`, `sudo`, `perl`, `install`…) o texto. La única invocación dinámica es el `eval` de las quality gates (`hooks/guard-completado.sh:953`). **La lista es completa frente al código** que el hook ejecuta por sí mismo.
+- **Lo que queda suplantable o heredable por `guard.sh` fuera de F-136-20:** es SEC-131 (§6).
+  - (a) Una función importada con el nombre de la orden de una quality gate, que no está en la lista ni puede estarlo, porque cada proyecto escribe las suyas.
+  - (b) Límites de recursos heredados que hacen fallar el preludio, y ese fallo se lee como «inerte».
+  - (c) `PATH`.
+  - Hacia el lado cerrado, `ulimit -f` heredado convierte el aviso en `deny`, como `errexit`.
+- **`PATH`: ficha, no hallazgo propio.** Es entrada del contrato con el host, y no estado heredado en el sentido de (ii): el hook la necesita para encontrar `jq`, `git` y el propio intérprete. Además, `#!/usr/bin/env bash` resuelve `bash` por `PATH` **antes** de la primera línea del hook. No se puede neutralizar desde dentro, y su capacidad incluye la de todos los vectores de funciones. Va dentro de SEC-131 como la frontera que hay que **declarar**.
+  - **Recomendación para 1.37 (F-136-20):** enunciar (ii) con esa frontera **por propiedad**: el entorno de proceso que el cliente da al hook es de confianza, salvo el estado del intérprete que el preludio neutraliza.
+  - Y resolver F-136-20 en `hooks/hooks.json` con una **lista blanca** del entorno del contrato (`CLAUDE_PROJECT_DIR`, `PATH`, `HOME`, el locale…), no con una lista negra. Una lista blanca retira `BASH_FUNC_*`, `BASH_ENV`, `SHELLOPTS` y `BASHOPTS` sin enumerarlos, y cubre SEC-131 (a). `PATH` queda como la raíz de confianza, declarada.
+
+### 4. SEC-130 y R2
+
+- **R2 no cubre SEC-130.** QA lo midió (`qa/40-` a `43-`), y la lectura lo confirma: `arnes_estado_ausente` devuelve 0, `hooks/guard-completado.sh:412` sale con `return 0`, el grupo termina normalmente y escribe su marca.
+- **Desde fuera del proceso no se alcanza** (bloque 06). Con el límite de descriptores heredado:
+  - 3: rc 127;
+  - 4 y 5: la vía inerte del preludio, que es SEC-131 (b);
+  - 6 o más: la decisión normal.
+
+  Así que el camino de SEC-130 sólo se alcanza cambiando el límite **dentro** del proceso, como en la copia de QA. El texto de `Hallazgos abiertos:` («no alcanzado a nivel de hook») queda corregido en esos términos.
+- **Clase y sede finales: `instrumento`, baja, ficha F-136-12, 1.37.** No bloquea el cierre de REQ-007. Mientras esté abierto, devuelve **publicar** al propietario por la regla vigente.
+
+### 5. Límites declarados e instrumentos
+
+- **F-136-18 (QA-007-09):** encaja. Es un límite declarado, que no es un riesgo aceptado; sigue como `contrato` y la resolución es para 1.37. Un techo sobre el documento en disco por encima de 660 KB **no** cubriría SEC-132 (b): con una cabecera de 600 KB, la decisión llega a los 48 s.
+- **F-136-19 y F-136-20:** encajan. Son preexistentes y su frontera es el entorno del host. Hay que corregir el efecto de (i): el `allow` explícito de §3. Recomiendo resolverlas con la lista blanca de §3.
+- **INS-136-1 a INS-136-4:** son defectos del banco y de las sondas de reloj, no de los hooks. Encaja la clase `instrumento`, y ninguno oculta un fallo en abierto del delta. INS-136-4 da una cifra por debajo de 1 —el candidato fue más rápido— y E1 no cambia.
+- **Sin declarar:** SEC-131 y SEC-132.
+
+### 6. SEC-131 — `contrato` (REQ-007, CA-68 (ii) y (i)) · **abierto** · severidad **baja** · preexistente (igual en v1.35.0) · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (la frontera en CA-68)
+
+**El estado de proceso que el hook hereda cambia decisiones por caminos que ni el preludio neutraliza ni F-136-20 declara.** Ejemplos **no exhaustivos**:
+- **(a) Una función importada con el nombre de la orden de una quality gate** (`hooks/guard-completado.sh:953`, `eval` en una subshell que hereda las funciones). Medido (bloque 05): una gate roja (`mitest`, o `npm test`) con `BASH_FUNC_<orden>%%` que devuelve 0 pasa, y el cierre sale sin decisión. Sin la función, `deny`. Igual en v1.35.0. Control: con `sh`, que está en la lista, no cambia nada.
+- **(b) Un límite de recursos heredado que hace fallar el preludio** (`hooks/lib.sh:38-48`; `guard.sh:48` lee su fallo como «inerte» y escribe `fin`). Medido (bloque 06): con `ulimit -n` de 4 o 5 heredado, el `sed -i` de cierre sale sin decisión. Igual en v1.35.0. **Por lectura, no localizado:** dónde falla dentro del preludio.
+- **(c) `PATH`**, con la misma capacidad que (a) y mayor (§3). Va como frontera a declarar, no como algo que reparar desde dentro.
+- **Por qué `contrato` y baja.** Contradice la propiedad (ii) —«ninguna decisión depende de nada que el hook herede del entorno»— y, en (b), la (i): un preludio que falla no es un juicio concluido. No está entre los límites declarados. Hace falta controlar el entorno del proceso del cliente, como en F-136-19 y F-136-20, y por eso la severidad es baja. Bloquea el cierre de REQ-007 por su clase hasta que se repare o se declare.
+- **Remediación, por propiedad:**
+  - **declarar** en CA-68 (ii) la frontera de confianza del entorno de proceso del host —qué neutraliza el preludio, por propiedad, y qué queda fuera, con `PATH` como raíz—;
+  - en 1.37, la **lista blanca** de §3 en la orden de `hooks/hooks.json`, que cubre (a);
+  - y que el preludio distinga «no hay proyecto» de «no se pudo determinar», denegando cuando hay `CLAUDE_PROJECT_DIR` con `.arnes/` y el preludio falló, para (b).
+
+  La técnica es del `desarrollador`. **Qué se encarga y en qué entrega lo clasifica la coordinadora, y si es límite declarado lo decide el propietario.** No aceptado.
+
+### 7. SEC-132 — `contrato` (REQ-007, CA-68) · **abierto** · severidad **media** · preexistente (en v1.35.0 no hay plazo y los dos casos salen sin decisión) · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (CA-68)
+
+**El plazo propio no alcanza dos recorridos cuyo coste crece sin techo, y en ellos el hook sigue muriendo sin decisión.** Ejemplos **no exhaustivos**:
+- **(a) Las quality gates en serie.**
+  - **Dónde:** `arnes_plazo` se comprueba antes del bucle (`hooks/guard-completado.sh:946`) y no entre una gate y la siguiente (`:950-957`).
+  - **Medido** (`07-`): con cuatro gates de 20 s, el cierre por `Edit` sale **sin decisión** a los 60 s (rc 124, sin salida). Con la comprobación entre gates habría denegado hacia los 40 s.
+  - **El texto de CA-68 se queda corto:** dice que el plazo «no alcanza a una quality gate en curso, porque se comprueba antes de lanzarla», y eso sólo vale para la primera.
+  - **Es alcanzable con configuración ordinaria** —el ejemplo de `AGENTS.md` §7 para Node son cuatro gates— y en la puerta de cierre de los REQ `critico`. Una sola gate que pasa de 60 s sigue siendo el límite declarado y SEC-030.
+- **(b) Las líneas `Hallazgos abiertos:` repetidas en la cabecera en disco**, cerradas con un `Edit` pequeño (bloque 08).
+  - **Medido, con líneas de 66 caracteres:** 3 000 líneas, 4,6 s; 5 000, 9,7 s; 8 000, 16,3 s; 12 000, 32,8 s; 20 000 (1,6 MB), **sin decisión** a los 60 s. Con líneas cortas, 20 000 (600 KB) dan `deny` a los **48,5 s**, por encima de los 40 s de CA-68.
+  - **Controles lineales:** 20 000 o 40 000 líneas de otra clave o sin dos puntos, y `Rigor:` repetida.
+  - **Causa, por lectura y sin localizar por medida** (O-56-2): la acumulación de la cita `lin_h+=` (`hooks/lib.sh:3376`) o la construcción del motivo de `hooks/guard-completado.sh:71-73`.
+  - Lo alcanza quien agranda la cabecera con un `Bash` que no menciona el estado terminal y después cierra por `Edit`, como QA-007-09. **No es QA-007-09**, que es la vía CRLF.
+- **Por qué `contrato` y media.** Contradice CA-68 —un hook que no puede terminar antes de que el cliente lo mate «emite `deny`», y los techos van «delante de toda operación que crezca más que linealmente»—, y ningún límite lo declara. La severidad es media porque (a) es alcanzable sin ningún ataque. La barandilla ya admite otros rodeos deliberados —los intérpretes, en `AGENTS.md` §13—, y eso modera (b).
+- **Remediación, por propiedad:** todo recorrido cuyo número de vueltas depende de la entrada o de la configuración comprueba el plazo en cada vuelta, sin procesos, y toda operación superlineal lleva techo delante. Ejemplos **no exhaustivos**:
+  - `arnes_plazo` dentro del bucle de gates, que es un cambio de compatibilidad que se declara en CA-69 punto 3: un cierre con gates lentas pasa de «sin decisión» a `deny`;
+  - el plazo en el recorrido por líneas de la cabecera;
+  - un tope a las líneas citadas.
+
+  Qué se encarga y en qué entrega lo clasifica la coordinadora. **No aceptado.**
+
+### 8. Observaciones (no hallazgos)
+
+- **O-56-1 — Comentarios desfasados.** `hooks/guard-completado.sh:66-70`, `hooks/lib.sh:1466` y `:3048` todavía dicen que el motivo viaja «como UN argumento» de `jq`. Son de documentación técnica, para la próxima pasada del `desarrollador`. Las sedes de la promesa —`AGENTS.md` §13, las plantillas, `requirements/README.md`— se cambian por CA-69 punto 5, ahora que el mecanismo está validado.
+- **O-56-2 — Control del proveedor.** Detuvo la sonda de perfil (una traza con marcas de tiempo lanzada con `bash -c` desde un script que contiene un `rm`). No la reintenté. Por eso la operación de SEC-132 (b) queda sin localizar por medida.
+- **O-56-3 — El recorte del motivo** (§1).
+- **O-56-4 — Los motivos interpolan contenido del disco en el contexto del modelo.** Es un canal de inyección indirecta (OWASP LLM01), preexistente y propio del diseño. El tope de 16 384 bytes lo acota; no lo crea.
+
+### 9. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el delta del paso 6: CONFORME CON HALLAZGOS, SIN VETO.**
+  - Ningún `deny` pasa a `allow` ni a «sin decisión» a nivel de hook en lo medido: 3 162 combinaciones de entorno más la matriz POSIX, frente al candidato sin ese estado y frente a v1.35.0.
+  - Los movimientos son sólo hacia `deny` y están declarados en CA-69 punto 3: los techos, las filas POSIX y las variables `ARNES_*`.
+  - Los dos hallazgos nuevos son preexistentes.
+- **Esta revisión no firma REQ-007.** `Seguridad:` sigue en `pendiente`; sólo añado R-056 en su paréntesis. La firma no procede: el REQ tiene QA pendiente en su conjunto y hallazgos `contrato` abiertos.
+- **SEC-131 y SEC-132:**
+  - **(i) Qué acción impiden:** **cerrar** REQ-007, porque `guard-completado` deniega el cierre con un hallazgo `contrato` abierto (§6 y §13). Abiertos, **publicar** no puede hacerse por delegación y vuelve al propietario (§4); es efecto de la regla vigente, no un veto mío.
+  - **(ii) Qué parte afectan:** SEC-131, la parte (ii) de CA-68 y la vía inerte del preludio; SEC-132, el plazo de CA-68 en el bucle de gates y en la cabecera.
+  - **(iii) Evidencia:** §6 y §7, con `seg-R056/` en `4bd3464`.
+  - **(iv) Qué los resuelve:** la reparación, o la declaración como límite con ficha por decisión del propietario, con su write-back en CA-68.
+  - **No impiden** implementar ni probar, ni el commit validado del paso 6.
+- **Decisión que conviene presentar ya al propietario** (regla 4), junto con la de publicar 1.36.0: si SEC-132 (a) se repara en 1.36.0 —una línea, con el cambio de compatibilidad declarado— o queda como límite para 1.37. Lo mismo para SEC-131: reparar (b) o declarar la frontera.
+
+### 10. Reclasificación (en el candidato `c5bf6d4`, sin publicar)
+
+- **SEC-118 → `mitigado`.**
+  - **Residuales:** Windows/MSYS y el host, sin medir.
+  - **Write-back:** existe en CA-67, «Estado» y QA-007-12.
+  - **Regresión a vigilar:** un motivo o un aviso que vuelva a la línea de órdenes, o un recorte hecho fuera de `jq`.
+- **SEC-115 → `mitigado` en sus tres vías registradas**: el valor grande, el `Write` grande y la búsqueda de `old_string`, que QA validó en `deny` por debajo de 40 s.
+  - **Residuales con identificador propio, que siguen abiertos:** QA-007-09 (F-136-18, límite declarado) y SEC-132.
+  - **Límite declarado:** la operación única que no termina.
+  - **Abierto aparte:** SEC-030. **Sin medir:** Windows/MSYS.
+  - **Write-back:** existe en CA-68.
+  - **Regresión a vigilar:** una operación superlineal sin techo delante, o un bucle sin plazo.
+- **SEC-129 → `mitigado`.**
+  - **Residuales:** F-136-20 (i)-(v), F-136-19 y F-136-9, declarados; SEC-131, abierto; bash distinto de 5.3.9, sin medir.
+  - **Write-back:** existe en CA-68 (i) y (ii).
+  - **Regresión a vigilar:** cualquier orden que corra antes de `hooks/entrada.sh`, un builtin que el hook empiece a usar y que no esté en la lista estática, o una vía «inerte» alcanzable por un fallo.
+- **SEC-130:** `instrumento`, baja, `abierto`, F-136-12, 1.37 (§4).
+
+### 11. Firmas y cobertura
+
+- **Revisado:**
+  - el delta de `hooks/` entre `78a2f33` y `c5bf6d4`, por lectura;
+  - a nivel de hook, por `guard.sh`, en Linux/WSL2 con bash 5.3.9: la matriz POSIX y los barridos de opciones, variables y funciones; los límites `ulimit -n` y `-f`; las gates lentas; las cabeceras grandes.
+- **No revisado o no medido:**
+  - el host (`claude -p`), incluida la interpretación del código de salida y de dos documentos;
+  - Windows/MSYS;
+  - otros bash;
+  - los guardianes sueltos (fuera de producción, F-136-20 (v));
+  - T1, T2 y T3 y el tope (los midió QA; no los repetí);
+  - E1 a E3;
+  - el banco completo;
+  - la recursión (QA, por lectura);
+  - `ulimit -v`, `-s` y `-t` heredados;
+  - la configuración de `git` del proyecto (p. ej. `core.fsmonitor`) como código que corre dentro del hook, que es preexistente y está fuera del delta.
+
+### 12. Estado tras R-056
+
+| Hallazgo | Clase | Estado | Dueño | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-118`** | `instrumento` (REQ-023) | **`mitigado`** en `c5bf6d4`, sin publicar; Windows/host sin medir | `desarrollador`; `analista-requerimientos` | no |
+| **`SEC-115`** | `instrumento` (REQ-031) | **`mitigado`** en sus tres vías, en `c5bf6d4`, sin publicar; residuales QA-007-09, SEC-132, SEC-030 | `desarrollador`; `analista-requerimientos` | no |
+| **`SEC-129`** | `contrato` (REQ-007) | **`mitigado`** en `c5bf6d4`, sin publicar; residuales F-136-19/20, F-136-9 y SEC-131 | `desarrollador`; `analista-requerimientos` | no (sale de `Hallazgos abiertos:`) |
+| **`SEC-130`** | `instrumento` (REQ-007) | `abierto`, no aceptado; texto corregido (§4); F-136-12, 1.37 | `desarrollador` | no |
+| **`SEC-131`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido; preexistente | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+| **`SEC-132`** | **`contrato`** (REQ-007) | **`abierto`**, no aceptado, medido; preexistente | `desarrollador`; `analista-requerimientos` | **REQ-007** |
+
+**Pendiente fuera de mi edición:** las entradas de SEC-118 en `Hallazgos abiertos:` de REQ-023 y de SEC-115 en la de REQ-031 siguen describiendo el defecto como abierto. Su actualización la hace quien edite esos REQ (el encargo limita la mía a REQ-007); como son de clase `instrumento`, no bloquean ningún cierre.
+
+**Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Los demás REQ:** sin cambio.
+
+**Regresiones a vigilar** (no exhaustivo):
+- una orden antes de `hooks/entrada.sh`;
+- un builtin u orden nueva que no esté en la lista estática;
+- una vía «inerte» alcanzable por un fallo;
+- un bucle sin plazo;
+- un motivo fuera de la entrada estándar.
+
+**`docs/seguridad/gobernanza-datos.md`: sin cambios**: no cambian los datos que se manejan. **Numeración vigente:** última revisión **R-056**; último hallazgo **SEC-132** (`SEC-121` y `SEC-144`, reservados a los ejemplos de `requirements/README.md`); próximos libres **R-057** y **SEC-133**.
+
+## Revisión R-057 — **Estado final del candidato 1.36.0: determinación corta de seguridad para la decisión de publicar** (código de `c5bf6d4` tras la reversión de `cd63066` por P-136-U; versión `b43d7ea`). `cand/1.36.0` @ `4610004` — 2026-10-07 — **DETERMINACIÓN SOBRE EL CANDIDATO, NO FIRMA DEL REQ**
+
+- **Pedido:** encargo de la coordinadora del 2026-10-07 (determinación corta sobre el estado final, para que el propietario decida publicar con las notas delante), tras P-136-S, P-136-T y P-136-U (`PENDING_APPROVAL.md` § Resueltas, literales).
+- **Orden de fases:** QA comprobó la reversión con veredicto favorable (`docs/qa/REQ-007.md`, «P-136-U: comprobación de la reversión»; evidencia `qa6/`, `69e541c`). Esta revisión va después y no mira las quality gates.
+- **Evidencia:** `cand-1.36.0/sec115-118/seg-R057/` (`00-comprobaciones.txt`, `01-stdin-gates.*`, `02-vectores-qa00715.*`, `h.sh` de R-056), commit `1f73698` del repositorio de evidencia. Linux/WSL2, bash 5.3.9, jq 1.8.2, a nivel de hook por `guard.sh`, una corrida por punto. **No corrí el banco** (encargo).
+
+### 1. ¿El código final es el que determinó R-056?
+
+**Sí.** `git diff c5bf6d4 HEAD -- hooks/ tools/ tests/` vacío, y también `.github/`, `agents/` y `playbooks/`. `plugin.json` y `marketplace.json` en 1.36.0; `arnes_version` de `.arnes/config.json` en 1.33.0 (`00-`). Lo que cambió desde `c5bf6d4` es sólo documentación, plantillas, la skill de migración, el REQ y los registros. R-056 se mantiene sobre el código que se publicaría.
+
+### 2. SEC-131 y SEC-132: estado final
+
+Declararlos límite con ficha **no cambia su clase ni su estado**. Es la regla de la casa desde F-136-18 (R-056 §5): un límite declarado no es un riesgo aceptado ni un reparado.
+- **Qué sí cambia:** el write-back existe —CA-68, «Límites declarados de 1.36.0», con su ficha— y `AGENTS.md` §13 los nombra. Su promesa ya no excede lo medido, salvo lo de SEC-134 (§5). Ya no son «sin declarar».
+- **SEC-131:** `contrato`, baja, **`abierto` — límite declarado** por P-136-S (2) (A), ficha F-136-21 con F-136-20. **No aceptado. Vence en 1.37.**
+- **SEC-132 (a) y (b):** `contrato`, media, **`abierto` — límite declarado**. (a) por P-136-U (A), (b) por P-136-S (1) (A), ficha F-136-22. **No aceptado. Vence en 1.37.**
+- **Efecto:** los dos impiden **cerrar** REQ-007 (`guard-completado`, §6 y §13). Abiertos, devuelven **publicar** al propietario (§4); es efecto de la regla vigente, no un veto.
+
+### 3. El intento revertido (`cd63066`)
+
+- **Rastro en el código: ninguno.** `arnes_corta_gate` y `arnes_deny_plazo_gate` no aparecen en lo distribuido (`00-`, §3). El bucle de gates es el de `c5bf6d4` (`hooks/guard-completado.sh:951-958`).
+- **Medido de nuevo** (`02-`): los vectores de QA-007-15 —una gate roja que escribe en un descriptor heredado, que pone una trampa `EXIT` o que imprime un `allow` en su salida— reciben `deny`.
+- **Lecciones que el registro conserva además de las tres de F-136-22:**
+  - **L4 — La gate es código no confiable dentro del proceso del hook.** Su veredicto es sólo su código de salida, observado por el hook. Nada de lo que hereda —entrada estándar, descriptores, salidas, trampas, funciones— puede alimentar la lista, el veredicto ni la salida del hook. Son instancias de esta propiedad, ejemplos **no exhaustivos**:
+    - QA-007-15, por un descriptor (revertido);
+    - SEC-131 (a), por funciones (límite declarado);
+    - **SEC-133** (§4), por la entrada estándar, preexistente y abierto.
+  - **L5 — Reparar la vivacidad no debe romper la integridad.** Una reparación de «siempre emite decisión» se valida también contra «nunca pasa una gate roja», con casos adversarios en el banco.
+    - Los vectores de QA-007-15 y los de SEC-133 salieron del banco con la reversión, o nunca estuvieron.
+    - Deben entrar **antes** del intento de 1.37.
+    - Regresión a vigilar.
+
+### 4. SEC-133 — `contrato` (REQ-007) · **abierto** · severidad **media** · preexistente (igual en v1.35.0) · dueños `desarrollador` (mecanismo) y `analista-requerimientos` (contrato)
+
+**Una quality gate que lee su entrada estándar consume la lista de las gates siguientes; éstas no se ejecutan, y el cierre sale sin decisión con una gate posterior en rojo.**
+- **Causa:** el bucle lee la lista de gates de la entrada estándar (`done <<< "$ARNES_GATES"`, `hooks/guard-completado.sh:958`), y cada gate la hereda (`:953`).
+- **Medido** (`01-`), en el candidato y en v1.35.0:
+  - con `cat >/dev/null` o con `read -r x; true` seguidas de `false`, el cierre sale **sin decisión** (nada, rc 0);
+  - controles: la gate roja sola, `true` seguida de `false`, y la misma `cat` con `</dev/null` dan `deny`.
+- **Alcance:** cualquier orden de gate que lea de la entrada estándar sin necesitarlo. No hace falta ningún ataque. No medí qué órdenes reales lo hacen.
+- **Por qué `contrato`:** contradice la fila «No completar un REQ con quality gates en rojo» de `AGENTS.md` §13 y §7, y ningún límite lo declara.
+- **Por qué media:** es un fail-open de la puerta de cierre con configuración ordinaria. Depende de que una gate que lee stdin vaya delante de una roja, y es preexistente.
+- **Remediación, por propiedad (L4):** ninguna gate hereda un canal del que el hook lea. Por ejemplo, la lista por otro descriptor o cada gate con la entrada desde `/dev/null`. Con caso de banco y su fail-before.
+- **Decisión del propietario:** reparar en 1.36.0 o declarar el límite para 1.37 (regla 4). P-136-U dice «Nada más entra». **No aceptado.**
+
+### 5. SEC-134 — `contrato` (REQ-007, CA-68 y su sede en `AGENTS.md` §13) · **abierto** · severidad **baja** · dueño `analista-requerimientos`
+
+**La nota de P-136-U sugiere una mejora de 1.36.0 que no está medida en el cliente.**
+- **Dónde está la frase** —sedes encontradas por búsqueda, ejemplos **no exhaustivos**, `00-` §4—: la cláusula 1 de `AGENTS.md` §13 (`:730`), su plantilla (`templates/AGENTS.md.tpl:694`), `skills/arnes-upgrade/SKILL.md:1480`, CA-68 (`requirements/REQ-007.md:2455`) y `docs/PENDIENTES.md:2336`.
+- **Qué dice:** con las gates de SEC-132 (a), «en 1.35.0, **además**, el REQ quedaba `completado`». El «además» da a entender que en 1.36.0 no queda cerrado.
+- **Lo medido en `c5bf6d4`:**
+  - cuatro gates de 20 s y una de 70 s salen **sin salida** a los 60 s (`seg-R056/07-`), igual que v1.35.0;
+  - en la gate colgada, el `deny` fijo sale **después** de que `timeout` señalara al hook (QA, «SEC-132 (a): re-verificación acotada» §4), de un hook que el cliente ya mató.
+  - En el cliente los dos casos son «sin decisión», y que eso cuente como permitir es inferido (REQ-031 CA-A12): el REQ **puede** quedar `completado` también en 1.36.0.
+- **Remediación:** decir que en 1.36.0 el hook también queda sin decisión, y que el REQ puede quedar cerrado igual que en 1.35.0. La nota del propietario («v1.35.0 cerraba el REQ sin decisión») se conserva: es cierta. Lo que sobra es el contraste.
+- **Recomiendo corregirlo antes del tag**, porque es texto que heredan los consumidores. Si no se corrige, las notas lo dicen.
+
+### 6. `AGENTS.md` §13 (y su plantilla): ¿dice lo que es cierto en el candidato?
+
+- **Cláusula 1, sí, con dos salvedades.**
+  - **La salvedad de SEC-134.**
+  - **«los techos de tamaño deniegan antes de las operaciones que crecen más que linealmente»** es más ancho que lo medido. Los residuales de la misma cláusula (SEC-132 (b), QA-007-09) lo desmienten en dos operaciones. Observación O-57-1: no es hallazgo porque el texto declara la excepción al lado.
+  - **Lo demás está medido** (QA y R-056): el plazo de 30 s y los 40 s con sus residuales, la trampa, el motivo por la entrada estándar de `jq` acotado a 16 384 bytes, y SEC-115/118 `mitigado`.
+- **Fila de SEC-120:** conforme con R-053, incluido el límite sin `CLAUDE_PROJECT_DIR`.
+- **Fila de CA-68 (ii):** conforme. Declara `.` y `[` (con el `allow` explícito de R-056 §3), las opciones, `BASH_ENV`, la función con nombre de gate, el límite de descriptores y `PATH`.
+- **Fila de los hallazgos:** conforme. Sus cifras de 1.35.0 van fechadas como historia.
+- **Fila «No completar un REQ con quality gates en rojo»:** **excede lo medido** y no tiene residual en la tabla.
+  - SEC-133 (§4) la contradice.
+  - SEC-131 (a) también, y sólo está declarado en otra fila.
+  - Es parte del write-back de SEC-133.
+- **Plantilla:** §13 coincide con `AGENTS.md` en estas filas y en la cláusula 1. Sólo difiere en dos párrafos de redacción propia de la plantilla.
+
+### 7. Alcance de la determinación (`AGENTS.md` §6, regla 2)
+
+- **Determinación sobre el estado final del candidato 1.36.0: CONFORME CON HALLAZGOS, SIN VETO.**
+  - El código es el de R-056: ningún `deny` pasa a `allow` ni a «sin decisión» frente a v1.35.0 en lo medido.
+  - La reversión no deja rastro.
+  - Los dos hallazgos nuevos son preexistentes (SEC-133) o de redacción (SEC-134). Ninguno es una regresión de 1.36.0.
+  - Publicar 1.36.0 no empeora ninguno; retenerla retiene SEC-115/118/120/127/128/129 `mitigado`.
+- **Qué publica** (en el candidato, sin publicar):
+  - **`mitigado`:** SEC-115 en sus tres vías, SEC-118, SEC-120, SEC-127, SEC-128 y SEC-129;
+  - las propiedades (i) y (ii) de CA-68.
+- **Qué declara** —límites, ni aceptados ni reparados, todos para 1.37—:
+  - SEC-132 (a) y (b), F-136-22;
+  - SEC-131, F-136-21 con F-136-20;
+  - QA-007-09, F-136-18;
+  - QA-007-11, F-136-19;
+  - QA-007-01, P-136-F.
+- **Qué impide**, ejemplos **no exhaustivos**:
+  - **(i) Acción:** **cerrar** REQ-007, por `guard-completado` con hallazgos `contrato` abiertos (§6 y §13).
+  - **(ii) Parte:** el cierre de REQ-007; la publicación no por delegación.
+  - **(iii) Evidencia:** §2, §4 y §5, con `seg-R057/`.
+  - **(iv) Qué lo resuelve:** la reparación, o la declaración como límite por decisión del propietario con su write-back.
+- **Qué devuelve la publicación al propietario** (§4, no por delegación): los `contrato` abiertos.
+  - **Del delta:** QA-007-01, QA-007-09, QA-007-11, SEC-131, SEC-132, y los nuevos SEC-133 y SEC-134.
+  - **Heredados en REQ-007:** QA-114, QA-116, QA-117 y SEC-124.
+  - **Heredados en otros REQ**, por búsqueda de la forma `ID (contrato`, no exhaustivo; la sede es la lectura de la puerta:
+    - REQ-013: SEC-014 y SEC-020;
+    - REQ-019: SEC-033;
+    - REQ-020: SEC-038 a SEC-045;
+    - REQ-021: QA-021-10 y QA-021-11.
+  - **`instrumento` abiertos** (no bloquean cierre): SEC-130, SEC-123, SEC-125, QA-023-23, QA-007-08.
+- **No impide:** implementar, probar, ni el write-back de SEC-133/SEC-134.
+- **Firma:** esta revisión no firma REQ-007. `Seguridad:` sigue en `pendiente`, con R-057 en su paréntesis.
+- **Decisiones que conviene presentar ya al propietario** (regla 4), con la de publicar:
+  - **(1) SEC-133:** reparar en 1.36.0 o declararlo para 1.37.
+    - Recomendación: **declararlo** y repararlo en 1.37 junto con F-136-22 bajo L4.
+    - Motivo: es preexistente, y una pasada más sobre el bucle de gates, tras P-136-U, repite el patrón que P-136-U cortó.
+    - La reparación mínima, la entrada desde `/dev/null`, es pequeña. Si se quiere en 1.36.0, sería otra vuelta con QA y seguridad.
+  - **(2) SEC-134:** corrección de texto por el analista antes del tag.
+
+### 8. Estado tras R-057
+
+| Hallazgo | Clase | Estado | Vence | ¿Bloquea algún cierre? |
+|---|---|---|---|---|
+| **`SEC-131`** | `contrato` (REQ-007) | **`abierto` — límite declarado** (F-136-21, P-136-S), no aceptado | 1.37 | **REQ-007** |
+| **`SEC-132`** | `contrato` (REQ-007) | **`abierto` — límite declarado** en (a) y (b) (F-136-22, P-136-S y P-136-U), no aceptado | 1.37 | **REQ-007** |
+| **`SEC-133`** | `contrato` (REQ-007) | **`abierto`**, nuevo, preexistente, no aceptado | decide el propietario | **REQ-007** |
+| **`SEC-134`** | `contrato` (REQ-007) | **`abierto`**, nuevo, de redacción | antes del tag (recomendado) | **REQ-007** |
+| `SEC-115`, `SEC-118`, `SEC-129` | — | `mitigado` en el candidato (R-056 §10), sin cambio | — | no |
+| `SEC-130` | `instrumento` | `abierto`, F-136-12 | 1.37 | no |
+
+- **No revisado:**
+  - el host (`claude -p`) y lo que hace con «sin decisión» o con salida tras una señal;
+  - Windows/MSYS y otros bash;
+  - qué órdenes de gate reales leen la entrada estándar;
+  - SEC-133 por `Write` y `MultiEdit` (mismo bucle, por lectura);
+  - el banco completo;
+  - el borrador de notas `docs/arnes/notas-1.36.0-borrador.md`, que estaba en redacción. Antes de publicar debe decir lo de §7 y no repetir SEC-134.
+- **Estado de seguridad aprobado de REQ-007:** ninguno, sigue sin firma. **Demás REQ:** sin cambio.
+- **Regresiones a vigilar** (no exhaustivo):
+  - un canal heredado por la gate del que el hook lea (L4);
+  - una reparación de plazo sin casos adversarios de integridad (L5);
+  - y las de R-056 §12.
+- **`docs/seguridad/gobernanza-datos.md`:** sin cambios.
+- **Numeración vigente:**
+  - última revisión **R-057**; último hallazgo **SEC-134**;
+  - `SEC-121` y `SEC-144` siguen reservados a los ejemplos de `requirements/README.md`;
+  - próximos libres **R-058** y **SEC-135**.
+
+### 9. Nota posterior a R-057 — **SEC-120 con el `jq` de serie de Ubuntu 24.04** (2026-10-07) — **SÓLO REGISTRO: NO REVISIÓN, NO FIRMA, NO RECLASIFICA**
+
+- **Por qué existe.** QA reprodujo el CI rojo del PR #60 (run `37482487075`): `docs/qa/REQ-007.md`, sección «CI del PR #60: K4 (V4) en Ubuntu». Evidencia en el repositorio de evidencia, `cand-1.36.0/ci-k4/`, commit `4e8b2e0`. No medí nada nuevo: leí esos archivos.
+- **Qué está medido y qué inferido** (de QA):
+  - **Inferido de la imagen:** el `jq` del runner `ubuntu-24.04` es 1.7.1 (paquete `1.7.1-3ubuntu0.24.04.2`). El paso del CI no imprime la versión (`00-ci-37482487075.txt`).
+  - **Medido:** con ese paquete extraído sin instalar y con el binario upstream 1.7.1 (`01-jq-obtencion.txt`, con sha256), `jq` lee 254 niveles y no lee 255. El 1.8.2 del anfitrión lee 9 998 y no lee 9 999 (`02-jq-profundidad.txt`).
+  - **Medido:** las decisiones por árbol (`03-sonda-k4.sh`, `03-sonda-k4-jq171.txt`, `03-sonda-k4-jq182.txt`), iguales por `guard.sh` y por `guard-completado.sh`.
+- **Precisión de lo registrado, sin reescribirlo.** R-045-A §4 y R-046 dicen «10 001 niveles → allow; con 9 000, deny». **Esas cifras valen sólo con `jq` 1.8**, que es el que se usó. Con `jq` 1.7.1 no son verdad (siguiente punto). Lo mismo vale para toda cita de «9 000 niveles → deny por el veredicto» en este registro.
+
+**(1) La exposición real de SEC-120 en lo publicado era mayor que la declarada.**
+- Con `jq` 1.7.1, v1.35.0 deja pasar el cierre de un REQ `critico` con QA pendiente a partir de **255 niveles**: una clave extra de unos **510 bytes** de corchetes. No hacen falta 10 001 niveles (≈ 20 KB). La medición es de 255, 9 000, 9 999 y 10 001 niveles: todos dan `allow` (`03-sonda-k4-jq171.txt`).
+- Afecta a todo consumidor de **v1.35.0 y anteriores** que corra el `jq` de serie de Ubuntu 24.04. La base tenía la misma conducta (R-045-A §4: «igual en la candidata y en la base»).
+- **Sin medir:** otras 1.7.x y versiones anteriores a 1.7. No afirmo su límite.
+
+**(2) En 1.36.0, SEC-120 sigue `mitigado`.**
+- Con `jq` 1.7.1, la candidata `c5bf6d4` deniega desde 255 niveles por «la entrada de esta llamada no se pudo leer», que es lo que pide CA-47 punto 20. Con 1.8.2 deniega por el veredicto hasta 9 998 niveles y por ilegible desde 9 999.
+- **Las dos ramas cierran.** Cambia el motivo, no la decisión. El banco completo con `jq` 1.7.1 da 0 FAIL (`20-banco-despues-jq171.txt`).
+- La dependencia del límite de `jq` no abre nada en 1.36.0. Sólo cambia qué rama mide V4.
+- El estado de R-053 §7 y R-057 §8 no cambia.
+
+**(3) Severidad de SEC-120 en lo publicado (v1.35.0): se mantiene `baja`, sin reclasificar hacia abajo.**
+- El factor que la fijó sigue igual: **no se ha observado que el host la alcance**, y eso **no está verificado** (R-045-A §4). Los guardianes sólo juzgan `Edit|Write|MultiEdit|Bash` (`hooks/hooks.json`), herramientas de esquema fijo. En lo observado, el host entrega sólo las claves del esquema, y sus valores anidables son cadenas.
+- **Lo que cambia es el coste de la entrada, no su alcance.** Con el `jq` de serie, la barrera de tamaño desaparece: medio kilobyte cabe en cualquier techo. Por eso «no verificado» pesa más de lo que pesaba.
+- **Condición de subida, declarada:** si algún canal que pueda medirse entrega anidamiento a esos hooks (otra versión del host, un cliente que no valide el esquema, invocar el hook fuera de Claude Code), SEC-120 en v1.35.0 pasa a **alta**. Sería un fail-open de la puerta de cierre con ~510 bytes y una dependencia de serie.
+
+**(4) Recomendación para las notas `[1.36.0]`** (`docs/arnes/notas-1.36.0-borrador.md`; la redacción es del analista y la coordinadora). Va con QA-007-18 (`contrato`, de QA), sin sustituirlo.
+- **V4 depende del `jq`.** Su resultado «deny por el veredicto» exige un `jq` que lea 9 000 niveles (medido: 1.8.2). Con `jq` 1.7.1, el de serie de Ubuntu 24.04 y el del CI que es puerta de `main`, V4 se deniega por entrada ilegible y el banco lo registra como SKIP con motivo. **Ninguna cifra de V4 se da como medida en el CI.**
+- **En la línea de SEC-120, decir la exposición real de lo publicado:** con `jq` 1.7.1, v1.35.0 y anteriores dejan pasar desde **255 niveles**, y actualizar a 1.36.0 lo cierra con cualquier `jq` medido.
+- Ninguna de las dos frases se escribe como «con 9 000 niveles, deny» sin la versión de `jq`.
+
+- **Estado tras esta nota:** sin hallazgos nuevos. SEC-120 sigue `abierto` en lo publicado (v1.35.0), con severidad baja y la condición de subida de (3), y `mitigado` en el candidato. No cambia ninguna firma; `Seguridad:` de REQ-007 sigue en `pendiente`. **Numeración vigente:** sin cambio; próximos libres **R-058** y **SEC-135**.

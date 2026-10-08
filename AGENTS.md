@@ -694,8 +694,8 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 |------------|---------|------|------------------------|
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar un REQ con quality gates en rojo | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera, ni con el campo **por encima de su techo** de tamaño, que se mide antes de normalizar—. **Aparte de la regla, sus limitaciones conocidas y sin reparar:** un hook que el cliente mata por tiempo no deniega (SEC-115; la denegación por tamaño está medida hasta 255 371 bytes, que deniega a tiempo, y por encima no hay promesa); y el motivo del campo repetido cita cada línea en un argumento cuyo límite es de **bytes**, por encima del cual el hook sale sin decisión y no deniega (SEC-118; medido en Linux/WSL2: con líneas ASCII de 60 caracteres o más, 1 601 deniegan y 1 801 salen sin decisión; con ASCII cortas, 2 501 deniegan y 3 000 no; con multibyte salen sin decisión 1 601 con `ñ`, 1 001 con caracteres de 4 bytes y 2 501 cortas con `ñ`; sin cifra para otros caracteres, hosts ni tamaños) (sintaxis, techo, repetición, sus límites y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar un REQ con quality gates en rojo. **Lo que esta fila no cubre en 1.36.0, límites declarados, ni aceptados ni reparados** —ejemplos **no exhaustivos**—: una gate que **lee su entrada estándar** se come la lista de las gates siguientes, que no se ejecutan (SEC-133); y una **función importada** del entorno con el nombre de la orden de una gate hace pasar esa gate aunque esté en rojo (SEC-131 (a), que también declara la fila del entorno heredado). **Consecuencia:** en esas formas el cierre puede salir **sin decisión** con una gate en rojo —una posterior a la que lee la entrada, o la propia gate suplantada—, y salir sin decisión no deniega. Preexistentes, iguales en v1.35.0; su resolución es de 1.37 (fichas F-136-23 y F-136-21; norma única: REQ-007 CA-68, «Límites declarados de 1.36.0», del repositorio del arnés) | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera, ni con el campo **por encima de su techo** de tamaño, que se mide antes de normalizar—. **Aparte de la regla, sus límites:** en 1.36.0 la denegación de esta fila **llega al cliente** —el motivo viaja por la entrada estándar de `jq`, nunca como argumento, acotado a 16 384 bytes— y un juicio que no termina a tiempo deniega por el plazo propio del hook: SEC-118 y SEC-115 están **`mitigado`**, con sus residuales (cláusula 1, abajo). **Residual propio de esta fila, límite declarado y sin reparar:** con miles de líneas `Hallazgos abiertos:` repetidas en la cabecera **en disco**, el juicio crece más que linealmente y puede pasar de los 40 s o quedarse sin decisión (SEC-132 (b); medido en Linux/WSL2, una corrida por punto: 20 000 líneas cortas, `deny` a los 48,5 s; 20 000 de 66 caracteres, sin decisión a los 60 s). *(Hasta 1.35.0 esta fila declaraba SEC-115 y SEC-118 como limitaciones sin reparar, con lo medido entonces: la denegación por tamaño, hasta 255 371 bytes; y, con el motivo en un argumento cuyo límite es de bytes, con líneas ASCII de 60 caracteres o más 1 601 deniegan y 1 801 salen sin decisión, con ASCII cortas 2 501 y 3 000, y con multibyte salen sin decisión 1 601 con `ñ`, 1 001 con caracteres de 4 bytes y 2 501 cortas con `ñ`. Es historia de 1.35.0, no un límite de 1.36.0.)* (sintaxis, techo, repetición, sus límites y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | La transición a `completado` no se hace por shell | §6 | `guard-completado` | `Bash` (parcial) |
@@ -703,20 +703,48 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 | Los campos del REQ valen sólo en la cabecera: una línea igual dentro de una sección no es un veredicto | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Lo que vive dentro de un `<!-- … -->` de la cabecera **no declara campo**; un rango que abre y no cierra en la cabecera no la deja medir y no deja cerrar | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Una línea de la cabecera con un **retorno de carro que no es el que la termina** no se puede medir y no deja cerrar — se deniega por eso, citando la línea, aunque los veredictos estén en verde. El CR **final** es transporte (CRLF decide igual que LF), el cuerpo no se toca y **reabrir** no se bloquea | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con su limitación SEC-118); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| Una cabecera **ambigua** no deja cerrar: una **clave de control** (`Estado`, `QA`, `Seguridad`, `Sensible a seguridad`, `Hallazgos abiertos`, `Rigor`) escrita de otra forma que la máquina no lee como esa clave —mayúsculas, un blanco de más, un carácter invisible, un marcador de lista—, o declarada **más de una vez aunque diga lo mismo**, se deniega citando las líneas, aunque los veredictos estén en verde (`Hallazgos abiertos` repetida con su forma exacta, cuando es la única ambigüedad, la decide la fila de los hallazgos, con los límites que esa fila declara); **reabrir** no se bloquea. Qué es una variante y dónde acaba la frontera de lo cubierto: `requirements/README.md` § «Veredictos de validación». Lo que queda fuera de esa frontera **no está protegido** y se sigue leyendo como ausencia —ejemplos **no exhaustivos**: un homóglifo, una letra cambiada, unos dos puntos que no son ASCII, una línea con carácter de estructura, una clave de más de 256 bytes (una **limitación**, no una zona protegida por ese límite)— | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Un `Edit`/`MultiEdit` de `requirements/` que la puerta **no puede reconstruir** se deniega (norma única: REQ-023 CA-13 del repositorio del arnés) | §9 | `guard-completado` | `Edit`/`MultiEdit` |
 | Las puertas juzgan el **archivo** que la escritura alcanzaría, no la forma de su ruta: una ruta equivalente recibe el veredicto de la canónica, un destino que no se puede determinar **no pasa**, y un `Edit`/`MultiEdit` de un REQ que la puerta no puede leer entero se deniega (norma única: REQ-007 CA-47 y CA-45 del repositorio del arnés) | §5, §9 | `guard-codigo`, `guard-completado` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
+| Una **entrada del hook que no se puede leer no pasa**: todo lo que no sea exactamente un objeto JSON —ejemplos **no exhaustivos**: un JSON que no se interpreta, `null`, un número, la entrada vacía, dos objetos seguidos, una entrada estándar cerrada— recibe `deny` a todo agente, con un motivo que lo dice; y una puerta que no puede trocear la parte de la entrada que necesita para decidir, deniega (SEC-120, `mitigado` en 1.36.0). **Límite declarado:** sin `CLAUDE_PROJECT_DIR`, el hook es inerte si de la entrada no puede obtener el proyecto, y deniega si del `cwd` de la entrada obtiene uno con manifiesto; que el host fije siempre esa variable está observado, no verificado (norma única: REQ-007 CA-47, punto 20, del repositorio del arnés) | §5, §6, §9, §10 | `guard-codigo`, `guard-completado`, `guard-git` | las que `hooks.json` hace pasar por `guard.sh` |
+| **Ninguna decisión depende de nada que el hook herede del entorno:** con un estado heredado —ejemplos **no exhaustivos**: el modo POSIX (`POSIXLY_CORRECT`, `SHELLOPTS` con `posix`, `bash --posix`), una función importada con el nombre de una orden que el hook usa, una variable `ARNES_*`— la llamada recibe la misma decisión que sin él (SEC-129, `mitigado` en 1.36.0). **Sus límites declarados, ni aceptados ni reparados** —ejemplos **no exhaustivos**—: lo que corre antes de que el hook pueda limpiar nada o no se neutraliza desde dentro (funciones importadas `.` y `[`, que pueden llegar a un `allow` explícito; `SHELLOPTS` con `errexit`, `noexec` u `onecmd`; `xtrace` hacia la salida estándar; `BASH_ENV`), una función con el nombre de la orden de una quality gate, que hace pasar una gate roja, un límite de descriptores heredado que hace fallar el preludio, y `PATH` (F-136-19, F-136-20 y SEC-131). Su resolución, la frontera de confianza del entorno del host, es de 1.37 (norma única: REQ-007 CA-68, parte (ii), y «Límites declarados de 1.36.0» del repositorio del arnés) | §5, §6, §9, §10 | `guard-codigo`, `guard-completado`, `guard-git` | `Edit`/`Write`/`MultiEdit` + `Bash` |
 | Un veredicto lleva fecha y no es anterior al último cambio del código —si el proyecto lo pide (`veredictos.*`, apagado por defecto) | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | Ningún agente —tampoco la coordinadora— ejecuta git destructivo: `clean -f`, `reset --hard`, `checkout .`, `restore .`, `stash` (`git.prohibidos`) | §10 | `guard-git` | `Bash` |
 
 **Cada fila de esta tabla enuncia la propiedad de su control. Lo que la limita se escribe aquí, una vez
 y aparte, y ninguna fila se lee como garantía sin ello:**
-1. **Un hook que no emite su decisión no deniega.** Hay dos limitaciones conocidas y sin reparar:
-   - el hook que el cliente mata por tiempo (SEC-115);
-   - el que decide pero no llega a emitir la decisión, porque su motivo no cabe en un argumento de línea
-     de órdenes, cuyo límite es de bytes (SEC-118).
+1. **Un hook que no emite su decisión no deniega.** Las dos vías conocidas por las que eso ocurría están
+   **`mitigado`** en 1.36.0 (revisión R-056 del repositorio del arnés), no reparadas sin residuo:
+   - el hook que el cliente mata por tiempo (SEC-115): el hook lleva un **plazo propio de 30 s**, comprobado
+     sin procesos entre unidades de trabajo para que su respuesta llegue en **no más de 40 s**, y al vencer
+     deniega; los techos de tamaño deniegan antes de las operaciones que crecen más que linealmente; y una
+     **trampa de salida** emite un `deny` fijo si el proceso termina sin un juicio concluido;
+   - el que decide pero no llegaba a emitir la decisión, porque su motivo no cabía en un argumento de línea
+     de órdenes (SEC-118): el motivo ya no viaja como argumento —va por la entrada estándar de `jq`— y se
+     **acota a 16 384 bytes**.
 
-   Afecta a todas las puertas.
+   **Sus residuales, que siguen abiertos o declarados:**
+   - las **quality gates** (SEC-132 (a)), **límite declarado de 1.36.0 y sin reparar:** el plazo propio no
+     alcanza a las quality gates —se comprueba antes de la primera, y no entre una y la siguiente ni durante la
+     que está en curso—, así que cuatro gates de 20 s, o una sola gate colgada, dejan el hook **sin decisión** a
+     los 60 s (medido en Linux/WSL2), y el cierre se aplica. **1.36.0 no cambia ese caso:** el límite es el mismo
+     que en 1.35.0, donde el hook moría sin denegar y el REQ quedaba `completado`; el `deny` fijo de la trampa sale
+     después de que el cliente ya mató el hook. La reparación preparada en 1.36.0 se revirtió antes de publicar por los defectos que abría, uno
+     de ellos un cierre con una gate en rojo; la resolución es de 1.37, con tres lecciones de diseño (ficha
+     F-136-22 del repositorio del arnés);
+   - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
+     `Hallazgos abiertos:` repetidas en la cabecera **en disco** (SEC-132 (b)) y un REQ de varios MB con CRLF
+     en disco (QA-007-09), límites declarados de 1.36.0;
+   - el **entorno del host** que el hook hereda y no puede neutralizar desde dentro —ejemplos **no
+     exhaustivos**: funciones importadas con ciertos nombres, opciones del intérprete, `BASH_ENV`, un límite
+     de descriptores, `PATH`— (F-136-20 y SEC-131): límites declarados, y su resolución, la frontera de
+     confianza del entorno, es de 1.37;
+   - **Windows/MSYS y el host**, sin medir;
+   - y si el cliente **mata** el proceso —con `kill -9`, o al agotar su tiempo mientras una sola operación no
+     termina—, nada que el hook haga deniega (SEC-030).
+
+   Afecta a todas las puertas. *(Hasta 1.35.0 esta cláusula declaraba SEC-115 y SEC-118 como «limitaciones
+   conocidas y sin reparar».)*
 2. **Las filas de `guard-completado` por `Edit`, `Write` y `MultiEdit` juzgan el documento resultante:**
    el de un `Write`, o el que la puerta reconstruye de un `Edit`/`MultiEdit`. Lo que no puede reconstruir
    —tampoco porque el REQ no se pueda leer entero— **no lo deja pasar: lo deniega** (REQ-023 CA-13 y
@@ -728,9 +756,10 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
    puertas decidían por la ruta escrita, y `..`, `./` o un directorio enlazado las evadían (SEC-119; por un
    directorio enlazado, reproducido en el CLI 2.1.285).
 
-Lo medido de SEC-115 y SEC-118 está en la fila de los hallazgos y en `requirements/README.md` § «Clases
-de hallazgo». Los registros completos están en `docs/seguridad/registro-seguridad.md` del repositorio del
-arnés.
+Lo medido de SEC-115 y SEC-118 en 1.35.0 queda, fechado, en la fila de los hallazgos y en
+`requirements/README.md` § «Clases de hallazgo»; su estado en 1.36.0 y sus residuales, en REQ-007 CA-67 y
+CA-68 del repositorio del arnés y en las notas de la versión 1.36.0. Los registros completos están en
+`docs/seguridad/registro-seguridad.md` del repositorio del arnés.
 
 **Un hook que avisa sin decidir.** Al escribir `QA:` o `Seguridad:` con un valor fuera del
 vocabulario (`pendiente` \| `aprobado` \| `con-hallazgos`; y en seguridad además `n/a`,

@@ -1,0 +1,86 @@
+# ADR-017 — Una puerta que no puede leer su entrada, terminar de juzgarla a tiempo o emitir su decisión no deja pasar (SEC-120, SEC-115, SEC-118)
+Fecha: 2026-10-03
+Estado: aceptada (2026-10-03). El propietario resolvió P-136-B y P-136-C en su décima autorización (`PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-10-03, décima autorización)», «Decisiones del propietario»), literales:
+- «P-136-B: criterio por propiedad: toda denegación decidida llega al cliente, entera o acotada, nunca perdida; el desarrollador elige la técnica; los avisos entran.»
+- «P-136-C: techos de tamaño más plazo propio de 40 s, sin procesos.»
+
+*(Antes: «propuesta. La decisión de base es del propietario (abajo). La forma de conseguirla depende de P-136-B y P-136-C, que siguen abiertas. Cuando las resuelva, este ADR pasa a `aceptada` con su resolución citada.»)*
+
+## Contexto
+**Lo que hoy está declarado.** `AGENTS.md` §13, cláusula 1 de «Lo que la limita», dice que un hook que no emite su decisión no deniega, y nombra dos limitaciones conocidas y sin reparar:
+- el hook que el cliente mata por tiempo (SEC-115);
+- el que decide pero no llega a emitir su decisión porque el motivo no cabe en un argumento de línea de órdenes (SEC-118).
+
+`requirements/README.md` § «Clases de hallazgo» y REQ-031 (CA-A12, nota del 2026-09-29; CA-A15) prometen la denegación sólo hasta lo medido. SEC-120 está fuera de toda promesa: REQ-007 CA-47, punto 11, lo nombra como lo que no cubre.
+
+**Lo medido** (`docs/seguridad/registro-seguridad.md`):
+- **SEC-120** (§ R-045-A, §4). Si `jq` no puede leer o trocear la entrada del hook, la puerta no decide y deja pasar. Medido a nivel de hook con un `MultiEdit` malformado y con un `Edit` de cierre con 10 001 niveles de anidamiento. R-046 y R-047 lo vuelven a medir sin cambio de conducta. Vence el 2026-10-29.
+- **SEC-115** (§ R-044-C, §2; § R-045-A, §5). Un hook que muere por tamaño deja pasar el cierre entero, y hay tres vías medidas:
+  - un valor de cabecera de unos 255 KB: 73,6 s;
+  - un `Write` de unos 2 MB: 80,2 s;
+  - la búsqueda del `old_string` en la reconstrucción, que crece más que linealmente.
+
+  REQ-031 CA-A16 observó en el cliente que un hook que agota su `timeout` deja pasar la herramienta.
+- **SEC-118** (§ R-045, §4). `arnes_deny` pasa el motivo a `jq` como un argumento. Por encima del límite de bytes de un argumento, el hook sale sin decisión, aunque haya decidido denegar en menos de un segundo. Es determinista y no depende del reloj.
+
+**Lo que decidió el propietario.** Sus decisiones de publicación de v1.35.0 (`PENDING_APPROVAL.md` § Resueltas, decisiones 2 y 3) declararon SEC-115, SEC-118 y SEC-120 como límites «no aceptados como definitivos». Fijaron su reparación en 1.36.0: «fail-closed» para SEC-115 y SEC-118, y para SEC-120 «fallo de jq al leer o trocear la entrada → deny». El pedido de apertura de 1.36.0 (2026-10-03, «Encargo 2») lo concreta así:
+- «fail-closed cuando el hook agota tiempo o el motivo excede el tope: emitir decisión siempre»;
+- «Comprobación de código de salida, sin procesos nuevos» para SEC-120;
+- «Windows declarado no medido».
+
+## Decisión
+Se aplica el principio rector («una puerta que no puede medir no deja pasar») a tres cosas que hasta ahora quedaban fuera de él:
+1. **La lectura de la entrada.** Si la entrada no se puede leer, el hook deniega. Si no se puede trocear la parte que una puerta necesita, deniega esa puerta (REQ-007 CA-47, punto 20).
+2. **La emisión.** Toda denegación decidida se emite, sea cual sea el tamaño o la codificación de su motivo (CA-67). Por P-136-B: llega al cliente entera o acotada, nunca perdida; la técnica es del desarrollador; y los avisos que el hook decide emitir entran en la misma propiedad.
+3. **El reloj.** Un hook que no puede terminar de juzgar antes del límite del cliente emite `deny` en vez de morir sin decisión (CA-68). Por P-136-C: techos de tamaño más un plazo propio del hook de 40 s, sin procesos.
+
+Las tres van a todo agente cuando la decisión no se puede atribuir, y sin procesos añadidos en la lectura de la entrada.
+
+**Lo que esta decisión no puede comprar, y se escribe con ella:**
+- si el cliente mata el proceso, nada que el hook haga deniega (SEC-030): el hook sólo puede decidir antes;
+- sin un proceso aparte, una sola operación que se bloquea por dentro no se interrumpe.
+
+## Alternativas consideradas
+- **Mantenerlos como límites declarados (estado de 1.35.0).** Rechazada por el propietario: «no aceptados como definitivos».
+- **Para SEC-118: acotar el motivo en bytes, o sacarlo de la línea de órdenes.** Las dos cumplen la propiedad. Qué es «el tope» que se mide, y si los avisos entran, era P-136-B: resuelta por propiedad, con la técnica para el desarrollador y los avisos dentro (arriba, «Estado»).
+- **Para SEC-115: sólo techos de tamaño antes de toda operación superlineal; esos techos más un plazo propio comprobado entre unidades de trabajo; o un vigilante en proceso aparte.** El vigilante cubre también la operación bloqueada, pero añade un proceso por invocación. En Windows/MSYS eso son 1,2–6 s por llamada (`AGENTS.md` §2), y choca con REQ-007 CA-59. La elección y el plazo eran de P-136-C: techos más plazo propio de 40 s, sin procesos; el vigilante en proceso aparte queda fuera (arriba, «Estado»).
+
+## Consecuencias
+- (+) Las tres vías por las que hoy una puerta del arnés deja pasar sin decidir pasan a denegar, hasta lo medido y con la frontera escrita. Se cierran así SEC-120, SEC-118 y, en la medida de P-136-C —techos de tamaño y plazo de 40 s, sin la operación que se bloquea por dentro—, SEC-115.
+- (+) La cláusula 1 de `AGENTS.md` §13, la fila de los hallazgos y `requirements/README.md` § «Clases de hallazgo» dejan de listar SEC-115 y SEC-118 como limitaciones sin reparar. **Eso ocurre sólo cuando esté construido y validado, y sólo hasta lo medido** (REQ-007 CA-69, punto 5). Hasta entonces ninguna sede dice «reparado».
+- (−) **Movimientos de `allow` (o «sin decisión») a `deny`, también sobre lo legítimo.** Un juicio legítimo que agote el plazo de 40 s de P-136-C se deniega a todo agente, también al `desarrollador`. Ocurre igual con un valor por encima de un techo de tamaño nuevo y con una entrada mal formada que hoy pasaba. Se declaran en REQ-007 CA-69, punto 3. Mitigación: el plazo y los techos son operativos y se bajan con la medición, y la salida está en el motivo.
+- (−) **Puede mover lo que mide REQ-017 CA-09** (sección 37/3 del banco, la pared de los 60 s por `Write`). REQ-017 está `completado`: si el veredicto cambia, se escala antes de entregar (REQ-007 CA-68, `AGENTS.md` §9). Decisión del propietario (décima autorización): «CA-68 / REQ-017 CA-09: se evalúa al construir SEC-115; si afecta, §9.»
+- (=) **Windows/MSYS, declarado no medido.** No se le atribuye cobertura. Si el motivo siguiera pasando por la línea de órdenes, el límite de `CreateProcess` podría bajar el umbral de SEC-118 (R-045 §4, inferido). Allí, además, la retirada del transporte es superlineal (R-047, observación de QA).
+- (=) No supersede ningún ADR. Se apoya en el mismo principio que ADR-015 (una edición que la puerta no puede reconstruir se deniega) y que ADR-016 (un REQ que la puerta no puede leer entero no se edita).
+
+## Nota posterior (2026-10-06) — SEC-129: también la puerta que termina por un camino que no es un juicio
+
+*Nota añadida por el `analista-requerimientos` en la fase 0 del paso 6 de 1.36.0. No reescribe nada de lo anterior: el título, la decisión y las consecuencias de arriba siguen como se aceptaron el 2026-10-03.*
+
+**Qué cambia en el alcance.** La decisión de arriba cubre tres cosas: la puerta que no puede **leer** su entrada, la que no puede **terminar** de juzgarla a tiempo y la que no puede **emitir** su decisión. Desde esta fecha cubre también otras dos:
+- la puerta que **termina por un camino que no es un juicio**: un error del intérprete, una puerta abandonada a mitad o un analizador que devuelve un código fuera de su vocabulario (ejemplos **no exhaustivos**). Ésa tampoco deja pasar;
+- y **ninguna decisión depende del modo del intérprete heredado del entorno**.
+
+Es SEC-129 (`docs/seguridad/registro-seguridad.md` § R-054, §4; su clase y su estado viven allí). Con el hook arrancado en modo POSIX, la vía `Bash` de las tres puertas sale sin decisión para toda llamada, medido igual desde v1.30.3. Ese hook no está en ninguno de los tres casos de arriba: termina en milisegundos, con rc 0, y no llega a decidir nada que emitir (R-054 §5).
+
+**Por qué entra aquí.** Lo decidió el propietario el 2026-10-06: «P-136-L: (A). … la reparación va dentro de SEC-115/118, que ya trata «el hook siempre emite decisión».» (`PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-10-06) — P-136-J (A, acotada), P-136-K (A) y P-136-L (A)»). El principio es el mismo: una puerta que no puede medir no deja pasar. Aquí la puerta no midió porque su analizador falló, y dejó pasar.
+
+**Dónde vive el contrato.** En REQ-007 CA-68, viñeta «Un final que no es un juicio no deja pasar, y ninguna decisión depende del modo del intérprete heredado», con el texto de R-054 §5 citado y su medida. El movimiento de «sin decisión» a `deny` está en CA-69, punto 3. Rige lo mismo que arriba para el resto: la técnica es del desarrollador y no hay procesos añadidos.
+
+**Lo que no entra:**
+- `BASH_ENV` con otro contenido que `set -o posix`, que corre antes del hook (ficha F-136-9).
+- Las variables `ARNES_*_LISTO` heredadas (QA-007-07). Su inclusión está pendiente de la decisión P-136-N del propietario.
+
+**Consecuencias.** (−) Las filas de `Bash` con el hook en modo POSIX pasan de «sin decisión» a `deny`, y se declaran en CA-69, punto 3. Sobre lo legítimo no hay movimiento esperado: la parte (ii) exige la misma decisión que en modo normal, así que `ls -la` sigue sin decisión. (=) No supersede este ADR ni ningún otro, y su `Estado:` no cambia.
+
+## Nota posterior (2026-10-06, P-136-O y P-136-N) — los techos de tamaño, como cambio de compatibilidad, y todo lo heredado del entorno
+
+*Nota añadida por el `analista-requerimientos` el 2026-10-06, en el paso 6 de 1.36.0. No reescribe nada de lo anterior, tampoco la nota de SEC-129: el título, la decisión y las consecuencias siguen como se aceptaron.*
+
+**Decisión del propietario, literal:** «P-136-O: (1) (A) y (2) (A). P-136-N: (A).» (`PENDING_APPROVAL.md` § Resueltas, entrada «RESUELTA (propietario, 2026-10-06) — P-136-O: (1) (A) y (2) (A); P-136-N: (A)», con su «Texto adoptado»).
+
+**1. Los techos de tamaño de P-136-C quedan como cambio de compatibilidad declarado.** La consecuencia (−) de arriba ya preveía que un valor por encima de un techo de tamaño nuevo se denegaría también sobre lo legítimo. Lo construido en `0efd3c2` le pone cifras —`ARNES_PIEZAS_MAX_BYTES` = 393 216 bytes y `ARNES_EDIT_MAX_BUSQUEDA` = 2³², los dos operativos— y la medida le pone casos. Un REQ cuyo texto troceado pasa de 393 216 bytes no se escribe entero de una vez con `Write`: `REQ-007.md`, de 660 431 bytes, salía sin decisión en v1.35.0 y ahora recibe `deny`. Y un `Edit` cuyo producto (documento + `new_string`) × `old_string` pasa de 2³² se deniega: sobre ese mismo documento, un `old_string` de 7 000 bytes o más deniega y uno de 3 000 a 6 400 pasa. La salida es partir la escritura o la edición. El propietario eligió esto frente a subir los techos (B) o rehacer la normalización de transporte (C): se conserva el margen frente al plazo y no se toca el perfil que mide REQ-017 CA-09. **Dónde vive:** REQ-007 CA-68, «Techos de tamaño», «Cambio de compatibilidad declarado…», y CA-69, punto 3. **Para quien actualiza:** `skills/arnes-upgrade/SKILL.md`, «Hacia 1.36.0». El síntoma, un REQ de 660 KB, va a la ficha F-136-17 para 1.37.
+
+**2. La parte (ii) de la nota anterior se amplía a todo lo heredado del entorno.** Antes decía «ninguna decisión depende del modo del intérprete heredado del entorno»; desde esta fecha, **ninguna decisión depende de nada que el hook herede del entorno**. Ejemplos no exhaustivos: el modo del intérprete y las variables `ARNES_INPUT_LISTO` y `ARNES_MANIFEST_LISTO` (QA-007-07). Así deja de valer lo que la nota anterior decía en «Lo que no entra» sobre las variables `ARNES_*_LISTO`: entran. `BASH_ENV` con otro contenido que `set -o posix` sigue fuera (F-136-9). Las entradas que el host da al hook por contrato, como `CLAUDE_PROJECT_DIR` (REQ-007 CA-47, punto 20), no son estado heredado en este sentido.
+
+**Consecuencias.** (−) Dos llamadas legítimas sobre un REQ grande pasan de «sin decisión» a `deny`, a todo agente, declaradas en CA-69, punto 3, con sus cifras. (−) Las llamadas juzgadas con `ARNES_INPUT_LISTO` o `ARNES_MANIFEST_LISTO` heredadas pasan de «sin decisión» a la decisión que reciben sin ellas; sobre lo legítimo no se espera movimiento. (=) No supersede este ADR ni ningún otro, y su `Estado:` no cambia.

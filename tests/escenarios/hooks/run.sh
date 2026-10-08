@@ -1656,7 +1656,45 @@ done
 # Y 1741 → 1787 por la pasada correctiva de la octava autorización (P-122-A (1), QA-023-16 y QA-023-17):
 # +46 en la sección 45, bloque C contra 9220c71 (fail-before) y 9596e39 —13 filas, 50 casos—, menos los
 # 4 de G1, que pasa al bloque C con su nuevo veredicto (deny).
-CASOS_ESPERADOS=2050
+# Y 2050 → 2122 por SEC-120 (REQ-007 CA-47 punto 20; 1.36.0, intervención 2, fase 1, sin reparar): +72 en
+# la sección 44 (247 → 319), bloque SEC-120 —los vectores V1–V4 de R-045-A §4 por propiedad: L, una entrada
+# que jq no puede leer, por guard.sh y por cada guardián que juzga la herramienta; T, unas ediciones que no
+# se pueden trocear; K, los controles de la puerta que no las necesita y de V4; I, los modos inertes; y P3—,
+# cada caso en la candidata y en v1.35.0 (3956a6f, la línea base de CA-69 punto 1). Con los hooks de 82ceb63
+# o de v1.35.0 las 28 columnas de la candidata de L y T salen FAIL: es el fail-before; con la reparación
+# (fase 2) pasan, y el total no cambia. Las 247 de antes no cambian ni de nombre ni de veredicto.
+# Y 2122 → 2166 por la pasada correctiva de SEC-120 (QA-007-03 y QA-007-04): +44 en la sección 44 (319 → 363)
+# —la entrada vacía, un NUL delante y un NUL detrás de un objeto (L7–L9), y `false` en `file_path` o en
+# `command` (F1–F3, con su control K5)—, cada caso en la candidata y en v1.35.0. Con los hooks de aba1c9b o de
+# v1.35.0 sus 21 columnas de la candidata que esperan deny salen FAIL: es su fail-before. Los 319 no cambian.
+# Y 2166 → 2198 por SEC-127 y QA-007-06 (1.36.0, paso 5, fase 1, sin reparar): +32 en la sección 47, nueva
+# —la sección 44 está a 4 líneas de su techo—: RF, el `read` de la entrada que falla con error (la entrada
+# estándar cerrada y un directorio) por las cuatro puertas, y RL, el límite sin CLAUDE_PROJECT_DIR, cada caso
+# en la candidata y en v1.35.0; LO, el locale leído después del atajo de guard-completado, sólo en la
+# candidata; y LK, el cierre por Bash con estado no ASCII en UTF-8, en los dos árboles. Con los hooks de
+# 413c6bd o de v1.35.0 las 8 columnas de la candidata de RF salen FAIL: es el fail-before de QA-007-06. LO y
+# LK no son fail-before de SEC-127 en bash 5.1 o posterior (docs/arnes/v1.36.0-sec127-fase1.md). Ninguna
+# sección existente cambia su número.
+# Y 2198 → 2210 por SEC-128 (P-136-J (A, acotada); REQ-007 CA-47 punto 20): +12 en la sección 47 (32 → 44),
+# bloque E —el vector de R-053 §4, el agente de código con `file_path: 5` y `<raíz>/5 -> src/a.ts`, por Edit,
+# Write y MultiEdit—: guard-codigo y guard.sh en la candidata (deny), guard-codigo en a59917d (sin decisión, el
+# fail-before) y en v1.35.0 (deny por el enlace, control). K5 de la sección 44 pasa a esperar deny; su número
+# no cambia.
+# Y 2210 → 2303 por el paso 6 de 1.36.0, fase 1 (SEC-118, SEC-115 y SEC-129; REQ-007 CA-67 y CA-68): +93 en la
+# sección nueva 47-decision-emitida.sh —D 11 (9 + 2 controles), A 6, T 4 (2 + 2 controles del fail-before), M 72
+# (6 modos × 12 filas de guardián)—. Se escriben SIN reparar: con los hooks de 78a2f33 salen 57 FAIL (y con los
+# de v1.35.0, 58: T2b pasa del plazo de 40 s), que la fase 2 tiene que volver PASS. Ninguna sección cambia su número.
+# Y 2303 → 2305 por QA-007-07 (P-136-N (A); REQ-007 CA-68): +2 en 47-decision-emitida.sh (93 → 95), bloque E —un
+# Write legible de la coordinadora a src/ con ARNES_INPUT_LISTO=1 o ARNES_MANIFEST_LISTO=1 heredada del entorno, deny—;
+# en 0efd3c2 y v1.35.0 salen sin decisión (el fail-before). Ninguna otra sección cambia su número.
+# Y 2305 → 2312 por la pasada correctiva del paso 6 (P-136-P (2) (A)): +7 en 47-decision-emitida.sh (95 → 102),
+# bloque P —QA-007-10 (ARNES_CWD_VISTO heredada), QA-007-12 (motivo con bytes no UTF-8 en el tope) y QA-007-11 (a)
+# (FUNCNEST, SHELLOPTS=keyword, BASH_FUNC_jq%%, BASH_COMPAT, BASHOPTS=compat40)—; con 8e11f87 los 7 salen FAIL.
+# Y 2312 → 2314 por QA-007-13 (P-136-Q (A)): +2 en 47-decision-emitida.sh (102 → 104) —funciones `builtin` y `read`
+# importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
+# Y 2314 → 2316 por QA-007-14 (P-136-R (A)): +2 en 47-decision-emitida.sh (104 → 106) —funciones `return` y `break`
+# importadas: `ls -la` sin decisión y un Write a src/ con deny, en menos de 5 s—; con 39e6128 mueren o no terminan.
+CASOS_ESPERADOS=2316
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

@@ -21,10 +21,25 @@ arnes_read_stdin() { cat; }
 
 # Lee stdin y localiza proyecto y manifiesto. Devuelve 1 si no hay nada que
 # vigilar (sin input, sin proyecto, o proyecto que no usa el arnes -> INERTE).
+#
+# `arnes_preludio guardian` (los guardianes de PreToolUse; SEC-120, QA-007-03, REQ-007 CA-47 punto 20):
+# una entrada VACIA, o con un byte NUL en cualquier sitio, es ilegible —ningun JSON lleva un NUL crudo— y
+# no deja el hook inerte: sigue hasta localizar el proyecto, y si lo hay y usa el arnes, `arnes_parse_input`
+# la marca ilegible y el guardian deniega. `read -d ''` se detiene en el primer NUL y devuelve 0 solo si lo
+# encontro: asi se sabe, sin procesos, que habia algo detras. Sin `CLAUDE_PROJECT_DIR` y sin proyecto que
+# sacar de la entrada, sigue inerte (limite declarado de CA-47 punto 20). Los hooks de parada no pasan
+# `guardian` y conservan la conducta de siempre.
+#
+# UN `read` QUE FALLA CON ERROR NO ASIGNA NADA (QA-007-06, SEC-127): con la entrada estandar cerrada o
+# siendo un directorio —por cualquier causa—, bash avisa y devuelve 1, igual que en el fin de archivo,
+# pero deja la variable como estaba. Sin valor previo, `set -u` abortaba el hook sin decision; con uno
+# heredado del entorno, se habria juzgado ese. Por eso la variable se vacia ANTES de leer: un `read`
+# fallido deja la entrada vacia, que es ilegible por la regla de arriba, sin procesos y sin otra rama.
 arnes_preludio() {
   arnes_require_jq || return 1
-  IFS= read -r -d '' ARNES_INPUT || true
-  [ -n "${ARNES_INPUT:-}" ] || return 1
+  ARNES_INPUT_NUL=0; ARNES_INPUT=''
+  if IFS= read -r -d '' ARNES_INPUT; then ARNES_INPUT_NUL=1; fi
+  [ -n "${ARNES_INPUT:-}" ] || [ "${1:-}" = guardian ] || return 1
   arnes_project_dir "$ARNES_INPUT"
   [ -n "$ARNES_PROJ" ] || return 1
   ARNES_MANIFEST="$ARNES_PROJ/.arnes/config.json"
@@ -91,33 +106,63 @@ arnes_preludio() {
 # trata el CR como el shell —un caracter de palabra— y DENIEGA donde no puede seguir su significado
 # (`arnes_bash_sin_texto`, `ARNES_RC_CR`).
 #
+# UNA ENTRADA QUE JQ NO PUEDE LEER NO PASA (SEC-120, REQ-007 CA-47 punto 20). Hasta 82ceb63 el codigo
+# de salida de esta llamada no decidia nada: con la entrada ilegible —un JSON roto, una anidacion por
+# encima del limite de jq— los campos quedaban vacios, `ARNES_TOOL` no era ninguna herramienta y las
+# puertas salian con permiso. Ahora la lectura MARCA `ARNES_INPUT_ILEGIBLE` y cada guardian, justo
+# despues de leer, deniega a todo agente (`arnes_deny_entrada_ilegible`). Es ilegible, ademas de lo que
+# hace fallar a jq, lo que no es exactamente UN objeto: `null`, un numero, dos objetos seguidos o nada.
+# Ninguno trae una herramienta que juzgar, y repartir dos objetos entre unos campos que esperan uno
+# juzgaria una mezcla. Lo exige la misma llamada (`[inputs]` con `-n`): sin procesos nuevos.
+#
+# Y un `file_path` o un `command` que llega pero NO ES TEXTO —un numero, una lista— se marca
+# (`ARNES_FP_NOTXT`, `ARNES_CMD_NOTXT`, la misma llamada): leido con `tostring` se juzgaria un texto que
+# nadie escribio, y la puerta que necesita ese campo lo deniega (`arnes_campo_no_texto`).
+#
 # Si jq no puede leer la entrada, los campos quedan VACIOS: nunca se reparte entre los campos una
-# salida anterior de jq (el fallo de jq al leer la entrada es SEC-120, fuera de esta reparacion).
+# salida anterior de jq.
+#
+# LAS MARCAS DE «YA LEIDO» NACEN VACIAS AL CARGAR LA LIBRERIA (QA-007-07; REQ-007 CA-68, P-136-N). Exportadas en
+# el entorno del hook, `ARNES_INPUT_LISTO=1` o `ARNES_MANIFEST_LISTO=1` hacian creer que la entrada o el
+# manifiesto ya se habian leido: las puertas se saltaban la lectura y salian sin decision —medido con un `Write`
+# legible de la coordinadora a `src/` y, con la primera, con la entrada estandar cerrada—. Una decision del hook no
+# depende de lo que herede del entorno: se vacian aqui, sin procesos, antes de que nada las lea. Todo `source`
+# de esta libreria ocurre antes del preludio, asi que vaciarlas de nuevo al cargarla otra vez no borra ninguna
+# lectura hecha.
+ARNES_INPUT_LISTO=''; ARNES_MANIFEST_LISTO=''
 arnes_parse_input() {
   [ -z "${ARNES_INPUT_LISTO:-}" ] || return 0
-  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' out
-  ARNES_JQ=''
-  if out="$(jq -r '[.tool_name // "",
+  local n_tool='' n_aid='' n_aty='' n_cwd='' n_fp='' r_tool='' r_cwd='' r_fp='' t_fp='' t_cmd='' out
+  ARNES_JQ=''; ARNES_INPUT_ILEGIBLE=1
+  # Una entrada vacia, o con un NUL (lo detecta `arnes_preludio`): ilegible sin preguntar a jq, que en el
+  # segundo caso solo veria lo de delante (QA-007-03). `file_path` y `command` se leen con `null` -> "" y no
+  # con `// ""`, que tambien trata `false` como ausente y lo dejaba pasar por texto vacio (QA-007-04).
+  if [ "${ARNES_INPUT_NUL:-0}" = 0 ] && [ -n "${ARNES_INPUT:-}" ] &&
+     out="$(jq -nr '[inputs] | if length == 1 and (.[0] | type) == "object" then .[0] else error("entrada") end
+                   | [.tool_name // "",
                     .agent_id // "",
                     .agent_type // "",
                     (.cwd // "" | if type == "string" then . else "" end),
-                    .tool_input.file_path // "",
-                    .tool_input.command // ""]
+                    (.tool_input.file_path | if . == null then "" else . end),
+                    (.tool_input.command | if . == null then "" else . end)]
+                   | ([.[4], .[5]] | map(if type == "string" then 0 else 1 end)) as $notxt
                    | map(tostring)
                    | ((.[0:5] | map(indices("\n") | length))
                       + ([.[0], .[3], .[4]] | map(indices("\r") | length))
+                      + $notxt
                       | map(tostring) | join(" ")),
-                     .[]' <<< "$ARNES_INPUT")"; then
+                     .[]' <<< "$ARNES_INPUT")" && [ -n "$out" ]; then
     # La primera linea solo lleva digitos y espacios: un CR al final es el de transporte (arriba).
     case "${out%%$'\n'*}" in
       *$'\r') arnes_sin_cr_transporte "$out"; ARNES_JQ="$ARNES_SIN_CR" ;;
       *)      ARNES_JQ="$out" ;;
     esac
+    ARNES_INPUT_ILEGIBLE=0
   fi
   ARNES_TOOL=''; ARNES_AGENT_ID=''; ARNES_AGENT_TYPE=''; ARNES_CWD=''; ARNES_FP=''; ARNES_CMD=''
-  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0
+  ARNES_TOOL_CR=0; ARNES_CWD_CR=0; ARNES_FP_CR=0; ARNES_FP_NOTXT=0; ARNES_CMD_NOTXT=0
   if [ -n "$ARNES_JQ" ]; then
-    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp
+    { IFS=' ' read -r n_tool n_aid n_aty n_cwd n_fp r_tool r_cwd r_fp t_fp t_cmd
       _arnes_lee_campo "$n_tool"; ARNES_TOOL="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aid";  ARNES_AGENT_ID="$ARNES_CAMPO"
       _arnes_lee_campo "$n_aty";  ARNES_AGENT_TYPE="$ARNES_CAMPO"
@@ -129,8 +174,34 @@ arnes_parse_input() {
     [ "$r_cwd" = 0 ] || { ARNES_CWD_CR=1; ARNES_CWD=''; }
     [ "$r_tool" = 0 ] || ARNES_TOOL_CR=1
     [ "$r_fp" = 0 ] || ARNES_FP_CR=1
+    [ "$t_fp" = 0 ] || ARNES_FP_NOTXT=1
+    [ "$t_cmd" = 0 ] || ARNES_CMD_NOTXT=1
   fi
   ARNES_INPUT_LISTO=1
+}
+
+# SEC-120 (REQ-007 CA-47 punto 20): la entrada que `arnes_parse_input` no pudo leer se deniega a TODO
+# agente —el agente tambien viene en ella, asi que no hay a quien exceptuar—. Cada guardian lo llama
+# justo despues de leer. El motivo no cita la entrada: no se sabe que lleva ni cuanto mide (CA-67).
+arnes_deny_entrada_ilegible() {
+  [ "${ARNES_INPUT_ILEGIBLE:-0}" = 1 ] || return 0
+  arnes_deny "ARNES: la entrada de esta llamada no se pudo leer: jq no la interpreta como un unico objeto JSON del que sacar sus campos (por ejemplo, no es JSON valido, anida por encima del limite de jq o trae mas de un objeto). Sin leerla ninguna puerta sabe que herramienta es, quien la pide ni que escribiria, asi que no se permite a ningun agente: una puerta que no puede medir no deja pasar (REQ-007 CA-47, punto 20)."
+}
+
+# SEC-120: ¿llego como algo que no es texto el campo de `tool_input` que juzga esta herramienta?
+# `command` en `Bash`, `file_path` en `Edit`/`Write`/`MultiEdit`; cualquier otra herramienta no lo usa.
+arnes_campo_no_texto() {
+  case "$ARNES_TOOL" in
+    Bash)                [ "${ARNES_CMD_NOTXT:-0}" = 1 ] ;;
+    Edit|Write|MultiEdit) [ "${ARNES_FP_NOTXT:-0}" = 1 ] ;;
+    *)                   return 1 ;;
+  esac
+}
+
+# El motivo de una puerta que necesita ese campo y no lo tiene como texto. <lo que no puede saber> <a quien>
+arnes_deny_no_texto() {
+  local campo=file_path; [ "$ARNES_TOOL" = Bash ] && campo=command
+  arnes_deny "ARNES: el campo '$campo' de esta llamada no es texto, asi que $1; leerlo como texto seria juzgar algo que nadie escribio, y una puerta que no puede medir no deja pasar (${2}REQ-007 CA-47, punto 20). Para corregirlo, envia '$campo' como una cadena."
 }
 
 # La causa de que el `tool_name` no identifique ninguna herramienta (CA-47 punto 13), para el motivo
@@ -291,17 +362,99 @@ arnes_require_jq() {
 
 # Emite una decisión DENY de PreToolUse y termina con `exit 0`. La decisión existe SÓLO si
 # `jq` llegó a escribir el JSON: el `exit 0` no la acredita.
-# APARTE, LA LIMITACIÓN CONOCIDA Y SIN REPARAR: SEC-118. El motivo viaja como UN argumento de
-# `jq`; si supera el límite de un argumento (128 KiB en Linux) —o `jq` no arranca por otra
-# causa—, no se escribe nada y el hook sale sin decisión, que no es una denegación. Los motivos
-# de REQ-023 CA-01 y CA-13 llevan tope por eso; los que interpolan contenido sin tope están en
-# docs/seguridad/registro-seguridad.md, R-045 §4, en una lista que no es exhaustiva.
+#
+# TODA DENEGACIÓN DECIDIDA LLEGA AL CLIENTE, ENTERA O ACOTADA, NUNCA PERDIDA (SEC-118; REQ-007 CA-67,
+# P-136-B). Hasta 1.36.0 el motivo viajaba como UN argumento de `jq` (`--arg`), y por encima del límite
+# de un argumento (131 072 bytes en Linux; en Windows, el de `CreateProcess`, más bajo) `jq` no
+# arrancaba: no se escribía nada y el hook salía sin decisión con rc 0. Medido con motivos de 134 301 a
+# 154 598 bytes (R-045 §4 y `docs/arnes/v1.36.0-sec115-118-fase1.md`). Ahora, dos cosas:
+#   * el motivo viaja por la ENTRADA ESTÁNDAR de `jq` (here-string: sin procesos nuevos), así que
+#     ningún dato variable pasa por la línea de órdenes;
+#   * se ACOTA a `ARNES_MOTIVO_MAX_BYTES` bytes (`ARNES_JQ_ACOTA`), DENTRO de la misma llamada a `jq` y
+#     DESPUÉS de que `jq -R` sustituya cada byte que no es UTF-8 por U+FFFD (3 bytes): conserva su
+#     comienzo —que nombra la causa—, dice que se acortó y nunca parte un carácter. Hasta la pasada
+#     correctiva se acotaba antes, en bash, y con bytes inválidos venidos del disco el motivo emitido
+#     llegaba a 48 781 bytes (QA-007-12).
+# Y si aun así `jq` no escribe la decisión, `ARNES_JUICIO` no queda en `fin` y la salida del proceso
+# emite la denegación fija de `arnes_entrada_del_hook` (CA-68 (i)): el `exit 0` ya no puede quedarse mudo.
 # Salida compacta (-c): una sola línea, el formato que esperan los hooks.
 arnes_deny() {
-  jq -cn --arg r "$1" \
-    '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}'
+  jq -cRs --argjson tope "$ARNES_MOTIVO_MAX_BYTES" "$ARNES_JQ_ACOTA"'
+    rtrimstr("\n") | arnes_acota($tope)
+    | {hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:.}}' \
+    <<< "$1" && ARNES_JUICIO=fin
   exit 0
 }
+
+# El TOPE de un motivo o de un aviso, en BYTES (REQ-007 CA-67; OPERATIVO: «no más de 16 384 bytes», se baja
+# con la medición). Con la entrada estándar no hay límite del sistema que lo exija; se acota porque un motivo
+# lo lee una persona y un modelo, y 16 KiB ya es más de lo que cualquier motivo del arnés necesita para
+# nombrar su causa (el mayor con tope propio, REQ-023 CA-01, mide unos 9,6 KB).
+ARNES_MOTIVO_MAX_BYTES=16384
+# ARNES_JQ_ACOTA: las definiciones de `jq` que acotan un texto YA LEÍDO por `jq -R` —es decir, con cada byte que
+# no es UTF-8 ya sustituido por U+FFFD—, así que el tope se mide sobre lo que de verdad se emite. `arnes_acota($t)`:
+# el texto entero si sus bytes UTF-8 caben en $t; si no, su comienzo, por caracteres enteros, y una nota de que se
+# acortó, todo en no más de $t bytes. Los bytes se cuentan por punto de código (1 a 4) y no con `utf8bytelength`,
+# que no tiene jq 1.5. Es un trozo de programa, fijo: ningún dato variable viaja en la línea de órdenes.
+ARNES_JQ_ACOTA='
+def arnes_b: if . < 128 then 1 elif . < 2048 then 2 elif . < 65536 then 3 else 4 end;
+def arnes_bytes: explode | map(arnes_b) | add // 0;
+def arnes_acota($t): arnes_bytes as $n
+  | if $n <= $t then .
+    else (" [...] (ARNES: motivo acortado: medía \($n) bytes y el tope es \($t); se conserva su comienzo)") as $nota
+      | ($t - ($nota | arnes_bytes)) as $b
+      | (explode | .[:$b]
+         | reduce .[] as $c ({o: [], n: 0};
+             ($c | arnes_b) as $l
+             | if .n >= 0 and .n + $l <= $b then .o += [$c] | .n += $l else .n = -1 end)
+         | .o | implode) + $nota
+    end;'
+
+# --- Un final que no es un juicio no deja pasar (SEC-129, SEC-115; REQ-007 CA-68) ----------------
+# El hook sólo sale sin decisión cuando ha TERMINADO un juicio que concluye que la llamada no toca
+# nada protegido. Lo marca `ARNES_JUICIO=fin`, que escriben sólo: la salida inerte de
+# `arnes_preludio`, el final de cada punto de entrada y `arnes_deny` cuando `jq` escribió la decisión.
+# Cualquier otro final —el intérprete que aborta el script, un `set -u`, un `exit` inesperado— lo
+# recoge la trampa de salida que instala cada punto de entrada (`guard.sh` y los tres guardianes
+# ejecutados por su cuenta) ANTES de cargar esta librería, con un motivo fijo y sin `jq`.
+# Y una puerta que el intérprete abandona a mitad sin terminar el proceso —una expansión que aborta
+# la orden en curso: medido en modo POSIX, `arnes_guard_git` se abandonaba y el siguiente guardián
+# corría como si hubiera permitido (R-054, `09-`)— no escribe su marca: `arnes_juicio_puerta` lo ve y
+# deniega.
+ARNES_PUERTA_FIN=''
+arnes_juicio_puerta() {   # <puerta> — tras `{ arnes_guard_X; ARNES_PUERTA_FIN=<puerta>; }`
+  if [ "$ARNES_PUERTA_FIN" != "$1" ]; then
+    arnes_deny "ARNES: la puerta $1 no termino su juicio de esta llamada: el interprete la abandono a mitad (un error de expansion o del analisis), asi que no se sabe si la llamada toca algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68)."
+  fi
+  ARNES_PUERTA_FIN=''
+  arnes_plazo
+}
+
+# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C). Cada punto de entrada pone `SECONDS=0` al
+# arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo comprueba
+# ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
+# OPERATIVO: la comprobación salta a los 30 s, para que la respuesta llegue en no más de 40 s con la
+# unidad en curso y la emisión; se baja con la medición. Lo que NO alcanza, dicho: una sola operación
+# que no termina no se interrumpe sin un proceso aparte; por eso las que crecen más que linealmente
+# tienen techo de tamaño delante (`ARNES_PIEZAS_MAX_BYTES`, `ARNES_EDIT_MAX_BUSQUEDA`).
+ARNES_PLAZO_S=30
+# Sólo en un proceso que arrancó por un punto de entrada (`ARNES_EN_HOOK`, entrada.sh): quien carga la
+# librería en otro shell —el banco, a nivel de librería— no tiene un reloj que signifique nada.
+arnes_plazo() {
+  [ -n "${ARNES_EN_HOOK:-}" ] || return 0
+  [ "${SECONDS:-0}" -ge "$ARNES_PLAZO_S" ] || return 0
+  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s desde que arranco; el cliente mata el hook a los 60 s y un hook muerto no deniega). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
+}
+
+# R2 (SEC-129): un codigo del analizador de escrituras de Bash fuera de su vocabulario declarado —0, y
+# los cuatro de «no analice»: ARNES_RC_EXCESO, ARNES_RC_CR, ARNES_RC_CUERPO_CR y ARNES_RC_LC10— no es «no
+# escribe nada»: es un analisis que no termino. Los dos guardianes que lo leen deniegan, a todo agente.
+arnes_deny_rc_analizador() {   # <codigo> <puerta>
+  arnes_deny "ARNES: el analisis de escrituras de este comando termino con un codigo que no esta en su vocabulario declarado ($1), en $2: el analisis no concluyo, y no se puede saber si el comando escribe algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68)."
+}
+
+# arnes_bytes <texto> -> ARNES_BYTES: su longitud en BYTES, sea cual sea el locale. Sin procesos.
+arnes_bytes() { local LC_ALL=C; ARNES_BYTES=${#1}; }
 
 # Motivo UNICO de la Excepcion nombrada LC10 (SEC-125; REQ-007 CA-47, punto 19), compartido por las cuatro
 # puertas: texto fijo, sin interpolar el comando ni la linea (no hereda SEC-118) y sin nombrar ninguna
@@ -330,7 +483,9 @@ ARNES_AVISOS=''
 arnes_aviso() { ARNES_AVISOS+="ARNES: $1"$'\n'; }
 arnes_emitir_avisos() {
   [ -n "$ARNES_AVISOS" ] || return 0
-  jq -cn --arg m "${ARNES_AVISOS%$'\n'}" '{systemMessage:$m}'
+  # Los avisos entran (SEC-118, P-136-B): por la entrada estandar y acotados, como el motivo de `arnes_deny`.
+  jq -cRs --argjson tope "$ARNES_MOTIVO_MAX_BYTES" "$ARNES_JQ_ACOTA"' rtrimstr("\n") | arnes_acota($tope) | {systemMessage:.}' \
+    <<< "${ARNES_AVISOS%$'\n'}"
   return 0
 }
 
@@ -601,7 +756,7 @@ ARNES_ID_MAX=4096   # PATH_MAX: una ruta mas larga no la abre el sistema; es no 
 declare -gA ARNES_IDM_E=() ARNES_IDM_C=() ARNES_IDM_A=() ARNES_IDM_F=() ARNES_IDM_F2=() \
             ARNES_IDM_L=() ARNES_IDM_LN=() ARNES_IDM_B=() ARNES_IDM_K=() ARNES_IDM_X=() \
             ARNES_IDM_V=() ARNES_IDM_FD=() ARNES_IDM_O=() ARNES_IDM_R=()
-declare -gA ARNES_TRAMO_FIS=() ARNES_TRAMO_TXT=() ARNES_DIRFIS=() ARNES_AMB_LISTO=()
+declare -gA ARNES_TRAMO_FIS=() ARNES_TRAMO_TXT=() ARNES_DIRFIS=() ARNES_AMB_LISTO=() ARNES_AMB_NT=()
 declare -ga ARNES_AMB_req_P=() ARNES_AMB_req_T=() ARNES_AMB_req_F=() ARNES_AMB_req_Q=() \
             ARNES_AMB_codigo_P=() ARNES_AMB_codigo_T=() ARNES_AMB_codigo_F=() ARNES_AMB_codigo_Q=() \
             ARNES_AMB_manifiesto_P=() ARNES_AMB_manifiesto_T=() ARNES_AMB_manifiesto_F=() ARNES_AMB_manifiesto_Q=()
@@ -655,12 +810,12 @@ _arnes_id_ln() {
 # ¿<ruta> esta en <raiz> o debajo? -> 0 y ARNES_BAJO (relativa; vacia si es la raiz misma). Por
 # subcadena y no con `${1#"$r"/}`: quitar un prefijo literal largo es cuadratico en bash (medido).
 _arnes_bajo() {
-  [ -n "$2" ] || return 1
+  [[ -n $2 ]] || return 1
   case "$1" in
     "$2")   ARNES_BAJO=''; return 0 ;;
     "$2"/*) ARNES_BAJO="${1:${#2}+1}"; return 0 ;;
   esac
-  [ "$2" = / ] && [ "${1:0:1}" = / ] && { ARNES_BAJO="${1:1}"; return 0; }
+  [[ $2 == / && ${1:0:1} == / ]] && { ARNES_BAJO="${1:1}"; return 0; }
   return 1
 }
 
@@ -759,16 +914,24 @@ _arnes_lectura_lexica() {   # <ruta absoluta> -> ARNES_LL
     [A-Za-z]:/*) pre="${p:0:3}"; rest="${p:3}" ;;
     *)           pre='';   rest="$p" ;;
   esac
-  while [ -n "$rest" ]; do
-    seg="${rest%%/*}"
-    if [ "$seg" = "$rest" ]; then rest=''; else rest="${rest#*/}"; fi
+  # Los segmentos, partidos UNA vez (troceado por `/`, sin globbing) y no recortando `rest` segmento a
+  # segmento, que copiaba el resto de la ruta en cada uno (CA-54, nota del 2026-10-03). Mismos
+  # segmentos y en el mismo orden: el troceado descarta un segmento vacio FINAL, y el bucle de siempre
+  # tambien lo descartaba (un segmento vacio no hace nada).
+  local IFS=/ reponer_f=0
+  local -a segs
+  case $- in *f*) reponer_f=1 ;; esac
+  set -f
+  # shellcheck disable=SC2206  -- se quiere el troceado por IFS, con globbing apagado
+  segs=($rest)
+  [ "$reponer_f" -eq 1 ] || set +f
+  for seg in ${segs[@]+"${segs[@]}"}; do
     case "$seg" in
       ''|.) ;;
       ..) [ "${#pila[@]}" -eq 0 ] || unset "pila[$(( ${#pila[@]} - 1 ))]" ;;
       *)  pila+=("$seg") ;;
     esac
   done
-  local IFS=/
   ARNES_LL="$pre${pila[*]-}"
 }
 
@@ -789,62 +952,99 @@ _arnes_lectura_lexica() {   # <ruta absoluta> -> ARNES_LL
 # esa. Asi el camino comun no paga ni un `cd` mas. Una resolucion que aterriza en la entrada propia de
 # /proc depende del proceso y NO se memoriza: otro proceso —un subshell— aterrizaria en la suya.
 _arnes_lectura_fisica() {   # <ruta absoluta, sin barra final> <dir 0|1> -> ARNES_LF, ARNES_LF_DIR, ARNES_LF_RESTO ; 1 = no determinable
-  local dir="$1" base='' cur resto seg d r orig="$PWD" CDPATH='' pasada=1 rc=0
-  [ "$2" = 1 ] || { base="${1##*/}"; dir="${1%/*}"; }
+  # COSTE (CA-54, nota del 2026-10-03; ver `_arnes_id_calcula`, «COSTE»): un comando con miles de
+  # destinos en directorios que aun no existen recorre esta funcion entera por cada uno. Los motivos de
+  # «no determinable» viven en `_arnes_lf_nodet`, y los segmentos que no existen solo se recorren uno a
+  # uno (`_arnes_lf_resto`) si alguno puede ser '', '.' o '..'. Mismo algoritmo, mismo orden.
+  local dir="$1" base='' cur resto d orig="$PWD" CDPATH='' pasada=1 rc=0
+  [[ $2 == 1 ]] || { base="${1##*/}"; dir="${1%/*}"; }
   while :; do
     cur="${dir:-/}"; resto=''
     while :; do
-      if [ -n "${ARNES_DIRFIS[$cur]+x}" ]; then ARNES_PWD_FIS="${ARNES_DIRFIS[$cur]}"; break; fi
-      if cd -P -- "$cur" 2>/dev/null; then
+      if [[ -n ${ARNES_DIRFIS[$cur]+x} ]]; then ARNES_PWD_FIS="${ARNES_DIRFIS[$cur]}"; break; fi
+      # `cd` solo se intenta si el sistema ve algo en esa ruta: un `cd` que acierta ha resuelto la ruta
+      # entera, asi que si `-e` (stat) falla el `cd` falla seguro, y fallando costaba cinco veces mas
+      # (medido: la redireccion y el mensaje de error). Con `-e` falso se sigue exactamente por donde
+      # seguia el `cd` fallido: la comprobacion de abajo.
+      if [[ -e $cur ]] && cd -P -- "$cur" 2>/dev/null; then
         _arnes_pwd_fisico
-        if [ "$pasada" = 1 ] && ! _arnes_mismo_texto "$cur"; then rc=2; break; fi
+        if [[ $pasada == 1 ]] && ! _arnes_mismo_texto "$cur"; then rc=2; break; fi
         _arnes_propio "$ARNES_PWD_FIS" || ARNES_DIRFIS[$cur]="$ARNES_PWD_FIS"
         break
       fi
-      if [ -e "$cur" ] || [ -L "$cur" ]; then
-        arnes_cita_ruta "$cur"
-        _arnes_nodet "el directorio $ARNES_CITA_RUTA de la ruta existe pero no se puede recorrer (sin permiso, no es un directorio, o es un enlace roto o en bucle)" \
-                     "escribe la ruta a traves de directorios que se puedan recorrer"
-        rc=1; break
-      fi
+      if [[ -e $cur || -L $cur ]]; then _arnes_lf_nodet recorrer "$cur"; rc=1; break; fi
       case "$cur" in
-        /|//|[A-Za-z]:|[A-Za-z]:/)
-          _arnes_nodet "ni siquiera su raiz se puede recorrer" "escribe la ruta a traves de directorios que se puedan recorrer"
-          rc=1; break ;;
+        /|//|[A-Za-z]:|[A-Za-z]:/) _arnes_lf_nodet raiz; rc=1; break ;;
       esac
       resto="${cur##*/}${resto:+/$resto}"; cur="${cur%/*}"
       case "$cur" in '') cur=/ ;; [A-Za-z]:) cur="$cur/" ;; esac
     done
-    [ "$rc" = 2 ] || break
+    [[ $rc == 2 ]] || break
     # Atraveso un enlace: se rehace desde el directorio del proceso que escribira (arriba).
     rc=0; pasada=2; cd -- "$orig" 2>/dev/null
-    if ! _arnes_cd_resolucion; then
-      _arnes_nodet "el directorio de trabajo de la entrada ('cwd'), desde el que se resuelve la ruta, ya no se puede recorrer" \
-                   "escribe la ruta desde un directorio de trabajo que exista"
-      rc=1; break
-    fi
+    if ! _arnes_cd_resolucion; then _arnes_lf_nodet cwd; rc=1; break; fi
   done
-  [ "$PWD" = "$orig" ] || cd -- "$orig" 2>/dev/null
-  [ "$rc" = 0 ] || return 1
+  [[ $PWD == "$orig" ]] || cd -- "$orig" 2>/dev/null
+  [[ $rc == 0 ]] || return 1
   ARNES_LF_RESTO=0
-  if [ -n "$resto" ]; then
-    ARNES_LF_RESTO=1; r="$resto"
-    while [ -n "$r" ]; do
-      seg="${r%%/*}"
-      if [ "$seg" = "$r" ]; then r=''; else r="${r#*/}"; fi
-      case "$seg" in
-        ''|.|..)
-          _arnes_nodet "lleva '$seg' sobre un directorio que todavia no existe, y el sistema no puede resolverlo" \
-                       "escribe la ruta sin '..' ni '.' sobre directorios que no existen"
-          return 1 ;;
-      esac
-    done
+  if [[ -n $resto ]]; then
+    ARNES_LF_RESTO=1
+    # Un segmento '', '.' o '..' deja una de estas marcas en «/resto/»; sin ninguna, no hay que buscarlo.
+    case "/$resto/" in *//*|*/./*|*/../*) _arnes_lf_resto "$resto" || return 1 ;; esac
   fi
-  d="$ARNES_PWD_FIS"; [ "$d" != / ] || d=''
+  d="$ARNES_PWD_FIS"; [[ $d != / ]] || d=''
   ARNES_LF_DIR="$d${resto:+/$resto}"
-  if [ -n "$base" ]; then ARNES_LF="$ARNES_LF_DIR/$base"; else ARNES_LF="${ARNES_LF_DIR:-/}"; fi
+  if [[ -n $base ]]; then ARNES_LF="$ARNES_LF_DIR/$base"; else ARNES_LF="${ARNES_LF_DIR:-/}"; fi
   ARNES_LF_DIR="${ARNES_LF_DIR:-/}"
   return 0
+}
+
+# Los segmentos que no existen de `_arnes_lectura_fisica`, uno a uno: el primero que sea '', '.' o '..'
+# da «no determinable» (CA-47, punto 2: solo NOMBRES sobre directorios que todavia no existen). 1 = lo dio.
+_arnes_lf_resto() {   # <resto>
+  local r="$1" seg
+  while [ -n "$r" ]; do
+    seg="${r%%/*}"
+    if [ "$seg" = "$r" ]; then r=''; else r="${r#*/}"; fi
+    case "$seg" in
+      ''|.|..)
+        _arnes_nodet "lleva '$seg' sobre un directorio que todavia no existe, y el sistema no puede resolverlo" \
+                     "escribe la ruta sin '..' ni '.' sobre directorios que no existen"
+        return 1 ;;
+    esac
+  done
+  return 0
+}
+
+# Los «no determinable» de `_arnes_lectura_fisica`, con su motivo de siempre. Aparte por coste: los
+# motivos largos viajaban en la copia del cuerpo de esa funcion en cada llamada.
+_arnes_lf_nodet() {   # <recorrer <dir>|raiz|cwd>
+  case "$1" in
+    recorrer)
+      arnes_cita_ruta "$2"
+      _arnes_nodet "el directorio $ARNES_CITA_RUTA de la ruta existe pero no se puede recorrer (sin permiso, no es un directorio, o es un enlace roto o en bucle)" \
+                   "escribe la ruta a traves de directorios que se puedan recorrer" ;;
+    raiz)
+      _arnes_nodet "ni siquiera su raiz se puede recorrer" "escribe la ruta a traves de directorios que se puedan recorrer" ;;
+    cwd)
+      _arnes_nodet "el directorio de trabajo de la entrada ('cwd'), desde el que se resuelve la ruta, ya no se puede recorrer" \
+                   "escribe la ruta desde un directorio de trabajo que exista" ;;
+  esac
+}
+
+# El camino de MEMORIA de `_arnes_lectura_fisica`, sin su andamiaje (CA-54, nota del 2026-10-03): la ruta
+# de un archivo —no la de un directorio— cuyo directorio ya se resolvio en esta invocacion. Publica lo
+# mismo que esa funcion en ese camino (ARNES_PWD_FIS, ARNES_LF, ARNES_LF_DIR, ARNES_LF_RESTO) y no cambia
+# de directorio. 1 = no es ese camino, y quien llama sigue por `_arnes_lectura_fisica`, que lo resuelve
+# todo como siempre. Existe porque se recorre una vez por destino y la funcion completa declara once
+# variables y dos bucles para llegar aqui.
+_arnes_lf_memo() {   # <ruta absoluta, sin barra final> <dir 0|1>
+  [ "$2" = 0 ] && [ -n "${1##*/}" ] || return 1
+  local d="${1%/*}"
+  [ -n "${ARNES_DIRFIS[${d:-/}]+x}" ] || return 1
+  ARNES_PWD_FIS="${ARNES_DIRFIS[${d:-/}]}"; ARNES_LF_RESTO=0
+  d="$ARNES_PWD_FIS"; [ "$d" != / ] || d=''
+  ARNES_LF_DIR="${d:-/}"; ARNES_LF="$d/${1##*/}"
 }
 
 # arnes_identidad <ruta tal como llego> — la identidad de UN destino, memorizada por invocacion.
@@ -857,19 +1057,22 @@ _arnes_lectura_fisica() {   # <ruta absoluta, sin barra final> <dir 0|1> -> ARNE
 # situar), ARNES_ID_O (el archivo que se leeria: el fisico, o el destino del enlace una vez
 # resuelto), ARNES_ID_X (existe algo en ARNES_ID_O) y ARNES_ID_R (enlace ya resuelto).
 arnes_identidad() {
-  local d="$1"
-  # La vigente —la ultima calculada o cargada— ya esta en las variables: no se recarga.
-  [ -z "$d" ] || [ "$d" != "$ARNES_ID_RUTA" ] || return 0
-  if [ -n "$d" ] && [ -n "${ARNES_IDM_E[$d]+x}" ]; then
-    # Una sola orden de asignaciones: cada orden de bash cuesta microsegundos (medido).
-    ARNES_ID_E="${ARNES_IDM_E[$d]}" ARNES_ID_C="${ARNES_IDM_C[$d]}" ARNES_ID_A="${ARNES_IDM_A[$d]}" \
-    ARNES_ID_F="${ARNES_IDM_F[$d]}" ARNES_ID_F2="${ARNES_IDM_F2[$d]}" ARNES_ID_L="${ARNES_IDM_L[$d]}" \
-    ARNES_ID_LN="${ARNES_IDM_LN[$d]}" ARNES_ID_B="${ARNES_IDM_B[$d]}" ARNES_ID_K="${ARNES_IDM_K[$d]}" \
-    ARNES_ID_X="${ARNES_IDM_X[$d]}" ARNES_ID_V="${ARNES_IDM_V[$d]}" ARNES_ID_FD="${ARNES_IDM_FD[$d]}" \
-    ARNES_ID_O="${ARNES_IDM_O[$d]}" ARNES_ID_R="${ARNES_IDM_R[$d]}" ARNES_ID_RUTA="$d"
-    return 0
+  # La vigente —la ultima calculada o cargada— ya esta en las variables: no se recarga. Las pruebas van
+  # con `[[ ]]`, que da el mismo resultado que `[ ]` con estos operandos y no arma una orden por cada una
+  # (CA-54, nota del 2026-10-03: esta funcion corre una o dos veces por destino).
+  if [[ -n $1 ]]; then
+    [[ $1 == "$ARNES_ID_RUTA" ]] && return 0
+    if [[ -n ${ARNES_IDM_E[$1]+x} ]]; then
+      # Una sola orden de asignaciones: cada orden de bash cuesta microsegundos (medido).
+      ARNES_ID_E="${ARNES_IDM_E[$1]}" ARNES_ID_C="${ARNES_IDM_C[$1]}" ARNES_ID_A="${ARNES_IDM_A[$1]}" \
+      ARNES_ID_F="${ARNES_IDM_F[$1]}" ARNES_ID_F2="${ARNES_IDM_F2[$1]}" ARNES_ID_L="${ARNES_IDM_L[$1]}" \
+      ARNES_ID_LN="${ARNES_IDM_LN[$1]}" ARNES_ID_B="${ARNES_IDM_B[$1]}" ARNES_ID_K="${ARNES_IDM_K[$1]}" \
+      ARNES_ID_X="${ARNES_IDM_X[$1]}" ARNES_ID_V="${ARNES_IDM_V[$1]}" ARNES_ID_FD="${ARNES_IDM_FD[$1]}" \
+      ARNES_ID_O="${ARNES_IDM_O[$1]}" ARNES_ID_R="${ARNES_IDM_R[$1]}" ARNES_ID_RUTA="$1"
+      return 0
+    fi
   fi
-  _arnes_id_calcula "$d"
+  _arnes_id_calcula "$1"
   _arnes_id_guarda
 }
 
@@ -883,12 +1086,11 @@ _arnes_id_guarda() {
   ARNES_IDM_O[$d]="$ARNES_ID_O" ARNES_IDM_R[$d]="$ARNES_ID_R"
 }
 
-_arnes_id_calcula() {
-  local p="$1" abs c dirref=0
-  ARNES_ID_RUTA="$1" ARNES_ID_E=ok ARNES_ID_C='' ARNES_ID_A='' ARNES_ID_F='' ARNES_ID_F2='' \
-  ARNES_ID_L='' ARNES_ID_LN='' ARNES_ID_B=0 ARNES_ID_K=0 ARNES_ID_X=0 ARNES_ID_V=0 ARNES_ID_FD='' \
-  ARNES_ID_O='' ARNES_ID_R=0
-  _arnes_raices
+# Las comprobaciones de `_arnes_id_calcula` que pueden dar «no determinable» antes de leer nada, en su
+# orden de siempre. 0 = una dio «no determinable» (y quien llama sale); 1 = ninguna. Viven aparte por
+# coste (ver `_arnes_id_calcula`, «COSTE»): solo se recorren cuando alguna puede dispararse.
+_arnes_id_previas() {   # <ruta tal como llego>
+  local p="$1"
   if [ -z "$p" ]; then _arnes_nodet "la ruta esta vacia" "escribe la ruta del archivo"; return 0; fi
   # CA-47, punto 12: el `file_path` que la puerta juzga, si su texto TAL COMO LLEGA lleva un salto de
   # linea, es no determinable (y se aplica el punto 7). La ruta se lee entera (punto 11), pero que
@@ -919,39 +1121,134 @@ _arnes_id_calcula() {
   if [ -z "$ARNES_RAIZ_FIS" ]; then
     _arnes_nodet "la raiz del proyecto no se puede resolver en el sistema de archivos" "comprueba que la raiz del proyecto se pueda recorrer"; return 0
   fi
+  return 1
+}
+
+# El `cwd` en el que se ancla una ruta relativa (CA-47, punto 1), con sus tres «no determinable», en su
+# orden de siempre. 0 + ARNES_ID_CWDC (el `cwd` en forma de comparacion); 1 = no determinable (y quien
+# llama sale). Aparte por coste, como `_arnes_id_previas`: el `cwd` es el mismo para todos los destinos
+# de la llamada y, una vez comprobado, `_arnes_id_calcula` no vuelve a recorrer esto.
+# La memoria `ARNES_CWD_VISTO` nace vacia al cargar la libreria (QA-007-10; REQ-007 CA-68, P-136-N): exportada en el
+# entorno con el valor del `cwd` de la entrada, se saltaba la comprobacion de que el directorio existe y una ruta
+# relativa bajo un `cwd` inexistente salia sin decision en vez de «no determinable». Como `ARNES_*_LISTO`, arriba.
+ARNES_CWD_VISTO=''
+_arnes_id_ancla_rel() {
+  local c
+  # QA-023-13: un `cwd` con un retorno de carro no ancla. El transporte de la entrada retira el
+  # CR que lo cierra, y anclar en lo que queda era juzgar OTRO directorio que el del shell;
+  # `arnes_parse_input` lo detecta en el valor crudo y lo vacia. Se dice por que, no «falta».
+  if [ "${ARNES_CWD_CR:-0}" = 1 ]; then
+    _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria" \
+                 "escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro"; return 1
+  fi
+  c="${ARNES_CWD:-}"
+  case "$c" in
+    /*) ;;
+    [A-Za-z]:[/\\]*) c="${c//\\//}" ;;
+    *) _arnes_nodet "es relativa y la entrada del hook no trae un directorio de trabajo absoluto ('cwd') en el que anclarla" \
+                    "escribe la ruta absoluta"; return 1 ;;
+  esac
+  # El `cwd` es el mismo para todos los destinos de la llamada: se comprueba una vez.
+  if [ "$c" != "${ARNES_CWD_VISTO:-}" ]; then
+    if [ ! -d "$c" ]; then
+      _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer" \
+                   "escribe la ruta absoluta"; return 1
+    fi
+    ARNES_CWD_VISTO="$c"
+  fi
+  ARNES_ID_CWDC="$c"
+  return 0
+}
+
+# Con un `..` en la ruta (CA-47, punto 4): la lectura fisica de la LEXICA, y si las dos designan archivos
+# distintos. Es el final de `_arnes_id_calcula`, aparte por coste: solo lo recorre una ruta con `..`.
+_arnes_id_dos_lecturas() {   # <dirref 0|1>
+  if _arnes_lf_memo "$ARNES_ID_L" "$1" || _arnes_lectura_fisica "$ARNES_ID_L" "$1"; then
+    # La lectura del texto, sin los `..`, depende del proceso (SEC-122): no se sabe que designa.
+    if _arnes_propio "$ARNES_LF_DIR"; then _arnes_nodet "$ARNES_PROC_CAUSA" "$ARNES_PROC_ARREGLO"; return 0; fi
+    ARNES_ID_F2="$ARNES_LF"; [ "$ARNES_ID_F2" = "$ARNES_ID_F" ] || ARNES_ID_V=1
+  else
+    # La lectura lexica no se puede situar: no se sabe si designan el mismo archivo.
+    ARNES_ID_E=ok; ARNES_ID_C=''; ARNES_ID_A=''; ARNES_ID_V=2
+  fi
+  return 0
+}
+
+# COSTE (CA-54, nota del 2026-10-03). Esta funcion corre una vez por destino, y un comando de 128 KiB
+# trae miles. Medido: bash COPIA EL CUERPO ENTERO de una funcion en cada llamada, de modo que una funcion
+# larga cuesta decenas de microsegundos aunque salga en su primera linea —y los motivos largos de los
+# «no determinable» viajaban en cada copia—. Por eso aqui queda solo lo que recorre todo destino, y cada
+# rama que fija un «no determinable» vive en su propia funcion, que se llama solo cuando su condicion
+# PUEDE dispararse: `_arnes_id_previas`, `_arnes_id_ancla_rel` (una vez por llamada, mientras el `cwd`
+# no este comprobado) y `_arnes_id_dos_lecturas` (solo con `..`). Las consultas de memoria —las raices,
+# la lectura lexica de una ruta limpia, el directorio fisico ya resuelto (`_arnes_lf_memo`), la entrada
+# propia de /proc— se hacen en linea con la misma condicion que abre su funcion. Mismas comprobaciones,
+# en el mismo orden y con los mismos motivos: cambia lo que cuesta, no lo que se calcula.
+_arnes_id_calcula() {
+  local p="$1" abs c dirref=0 texto=0
+  ARNES_ID_RUTA="$1" ARNES_ID_E=ok ARNES_ID_C='' ARNES_ID_A='' ARNES_ID_F='' ARNES_ID_F2='' \
+  ARNES_ID_L='' ARNES_ID_LN='' ARNES_ID_B=0 ARNES_ID_K=0 ARNES_ID_X=0 ARNES_ID_V=0 ARNES_ID_FD='' \
+  ARNES_ID_O='' ARNES_ID_R=0
+  [[ -n $ARNES_RAICES_LISTAS ]] || _arnes_raices
+  # Ninguna de las previas puede dispararse si la ruta no esta vacia, la raiz se resolvio, la ruta cabe
+  # y no es el `file_path` de otra herramienta que `Bash` (el salto y el retorno de carro solo cuentan ahi).
+  if [[ -z $p || -z $ARNES_RAIZ_FIS ]] || (( ${#p} > ARNES_ID_MAX )) \
+     || [[ ${ARNES_TOOL:-} != Bash && $p == "${ARNES_FP:-}" ]]; then
+    _arnes_id_previas "$p" && return 0
+  fi
   # CA-47, punto 10: la barra final (el detector la emite para `cp`/`mv`/`install` hacia un
   # directorio) designa una escritura DENTRO de ese directorio, y ese sentido se conserva.
   case "$p" in ?*/) while [ "${#p}" -gt 1 ] && [ "${p%/}" != "$p" ]; do p="${p%/}"; ARNES_ID_B=1; done ;; esac
-  # CA-47, punto 1: una relativa se ancla en el `cwd` de la entrada, NO en la raiz.
+  # CA-47, punto 1: una relativa se ancla en el `cwd` de la entrada, NO en la raiz. Un `cwd` sin retorno
+  # de carro e igual al ya comprobado en esta llamada pasa sin repetir la comprobacion (es lo que haria
+  # `_arnes_id_ancla_rel`: el `cwd` comprobado es exactamente el que se guardo).
   case "$p" in
     /*) abs="$p" ;;
     [A-Za-z]:[/\\]*) abs="${p//\\//}" ;;
     *)
-      # QA-023-13: un `cwd` con un retorno de carro no ancla. El transporte de la entrada retira el
-      # CR que lo cierra, y anclar en lo que queda era juzgar OTRO directorio que el del shell;
-      # `arnes_parse_input` lo detecta en el valor crudo y lo vacia. Se dice por que, no «falta».
-      if [ "${ARNES_CWD_CR:-0}" = 1 ]; then
-        _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') contiene un retorno de carro, que la lectura de la entrada no conserva con certeza (el del final se confunde con el fin de linea de Windows), asi que no se sabe en que directorio se anclaria" \
-                     "escribe la ruta absoluta, o trabaja desde un directorio cuyo nombre no lleve retornos de carro"; return 0
+      if [[ ${ARNES_CWD_CR:-0} == 0 && -n ${ARNES_CWD:-} && $ARNES_CWD == "${ARNES_CWD_VISTO:-}" ]]; then
+        c="$ARNES_CWD"
+      else
+        _arnes_id_ancla_rel || return 0
+        c="$ARNES_ID_CWDC"
       fi
-      c="${ARNES_CWD:-}"
-      case "$c" in
-        /*) ;;
-        [A-Za-z]:[/\\]*) c="${c//\\//}" ;;
-        *) _arnes_nodet "es relativa y la entrada del hook no trae un directorio de trabajo absoluto ('cwd') en el que anclarla" \
-                        "escribe la ruta absoluta"; return 0 ;;
-      esac
-      # El `cwd` es el mismo para todos los destinos de la llamada: se comprueba una vez.
-      if [ "$c" != "${ARNES_CWD_VISTO:-}" ]; then
-        if [ ! -d "$c" ]; then
-          _arnes_nodet "es relativa y el directorio de trabajo de la entrada ('cwd') no es un directorio que exista y se pueda recorrer" \
-                       "escribe la ruta absoluta"; return 0
-        fi
-        ARNES_CWD_VISTO="$c"
-      fi
-      [ "$c" = / ] || c="${c%/}"
+      [[ $c == / ]] || c="${c%/}"
       abs="$c/$p" ;;
   esac
+  # Una ruta sin nada que retirar —sin `//`, `/./`, `/../` ni barra invertida— es su propia lectura
+  # lexica (la condicion del camino rapido de `_arnes_lectura_lexica`, en linea), no tiene barras que
+  # plegar, no designa un directorio por su forma y no lleva `..`: los tres pasos que dependen de esos
+  # textos (`_arnes_id_texto`, y `_arnes_id_dos_lecturas` abajo) solo los recorre la que los lleva.
+  case "$abs/" in
+    *//*|*/./*|*/../*|*\\*) texto=1; _arnes_id_texto ;;
+    *) ARNES_LL="$abs"; ARNES_ID_L="$abs" ;;
+  esac
+  [[ $ARNES_ID_B == 0 ]] || dirref=1
+  _arnes_lf_memo "$abs" "$dirref" || _arnes_lectura_fisica "$abs" "$dirref" || return 0
+  ARNES_ID_F="$ARNES_LF" ARNES_ID_FD="$ARNES_LF_DIR" ARNES_ID_O="$ARNES_LF"
+  # SEC-122: aterrizo en la entrada propia de /proc -> depende del proceso (`_arnes_id_propio`; la
+  # condicion es la de `_arnes_propio`, en linea).
+  case "$ARNES_LF_DIR/" in
+    "/proc/$BASHPID/"*)
+      c=''; [ "$dirref" = 1 ] || c="${ARNES_LF##*/}"
+      _arnes_id_propio "$ARNES_LF_DIR" "$ARNES_LF_RESTO" "$c" "$BASHPID"; return 0 ;;
+  esac
+  if [[ $ARNES_LF_RESTO == 0 ]]; then
+    if [[ $dirref == 0 && -L $ARNES_LF ]]; then ARNES_ID_K=1 ARNES_ID_X=1
+    elif [[ -e $ARNES_LF ]]; then ARNES_ID_X=1; fi
+  fi
+  # CA-47, punto 4: con un `..` en la ruta, las dos lecturas pueden designar archivos distintos
+  # (un `..` detras de un directorio enlazado). Sin `..` no pueden: `.` y `//` no cambian nada.
+  [[ $texto == 0 ]] || case "/$abs/" in */../*) _arnes_id_dos_lecturas "$dirref" ;; esac
+  return 0
+}
+
+# Los pasos de `_arnes_id_calcula` que dependen de que la ruta absoluta lleve `//`, `/./`, `/../` o una
+# barra invertida, en su orden de siempre: su lectura lexica (CA-47, punto 3), el pliegue de las barras
+# repetidas y si designa un directorio por su forma (`/.`, `/..`). Lee y cambia `abs` y `dirref` de quien
+# llama. Aparte por coste (ver `_arnes_id_calcula`, «COSTE»): una ruta limpia no lo recorre.
+_arnes_id_texto() {
+  local c
   _arnes_lectura_lexica "$abs"; ARNES_ID_L="$ARNES_LL"
   # Ningun prefijo queda fuera (SEC-122): `/dev/…` y `/proc/…` se identifican como cualquier otra
   # ruta, con su lectura fisica, su enlace y su existencia. Lo que dependa del proceso se ve abajo.
@@ -962,31 +1259,6 @@ _arnes_id_calcula() {
           abs="$c$abs" ;;
   esac
   case "$abs" in */.|*/..) dirref=1 ;; esac
-  [ "$ARNES_ID_B" = 0 ] || dirref=1
-  _arnes_lectura_fisica "$abs" "$dirref" || return 0
-  ARNES_ID_F="$ARNES_LF"; ARNES_ID_FD="$ARNES_LF_DIR"; ARNES_ID_O="$ARNES_LF"
-  # SEC-122: aterrizo en la entrada propia de /proc -> depende del proceso (`_arnes_id_propio`).
-  if _arnes_propio "$ARNES_LF_DIR"; then
-    c=''; [ "$dirref" = 1 ] || c="${ARNES_LF##*/}"
-    _arnes_id_propio "$ARNES_LF_DIR" "$ARNES_LF_RESTO" "$c" "$BASHPID"; return 0
-  fi
-  if [ "$ARNES_LF_RESTO" = 0 ]; then
-    if [ "$dirref" = 0 ] && [ -L "$ARNES_LF" ]; then ARNES_ID_K=1; ARNES_ID_X=1
-    elif [ -e "$ARNES_LF" ]; then ARNES_ID_X=1; fi
-  fi
-  # CA-47, punto 4: con un `..` en la ruta, las dos lecturas pueden designar archivos distintos
-  # (un `..` detras de un directorio enlazado). Sin `..` no pueden: `.` y `//` no cambian nada.
-  case "/$abs/" in
-    */../*)
-      if _arnes_lectura_fisica "$ARNES_ID_L" "$dirref"; then
-        # La lectura del texto, sin los `..`, depende del proceso (SEC-122): no se sabe que designa.
-        if _arnes_propio "$ARNES_LF_DIR"; then _arnes_nodet "$ARNES_PROC_CAUSA" "$ARNES_PROC_ARREGLO"; return 0; fi
-        ARNES_ID_F2="$ARNES_LF"; [ "$ARNES_ID_F2" = "$ARNES_ID_F" ] || ARNES_ID_V=1
-      else
-        # La lectura lexica no se puede situar: no se sabe si designan el mismo archivo.
-        ARNES_ID_E=ok; ARNES_ID_C=''; ARNES_ID_A=''; ARNES_ID_V=2
-      fi ;;
-  esac
   return 0
 }
 
@@ -1099,66 +1371,86 @@ _arnes_ambito() {   # <req|codigo|manifiesto> -> ARNES_AMB_<amb>_P (patrones), _
     [ "$ARNES_TRAMO_F" != "$ARNES_RAIZ_FIS/$ARNES_TRAMO" ] || continue
     t+=("$ARNES_TRAMO"); f+=("$ARNES_TRAMO_F"); q+=("$x")
   done
+  ARNES_AMB_NT[$1]=${#t[@]}   # cuantos tramos aportan por la via (c): `arnes_id_pertenece` no los nombra si son 0
 }
 
 arnes_id_pertenece() {
-  local amb="$1" x r rel via
+  local amb="$1" x rel via
   local -a fis=() rels=()
-  _arnes_ambito "$amb"
-  local -n pats="ARNES_AMB_${amb}_P" ct="ARNES_AMB_${amb}_T" cf="ARNES_AMB_${amb}_F" cq="ARNES_AMB_${amb}_Q"
+  # COSTE (CA-54, nota del 2026-10-03): se recorre una vez por destino y por puerta. Las consultas de
+  # memoria —el ambito ya preparado, la lectura lexica ya calculada— se hacen en linea con la condicion
+  # con la que abre su funcion, y los tramos de la via (c) y el motivo de CA-47 punto 4 viven en su
+  # propia funcion (`_arnes_id_via_c`, `_arnes_id_v`), que solo se llama si puede aportar.
+  [[ -n ${ARNES_AMB_LISTO[$amb]:-} ]] || _arnes_ambito "$amb"
+  local -n pats="ARNES_AMB_${amb}_P"
   # Un ambito sin ningun patron no tiene «dentro»: ni siquiera un destino no determinable cae en el.
-  [ "${#pats[@]}" -gt 0 ] || return 1
+  (( ${#pats[@]} > 0 )) || return 1
   # Un descriptor del shell (SEC-122, `_arnes_id_propio`) no es un archivo de ningun ambito, pero la
   # RUTA por la que se llega a el se juzga por las tres vias de abajo, como la de cualquier otro enlace
   # (QA-023-17, pasada correctiva de la octava autorizacion): `src/log -> /dev/stderr` esta en `src/*`
   # por su lectura fisica y por la lexica, y salia «fuera» antes de mirarlas. Su destino —la ranura
   # del descriptor— no aporta pertenencia: no entra en `fis` (`ARNES_ID_O` sigue siendo el enlace).
   case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
-  if [ "$ARNES_ID_K" = 1 ]; then
+  if [[ $ARNES_ID_K == 1 ]]; then
     _arnes_id_resuelve_enlace
     case "$ARNES_ID_E" in ok|desc) ;; *) return 2 ;; esac
   fi
-  [ -z "$ARNES_ID_F" ]  || fis+=("$ARNES_ID_F")
-  [ -z "$ARNES_ID_F2" ] || fis+=("$ARNES_ID_F2")
-  [ "$ARNES_ID_O" = "$ARNES_ID_F" ] || [ -z "$ARNES_ID_O" ] || fis+=("$ARNES_ID_O")
+  [[ -z $ARNES_ID_F ]]  || fis+=("$ARNES_ID_F")
+  [[ -z $ARNES_ID_F2 ]] || fis+=("$ARNES_ID_F2")
+  [[ $ARNES_ID_O == "$ARNES_ID_F" || -z $ARNES_ID_O ]] || fis+=("$ARNES_ID_O")
   ARNES_ID_REL=''
   # (a), y si no basta (b): las lecturas relativas a las raices, contra todos los patrones del
   # ambito. La (b) necesita la forma de comparacion, que se calcula aqui y solo si hace falta.
   for x in ${fis[@]+"${fis[@]}"}; do _arnes_bajo "$x" "$ARNES_RAIZ_FIS" && rels+=("${ARNES_BAJO:-.}"); done
   for via in a b; do
-    if [ "$via" = b ]; then
-      rels=(); _arnes_id_ln
-      [ -n "$ARNES_ID_LN" ] || break
+    if [[ $via == b ]]; then
+      rels=(); [[ -n $ARNES_ID_LN ]] || _arnes_id_ln
+      [[ -n $ARNES_ID_LN ]] || break
       # Con la lectura lexica igual a la fisica y las tres raices iguales, (b) daria las mismas
       # rutas relativas que (a), que ya se probaron contra todos los patrones.
-      if [ "$ARNES_ID_LN" = "$ARNES_ID_F" ] && [ "$ARNES_RAIZ_ENV_N" = "$ARNES_RAIZ_FIS" ] \
-         && [ "$ARNES_RAIZ_FIS_N" = "$ARNES_RAIZ_FIS" ]; then break; fi
+      if [[ $ARNES_ID_LN == "$ARNES_ID_F" && $ARNES_RAIZ_ENV_N == "$ARNES_RAIZ_FIS" \
+            && $ARNES_RAIZ_FIS_N == "$ARNES_RAIZ_FIS" ]]; then break; fi
       _arnes_bajo "$ARNES_ID_LN" "$ARNES_RAIZ_ENV_N" && rels+=("${ARNES_BAJO:-.}")
       _arnes_bajo "$ARNES_ID_LN" "$ARNES_RAIZ_FIS_N" && rels+=("${ARNES_BAJO:-.}")
     fi
     for rel in ${rels[@]+"${rels[@]}"}; do
-      [ "$ARNES_ID_B" = 1 ] && rel="$rel/"
-      for ((r = 0; r < ${#pats[@]}; r++)); do
-        if _arnes_casa_patron "$amb" "${pats[r]}" "$rel"; then ARNES_ID_REL="$rel"; break 3; fi
+      [[ $ARNES_ID_B == 1 ]] && rel="$rel/"
+      for x in "${pats[@]}"; do      # no vacio: comprobado arriba; mismo orden que el indice
+        if _arnes_casa_patron "$amb" "$x" "$rel"; then ARNES_ID_REL="$rel"; break 3; fi
       done
     done
   done
-  # (c): la fisica bajo la identidad fisica del tramo fijo de cada patron, reconstruida desde el; solo
-  # los tramos que aportan (`_arnes_ambito`).
-  if [ -z "$ARNES_ID_REL" ]; then
-    for ((r = 0; r < ${#ct[@]}; r++)); do
-      for x in ${fis[@]+"${fis[@]}"}; do
-        _arnes_bajo "$x" "${cf[r]}" || continue
-        rel="${ct[r]}${ARNES_BAJO:+/$ARNES_BAJO}"; [ "$ARNES_ID_B" = 1 ] && rel="$rel/"
-        if _arnes_casa_patron "$amb" "${cq[r]}" "$rel"; then ARNES_ID_REL="$rel"; break 2; fi
-      done
+  # (c): la fisica bajo la identidad fisica del tramo fijo de cada patron; solo si el ambito tiene
+  # tramos que aportan (`_arnes_ambito`, `_arnes_id_via_c`).
+  if [[ -z $ARNES_ID_REL && ${ARNES_AMB_NT[$amb]:-0} != 0 ]]; then _arnes_id_via_c "$amb"; fi
+  [[ -n $ARNES_ID_REL ]] || return 1
+  # CA-47, punto 4: con las dos lecturas designando archivos distintos (`_arnes_id_v`).
+  [[ $ARNES_ID_V == 0 ]] && return 0
+  _arnes_id_v
+}
+
+# La via (c) de `arnes_id_pertenece`: la fisica bajo la identidad fisica del tramo fijo de cada patron,
+# reconstruida desde el; solo los tramos que aportan (`_arnes_ambito`). Lee `fis` de quien llama. Aparte
+# por coste (ver `_arnes_id_calcula`, «COSTE»): un ambito sin tramos que aporten no la recorre.
+_arnes_id_via_c() {   # <ambito> -> ARNES_ID_REL
+  local -n ct="ARNES_AMB_${1}_T" cf="ARNES_AMB_${1}_F" cq="ARNES_AMB_${1}_Q"
+  local r x rel
+  for ((r = 0; r < ${#ct[@]}; r++)); do
+    for x in ${fis[@]+"${fis[@]}"}; do
+      _arnes_bajo "$x" "${cf[r]}" || continue
+      rel="${ct[r]}${ARNES_BAJO:+/$ARNES_BAJO}"; [ "$ARNES_ID_B" = 1 ] && rel="$rel/"
+      if _arnes_casa_patron "$1" "${cq[r]}" "$rel"; then ARNES_ID_REL="$rel"; return 0; fi
     done
-  fi
-  [ -n "$ARNES_ID_REL" ] || return 1
-  # CA-47, punto 4: dentro del ambito por alguna lectura y con las dos designando archivos
-  # distintos, la puerta no puede saber cual escribira la herramienta. Es no determinable PARA ESTE
-  # AMBITO —«y alguna cae en el ambito»—, asi que se publica la causa y NO se memoriza como estado
-  # del destino: otra puerta, con otro ambito, puede tenerlo fuera.
+  done
+  return 0
+}
+
+# CA-47, punto 4: dentro del ambito por alguna lectura y con las dos designando archivos
+# distintos, la puerta no puede saber cual escribira la herramienta. Es no determinable PARA ESTE
+# AMBITO —«y alguna cae en el ambito»—, asi que se publica la causa y NO se memoriza como estado
+# del destino: otra puerta, con otro ambito, puede tenerlo fuera. Devuelve lo que devolvia ese final
+# de `arnes_id_pertenece`: 2 con ARNES_ID_V 1 o 2, y 0 con cualquier otro valor.
+_arnes_id_v() {
   case "$ARNES_ID_V" in
     1) ARNES_ID_C="sus dos lecturas —la del sistema de archivos, que sigue los enlaces, y la del texto, que retira los '..'— designan archivos distintos (un '..' detras de un directorio enlazado), y alguna cae en la zona protegida"
        ARNES_ID_A="escribe la ruta sin '..' detras de un directorio enlazado" ;;
@@ -1363,6 +1655,23 @@ ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tst
 # dentro el caso ordinario (un REQ grande con un punado de ediciones) y corta antes de que
 # el reloj decida. Igual que el otro techo: el numero es operativo y sale impreso en el deny.
 ARNES_EDIT_MAX_PRESUPUESTO=67108864
+# TECHOS DE TAMAÑO DE SEC-115 (REQ-007 CA-68, P-136-C), los dos OPERATIVOS: se bajan con la medición, y
+# subirlos por encima de lo medido devuelve el hook a la pared de los 60 s, donde un hook muerto no deniega.
+#   * ARNES_PIEZAS_MAX_BYTES: el texto que trae una escritura de un REQ, tal como lo trocea `guard-completado`
+#     —el `content` de un `Write` más 4 bytes de cabecera de piezas, o las cadenas de todas las ediciones con
+#     sus separadores—, medido en BYTES antes de la normalización de transporte, que crece más que
+#     linealmente: medido en `78a2f33`, un `Write` de 1 012 650 bytes tardaba de 29 a 49 s y uno de
+#     2 025 113 no respondía en 60 s. Restricción del paso 6 (CA-68, «Dónde no puede caer un techo nuevo»):
+#     por encima de 296 976 bytes —el `content` de `REQ-021.md`— y lejos de las entradas de la sonda 37/3
+#     (como mucho 196 638 bytes). Medido justo por debajo (393 212 bytes): 3,8 s solo. Deniega el `Write`
+#     entero de un REQ más grande —en este repositorio, `REQ-007.md`, de 660 431 bytes—, y se declara.
+#   * ARNES_EDIT_MAX_BUSQUEDA: la búsqueda literal de cada `old_string` en la reconstrucción
+#     (`[[ … == *"$old"* ]]` y su sustitución) cuesta del orden de |documento| x |old_string| en el peor
+#     caso —una racha repetida—: medido, 256 000 bytes con un `old_string` de 128 000 no respondían en
+#     120 s (R-045-A §5). El presupuesto es ese producto, en bytes x bytes, sumado sobre las ediciones.
+#     Medido (Linux/WSL2, una corrida por punto): en el peor caso, unos 4,2e9 tardan 8,2 s solos.
+ARNES_PIEZAS_MAX_BYTES=393216
+ARNES_EDIT_MAX_BUSQUEDA=4294967296
 # Codigo de salida de `arnes_bash_escrituras` cuando NO analizo por presupuesto.
 ARNES_RC_EXCESO=2
 # Codigo de salida cuando NO analizo porque un retorno de carro del comando cae donde el analizador no
@@ -1394,31 +1703,39 @@ ARNES_RC_LC10=5
 # subirlo tiene sentido. Un proyecto que quisiera un techo MAS BAJO que el del codigo no
 # obtendria nada que la puerta no le de ya: el techo no autoriza, solo acota el analisis.
 arnes_techo_bash() {   # -> ARNES_TECHO
-  local v m
   if [ -z "${ARNES_TECHO:-}" ]; then
     ARNES_TECHO="$ARNES_BASH_MAX_ANALISIS"
     arnes_parse_manifest
     if [ -n "${ARNES_BASH_MAX:-}" ]; then
-      # TOPE DEL VALOR DECLARADO (SEC-006(b), R-001). El coste del análisis crece con el
-      # tamaño y un hook `PreToolUse` MUERE a los 60 s permitiendo: sin máximo, subir el
-      # techo desde el manifiesto reabre POR CONFIGURACIÓN el fallo en abierto que el
-      # presupuesto cerró. `4294967296` se aceptaba tal cual.
-      #
-      # La comparación es por LONGITUD y luego lexicográfica sobre dígitos, no aritmética:
-      # `99999999999999999999` desborda el entero de 64 bits de bash y `(( ))` daría un
-      # número cualquiera —incluido uno pequeño—, que es fallar en abierto justo en la
-      # comprobación que existe para no fallar en abierto.
-      v="${ARNES_BASH_MAX}"; m="$ARNES_BASH_MAX_MANIFIESTO"
-      while [ "${v:0:1}" = 0 ] && [ ${#v} -gt 1 ]; do v="${v:1}"; done
-      if [ ${#v} -gt ${#m} ] || { [ ${#v} -eq ${#m} ] && [ "$v" \> "$m" ]; }; then
+      if _arnes_techo_excede; then
         arnes_warn "'limites.bash_max_analisis' de .arnes/config.json declara $ARNES_BASH_MAX bytes y el maximo admitido es $ARNES_BASH_MAX_MANIFIESTO; se aplica el maximo. Un techo mas alto deja de responder antes de que el hook muera, y un hook muerto no deniega."
         ARNES_TECHO="$ARNES_BASH_MAX_MANIFIESTO"
-      elif (( v > ARNES_TECHO )); then
-        ARNES_TECHO="$v"
+      elif (( ARNES_TECHO_V > ARNES_TECHO )); then
+        ARNES_TECHO="$ARNES_TECHO_V"
       fi
     fi
   fi
   return 0
+}
+
+# ¿El valor declarado (`ARNES_BASH_MAX`, ya leido y no vacio) supera el maximo? 0 = si. Deja en
+# ARNES_TECHO_V el valor sin ceros a la izquierda. Vive aparte para que `arnes_escrituras_de` pueda
+# saber, sin resolver el techo, si resolverlo avisaria (CA-54, nota del 2026-10-03).
+#
+# TOPE DEL VALOR DECLARADO (SEC-006(b), R-001). El coste del análisis crece con el
+# tamaño y un hook `PreToolUse` MUERE a los 60 s permitiendo: sin máximo, subir el
+# techo desde el manifiesto reabre POR CONFIGURACIÓN el fallo en abierto que el
+# presupuesto cerró. `4294967296` se aceptaba tal cual.
+#
+# La comparación es por LONGITUD y luego lexicográfica sobre dígitos, no aritmética:
+# `99999999999999999999` desborda el entero de 64 bits de bash y `(( ))` daría un
+# número cualquiera —incluido uno pequeño—, que es fallar en abierto justo en la
+# comprobación que existe para no fallar en abierto.
+_arnes_techo_excede() {
+  local v="$ARNES_BASH_MAX" m="$ARNES_BASH_MAX_MANIFIESTO"
+  while [ "${v:0:1}" = 0 ] && [ ${#v} -gt 1 ]; do v="${v:1}"; done
+  ARNES_TECHO_V="$v"
+  [ ${#v} -gt ${#m} ] || { [ ${#v} -eq ${#m} ] && [ "$v" \> "$m" ]; }
 }
 
 # Descuenta el texto ENTRECOMILLADO de UN fragmento, por pares. Sin procesos.
@@ -1866,12 +2183,28 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   # `$ARNES_RC_CUERPO_CR` (4): una linea del cuerpo que es el delimitador seguido de un
   # retorno de carro y no es la ultima del comando (SEC-124). Y con `$ARNES_RC_LC10` (5):
   # la linea que abre un heredoc acaba en una continuacion de linea (SEC-125, LC10).
-  local limpio i j n tok
+  arnes_bash_sin_texto "$1" || return $?
+  # LOCALE (CA-54, nota del 2026-10-03). Lo que sigue son sustituciones, troceado y patrones con
+  # caracteres ASCII sobre el texto ya descontado. En un locale multibyte bash los resuelve convirtiendo
+  # el texto a caracteres anchos, y en un comando de 128 KiB con miles de operadores eso costaba medio
+  # segundo (medido en C.UTF-8 frente a C: 0,79 s frente a 0,21 s). Sobre un texto TODO ASCII cada byte
+  # es un caracter en cualquier locale y los dos dan exactamente el mismo resultado, asi que se resuelve
+  # en el locale C; con un solo byte que no sea ASCII se resuelve como siempre, en el del proceso. Esta
+  # fase no arranca procesos: el locale C no llega a ninguno, y no escribe nada en stderr, asi que el
+  # stderr del grupo es solo el aviso de bash al RESTAURAR un locale del entorno que no esta instalado
+  # (lo da una vez por cambio): sin redirigirlo, cada analisis anadiria una linea que v1.35.0 no escribia.
+  if [[ $ARNES_SIN_TEXTO == *[![:ascii:]]* ]]; then _arnes_escrituras_texto "$ARNES_SIN_TEXTO"
+  else { LC_ALL=C _arnes_escrituras_texto "$ARNES_SIN_TEXTO"; } 2>/dev/null; fi
+}
+
+# La segunda mitad de `arnes_bash_escrituras`: del texto del comando ya descontado
+# (`arnes_bash_sin_texto`) a los destinos, uno por linea. Aparte para poder resolverla en el locale C
+# cuando el texto es ASCII (arriba).
+_arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por linea
+  local limpio="$1" i j n tok
   # IFS explicito: el troceado en palabras de esta funcion (y el de sus auxiliares) no
   # puede depender de como lo haya dejado el llamador.
   local IFS=$' \t\n'
-  arnes_bash_sin_texto "$1" || return $?
-  limpio="$ARNES_SIN_TEXTO"
   # 2) Separa los operadores de su operando: `>src/a.ts` -> `> src/a.ts`.
   #    Y las sustituciones de comando pierden sus parentesis, para que el destino de
   #    `$(echo x > src/a.ts)` quede como operando limpio de `>` y no como `src/a.ts)`,
@@ -1893,37 +2226,45 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
   [ "$reponer_f" -eq 1 ] || set +f
 
   n=${#t[@]}
+  # Los destinos se ACUMULAN y se escriben de una vez al final (CA-54, nota del 2026-10-03): un
+  # `printf` por destino era una escritura en la tuberia de la sustitucion de comandos por cada uno,
+  # y un comando de 128 KiB lleva miles. La salida es la misma, byte a byte: un destino por linea y en
+  # el mismo orden. «Es separador» y «se emite» son las de siempre, escritas como `case` en linea —una
+  # llamada a funcion por token costaba mas que el trabajo—; `_arnes_es_separador` y `_arnes_emite`
+  # se conservan con su conducta para quien las llame.
   _arnes_es_separador() { case "$1" in '>'|'|'|';'|'&&'|'||'|'&') return 0 ;; *) return 1 ;; esac; }
   _arnes_emite() { [ -n "${1:-}" ] && ! _arnes_es_separador "$1" && printf '%s\n' "$1"; }
+  local -a sal=()
+  local x
 
   for ((i = 0; i < n; i++)); do
     tok="${t[i]}"
     case "$tok" in
       '>')
-        _arnes_emite "${t[i + 1]:-}" ;;
+        x="${t[i + 1]:-}"
+        case "$x" in ''|'>'|'|'|';'|'&&'|'||'|'&') ;; *) sal+=("$x") ;; esac ;;
       tee|*/tee)
         for ((j = i + 1; j < n; j++)); do
-          _arnes_es_separador "${t[j]}" && break
-          case "${t[j]}" in -*) continue ;; esac
-          _arnes_emite "${t[j]}"
+          x="${t[j]}"
+          case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          sal+=("$x")
         done ;;
       cp|mv|install|*/cp|*/mv|*/install)
         # El destino es el último operando del segmento; se prueba también su forma
         # de directorio (`cp x src` debe casar con el glob `src/*`).
         local dest=""
         for ((j = i + 1; j < n; j++)); do
-          _arnes_es_separador "${t[j]}" && break
-          case "${t[j]}" in -*) continue ;; esac
+          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*) continue ;; esac
           dest="${t[j]}"
         done
         if [ -n "$dest" ]; then
-          _arnes_emite "$dest"
-          case "$dest" in */) ;; *) _arnes_emite "$dest/" ;; esac
+          sal+=("$dest")
+          case "$dest" in */) ;; *) sal+=("$dest/") ;; esac
         fi ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
         for ((j = i + 1; j < n; j++)); do
-          _arnes_es_separador "${t[j]}" && break
+          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; esac
           # Sólo cuenta como in-place `--in-place[=x]` o un flag corto con `i`
           # (`-i`, `-i.bak`, `-pi`). `--expression` también lleva una `i` y NO lo es.
           case "${t[j]}" in
@@ -1934,15 +2275,87 @@ arnes_bash_escrituras() {  # <comando> -> rutas escritas, una por línea
         done
         [ "$en_sitio" -eq 1 ] || continue
         for ((j = i + 1; j < n; j++)); do
-          _arnes_es_separador "${t[j]}" && break
-          case "${t[j]}" in -*) continue ;; esac
-          _arnes_emite "${t[j]}"
+          x="${t[j]}"
+          case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          sal+=("$x")
         done ;;
       of=*)
-        _arnes_emite "${tok#of=}" ;;
+        x="${tok#of=}"
+        case "$x" in ''|'>'|'|'|';'|'&&'|'||'|'&') ;; *) sal+=("$x") ;; esac ;;
     esac
   done
+  [ "${#sal[@]}" -eq 0 ] || printf '%s\n' "${sal[@]}"
   return 0
+}
+
+# ¿Es SEGURO que la busqueda del estado terminal de `guard-completado` —`grep -iqE
+# "(^|[^a-zA-Z])<estado>([^a-zA-Z]|$)"` sobre el texto— NO lo encuentra? 0 = seguro que no; 1 = puede
+# encontrarlo, o no se puede probar (CA-54, nota del 2026-10-03, P-136-D; la usa solo el recorrido de
+# destinos de la via `Bash` de `guard-completado`). Lee el texto entero. Sin procesos.
+#
+# Solo afirma en el caso que se puede probar: el estado es una palabra ASCII de letras, digitos, `_` o
+# `-` (en la expresion de `grep`, cada uno de esos caracteres solo casa consigo mismo, o con su otra
+# mayuscula/minuscula por `-i`), y el texto es TODO ASCII. Entonces, en cualquier locale, `grep -i` solo
+# puede casar una letra ASCII del estado con esa misma letra en mayuscula o minuscula, de modo que si el
+# texto pasado a minusculas ASCII no CONTIENE el estado en minusculas, `grep` no lo encuentra —contenerlo
+# es necesario, no suficiente: ahi se responde 1 y decide `grep`, como siempre—. Con un estado de otra
+# forma (un acento, un punto, un parentesis: la expresion cambia) o un solo byte no ASCII en el texto
+# (los plegados de mayusculas de otros alfabetos), responde 1. Se resuelve en el locale C, donde pasar a
+# minusculas solo toca A-Z; no arranca ningun proceso, asi que el locale C no llega a ninguno.
+#
+# EL LOCALE SE GUARDA Y SE RESTAURA A MANO, NO CON UNA ASIGNACION DELANTE DE LA LLAMADA (SEC-127, R-052
+# §4). Esta funcion corre en el proceso que juzga, no en un subshell. `LC_ALL=C funcion …` se deshace al
+# volver solo desde bash 5.1: en bash 5.0 o anterior, en modo POSIX, la asignacion delante de una funcion
+# PERSISTE (NEWS de bash-5.1, punto «o»), y el recorrido de destinos de despues correria en C, donde
+# `grep -i` no pliega las mayusculas que no son ASCII. Aqui solo hay asignaciones y un `unset` sueltos,
+# que todo bash, en todo modo, aplica y deshace igual; sin subshell y sin procesos.
+arnes_estado_ausente() {   # <texto> <estado terminal>
+  local rc=0 habia="${LC_ALL+1}" antes="${LC_ALL-}"
+  # El stderr del grupo es solo el aviso de bash al cambiar a, o RESTAURAR, un locale del entorno que no
+  # esta instalado (la funcion no escribe nada): sin el, cada llamada anadiria una linea que v1.35.0 no
+  # escribia.
+  { LC_ALL=C
+    _arnes_estado_ausente_c "$1" "$2" || rc=$?
+    if [ -n "$habia" ]; then LC_ALL="$antes"; else unset LC_ALL; fi
+  } 2>/dev/null
+  return "$rc"
+}
+_arnes_estado_ausente_c() {
+  case "$2" in ''|*[!A-Za-z0-9_-]*) return 1 ;; esac
+  case "$1" in *[![:ascii:]]*) return 1 ;; esac
+  [[ ${1,,} != *"${2,,}"* ]]
+}
+
+# LOS DESTINOS DE UN COMANDO, ANALIZADO UNA VEZ POR INVOCACION (CA-54, nota del 2026-10-03).
+# `guard-codigo` y `guard-completado` corren en el mismo proceso (`guard.sh`) y analizaban el MISMO
+# comando dos veces, cada una en su sustitucion de comandos: medido, un segundo entero de los ~9 s de
+# un comando de 128 KiB. Aqui el analisis se hace como siempre —en una sustitucion de comandos, con su
+# codigo de salida— y su resultado se memoriza por el texto exacto del comando; la segunda puerta lo
+# reutiliza. -> ARNES_ESCRITURAS, y el codigo de salida de `arnes_bash_escrituras`.
+#
+# SE REUTILIZA SOLO CUANDO REPETIR NO DIRIA NADA MAS. El analisis es determinista sobre el texto, asi
+# que repetirlo da la misma salida y el mismo codigo; lo unico que una segunda pasada podia anadir es
+# lo que escribe en stderr al resolver el techo (`arnes_techo_bash`: leer el manifiesto y avisar), y
+# eso solo ocurre si el material supera el techo por defecto. Por eso se repite, como en v1.35.0,
+# cuando resolver el techo en esa segunda pasada podria leer el manifiesto o avisar: el comando supera
+# `ARNES_BASH_MAX_ANALISIS` (el material analizado nunca es mayor que el comando), el techo no esta
+# resuelto en este proceso y, o el manifiesto aun no se leyo aqui, o el valor declarado supera el
+# maximo. En cualquier otro caso la segunda pasada no escribiria nada en stderr ni arrancaria ningun
+# proceso, y reutilizar es indistinguible de repetir salvo en el reloj y en una sustitucion de comandos
+# menos.
+ARNES_ESCR_LISTO=''; ARNES_ESCR_CMD=''; ARNES_ESCR_OUT=''; ARNES_ESCR_RC=0
+arnes_escrituras_de() {   # <comando> -> ARNES_ESCRITURAS ; rc de `arnes_bash_escrituras`
+  local rc
+  if [ -n "$ARNES_ESCR_LISTO" ] && [ "$1" = "$ARNES_ESCR_CMD" ]; then
+    if [ "${#1}" -le "$ARNES_BASH_MAX_ANALISIS" ] || [ -n "${ARNES_TECHO:-}" ] \
+       || { [ -n "${ARNES_MANIFEST_LISTO:-}" ] && { [ -z "${ARNES_BASH_MAX:-}" ] || ! _arnes_techo_excede; }; }; then
+      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"
+      return "$ARNES_ESCR_RC"
+    fi
+  fi
+  ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"; rc=$?
+  ARNES_ESCR_LISTO=1; ARNES_ESCR_CMD="$1"; ARNES_ESCR_OUT="$ARNES_ESCRITURAS"; ARNES_ESCR_RC=$rc
+  return "$rc"
 }
 
 # --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------

@@ -26,9 +26,16 @@
 # fuera del vocabulario, p. ej.) como `systemMessage`. Nunca junto a una denegación: dos
 # salidas JSON en el mismo stdout no son un objeto válido, y una denegación ya lo dice
 # todo.
-set -uo pipefail
+#
+# UN FINAL QUE NO ES UN JUICIO NO DEJA PASAR (SEC-129, SEC-115; REQ-007 CA-68). Antes de cargar nada,
+# `entrada.sh`: sale del modo POSIX heredado (R1), arranca el plazo propio y pone la trampa de salida.
+# Y cada guardián corre en un grupo que escribe su marca al terminar: un guardián que el intérprete
+# abandona a mitad no la escribe, y `arnes_juicio_puerta` deniega (R2).
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# shellcheck source=/dev/null
+. "$DIR/entrada.sh"
+set -uo pipefail
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 # shellcheck source=/dev/null
@@ -38,9 +45,14 @@ DIR="${BASH_SOURCE[0]%/*}"
 # shellcheck source=/dev/null
 . "$DIR/guard-completado.sh"
 
-arnes_preludio || exit 0
-arnes_guard_git
-arnes_guard_codigo
-arnes_guard_completado
+arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+arnes_plazo
+{ arnes_guard_git; ARNES_PUERTA_FIN=guard-git; }
+arnes_juicio_puerta guard-git
+{ arnes_guard_codigo; ARNES_PUERTA_FIN=guard-codigo; }
+arnes_juicio_puerta guard-codigo
+{ arnes_guard_completado; ARNES_PUERTA_FIN=guard-completado; }
+arnes_juicio_puerta guard-completado
 arnes_emitir_avisos
+ARNES_JUICIO=fin
 exit 0

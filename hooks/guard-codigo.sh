@@ -19,6 +19,9 @@
 set -uo pipefail
 DIR="${BASH_SOURCE[0]%/*}"
 [ "$DIR" = "${BASH_SOURCE[0]}" ] && DIR=.
+# Ejecutado por su cuenta es un punto de entrada: R1, plazo y trampa de salida (entrada.sh, SEC-129/115).
+# shellcheck source=/dev/null
+[ "${BASH_SOURCE[0]}" != "$0" ] || . "$DIR/entrada.sh"
 # shellcheck source=/dev/null
 . "$DIR/lib.sh"
 
@@ -31,6 +34,22 @@ arnes_guard_codigo() {
   local objetivo="" via_bash=0 exceso=0 cand quien escrituras="" rc nodet=0 nd_ruta='' nd_causa='' nd_arreglo=''
 
   arnes_parse_input
+  arnes_deny_entrada_ilegible   # SEC-120: a todo agente
+  # SEC-120 (REQ-007 CA-47, punto 20): el `file_path` o el `command` que esta puerta juzga no es texto.
+  # Un `file_path` que no es texto NO DEJA PASAR A NADIE, tampoco al agente de codigo (SEC-128, CA-47
+  # punto 20, P-136-J): la regla del enlace de abajo (SEC-004, CA-49 (i)) le alcanza a el tambien, y
+  # sin el texto del destino no se puede aplicar. Un `command` que no es texto si deja pasar al agente de
+  # codigo, como un `tool_name` que no identifica ninguna herramienta (abajo): por `Bash` esta puerta no
+  # le juzga nada. El manifiesto se lee solo en este camino.
+  if arnes_campo_no_texto; then
+    arnes_parse_manifest
+    if [ "$ARNES_TOOL" = Bash ] && [ -n "$ARNES_AGENT_ID" ] && arnes_agente_coincide "$ARNES_AGENT_TYPE" "${ARNES_AGENTE_CODIGO:-}"; then
+      return 0
+    fi
+    if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+    else quien="la sesión coordinadora"; fi
+    arnes_deny_no_texto "esta puerta no puede saber si escribe codigo de la app ni en que archivo" "intento de $quien; "
+  fi
   # REQ-007 CA-47, punto 13: un `tool_name` con un salto de linea no identifica ninguna herramienta
   # —leido entero, `Bash` seguido de un salto ya no es `Bash`—, y tratarlo como una herramienta que
   # esta puerta no juzga lo dejaria pasar. Es una escritura no determinable (punto 7): solo el agente
@@ -58,7 +77,8 @@ arnes_guard_codigo() {
     via_bash=1
     # El codigo de salida NO se ignora: `$ARNES_RC_EXCESO` significa "no analice",
     # y una lista vacia por no haber analizado no puede leerse como "no escribe nada".
-    escrituras="$(arnes_bash_escrituras "$ARNES_CMD")"; rc=$?
+    # Analizado una vez por invocacion: `guard-completado` reutiliza este resultado (`arnes_escrituras_de`).
+    arnes_escrituras_de "$ARNES_CMD"; rc=$?; escrituras="$ARNES_ESCRITURAS"
     if [ "$rc" -eq "$ARNES_RC_EXCESO" ]; then
       # Fail-closed CON destinatario: el guardian solo prohibe a quien no es el agente
       # de codigo, asi que el rechazo por tamano se decide abajo, en el mismo sitio y
@@ -80,6 +100,10 @@ arnes_guard_codigo() {
       # una continuacion de linea. A TODO agente, el de codigo incluido: no pasa por la regla de destinatarios
       # de abajo. Motivo unico de las cuatro puertas.
       arnes_deny_lc10 guard-codigo
+    elif [ "$rc" -ne 0 ]; then
+      # R2 (SEC-129, REQ-007 CA-68 (i)): un codigo fuera del vocabulario del analizador no es «no escribe»:
+      # el analisis no concluyo (medido en modo POSIX: rc 1 con la lista vacia). A TODO agente.
+      arnes_deny_rc_analizador "$rc" guard-codigo
     else
       # EL MANIFIESTO SE LEE SOLO SI HAY UNA ESCRITURA QUE JUZGAR (QA-104).
       #
@@ -179,7 +203,10 @@ arnes_guard_codigo() {
 
 # Ejecutado directamente (no `source`): hace su propio preludio y corre.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
-  arnes_preludio || exit 0
-  arnes_guard_codigo
+  arnes_preludio guardian || { ARNES_JUICIO=fin; exit 0; }
+  arnes_plazo
+  { arnes_guard_codigo; ARNES_PUERTA_FIN=guard-codigo; }
+  arnes_juicio_puerta guard-codigo
+  ARNES_JUICIO=fin
   exit 0
 fi
