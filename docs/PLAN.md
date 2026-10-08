@@ -418,7 +418,24 @@ cuando deben.
 
 Que el arnés ayude a construir aplicaciones **más rápido, con menos coste y sin perder el control** de cinco cosas: **fidelidad al encargo** (los agentes no cambian requisitos ni alcance sin autorización); **un plan de desarrollo** (qué va primero, qué depende de qué, cuándo una entrega está terminada); **autonomía útil** (continuar lo autorizado sin pararse por cada ajuste menor); **calidad y seguridad proporcionales** (detectar errores sin convertir cada corrección en una cadena interminable); y **medición real** (tiempo, tokens y coste hasta una entrega aprobada; ningún ahorro se presume sin evidencia). Toda ficha de 1.37 y 1.38 se juzga contra esto.
 
-## 1.36.0 — plan vigente por intervenciones (decisiones del propietario del 2026-10-03 y del 2026-10-05)
+## 1.37.0 — plan vigente (orden decidido por el propietario el 2026-10-08; literal en `PENDING_APPROVAL.md` § Resueltas)
+
+**Coordinadora en Opus.** La prueba con Fable (ventana 1.36.0, desde `098896c`) se repite, si se repite, sobre una intervención acotada **después** de F-136-17. Cada intervención lleva su autorización con la forma de `templates/autorizacion.md`; **ninguna está autorizada todavía.**
+
+| Orden | Intervención | Qué | Estado |
+|---|---|---|---|
+| 1 | **F-136-17** | Partir `REQ-007.md` (660 KB) y sacar su historial a `historial/` con la rotación por sección del arnés; es la causa del coste del analista en 1.36.0 (≈ 2,9 M tokens en el tramo final) y de que los techos de SEC-115 lo alcancen | Pendiente de autorización |
+| 2 | **a)** | Plan de desarrollo: `docs/PLAN.md` como fuente; la coordinadora continúa sola salvo gates; línea derivada en ESTADO (recoge la ficha del campo derivado) | — |
+| 3 | **c)** | Adelgazamiento con rigor proporcional: roles, gates y la tabla de §13 a `.arnes/config.json`; `AGENTS.md` a la mitad; historia a `docs/`; rigor proporcional por defecto; analista en modelo más barato y `/compact` entre fases | — |
+| 4 | **b)** | Post-condición de filesystem (foto antes, comparación después, reversión); el hueco C pasa de límite a detección; cierra la clase de PR-136-1 a 6 | — |
+| 5 | **d)** | Spike «ArnesJuan como mod»: `guard-git` como mod, medido contra el banco | — |
+| 6 | **2b de CA-54** | QA-007-01 (M/N, M0, MD en anfitrión sano), la recursión (F-136-5/6), **y los `contrato` declarados de 1.36.0**: F-136-18 (QA-007-09), F-136-19 (QA-007-11 (b)), F-136-20/21 (frontera del entorno, lista blanca en `hooks.json`), F-136-22 (SEC-132 (a)/(b) con las lecciones L1–L5), F-136-23 (SEC-133), SEC-130 (F-136-12); los vectores adversarios al banco **antes** del intento | — |
+
+**Fichas sin orden asignado (1.38 u otra):** e) push de la candidata por el agente y el límite declarado de mods; f) a i) de 1.38.0; F-136-9 (`BASH_ENV`), F-136-14 (rotación sin aviso), F-136-15 (ESTADO siempre modificado), F-136-16 e INS-136-1 a 4 (instrumentos del banco), F-136-4 y F-136-8 (sondas de reloj de REQ-021/REQ-017).
+
+---
+
+## 1.36.0 — CERRADA Y PUBLICADA el 2026-10-08 (`main` `f22b905`, tag `v1.36.0`, PR #60); plan de la ventana, conservado tal cual
 
 **Este es el plan de versión vigente de 1.36.0.** Lo escribe la coordinadora con las decisiones del propietario, literales en `PENDING_APPROVAL.md` § Resueltas: «Alcance de 1.36.0», la décima autorización y P-136-A a P-136-F. Cada intervención lleva su propia autorización con la forma de `templates/autorizacion.md`. El contrato vive en `requirements/REQ-007.md`.
 

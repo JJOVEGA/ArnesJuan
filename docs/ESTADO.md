@@ -10,7 +10,20 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — ventana 1.36.0 abierta; 1.35.0 publicada (2026-10-03)
+## ⏸ RETOMAR AQUÍ — ventana 1.37.0 abierta; 1.36.0 publicada (2026-10-08)
+
+**Este bloque es el único vigente en la rama `cand/1.37.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`, misma carpeta). Todo lo que está debajo es historia.
+
+- **1.36.0 publicada el 2026-10-08:** `main` en `f22b905` (fusión del PR #60), tag `v1.36.0`. CI de `main`: run `37790430987` (en curso al registrar). Registro: `PENDING_APPROVAL.md` § Resueltas y la línea «PUBLICADA» de las notas `[1.36.0]`.
+- **Cabeza de partida de 1.37:** `cand/1.37.0` desde `f22b905`. Sin push.
+- **Instalación estable:** se actualiza a 1.36.0 en este host en este cierre; comprobación en la entrada del CHANGELOG. `arnes_version` de `.arnes/config.json` sigue en 1.33.0 (decisión del propietario; la escribe `/arnes-upgrade`).
+- **Plan de 1.37.0** (`docs/PLAN.md` § 1.37.0; literal del propietario en la cola): **F-136-17 primero**, después a), c), b), d) y la 2b de CA-54 con los `contrato` declarados. **Coordinadora en Opus.** Ninguna intervención autorizada todavía.
+- **Plan autorizado vigente: ninguno.** Siguiente acción: el propietario autoriza F-136-17 (forma de `templates/autorizacion.md`); la coordinadora encarga al analista el contrato (qué sección de REQ-007 es historia; `rotacion.artefactos` en el manifiesto, archivo protegido → `desarrollador` con gate humano) y mide después que el `Write` entero de `REQ-007.md` vuelve a caber bajo el techo de 393 216 bytes.
+- **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
+
+## Historia — ventana 1.36.0 (2026-10-03 → 2026-10-08), publicada en `f22b905`
+
+*(Historia desde el 2026-10-08: lo sustituye el bloque de 1.37.0, arriba. El texto siguiente no se reescribe.)*
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 
@@ -552,7 +565,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-07 19:05
+## Estado derivado — 2026-10-07 19:11
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -562,7 +575,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `c0dfc47` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.36.0` @ `a23a026` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8

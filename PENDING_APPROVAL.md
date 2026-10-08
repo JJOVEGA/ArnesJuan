@@ -47,6 +47,25 @@ _(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-08) — **v1.36.0 PUBLICADA** (`main` `f22b905`, tag `v1.36.0`, PR #60) **y orden del plan de 1.37.0**: F-136-17 primero; después a), c), b), d) y la 2b de CA-54; coordinadora en Opus
+
+**Texto del propietario, literal** (mensaje del 2026-10-08 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Publicada: main <cabeza de la fusión>, tag v1.36.0, PR #60. Registra la
+> publicación, actualiza la instalación estable en este host y abre 1.37.
+> Orden del plan de 1.37, decidido: primero F-136-17 (partir REQ-007 y sacar
+> su historial; es la causa del coste del analista), después a) plan de
+> desarrollo, c) adelgazamiento con rigor proporcional, b) post-condición de
+> filesystem, d) spike de guard-git como mod, y la 2b de CA-54 con los
+> contrato declarados. Coordinadora en Opus para 1.37; la prueba con Fable
+> se repite, si se repite, sobre una intervención acotada después de
+> F-136-17.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Comprobado:** `origin/main` = `f22b905` (fusión de `3956a6f` y `a23a026`); `v1.36.0` → `f22b905`; PR #60 `MERGED` 2026-10-08T14:11:23Z; CI de `main` run `37790430987` en curso al registrar.
+- **Apertura de 1.37.0:** rama `cand/1.37.0` desde `f22b905`; plan en `docs/PLAN.md` § 1.37.0 con el orden literal del propietario; cada intervención con su autorización en la forma de `templates/autorizacion.md`. **Ninguna intervención está autorizada todavía:** F-136-17 empieza con su encargo al `analista-requerimientos` cuando el propietario lo autorice.
+- **La cola queda vacía.**
+
 ### RESUELTA (propietario, 2026-10-07) — **P-136-V: SEC-133 límite declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia)**; write-back de §13, notas `[1.36.0]` con fecha, último commit, push. Nada más entra
 
 **Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

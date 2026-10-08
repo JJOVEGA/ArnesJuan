@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-08 · Registro de la publicación de v1.36.0: `main` `f22b905`, tag `v1.36.0`, PR #60; apertura de la ventana 1.37.0 con el orden decidido por el propietario; coordinadora en Opus
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 (este registro; la ventana 1.37 va con Opus) · agente: la coordinadora. Rama `cand/1.37.0`, desde `f22b905`.
+
+- **Comprobado con `git` y `gh`:** `origin/main` = `f22b905`, fusión de `3956a6f` y `a23a026`; `v1.36.0` apunta a `f22b905`; PR #60 `MERGED` (`mergedAt` 2026-10-08T14:11:23Z), `headRefOid` `a23a026`. CI de `main`: run `37790430987`, en curso al registrar.
+- **CHANGELOG:** la entrada `[1.36.0]` pasa de candidato a publicada (fecha 2026-10-08 y línea «PUBLICADA»); su texto no se reescribe.
+- **Decisión del propietario, literal, en la cola:** la publicación y el **orden del plan de 1.37**: primero F-136-17 (partir `REQ-007.md` y sacar su historial: la causa del coste del analista), después a) plan de desarrollo, c) adelgazamiento con rigor proporcional, b) post-condición de filesystem, d) spike de `guard-git` como mod, y la 2b de CA-54 con los `contrato` declarados. **Coordinadora en Opus para 1.37**; la prueba con Fable se repite, si se repite, sobre una intervención acotada después de F-136-17.
+- **`docs/PLAN.md`:** 1.36.0 cerrada y publicada; 1.37.0 con ese orden. **ESTADO:** bloque vigente nuevo de 1.37; lo anterior, historia.
+- **Instalación estable:** se actualiza a 1.36.0 en este host en este mismo cierre (resultado en la entrada siguiente).
+- **Avance (regla 6):** 1.36.0 publicada; 1.37 abierta con su primer trabajo, F-136-17, por delante.
+
 ## [Interno] — 2026-10-07 · Corrección del commit `da0525b`: el recuadro de aviso del borrador se había copiado al CHANGELOG delante de la entrada `[1.36.0]` (un `index` que casó con una frase partida); retirado; ESTADO cerrado; borrador con su nota en el sitio correcto
 > Origen: GitHub (commit local con push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
@@ -9,8 +19,10 @@ CHANGELOG — ArnesJuan
 - ESTADO: «Plan autorizado vigente: ninguno en ejecución»; el cierre de 1.36.0 queda en manos del propietario.
 - **Avance (regla 6):** candidata completa; el CI corre sobre esta cabeza.
 
-## [1.36.0] — 2026-10-07 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
+## [1.36.0] — 2026-10-08 · Una puerta que no puede leer su entrada, terminar su juicio o emitir su decisión deja de dejar pasar —SEC-120, SEC-115, SEC-118 y SEC-129 quedan `mitigado`, con dos techos de tamaño como cambio de compatibilidad—, el análisis de `Bash` en el máximo baja de 5 s, y el plazo que no alcanza a las quality gates sale como límite declarado
 
+
+> **PUBLICADA el 2026-10-08.** `main` en `f22b905` (fusión del PR #60, `cand/1.36.0`), tag `v1.36.0` sobre esa fusión. CI de `main`: run `37790430987`, en curso al registrar (su resultado, en la entrada de registro de la publicación). Notas fechadas el 2026-10-07 (su fecha anterior en este encabezado); el registro de la publicación lo añade la coordinadora el 2026-10-08 por encargo del propietario; el texto de las notas no se reescribe, y donde dice «la cabeza final» se lee `a23a026`.
 > Origen: GitHub (commit de versión) · usuario: Juan · modelo de IA: Fable 5.1 (coordinadora) y Opus 5.5 (subagentes) ·
 > agentes: `desarrollador` (Opus 5.5), `qa-tester` (Opus 5.5, por la decisión del propietario de `AGENTS.md` §5),
 > `analista-requerimientos` (Opus 5.5), `auditor-seguridad` (Opus 5.5) y la coordinadora (Fable 5.1) ·
