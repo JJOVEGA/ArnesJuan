@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `cand/1.37.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`, misma carpeta). Todo lo que está debajo es historia.
 
-- **1.36.0 publicada el 2026-10-08:** `main` en `f22b905` (fusión del PR #60), tag `v1.36.0`. CI de `main`: run `37790430987` (en curso al registrar). Registro: `PENDING_APPROVAL.md` § Resueltas y la línea «PUBLICADA» de las notas `[1.36.0]`.
+- **1.36.0 publicada el 2026-10-08:** `main` en `f22b905` (fusión del PR #60), tag `v1.36.0`. CI de `main`: run `37790430987`, **success** (2278/0/38; autoprueba 117/0). Registro: `PENDING_APPROVAL.md` § Resueltas y la línea «PUBLICADA» de las notas `[1.36.0]`.
 - **Cabeza de partida de 1.37:** `cand/1.37.0` desde `f22b905`. Sin push.
 - **Instalación estable: 1.36.0** en este host (alcances `user` y `project`, `gitCommitSha` `f22b905`; cada archivo de `hooks/` idéntico al del tag, `entrada.sh` incluido). **Rige desde el próximo reinicio de Claude Code**; esta sesión sigue con los hooks de 1.35.0 cargados. `arnes_version` de `.arnes/config.json` sigue en 1.33.0 (decisión del propietario; la escribe `/arnes-upgrade`).
 - **Plan de 1.37.0** (`docs/PLAN.md` § 1.37.0; literal del propietario en la cola): **F-136-17 primero**, después a), c), b), d) y la 2b de CA-54 con los `contrato` declarados. **Coordinadora en Opus.** Ninguna intervención autorizada todavía.

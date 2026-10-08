@@ -62,7 +62,7 @@ _(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resuelt
 > F-136-17.
 
 **Lo que añade la coordinadora, rotulado como suyo:**
-- **Comprobado:** `origin/main` = `f22b905` (fusión de `3956a6f` y `a23a026`); `v1.36.0` → `f22b905`; PR #60 `MERGED` 2026-10-08T14:11:23Z; CI de `main` run `37790430987` en curso al registrar.
+- **Comprobado:** `origin/main` = `f22b905` (fusión de `3956a6f` y `a23a026`); `v1.36.0` → `f22b905`; PR #60 `MERGED` 2026-10-08T14:11:23Z; CI de `main` run `37790430987`: **success** (2278/0/38; autoprueba 117/0).
 - **Apertura de 1.37.0:** rama `cand/1.37.0` desde `f22b905`; plan en `docs/PLAN.md` § 1.37.0 con el orden literal del propietario; cada intervención con su autorización en la forma de `templates/autorizacion.md`. **Ninguna intervención está autorizada todavía:** F-136-17 empieza con su encargo al `analista-requerimientos` cuando el propietario lo autorice.
 - **La cola queda vacía.**
 
