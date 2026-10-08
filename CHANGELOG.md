@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-08 · Instalación estable actualizada a 1.36.0 en este host (WSL2)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
+
+- `claude plugin marketplace update arnes-juan` y `claude plugin update arnes-juan@arnes-juan` en los alcances `user` y `project`: **1.35.0 → 1.36.0**, `gitCommitSha` `f22b905`. `plugin.json` de la caché en 1.36.0; cada `hooks/*` comparado con `git show v1.36.0:` es idéntico; `hooks/entrada.sh` presente. **Rige desde el próximo reinicio.**
+- **Avance (regla 6):** 1.36.0 gobierna el desarrollo de 1.37 en cuanto se reinicie la sesión.
+
 ## [GitHub] — 2026-10-08 · Registro de la publicación de v1.36.0: `main` `f22b905`, tag `v1.36.0`, PR #60; apertura de la ventana 1.37.0 con el orden decidido por el propietario; coordinadora en Opus
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 (este registro; la ventana 1.37 va con Opus) · agente: la coordinadora. Rama `cand/1.37.0`, desde `f22b905`.
 
