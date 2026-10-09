@@ -18,7 +18,12 @@
 - **Cabeza de partida de 1.37:** `cand/1.37.0` desde `f22b905`. Sin push.
 - **Instalación estable: 1.36.0** en este host (alcances `user` y `project`, `gitCommitSha` `f22b905`; cada archivo de `hooks/` idéntico al del tag, `entrada.sh` incluido). **Rige desde el próximo reinicio de Claude Code**; esta sesión sigue con los hooks de 1.35.0 cargados. `arnes_version` de `.arnes/config.json` sigue en 1.33.0 (decisión del propietario; la escribe `/arnes-upgrade`).
 - **Plan de 1.37.0** (`docs/PLAN.md` § 1.37.0; literal del propietario en la cola): **F-136-17 primero**, después a), c), b), d) y la 2b de CA-54 con los `contrato` declarados. **Coordinadora en Opus.** Ninguna intervención autorizada todavía.
-- **Plan autorizado vigente: ninguno.** Siguiente acción: el propietario autoriza F-136-17 (forma de `templates/autorizacion.md`); la coordinadora encarga al analista el contrato (qué sección de REQ-007 es historia; `rotacion.artefactos` en el manifiesto, archivo protegido → `desarrollador` con gate humano) y mide después que el `Write` entero de `REQ-007.md` vuelve a caber bajo el techo de 393 216 bytes.
+- **Plan autorizado vigente: undécima autorización (F-136-17), 2026-10-09 — `REQ-007.md` deja de ser un archivo de 660 KB. Fase 1 de 4 en curso.** Literal del propietario en `PENDING_APPROVAL.md` § Resueltas. Fases: **1** analista (contrato: qué es historia con líneas exactas, destino, enlaces y anclas, cómo se verifica que no se pierde ninguna línea) → **2** analista (ejecuta la partición) → **3** QA (verificación, enlaces, banco, mide una comisión del analista sobre el REQ nuevo; una pasada correctiva) → **4** seguridad (que ningún hallazgo abierto ni criterio vigente desapareció). **Cada fase termina en commit local y la siguiente empieza sin pedir permiso.**
+  - **Medida de éxito del propietario:** `REQ-007.md` por debajo del techo de un `Write` entero (393 216 bytes, `hooks/lib.sh:1673`) y una comisión del analista sobre él por debajo de 300 k tokens, sobre el mismo tipo de encargo que en 1.36.0.
+  - **Punto de partida medido hoy (cabeza `23feefe`):** 868 108 bytes y 4 857 líneas —no los 660 431 de la ficha F-136-17, el REQ creció en 1.36.0—, así que hay que quitar **más de 474 892 bytes (55 %)**. Secciones: cabecera 38 287 (no se toca, es el contrato), Historia 1 433, **Criterios de aceptación 419 441**, Notas/alcance 41 229, Preguntas abiertas 34 936, **Trazabilidad 144 287**, **Historial de cambios 188 495**. Las dos últimas suman 332 782 y **no alcanzan**: la definición de historia del propietario hay que aplicarla también dentro de los criterios.
+  - **Destino:** `docs/historia/REQ-007/` por versión, con índice y un puntero en REQ-007 por sección movida. Nada se borra. Precedente: `docs/historia/propuesta-v1.35.0/`.
+  - **La coordinadora para y pregunta sólo en:** la edición de `rotacion.artefactos` en `.arnes/config.json`; un criterio o hallazgo que no se sepa si es historia o vigente; más pasadas que la prevista; publicar. **Límites:** no `hooks/`, `tools/`, `tests/` ni `AGENTS.md`; nada de las piezas a–d.
+  - **Pendiente del propietario:** `cand/1.37.0` lleva **3 commits locales sin push** (`f7d3c0d`, `408b433`, `23feefe`); se le recuerda al final de cada fase.
 - **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
 
 ## Historia — ventana 1.36.0 (2026-10-03 → 2026-10-08), publicada en `f22b905`
@@ -565,7 +570,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-07 19:11
+## Estado derivado — 2026-10-09 15:44
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -575,8 +580,8 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.36.0` @ `a23a026` — CON CAMBIOS SIN COMITEAR
-**Arnés:** plugin instalado `1.35.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
+**Repositorio:** `cand/1.37.0` @ `23feefe` — CON CAMBIOS SIN COMITEAR
+**Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0

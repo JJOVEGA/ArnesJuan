@@ -47,6 +47,67 @@ _(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-09) — **Undécima autorización: F-136-17, `REQ-007.md` deja de ser un archivo de 660 KB** (plan de 4 fases; la coordinadora para sólo en las cuatro condiciones declaradas)
+
+**Texto del propietario, literal** (mensaje del 2026-10-09 a la sesión coordinadora del worktree `ArnesJuan-v1.36`; los encabezados `##` del original van citados con `> ` para no cerrar esta sección):
+
+> Undécima autorización — F-136-17: REQ-007 deja de ser un archivo de 660 KB.
+>
+> ## Decisiones del propietario
+> - Historia = todo lo de REQ-007 (Historial, versionados, notas de
+>   decisiones) anterior a la publicación de v1.36.0 que no sea un criterio
+>   vigente ni un hallazgo abierto. Los criterios (CA-xx) y sus notas vigentes
+>   se quedan; lo demás sale.
+> - Destino de la historia: docs/historia/REQ-007/ por versión, con un índice;
+>   REQ-007 conserva un puntero por sección movida. Nada se borra.
+> - rotacion.artefactos: autorizo declararlo ahí si el analista lo justifica;
+>   es archivo protegido y lleva gate humano, así que esa edición concreta me
+>   la presentas antes de hacerla.
+> - Medida de éxito: REQ-007 por debajo del techo de un Write entero (REQ-014)
+>   y, de paso, una comisión del analista sobre REQ-007 por debajo de 300k
+>   tokens, medida sobre el mismo tipo de encargo que en 1.36.0.
+> - Si al partirlo aparece un criterio que ya no es cierto, se registra como
+>   ficha; no se corrige en esta intervención.
+>
+> ## Plan autorizado (cada fase termina en commit local; la siguiente empieza
+> ## sin pedir permiso)
+> Fase 1 — analista: contrato: qué secciones son historia (lista exacta con
+>   líneas), estructura de destino, qué enlaces y anclas cambian (índice,
+>   guía, registro de seguridad, docs/qa, PLAN) y cómo se verifica que no se
+>   pierde ninguna línea (conteo y diff de contenido movido). Propuesta de
+>   rotacion.artefactos, si aplica, como ficha para mi gate.
+> Fase 2 — analista (es texto, no código): ejecuta la partición según el
+>   contrato; tools/arnes-lectura.sh sin anomalías; verificación de que todo
+>   lo movido existe en destino línea a línea.
+> Fase 3 — QA: comprueba la verificación, los enlaces, que el banco no cambia
+>   (las secciones que crean REQ propios no dependen de REQ-007), y mide una
+>   comisión del analista sobre el REQ nuevo. Una pasada correctiva.
+> Fase 4 — seguridad: sólo que ningún hallazgo abierto ni criterio vigente
+>   desapareció. Commit validado.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, índices, estructura de docs/historia, orden y
+> presupuesto de los despachos, registrar fichas sin repararlas.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> La edición de rotacion.artefactos; cualquier criterio o hallazgo que no
+> sepas si es historia o vigente; más pasadas que la prevista; publicar.
+>
+> ## Si la sesión se corta
+> Lee ESTADO y la cola y continúa desde la última fase comiteada.
+>
+> ## Límites
+> No hooks/, tools/, tests/ ni AGENTS.md. Nada de las piezas a–d. Push de la
+> candidata: recordármelo al final de cada fase.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Medido en disco hoy (cabeza `23feefe`), no estimado:** `requirements/REQ-007.md` son **868 108 bytes** y 4 857 líneas, no los 660 431 que registró la ficha F-136-17 en 1.36.0; el REQ creció durante esa ventana. El techo de un `Write` entero es `ARNES_PIEZAS_MAX_BYTES` = **393 216 bytes** (`hooks/lib.sh:1673`), así que la medida de éxito exige quitar **más de 474 892 bytes**, el 55 % del archivo.
+- **Consecuencia aritmética que el encargo de la fase 1 lleva por escrito:** las dos secciones que son historia por su nombre —«Historial de cambios» (188 495 bytes) y «Trazabilidad» (144 287)— suman 332 782 y dejarían el REQ en **535 326 bytes, todavía por encima del techo**. La sección «Criterios de aceptación» mide ella sola **419 441 bytes**. Para cumplir la medida hay que aplicar la definición de historia del propietario **también dentro de los criterios** —sus notas de versiones anteriores a 1.36.0 que no sean nota vigente—, que es justo donde la decisión de «historia o vigente» deja de ser mecánica. De ahí que la condición de parada «cualquier criterio o hallazgo que no sepas si es historia o vigente» sea la que más probablemente se ejerza.
+- **Cabecera:** mide 38 287 bytes (el campo `Hallazgos abiertos:` ronda los 13,9 KB, bajo su techo de 16 384). **No se toca:** es el contrato y lo leen las puertas.
+- **Precedente del destino:** `docs/historia/propuesta-v1.35.0/`, movido con `git mv` en el cierre de 1.36.0.
+- **Despacho:** fase 1 al `analista-requerimientos`. La edición de `.arnes/config.json` (`rotacion.artefactos`) **no se despacha**: si el analista la justifica, vuelve aquí como entrada pendiente antes de hacerse.
+- **Recordatorio pendiente al propietario:** `cand/1.37.0` lleva **3 commits locales sin push** (`f7d3c0d`, `408b433`, `23feefe`), y el push se le recuerda al final de cada fase.
+
 ### RESUELTA (propietario, 2026-10-08) — **v1.36.0 PUBLICADA** (`main` `f22b905`, tag `v1.36.0`, PR #60) **y orden del plan de 1.37.0**: F-136-17 primero; después a), c), b), d) y la 2b de CA-54; coordinadora en Opus
 
 **Texto del propietario, literal** (mensaje del 2026-10-08 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

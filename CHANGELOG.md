@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-09 · Undécima autorización registrada: F-136-17, `REQ-007.md` deja de ser un archivo de 660 KB (plan de 4 fases); fase 1 encargada al `analista-requerimientos`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5 · agente: la coordinadora. Rama `cand/1.37.0`.
+
+- **Cola:** el texto literal del propietario queda en `PENDING_APPROVAL.md` § Resueltas (los `##` del original, citados con `> ` para no cerrar la sección). La cola sigue **vacía** en `## Pendientes`.
+- **Medido en disco, no estimado:** `requirements/REQ-007.md` son **868 108 bytes** y 4 857 líneas —la ficha F-136-17 registró 660 431 en 1.36.0; el REQ creció dentro de esa ventana—. El techo de un `Write` entero es 393 216 (`hooks/lib.sh:1673`), así que la medida de éxito exige quitar **más de 474 892 bytes, el 55 %**.
+- **Lo que esa aritmética obliga, y va en el encargo:** «Historial de cambios» (188 495) y «Trazabilidad» (144 287) suman 332 782 y dejarían el REQ en 535 326, **por encima del techo**; «Criterios de aceptación» mide ella sola 419 441. La definición de historia del propietario hay que aplicarla **también dentro de los criterios**, que es donde la decisión deja de ser mecánica — y por eso la condición de parada «un criterio o hallazgo que no sepas si es historia o vigente» es la que más probablemente se ejerza.
+- **ESTADO:** plan autorizado vigente, con las fases, la medida de éxito, el mapa de secciones con sus bytes, el destino (`docs/historia/REQ-007/`) y las cuatro condiciones de parada.
+- **No se despacha** la edición de `.arnes/config.json` (`rotacion.artefactos`): si el analista la justifica, vuelve a la cola como entrada pendiente antes de hacerse.
+- **Avance (regla 6):** la fase 1 (contrato de la partición) queda encargada; falta su entrega para poder ejecutar la fase 2.
+
 ## [Interno] — 2026-10-08 · Instalación estable actualizada a 1.36.0 en este host (WSL2)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
