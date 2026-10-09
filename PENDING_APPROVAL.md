@@ -43,7 +43,67 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resueltas.)_
+### P-137-A — F-136-17, fase 1: **una regla y un despacho**. (1) ¿Un `CA-xx` cuyo contenido es evidencia ya rendida de una versión publicada es «criterio vigente» o «versionado»? (2) ¿Quién ejecuta la fase 2, si el `analista-requerimientos` no tiene consola?
+
+**Qué trabajo detiene, y qué no.** Detiene la **fase 2** (ejecutar la partición) por las dos preguntas. **No detiene** el registro de fichas (hecho: F-137-1 a F-137-5 en `docs/PENDIENTES.md`) ni la lectura del contrato. **Y mientras esta entrada esté aquí, `guard-completado` deniega marcar cualquier REQ como `completado`** — no hay ninguno en camino de cierre, así que no bloquea nada más.
+
+---
+
+#### Decisión 1 — la regla que decide las cuatro dudas de golpe
+
+**La pregunta.** Tu definición dice: «Historia = todo lo de REQ-007 (Historial, versionados, notas de decisiones) anterior a la publicación de v1.36.0 que no sea un criterio vigente ni un hallazgo abierto. Los criterios (CA-xx) y sus notas vigentes se quedan». Las cuatro dudas del analista son **el mismo caso cuatro veces**: un bloque que es *a la vez* las dos cosas — lleva rótulo `CA-xx`, y su contenido es la **evidencia ya rendida** de una ventana que ya se publicó. ¿Se queda por el rótulo, o sale por el contenido?
+
+**Por qué no es una duda de matiz: sin resolverla, la medida de éxito no se cumple.** Cifras releídas del disco sobre la cabeza `cecf9b6` (`REQ-007.md` = 868 108 bytes; techo = 393 216):
+
+| Paso | Qué sale | Bytes que salen | REQ-007 queda en | ¿< 393 216? |
+|---|---|---|---|---|
+| Grupo 1 | Historial, Trazabilidad, Preguntas abiertas (todas resueltas) y 2 bloques de Notas | 379 680 | **488 428** | **NO**, por 95 212 |
+| + D1 | CA-66, evidencia por versionado (l. 1653–2194) | 63 799 | **424 629** | **NO**, por 31 413 |
+| + D2 | CA-69 entero (l. 3139–3397), «evidencia obligatoria de la ventana 1.36.0» | 25 778 | **398 851** | **NO**, por 5 635 |
+| + D3 | CA-67/CA-68, viñetas de técnica y medición (l. 2286–2348, 3036–3138) | 17 389 | **381 462** | **SÍ**, margen 11 754 |
+| + D4 | notas de versionados pasados en CA-24, CA-46, CA-54, CA-58, CA-60 | ≈ 18 800 | ≈ 362 700 | SÍ, margen ≈ 30 500 |
+
+**Léelo así: D1, D2 y D3 no son opcionales — sin las tres, el archivo no baja del techo. La única duda que de verdad es optativa es D4.** Y el margen con D1+D2+D3 es de ~11,7 KB sobre 393 216: **el 3 %**, que un par de criterios nuevos de 1.37 se comen.
+
+**Opciones:**
+
+- **(A) El rótulo `CA-xx` no inmuniza; lo que decide es qué hace el bloque.** Se queda el **enunciado** del criterio —lo que exige, lo que hay que cumplir— y sale el **registro de cómo se midió** en una versión ya publicada, con su puntero. Con dos salvaguardas que no se negocian: **(i)** lo que un **hallazgo abierto** cita por su nombre se queda donde está (SEC-124 cita «CA-66 punto 5»: ese punto no se mueve); **(ii)** lo que `AGENTS.md` §13 declara **norma única** —CA-67 y CA-68, «Límites declarados de 1.36.0»— conserva su **texto normativo** en REQ-007; sólo sale la crónica de construcción. Cumple la medida con D1+D2+D3 y deja D4 a criterio del analista bajo la misma regla.
+  - *Consecuencia:* REQ-007 queda en ≈ 362 700–381 500. La evidencia sigue existiendo y citable en `docs/historia/REQ-007/1.36.0/`. **Riesgo:** la frontera «enunciado» / «registro de medición» la traza el analista bloque a bloque, y en CA-67/CA-68 esa línea es fina — por eso la fase 4 (seguridad) existe y revisa exactamente eso.
+- **(B) El rótulo `CA-xx` manda: ningún criterio se mueve.** Sólo sale el Grupo 1.
+  - *Consecuencia:* REQ-007 queda en **488 428 bytes**, un 24 % **por encima** del techo. **La medida de éxito no se cumple y el `Write` entero sigue denegado**, que es el problema que F-136-17 existe para resolver. El trabajo rebaja el archivo un 44 % y no arregla nada de lo que te molestaba. Honesto, pero es decidir que la intervención no alcanza su objetivo.
+- **(C) Como (A), pero D4 también sale, y de entrada.** Margen ≈ 30 500 (el 8 %).
+  - *Consecuencia:* la más duradera —aguanta las ventanas siguientes sin volver a partir el archivo— y la que más toca criterios vigentes, incluido CA-54, que es donde más se ha discutido texto. Más superficie para la fase 4.
+
+**Mi recomendación: (A)**, y que D4 lo resuelva el analista aplicando la misma regla, caso por caso, en vez de decidirlo en bloque ahora. Motivo: (B) no cumple el objetivo y lo sabemos antes de empezar; entre (A) y (C), la diferencia es sólo **cuándo** se decide D4, y decidirlo con el bloque delante es mejor que decidirlo en una tabla. Si el analista llega a D4 y el margen le parece corto, lo aplica; si no, lo deja y queda ficha.
+
+#### Decisión 2 — quién ejecuta la fase 2
+
+**La pregunta.** Escribiste «Fase 2 — analista (es texto, no código)». **El `analista-requerimientos` no tiene la herramienta `Bash`** (su definición en el plugin le da `Read`, `Write`, `Edit`, `Glob`, `Grep`). Eso tiene dos consecuencias que no se arreglan con empeño: **(i)** no puede correr el conteo ni el `diff` que el propio contrato exige para demostrar que no se perdió una línea; **(ii)** no puede siquiera **leer** `REQ-007.md` entero —la herramienta `Read` corta en 256 KB—, así que no puede componer el archivo resultante sin retranscribir ~380 KB a mano. Una partición que no se puede verificar **no debe ejecutarse**.
+
+**Opciones:**
+
+- **(A) La ejecuta la coordinadora**, desde la especificación línea a línea del analista, con las órdenes de verificación del contrato; el analista escribe los punteros, el índice y la prosa del destino, y valida el resultado; QA verifica aparte en la fase 3.
+  - *Consecuencia:* ninguna comisión nueva, y respeta tu «es texto, no código». El movimiento es **determinista** (rangos de líneas) y **comprobable byte a byte**, así que quién lo teclee importa menos que que se compruebe — y se comprueba dos veces. **Riesgo:** mete a la coordinadora dentro del cuerpo de un REQ, que `AGENTS.md` §5 desaconseja por costumbre aunque ninguna puerta lo impida (`requirements/` no es `codigo_app.globs`).
+- **(B) La ejecuta el `desarrollador`**, que sí tiene consola y puede escribir en `requirements/`, bajo la misma especificación.
+  - *Consecuencia:* respeta la costumbre de §5 al milímetro. **Pero contradice tu paréntesis**: traes al dueño del código a mover texto, y gastas una comisión más en el rol más caro de convocar.
+- **(C) Lo intenta el analista sin consola.**
+  - *Consecuencia:* **no la recomiendo y la nombro para descartarla por escrito**: retranscribir 380 KB a mano, sin poder comprobar el resultado, es justo la forma en que se pierde una línea sin que nadie se entere. «Nada se borra» dejaría de ser verificable.
+
+**Mi recomendación: (A).**
+
+#### Lo que decido yo y no te pregunto (te lo digo, no te lo consulto)
+
+El campo **`Archivos:` de la cabecera** (l. 4) sí se actualiza en la fase 2 para declarar `docs/historia/REQ-007/`. Mi encargo le había dicho al analista que no tocara la cabecera y por eso lo devolvió; lo levanto yo porque me diste «trazabilidad», porque ninguna puerta lee ese campo —lo lee `tools/arnes-paralelo.sh` para decidir si dos comisiones son disjuntas— y porque un `Archivos:` desfasado es exactamente la clase de riesgo de SEC-020. No toco ningún otro campo de la cabecera.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-A»; si no, corrige lo que sea):
+
+> **P-137-A. (1) Regla: opción (A).** El rótulo `CA-xx` no inmuniza un bloque. Se queda el **enunciado** del criterio y sale el **registro de cómo se midió** en una versión ya publicada, con su puntero. Dos salvaguardas: lo que un **hallazgo abierto** cita por su nombre no se mueve (SEC-124 → «CA-66 punto 5» se queda), y lo que `AGENTS.md` §13 declara **norma única** (CA-67, CA-68, «Límites declarados de 1.36.0») conserva su texto normativo en REQ-007; sólo sale la crónica de construcción. D1, D2 y D3 salen. **D4 lo resuelve el analista aplicando esta misma regla, bloque a bloque**, y lo que deje fuera queda como ficha. Si al terminar el REQ no baja de 393 216, **no se ensancha la regla**: se para y se me dice con la cifra.
+> **(2) Fase 2: opción (A).** La ejecuta la coordinadora desde la especificación línea a línea del analista; el analista escribe los punteros, el índice y la prosa del destino y valida el resultado; QA verifica aparte en la fase 3. Queda constancia de que es una excepción de ejecución, no un cambio de dueño del texto.
+> **(3)** `Archivos:` se actualiza; el resto de la cabecera no se toca. **(4)** `rotacion.artefactos` **no** se declara: el analista lo desaconsejó y lo comprobé en el código (F-137-2 y F-137-3). No vuelve a preguntarse.
+
+_(Pendiente también, de antes: `cand/1.37.0` lleva **4 commits locales sin push**.)_
 
 ## Resueltas
 

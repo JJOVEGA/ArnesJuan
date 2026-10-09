@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-09 · F-136-17 fase 1 entregada: el contrato de la partición, con dos paradas declaradas (`P-137-A`) y cinco fichas
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora. Rama `cand/1.37.0`.
+
+- **Contrato:** `docs/arnes/v1.37.0-f136-17-fase1.md`. Nada ejecutado: `requirements/REQ-007.md` intacto, nada bajo `docs/historia/`, ningún criterio corregido, sin tocar `.arnes/config.json`.
+- **Parada 1, la que el propietario nombró:** cuatro dudas que son el mismo caso —un bloque con rótulo `CA-xx` cuyo contenido es **evidencia ya rendida de una versión publicada**—. **Cifras releídas del disco por la coordinadora, no copiadas del informe:** el Grupo 1 (historia sin discusión) son 379 680 bytes y deja el REQ en **488 428, un 24 % por encima del techo de 393 216**. D1 (CA-66, 63 799), D2 (CA-69, 25 778) y D3 (CA-67/68, 17 389) **son necesarias**, no opcionales; sólo D4 (≈ 18 800) es optativa. Sin la regla, la medida de éxito no se cumple — por eso la duda es una decisión y no un matiz.
+- **Parada 2, de despacho:** el `analista-requerimientos` **no tiene `Bash`** (el plugin le da `Read`, `Write`, `Edit`, `Glob`, `Grep`), así que no puede correr la verificación que el propio contrato exige ni leer el REQ entero (`Read` corta en 256 KB). La fase 2 no es ejecutable por él tal como está escrita; **una partición que no se puede verificar no se ejecuta**.
+- **Cola:** `P-137-A`, las dos decisiones **agrupadas** (regla 4) con opciones, consecuencias y bloque listo para adoptar. Detiene sólo la fase 2.
+- **Fichas `F-137-1` a `F-137-5`, registradas sin reparar** (decisión del propietario). Dos valen para todo el arnés y **no se sabían**: la rotación por sección **no puede** archivar el `## Historial de cambios` de un REQ porque es una **tabla** (`hooks/rotar-artefactos.sh:214-218`: las filas de tabla son continuaciones, y una sección sin entradas reconocibles no se rota, avisando en cada parada), y **aunque pudiera, no alcanzaría** (el Historial es el 21,7 %; el peso está en los criterios, que la rotación no toca por diseño). De ahí que **`rotacion.artefactos` no se proponga**: sobre este artefacto no movería un byte.
+- **Lo que decidió la coordinadora sin preguntar:** el campo `Archivos:` sí se actualiza en la fase 2 (lo lee `tools/arnes-paralelo.sh`, no una puerta; un `Archivos:` desfasado es la clase de riesgo de SEC-020); ningún otro campo de la cabecera se toca.
+- **Avance (regla 6):** el contrato existe y es ejecutable; falta la decisión `P-137-A` para que la fase 2 pueda empezar.
+
 ## [Interno] — 2026-10-09 · Undécima autorización registrada: F-136-17, `REQ-007.md` deja de ser un archivo de 660 KB (plan de 4 fases); fase 1 encargada al `analista-requerimientos`
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5 · agente: la coordinadora. Rama `cand/1.37.0`.
 

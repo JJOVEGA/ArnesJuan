@@ -2347,3 +2347,27 @@ ninguna mata al hook.»
 - **Qué** (R-057): `guard-completado.sh:951-958` lee la lista con `done <<< "$ARNES_GATES"`; cada gate hereda esa entrada. Con `cat >/dev/null` o `read -r x; true` delante de `false`, no hay salida ni decisión. Igual en v1.35.0. Con `</dev/null` deniega.
 - **Lecciones de R-057 que se suman a F-136-22:** **L4**, la gate es código no confiable dentro del proceso del hook: su veredicto es sólo su código de salida y nada de lo que hereda (entrada estándar, descriptores, salidas, trampas, funciones) puede alimentar la lista de gates, el veredicto ni la salida; **L5**, reparar la vivacidad no debe romper la integridad: cualquier arreglo de «siempre emite decisión» se valida también contra «nunca pasa una gate roja», y los vectores adversarios de QA-007-15 y SEC-133 entran al banco **antes** del intento.
 - **Dueño:** `desarrollador` con `qa-tester` y `auditor-seguridad`; con F-136-21 y F-136-22, una sola intervención de 1.37 sobre el bucle de gates.
+
+## Fichas de la fase 1 de F-136-17 (2026-10-09)
+
+*(Registradas por la coordinadora, que es quien lleva las fichas; propuestas por el `analista-requerimientos` en `docs/arnes/v1.37.0-f136-17-fase1.md`. La decisión del propietario es «se registra como ficha; no se corrige en esta intervención», así que **ninguna se repara aquí**. Las cifras de abajo las releyó del disco la coordinadora sobre la cabeza `cecf9b6`, no se copiaron del informe.)*
+
+### F-137-1 — La ficha F-136-17 declara un tamaño de `REQ-007.md` que ya no es el real: 660 431 bytes contra 868 108 medidos
+- **Qué:** F-136-17 (arriba) se escribió en 1.36.0 con 660 431 bytes; el REQ creció **dentro de esa misma ventana** y hoy son **868 108 bytes y 4 857 líneas**. De ahí se sigue un segundo error en la misma ficha: el límite de `old_string` que cita («~6,5 KB») se calculó sobre el tamaño viejo; con el real son **≈ 4 947 bytes de `old_string` sumados por llamada**, porque el presupuesto `ARNES_EDIT_MAX_BUSQUEDA` (4 294 967 296) es el producto |documento| × |old_string| **sumado sobre las ediciones** (`hooks/lib.sh:1668-1674`), no un tope por edición.
+- **Lección, que es la que vale más que la cifra:** una ficha que lleva una medida en bytes **caduca sola** mientras el artefacto medido sigue vivo, y nadie la revalida al usarla. Clase `instrumento`. **Dueño:** coordinadora.
+
+### F-137-2 — La rotación por sección del arnés **no puede** archivar el `## Historial de cambios` de un REQ, porque es una tabla
+- **Qué:** `hooks/rotar-artefactos.sh:214-218` define ENTRADA como lo que empieza a columna cero por `- `, `* `, `### ` o `N. `, y declara que **una fila de tabla es continuación, no entrada**; `:296-300` avisa de que una sección que contiene el nombre declarado pero no tiene «ni una ENTRADA reconocible» **no se rota**, y lo avisa en cada parada de agente. El `## Historial de cambios` de `REQ-007.md` (línea 4791) es una tabla `| Fecha | Antes → Después | Causa | ADR |`, igual que el de los demás REQ por la plantilla del arnés.
+- **Consecuencia:** el mecanismo que F-136-17 proponía usar **no mueve un byte** sobre este artefacto, y lo mismo valdría en cualquier proyecto que herede la plantilla de REQ. O la rotación aprende a cortar por filas de tabla, o la plantilla del Historial deja de ser una tabla, o se declara que los REQ no se rotan por esa vía. Clase `instrumento`. **Dueños:** `desarrollador` (mecanismo) y `analista-requerimientos` (plantilla).
+
+### F-137-3 — Aunque la rotación funcionara sobre el Historial, no alcanzaría: el peso de `REQ-007.md` no está donde la rotación puede entrar
+- **Qué:** el `## Historial de cambios` son 188 495 bytes, el 21,7 % del archivo. Archivarlo entero dejaría el REQ en ≈ 679 600, todavía **286 400 por encima** del techo de 393 216. El peso está en `## Criterios de aceptación` (419 441, el 48 %) y `## Trazabilidad` (144 287), y **la rotación no toca criterios por diseño** —«la cabecera con sus veredictos y los criterios de aceptación no se tocan nunca, porque son el contrato», `AGENTS.md` §13—.
+- **Consecuencia:** para un REQ de este tamaño hace falta otro mecanismo que la rotación por sección. Clase `instrumento`. **Dueño:** `analista-requerimientos` con el `desarrollador`.
+
+### F-137-4 — Citas a contenido que se va a mover, en sedes que esta intervención no puede tocar
+- **Qué:** (i) `hooks/lib.sh:739` cita «medido y declarado en REQ-007, **Historial del 2026-09-30**», y `hooks/` está fuera de los límites de esta intervención; (ii) `docs/qa/REQ-023.md:2850-2851` cita **números de línea** de `REQ-007.md` (`l. 382` y `l. 2275`), que cualquier partición invalida.
+- **Lección:** una cita por **número de línea** a un documento vivo nace rota; la cita por **identificador** (`CA-xx`, fecha del Historial) sobrevive a la partición si el destino conserva el rótulo. Clase `instrumento`. **Dueños:** `desarrollador` (i) y `qa-tester` (ii).
+
+### F-137-5 — No se buscaron criterios que hayan dejado de ser ciertos, y la fase 1 lo declara
+- **Qué:** la decisión del propietario prevé registrar como ficha «un criterio que ya no es cierto» si aparece al partir. La fase 1 **no leyó el cuerpo de los criterios** (sólo su estructura), así que **no detectó ninguno y tampoco los buscó**: la ausencia de hallazgo aquí no es evidencia de que no los haya. La única inconsistencia conocida ya es hallazgo abierto (SEC-134).
+- **Para quién:** la fase 3 (QA) y la fase 4 (seguridad) son quienes pasarán por el contenido; si aparece, se registra aquí y **no se corrige**. Clase `instrumento`. **Dueño:** `qa-tester`.

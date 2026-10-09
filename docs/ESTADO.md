@@ -23,7 +23,11 @@
   - **Punto de partida medido hoy (cabeza `23feefe`):** 868 108 bytes y 4 857 líneas —no los 660 431 de la ficha F-136-17, el REQ creció en 1.36.0—, así que hay que quitar **más de 474 892 bytes (55 %)**. Secciones: cabecera 38 287 (no se toca, es el contrato), Historia 1 433, **Criterios de aceptación 419 441**, Notas/alcance 41 229, Preguntas abiertas 34 936, **Trazabilidad 144 287**, **Historial de cambios 188 495**. Las dos últimas suman 332 782 y **no alcanzan**: la definición de historia del propietario hay que aplicarla también dentro de los criterios.
   - **Destino:** `docs/historia/REQ-007/` por versión, con índice y un puntero en REQ-007 por sección movida. Nada se borra. Precedente: `docs/historia/propuesta-v1.35.0/`.
   - **La coordinadora para y pregunta sólo en:** la edición de `rotacion.artefactos` en `.arnes/config.json`; un criterio o hallazgo que no se sepa si es historia o vigente; más pasadas que la prevista; publicar. **Límites:** no `hooks/`, `tools/`, `tests/` ni `AGENTS.md`; nada de las piezas a–d.
-  - **Pendiente del propietario:** `cand/1.37.0` lleva **3 commits locales sin push** (`f7d3c0d`, `408b433`, `23feefe`); se le recuerda al final de cada fase.
+  - **Fase 1 ENTREGADA (2026-10-09):** contrato en `docs/arnes/v1.37.0-f136-17-fase1.md`. El analista **paró en la condición que el propietario nombró** («un criterio que no sepas si es historia o vigente»): cuatro dudas, todas el mismo caso —un bloque con rótulo `CA-xx` cuyo contenido es evidencia ya rendida de una versión publicada—. **Releído del disco por la coordinadora:** el Grupo 1 (lo que es historia sin discusión) son 379 680 bytes y deja el REQ en **488 428, un 24 % por encima del techo**; hacen falta **D1 (CA-66, 63 799), D2 (CA-69, 25 778) y D3 (CA-67/68, 17 389)** para bajar a 381 462. **Las tres son necesarias, no opcionales**; sólo D4 (≈ 18 800) es optativa.
+  - **Segunda parada, de despacho:** el `analista-requerimientos` **no tiene la herramienta `Bash`** (el plugin le da `Read`, `Write`, `Edit`, `Glob`, `Grep`), así que no puede correr la verificación que el contrato exige ni leer `REQ-007.md` entero (`Read` corta en 256 KB). **La fase 2 no es ejecutable por él tal como está escrita.**
+  - **Cola: `P-137-A` PENDIENTE** con las dos decisiones agrupadas, sus opciones, consecuencias y el bloque listo para adoptar. Detiene **sólo la fase 2**.
+  - **Fichas registradas, sin reparar:** `F-137-1` a `F-137-5` en `docs/PENDIENTES.md`. Entre ellas, dos que valen para todo el arnés: **la rotación por sección no puede archivar el `## Historial de cambios` de un REQ porque es una tabla** (`hooks/rotar-artefactos.sh:214-218`, filas de tabla = continuaciones, sección sin entradas = no se rota), y **aunque pudiera no alcanzaría** (el Historial es el 21,7 %; el peso está en los criterios, que la rotación no toca por diseño). Por eso **`rotacion.artefactos` no se propone**: no movería un byte.
+  - **Pendiente del propietario:** `cand/1.37.0` lleva **4 commits locales sin push** (`f7d3c0d`, `408b433`, `23feefe`, `cecf9b6`); se le recuerda al final de cada fase.
 - **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
 
 ## Historia — ventana 1.36.0 (2026-10-03 → 2026-10-08), publicada en `f22b905`
@@ -570,7 +574,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-09 15:44
+## Estado derivado — 2026-10-09 16:03
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -580,7 +584,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `23feefe` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.37.0` @ `cecf9b6` — limpio
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
