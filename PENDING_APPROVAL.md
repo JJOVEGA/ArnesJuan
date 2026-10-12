@@ -43,7 +43,68 @@
 
 ## Pendientes
 
-### P-137-C — F-136-17, paso 1: **ningún agente puede hacer «un solo `Write`» de 390 KB**, y la única otra vía, copiar por consola, rodea el juicio de `guard-completado`. ¿Cómo entra la partición en `requirements/REQ-007.md`?
+### P-137-E — F-136-17: **la puerta en vivo denegó el `cp`, y la causa no es el contenido.** Desde 1.35.0 todo `cp` que sobrescribe un archivo existente se deniega (F-137-10). ¿Se aplica con la redirección `cat … > …`, que la puerta sí juzga en vivo?
+
+**Lo que pasó.** Hice lo que autorizaste en P-137-C: una llamada `Bash` normal, `cp <scratchpad>/REQ-007.md requirements/REQ-007.md`. **La puerta instalada la denegó en vivo**: «no se pudo determinar a qué archivo escribe '…/requirements/REQ-007.md/'». **Paré**, como mandaste, y **deshice la aplicación parcial**: había copiado ya los 13 destinos y el índice, y los retiré para que no hubiera historia «movida» que seguía también en el REQ. **El REQ está intacto (`cmp` contra la foto de `cecf9b6`).** Los archivos siguen en el scratchpad, con el mismo `sha256`.
+
+**Por qué la denegó: no es el contenido ni esta partición.** Medido fuera de banda, sin escribir nada:
+- `cp` sobre un archivo **existente** → **`deny`**: el REQ con ruta absoluta o relativa, y `docs/PLAN.md`, que no es un REQ ni código protegido.
+- `cp` sobre un archivo que **no existe** → pasa.
+- Con el agente `desarrollador` → **`deny`** igual. Con `cp -T` → **`deny`** igual.
+- **Por versión:** 1.33.2 pasaba; **1.35.0 y 1.36.0 deniegan**.
+
+El detector juzga `destino/` como si fuera un directorio, y la identificación del destino de CA-47 falla cerrada. **Es una regresión de 1.35.0, publicada también en 1.36.0, y no está declarada en ningún sitio.** Queda como ficha `F-137-10`; está en `hooks/`, fuera de los límites de esta intervención.
+
+**Lo que sí juzga la puerta en vivo:** `cat <scratchpad>/REQ-007.md > requirements/REQ-007.md`. Medido fuera de banda: la puerta **determina el destino** —la redirección es la forma que su detector lee mejor—, lo juzga y **lo deja pasar**. El juicio en vivo es el mismo que pedías para `cp`: el comando y su destino, no el contenido. El contenido ya tiene su juicio fuera de banda (`allow`) y la §5 después.
+
+**Opciones:**
+- **(A) Aplicar con `cat … > …` como llamada `Bash` normal**, juzgada en vivo, con todas las condiciones de P-137-C: sin desactivar nada y, si la puerta deniega, paro. Después, la comprobación completa, commit y push.
+  - *Consecuencia:* el paso 1 aterriza hoy, con la puerta mirando el comando en vivo. **No rodea nada:** es una forma que la puerta entiende y juzga, no una que se le escapa.
+- **(B) Copias tú.**
+  - *Consecuencia:* ningún agente elige la forma del comando. Cuesta una acción tuya.
+- **(C) Se espera a que se repare el detector de `cp`** (F-137-10, `hooks/`).
+  - *Consecuencia:* F-136-17 queda parada esta ventana con todo preparado.
+
+**Mi recomendación: (A).** La razón por la que pediste `cp` en vivo era que la puerta lo juzgara. Con `cp` no puede juzgar: falla cerrada antes de mirar nada. Con la redirección sí.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-E»; si no, corrige):
+
+> **P-137-E: opción (A).** La coordinadora aplica el paso 1 con `cat <scratchpad>/REQ-007.md > requirements/REQ-007.md` (y los destinos y el índice como antes), en una llamada `Bash` normal juzgada en vivo, con las condiciones de P-137-C: sin desactivar nada y, si la puerta deniega, se para y se registra. Después, la comprobación completa, commit y push. F-137-10 queda como ficha para 1.37, con el `auditor-seguridad` para clasificarla.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-12) — **P-137-C adoptada con la copia juzgada EN VIVO, y P-137-D (A)**: el paso 2 no mueve nada; los 30 KB, inalcanzables con la regla; QA y seguridad, sólo sobre el paso 1
+
+**Texto del propietario, literal** (mensaje del 2026-10-12 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-137-C: adoptada. La copia la ejecuta la coordinadora como una llamada
+> Bash normal de Claude Code (cp desde el scratchpad a requirements/REQ-007.md),
+> de modo que la puerta instalada la juzgue EN VIVO, no sólo en la prueba
+> manual previa. Sin core.hooksPath, sin consola externa, sin desactivar
+> nada. Después: la comprobación completa (13 destinos exactos, ninguna línea
+> ni identificador perdido, 17 hallazgos en su sitio, 13 enlaces), commit y
+> push. Si la puerta en vivo deniega, se para y se registra.
+>
+> P-137-D: (A). El paso 2 no mueve nada. Los 30 KB se declaran inalcanzables
+> con esta regla; ficha para 1.37 con las dos salidas: partir REQ-007 en
+> varios REQ (cambio de contrato, el más probable) o revisar el techo
+> midiendo (toca hooks/). La medida que vale es la del paso 1: Edit pasa de
+> 4,9 a 11 KB por llamada y la lectura del analista a menos de la mitad; QA
+> la mide en la fase 3. QA y seguridad revisan sólo el paso 1.
+>
+> F-137-8 queda como ficha. Continúa: aplicar, fase 3, fase 4, commit
+> validado.
+
+**Y, en el mismo mensaje:** «Haz el push cuando termines».
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Qué juzga la puerta «en vivo» sobre un `cp`, dicho con precisión para que no se lea de más:** los hooks `PreToolUse` corren sobre la llamada `Bash` y juzgan **el comando** —`guard-codigo` la ruta de destino, que no es `codigo_app.globs`; `guard-completado` si el comando menciona el estado terminal, que no lo hace—, **no el contenido del archivo copiado**. El juicio del contenido es la corrida fuera de banda del `Write` equivalente (`allow`, 4,8 s, `sha256` `2edf95c0…48c3`), y la comprobación de que no se pierde nada es la §5, después. Se registran las tres cosas por separado.
+- **Ficha nueva `F-137-9`** con las dos salidas estructurales, sin decidir entre ellas.
+- **Las firmas de QA y seguridad de F-136-17 van en sus sedes** (`docs/qa/REQ-007.md`, `docs/seguridad/registro-seguridad.md`), **no en la cabecera de REQ-007**: sus `QA:` y `Seguridad:` responden por todos los criterios abiertos del REQ, no por esta partición, y la partición no cambia la cabecera salvo `Archivos:`.
+
+### P-137-C (texto de la consulta, conservado) — F-136-17, paso 1: **ningún agente puede hacer «un solo `Write`» de 390 KB**, y la única otra vía, copiar por consola, rodea el juicio de `guard-completado`. ¿Cómo entra la partición en `requirements/REQ-007.md`?
 
 **Qué trabajo detiene, y qué no.** Detiene **aplicar** el paso 1 al repositorio (y su commit y push). **No detiene** al analista, que ya está acortando su texto (paso 1) y clasificando los doce versionados (paso 2) en una sola comisión; tampoco el ensamblado ni las comprobaciones, que hago en el scratchpad. Cuando decidas, el paso 1 se aplica en minutos.
 
@@ -73,7 +134,7 @@
 
 **Actualización (2026-10-12, después de abrir esta entrada): el paso 1 está ensamblado y comprobado, y sólo espera esta decisión.** Con el texto nuevo acortado por el analista (de 6 194 a 3 761 bytes), el REQ ensamblado mide **391 307 bytes, 1 909 bajo el techo**. §5 en el scratchpad: 13/13 destinos verbatim; ninguna línea perdida salvo las dos ediciones en sitio declaradas; ningún `CA-xx` ni ningún identificador sin rastro desde el REQ (R-050 incluido); los 17 hallazgos abiertos con sede en el REQ; las 13 `ruta#ancla` casan con el título de su destino. **La puerta instalada, fuera de banda, sobre el `Write` equivalente: sin decisión (`allow`), en 4,8 s.** `sha256` del REQ que se copiaría: `2edf95c065e93e771b04efb5e06d67b2a469364e95c72e903b7db8aad91548c3`.
 
-### P-137-D — F-136-17, paso 2: **con tu regla, los 30 KB de margen no se alcanzan.** De los doce versionados no sale nada sin duda; aunque las tres dudas fueran historia, el margen quedaría en ≈ 14,9 KB. ¿Qué se hace con ellas, y con el objetivo?
+### P-137-D (texto de la consulta, conservado; resuelta arriba) — F-136-17, paso 2: **con tu regla, los 30 KB de margen no se alcanzan.** De los doce versionados no sale nada sin duda; aunque las tres dudas fueran historia, el margen quedaría en ≈ 14,9 KB. ¿Qué se hace con ellas, y con el objetivo?
 
 **Qué trabajo detiene, y qué no.** Detiene el paso 2 y, como QA y seguridad revisan «una vez el resultado de los dos pasos», también las fases 3 y 4. **No detiene** el paso 1, que sólo espera `P-137-C`.
 
@@ -114,8 +175,6 @@ Lo segundo es tu otra medida, y la mide QA en la fase 3. **El margen duradero no
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-D»; si no, corrige):
 
 > **P-137-D: opción (A).** El paso 2 no mueve nada: D-45-1, D-47-1 y D-47-2 se quedan como texto vigente. El objetivo de 30 KB queda declarado inalcanzable con la regla de P-137-A, porque el contenido vigente de REQ-007 son ≈ 378 KB; se registra una ficha para 1.37 con las dos salidas estructurales (partir REQ-007 en varios REQ, cambio de contrato con el analista; o revisar el techo midiendo, en `hooks/`), sin decidir entre ellas. F-136-17 sigue con el paso 1 aplicado según P-137-C, y QA y seguridad revisan sólo el paso 1 en las fases 3 y 4. F-137-8 sigue como ficha.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-12) — **P-137-B: opción (A)**, dos pasos; CA-47 punto por punto; objetivo ≥ 30 KB de margen; dos pasadas del analista aceptadas sin reiniciar contadores
 

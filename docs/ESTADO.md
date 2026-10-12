@@ -32,6 +32,8 @@
   - **`P-137-C` PENDIENTE:** «un solo `Write`» de ≈ 390 KB no lo puede emitir ningún agente de forma fiable, y la puerta instalada, ejecutada a mano, **deja pasar un `Write` truncado a 200 KB** (ficha `F-137-7`). La única vía es copiar por consola, que la puerta no juzga. Recomendación: copia de la coordinadora con el juicio de la puerta hecho antes fuera de banda (`allow` obligatorio) y §5 después, sólo para F-136-17. **Detiene sólo aplicar el paso 1.**
   - **Paso 1 LISTO, sin aplicar (2026-10-12):** texto nuevo acortado (6 194 → 3 761 B); REQ ensamblado en el scratchpad = **391 307 B, 1 909 bajo el techo**; §5 limpio (13/13 verbatim, ningún `CA-xx` ni identificador perdido, 17 hallazgos abiertos con sede, 13 anclas válidas); puerta instalada fuera de banda: **`allow`**. `sha256` `2edf95c0…48c3`. **Espera `P-137-C`.**
   - **Paso 2 PARADO, `P-137-D` PENDIENTE:** de los doce versionados no sale nada sin duda; las tres dudas (D-45-1, D-47-1, D-47-2) suman **13 378 B medidos** → margen máximo ≈ 14,9 KB, **no los 30 KB**. El contenido vigente de REQ-007 son ≈ 378 KB. Recomendación: (A) el paso 2 no mueve nada; ficha para 1.37 con las salidas estructurales. Ficha `F-137-8` registrada (P-119-A «pendiente» en CA-45/47 estando resuelta).
+  - **P-137-C y P-137-D resueltas (2026-10-12):** aplicar con un `cp` juzgado EN VIVO; el paso 2 no mueve nada; los 30 KB, inalcanzables con la regla (ficha `F-137-9`, salidas estructurales para 1.37); QA y seguridad, sólo sobre el paso 1.
+  - **APLICACIÓN PARADA (2026-10-12), `P-137-E` PENDIENTE: la puerta en vivo denegó el `cp`.** Causa: **desde 1.35.0 todo `cp` que sobrescribe un archivo existente se deniega** a cualquier agente (el detector juzga `destino/`), regresión no declarada y publicada también en 1.36.0 (ficha **`F-137-10`**; 1.33.2 pasaba). Aplicación parcial deshecha; **REQ-007 intacto**. La redirección `cat … > …` sí la juzga la puerta (fuera de banda: `allow`). Recomendación: (A) aplicar así, con las condiciones de P-137-C.
   - **Push:** `origin/cand/1.37.0` en `d8022cc` (2026-10-12, a petición del propietario, antes de la fase 2). Lo posterior va en commits locales; se le recuerda al final de cada fase.
 - **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
 
@@ -579,7 +581,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-12 09:12
+## Estado derivado — 2026-10-12 09:15
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -589,9 +591,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `4050283` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.37.0` @ `80a01d6` — limpio
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
+**Aprobaciones pendientes:** 2
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

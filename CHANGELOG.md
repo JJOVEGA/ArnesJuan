@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17: P-137-C y P-137-D resueltas; **la puerta en vivo deniega el `cp` y la aplicación se para** (`P-137-E`); regresión de 1.35.0 hallada: todo `cp` sobre un archivo existente se deniega (`F-137-10`)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-137-C** (aplicar con un `cp` normal juzgado en vivo) y **P-137-D** ((A): el paso 2 no mueve nada; los 30 KB, inalcanzables con la regla; QA y seguridad sólo sobre el paso 1), literales en la cola. **Ficha `F-137-9`** con las dos salidas estructurales.
+- **Aplicación:** primero los 13 destinos y el índice; después, en una llamada propia, `cp` del REQ. **La puerta instalada lo denegó en vivo**: «no se pudo determinar a qué archivo escribe '…/REQ-007.md/'». **Se paró**, como mandaba la decisión, y se **deshizo la aplicación parcial**; REQ-007 intacto (`cmp` contra la foto de `cecf9b6`).
+- **Caracterizado fuera de banda, sin escribir nada:** todo `cp` sobre un archivo **existente** se deniega —el REQ, `docs/PLAN.md`, con `agent_type` `desarrollador`, y con `cp -T`—; sobre uno inexistente, pasa; **1.33.2 pasaba, 1.35.0 y 1.36.0 deniegan**. **Regresión no declarada**, ficha **`F-137-10`** (`hooks/`, fuera de esta intervención). La redirección `cat … > …` sí la juzga la puerta: `allow`.
+- **Cola: `P-137-E`**, recomendación (A): aplicar con la redirección, con las condiciones de P-137-C.
+- **Avance (regla 6):** el paso 1 sigue listo y comprobado; falta la forma de aplicarlo que la puerta pueda juzgar. **La regresión del `cp` afecta a todos los proyectos con 1.35.0 o 1.36.0.**
+
 ## [Interno] — 2026-10-12 · F-136-17: paso 1 listo y comprobado (391 307 B, la puerta lo admite fuera de banda; espera `P-137-C`); paso 2 parado (`P-137-D`): con la regla, el margen máximo es ≈ 14,9 KB, no 30
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora.
 
