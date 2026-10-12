@@ -43,7 +43,90 @@
 
 ## Pendientes
 
-### P-137-A — F-136-17, fase 1: **una regla y un despacho**. (1) ¿Un `CA-xx` cuyo contenido es evidencia ya rendida de una versión publicada es «criterio vigente» o «versionado»? (2) ¿Quién ejecuta la fase 2, si el `analista-requerimientos` no tiene consola?
+### P-137-B — F-136-17, fase 2: **con las salvaguardas aplicadas, la partición autorizada deja REQ-007 en 393 740 bytes, 524 por encima del techo — y por eso ni siquiera se puede aplicar.** ¿De dónde sale el margen, y en qué orden?
+
+**Qué trabajo detiene, y qué no.** Detiene **aplicar la partición** al repositorio (fase 2) y, con ella, las fases 3 y 4. **No detiene** nada más: la partición está **ensamblada y comprobada en el scratchpad** de la coordinadora, y se aplica en minutos en cuanto haya decisión. Mientras esta entrada esté aquí, `guard-completado` deniega marcar cualquier REQ como `completado`; no hay ninguno en camino de cierre.
+
+**Lo medido — ensamblado y medido, no derivado** (cabeza de origen `cecf9b6`; script y salidas en el scratchpad de la sesión):
+
+- **REQ-007 candidato: 2 880 líneas, 393 740 bytes.** Techo de un `Write` del REQ: 393 216 de contenido **más 4** de cabecera de piezas, es decir **393 212 de contenido como máximo**. **Pasa por 528 bytes.**
+- **La mecánica está limpia** (contrato de la fase 1, §5): los 13 archivos de destino son **verbatim** (`diff` vacío, uno a uno); los rangos son disjuntos; **ningún `CA-xx` desaparece** del REQ; la cabecera sólo cambia en `Archivos:`; y las únicas líneas del original que no aparecen tal cual son las dos ediciones en sitio declaradas (`Archivos:`, `Tocado por:`, cuyo valor viejo está entero en su archivo de destino). **Lo único que falla es el tamaño.**
+- **Por qué no se puede aplicar a 393 740, y no es un tecnicismo:** un `Write` del REQ por encima del techo lo deniega `guard-completado` (`hooks/guard-completado.sh:490`), **y hace bien**. Un `Edit` **no puede retirar un bloque grande**: su presupuesto es |documento| × |`old_string`| ≤ 4 294 967 296, unos **4,9 KB de `old_string` por llamada** con el REQ en 868 KB, y aquí hay bloques de 64, 70 y 85 KB. Copiar el archivo por consola **rodearía la puerta** y no se hace (`AGENTS.md` §13). **Conclusión: la partición sólo se puede aplicar si el resultado cabe bajo el techo.** Era la advertencia del contrato de la fase 1, §6.1, y se ha cumplido.
+
+**Por qué el margen se fue — y mi cifra anterior estaba mal.** En P-137-A te di «≈ 362 700 con D4». Era el **prorrateo de la fase 1, antes de aplicar las salvaguardas** a los rangos; no lo medí, y tenía que haberlo hecho. Al aplicarlas, el analista **devolvió al REQ ≈ 19,5 KB**, y yo **comprobé en disco cada una** de sus razones:
+- **CA-24 no sale:** SEC-124 (abierto, `contrato`) cita «**la nota de CA-24**» por nombre. *Tu salvaguarda 1.*
+- **CA-46 no sale, y no por salvaguarda: es el texto que manda.** La línea 242 dice «**manda este versionado**», y 232 y 248 sustituyen los apartados (c) y (b) del enunciado de 227. Moverlo dejaría el criterio **afirmando lo contrario de lo que hace el código**.
+- **CA-67 sale sólo en parte** (38 de 63 líneas): se quedan el tope de 16 384 bytes y la vía de los avisos, que §13 refleja (*salvaguarda 2*).
+- **CA-68 sale sólo en parte** (43 de 103): se quedan la «Medida» con su techo de 40 s, el plazo propio, la trampa de salida, los dos techos (*salvaguarda 2*) y **R2, que SEC-130 cita por nombre** (*salvaguarda 1*).
+- **CA-69 sale sin su enunciado ni su punto 7**: E2 lo cita **QA-007-08**, abierto (*salvaguarda 1*).
+- Y **cuatro rangos del contrato estaban mal trazados**: CA-24 y CA-58 (los encontré yo) y CA-66 (el analista) **se tragaban o dejaban huérfano un encabezado**; CA-69 empezaba en el enunciado.
+
+**Las dos palancas que hay, medidas:**
+- **Compactar el texto nuevo** (punteros, fila del Historial, `Tocado por:`): hoy son ≈ **7 KB**. Apretándolo, el REQ baja a ≈ 389–391 KB: **aplicable, pero con 2–4 KB de margen**, que es menos todavía que los 11 KB que ya rechazaste.
+- **Los «Versionado el …» de CA-41, CA-45, CA-47, CA-48, CA-49 y CA-50**, que la fase 1 no inventarió: doce bloques, ≈ **101 KB**. Pero **≈ 83 KB son de CA-47**, y `AGENTS.md` §13 cita CA-47 (y CA-45) como **norma única**; esos versionados son probablemente **donde nacieron los puntos 11 a 20 de CA-47**, y CA-46 acaba de demostrar que un versionado puede **ser** el texto vigente. **Cuánto de esos 101 KB es historia no se sabe sin leerlos bloque a bloque**, y lo más probable es que sea bastante menos de la mitad.
+
+**Opciones:**
+
+- **(A) Dos pasos, y el primero ya.** **Paso 1:** el analista **aprieta su propio texto nuevo** hasta dejar el REQ bajo el techo y añade R-050 (abajo); aplico en un solo `Write`, compruebo §5, commit y push. **Paso 2, dentro de F-136-17:** el analista clasifica los doce versionados **con tu misma regla y tus tres salvaguardas**, leyendo el REQ **ya partido** (≈ 390 KB en vez de 868: más barato), y **para en cualquier duda** de CA-45 o CA-47; lo que salga, sale en un segundo `Write`. **QA y seguridad, una sola vez, sobre el resultado de los dos pasos.**
+  - *Consecuencia:* los 474 KB **verificados** quedan en el repositorio y en `origin` ya, que es lo que pediste con el push. El margen real **depende del paso 2** y puede quedar corto si CA-47 resulta normativo. **Gasta dos pasadas del analista más de las previstas** (la condición de parada que nombraste).
+- **(B) Primero el paso 2, después una sola aplicación.**
+  - *Consecuencia:* un solo `Write`, con el margen que haya. Pero **nada aterriza** hasta que el analista termine de clasificar el núcleo normativo de CA-47 en el archivo de 868 KB —el caro—, y si para en dudas (probable), **la partición entera espera por ellas**.
+- **(C) Sólo el paso 1, y los versionados a una ficha de 1.37.**
+  - *Consecuencia:* el `Write` entero vuelve a funcionar **hoy**, con 2–4 KB de margen; **el primer criterio nuevo de 1.37 lo vuelve a pasar del techo**. Es la medida cumplida en la letra y no en lo que pediste («margen real»).
+
+**Mi recomendación: (A).** El paso 1 asegura lo verificado, y el paso 2 es más barato y menos arriesgado sobre un archivo de 390 KB que sobre uno de 868. Entre (A) y (B) cambia cuándo aterriza lo seguro, no lo que se decide. (C) sólo si prefieres no gastar ahora el paso 2.
+
+**Lo que hago sin preguntarte, y te lo digo.** (i) **R-050** quedaría sin rastro desde el REQ: vivía en la línea `Tocado por:`, que se reduce, y ningún puntero lo nombra. Tu tercera salvaguarda manda que lo nombre, y el analista lo añade al puntero de `## Trazabilidad` en cualquiera de las tres opciones. (ii) **El índice borrador del analista lo saqué de `docs/historia/REQ-007/`** a `docs/arnes/v1.37.0-f136-17-fase2-indice-borrador.md`: afirma que la historia vive ahí, y hoy sería falso. Vuelve a su sitio cuando la partición se aplique.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-B»; si no, corrige):
+
+> **P-137-B: opción (A).** **Paso 1:** el analista aprieta su texto nuevo (punteros, fila del Historial, `Tocado por:`) hasta que el REQ quede bajo el techo con el máximo margen que permita sin perder la ruta, el ancla ni los identificadores de cada puntero, y añade R-050; la coordinadora aplica en un solo `Write`, comprueba §5, hace commit y push. **Paso 2, dentro de F-136-17:** el analista clasifica los doce «Versionado el …» de CA-41, CA-45, CA-47, CA-48, CA-49 y CA-50 con la misma regla y las mismas tres salvaguardas, sobre el REQ ya partido, y **para en cualquier duda de CA-45 o CA-47**, que son norma única; lo que salga, en un segundo `Write`. **QA y seguridad, una vez, sobre el resultado de los dos pasos.** Si después del paso 2 el margen sigue por debajo de 30 KB, se me dice con la cifra y no se busca más dentro de los criterios.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-12) — **P-137-A adoptada con una salvaguarda más y D4 incluida**: el rótulo `CA-xx` no inmuniza; la partición la ejecuta la coordinadora; `rotacion.artefactos` no se enciende
+
+**Texto del propietario, literal** (mensaje del 2026-10-12 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-137-A:
+>
+> 1. El rótulo CA-xx no inmuniza. Se queda el enunciado de cada criterio;
+>    sale el registro de cómo se midió en una versión publicada. Salen D1,
+>    D2, D3 y también D4 (quiero margen real, no 11 KB). Salvaguardas, las
+>    dos tuyas y una más:
+>    - lo que un hallazgo abierto cita por nombre no se mueve;
+>    - lo que AGENTS.md §13 declara norma única conserva su texto normativo;
+>    - cada bloque movido deja en REQ-007 una línea de puntero con la ruta y
+>      el ancla del destino, para que un `grep` del identificador (CA-66
+>      punto 5, R-047 §3…) siga encontrándolo desde el REQ.
+>
+> 2. La partición la ejecuta la coordinadora desde la especificación línea a
+>    línea del contrato; el analista escribe punteros, índice y prosa del
+>    destino y valida; QA verifica aparte en la fase 3 con conteo y diff.
+>    rotacion.artefactos no se enciende: no movería un byte sobre este
+>    artefacto. Archivos: se actualiza, como decidiste.
+>
+> Ficha para la pieza c (no ahora): el analista no tiene Bash y Read corta
+> en 256 KB, así que no puede verificar lo que escribe. Hay que decidir en
+> 1.37 si el rol recibe una herramienta de verificación acotada o si todo
+> conteo/diff es siempre de la coordinadora o de QA.
+>
+> Continúa con la fase 2.
+
+**Y, en el mismo mensaje, sobre el push:**
+
+> Y haz el push de los cuatro commits antes de que arranque; la fase 2 mueve 400 KB de texto y es justo el tipo de cambio que no quieres tener sólo en local
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Push hecho** antes de arrancar la fase 2: `origin/cand/1.37.0` creada en `d8022cc` (los cuatro commits `f7d3c0d`, `408b433`, `23feefe`, `cecf9b6` + `d8022cc`).
+- **La tercera salvaguarda cambia el contrato de la fase 1** (§3.3, «una por sección movida»): el puntero pasa a ser **por bloque movido** y debe llevar **ruta y ancla del destino más el inventario de identificadores** que ese bloque contenía, para que un `grep` de `CA-66 punto 5`, `R-047 §3`, `P-136-x`, `QA-xxx` o `SEC-xxx` siga dando resultado **desde el REQ**. El inventario se computa mecánicamente sobre el rango antes de moverlo; no se redacta de memoria.
+- **D4 entra**, así que sale también el Grupo 2 completo: previsión ≈ 362 700 bytes, margen ≈ 30 500 sobre el techo de 393 216.
+- **Reparto de la fase 2, derivado del punto 2:** la coordinadora hace el movimiento mecánico (foto, medición, extracción verbatim por rangos, ensamblado del REQ y las comprobaciones §5.0–5.6); el `analista-requerimientos` tiene **la autoría final** de los punteros, del índice y de la prosa de destino, y **valida**. La coordinadora redacta un borrador a partir de las plantillas **literales** del contrato (§3.1, §3.2, §3.3) para que el analista no tenga que inventar la forma ni medir; el analista reescribe lo que haga falta, y lo que reescriba se aplica.
+- **Ficha de la pieza c registrada:** `F-137-6` en `docs/PENDIENTES.md`. **No se repara ahora**, por orden del propietario.
+
+### P-137-A (texto de la consulta, conservado) — F-136-17, fase 1: **una regla y un despacho**. (1) ¿Un `CA-xx` cuyo contenido es evidencia ya rendida de una versión publicada es «criterio vigente» o «versionado»? (2) ¿Quién ejecuta la fase 2, si el `analista-requerimientos` no tiene consola?
 
 **Qué trabajo detiene, y qué no.** Detiene la **fase 2** (ejecutar la partición) por las dos preguntas. **No detiene** el registro de fichas (hecho: F-137-1 a F-137-5 en `docs/PENDIENTES.md`) ni la lectura del contrato. **Y mientras esta entrada esté aquí, `guard-completado` deniega marcar cualquier REQ como `completado`** — no hay ninguno en camino de cierre, así que no bloquea nada más.
 
@@ -103,9 +186,7 @@ El campo **`Archivos:` de la cabecera** (l. 4) sí se actualiza en la fase 2 par
 > **(2) Fase 2: opción (A).** La ejecuta la coordinadora desde la especificación línea a línea del analista; el analista escribe los punteros, el índice y la prosa del destino y valida el resultado; QA verifica aparte en la fase 3. Queda constancia de que es una excepción de ejecución, no un cambio de dueño del texto.
 > **(3)** `Archivos:` se actualiza; el resto de la cabecera no se toca. **(4)** `rotacion.artefactos` **no** se declara: el analista lo desaconsejó y lo comprobé en el código (F-137-2 y F-137-3). No vuelve a preguntarse.
 
-_(Pendiente también, de antes: `cand/1.37.0` lleva **4 commits locales sin push**.)_
-
-## Resueltas
+_(Pendiente también, de antes: `cand/1.37.0` lleva **4 commits locales sin push**.)_ — **resuelto el 2026-10-12: push hecho, `origin/cand/1.37.0` @ `d8022cc`.**
 
 ### RESUELTA (propietario, 2026-10-09) — **Undécima autorización: F-136-17, `REQ-007.md` deja de ser un archivo de 660 KB** (plan de 4 fases; la coordinadora para sólo en las cuatro condiciones declaradas)
 

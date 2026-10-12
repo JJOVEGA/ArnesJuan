@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17: P-137-A resuelta y registrada; push de la candidata; fase 2 **parada** antes de aplicar (`P-137-B`): con las salvaguardas, la partición mide 393 740 bytes y no cabe en un `Write`
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora. Rama `cand/1.37.0`.
+
+- **Push** pedido por el propietario antes de la fase 2: `origin/cand/1.37.0` creada en `d8022cc`.
+- **P-137-A**, literal en la cola: el rótulo `CA-xx` no inmuniza; salen D1–D4; **tres salvaguardas** (lo que cita un hallazgo abierto no se mueve; la norma única de `AGENTS.md` §13 conserva su texto; un puntero por bloque con ruta, ancla e identificadores); ejecuta la coordinadora; `rotacion.artefactos` no se enciende. **Ficha `F-137-6`** (pieza c): el analista no puede verificar lo que escribe.
+- **Prosa del analista entregada:** `docs/arnes/v1.37.0-f136-17-fase2-prosa.md` (13 encabezados de destino con `H` = 8, 11 punteros, `Tocado por:`, fila del Historial, `Archivos:`). **Índice borrador** movido por la coordinadora a `docs/arnes/v1.37.0-f136-17-fase2-indice-borrador.md`: afirmaba que la historia vive en `docs/historia/REQ-007/`, y hoy es falso.
+- **Rangos corregidos al aplicar las salvaguardas, y cada razón comprobada en disco por la coordinadora:** CA-24 no sale (SEC-124 cita «la nota de CA-24»); CA-46 no sale (l. 242, «manda este versionado»: es el texto vigente); CA-67, CA-68 y CA-69 salen sólo en parte (tope de 16 384, techo de 40 s, plazo, trampa, techos, **R2** citado por SEC-130, **E2** citado por QA-007-08); y CA-24, CA-58 y CA-66 estaban trazados **tragándose o dejando huérfano un encabezado**.
+- **Ensamblado y medido en el scratchpad, no derivado:** REQ-007 = **2 880 líneas, 393 740 bytes**, **528 por encima** de lo que admite un `Write` (393 212 de contenido). §5 limpio: 13/13 destinos verbatim, rangos disjuntos, ningún `CA-xx` perdido, cabecera cambiada sólo en `Archivos:`. Un identificador quedaría sin rastro desde el REQ, **R-050**; se añade a un puntero.
+- **No se puede aplicar** a ese tamaño: el `Write` lo deniega `guard-completado` (y hace bien), un `Edit` no retira bloques grandes (≈ 4,9 KB de `old_string` por llamada) y la consola rodearía la puerta. **Nada se aplicó al repositorio.**
+- **Corrección de una cifra de la coordinadora:** el «≈ 362 700 con D4» de P-137-A era el prorrateo de la fase 1 **antes** de aplicar las salvaguardas, no una medida.
+- **Cola: `P-137-B`** con tres opciones, consecuencias y bloque listo para adoptar; recomendación (A): paso 1 ya con el texto nuevo apretado, paso 2 sobre los doce «Versionado el …» de CA-41/45/47/48/49/50 (≈ 101 KB, ≈ 83 de CA-47, norma única).
+- **Avance (regla 6):** la partición existe, está comprobada y se aplica en minutos; falta decidir de dónde sale el margen, porque sin él no cabe por la puerta.
+
 ## [Interno] — 2026-10-09 · F-136-17 fase 1 entregada: el contrato de la partición, con dos paradas declaradas (`P-137-A`) y cinco fichas
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora. Rama `cand/1.37.0`.
 
