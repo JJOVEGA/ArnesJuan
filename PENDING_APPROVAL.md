@@ -43,7 +43,60 @@
 
 ## Pendientes
 
-### P-137-B — F-136-17, fase 2: **con las salvaguardas aplicadas, la partición autorizada deja REQ-007 en 393 740 bytes, 524 por encima del techo — y por eso ni siquiera se puede aplicar.** ¿De dónde sale el margen, y en qué orden?
+### P-137-C — F-136-17, paso 1: **ningún agente puede hacer «un solo `Write`» de 390 KB**, y la única otra vía, copiar por consola, rodea el juicio de `guard-completado`. ¿Cómo entra la partición en `requirements/REQ-007.md`?
+
+**Qué trabajo detiene, y qué no.** Detiene **aplicar** el paso 1 al repositorio (y su commit y push). **No detiene** al analista, que ya está acortando su texto (paso 1) y clasificando los doce versionados (paso 2) en una sola comisión; tampoco el ensamblado ni las comprobaciones, que hago en el scratchpad. Cuando decidas, el paso 1 se aplica en minutos.
+
+**El problema, medido.** Adoptaste «un solo `Write`», que era mi redacción, y la escribí sin comprobar que se pudiera ejecutar:
+
+- **Un `Write` lleva el archivo entero dentro de la llamada.** El REQ partido mide ≈ 390 KB, unos **120 k tokens** que habría que emitir **verbatim** en una sola respuesta. No es fiable, y su forma de fallar es la peor posible.
+- **Lo comprobé ejecutando a mano la puerta instalada (1.36.0) sobre `Write` equivalentes:** el candidato actual (393 740 B) → **`deny`**, por el techo; el original (868 108 B) → **`deny`**; **ese mismo candidato truncado a 200 KB → la puerta lo deja pasar** (sin decisión = `allow`). Es decir: **si el `Write` gigante se corta, borra media REQ y nada lo detiene**, porque la puerta juzga veredictos y techos, no que el cuerpo siga entero. Lo registro como ficha `F-137-7`.
+- **Un `Edit` no sirve:** su presupuesto (|documento| × |`old_string`|) no deja retirar bloques de decenas de KB.
+- **La consola (`cp` del archivo ya ensamblado) sí puede**, pero la puerta **no lo juzga**: `guard-completado` sólo deriva por `Bash` lo que menciona el estado terminal, y aquí no lo hace. `AGENTS.md` §13 la admite **diciendo por qué y asumiendo que ninguna puerta lo mide**; y tu instrucción sobre `core.hooksPath` dice que **si un control impide algo, se para y decides tú**. Por eso estoy aquí.
+
+**Opciones:**
+
+- **(A) Copia por consola la coordinadora, con el juicio de la puerta hecho antes y fuera de banda.** Antes de copiar: ejecuto el `guard.sh` **instalado** sobre el `Write` equivalente —mismo `file_path`, mismo contenido byte a byte— y **sólo copio si devuelve `allow`**; registro su salida en el índice. Después: §5 completo sobre el repositorio (13 destinos verbatim, ninguna línea perdida, ningún `CA-xx` perdido, cabecera sólo `Archivos:`), y QA **lo reproduce todo** en la fase 3 sin fiarse de mi salida. El commit lo declara: «aplicado por consola; juzgado fuera de banda por la puerta instalada».
+  - *Consecuencia:* el mismo veredicto que daría la puerta, **más** la comprobación de contenido que la puerta no hace, y que un `Write` no tendría. **Pero el juicio en banda no existe:** su registro es mi corrida más la de QA, no la del arnés. Es una excepción **declarada y autorizada**, y hoy es la forma manual de lo que la pieza b) de 1.37 haría solo: preguntar **después** si algo protegido cambió.
+- **(B) Copias tú.** Te dejo la orden exacta, el veredicto fuera de banda y el `sha256` esperado; yo corro §5 después.
+  - *Consecuencia:* ningún agente rodea una puerta; el acto es humano, como el push. Cuesta una acción tuya y una espera.
+- **(C) No se aplica hasta que exista la pieza b).**
+  - *Consecuencia:* F-136-17 queda parada esta ventana con todo preparado; el analista seguirá caro hasta entonces.
+
+**Mi recomendación: (A).** La copia no rebaja nada: la puerta dice lo mismo antes de copiar, y además se comprueba lo que la puerta no mira. Lo que la hace aceptable es que **tú la autorices para esta aplicación concreta**: no se convierte en costumbre, y el paso 2 llevará el mismo procedimiento sólo si lo dices.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-C»; si no, corrige):
+
+> **P-137-C: opción (A), sólo para F-136-17 (pasos 1 y 2).** La coordinadora aplica la partición copiando por consola el archivo ensamblado, con dos condiciones: **antes**, la puerta instalada (`guard.sh` de la 1.36.0) juzga fuera de banda el `Write` equivalente, byte a byte, y sólo se copia si devuelve `allow`; **después**, se ejecuta §5 completo sobre el repositorio. Las dos salidas quedan en el índice. El commit lo declara como aplicación por consola juzgada fuera de banda. QA reproduce ambas en la fase 3 sin fiarse de la salida de la coordinadora. Fuera de F-136-17 no vale como precedente.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-12) — **P-137-B: opción (A)**, dos pasos; CA-47 punto por punto; objetivo ≥ 30 KB de margen; dos pasadas del analista aceptadas sin reiniciar contadores
+
+**Texto del propietario, literal** (mensaje del 2026-10-12 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-137-B: (A).
+> Paso 1, ya: el analista acorta su texto nuevo (punteros, fila del
+> Historial) hasta que el REQ quepa bajo el techo; un solo Write; comprobación
+> línea a línea; commit; push. Los 474 KB comprobados quedan en origin.
+> Paso 2: el analista clasifica los doce «Versionado el …» de CA-41/45/47/
+> 48/49/50 con la misma regla (enunciado vigente se queda; registro de cómo
+> se midió en versión publicada sale), sobre el REQ ya partido. Se para ante
+> CUALQUIER duda de CA-45 o CA-47, y CA-47 se revisa punto por punto, no por
+> bloque: donde nació un punto vigente (11 a 20), ese texto se queda aunque
+> esté bajo un rótulo de versionado. Objetivo: margen ≥ 30 KB bajo el techo.
+> QA y seguridad revisan una vez el resultado de los dos pasos. Acepto las
+> dos pasadas del analista por encima de lo previsto; los contadores no se
+> reinician. R-050 con puntero; índice borrador donde lo dejaste.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Pasos 1 y 2 en una sola comisión del analista**, con el entregable del paso 1 escrito antes de empezar el paso 2, para no pagar dos veces la lectura. Objetivo del paso 1: REQ ensamblado ≤ 392 000 bytes (el máximo que admite la puerta es 393 213 de contenido).
+- **El analista lee los versionados en la foto de `cecf9b6`, no en el repositorio:** son idénticos byte a byte en el REQ partido, y una sola numeración es lo que mantiene verificable «nada se borra».
+- **«Un solo `Write»` no se puede ejecutar** tal como está escrito, y eso es una decisión tuya: `P-137-C`, arriba.
+
+### P-137-B (texto de la consulta, conservado) — F-136-17, fase 2: **con las salvaguardas aplicadas, la partición autorizada deja REQ-007 en 393 740 bytes, 524 por encima del techo — y por eso ni siquiera se puede aplicar.** ¿De dónde sale el margen, y en qué orden?
 
 **Qué trabajo detiene, y qué no.** Detiene **aplicar la partición** al repositorio (fase 2) y, con ella, las fases 3 y 4. **No detiene** nada más: la partición está **ensamblada y comprobada en el scratchpad** de la coordinadora, y se aplica en minutos en cuanto haya decisión. Mientras esta entrada esté aquí, `guard-completado` deniega marcar cualquier REQ como `completado`; no hay ninguno en camino de cierre.
 
@@ -83,8 +136,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-B»; si no, corrige):
 
 > **P-137-B: opción (A).** **Paso 1:** el analista aprieta su texto nuevo (punteros, fila del Historial, `Tocado por:`) hasta que el REQ quede bajo el techo con el máximo margen que permita sin perder la ruta, el ancla ni los identificadores de cada puntero, y añade R-050; la coordinadora aplica en un solo `Write`, comprueba §5, hace commit y push. **Paso 2, dentro de F-136-17:** el analista clasifica los doce «Versionado el …» de CA-41, CA-45, CA-47, CA-48, CA-49 y CA-50 con la misma regla y las mismas tres salvaguardas, sobre el REQ ya partido, y **para en cualquier duda de CA-45 o CA-47**, que son norma única; lo que salga, en un segundo `Write`. **QA y seguridad, una vez, sobre el resultado de los dos pasos.** Si después del paso 2 el margen sigue por debajo de 30 KB, se me dice con la cifra y no se busca más dentro de los criterios.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-12) — **P-137-A adoptada con una salvaguarda más y D4 incluida**: el rótulo `CA-xx` no inmuniza; la partición la ejecuta la coordinadora; `rotacion.artefactos` no se enciende
 

@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17: P-137-B adoptada (A), analista despachado con los pasos 1 y 2; `P-137-C` abierta: «un solo `Write`» de 390 KB no es ejecutable y un `Write` truncado pasa la puerta (`F-137-7`)
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (el analista, en curso).
+
+- **P-137-B**, literal en la cola: (A), dos pasos; CA-47 punto por punto; objetivo ≥ 30 KB de margen; dos pasadas del analista aceptadas, contadores sin reiniciar; R-050 con puntero; índice borrador donde está.
+- **Analista despachado** con los dos pasos en una sola comisión (paso 1 entregado antes de empezar el 2), leyendo la foto de `cecf9b6` para conservar una sola numeración.
+- **Medido con la puerta instalada (1.36.0) ejecutada a mano sobre `Write` equivalentes:** candidato 393 740 B → `deny` (techo); original → `deny`; **candidato truncado a 200 KB → sin decisión (`allow`)**. Ficha **`F-137-7`**: la puerta no comprueba que el cuerpo siga entero, y su techo está por encima de lo que un agente emite de forma fiable.
+- **`P-137-C`** en la cola: cómo entra la partición si un agente no puede emitir el `Write` de 390 KB y la consola no la juzga la puerta. Recomendación: copia de la coordinadora con juicio fuera de banda previo (`allow` obligatorio) y §5 posterior, sólo para F-136-17. Detiene sólo la aplicación.
+- **Avance (regla 6):** el texto del paso 1 y la clasificación del paso 2 están en curso; falta la decisión sobre la vía de aplicación.
+
 ## [Interno] — 2026-10-12 · F-136-17: P-137-A resuelta y registrada; push de la candidata; fase 2 **parada** antes de aplicar (`P-137-B`): con las salvaguardas, la partición mide 393 740 bytes y no cabe en un `Write`
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora. Rama `cand/1.37.0`.
 
