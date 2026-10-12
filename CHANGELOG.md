@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17, fase 3 (preparación): comisión de medida del analista sobre el REQ partido — **135 909 tokens**, write-back de F-137-8 preparado sin aplicar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos`.
+
+- **Para qué:** la medida del propietario, «una comisión del analista sobre REQ-007 por debajo de 300k tokens, medida sobre el mismo tipo de encargo que en 1.36.0». El tipo más frecuente del analista en 1.36.0 fue el *write-back* sobre REQ-007; se encargó uno real (F-137-8) en modo *preparar, sin aplicar*, porque el propietario decidió que F-137-8 sigue como ficha.
+- **Cifra:** 135 909 tokens, 36 llamadas, 342 s. Leyó ≈ 350 líneas de REQ-007 por rangos y un fragmento de `docs/historia/REQ-007/preguntas-resueltas.md`. **La juzga QA en la fase 3** contra las comisiones de 1.36.0, que el `CHANGELOG` registra entre ≈ 59 k y ≈ 398 k, la mayoría entre 130 k y 210 k.
+- **Resultado del encargo:** `docs/arnes/v1.37.0-f137-8-writeback-preparado.md`: seis líneas afectadas (una más que la ficha, en la cabecera `Hallazgos abiertos:`), pares `Edit` listos, fila del Historial; índice y guía sin cambios. **No se aplica:** F-137-8 sigue como ficha.
+
 ## [Interno] — 2026-10-12 · Regresión conocida de 1.35.0/1.36.0 declarada en las notas `[1.36.0]`: todo `cp` sobre un archivo existente se deniega (F-137-10; hotfix 1.36.1)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por decisión del propietario (P-137-E: «se declara en las notas de 1.36.0 como regresión conocida con su forma, su efecto (sobre-denegación) y la salida (redirección o destino nuevo)»).
 
