@@ -58,7 +58,29 @@ de tamaño** y **E2 del punto 7 de CA-69** (lo cita QA-007-08). Detalle línea a
 Es la de `docs/arnes/v1.37.0-f136-17-fase1.md` §5.0 a §5.6, ejecutada sobre esta partición. Su salida
 real va aquí; **ninguna cifra de este bloque se escribe sin su corrida detrás**.
 
-<!-- F13617:COMPROBACION -->
+```text
+Comprobación §5 sobre el árbol de trabajo de cand/1.37.0, 2026-10-12, tras aplicar la partición (coordinadora).
+5.0 original: 4857 líneas, 868108 bytes, sha256 bda82984e0fe032d6374166d31194c669e059986670d67f5787e1aaf9d53bed5 (= git show cecf9b6:requirements/REQ-007.md)
+    REQ-007 resultante: 2838 líneas, 391307 bytes, sha256 2edf95c065e93e771b04efb5e06d67b2a469364e95c72e903b7db8aad91548c3
+5.2 rangos movidos: 24 tramos, 2039 líneas; disjuntos, dentro de 1-4857
+5.3 destinos verbatim (diff de tail -n +9 contra sus rangos): 13 ok (de 13)
+5.4 REQ = original − rangos + texto nuevo declarado: diferencias fuera de líneas en blanco = 4 (esperadas 4: Archivos: y Tocado por:, antes y después)
+5.5 líneas del original ausentes de REQ + destinos: 2 - Archivos, Tocado por (las dos ediciones en sitio declaradas)
+5.6 identificadores CA-xx desaparecidos del REQ: ninguno (69 distintos)
+5.6 cabecera (1-13): líneas distintas = 2 (esperadas 2: Archivos: antes y después)
+5.6 identificadores del original sin rastro desde el REQ (salvaguarda 3): ninguno
+5.6 hallazgos abiertos con sede en el REQ: 17 de 17
+5.6 enlaces ruta#ancla de los punteros: 13, que no resuelven: 0
+5.6 lector del arnés: Ningún valor anómalo: la máquina lee los 29 REQ como están escritos.
+5.6 mapa de archivos (tools/arnes-paralelo.sh REQ-007 REQ-023): las rutas de REQ-007 se expanden, docs/historia/REQ-007 incluida (la herramienta la normaliza sin barra final), 0 «SIN DECLARAR»; REQ-007 vs REQ-023 colisiona en hooks/lib.sh, como antes de la partición.
+Puerta (P-137-C y P-137-E):
+  fuera de banda, guard.sh instalado (1.36.0) sobre el Write equivalente (mismo file_path, mismo contenido, sha256 2edf95c0…48c3): sin decisión (allow), 4,8 s.
+  en vivo, cp <scratchpad>/REQ-007.md requirements/REQ-007.md: DENEGADO («no se pudo determinar a que archivo escribe '…/REQ-007.md/'»); aplicación parcial deshecha; regresión F-137-10, hotfix 1.36.1.
+  en vivo, cat <scratchpad>/REQ-007.md > requirements/REQ-007.md (llamada Bash normal, sin desactivar nada): admitido.
+  la puerta en vivo juzga el comando y su destino, no el contenido: el contenido lo juzgó la corrida fuera de banda, y su integridad, esta §5.
+```
+
+*(Esta salida la produjo la coordinadora. La fase 3 (QA) vuelve a ejecutar §5 sobre el árbol comiteado **y no da por buena esta salida**.)*
 
 ## Punteros
 
@@ -67,4 +89,4 @@ real va aquí; **ninguna cifra de este bloque se escribe sin su corrida detrás*
 - Prosa aplicada en la fase 2: `docs/arnes/v1.37.0-f136-17-fase2-prosa.md`.
 - Ficha **F-136-17** en `docs/PENDIENTES.md`.
 - Decisiones del propietario: `PENDING_APPROVAL.md` § Resueltas, undécima autorización (2026-10-09) y
-  **P-137-A** (2026-10-12).
+  **P-137-A** a **P-137-E** (2026-10-12).

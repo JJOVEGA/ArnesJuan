@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-12 · F-136-17, paso 1 **aplicado** (sin validar): `REQ-007.md` pasa de 868 108 a **391 307 bytes**; su historia, verbatim, en `docs/historia/REQ-007/`; P-137-E y el hotfix 1.36.1 registrados
+> Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora); prosa del `analista-requerimientos` (Opus) · agente: la coordinadora aplica, por P-137-A (2).
+
+- **P-137-E**, literal en la cola: aplicar con redirección, juzgada en vivo. **Hotfix 1.36.1 (F-137-10)** con su alcance literal en `docs/PLAN.md`: se abre al cerrar F-136-17, antes de a).
+- **Aplicación:** 13 destinos y el índice primero; después `cat <scratchpad>/REQ-007.md > requirements/REQ-007.md`, en una llamada `Bash` normal: **la puerta en vivo la admitió**. Fuera de banda, el `Write` equivalente: `allow`. Sin desactivar nada.
+- **Resultado:** `requirements/REQ-007.md` = 2 838 líneas, **391 307 bytes** (era 4 857 / 868 108); 2 039 líneas en 24 tramos movidas **verbatim** a 13 archivos de `docs/historia/REQ-007/`, con un puntero por bloque; cabecera intacta salvo `Archivos:`; `Tocado por:` reducido a su última entrada, con su valor completo en `trazabilidad-tocado-por.md`; una fila nueva en el Historial.
+- **Comprobación §5 sobre el repositorio** (salida en `docs/historia/REQ-007/README.md`): 13/13 destinos verbatim; ningún `CA-xx` ni identificador sin rastro desde el REQ; 17/17 hallazgos abiertos con sede en el REQ; 13/13 `ruta#ancla` resuelven; `tools/arnes-lectura.sh` sin anomalías; `tools/arnes-paralelo.sh` expande las rutas.
+- **Sin validar:** QA (fase 3) vuelve a ejecutar §5 sin fiarse de esta salida; seguridad (fase 4) comprueba que no desapareció ningún hallazgo abierto ni criterio vigente.
+- **Avance (regla 6):** el objetivo práctico de F-136-17 está en el árbol; faltan QA y seguridad.
+
 ## [Interno] — 2026-10-12 · F-136-17: P-137-C y P-137-D resueltas; **la puerta en vivo deniega el `cp` y la aplicación se para** (`P-137-E`); regresión de 1.35.0 hallada: todo `cp` sobre un archivo existente se deniega (`F-137-10`)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

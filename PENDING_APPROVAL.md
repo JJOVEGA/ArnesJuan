@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-### P-137-E — F-136-17: **la puerta en vivo denegó el `cp`, y la causa no es el contenido.** Desde 1.35.0 todo `cp` que sobrescribe un archivo existente se deniega (F-137-10). ¿Se aplica con la redirección `cat … > …`, que la puerta sí juzga en vivo?
+_(Vacía desde el 2026-10-12: P-137-E y el hotfix 1.36.1 resueltos por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-12) — **P-137-E: (A), aplicar con redirección juzgada en vivo**; y **F-137-10 pasa a HOTFIX 1.36.1**, que se abre al cerrar F-136-17 y antes de la pieza a)
+
+**Texto del propietario, literal** (mensaje del 2026-10-12 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-137-E: (A). Aplicar con redirección (cat … > …) como llamada Bash normal,
+> con la puerta juzgando en vivo; si deniega, parar; después comprobación
+> completa, commit y push. Mismas condiciones de P-137-C.
+>
+> F-137-10 se trata como HOTFIX 1.36.1, no como ficha de 1.37:
+> - Se abre al cerrar F-136-17 (fase 4 y commit validado), antes de la pieza
+>   a). Alcance único: el detector de escrituras reconoce el destino de cp
+>   (y de mv e install, si comparten la causa) como archivo cuando lo es;
+>   fail-before contra v1.36.0 con los casos ya medidos a mano (REQ,
+>   PLAN.md, desarrollador, cp -T, destino inexistente); regresión completa
+>   del banco. Ciclo entero: desarrollador → QA → seguridad.
+> - Mientras tanto, se declara en las notas de 1.36.0 como regresión conocida
+>   con su forma, su efecto (sobre-denegación) y la salida (redirección o
+>   destino nuevo).
+> - Nada más entra en 1.36.1.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Las «notas de 1.36.0» son la entrada `[1.36.0]` de `CHANGELOG.md`**: no hay release de GitHub para `v1.36.0` (`gh release view` → «release not found»), así que declararla no publica nada fuera del repositorio. La declaración se **añade** a la entrada, fechada y rotulada como posterior a la publicación; el texto publicado no se reescribe.
+- **Hotfix 1.36.1 anotado en `docs/PLAN.md`** con el alcance literal, entre F-136-17 y la pieza a). Al abrirse, el `analista-requerimientos` fija el contrato: el propietario pidió el ciclo desarrollador → QA → seguridad, y **este repositorio no declara la vía proporcional** (`AGENTS.md` §6), así que el analista no se omite. **Esa comprobación la hace la coordinadora por escrito en el encargo**, como manda §6.
+
+### P-137-E (texto de la consulta, conservado) — F-136-17: **la puerta en vivo denegó el `cp`, y la causa no es el contenido.** Desde 1.35.0 todo `cp` que sobrescribe un archivo existente se deniega (F-137-10). ¿Se aplica con la redirección `cat … > …`, que la puerta sí juzga en vivo?
 
 **Lo que pasó.** Hice lo que autorizaste en P-137-C: una llamada `Bash` normal, `cp <scratchpad>/REQ-007.md requirements/REQ-007.md`. **La puerta instalada la denegó en vivo**: «no se pudo determinar a qué archivo escribe '…/requirements/REQ-007.md/'». **Paré**, como mandaste, y **deshice la aplicación parcial**: había copiado ya los 13 destinos y el índice, y los retiré para que no hubiera historia «movida» que seguía también en el REQ. **El REQ está intacto (`cmp` contra la foto de `cecf9b6`).** Los archivos siguen en el scratchpad, con el mismo `sha256`.
 
@@ -72,8 +100,6 @@ El detector juzga `destino/` como si fuera un directorio, y la identificación d
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-E»; si no, corrige):
 
 > **P-137-E: opción (A).** La coordinadora aplica el paso 1 con `cat <scratchpad>/REQ-007.md > requirements/REQ-007.md` (y los destinos y el índice como antes), en una llamada `Bash` normal juzgada en vivo, con las condiciones de P-137-C: sin desactivar nada y, si la puerta deniega, se para y se registra. Después, la comprobación completa, commit y push. F-137-10 queda como ficha para 1.37, con el `auditor-seguridad` para clasificarla.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-12) — **P-137-C adoptada con la copia juzgada EN VIVO, y P-137-D (A)**: el paso 2 no mueve nada; los 30 KB, inalcanzables con la regla; QA y seguridad, sólo sobre el paso 1
 
