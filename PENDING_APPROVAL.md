@@ -43,7 +43,43 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-12: P-137-E y el hotfix 1.36.1 resueltos por el propietario, en § Resueltas.)_
+### P-137-F — F-136-17, fase 3: **QA encontró texto vigente fuera del REQ que hallazgos abiertos citan por su nombre** (tu salvaguarda 1). Devolverlo saca el REQ del techo del `Write` en cualquier variante. ¿Cuánto se devuelve?
+
+**Qué trabajo detiene, y qué no.** Detiene la pasada correctiva, la fase 4 y el commit validado. **No detiene nada más:** el hotfix 1.36.1 se abre al cerrar F-136-17.
+
+**Los hallazgos de QA** (`docs/qa/REQ-007.md` § «F-136-17 — partición (fase 3)»; **comprobados en disco por la coordinadora**):
+- **QA-007-19 (`contrato`, alta):** los **puntos 1 a 6 de CA-69** son el **enunciado** del criterio —qué evidencia se exige, la línea base, los movimientos y cambios de compatibilidad declarados—, no el registro de cómo se midió, y salieron. **SEC-132** (abierto) dice en el registro que su arreglo «se declara en **CA-69 punto 3**»; **SEC-130** (abierto) lo cita por su nombre. **33 líneas que se quedaron en el REQ** remiten a «CA-69, punto N», entre ellas CA-47 p. 20, CA-67 y CA-68, que §13 declara norma única. Y la fila nueva del Historial dice «el contrato no cambia», lo que con esto es falso. **El error de origen es mío:** en el encargo de la fase 2 propuse yo que CA-69 saliera entero salvo su primera frase, y el analista lo confirmó.
+- **QA-007-20 (`contrato`, media):** el texto que **SEC-124** cita desde la propia cabecera, «CA-66 punto 5 (octava autorización, «la regla, no un inventario»)», salió con D1, aunque se quedó el rótulo. Es el ejemplo exacto que pusiste en P-137-A. Ahora el REQ se contradice: CA-66 punto 5 habla de «seis» clases y la nota de CA-24 de «ocho».
+- **QA-007-21 (`instrumento`):** REQ-009, O-16 y 14 hashes de commit quedaron sin rastro desde el REQ. **Mi comprobación no los cubría:** el patrón no incluía `REQ-`, `O-` ni hashes. Su arreglo es mecánico: van en los punteros.
+- **El resto, conforme:** la mecánica (13/13 destinos verbatim, rehecho por QA con `cmp`, sin fiarse de mi salida); los enlaces; y **el banco: 2304 PASS, 0 FAIL, 12 SKIP, autoprueba 117/0** sobre el mismo total de casos que el CI. Los 26 SKIP de menos se explican caso por caso (instalación 1.33.2, `jq` 1.7.1 y bash del runner).
+
+**Por qué no lo corrijo sin preguntarte.** CA-69 sí es mecánico: vuelve entero y no hay nada que juzgar. **CA-66 no lo es:** SEC-124 cita «punto 5», y en D1 hay **tres** «Punto 5», uno por versionado. Cada uno lista los movimientos de `deny` a `allow` que ese versionado declaró admitidos. Si esas listas son las sedes de las clases que la nota de CA-24 cuenta («sólo los movimientos de esas ocho clases no son hallazgo»), son vigentes y deben volver. **No sé si son historia o vigentes**, y ésa es tu condición de parada.
+
+**Las opciones, medidas** (REQ hoy: 391 307 B; techo del `Write`: 393 216; presupuesto de `Edit` = 4 294 967 296 / tamaño del REQ):
+
+| Opción | Qué vuelve al REQ | REQ queda en | Sobre el techo del `Write` | Presupuesto de `Edit` |
+|---|---|---|---|---|
+| hoy | — | 391 307 | 0 | **10 975** (QA lo midió: 10 975/10 976) |
+| **(A)** | CA-69 entero + los **tres «Punto 5»** de D1 | ≈ 430 800 | ≈ 37 600 | ≈ 9 970 |
+| **(B)** | CA-69 entero + **sólo** «la regla, no un inventario» (1999–2012) | ≈ 418 400 | ≈ 25 200 | ≈ 10 270 |
+| **(C)** | CA-69 entero + **D1 entero** (toda la evidencia de CA-66) | ≈ 481 100 | ≈ 87 900 | ≈ 8 930 |
+| original | — | 868 108 | 474 892 | 4 947 |
+
+En las tres opciones, además: REQ-009, O-16 y los hashes van a los punteros; la fila del Historial se corrige; los destinos se rehacen (`evidencia-ca69-1.36.0.md` desaparece si CA-69 vuelve entero); y se actualiza la fila de REQ-007 en `requirements/README.md`, que el contrato §4 pedía y no se hizo. **Lo aplico por `Edit`, y así la puerta juzga en vivo el documento reconstruido.** Es posible porque el `old_string` es un puntero corto: el presupuesto no se acerca al límite. Después, **la única pasada correctiva de QA** verifica todo junto, y luego la fase 4.
+
+- **(A)** *Consecuencia:* devuelve todo lo que SEC-124 y la nota de CA-24 pueden estar citando, con un corte **estructural** (la viñeta «Punto 5» entera) que no pide al analista otra lectura. El `Edit` se queda en ≈ 2× el original.
+- **(B)** *Consecuencia:* devuelve sólo lo que SEC-124 nombra literalmente. Es la más pequeña, pero si QA juzga normativas las listas de movimientos, sale **otro hallazgo y una segunda pasada**, que es tu otra condición de parada.
+- **(C)** *Consecuencia:* no hace falta ningún juicio, pero devuelve también registro puro, como el fail-before del punto 1. Es la más conservadora y la que menos gana.
+
+**Lo que esto le hace a tu medida, sin adornos.** **El objetivo «REQ bajo el techo de un `Write`» se pierde en cualquier variante**, y la salida de verdad es F-137-9 (partir REQ-007). Lo que se mantiene es lo que declaraste válido en P-137-D: el `Edit` pasa de 4,9 a ≈ 10 KB por llamada. **Y la medida del coste del analista, según QA:** la comisión de medida (135 909 tokens) es **≈ 15 % más barata** que la mediana de once comisiones comparables de 1.36.0 (≈ 160 k), y cuatro de esas once costaron igual o menos. **Las once ya estaban por debajo de 300 k**, porque el analista ya leía por rangos (`Read` corta en 256 KB). Además, la comparación es sólo parcialmente del mismo tipo: no aplicó nada, y eso sesga la cifra hacia abajo. **«La lectura a menos de la mitad» no está medida:** lo medido es el archivo, al 45 % de sus bytes.
+
+**Mi recomendación: (A).** Cumple tu salvaguarda 1 con un corte que no depende de que nadie interprete nada, y conserva casi todo el beneficio práctico.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-F»; si no, corrige):
+
+> **P-137-F: opción (A).** Vuelven al REQ, verbatim y en su sitio, CA-69 entero (3141–3397 de `cecf9b6`) y las tres viñetas «Punto 5» de D1 (1688–1709, 1781–1806 y 1921–2012). REQ-009, O-16 y los hashes de commit se añaden a los punteros. Se corrigen la fila del Historial y la fila de REQ-007 en `requirements/README.md`, y se rehacen los destinos y el índice. La coordinadora lo aplica por `Edit`, juzgado en vivo; QA hace su única pasada correctiva sobre todo junto; después, seguridad. Queda aceptado que REQ-007 supere el techo de un `Write`; la medida que vale es el presupuesto de `Edit`, re-medido por QA, y la salida de fondo es F-137-9.
 
 ## Resueltas
 

@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17, fase 3: QA **con hallazgos** — salió texto vigente que hallazgos abiertos citan (QA-007-19 y 20, `contrato`); banco 2304/0/12; `P-137-F` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 256 k tokens) · agentes: `qa-tester` + la coordinadora.
+
+- **QA rehízo §5 sin fiarse de la salida de la coordinadora:** 13/13 destinos verbatim (`cmp`), ninguna línea perdida salvo las dos ediciones en sitio, 69 `CA-xx`, cabecera igual salvo `Archivos:`. **Banco completo: 2304 PASS, 0 FAIL, 12 SKIP, autoprueba 117/0**; ninguna sección lee el REQ del repositorio.
+- **QA-007-19 (`contrato`, alta):** los puntos 1–6 de CA-69 son enunciado y salieron. SEC-132 y SEC-130 (abiertos) citan «CA-69 punto 3», y 33 líneas del REQ remiten a CA-69. **El error de origen es de la coordinadora**, que propuso ese corte en el encargo de la fase 2.
+- **QA-007-20 (`contrato`, media):** salió el texto «la regla, no un inventario» que SEC-124 cita.
+- **QA-007-21 (`instrumento`):** REQ-009, O-16 y 14 hashes quedaron sin rastro desde el REQ; el patrón de la coordinadora no los cubría.
+- **Comprobado en disco por la coordinadora**, y medidas las opciones: cualquier devolución deja el REQ **sobre el techo del `Write`** (≈ 418–481 KB); el presupuesto de `Edit` queda entre ≈ 8,9 y ≈ 10,3 KB (era 4,9).
+- **Medida del propietario, juzgada por QA:** comisión del analista 135 909 tokens, **≈ 15 % bajo la mediana** de once comparables de 1.36.0, que ya estaban todas bajo 300 k. **La mejora de coste por comisión no queda demostrada**; el presupuesto de `Edit` sí: **10 975 B medidos** con la puerta, frente a 4 947.
+- **Cola: `P-137-F`** (cuánto vuelve: CA-69 con los tres «Punto 5», sólo la regla, o todo D1). Recomendación (A).
+- **Avance (regla 6):** la partición es mecánicamente correcta y el banco no cambia; falta devolver el texto vigente, y la decisión es del propietario porque la condición de parada lo exige.
+
 ## [Interno] — 2026-10-12 · F-136-17, fase 3 (preparación): comisión de medida del analista sobre el REQ partido — **135 909 tokens**, write-back de F-137-8 preparado sin aplicar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos`.
 
