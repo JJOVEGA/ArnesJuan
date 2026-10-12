@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · F-136-17: paso 1 listo y comprobado (391 307 B, la puerta lo admite fuera de banda; espera `P-137-C`); paso 2 parado (`P-137-D`): con la regla, el margen máximo es ≈ 14,9 KB, no 30
+> Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista) · agente: `analista-requerimientos` + la coordinadora.
+
+- **Analista (una comisión, pasos 1 y 2; ≈ 266 k tokens):** prosa acortada (`docs/arnes/v1.37.0-f136-17-fase2-prosa.md` §0.1, §2, §3.2), índice borrador con las cifras medidas, R-050 en dos punteros, anclas corregidas al formato de GitHub; y la clasificación de los doce versionados (`docs/arnes/v1.37.0-f136-17-paso2-clasificacion.md`).
+- **Paso 1, ensamblado y comprobado por la coordinadora:** REQ-007 = **391 307 bytes** (1 909 bajo el techo); 13/13 destinos verbatim; ningún `CA-xx` ni identificador sin rastro; 17 hallazgos abiertos con sede; 13 `ruta#ancla` casan. **Puerta instalada fuera de banda: sin decisión (`allow`), 4,8 s.** Espera `P-137-C` para aplicarse.
+- **Paso 2:** CA-41/48/49/50 se quedan (texto vigente; CA-41 l. 150 «manda este versionado», comprobado); CA-45 y CA-47 puntos 1–20 se quedan; **tres dudas** de CA-45/47, **13 378 bytes medidos**. Aun resueltas hacia historia, margen ≈ 14,9 KB: **el objetivo de 30 KB no se alcanza con la regla**, porque el contenido vigente de REQ-007 son ≈ 378 KB. **`P-137-D`** en la cola, agrupada con `P-137-C`.
+- **Ficha `F-137-8`** (P-119-A dicha «pendiente» en CA-45/47 estando resuelta desde el 2026-10-03), comprobada en disco; sin corregir.
+- **Avance (regla 6):** el paso 1 está a una decisión de aterrizar; el paso 2 ha medido que la meta de margen pide una salida estructural.
+
 ## [Interno] — 2026-10-12 · F-136-17: P-137-B adoptada (A), analista despachado con los pasos 1 y 2; `P-137-C` abierta: «un solo `Write`» de 390 KB no es ejecutable y un `Write` truncado pasa la puerta (`F-137-7`)
 > Origen: GitHub (commit local, sin push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (el analista, en curso).
 

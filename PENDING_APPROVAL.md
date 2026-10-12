@@ -71,6 +71,50 @@
 
 > **P-137-C: opción (A), sólo para F-136-17 (pasos 1 y 2).** La coordinadora aplica la partición copiando por consola el archivo ensamblado, con dos condiciones: **antes**, la puerta instalada (`guard.sh` de la 1.36.0) juzga fuera de banda el `Write` equivalente, byte a byte, y sólo se copia si devuelve `allow`; **después**, se ejecuta §5 completo sobre el repositorio. Las dos salidas quedan en el índice. El commit lo declara como aplicación por consola juzgada fuera de banda. QA reproduce ambas en la fase 3 sin fiarse de la salida de la coordinadora. Fuera de F-136-17 no vale como precedente.
 
+**Actualización (2026-10-12, después de abrir esta entrada): el paso 1 está ensamblado y comprobado, y sólo espera esta decisión.** Con el texto nuevo acortado por el analista (de 6 194 a 3 761 bytes), el REQ ensamblado mide **391 307 bytes, 1 909 bajo el techo**. §5 en el scratchpad: 13/13 destinos verbatim; ninguna línea perdida salvo las dos ediciones en sitio declaradas; ningún `CA-xx` ni ningún identificador sin rastro desde el REQ (R-050 incluido); los 17 hallazgos abiertos con sede en el REQ; las 13 `ruta#ancla` casan con el título de su destino. **La puerta instalada, fuera de banda, sobre el `Write` equivalente: sin decisión (`allow`), en 4,8 s.** `sha256` del REQ que se copiaría: `2edf95c065e93e771b04efb5e06d67b2a469364e95c72e903b7db8aad91548c3`.
+
+### P-137-D — F-136-17, paso 2: **con tu regla, los 30 KB de margen no se alcanzan.** De los doce versionados no sale nada sin duda; aunque las tres dudas fueran historia, el margen quedaría en ≈ 14,9 KB. ¿Qué se hace con ellas, y con el objetivo?
+
+**Qué trabajo detiene, y qué no.** Detiene el paso 2 y, como QA y seguridad revisan «una vez el resultado de los dos pasos», también las fases 3 y 4. **No detiene** el paso 1, que sólo espera `P-137-C`.
+
+**Lo que encontró el analista, y lo que comprobé yo.** Clasificó los doce bloques con tu regla (`docs/arnes/v1.37.0-f136-17-paso2-clasificacion.md`):
+- **CA-41, CA-48, CA-49 y CA-50: se quedan enteros.** Son el texto vigente; en CA-41, la línea 150 dice «manda este versionado» (comprobado), el mismo caso que CA-46.
+- **CA-45 (165–206) y CA-47 (266–441) se quedan:** sede única; los puntos 1–10 y F1–F7, que citan SEC-123 y CA-49.
+- **CA-47, puntos 11 a 20, se quedan, punto por punto, como pediste.** Del 18 y el 19 cuelgan SEC-124, SEC-125 y QA-023-23; el 20 es norma única de §13 y QA-007-18 cita su «Medida».
+- **Quedan tres dudas, y las tres son de CA-45 o CA-47**, así que paró, como mandaste. **Bytes medidos por mí con `wc -c`, no estimados:**
+
+| Duda | Qué es | Bytes | Lectura «historia» | Lectura «vigente» |
+|---|---|---|---|---|
+| **D-45-1** | CA-45, 207–226 | 1 992 | registro de un experimento en el host sobre `43b948a` | contiene la declaración del límite de R5 que la norma de 199–200 exige que exista, y la cabecera la nombra (l. 6) |
+| **D-47-1** | los cinco rótulos «Versionado el …» de CA-47 | 4 752 | ningún rótulo contiene una regla | llevan «manda esta versión»; 742–744 es la **única** frase que da el estado del punto 18; y sin ellos, «11.», «14.» y «18.» siguen a un párrafo y **la lista se muestra mal** |
+| **D-47-2** | registro dentro de los puntos 11 y 20 (lo medido, los «Por qué», las notas «Antes») | 6 634 | lo medido y los porqués son registro | «ese texto se queda» cubre también sus sub-viñetas |
+| | **total** | **13 378** | | |
+
+**La aritmética:** tras el paso 1, el REQ mide 391 307. Con **las tres** hacia historia queda en ≈ 377 900 más sus punteros: **margen ≈ 14,9 KB, la mitad del objetivo**. Con sólo lo medido de D-47-2, ≈ 3,4 KB. Sin nada, 1,9 KB.
+
+**Y un dato que cambia lo que vale ese margen.** El techo protege el `Write` entero, pero `P-137-C` ha mostrado que **ningún agente emite un `Write` de ~390 KB de forma fiable** (ficha F-137-7). Por eso el margen bajo ese techo **compra poco en la práctica**. Lo que sí compra el paso 1, con o sin margen:
+- **El presupuesto de un `Edit` se duplica:** de ≈ 4,9 KB a ≈ 11 KB de `old_string` por llamada.
+- **La lectura del analista baja a menos de la mitad.**
+
+Lo segundo es tu otra medida, y la mide QA en la fase 3. **El margen duradero no sale de mover historia: el contenido vigente de REQ-007 son ≈ 378 KB.** Sólo hay dos salidas, y las dos quedan fuera de los límites de esta intervención: **partir REQ-007 en varios REQ**, que es un cambio de contrato del analista, o **revisar el techo midiendo**, que toca `hooks/`.
+
+**Opciones:**
+
+- **(A) El paso 2 no mueve nada.** Las tres dudas se resuelven como **vigentes**. F-136-17 se cierra con el paso 1, y el objetivo de 30 KB se declara **inalcanzable con esta regla**, con una ficha para 1.37 que recoja las dos salidas estructurales. QA y seguridad revisan el paso 1.
+  - *Consecuencia:* margen de 1,9 KB. El próximo criterio que crezca vuelve a pasar el techo del `Write`, pero los `Edit` siguen funcionando con el doble de presupuesto. No se toca la norma única de CA-45 y CA-47. Lo más barato y lo más seguro.
+- **(B) Las tres dudas, hacia historia.**
+  - *Consecuencia:* margen ≈ 14,9 KB, la mitad del objetivo. Saca de la norma única los rótulos que mantienen numerada la lista de CA-47 y la única frase de estado del punto 18. Además pide otra aplicación, más punteros y más superficie para QA y seguridad.
+- **(C) Sólo lo medido de D-47-2** (555–562 y 986–990, ≈ 1,5 KB).
+  - *Consecuencia:* margen ≈ 3,4 KB. Un paso entero para muy poco.
+
+**Mi recomendación: (A).** Lo que de verdad cambia el coste y el trabajo diario ya lo da el paso 1. Los 13 KB de (B) no llegan al objetivo y salen de la norma única. Y el problema de fondo —que REQ-007 sea un REQ vigente de 378 KB— no lo resuelve mover historia, así que conviene decidirlo en 1.37 con su nombre.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-D»; si no, corrige):
+
+> **P-137-D: opción (A).** El paso 2 no mueve nada: D-45-1, D-47-1 y D-47-2 se quedan como texto vigente. El objetivo de 30 KB queda declarado inalcanzable con la regla de P-137-A, porque el contenido vigente de REQ-007 son ≈ 378 KB; se registra una ficha para 1.37 con las dos salidas estructurales (partir REQ-007 en varios REQ, cambio de contrato con el analista; o revisar el techo midiendo, en `hooks/`), sin decidir entre ellas. F-136-17 sigue con el paso 1 aplicado según P-137-C, y QA y seguridad revisan sólo el paso 1 en las fases 3 y 4. F-137-8 sigue como ficha.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-10-12) — **P-137-B: opción (A)**, dos pasos; CA-47 punto por punto; objetivo ≥ 30 KB de margen; dos pasadas del analista aceptadas sin reiniciar contadores

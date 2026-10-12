@@ -30,6 +30,8 @@
   - **Fichas registradas, sin reparar:** `F-137-1` a `F-137-5` en `docs/PENDIENTES.md`. Entre ellas, dos que valen para todo el arnés: **la rotación por sección no puede archivar el `## Historial de cambios` de un REQ porque es una tabla** (`hooks/rotar-artefactos.sh:214-218`, filas de tabla = continuaciones, sección sin entradas = no se rota), y **aunque pudiera no alcanzaría** (el Historial es el 21,7 %; el peso está en los criterios, que la rotación no toca por diseño). Por eso **`rotacion.artefactos` no se propone**: no movería un byte.
   - **P-137-B resuelta (2026-10-12): opción (A).** Paso 1 (acortar el texto nuevo hasta caber) y paso 2 (los doce «Versionado el …», CA-47 punto por punto, parada ante cualquier duda de CA-45/47, objetivo ≥ 30 KB de margen); QA y seguridad una vez sobre los dos; dos pasadas del analista aceptadas, contadores sin reiniciar. **Analista despachado con los dos pasos en una comisión** (en curso).
   - **`P-137-C` PENDIENTE:** «un solo `Write`» de ≈ 390 KB no lo puede emitir ningún agente de forma fiable, y la puerta instalada, ejecutada a mano, **deja pasar un `Write` truncado a 200 KB** (ficha `F-137-7`). La única vía es copiar por consola, que la puerta no juzga. Recomendación: copia de la coordinadora con el juicio de la puerta hecho antes fuera de banda (`allow` obligatorio) y §5 después, sólo para F-136-17. **Detiene sólo aplicar el paso 1.**
+  - **Paso 1 LISTO, sin aplicar (2026-10-12):** texto nuevo acortado (6 194 → 3 761 B); REQ ensamblado en el scratchpad = **391 307 B, 1 909 bajo el techo**; §5 limpio (13/13 verbatim, ningún `CA-xx` ni identificador perdido, 17 hallazgos abiertos con sede, 13 anclas válidas); puerta instalada fuera de banda: **`allow`**. `sha256` `2edf95c0…48c3`. **Espera `P-137-C`.**
+  - **Paso 2 PARADO, `P-137-D` PENDIENTE:** de los doce versionados no sale nada sin duda; las tres dudas (D-45-1, D-47-1, D-47-2) suman **13 378 B medidos** → margen máximo ≈ 14,9 KB, **no los 30 KB**. El contenido vigente de REQ-007 son ≈ 378 KB. Recomendación: (A) el paso 2 no mueve nada; ficha para 1.37 con las salidas estructurales. Ficha `F-137-8` registrada (P-119-A «pendiente» en CA-45/47 estando resuelta).
   - **Push:** `origin/cand/1.37.0` en `d8022cc` (2026-10-12, a petición del propietario, antes de la fase 2). Lo posterior va en commits locales; se le recuerda al final de cada fase.
 - **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
 
@@ -577,7 +579,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-12 08:46
+## Estado derivado — 2026-10-12 09:12
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -587,7 +589,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `d4de5c8` — limpio
+**Repositorio:** `cand/1.37.0` @ `4050283` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
