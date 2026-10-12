@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-12 · Regresión conocida de 1.35.0/1.36.0 declarada en las notas `[1.36.0]`: todo `cp` sobre un archivo existente se deniega (F-137-10; hotfix 1.36.1)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por decisión del propietario (P-137-E: «se declara en las notas de 1.36.0 como regresión conocida con su forma, su efecto (sobre-denegación) y la salida (redirección o destino nuevo)»).
+
+- Recuadro **añadido** al principio de la entrada `[1.36.0]`, fechado y rotulado como posterior a la publicación; **el texto publicado no se reescribe**. No hay release de GitHub para `v1.36.0`, así que no se publica nada fuera del repositorio.
+- **Avance (regla 6):** quien use 1.35.0 o 1.36.0 tiene la forma, el efecto y la salida por escrito hasta que salga 1.36.1.
+
 ## [GitHub] — 2026-10-12 · F-136-17, paso 1 **aplicado** (sin validar): `REQ-007.md` pasa de 868 108 a **391 307 bytes**; su historia, verbatim, en `docs/historia/REQ-007/`; P-137-E y el hotfix 1.36.1 registrados
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora); prosa del `analista-requerimientos` (Opus) · agente: la coordinadora aplica, por P-137-A (2).
 
@@ -104,6 +110,13 @@ CHANGELOG — ArnesJuan
 > agentes: `desarrollador` (Opus 5.5), `qa-tester` (Opus 5.5, por la decisión del propietario de `AGENTS.md` §5),
 > `analista-requerimientos` (Opus 5.5), `auditor-seguridad` (Opus 5.5) y la coordinadora (Fable 5.1) ·
 > gobernado por la instalación estable **1.35.0**
+
+> **⚠ Regresión conocida — declarada el 2026-10-12, después de publicar** (decisión del propietario, `PENDING_APPROVAL.md` § Resueltas, P-137-E; ficha F-137-10; se repara en el **hotfix 1.36.1**). *El resto de estas notas no se reescribe.*
+>
+> - **Forma:** un `cp` desde `Bash` cuyo destino es un **archivo que ya existe** dentro del proyecto **se deniega**, aunque el destino no sea código protegido ni un REQ. El motivo dice «no se pudo determinar a qué archivo escribe '…/<archivo>/'». El detector de escrituras trata el último argumento de `cp` como un posible directorio y juzga `<archivo>/`. Como esa ruta no se puede recorrer, la identificación del destino (REQ-007 CA-47) falla **cerrada**.
+> - **Alcance medido** (la puerta ejecutada a mano con la entrada `Bash` equivalente, 2026-10-12): deniega con cualquier agente —también el `desarrollador`—, con ruta absoluta o relativa, y también con `cp -T`. Con un destino que **no existe**, no deniega. **Viene de 1.35.0:** 1.33.2 no lo denegaba, y 1.35.0 y 1.36.0 sí. **Ninguna nota lo declaraba.** No está medido si `mv` e `install` comparten la causa; el hotfix lo determina.
+> - **Efecto: sobre-denegación.** Falla del lado **cerrado**: no deja pasar nada que antes estuviera protegido, pero bloquea una escritura legítima con un motivo que no se explica por ninguna regla del proyecto.
+> - **Salida mientras tanto:** escribir con **redirección** (`cat origen > destino`), cuyo destino la puerta sí determina y juzga; o escribir a un **destino nuevo**; o usar `Edit`/`Write`. **No** se desactiva ningún hook para sortearlo.
 
 **Estas notas no publican nada.** El propietario lo dejó escrito: «Fusión, tag y publicación los decido yo con las
 notas finales delante.» (P-136-S (3), `PENDING_APPROVAL.md` § Resueltas). **CI verde sobre `789a6f9`, run
