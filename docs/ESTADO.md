@@ -10,7 +10,18 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — ventana 1.36.0 abierta; 1.35.0 publicada (2026-10-03)
+## ⏸ RETOMAR AQUÍ — hotfix 1.36.1 en curso (rama `hotfix/1.36.1` desde `v1.36.0`, 2026-10-13)
+
+**Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
+
+- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 0 de 4, siguiente acción: el `analista-requerimientos` escribe el REQ nuevo.** La autorización, literal, está en `PENDING_APPROVAL.md` § Resueltas, «Hotfix 1.36.1 (F-137-10) autorizado».
+- **El defecto:** desde 1.35.0, un `cp` sobre un archivo **existente** del proyecto se deniega a cualquier agente, también con `cp -T`. El detector juzga `destino/` como si fuera un directorio, y la identificación del destino falla cerrada. Medido fuera de banda el 2026-10-12: 1.33.2 pasaba, y 1.35.0 y 1.36.0 deniegan. Un destino que no existe pasa. La redirección `cat … > …` también pasa.
+- **Criterio por propiedad, literal del propietario:** «un destino que existe y es archivo se juzga como archivo, en cp, mv e install».
+- **Fases:** 0 analista (REQ nuevo) → 1 desarrollador → 2 QA (Opus) → 3 seguridad → 4 analista (write-back y notas `[1.36.1]`). Al cerrar, la coordinadora hace push y abre PR con CI. **La publicación es del propietario.**
+- **Push de `hotfix/1.36.1`: se le recuerda al propietario al terminar cada fase.**
+- **Mientras dure, gobierna la 1.36.0 instalada, que tiene el defecto:** nada de `cp` sobre archivos existentes.
+
+## Historia — ventana 1.36.0 abierta; 1.35.0 publicada (2026-10-03)
 
 **Este bloque es el único vigente en la rama `cand/1.36.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Todo lo que está debajo es historia.
 

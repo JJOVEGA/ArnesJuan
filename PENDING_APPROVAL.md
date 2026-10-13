@@ -47,6 +47,64 @@ _(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resuelt
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-13) — **Hotfix 1.36.1 (F-137-10) autorizado: P-137-H adoptada con tres ajustes**; rama `hotfix/1.36.1` desde `v1.36.0`
+
+**Esta rama parte de `v1.36.0`**, así que esta cola no tiene las entradas de 1.37 (P-137-A a P-137-G, en `cand/1.37.0`, `origin` `ab22d02`). Allí está registrada la propuesta P-137-H, y aquí, la autorización vigente del hotfix. Al fusionar `main` en `cand/1.37.0` se juntan las dos historias.
+
+**Texto del propietario, literal** (mensaje del 2026-10-13 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-H, con sus tres ajustes: analista en fase 0 (REQ nuevo del
+> hotfix, criterio por propiedad: «un destino que existe y es archivo se
+> juzga como archivo, en cp, mv e install»; sin declarar en §6 la vía que
+> lo omite), rama hotfix/1.36.1 desde v1.36.0 (f22b905), y los controles de
+> seguridad del fail-before: cp sobre archivo protegido sigue en deny, y el
+> paso de deny a allow se declara como clase de movimiento con sus casos.
+>
+> Límite del hotfix: nada más entra. Si el desarrollador encuentra la causa
+> en un sitio compartido con otra puerta, se registra y se repara sólo lo
+> que el REQ del hotfix nombra.
+>
+> Anota en docs/PLAN.md el paso que sigue a la publicación de 1.36.1: fusión
+> de main en cand/1.37.0, para que 1.37 lleve el arreglo del cp y no vuelva
+> a publicarlo roto.
+>
+> Al cerrar: notas [1.36.1], push, CI; la publicación es mía. Recuérdame el
+> push de hotfix/1.36.1 al terminar cada fase.
+
+**La propuesta que adoptó** (redactada por la coordinadora con la forma de `templates/autorizacion.md`, conservada literal; **los ajustes de arriba prevalecen**):
+
+> ## Autorización — hotfix 1.36.1 (F-137-10)
+>
+> ## Decisiones del propietario
+> - Alcance único: el detector de escrituras reconoce el destino de `cp` —y de `mv` e `install`, si comparten la causa— como **archivo** cuando lo es. Nada más entra en 1.36.1.
+> - Sede: un **REQ nuevo** (REQ-032), con `Sensible a seguridad: sí` y `Rigor: critico` por la política de autoalojamiento. No se añade a REQ-007, que F-137-9 va a partir.
+> - El movimiento que el arreglo produce —de `deny` a `allow` para `cp`/`mv`/`install` sobre un archivo existente **no protegido**— se declara como **clase** de movimiento, restituyendo lo que daba 1.33.2 (regla de CA-24: un movimiento de `deny` a `allow` no declarado es un hallazgo). Sobre un archivo **protegido** no hay movimiento: sigue en `deny`.
+> - Rama `cand/1.36.1` desde `v1.36.0`. Fusión, tag `v1.36.1`, publicación y actualización de la instalación estable: míos.
+>
+> ## Plan autorizado (cada fase termina en commit local; la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: REQ-032 con el contrato. Propiedad; fail-before contra v1.36.0 con los casos ya medidos a mano (`cp` sobre el REQ con ruta absoluta y relativa, sobre `docs/PLAN.md`, emitido por el `desarrollador`, con `cp -T`; y destino inexistente como control); y los controles de seguridad: `cp` sobre un archivo **protegido** existente, de un agente que no es el de código, sigue en `deny` antes y después; `cp` a un **directorio** existente se juzga como `directorio/nombre`; la misma matriz para `mv` e `install` si comparten la causa. Declara la clase de movimiento. Regresión completa del banco. Notas `[1.36.1]` como entregable.
+> Fase 1 — desarrollador: el arreglo, los casos en el banco con su fail-before contra v1.36.0, la regresión completa, la autoprueba y la versión 1.36.1 en `plugin.json` y en el marketplace. Sin procesos nuevos en el camino común.
+> Fase 2 — QA (Opus): repite el fail-before y el pass-after, el banco y la autoprueba, y **intenta romperlo**, sobre todo para que no abra un `allow` sobre algo protegido. Una pasada correctiva como máximo, dentro del contador.
+> Fase 3 — seguridad, sólo con QA favorable: que el movimiento de `deny` a `allow` queda acotado a lo no protegido y declarado. Puede vetar.
+> Fase 4 — analista: write-back y notas `[1.36.1]`. La coordinadora: commit validado, push de la rama y PR.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, CHANGELOG, ESTADO e índices; crear la rama, hacer push de la candidata y abrir el PR en borrador, porque el CI es la puerta requerida; orden y presupuesto de cada despacho (≈ 150 k analista, ≈ 300 k desarrollador, ≈ 250 k QA, ≈ 150 k seguridad); ajustes del banco que no cambian ningún veredicto ni contrato; registrar defectos nuevos sin repararlos.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Cambio de contrato o de alcance —por ejemplo, que `mv` o `install` tengan **otro** defecto, o que el arreglo exija tocar la identificación del destino de CA-47 más allá del detector de `cp`/`mv`/`install`—; cualquier movimiento de `deny` a `allow` fuera de la clase declarada; un veredicto del banco que cambia fuera de lo declarado; aceptar o aplazar un riesgo; más pasadas que la prevista; un control del proveedor que detenga algo; publicar, fusionar, etiquetar o cerrar un REQ.
+>
+> ## Si la sesión se corta
+> La siguiente lee este plan en la cola y en ESTADO y continúa desde la última fase comiteada. No vuelve a pedir la autorización.
+>
+> ## Límites
+> Nada más que F-137-10 en 1.36.1. Nada de F-137-9 ni de las piezas a–d. No `AGENTS.md`. Fusión, tag, publicación e instalación estable: míos.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Lo que cambian los ajustes respecto de la propuesta:** la rama se llama **`hotfix/1.36.1`**; el criterio del REQ es el de la cita; y el **push de la rama no lo decide la coordinadora en cada fase: se lo recuerda al propietario**, y lo hace ella al cerrar, junto con las notas `[1.36.1]` y el CI.
+- **Comprobación de `AGENTS.md` §6, por escrito:** este proyecto «todavía no ha declarado esa autorización» (§6), así que **el analista no se omite** y hace la fase 0. El propietario lo confirma: «sin declarar en §6 la vía que lo omite».
+- **Se trabaja en el worktree de la sesión, cambiando de rama**, porque los hooks juzgan contra `CLAUDE_PROJECT_DIR`. Gobierna la instalación estable 1.36.0, **que tiene el defecto**: ningún agente hace `cp` sobre un archivo existente; se usa `Edit`/`Write` o la redirección.
+
 ### RESUELTA (propietario, 2026-10-07) — **P-136-V: SEC-133 límite declarado para 1.37, con la fila de §13 acotada (qué no cubre y su consecuencia)**; write-back de §13, notas `[1.36.0]` con fecha, último commit, push. Nada más entra
 
 **Texto del propietario, literal** (mensaje del 2026-10-07 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):

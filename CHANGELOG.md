@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · Hotfix 1.36.1 (F-137-10) abierto: rama `hotfix/1.36.1` desde `v1.36.0`; autorización registrada; fase 0 al `analista-requerimientos`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Autorización del propietario**, literal en `PENDING_APPROVAL.md` § Resueltas: P-137-H adoptada con tres ajustes. Alcance único: «un destino que existe y es archivo se juzga como archivo, en cp, mv e install»; fail-before contra v1.36.0, con los controles de seguridad (un `cp` sobre un archivo protegido sigue en `deny`, y el paso de `deny` a `allow` se declara como clase de movimiento con sus casos); nada más entra.
+- **La rama parte de `v1.36.0` (`f22b905`):** esta cola y este ESTADO no traen la historia de 1.37, que está en `cand/1.37.0` (`origin` `ab22d02`). Se juntan al fusionar `main` en `cand/1.37.0` tras publicar.
+- **Avance (regla 6):** el hotfix empieza por el contrato del analista.
+
 ## [Interno] — 2026-10-07 · Corrección del commit `da0525b`: el recuadro de aviso del borrador se había copiado al CHANGELOG delante de la entrada `[1.36.0]` (un `index` que casó con una frase partida); retirado; ESTADO cerrado; borrador con su nota en el sitio correcto
 > Origen: GitHub (commit local con push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
