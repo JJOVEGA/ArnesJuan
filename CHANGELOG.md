@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-13 · **F-136-17 CERRADA — cumple a medias** (commit validado): seguridad sin veto (R-058); `Edit` de 4 947 a 8 955 B por llamada; REQ-007 = 479 582 B, por encima del techo del `Write`; ≈ 388 KB de historia fuera con punteros
+> Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora); Opus (analista, QA, seguridad) · agentes: `analista-requerimientos`, `qa-tester`, `auditor-seguridad` y la coordinadora.
+
+- **Fase 4, `auditor-seguridad`, R-058: conforme en los tres puntos, sin veto, sin hallazgos.** (1) Ningún hallazgo abierto desapareció: los 17 siguen idénticos, y todo lo que citan por subpunto o fragmento —en la cabecera, en el registro y en `docs/qa/`— está en el REQ. (2) Ningún criterio vigente desapareció: 69 `CA-xx`; CA-01 a CA-53, CA-66 y CA-69 idénticos byte a byte; sólo CA-54, CA-58, CA-60, CA-67 y CA-68 pierden líneas (139, leídas enteras); la norma única de §13 conserva su texto. (3) La cabecera sólo cambia en `Archivos:`; el lector no da anomalías. Comparado por su cuenta, sin las cifras de QA ni de la coordinadora. **No firma la cabecera de REQ-007** (responde por todos sus criterios). Tres observaciones de forma → ficha **F-137-11**.
+- **Write-back de cierre, literal del propietario** en `docs/PENDIENTES.md` § F-136-17, con las cifras medidas y el coste de las comisiones. **Cumple a medias:** gana el `Edit` (1,81×) y la separación de la historia; no gana el techo del `Write` ni un ahorro demostrado del analista. **Lección:** CA-66 no es registro, es contrato. **Salida de fondo:** F-137-9 (partir REQ-007 por dominio), intervención 3 de 1.37.
+- **Memoria de la coordinadora:** antes de sacar texto de un REQ se barren las citas de los hallazgos abiertos **en sus registros**, no sólo en la cabecera.
+- `docs/PLAN.md`: F-136-17 cerrada. ESTADO: sin plan vigente; siguiente acción, adoptar `P-137-H` (hotfix 1.36.1).
+- **Avance (regla 6):** F-136-17 entregada con lo que se pudo y declarada con lo que no; lo siguiente, el hotfix 1.36.1, tiene su autorización lista.
+
 ## [Interno] — 2026-10-13 · F-136-17, fase 3: **QA APROBADO** tras la segunda pasada (P-137-G); QA-007-19 a 22 cerrados; `Edit` medido en 8 955 B (1,81× el original)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`qa-tester`) · agente: `qa-tester`.
 
