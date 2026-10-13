@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-### P-137-G — F-136-17: **la pasada correctiva cerró QA-007-19 y 20, pero encontró más texto de CA-66 que hallazgos abiertos citan y sigue fuera (QA-007-22).** Repararlo es una segunda pasada, y eso es tu condición de parada. ¿Vuelve CA-66 entero, o sólo lo citado?
+_(Vacía desde el 2026-10-13: P-137-G resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-13) — **P-137-G: (A), CA-66 vuelve entero**; cuatro «Punto 5» confirmadas; segunda pasada autorizada (2.ª de 3); write-back con la lección: **CA-66 no es registro, es contrato**
+
+**Texto del propietario, literal** (mensaje del 2026-10-13 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-G: (A). Devolver CA-66 entero al REQ. Confirmo las cuatro
+> «Punto 5» aplicadas. Autorizo esta segunda pasada (2.ª de 3; contador sin
+> reiniciar). Aplicar por Edit con la puerta en vivo; QA verifica la pasada
+> y repite la búsqueda de contraejemplos sólo sobre CA-66; seguridad;
+> commit validado; push.
+>
+> Write-back, con esta lección añadida: CA-66 no es registro, es contrato
+> (clases de movimiento, compatibilidad y filas contratadas que los hallazgos
+> abiertos usan como sede). La regla «el rótulo no inmuniza» vale para
+> Historial, Trazabilidad, Preguntas, notas y CA-67/68, que QA ya probó sin
+> contraejemplos; para CA-66 no. Resultado final de F-136-17: REQ en ~479 KB,
+> Edit en ~9 KB por llamada (1,8× el original), ~388 KB de historia fuera con
+> punteros. Cumple a medias, y así se declara.
+>
+> Al cerrar: push, y abre el hotfix 1.36.1 con su autorización lista.
+
+### P-137-G (texto de la consulta, conservado; resuelta arriba) — F-136-17: **la pasada correctiva cerró QA-007-19 y 20, pero encontró más texto de CA-66 que hallazgos abiertos citan y sigue fuera (QA-007-22).** Repararlo es una segunda pasada, y eso es tu condición de parada. ¿Vuelve CA-66 entero, o sólo lo citado?
 
 **Qué trabajo detiene, y qué no.** Detiene la segunda pasada, la fase 4 y el commit validado; y, como el hotfix 1.36.1 se abre al cerrar F-136-17, también su apertura. **No detiene nada más.**
 
@@ -78,8 +102,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-G»; si no, corrige):
 
 > **P-137-G: opción (A).** Vuelve al REQ CA-66 entero (lo que queda de D1: 1649–1687, 1710–1780, 1807–1920, 2013–2123 y 2154–2194 de `cecf9b6`), verbatim y en su sitio, por `Edit` juzgado en vivo; `evidencia-ca66-1.35.0.md` se retira; `7c6baea` va a un puntero. Confirmo las **cuatro** «Punto 5» aplicadas en P-137-F. Autorizo esta segunda pasada correctiva de la entrega, con los contadores tal cual. QA verifica una vez; después, seguridad; commit validado; push. Si QA encuentra otro texto citado fuera, se para y se me dice.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-13) — **P-137-F: (A)**; write-back de cierre de F-136-17 («cumple a medias»); **orden de lo que sigue**: hotfix 1.36.1, F-137-9 (partir REQ-007 por dominio), y después a), c), b), d), 2b
 

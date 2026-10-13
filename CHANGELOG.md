@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-13 · F-136-17: segunda corrección (P-137-G) por `Edit` juzgado en vivo (sin validar) — **CA-66 vuelve entero** al REQ; REQ-007 = 479 582 bytes
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por P-137-G.
+
+- **P-137-G**, literal en la cola: CA-66 entero; las cuatro «Punto 5» confirmadas; segunda pasada autorizada (2.ª de 3, sin reiniciar el contador); y la lección: **CA-66 no es registro, es contrato**.
+- **Cinco `Edit` con anclas cortas**, porque un solo `Edit` sobre las cuatro «Punto 5» no cabe en el presupuesto de búsqueda de la puerta. Todos juzgados en vivo y ninguno denegado; cada tramo se comprobó verbatim al escribirse. **CA-66 (1532–2194 de `cecf9b6`) está en el REQ idéntico al original**; su puntero desaparece; `7c6baea` pasa al puntero del Historial; una fila nueva del Historial registra la corrección y la lección.
+- **Destinos:** `evidencia-ca66-1.35.0.md` **retirado**: todo su contenido volvió. Quedan 11 destinos y el índice, que explica las dos correcciones.
+- **§5 sobre el repositorio:** 11/11 destinos verbatim; 21 tramos y 1 265 líneas movidos; CA-66 y CA-69 enteros y verbatim; ningún `CA-xx` ni identificador sin rastro (hashes con o sin comillas incluidos); 17/17 hallazgos con sede; 11/11 enlaces. **REQ-007 = 3 612 líneas, 479 582 bytes; presupuesto de `Edit` ≈ 8 955 B por llamada** (era 4 947).
+- **Avance (regla 6):** el contrato de REQ-007 está entero en el REQ; falta que QA verifique la pasada, y después la fase 4.
+
 ## [Interno] — 2026-10-13 · F-136-17, pasada correctiva de QA: QA-007-19 y 20 **cerrados**; **QA-007-22 nuevo** (`contrato`) — más texto de CA-66 citado por hallazgos abiertos sigue fuera; `P-137-G` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 311 k tokens en esta pasada) · agentes: `qa-tester` + la coordinadora.
 

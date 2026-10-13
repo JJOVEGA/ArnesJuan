@@ -38,7 +38,6 @@ quedan en el REQ no lo repiten, y remiten aquí.
 | `trazabilidad-correspondencias-1.36.0.md` | Las 16 tablas `### Correspondencia con el encargo (…)` restantes | 4419–4789 | 371 | 60 229 |
 | `preguntas-resueltas.md` | El cuerpo entero de `## Preguntas abiertas / conflictos`: las cinco preguntas, todas resueltas | 3812–4177 | 366 | 34 900 |
 | `notas-sedes-de-versionado.md` | De `## Notas / alcance`: «Construido en `9220c71`/`befc17a`» y las tres «Sedes y pruebas del versionado …» | 3602–3615 y 3737–3809 | 87 | 12 385 |
-| `evidencia-ca66-1.35.0.md` | CA-66: los cuatro bloques de evidencia por versionado de 1.35.0, **sin** sus viñetas «Punto 5» (el enunciado, los puntos 1–8 y las cuatro «Punto 5» se quedan en el REQ) | 1649–1687, 1710–1780, 1807–1920, 2013–2123 y 2154–2194 | 376 | 47 127 |
 | `evidencia-ca67-68-1.36.0.md` | CA-67 y CA-68: las viñetas de **estado y de medición** de la construcción de 1.36.0 | 2286–2291, 2295–2297, 2299–2305, 2308–2320, 2325–2333, 3068–3096, 3116–3122 y 3132–3138 | 81 | 8 367 |
 | `notas-de-versionado-en-criterios.md` | Notas de versionados ya rendidos dentro de CA-54, CA-58 y CA-60 | 1232–1261, 1429–1434 y 1465–1486 | 58 | 5 873 |
 
@@ -61,32 +60,40 @@ movimientos que cada versionado declara, con «la regla, no un inventario» que 
 también REQ-009, REQ-901, O-16 y los hashes que sólo viven aquí. **El REQ queda por encima del techo de un
 `Write`** (393 216 bytes); la salida de fondo es F-137-9.
 
+**Segunda corrección, del 2026-10-13 (P-137-G; QA-007-22).** La pasada correctiva de QA encontró más texto
+de CA-66 citado por hallazgos abiertos que seguía fuera: los «Punto 7» de compatibilidad (SEC-124) y las filas
+LC10 (QA-023-23). Por decisión del propietario, **CA-66 volvió entero al REQ** y `evidencia-ca66-1.35.0.md`
+dejó de existir. **La lección, en palabras del propietario:** «CA-66 no es registro, es contrato (clases de
+movimiento, compatibilidad y filas contratadas que los hallazgos abiertos usan como sede). La regla «el rótulo
+no inmuniza» vale para Historial, Trazabilidad, Preguntas, notas y CA-67/68, que QA ya probó sin
+contraejemplos; para CA-66 no.»
+
 ## Comprobación de que no se perdió ninguna línea
 
 Es la de `docs/arnes/v1.37.0-f136-17-fase1.md` §5.0 a §5.6, ejecutada sobre esta partición. Su salida
 real va aquí; **ninguna cifra de este bloque se escribe sin su corrida detrás**.
 
 ```text
-Comprobación §5 sobre el árbol de trabajo de cand/1.37.0, 2026-10-13, tras la corrección de P-137-F (coordinadora).
+Comprobación §5 sobre el árbol de trabajo de cand/1.37.0, 2026-10-13, tras la segunda corrección (P-137-G) (coordinadora).
 5.0 original: 4857 líneas, 868108 bytes, sha256 bda82984e0fe032d6374166d31194c669e059986670d67f5787e1aaf9d53bed5 (= git show cecf9b6:requirements/REQ-007.md)
-    REQ-007 resultante: 3236 líneas, 432382 bytes, sha256 4867a66dce0921f64a426fe03f7210d759ea021624bd65eb4c972dd441eea2ee
-5.2 rangos movidos: 26 tramos, 1641 líneas; disjuntos, dentro de 1-4857
-5.3 destinos verbatim (cmp de tail -n +9 contra sus rangos):  12 ok (de 12)
-5.4 REQ = original − rangos + texto nuevo declarado (13 líneas: punteros, «(ninguna)» y dos filas del Historial): diferencias fuera de líneas en blanco = 4 (esperadas 4: Archivos: y Tocado por:, antes y después)
-5.5 líneas del original ausentes de REQ + destinos (por recuento, no por conjunto): 2 - Archivos, Tocado por (las dos ediciones en sitio declaradas)
+    REQ-007 resultante: 3612 líneas, 479582 bytes, sha256 55958f2b15c23991514f16d4b952c3c075b7cef0a6506be1bcfb1e04b448cd71
+5.2 rangos movidos: 21 tramos, 1265 líneas; disjuntos, dentro de 1-4857
+5.3 destinos verbatim (cmp de tail -n +9 contra sus rangos):  11 ok (de 11)
+5.4 REQ = original − rangos + texto nuevo declarado (13 líneas: punteros, «(ninguna)» y tres filas del Historial): diferencias fuera de líneas en blanco = 4 (esperadas 4: Archivos: y Tocado por:, antes y después)
+5.5 líneas del original ausentes de REQ + destinos (por recuento): 2 - Archivos, Tocado por (las dos ediciones en sitio declaradas)
 5.6 identificadores CA-xx desaparecidos del REQ: ninguno (69 distintos)
 5.6 cabecera (1-13): líneas distintas = 2 (esperadas 2: Archivos: antes y después)
-5.6 identificadores del original (CA/SEC/QA/R/P/F/ADR/INS/PR/REQ/O y hashes) sin rastro desde el REQ: ninguno
+5.6 identificadores del original (CA/SEC/QA/R/P/F/ADR/INS/PR/REQ/O y hashes de 7, con o sin comillas) sin rastro desde el REQ: ninguno
 5.6 hallazgos abiertos con sede en el REQ: 17 de 17
-5.6 citas que motivaron P-137-F: «CA-69» con sus puntos 1-6 = 6 de 6; «La regla, no un inventario» = 4 apariciones; «Punto 5, movimientos» = 4 de 4
-5.6 enlaces ruta#ancla de los punteros: 12, que no resuelven: 0
+5.6 CA-66 entero (1532-2194 del original) en el REQ: verbatim; CA-69 entero (3139-3397): verbatim
+5.6 enlaces ruta#ancla de los punteros: 11, que no resuelven: 0
 5.6 lector del arnés: Ningún valor anómalo: la máquina lee los 29 REQ como están escritos.
 5.6 mapa de archivos (tools/arnes-paralelo.sh REQ-007 REQ-023): docs/historia/REQ-007 en las rutas de REQ-007 = 1; «SIN DECLARAR» = 0
-Puerta: las siete ediciones del REQ de la corrección (CA-69 en dos tramos, las cuatro «Punto 5» en una, tres punteros, la fila del Historial) fueron Edit juzgados en vivo por la instalación estable 1.36.0: ninguno denegado.
-Presupuesto de Edit sobre este tamaño (4294967296 / bytes del REQ): 9933 bytes de old_string por llamada (era 4947 con el original).
+Puerta: las ediciones del REQ de las dos correcciones (P-137-F y P-137-G) fueron Edit juzgados en vivo por la instalación estable 1.36.0: ninguno denegado.
+Presupuesto de Edit sobre este tamaño (4294967296 / bytes del REQ): 8955 bytes de old_string por llamada (era 4947 con el original). Lo mide QA con la puerta.
 ```
 
-*(Esta salida la produjo la coordinadora tras la corrección de P-137-F; sustituye a la del 2026-10-12, que está en el historial de git (`6afb686`). La pasada correctiva de QA vuelve a ejecutar §5 sobre el árbol comiteado **y no da por buena esta salida**.)*
+*(Esta salida la produjo la coordinadora tras la segunda corrección (P-137-G); sustituye a las anteriores, que están en el historial de git (`6afb686` y `5717659`). La pasada correctiva de QA vuelve a ejecutar §5 sobre el árbol comiteado **y no da por buena esta salida**.)*
 
 ## Punteros
 
