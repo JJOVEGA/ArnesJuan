@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · Hotfix 1.36.1 abierto: autorización `P-137-H` lista para que el propietario la adopte, con la forma de `templates/autorizacion.md`
+> Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **`P-137-H` en `## Pendientes`:** decisiones, cinco fases (analista → desarrollador → QA (Opus) → seguridad → analista), lo que decide la coordinadora sola, cuándo para, cómo se retoma y límites. Alcance único: F-137-10.
+- **Tres comprobaciones escritas antes de redactarla:** (1) **el analista no se omite**, porque `AGENTS.md` §6 dice que este proyecto «todavía no ha declarado esa autorización», y por eso la autorización empieza con su contrato; (2) la rama sale de `v1.36.0` (`f22b905`), no de `cand/1.37.0`; (3) mientras dure, gobierna la 1.36.0 instalada, que tiene el defecto: nada de `cp` sobre archivos existentes.
+- **Avance (regla 6):** el hotfix está a una decisión de empezar.
+
 ## [GitHub] — 2026-10-13 · **F-136-17 CERRADA — cumple a medias** (commit validado): seguridad sin veto (R-058); `Edit` de 4 947 a 8 955 B por llamada; REQ-007 = 479 582 B, por encima del techo del `Write`; ≈ 388 KB de historia fuera con punteros
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora); Opus (analista, QA, seguridad) · agentes: `analista-requerimientos`, `qa-tester`, `auditor-seguridad` y la coordinadora.
 

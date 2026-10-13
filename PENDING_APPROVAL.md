@@ -43,7 +43,45 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-13: P-137-G resuelta por el propietario, en § Resueltas.)_
+### P-137-H — **Hotfix 1.36.1 (F-137-10): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
+
+**Qué detiene, y qué no.** Mientras no la adoptes, el hotfix **no empieza**. No detiene nada más: F-136-17 está cerrada, y F-137-9 va detrás del hotfix por tu orden.
+
+**Tres cosas que la coordinadora comprueba antes de redactarla, por escrito como manda `AGENTS.md` §6:**
+1. **El analista no se puede omitir, y por eso hay una fase 0.** Tu orden dice «ciclo entero desarrollador → QA → seguridad». Pero este `AGENTS.md` dice, en §6, l. 132: «**Este proyecto todavía no ha declarado esa autorización.** Rige el procedimiento anterior: analista → desarrollador → QA → seguridad». Sin esa declaración, una reparación no puede saltarse al analista, y tampoco se puede cuando hace falta un REQ nuevo, que «es el `analista-requerimientos` quien define». **Por eso la autorización empieza con el analista**, en una comisión corta de contrato. Si prefieres omitirlo, el acto es tuyo y va aparte: declarar la vía proporcional en `AGENTS.md` §6.
+2. **La rama sale de `v1.36.0`** (= `origin/main` = `f22b905`), no de `cand/1.37.0`. Así el hotfix lleva **sólo** su cambio y no arrastra la partición de REQ-007 ni nada de 1.37. Al publicarse, `main` se fusiona en `cand/1.37.0`.
+3. **Mientras dure, nos gobierna la 1.36.0 instalada, que tiene el defecto.** Ningún agente del hotfix puede hacer `cp` sobre un archivo existente: usa `Edit`/`Write` o la redirección. Ya está declarado en las notas de 1.36.0.
+
+---
+
+**La autorización, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-H»; si no, corrige lo que sea):
+
+> ## Autorización — hotfix 1.36.1 (F-137-10)
+>
+> ## Decisiones del propietario
+> - Alcance único: el detector de escrituras reconoce el destino de `cp` —y de `mv` e `install`, si comparten la causa— como **archivo** cuando lo es. Nada más entra en 1.36.1.
+> - Sede: un **REQ nuevo** (REQ-032), con `Sensible a seguridad: sí` y `Rigor: critico` por la política de autoalojamiento. No se añade a REQ-007, que F-137-9 va a partir.
+> - El movimiento que el arreglo produce —de `deny` a `allow` para `cp`/`mv`/`install` sobre un archivo existente **no protegido**— se declara como **clase** de movimiento, restituyendo lo que daba 1.33.2 (regla de CA-24: un movimiento de `deny` a `allow` no declarado es un hallazgo). Sobre un archivo **protegido** no hay movimiento: sigue en `deny`.
+> - Rama `cand/1.36.1` desde `v1.36.0`. Fusión, tag `v1.36.1`, publicación y actualización de la instalación estable: míos.
+>
+> ## Plan autorizado (cada fase termina en commit local; la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: REQ-032 con el contrato. Propiedad; fail-before contra v1.36.0 con los casos ya medidos a mano (`cp` sobre el REQ con ruta absoluta y relativa, sobre `docs/PLAN.md`, emitido por el `desarrollador`, con `cp -T`; y destino inexistente como control); y los controles de seguridad: `cp` sobre un archivo **protegido** existente, de un agente que no es el de código, sigue en `deny` antes y después; `cp` a un **directorio** existente se juzga como `directorio/nombre`; la misma matriz para `mv` e `install` si comparten la causa. Declara la clase de movimiento. Regresión completa del banco. Notas `[1.36.1]` como entregable.
+> Fase 1 — desarrollador: el arreglo, los casos en el banco con su fail-before contra v1.36.0, la regresión completa, la autoprueba y la versión 1.36.1 en `plugin.json` y en el marketplace. Sin procesos nuevos en el camino común.
+> Fase 2 — QA (Opus): repite el fail-before y el pass-after, el banco y la autoprueba, y **intenta romperlo**, sobre todo para que no abra un `allow` sobre algo protegido. Una pasada correctiva como máximo, dentro del contador.
+> Fase 3 — seguridad, sólo con QA favorable: que el movimiento de `deny` a `allow` queda acotado a lo no protegido y declarado. Puede vetar.
+> Fase 4 — analista: write-back y notas `[1.36.1]`. La coordinadora: commit validado, push de la rama y PR.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, CHANGELOG, ESTADO e índices; crear la rama, hacer push de la candidata y abrir el PR en borrador, porque el CI es la puerta requerida; orden y presupuesto de cada despacho (≈ 150 k analista, ≈ 300 k desarrollador, ≈ 250 k QA, ≈ 150 k seguridad); ajustes del banco que no cambian ningún veredicto ni contrato; registrar defectos nuevos sin repararlos.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Cambio de contrato o de alcance —por ejemplo, que `mv` o `install` tengan **otro** defecto, o que el arreglo exija tocar la identificación del destino de CA-47 más allá del detector de `cp`/`mv`/`install`—; cualquier movimiento de `deny` a `allow` fuera de la clase declarada; un veredicto del banco que cambia fuera de lo declarado; aceptar o aplazar un riesgo; más pasadas que la prevista; un control del proveedor que detenga algo; publicar, fusionar, etiquetar o cerrar un REQ.
+>
+> ## Si la sesión se corta
+> La siguiente lee este plan en la cola y en ESTADO y continúa desde la última fase comiteada. No vuelve a pedir la autorización.
+>
+> ## Límites
+> Nada más que F-137-10 en 1.36.1. Nada de F-137-9 ni de las piezas a–d. No `AGENTS.md`. Fusión, tag, publicación e instalación estable: míos.
 
 ## Resueltas
 
