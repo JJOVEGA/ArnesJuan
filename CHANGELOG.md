@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · Hotfix 1.36.1, fase 0: REQ-032 escrito (`borrador`, 14 criterios); `P-032-1` y `P-032-2` en la cola; corrección de una medida de la coordinadora
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 166 k tokens) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **REQ-032** (`requirements/REQ-032.md`), con su fila en el índice: CA-01, la propiedad, literal del propietario; CA-02, fail-before y pass-after contra v1.36.0; CA-03, `mv` e `install`; CA-04, lo protegido sigue en `deny`; CA-05, el cierre por `cp` se sigue derivando; CA-06, directorios; CA-07, destino inexistente; CA-08, ante la duda, lo de v1.36.0; CA-09, la clase de movimiento M-032 con sus casos; CA-10, el límite del propietario; CA-11, regresión; CA-12, coste; CA-13, versión; CA-14, notas `[1.36.1]`. `Rigor: critico`, `Sensible a seguridad: sí`.
+- **Causa confirmada en el código por la coordinadora** (`hooks/lib.sh:2252-2263`): para `cp`, `mv` e `install` el detector juzga el destino y también `destino/`; sobre un archivo existente, `destino/` no se puede recorrer y la identificación falla cerrada. Las tres órdenes pasan por la misma rama.
+- **Cola: `P-032-1`** (un destino que es directorio: «`directorio/nombre`», como decía P-137-H por un **error de redacción de la coordinadora**, o como hoy) y **`P-032-2`** (qué es «archivo»). Recomendación (A) en las dos.
+- **Corrección de una medida de la coordinadora:** el caso del `desarrollador` del 2026-10-12 se midió sin `agent_id`. Re-medido con su forma real, **al `desarrollador` se le permite**; el defecto deniega **a todo el que no es el agente de código**. La nota de regresión de `[1.36.0]` y la ficha F-137-10, en `cand/1.37.0` (que aún no está en `main`), dicen de más: se corrigen en el paso 2b.
+- **Avance (regla 6):** el contrato está escrito; faltan dos decisiones para cerrarlo.
+
 ## [Interno] — 2026-10-13 · Hotfix 1.36.1 (F-137-10) abierto: rama `hotfix/1.36.1` desde `v1.36.0`; autorización registrada; fase 0 al `analista-requerimientos`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

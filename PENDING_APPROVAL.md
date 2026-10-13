@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-07: P-136-V resuelta por el propietario, en § Resueltas.)_
+### P-032-1 y P-032-2 — Hotfix 1.36.1, fase 0: **dos preguntas sobre el criterio de REQ-032**. La primera nace de un error de redacción de la coordinadora en P-137-H
+
+**Qué detiene, y qué no.** Detiene **cerrar el contrato** de REQ-032 (sigue en `borrador`) y, por tanto, el arreglo del desarrollador, cuya condición depende de P-032-2. **No detiene** nada más: el REQ está escrito con 14 criterios (`requirements/REQ-032.md`), y los casos del banco de CA-02 a CA-05 y CA-07 no dependen de estas preguntas.
+
+#### P-032-1 — Un destino que es un **directorio** existente: ¿«`directorio/nombre`» como dice P-137-H, o como hoy?
+
+**El error es mío.** En la autorización que redacté puse: «`cp` a un **directorio** existente se juzga como `directorio/nombre`». **Hoy no es así:** el detector juzga el destino y su forma `destino/` (`hooks/lib.sh:2252-2263`; REQ-007 CA-47, punto 10, «la barra final es para `cp`, `mv` e `install` hacia un directorio»). Un directorio se juzga como **`directorio/`**, y con eso `cp x src` casa con el glob `src/*`. Leerlo al pie de la letra sería una **capacidad nueva**: con globs con sufijo (`src/*.ts`) puede dar veredictos distintos de los de hoy. Lo ha razonado el analista; no está medido.
+
+- **(A) Conservar lo de hoy:** un directorio existente se juzga como hoy, y su veredicto no cambia (CA-06).
+  - *Consecuencia:* cumple «nada más entra» y no toca CA-47. **Mi recomendación.**
+- **(B) Al pie de la letra, `directorio/nombre`:**
+  - *Consecuencia:* capacidad nueva dentro de un hotfix; mueve veredictos de `allow` a `deny` y obliga a versionar CA-47, punto 10. Contradice «nada más entra».
+
+#### P-032-2 — ¿Qué es «archivo» en tu criterio («un destino que existe y es archivo se juzga como archivo»)?
+
+- **(A) Sólo un archivo regular** (`-f`). Cualquier otra cosa que exista —FIFO, dispositivo, socket— se queda como hoy (se juzga también `destino/`).
+  - *Consecuencia:* falla del **lado cerrado**: lo que no sea un archivo regular sigue denegándose a quien no es el agente de código. **Recomendación del analista y mía.**
+- **(B) Todo lo que existe y no es directorio**, `/dev/null` incluido.
+  - *Consecuencia:* abre más; los tipos especiales pasan a juzgarse por su nombre. Nadie ha pedido ese caso, y el arnés ya tiene reglas propias para `/dev/` y `/proc/` (REQ-007 CA-47, puntos 14 a 16) con las que habría que reconciliarlo.
+
+#### Una corrección de la coordinadora, que tienes que conocer aunque no decide nada
+
+**Mi medición del caso del `desarrollador` (2026-10-12) estaba mal construida:** le pasé `agent_type` sin `agent_id`, y un subagente real lleva los dos. **Re-medido fuera de banda (2026-10-13, puerta 1.36.0 instalada):** un `cp` sobre un archivo existente **se le permite al `desarrollador`** con su `agent_id`, tanto sobre `docs/PLAN.md` como sobre un REQ. Se deniega al `qa-tester`, al `analista-requerimientos`, a la coordinadora y a toda entrada sin `agent_id`. La razón: «no determinable» se trata como código de la app, y el agente de código puede escribirlo (`hooks/guard-codigo.sh:169-171`). **La forma correcta del defecto es: se deniega a todo el que no es el agente de código.** La nota de regresión de las notas `[1.36.0]` y la ficha F-137-10, en `cand/1.37.0`, dicen «también el `desarrollador`», y **es falso**. Las corrijo en el paso 2b (al fusionar `main` en `cand/1.37.0`), y las notas `[1.36.1]` saldrán con la forma correcta. **No es pública todavía:** `main` no tiene esa nota. REQ-032 ya trata ese caso como «se mide» (CA-02, F5).
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-1 (A) y P-032-2 (A)»; si no, corrige):
+
+> **P-032-1 (A):** un directorio existente se juzga como hoy (REQ-007 CA-47, punto 10) y su veredicto no cambia; la frase «`directorio/nombre`» de P-137-H queda corregida. **P-032-2 (A):** «archivo» es un archivo regular; cualquier otro tipo que exista conserva el veredicto de v1.36.0. El analista cierra el contrato de REQ-032 con esto, sin otra comisión de análisis, y el plan sigue con la fase 1.
 
 ## Resueltas
 
