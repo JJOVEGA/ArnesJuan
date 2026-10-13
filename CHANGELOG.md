@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · Plan de 1.37 reordenado por el propietario (P-137-F): hotfix 1.36.1, F-137-9 (partir REQ-007 por dominio), y después a), c), b), d), 2b
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- `docs/PLAN.md` § 1.37.0: la tabla sigue el orden literal del propietario y lleva la nota con la cita. **F-137-9** pasa a ser la intervención 3, con su forma elegida: partir REQ-007 **por dominio** (CA-47 y los puntos de `Bash` en un REQ propio; cabeceras y cierre en otro), con el contrato del analista primero y parada antes de ejecutar. La ficha en `docs/PENDIENTES.md` lo recoge.
+- **Avance (regla 6):** lo que sigue a F-136-17 está ordenado y escrito, sin depender de la memoria de nadie.
+
 ## [GitHub] — 2026-10-13 · F-136-17: corrección de P-137-F aplicada por `Edit`, juzgada en vivo (sin validar) — vuelven al REQ CA-69 entero y las **cuatro** viñetas «Punto 5» de CA-66; punteros con los identificadores; REQ-007 = 432 382 bytes
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por P-137-F.
 
