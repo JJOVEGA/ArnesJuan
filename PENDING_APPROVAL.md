@@ -43,7 +43,49 @@
 
 ## Pendientes
 
-### P-137-F — F-136-17, fase 3: **QA encontró texto vigente fuera del REQ que hallazgos abiertos citan por su nombre** (tu salvaguarda 1). Devolverlo saca el REQ del techo del `Write` en cualquier variante. ¿Cuánto se devuelve?
+_(Vacía desde el 2026-10-13: P-137-F resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-13) — **P-137-F: (A)**; write-back de cierre de F-136-17 («cumple a medias»); **orden de lo que sigue**: hotfix 1.36.1, F-137-9 (partir REQ-007 por dominio), y después a), c), b), d), 2b
+
+**Texto del propietario, literal** (mensaje del 2026-10-13 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-F: (A). Devolver CA-69 entero, las tres viñetas «Punto 5»
+> completas de CA-66 y «La regla, no un inventario» al REQ; añadir REQ-009,
+> O-16 y los 14 hashes a los punteros. Aplicar por Edit, con la puerta en
+> vivo. Una sola pasada correctiva de QA sobre todo junto; después seguridad;
+> commit validado; push.
+>
+> Write-back de cierre de F-136-17, honesto: cumple a medias. Gana: Edit de
+> 4,9 a ~10 KB por llamada; historia separada de los criterios con punteros;
+> 13 destinos exactos. No gana: el REQ queda en 418–481 KB, por encima del
+> techo del Write; el ahorro del analista no queda demostrado (135 909
+> tokens, 15 % bajo la mediana, que ya leía por tramos). Conclusión
+> registrada: lo vigente de REQ-007 (~378 KB) no cabe en un archivo por
+> diseño; la salida es F-137-9.
+>
+> Orden decidido para lo que sigue, en docs/PLAN.md:
+> 1. Hotfix 1.36.1 — F-137-10 (cp sobre archivo existente denegado desde
+>    1.35.0; y mv/install si comparten causa). Alcance único. Fail-before
+>    contra v1.36.0 con los casos medidos a mano (REQ, PLAN.md, desarrollador,
+>    cp -T, destino inexistente); regresión completa del banco; ciclo entero
+>    desarrollador → QA → seguridad; notas [1.36.1]; publicación mía.
+>    Mientras, declarado en las notas de 1.36.0 como regresión conocida con
+>    su salida (redirección o destino nuevo).
+> 2. F-137-9 — partir REQ-007 por dominio (CA-47 y los puntos de Bash en un
+>    REQ propio; cabeceras y cierre en otro). Cambio de contrato: el analista
+>    escribe primero el contrato de la partición y para antes de ejecutar.
+> 3. Después: a) plan de desarrollo, c) adelgazamiento, b) post-condición,
+>    d) spike de mod, 2b.
+>
+> Ejecuta el cierre de F-136-17 sin pararte salvo por lo de la plantilla.
+> Al terminar, recuérdame el push y abre el hotfix 1.36.1 con su autorización
+> en la forma de templates/autorizacion.md, lista para que yo la adopte.
+
+**Lo que añade la coordinadora:** «La regla, no un inventario» (1999–2012 de `cecf9b6`) vive **dentro** de la tercera viñeta «Punto 5» (1921–2012), así que vuelve con ella; no hay un bloque aparte. El orden queda en `docs/PLAN.md` § 1.37.0. «Lo de la plantilla» son las condiciones de parada de la undécima autorización (forma de `templates/autorizacion.md`), que siguen vigentes.
+
+### P-137-F (texto de la consulta, conservado; resuelta arriba) — F-136-17, fase 3: **QA encontró texto vigente fuera del REQ que hallazgos abiertos citan por su nombre** (tu salvaguarda 1). Devolverlo saca el REQ del techo del `Write` en cualquier variante. ¿Cuánto se devuelve?
 
 **Qué trabajo detiene, y qué no.** Detiene la pasada correctiva, la fase 4 y el commit validado. **No detiene nada más:** el hotfix 1.36.1 se abre al cerrar F-136-17.
 
@@ -80,8 +122,6 @@ En las tres opciones, además: REQ-009, O-16 y los hashes van a los punteros; la
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-F»; si no, corrige):
 
 > **P-137-F: opción (A).** Vuelven al REQ, verbatim y en su sitio, CA-69 entero (3141–3397 de `cecf9b6`) y las tres viñetas «Punto 5» de D1 (1688–1709, 1781–1806 y 1921–2012). REQ-009, O-16 y los hashes de commit se añaden a los punteros. Se corrigen la fila del Historial y la fila de REQ-007 en `requirements/README.md`, y se rehacen los destinos y el índice. La coordinadora lo aplica por `Edit`, juzgado en vivo; QA hace su única pasada correctiva sobre todo junto; después, seguridad. Queda aceptado que REQ-007 supere el techo de un `Write`; la medida que vale es el presupuesto de `Edit`, re-medido por QA, y la salida de fondo es F-137-9.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-12) — **P-137-E: (A), aplicar con redirección juzgada en vivo**; y **F-137-10 pasa a HOTFIX 1.36.1**, que se abre al cerrar F-136-17 y antes de la pieza a)
 

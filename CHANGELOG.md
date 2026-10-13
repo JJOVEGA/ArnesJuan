@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-13 · F-136-17: corrección de P-137-F aplicada por `Edit`, juzgada en vivo (sin validar) — vuelven al REQ CA-69 entero y las **cuatro** viñetas «Punto 5» de CA-66; punteros con los identificadores; REQ-007 = 432 382 bytes
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por P-137-F.
+
+- **P-137-F**, literal en la cola, con el write-back de cierre («cumple a medias») y el orden de lo que sigue.
+- **Siete `Edit` sobre el REQ, juzgados en vivo por la instalación estable 1.36.0, ninguno denegado:** CA-69 vuelve **entero** (3141–3239 y 3269–3397 de `cecf9b6`); vuelven las viñetas «Punto 5» de CA-66, con «la regla, no un inventario»; los punteros de CA-66, `## Trazabilidad` y `## Historial de cambios` nombran O-16, REQ-009, REQ-901 y 12 hashes; y una fila nueva del Historial registra la corrección. Cada tramo devuelto se comprobó **verbatim** contra el original justo después de escribirlo.
+- **Son cuatro «Punto 5», no tres:** el cuarto (2124–2153, «movimientos de la fase 2») es el que añade las clases de SEC-124 y SEC-125, las que completan las «ocho» de la nota de CA-24. **El recuento de tres de la coordinadora estaba mal**: buscó sólo hasta la línea 2012. Entra con las otras tres porque la decisión era devolver las listas de movimientos declarados.
+- **Destinos:** `evidencia-ca66-1.35.0.md` rehecho con sus cinco tramos restantes (376 líneas, 47 127 B, verbatim); `evidencia-ca69-1.36.0.md` **retirado**, porque todo su contenido volvió al REQ. Índice actualizado, con la corrección explicada. Fila de REQ-007 en `requirements/README.md` actualizada, como pedía el contrato §4 (observación de QA).
+- **§5 sobre el repositorio:** 12/12 destinos verbatim; 26 tramos y 1 641 líneas movidos; ningún `CA-xx` y **ningún identificador** (con `REQ-`, `O-` y hashes en el patrón) sin rastro desde el REQ; 17/17 hallazgos abiertos con sede; CA-69 con sus puntos 1–6 y las cuatro «Punto 5» en el REQ; 12/12 enlaces. **REQ-007 = 3 236 líneas, 432 382 bytes; presupuesto de `Edit` ≈ 9 933 B por llamada** (era 4 947).
+- **Avance (regla 6):** el texto vigente está de vuelta; falta la pasada correctiva de QA y la fase 4.
+
 ## [Interno] — 2026-10-12 · F-136-17, fase 3: QA **con hallazgos** — salió texto vigente que hallazgos abiertos citan (QA-007-19 y 20, `contrato`); banco 2304/0/12; `P-137-F` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 256 k tokens) · agentes: `qa-tester` + la coordinadora.
 

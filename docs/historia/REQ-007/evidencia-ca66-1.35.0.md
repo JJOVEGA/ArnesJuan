@@ -1,7 +1,7 @@
 # REQ-007 — historia: CA-66, evidencia por versionado (1.35.0)
 
 > **Movido desde `requirements/REQ-007.md` el 2026-10-12** por la undécima autorización del propietario
-> (ficha **F-136-17**), cabeza de origen **`cecf9b6`**, líneas **1649–2194** (546 líneas, 64226 bytes medidos).
+> (ficha **F-136-17**), cabeza de origen **`cecf9b6`**, líneas **1649–1687, 1710–1780, 1807–1920, 2013–2123 y 2154–2194** (376 líneas, 47127 bytes medidos). Las cuatro viñetas «Punto 5» (1688–1709, 1781–1806, 1921–2012 y 2124–2153) **volvieron al REQ** el 2026-10-13 por P-137-F (QA-007-20).
 > **Copia verbatim: no se resumió, no se reordenó y no se corrigió nada.**
 > Índice: `docs/historia/REQ-007/README.md`. Contrato: `docs/arnes/v1.37.0-f136-17-fase1.md`.
 > Comprobación de que no se perdió ninguna línea: ese contrato, §5, y el índice.
@@ -45,28 +45,6 @@
       pasa de `allow` a `deny` (F4), y la C10 —`<raíz>/src/a.ts␊`— sigue en `deny` con el motivo de no
       determinable (F1); las dos se justifican en el Historial. Si otra sección cambia de expectativa por
       los puntos 11 a 13, se declara con su justificación, como manda el punto 4 de arriba.
-    - **Punto 5, movimientos del versionado del 2026-10-01**, frente a `9596e39` (y frente a 1.33.2 donde se
-      dice):
-      - **de `allow` a `deny`**, todas las filas con esa forma en la tabla; por propiedad:
-        - **(a)** toda entrada con un salto de línea en el agente (`agent_type`, `agent_id`) que `9596e39`
-          desplazaba y que ahora se juzga con su valor entero (E5);
-        - **(a′)** toda llamada cuyo `tool_name` lleva un salto de línea y que `9596e39` o 1.33.2 permitían,
-          haga lo que haga (`Write␊` y `Edit␊` de T1, y el `Write␊` del `desarrollador`; ejemplos **no
-          exhaustivos** de la batería del desarrollador, fuera del banco: `Bash␊` con un comando que no
-          escribe, y `Write␊` al manifiesto durante su avería, M5);
-        - **(b)** todo `file_path` con un salto de línea, en una llamada que no es de `Bash`, que `9596e39` o
-          1.33.2 permitían, sea cual sea la ruta y el agente (F3, F4; el `Edit` de creación de F2 frente a
-          1.33.2; y, con el manifiesto ilegible, el `Write` a `<raíz>/.arnes/config.json␊` —por cada puerta—
-          y a `<raíz>/.arnes/config.json␊<raíz>/.arnes/config.json`, que pasaban como la reparación de CA-60:
-          M1, M2 y M4 de la batería del desarrollador, fuera del banco; nota del 2026-10-01 en CA-60);
-        - **(c)** las clases ya declaradas el 2026-09-30, ahora también con un `cwd` que lleva saltos
-          —ejemplos **no exhaustivos**: I7 (E4), I8 y R1—.
-      - **frente a `43b948a`** vuelven además a `deny` E1, E2 y E3, y vuelven a `allow` las filas de G2:
-        restituyen el veredicto de `9596e39` y no son movimientos frente a lo publicado.
-      - **de `deny` a `allow`: ninguno nuevo.** Los seis del 2026-09-30 siguen siendo los únicos, y G3 es
-        una instancia de L8. Lo que la lectura entera habría movido a `allow` —F2 y `Bash␊` de T1— sigue en
-        `deny` por CA-47, puntos 12 y 13. Cualquier otro movimiento de `deny` a `allow` es un hallazgo
-        (CA-24).
     - **Punto 6, validación en el host:**
       - **Hecho (v3b), con su alcance:** el `cwd` tras un `cd` (I7, L8), observado en una ejecución
         —CA-45, versionado del 2026-10-01, (i)—; y R5, que no llegó al hook: **límite de la comprobación en
@@ -138,32 +116,6 @@
     - **Punto 4, adaptación:** ninguna fila existente cambia de nombre ni de veredicto. Las 167 anteriores de la
       sección 44 pasan con los hooks reparados y la sección sin editar (`evidencia-dev-r7/04-`), y ninguna otra
       sección cambia de expectativa.
-    - **Punto 5, movimientos del versionado del 2026-10-02**, frente a `9596e39` (y frente a 1.33.2 donde se
-      dice):
-      - **de `allow` a `deny`**, todas las filas con esa forma en la tabla; por propiedad:
-        - **(a)** toda ruta relativa —de `Bash` o de un `file_path`— cuyo anclaje depende de un `cwd` con un
-          retorno de carro, en cualquier posición, también fuera del ámbito, y también la del agente de código
-          cuando el comando menciona el estado terminal (RM1; de la batería del desarrollador, fuera del banco:
-          B7, B9, y con el manifiesto ilegible M5, nota del 2026-10-02 en CA-60). Frente a 1.33.2, además, R3
-          (A7 de la batería), que 1.33.2 permitía y `9596e39` ya denegaba;
-        - **(b)** todo `file_path` con un retorno de carro, en una llamada que no es de `Bash`, sea cual sea la
-          ruta y el agente (RF; de la batería: D1, D2, D3, D5, D6 y D7, y con el manifiesto ilegible M2 y M4);
-        - **(c)** toda llamada cuyo `tool_name` lleva un retorno de carro, haga lo que haga (RT; de la batería:
-          T1, T3, T5, T6 —el retorno de carro en medio, `B␍ash`— y M3, `Write␍` al manifiesto durante su
-          avería).
-      - **frente a `cd6afa6`** vuelven además a `deny` R1, R2, R3 y R5 (en la batería, A1, A2, A4, A6 y A7):
-        restituyen el veredicto de `9596e39` y no son movimientos frente a lo publicado. Es el fail-before de
-        QA-023-13.
-      - **de `deny` a `allow`: ninguno nuevo.** Los seis del 2026-09-30 siguen siendo los únicos, y RS (c) —C2
-        de la batería— es una instancia de L8. La misma afirmación del versionado del 2026-10-01 era falsa
-        respecto de `cd6afa6` —QA-023-13 es un movimiento de `deny` a `allow` que no declaraba— y con esta
-        reparación vuelve a ser cierta. Cualquier otro movimiento de `deny` a `allow` es un hallazgo (CA-24).
-      - **Ya declarados en versionados anteriores, sin cambio frente a `cd6afa6`:** K4 y K5 —un retorno de carro
-        en medio del comando, que designa por un enlace código protegido—, de la clase «escritura por `Bash` a
-        través de un enlace hacia una zona protegida» del 2026-09-30, y G5 —un salto en el agente—, de la clase
-        (a) del 2026-10-01.
-      - **No es un movimiento, y queda abierto:** el retorno de carro final del texto de `Bash` (K1 y K2,
-        `allow` en los cuatro árboles), límite declarado de CA-47, punto 11, y pregunta P-023-13-A.
     - **Punto 6, validación en el host:**
       - **El caso del retorno de carro no se ejecutó en el host en esta vuelta.** A la fecha de este
         versionado, la evidencia de QA-023-13 y de su reparación es **sólo a nivel de hook**: ninguna fila de
@@ -278,98 +230,6 @@
       pasa al bloque C como C1, en `deny` y con su fail-before contra `9220c71`, porque la pasada correctiva juzga
       también sin el retorno de carro toda orden de git (CA-47, punto 11). Su cobertura se conserva: G2 y G3
       siguen en el bloque G como controles. El banco completo sale en verde.
-    - **Punto 5, movimientos de la octava autorización**, frente a `9596e39` y frente a 1.33.2:
-      - **de `allow` a `deny`**, todas las filas con esa forma en la tabla; por propiedad:
-        - **(a)** SEC-122, cara (a): todo destino bajo `/dev/` o `/proc/` que el sistema resuelve por nombres hasta
-          un archivo protegido —un enlace corriente bajo `/dev/shm`, `/proc/self/root` seguido de la ruta
-          absoluta—, por `Edit`, `Write` o `Bash`, también la edición no reconstruible de SEC-117 (S1–S5 y P4; de la
-          batería del desarrollador, fuera del banco: A1 a A7 y R1 a R3);
-        - **(b)** SEC-122, cara (b), en un proyecto situado bajo `/dev/`: la escritura a través de un directorio
-          enlazado hacia una zona protegida, que tampoco se juzgaba allí en lo publicado (B4; de la batería: B5, B6
-          y B7);
-        - **(c)** lo que depende del proceso que abre la ruta (CA-47, puntos 14 y 16): por `Bash`,
-          `/proc/self/cwd/…`, `/proc/thread-self/cwd/…` y `/proc/self/fd/../cwd/…` resueltos desde el `cwd` de la
-          entrada hasta un archivo protegido (P1; de la batería: R4, R5, X2 y X5), y un enlace hacia
-          `/proc/self/cwd` (P5; R10); y, como no determinable, una ruta detrás de un descriptor (P6; R14), un
-          pseudoarchivo del proceso (R15), `/proc/self/cwd/…` sin un `cwd` que ancle (P7; R13), una ruta con `..`
-          cuya lectura léxica cae en la entrada propia (R7) y, por el host, todo lo que pasa por el directorio de
-          trabajo del proceso (P3; R8, R9 y R12) y todo descriptor (P9; N12, y X10 por `guard-completado`);
-        - **(d)** el retorno de carro del texto de `Bash`: todo destino cuyo nombre acaba en un retorno de carro
-          —al final del comando o delante de un salto— y que, con él, designa un archivo protegido (K1–K4; de la
-          batería: K1, K2, K6 a K9, K11 y K12; y K1, K2, K6, K7 y K8 de la batería K de QA r7). Es QA-023-15,
-          preexistente en los cuatro árboles;
-        - **(e)** todo heredoc cuyo delimitador lleva un retorno de carro (H2, H3 y H6). H3 cierra además un fallo
-          en abierto preexistente: el shell ejecuta la escritura a `src/a.ts` que va detrás, y los tres árboles
-          anteriores la permitían;
-        - **(f)** *(pasada correctiva)* toda orden de git que, leída **sin** sus retornos de carro, casa con una
-          regla prohibida, también cuando el retorno de carro va **en medio** de la orden (C7, `git clean␍ -f`; de
-          la batería de la pasada, `evidencia-dev-r8b/01-`, C7 y `git re␍set --hard`, C8). Esas dos filas salían
-          `allow` en los cuatro árboles anteriores, porque el transporte nunca tocó un retorno de carro que no
-          precede a un salto ni cierra el campo: es un hueco **preexistente** de `guard-git` que el mismo
-          mecanismo cierra, y QA midió que con `help.autocorrect` git las ejecuta (`docs/qa/REQ-023.md` §
-          «Vuelta excepcional de la octava autorización», §6). La coordinadora lo considera dentro del alcance
-          porque sólo añade denegaciones. No deniega lo que, sin el retorno de carro, tampoco estaría prohibido:
-          `git status␍` y `git stash list␍` pasan (C8 y C9).
-      - **de `allow` a `deny`, también lo legítimo** —dicho aparte para que no se lea sólo como protección—:
-        - un heredoc CRLF hacia un archivo no protegido: lo deniega `guard-codigo` a quien no es el agente de código
-          y `guard-completado` **a todo agente**, así que por `guard.sh` se deniega también al `desarrollador` (H2 y
-          H6; de la batería, H2 y H7);
-        - `Write /dev/stderr` **a todo agente**, por `guard-completado` (P9; X10), y, por la misma propiedad y sin
-          medir, todo descriptor por `Edit`, `Write` o `MultiEdit`;
-        - por `Edit`, `Write` o `MultiEdit`, toda ruta que pasa por el directorio de trabajo del proceso del host,
-          aunque designe algo legítimo: el cierre en verde de un REQ por `/proc/self/cwd/…` (R9) y un `Write` del
-          `desarrollador` a `/proc/self/cwd/src/a.ts` (X9), que `guard-completado` deniega a todo agente;
-        - por `Bash`, a quien no es el agente de código, la escritura a un pseudoarchivo del proceso (R15:
-          `echo 1 > /proc/self/oom_score_adj`), y toda ruta no determinable por el punto 14 aunque designara algo
-          legítimo.
-      - **Ya declarados, de clases anteriores:** X4 de la batería —`/proc/1/cwd/…`, un directorio de la ruta que
-        no se puede recorrer— es de la clase D2 del 2026-09-30, y R11 —un enlace situado fuera de la raíz hacia
-        `/proc/self/cwd/src/a.ts`, ya `deny` en `3bc7d3c`— es de la clase «escritura por `Bash` a través de un
-        enlace hacia una zona protegida» del mismo día.
-      - **Frente a `3bc7d3c`** vuelven además a su veredicto de `9596e39` B1, B2, B3 y B5 (en la batería, B1 a B4
-        y B10) y K10 de la batería: no son movimientos frente a lo publicado. B3 y B5 son lo legítimo que
-        `3bc7d3c` sobredenegaba en un proyecto bajo `/dev/` —un `Edit` literal sobre un REQ que existe se tomaba
-        por inexistente—; B1 y B2 son la cara (b) de SEC-122, el movimiento de `deny` a `allow` de `104ffd1` que
-        ningún versionado anterior declaraba (nota de CA-24 de la octava autorización).
-      - **Frente a `9220c71`** *(pasada correctiva)* vuelven a su veredicto de `9596e39` C1 a C6, C10 y C11 (en la
-        batería de la pasada, C1 a C6, C9, D1, D2 y D3): G1, `git stash␍`, las cuatro órdenes de QA-023-16 y el
-        enlace hacia un descriptor dentro de un ámbito protegido. No llegan a lo publicado.
-      - **de `deny` a `allow`, una clase nueva, sostenida por la propiedad de la autorización** —«nunca lo
-        elimines silenciosamente para juzgar un comando distinto»: la puerta juzga lo que el shell escribe—:
-        - **K6** (de la batería, KC4): `printf x > app/a.ts␍` con `app/*.ts`. El shell escribe `app/a.ts␍`, que el
-          patrón no cubre, y por la propiedad de CA-47 recibe el veredicto del archivo que designa, fuera del
-          ámbito; el `deny` de antes se debía a juzgar `app/a.ts`, otro archivo. La clase, por propiedad: un
-          destino de `Bash` cuyo nombre acaba en un retorno de carro y que, con él, ya no casa con el patrón que
-          casaba sin él; medido con un patrón con sufijo. Con un patrón que lo sigue cubriendo (`src/*`) se deniega
-          (batería, K3).
-      - **Reparados en la pasada correctiva, y por eso ya no son movimientos** *(antes de `befc17a` estaban aquí
-        como declarados o como «no declarados»; el texto anterior, en el Historial)*:
-        - **G1**, `git reset --hard␍`, que la reparación central había declarado de `deny` a `allow` porque git
-          rechaza la opción: vuelve a `deny` (C1) por la regla de las dos lecturas de `guard-git` (CA-47, punto
-          11), aunque git la rechace también con `help.autocorrect=immediate` (medido por QA): la regla es
-          uniforme y sólo añade denegaciones;
-        - **P-122-A (1)**, `git stash␍`: QA midió con git 2.53.0 que, con `help.autocorrect=immediate`, git corrige
-          el subcomando y lo ejecuta; vuelve a `deny` (C2);
-        - **QA-023-16**, `git checkout .␍`, `git checkout -- .␍`, `git restore .␍` y `git checkout HEAD .␍`, que la
-          reparación central dejaba en `allow` sin declararlos (git rechaza el pathspec con y sin
-          `help.autocorrect`, medido por QA): vuelven a `deny` (C3 a C6), por la misma regla uniforme;
-        - **QA-023-17**, que era **P-122-A (2)**: el enlace del último componente situado dentro de un ámbito
-          protegido que lleva a un descriptor, medido por QA en `allow` por `Bash` sobre `9220c71`; vuelve a
-          `deny` (C10 y C11), porque su ruta se juzga por las tres vías de CA-47, punto 6 (punto 15).
-      - **La regla, no un inventario** *(corregida tras QA-023-16)*: sobre lo construido en `befc17a`, un
-        movimiento de `deny` a `allow` frente a `9596e39` y 1.33.2 es conforme **sólo** si pertenece a una de las
-        seis clases del 2026-09-30 —las instancias de L8 incluidas— o a la clase de K6. **Cualquier otro
-        movimiento de `deny` a `allow` es un hallazgo (CA-24).** Lo medido que la sostiene son las baterías del
-        desarrollador (`evidencia-dev-r8/` y `evidencia-dev-r8b/`), el banco y el barrido de QA sobre `9220c71`
-        (`docs/qa/REQ-023.md` § «Vuelta excepcional de la octava autorización», §3), con los cuatro hallazgos de
-        ese barrido reparados; la re-verificación de QA sobre `befc17a` está pendiente, y nada de esto es una
-        prueba de que no exista otra forma. P2 no es movimiento (`allow` en los tres árboles). *(Anotado el
-        2026-10-03, novena autorización, fase 2: esta regla era falsa sobre `befc17a` —el barrido no incluía la
-        forma de SEC-124, que sale `allow` donde lo publicado deniega; R-047 §3—. Lo que la vuelve cierta, y le
-        añade la clase de SEC-125, está en el versionado de la fase 2, abajo, punto 5: construido en `10ac6c4` y
-        `36a0d27`; validado por el propietario por vía manual (`docs/qa/REQ-023.md`, CI run 37163342218); sin firma
-        del qa-tester ni del auditor-seguridad por impedimento del proveedor. Antes: «**pendiente de
-        implementación y de validación**».)*
     - **Punto 6, validación en el host y plataformas:**
       - **Ninguna fila de este versionado se ejerció desde el host.** La evidencia de lo construido en `9220c71`
         y en `befc17a` es **sólo a nivel de hook, en Linux/WSL2**, y cada fila queda **no comprobada** en el host,
@@ -481,36 +341,6 @@
     - **Punto 4, adaptación (P3 de la autorización):** **ninguna fila existente del banco cambia de decisión ni de
       nombre**; los únicos cambios de expectativa son las filas nuevas y el total de casos esperados. Una fila
       existente que cambie es un hallazgo de esta fase.
-    - **Punto 5, movimientos de la fase 2**, frente a `9596e39` y `v1.33.2`:
-      - **de `allow` a `deny`, protección:** LC1 y LC2 —un destino de escritura tras una continuación de línea
-        se juzga como el que escribe el shell; preexistente, también en `v1.34.0` (R-047 §4)—;
-      - **de `allow` a `deny`, también lo legítimo** —la restricción que el propietario acepta, dicha aparte para
-        que no se lea sólo como protección—: la forma de CA-47, punto 18, se deniega **a todo agente** por
-        `guard-completado`, también al `desarrollador` (HC5) y también cuando lo que va detrás es inocuo (HC6),
-        aunque el shell no ejecute nada de ello;
-      - **de `allow` a `deny`, LC10 (CA-47, punto 19, «Excepción nombrada»; P-LC10-A = (A))** —en `9596e39` y
-        `v1.33.2`, igual que en `3f96e6b`, medido—: **protección**, LC10.1, LC10.2, LC10.3, LC10.7 y LC10.9 —lo que
-        el shell sí ejecuta: una escritura en código protegido, el cierre de un REQ, una orden de git prohibida;
-        preexistente, QA-023-23 y SEC-125—; y **también lo legítimo**, dicho aparte, que es la restricción que el
-        propietario acepta («un uso legítimo raro»): LC10.4 (el `desarrollador`), LC10.5 (lo inocuo), LC10.6
-        (fuera de todo ámbito), `guard-git` en toda subforma sin orden de git, y LC10.8 en `guard-completado` y
-        `guard-git`, donde el shell no ejecuta lo que la fila nombra. En LC10.8, `guard-codigo` y `guard.sh` ya
-        denegaban: no es movimiento, cambia el motivo;
-      - **frente a `3f96e6b`**, que no está publicado: HC1 a HC4 vuelven al `deny` de lo publicado, y no son
-        movimiento;
-      - **de `deny` a `allow`:** la forma de SEC-124 **deja de serlo**; y **se añade una clase**, la de SEC-125
-        (LC8): un destino de `Bash` que lo publicado juzgaba por su fragmento anterior a una continuación de línea,
-        que casaba con el ámbito sólo por ese fragmento, y que, unido como lo une el shell, designa un archivo
-        fuera del ámbito. Recibe el veredicto del archivo que el shell escribe, por la misma propiedad que K6;
-        ninguna protección se debilita, porque el archivo escrito no es código protegido ni un REQ. Por
-        construcción; lo mide la fila LC8. **LC10 no añade ninguno, por construcción:** el candidato deniega la forma entera, así que todo
-        `deny` que lo publicado ya daba a esa forma sigue en `deny` —LC10.8 en `guard-codigo` y `guard.sh`; y, como
-        ejemplos **no exhaustivos** medidos por QA (QA-023-24), la escritura en código protegido o la orden de git
-        prohibida en la propia línea que abre, que ya denegaban la regla de escrituras y la de git—;
-      - **la regla, no un inventario:** sobre lo construido en `10ac6c4` y `36a0d27` *(antes: «cuando esto esté
-        construido»)*, un movimiento de `deny` a `allow` frente a
-        `9596e39` y `v1.33.2` es conforme **sólo** si pertenece a una de las seis clases del 2026-09-30 —las
-        instancias de L8 incluidas—, a la de K6 o a la de SEC-125. **Cualquier otro es un hallazgo (CA-24).**
     - **Punto 6, validación por capa y plataformas** (P5 y P10 de la autorización). Se registran **por separado**
       la decisión del hook, el efecto en disco y la conducta del host:
       - **a nivel de hook**, Linux/WSL2 —banco y batería—: obligatorio;
