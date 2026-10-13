@@ -37,6 +37,7 @@
   - **P-137-E resuelta (2026-10-12):** aplicar con `cat … > …`, juzgado en vivo. **F-137-10 pasa a HOTFIX 1.36.1** (alcance único: el detector reconoce el destino de `cp`, y de `mv` e `install` si comparten causa), que **se abre al cerrar F-136-17**, antes de a); mientras tanto, regresión conocida declarada en las notas de 1.36.0.
   - **PASO 1 APLICADO (2026-10-12)**, sin validar: la puerta en vivo admitió la redirección. **REQ-007 = 2 838 líneas, 391 307 bytes** (`sha256` `2edf95c0…48c3`); historia en `docs/historia/REQ-007/` (13 archivos + `README.md`, el índice, con la salida de §5). §5 sobre el repositorio: 13/13 verbatim, ningún `CA-xx` ni identificador perdido, 17/17 hallazgos abiertos con sede, 13/13 enlaces, lector sin anomalías. **Siguiente: fase 3 (QA, en Opus), con la medida de una comisión del analista; luego fase 4 (seguridad); commit validado; push.**
   - **FASE 3 (QA, 2026-10-12): con hallazgos; PARADA, `P-137-F` PENDIENTE.** QA-007-19 (`contrato`, alta): los puntos 1–6 de CA-69 son enunciado, no registro, y salieron (SEC-132 y SEC-130, abiertos, citan «CA-69 punto 3»; 33 líneas del REQ remiten a CA-69); el error de origen es de la coordinadora. QA-007-20 (`contrato`, media): salió «la regla, no un inventario», que SEC-124 cita. QA-007-21 (`instrumento`): REQ-009, O-16 y 14 hashes sin rastro desde el REQ. Conforme: mecánica, enlaces y **banco 2304/0/12, autoprueba 117/0**. **Medida:** comisión del analista 135 909 tokens, ≈ 15 % bajo la mediana de 1.36.0; presupuesto de `Edit` medido 10 975 B (era 4 947). Cualquier corrección deja el REQ sobre el techo del `Write`. Recomendación: (A) devolver CA-69 entero y los tres «Punto 5» de D1.
+  - **P-137-F aplicada (2026-10-13, `5717659`):** CA-69 entero y las **cuatro** «Punto 5» de CA-66 vuelven por `Edit` juzgado en vivo; REQ-007 = 432 382 B. **Pasada correctiva de QA: QA-007-19 y 20 cerrados; QA-007-22 (`contrato`) nuevo** — SEC-124 cita los «Punto 7» de CA-66 y QA-023-23 las filas LC10, que siguen fuera. **PARADA: `P-137-G` PENDIENTE** (segunda pasada). Recomendación: (A) CA-66 vuelve entero (REQ ≈ 479 KB, `Edit` ≈ 8 960 B). Presupuesto de `Edit` hoy, medido por QA: 9 933 B.
   - **Push:** `origin/cand/1.37.0` en `6afb686`; después, locales `bfa996c`, `e83f781` y el de la fase 3 (2026-10-12, a petición del propietario, antes de la fase 2). Lo posterior va en commits locales; se le recuerda al final de cada fase.
 - **Lo que 1.36.0 deja abierto y está declarado en sus notas:** los `contrato` QA-007-01, QA-007-09, QA-007-11, QA-007-18, SEC-131, SEC-132, SEC-133, SEC-134 (REQ-007), más los heredados; REQ-007 sigue `en-progreso` con `QA:` y `Seguridad:` en `pendiente`. Ningún REQ se cerró.
 
@@ -584,7 +585,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-12 14:44
+## Estado derivado — 2026-10-13 08:19
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -594,9 +595,9 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `1b13d34` — limpio
+**Repositorio:** `cand/1.37.0` @ `c656374` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
+**Aprobaciones pendientes:** 0
 **REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 

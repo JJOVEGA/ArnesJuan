@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · F-136-17, pasada correctiva de QA: QA-007-19 y 20 **cerrados**; **QA-007-22 nuevo** (`contrato`) — más texto de CA-66 citado por hallazgos abiertos sigue fuera; `P-137-G` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 311 k tokens en esta pasada) · agentes: `qa-tester` + la coordinadora.
+
+- **Conforme:** §5 repetido por QA con `cmp` (12/12 destinos, 26 tramos); CA-69 y las cuatro «Punto 5» en el REQ, verbatim y en su sitio; 17/17 hallazgos con sede. **Presupuesto de `Edit` medido con la puerta: 9 933 B pasan y 9 934 B se deniegan** (era 4 947).
+- **QA-007-22 (`contrato`, media):** SEC-124 cita «el punto 7 de compatibilidad («Pasa a permitirse la clase de K6»)», y QA-023-23 cita «CA-66 LC10». Ese texto vive en las viñetas «Punto 7» y en la tabla del «Punto 3» de la fase 2, que siguen fuera. **Comprobado en disco por la coordinadora.**
+- **QA-007-21:** residual `instrumento` (`7c6baea`), que no bloquea.
+- **Discrepancia declarada al propietario:** P-137-F decía «tres» «Punto 5»; se aplicaron **cuatro**, porque el recuento de la coordinadora estaba mal y la regla era devolver las listas de movimientos declarados. Se le pide que lo confirme.
+- **Cola: `P-137-G`**, segunda pasada (condición de parada del propietario). Recomendación (A): CA-66 vuelve entero.
+- **Avance (regla 6):** la corrección de P-137-F es correcta; falta decidir si CA-66 vuelve entero, porque el bloque D1 resultó ser sede de hallazgos abiertos y no sólo registro.
+
 ## [Interno] — 2026-10-13 · Plan de 1.37 reordenado por el propietario (P-137-F): hotfix 1.36.1, F-137-9 (partir REQ-007 por dominio), y después a), c), b), d), 2b
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

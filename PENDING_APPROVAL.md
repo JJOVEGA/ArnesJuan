@@ -43,7 +43,41 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-13: P-137-F resuelta por el propietario, en § Resueltas.)_
+### P-137-G — F-136-17: **la pasada correctiva cerró QA-007-19 y 20, pero encontró más texto de CA-66 que hallazgos abiertos citan y sigue fuera (QA-007-22).** Repararlo es una segunda pasada, y eso es tu condición de parada. ¿Vuelve CA-66 entero, o sólo lo citado?
+
+**Qué trabajo detiene, y qué no.** Detiene la segunda pasada, la fase 4 y el commit validado; y, como el hotfix 1.36.1 se abre al cerrar F-136-17, también su apertura. **No detiene nada más.**
+
+**Lo que encontró QA en su pasada correctiva** (`docs/qa/REQ-007.md`, «7. Pasada correctiva de P-137-F»). **Comprobado en disco por la coordinadora:**
+- **QA-007-19 y QA-007-20: cerrados.** CA-69 y las cuatro «Punto 5» están en el REQ, verbatim y en su sitio. §5 conforme otra vez: 12/12 destinos con `cmp`, 69 `CA-xx`, 17/17 hallazgos con sede, 12/12 enlaces. **Presupuesto de `Edit` medido por QA con la puerta: 9 933 B pasan y 9 934 se deniegan**, frente a 4 947 con el original.
+- **QA-007-22 (`contrato`, media), nuevo:**
+  - **SEC-124** (abierto) cita en el registro «el punto 7 de compatibilidad («Pasa a permitirse la clase de K6»)» y nombra entre sus sedes «CA-66 punto 5 y punto 7». Esa frase sólo existe en la viñeta «Punto 7» de la octava autorización (2035–2051 de `cecf9b6`), que sigue fuera. Hay **cuatro** «Punto 7», los cambios de compatibilidad de cada versionado, y suman 3 733 B.
+  - **QA-023-23** (abierto, en la cabecera de REQ-007) dice en el registro: «REQ-007 CA-47 punto 19 y **CA-66 LC10** tienen que cumplirse para cerrar REQ-007». Las filas LC10 están en la tabla del «Punto 3» de la fase 2 (2072–2120; 9 190 B), que sigue fuera y dice de sí misma «La columna «Candidato» es el contrato».
+- **QA-007-21:** queda como residual `instrumento`, que no bloquea: el hash `7c6baea` sigue sin rastro desde el REQ. Su arreglo es mecánico y va con la próxima pasada.
+- **QA se atribuye su parte:** en la primera pasada leyó «punto 7» como el punto 7 base de CA-66 sin comprobar el texto citado. Y yo **había llevado la decisión con «tres» «Punto 5» cuando eran cuatro**: apliqué cuatro, porque tu regla era devolver las listas de movimientos declarados, pero **lo aplicado no coincide con tu texto literal**, y te lo digo para que lo confirmes o lo corrijas.
+
+**La lección que dejan dos pasadas seguidas.** El bloque D1 —la evidencia por versionado de CA-66 en 1.35.0— **no es sólo registro de cómo se midió**: los hallazgos abiertos lo usan como **sede de las clases de movimiento, de los cambios de compatibilidad y de filas contratadas**. Cada pasada encuentra una cita más dentro de él. QA tampoco ha barrido las sedes que no son registros de hallazgos (ADR-016, la guía, el banco), que también citan «CA-66 (versionado del …)». Lo demás que salió del REQ —Historial, Trazabilidad, Preguntas, sedes de versionado de Notas, notas de CA-54/58/60 y viñetas de CA-67/68— **ya pasó la búsqueda de contraejemplos de QA sin hallazgos**.
+
+**Opciones, medidas** (REQ hoy: 432 382 B):
+
+| Opción | Qué vuelve | REQ queda en | Presupuesto de `Edit` |
+|---|---|---|---|
+| **(A)** | **CA-66 entero**: lo que queda de D1, 47 127 B | ≈ 479 100 | ≈ 8 960 B |
+| **(B)** | Sólo lo citado: las cuatro «Punto 7» y la tabla del «Punto 3» de la fase 2, ≈ 12 900 B | ≈ 445 300 | ≈ 9 640 B |
+| hoy | — | 432 382 | 9 933 B (medido) |
+| original | — | 868 108 | 4 947 B |
+
+- **(A)** *Consecuencia:* **cierra la clase**, no la instancia. Con CA-66 completo, ninguna cita a «CA-66 (versionado del …)» puede volver a quedar sin sede. Sigue fuera ≈ 388 KB de historia. El `Edit` se queda en 1,8× el original y el REQ, a la mitad. La aplicación es mecánica (el puntero de CA-66 se sustituye por su texto), juzgada en vivo, con una pasada de QA.
+- **(B)** *Consecuencia:* **cierra la instancia.** Devuelve sólo lo que hoy se sabe citado y gana unos 34 KB más que (A), pero deja dentro de D1 texto que las sedes sin barrer citan. Lo previsible, visto lo que ha pasado dos veces, es **una tercera pasada con otro hallazgo**.
+
+**Contadores:** la que viene sería la **segunda pasada correctiva** de esta entrega (tu plan preveía una). El tope de vueltas por REQ de §6 es 3, y esta sería la 2.ª.
+
+**Mi recomendación: (A).** Dos pasadas han demostrado que en D1 la frontera entre registro y sede no se puede trazar con fiabilidad, y que cada intento deja otra cita sin sede. Devolver CA-66 entero cuesta 34 KB más que (B), y a cambio se termina el problema en vez de buscar el siguiente.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-G»; si no, corrige):
+
+> **P-137-G: opción (A).** Vuelve al REQ CA-66 entero (lo que queda de D1: 1649–1687, 1710–1780, 1807–1920, 2013–2123 y 2154–2194 de `cecf9b6`), verbatim y en su sitio, por `Edit` juzgado en vivo; `evidencia-ca66-1.35.0.md` se retira; `7c6baea` va a un puntero. Confirmo las **cuatro** «Punto 5» aplicadas en P-137-F. Autorizo esta segunda pasada correctiva de la entrega, con los contadores tal cual. QA verifica una vez; después, seguridad; commit validado; push. Si QA encuentra otro texto citado fuera, se para y se me dice.
 
 ## Resueltas
 
