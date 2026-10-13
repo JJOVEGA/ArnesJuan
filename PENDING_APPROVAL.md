@@ -43,7 +43,38 @@
 
 ## Pendientes
 
-### P-137-H — **Hotfix 1.36.1 (F-137-10): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
+_(Vacía desde el 2026-10-13: P-137-H resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-13) — **P-137-H adoptada con tres ajustes: hotfix 1.36.1 autorizado** (rama `hotfix/1.36.1` desde `v1.36.0`; analista en fase 0; controles de seguridad en el fail-before)
+
+**Texto del propietario, literal** (mensaje del 2026-10-13 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-H, con sus tres ajustes: analista en fase 0 (REQ nuevo del
+> hotfix, criterio por propiedad: «un destino que existe y es archivo se
+> juzga como archivo, en cp, mv e install»; sin declarar en §6 la vía que
+> lo omite), rama hotfix/1.36.1 desde v1.36.0 (f22b905), y los controles de
+> seguridad del fail-before: cp sobre archivo protegido sigue en deny, y el
+> paso de deny a allow se declara como clase de movimiento con sus casos.
+>
+> Límite del hotfix: nada más entra. Si el desarrollador encuentra la causa
+> en un sitio compartido con otra puerta, se registra y se repara sólo lo
+> que el REQ del hotfix nombra.
+>
+> Anota en docs/PLAN.md el paso que sigue a la publicación de 1.36.1: fusión
+> de main en cand/1.37.0, para que 1.37 lleve el arreglo del cp y no vuelva
+> a publicarlo roto.
+>
+> Al cerrar: notas [1.36.1], push, CI; la publicación es mía. Recuérdame el
+> push de hotfix/1.36.1 al terminar cada fase.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **La autorización vigente es la de P-137-H** (abajo, conservada) **con estos ajustes**, que prevalecen sobre su texto: la rama se llama **`hotfix/1.36.1`**; el criterio del REQ nuevo es el de la cita; y **el push de la rama no lo hace la coordinadora en cada fase: lo recuerda**. Lo hace al cerrar, junto con las notas `[1.36.1]` y el CI. Eso corrige el «hacer push de la candidata» que la propuesta ponía entre lo que la coordinadora decide sola.
+- **Dónde se trabaja:** en **este mismo worktree**, cambiando de rama (`git switch -c hotfix/1.36.1 v1.36.0`), y **no** en un worktree aparte. Los hooks juzgan contra el proyecto de la sesión (`CLAUDE_PROJECT_DIR`), y una edición de `hooks/` en otro directorio quedaría **fuera** de su ámbito: rodearía `guard-codigo` sin querer. `cand/1.37.0` queda intacta en `origin` (`cb9dc9e`) y se retoma al publicar 1.36.1.
+- **La cola y el ESTADO de la rama del hotfix parten de `v1.36.0`**: allí se registra esta misma autorización, y al fusionar `main` en `cand/1.37.0` se resolverán los conflictos de los archivos de registro, que son esperables.
+
+### P-137-H (texto de la propuesta, conservado; adoptada arriba con ajustes) — **Hotfix 1.36.1 (F-137-10): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
 
 **Qué detiene, y qué no.** Mientras no la adoptes, el hotfix **no empieza**. No detiene nada más: F-136-17 está cerrada, y F-137-9 va detrás del hotfix por tu orden.
 
@@ -82,8 +113,6 @@
 >
 > ## Límites
 > Nada más que F-137-10 en 1.36.1. Nada de F-137-9 ni de las piezas a–d. No `AGENTS.md`. Fusión, tag, publicación e instalación estable: míos.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-13) — **P-137-G: (A), CA-66 vuelve entero**; cuatro «Punto 5» confirmadas; segunda pasada autorizada (2.ª de 3); write-back con la lección: **CA-66 no es registro, es contrato**
 

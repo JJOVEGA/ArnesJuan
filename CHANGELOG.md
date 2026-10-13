@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · `P-137-H` adoptada con ajustes: hotfix 1.36.1 autorizado en la rama `hotfix/1.36.1` desde `v1.36.0`; `cand/1.37.0` en pausa hasta publicar 1.36.1
+> Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-137-H**, literal en la cola, con los ajustes del propietario: el criterio por propiedad del REQ nuevo («un destino que existe y es archivo se juzga como archivo, en cp, mv e install»); la rama `hotfix/1.36.1`; los controles de seguridad en el fail-before; el límite («si la causa está en un sitio compartido con otra puerta, se registra y se repara sólo lo que el REQ del hotfix nombra»); y **el push de la rama del hotfix se le recuerda al propietario en cada fase**, y lo hace la coordinadora al cerrar.
+- **`docs/PLAN.md`, fila 2b:** tras publicar 1.36.1, fusionar `main` en `cand/1.37.0`, para que 1.37 lleve el arreglo del `cp`.
+- **Se trabaja en este mismo worktree, cambiando de rama, y no en otro:** los hooks juzgan contra el proyecto de la sesión, y una edición de `hooks/` en otro directorio quedaría fuera de su ámbito.
+- **Avance (regla 6):** el hotfix empieza; esta rama queda en pausa con todo en `origin`.
+
 ## [Interno] — 2026-10-13 · Hotfix 1.36.1 abierto: autorización `P-137-H` lista para que el propietario la adopte, con la forma de `templates/autorizacion.md`
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
