@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-13 · F-136-17, fase 3: **QA APROBADO** tras la segunda pasada (P-137-G); QA-007-19 a 22 cerrados; `Edit` medido en 8 955 B (1,81× el original)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`qa-tester`) · agente: `qa-tester`.
+
+- **§5 rehecho por QA sobre `6e835a4`, sin usar la salida de la coordinadora:** 11/11 destinos con `cmp`; CA-66 (1532–2194) y CA-69 (3139–3397) enteros, una sola vez y verbatim; sólo faltan las dos ediciones en sitio; 69 `CA-xx`; 17/17 hallazgos con sede; ningún identificador sin rastro (patrón ampliado; `SEC-A` y `SEC-B` son ejemplos); 11/11 enlaces; gates de §7 en rc 0.
+- **Contraejemplos sólo sobre CA-66**, como fijó el propietario: ninguno. Todo fragmento citado de «CA-66 …» por un hallazgo abierto está en el REQ.
+- **Presupuesto de `Edit` medido con la puerta 1.36.0:** 8 955 B pasa y 8 956 B se deniega con `new_string` de 1 byte; 8 794/8 795 B con `new_string` igual de largo. Frente a 4 947 B del original: **1,81×**.
+- **Hallazgos:** QA-007-19, 20, 21 y 22 cerrados. Pasadas gastadas: 2 de 3.
+- **Límites del aprobado, declarados por QA:** la medida de éxito original no se cumple (REQ sobre el techo del `Write`; ahorro del analista no demostrado), como el propietario ya registró. La cabecera de REQ-007 sigue sin firmar porque responde por todos sus criterios.
+- **Avance (regla 6):** falta la fase 4 (seguridad).
+
 ## [GitHub] — 2026-10-13 · F-136-17: segunda corrección (P-137-G) por `Edit` juzgado en vivo (sin validar) — **CA-66 vuelve entero** al REQ; REQ-007 = 479 582 bytes
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora, por P-137-G.
 
