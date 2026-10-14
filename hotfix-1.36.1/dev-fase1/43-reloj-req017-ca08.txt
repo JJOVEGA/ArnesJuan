@@ -1,0 +1,5 @@
+#1 candidata min=138681µs v1.36.0 min=142888µs razón=970‰
+#2 candidata min=138899µs v1.36.0 min=154261µs razón=900‰
+#3 candidata min=146147µs v1.36.0 min=153039µs razón=954‰
+#4 candidata min=189024µs v1.36.0 min=212844µs razón=888‰
+#5 candidata min=172127µs v1.36.0 min=179285µs razón=960‰

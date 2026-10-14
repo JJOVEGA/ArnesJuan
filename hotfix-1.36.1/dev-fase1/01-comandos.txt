@@ -1,0 +1,18 @@
+# Desde /home/juan/dev/ArnesJuan-v1.36 (rama hotfix/1.36.1), Linux/WSL2.
+H136=/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks   # idéntica a `git archive v1.36.0 hooks` (00-entorno.txt)
+# 10: el banco ANTES (árbol de pruebas de v1.36.0 con los hooks de v1.36.0), antes de tocar nada
+ARNES_HOOKS_DIR=$H136 bash tests/escenarios/hooks/run.sh > 10-banco-antes-v1.36.0.txt
+# 20/21: la sección 48 sobre la candidata, y con los hooks de v1.36.0 como candidata (el fail-before)
+bash tests/escenarios/hooks/run.sh secciones/48-destino-de-cp-que-es-archivo.sh > 20-s48-candidata.txt
+ARNES_HOOKS_DIR=$H136 bash tests/escenarios/hooks/run.sh secciones/48-destino-de-cp-que-es-archivo.sh > 21-s48-v1.36.0-como-candidata.txt
+# 12, 13, 14: el banco DESPUÉS, tres corridas completas, ninguna borrada
+bash tests/escenarios/hooks/run.sh > 1X-banco-despues-*.txt
+bash tests/escenarios/hooks/inventario.sh <salida> > <inventario>;  diff <inv antes> <inv después> > 17-diff-inv.txt
+# 30: la matriz a mano (cp, mv, install) en los dos árboles; 32: formas vecinas (observaciones)
+bash 30-matriz.sh <hooks>;  bash 32-observaciones.sh hooks $H136
+# 40-45: reloj (CA-12 (c)) y el FAIL de reloj de REQ-017 CA-08 (ii)
+bash 40-reloj-ca12c.sh hooks $H136;  bash 42-reloj-req017-ca08.sh hooks $H136
+ARNES_HOOKS_DIR=$H136 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-5-el-camino-normal.sh   # 44-*
+bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-5-el-camino-normal.sh                          # 45-*
+# 50: la autoprueba del corredor; 60: las quality gates de AGENTS.md §7; 70: el diff de la candidata
+bash tests/escenarios/hooks/autoprueba-corredor.sh;  git diff + la sección nueva > 70-diff-candidata.patch

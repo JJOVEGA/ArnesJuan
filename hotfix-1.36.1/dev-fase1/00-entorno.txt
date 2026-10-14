@@ -1,0 +1,13 @@
+fecha: 2026-10-14T15:59:08-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64
+bash: 5.3.9(1)-release
+jq: jq-1.8.2
+rama: hotfix/1.36.1 · cabeza: e3e1e021a9a886b9d510d89da537993751a89632 (árbol de trabajo con los cambios de la fase 1, sin commit)
+v1.36.0: f22b9059552ca85f17159022d289187b41b13e20
+línea base instalada: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+$ diff -rq <instalada> <git archive v1.36.0 hooks>
+idénticos
+sha256 de los hooks de la candidata:
+66ff48e28f1a4430b6f03cef0149cf77b84d2448f9df5ddfe1d3cd558e9245e3  hooks/lib.sh
+8a82241967f0a8d78992a1672d5119686ec2c0411afb3562f6d63727a4c7abea  hooks/guard-codigo.sh
+be1d3270bc83f2eea2aae3e80042ba1ece6196a2a169d3802bb6a8b564d3f4f3  hooks/guard-completado.sh

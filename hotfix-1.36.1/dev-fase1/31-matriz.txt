@@ -1,0 +1,100 @@
+## candidata
+allow  coord        cp S <raíz>/requirements/REQ-X.md
+allow  coord        cp S requirements/REQ-X.md
+allow  coord        cp S <raíz>/docs/notas.md
+allow  coord        cp -T S <raíz>/requirements/REQ-X.md
+allow  qa-tester    cp S <raíz>/docs/notas.md
+allow  analista-requerimientos cp S <raíz>/requirements/REQ-X.md
+allow  coord        cp S <raíz>/docs/enlace-notas
+allow  desarrollador cp S <raíz>/requirements/REQ-X.md
+allow  coord        cp S <raíz>/docs/nuevo.md
+allow  desarrollador cp S <raíz>/src/nuevo.ts
+deny   coord        cp S <raíz>/docs/enlace-src
+deny   qa-tester    cp S <raíz>/docs/enlace-src
+deny   coord        cp S <raíz>/docs/fifo
+deny   coord        cp S /dev/null
+deny   coord        cp S <raíz>/docs/notas.md/
+deny   coord        cp S <raíz>/src
+allow  coord        mv S <raíz>/requirements/REQ-X.md
+allow  coord        mv S requirements/REQ-X.md
+allow  coord        mv S <raíz>/docs/notas.md
+allow  coord        mv -T S <raíz>/requirements/REQ-X.md
+allow  qa-tester    mv S <raíz>/docs/notas.md
+allow  analista-requerimientos mv S <raíz>/requirements/REQ-X.md
+allow  coord        mv S <raíz>/docs/enlace-notas
+allow  desarrollador mv S <raíz>/requirements/REQ-X.md
+allow  coord        mv S <raíz>/docs/nuevo.md
+allow  desarrollador mv S <raíz>/src/nuevo.ts
+deny   coord        mv S <raíz>/docs/enlace-src
+deny   qa-tester    mv S <raíz>/docs/enlace-src
+deny   coord        mv S <raíz>/docs/fifo
+deny   coord        mv S /dev/null
+deny   coord        mv S <raíz>/docs/notas.md/
+deny   coord        mv S <raíz>/src
+allow  coord        install S <raíz>/requirements/REQ-X.md
+allow  coord        install S requirements/REQ-X.md
+allow  coord        install S <raíz>/docs/notas.md
+allow  coord        install -T S <raíz>/requirements/REQ-X.md
+allow  qa-tester    install S <raíz>/docs/notas.md
+allow  analista-requerimientos install S <raíz>/requirements/REQ-X.md
+allow  coord        install S <raíz>/docs/enlace-notas
+allow  desarrollador install S <raíz>/requirements/REQ-X.md
+allow  coord        install S <raíz>/docs/nuevo.md
+allow  desarrollador install S <raíz>/src/nuevo.ts
+deny   coord        install S <raíz>/docs/enlace-src
+deny   qa-tester    install S <raíz>/docs/enlace-src
+deny   coord        install S <raíz>/docs/fifo
+deny   coord        install S /dev/null
+deny   coord        install S <raíz>/docs/notas.md/
+deny   coord        install S <raíz>/src
+allow  coord        cat S > <raíz>/requirements/REQ-X.md
+## v1.36.0
+deny   coord        cp S <raíz>/requirements/REQ-X.md
+deny   coord        cp S requirements/REQ-X.md
+deny   coord        cp S <raíz>/docs/notas.md
+deny   coord        cp -T S <raíz>/requirements/REQ-X.md
+deny   qa-tester    cp S <raíz>/docs/notas.md
+deny   analista-requerimientos cp S <raíz>/requirements/REQ-X.md
+deny   coord        cp S <raíz>/docs/enlace-notas
+allow  desarrollador cp S <raíz>/requirements/REQ-X.md
+allow  coord        cp S <raíz>/docs/nuevo.md
+allow  desarrollador cp S <raíz>/src/nuevo.ts
+deny   coord        cp S <raíz>/docs/enlace-src
+deny   qa-tester    cp S <raíz>/docs/enlace-src
+deny   coord        cp S <raíz>/docs/fifo
+deny   coord        cp S /dev/null
+deny   coord        cp S <raíz>/docs/notas.md/
+deny   coord        cp S <raíz>/src
+deny   coord        mv S <raíz>/requirements/REQ-X.md
+deny   coord        mv S requirements/REQ-X.md
+deny   coord        mv S <raíz>/docs/notas.md
+deny   coord        mv -T S <raíz>/requirements/REQ-X.md
+deny   qa-tester    mv S <raíz>/docs/notas.md
+deny   analista-requerimientos mv S <raíz>/requirements/REQ-X.md
+deny   coord        mv S <raíz>/docs/enlace-notas
+allow  desarrollador mv S <raíz>/requirements/REQ-X.md
+allow  coord        mv S <raíz>/docs/nuevo.md
+allow  desarrollador mv S <raíz>/src/nuevo.ts
+deny   coord        mv S <raíz>/docs/enlace-src
+deny   qa-tester    mv S <raíz>/docs/enlace-src
+deny   coord        mv S <raíz>/docs/fifo
+deny   coord        mv S /dev/null
+deny   coord        mv S <raíz>/docs/notas.md/
+deny   coord        mv S <raíz>/src
+deny   coord        install S <raíz>/requirements/REQ-X.md
+deny   coord        install S requirements/REQ-X.md
+deny   coord        install S <raíz>/docs/notas.md
+deny   coord        install -T S <raíz>/requirements/REQ-X.md
+deny   qa-tester    install S <raíz>/docs/notas.md
+deny   analista-requerimientos install S <raíz>/requirements/REQ-X.md
+deny   coord        install S <raíz>/docs/enlace-notas
+allow  desarrollador install S <raíz>/requirements/REQ-X.md
+allow  coord        install S <raíz>/docs/nuevo.md
+allow  desarrollador install S <raíz>/src/nuevo.ts
+deny   coord        install S <raíz>/docs/enlace-src
+deny   qa-tester    install S <raíz>/docs/enlace-src
+deny   coord        install S <raíz>/docs/fifo
+deny   coord        install S /dev/null
+deny   coord        install S <raíz>/docs/notas.md/
+deny   coord        install S <raíz>/src
+allow  coord        cat S > <raíz>/requirements/REQ-X.md

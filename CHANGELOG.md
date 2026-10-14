@@ -1,5 +1,12 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-10-14 · Hotfix 1.36.1, fase 1 (desarrollador): REQ-032, evidencia del arreglo
+`hotfix-1.36.1/dev-fase1/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `e3e1e02` con los cambios sin commit (sha256 en `00-entorno.txt`), Linux/WSL2:
+- sección 48: 254/0 en la candidata; con los hooks de v1.36.0, 28 FAIL (el fail-before de M-032 en cp, mv e install, G1 y el oráculo);
+- banco antes 2303/0/13; después, tres corridas sin borrar ninguna: 2552/4/14 (reloj, con carga concurrente), 2556/0/14 y 2558/1/11 (el FAIL de reloj de REQ-017 CA-08 (ii) contra v1.32.1, escrito y sin clasificar; cabeza a cabeza con v1.36.0, 0,89×–0,97×);
+- procesos 0 añadidos; reloj CA-12 (c) 0,88×–1,00×; autoprueba 117/0; gates rc 0;
+- observaciones medidas sin reparar: origen de `mv`, `cd` en el comando y `$X` literal.
+
 ## 2026-09-30 · SEC-119/O-11 v3b: REGISTRO PREVIO de los casos de host que faltaban (QA-023-11) y del alcance real de QA-023-09 (antes de ejecutar)
 `sec119-v3b/`: cuatro casos: R5 (REQ sin permiso de lectura); `cwd` tras un `cd` anterior; `cd` a un directorio con salto de línea y cierre por la ruta canónica; y el control de éste sin salto de línea. Nada ejecutado todavía.
 
