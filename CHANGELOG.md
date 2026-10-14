@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 0 **cerrada**: P-032-1 (A) y P-032-2 (A) adoptadas; REQ-032 `pendiente`, contrato cerrado; ficha F-137-12
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, cierre de su misma comisión, ≈ 194 k tokens acumulados) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **Decisión del propietario**, literal en la cola: un directorio se juzga como hoy (`directorio/`); «archivo» es un archivo regular **después de resolver la identidad de CA-47** (SEC-122), así que un enlace a un archivo regular cuenta como ese archivo; los demás tipos, como en v1.36.0. La corrección de la medida del `desarrollador` queda registrada: la regresión deniega **a quien no es el agente de código**.
+- **REQ-032 cerrado** por el analista en su misma comisión: CA-01 (definición de «archivo»); CA-02 con F5 (el `desarrollador`) como control, F6 y F7 para `qa-tester` y el analista, F8 (enlace a un archivo no protegido, M-032) y **K4** (enlace a un archivo protegido, `deny` antes y después: el control que exige la precisión); CA-06 con el texto definitivo; CA-09 (casos de M-032: F1–F4, F6–F8); CA-14 con la forma exacta. `Estado: pendiente`.
+- **Ficha F-137-12** (preexistente, sin medir): con un glob con sufijo, un `cp` hacia el directorio puede no casar con el ámbito. Fuera del hotfix por P-032-1.
+- **Avance (regla 6):** el contrato está cerrado; empieza la fase 1 (desarrollador).
+
 ## [Interno] — 2026-10-13 · Hotfix 1.36.1, fase 0: REQ-032 escrito (`borrador`, 14 criterios); `P-032-1` y `P-032-2` en la cola; corrección de una medida de la coordinadora
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 166 k tokens) · agentes: `analista-requerimientos` + la coordinadora.
 

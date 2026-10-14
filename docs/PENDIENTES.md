@@ -2347,3 +2347,12 @@ ninguna mata al hook.»
 - **Qué** (R-057): `guard-completado.sh:951-958` lee la lista con `done <<< "$ARNES_GATES"`; cada gate hereda esa entrada. Con `cat >/dev/null` o `read -r x; true` delante de `false`, no hay salida ni decisión. Igual en v1.35.0. Con `</dev/null` deniega.
 - **Lecciones de R-057 que se suman a F-136-22:** **L4**, la gate es código no confiable dentro del proceso del hook: su veredicto es sólo su código de salida y nada de lo que hereda (entrada estándar, descriptores, salidas, trampas, funciones) puede alimentar la lista de gates, el veredicto ni la salida; **L5**, reparar la vivacidad no debe romper la integridad: cualquier arreglo de «siempre emite decisión» se valida también contra «nunca pasa una gate roja», y los vectores adversarios de QA-007-15 y SEC-133 entran al banco **antes** del intento.
 - **Dueño:** `desarrollador` con `qa-tester` y `auditor-seguridad`; con F-136-21 y F-136-22, una sola intervención de 1.37 sobre el bucle de gates.
+
+## Fichas del hotfix 1.36.1 (rama `hotfix/1.36.1`, 2026-10-14)
+
+*(Esta rama parte de `v1.36.0` y no trae las fichas F-137-1 a F-137-11, que viven en `cand/1.37.0`; la numeración sigue la de allí para que no choquen al fusionar `main` en `cand/1.37.0`.)*
+
+### F-137-12 — Con un glob con sufijo (`src/*.ts`), un `cp` hacia el **directorio** puede no casar con el ámbito (preexistente, sin medir)
+- **Qué** (observación del `analista-requerimientos` al cerrar REQ-032, 2026-10-14; **razonada, no medida**): el detector juzga un destino de `cp`/`mv`/`install` como el destino y como `destino/` (`hooks/lib.sh:2252-2263`). Con un patrón que exige un sufijo, `cp x.ts src` escribe `src/x.ts`, pero ni `src` ni `src/` casan con `src/*.ts`, así que la escritura podría pasar a un agente que no es el de código.
+- **Por qué no entra en el hotfix:** P-032-1 (A), literal del propietario: «el destino que es directorio se sigue juzgando como directorio/, como hoy (CA-47 punto 10). Nada más entra.» Es **preexistente** e independiente de F-137-10.
+- **Qué hace falta antes de decidir nada:** **medirlo** contra v1.36.0 y contra 1.33.2. Si se reproduce, es un movimiento posible de `deny` a `allow` del lado abierto, y su clase la fija el `auditor-seguridad`. **Dueños:** `qa-tester` (medida) y `auditor-seguridad` (clase); decisión del propietario sobre la ventana.

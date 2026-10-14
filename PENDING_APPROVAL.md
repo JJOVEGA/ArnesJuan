@@ -43,7 +43,33 @@
 
 ## Pendientes
 
-### P-032-1 y P-032-2 — Hotfix 1.36.1, fase 0: **dos preguntas sobre el criterio de REQ-032**. La primera nace de un error de redacción de la coordinadora en P-137-H
+_(Vacía desde el 2026-10-14: P-032-1 y P-032-2 resueltas por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-14) — **P-032-1 (A) y P-032-2 (A), con una precisión**: un directorio se juzga como hoy; «archivo» es un archivo regular **después de resolver la identidad de CA-47**; corrección de la medida del `desarrollador` registrada
+
+**Texto del propietario, literal** (mensaje del 2026-10-14 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-032-1 (A): el destino que es directorio se sigue juzgando como
+> directorio/, como hoy (CA-47 punto 10). Nada más entra.
+>
+> Adopto P-032-2 (A): «archivo» es un archivo regular, juzgado DESPUÉS de la
+> resolución de identidad de CA-47 (SEC-122): un enlace simbólico a un
+> archivo regular cuenta como ese archivo, no como «otro tipo». FIFO,
+> dispositivo y demás se quedan como en v1.36.0: ante la duda, deny.
+>
+> La corrección de tu medida es correcta y se registra: la regresión deniega
+> a quien no es el agente de código; el desarrollador con agent_id pasa.
+> Sigue siendo hotfix: la coordinadora, QA y el analista hacen cp a diario.
+> Notas de 1.36.1 y F-137-10 con la forma exacta.
+>
+> El analista cierra el contrato sin otra comisión; fase 1. Recuérdame el push
+> al terminar.
+
+**Lo que añade la coordinadora:** «sin otra comisión» se aplica **retomando la misma comisión del analista de la fase 0**, con el contexto que ya tiene, para que escriba las dos decisiones en REQ-032. No se abre un análisis nuevo. La ficha F-137-10 vive en `cand/1.37.0`, y su forma exacta se corrige en el paso 2b; las notas `[1.36.1]` se escriben con ella en la fase 4.
+
+### P-032-1 y P-032-2 (texto de la consulta, conservado; resueltas arriba) — Hotfix 1.36.1, fase 0: **dos preguntas sobre el criterio de REQ-032**. La primera nace de un error de redacción de la coordinadora en P-137-H
 
 **Qué detiene, y qué no.** Detiene **cerrar el contrato** de REQ-032 (sigue en `borrador`) y, por tanto, el arreglo del desarrollador, cuya condición depende de P-032-2. **No detiene** nada más: el REQ está escrito con 14 criterios (`requirements/REQ-032.md`), y los casos del banco de CA-02 a CA-05 y CA-07 no dependen de estas preguntas.
 
@@ -72,8 +98,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-1 (A) y P-032-2 (A)»; si no, corrige):
 
 > **P-032-1 (A):** un directorio existente se juzga como hoy (REQ-007 CA-47, punto 10) y su veredicto no cambia; la frase «`directorio/nombre`» de P-137-H queda corregida. **P-032-2 (A):** «archivo» es un archivo regular; cualquier otro tipo que exista conserva el veredicto de v1.36.0. El analista cierra el contrato de REQ-032 con esto, sin otra comisión de análisis, y el plan sigue con la fase 1.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-13) — **Hotfix 1.36.1 (F-137-10) autorizado: P-137-H adoptada con tres ajustes**; rama `hotfix/1.36.1` desde `v1.36.0`
 
