@@ -14,7 +14,8 @@
 
 **Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
 
-- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 2 de 4, siguiente acción: QA (Opus) valida REQ-032.** Fase 1 entregada el 2026-10-14 (sin validar): arreglo en `hooks/lib.sh` y las dos puertas, sección 48 (254 casos, fail-before 28 FAIL contra v1.36.0), `CASOS_ESPERADOS` 2570, versión 1.36.1. **Un FAIL de reloj sin clasificar** (REQ-017 CA-08 (ii), ajeno por su sujeto al código cambiado): lo clasifica QA. Fase 0 cerrada el 2026-10-14: REQ-032 `pendiente`, P-032-1 (A) y P-032-2 (A). La autorización, literal, está en `PENDING_APPROVAL.md` § Resueltas, «Hotfix 1.36.1 (F-137-10) autorizado».
+- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 2 de 4, siguiente acción: QA (Opus) valida REQ-032.** Fase 1 entregada el 2026-10-14 (sin validar): arreglo en `hooks/lib.sh` y las dos puertas, sección 48 (254 casos, fail-before 28 FAIL contra v1.36.0), `CASOS_ESPERADOS` 2570, versión 1.36.1. **Un FAIL de reloj sin clasificar** (REQ-017 CA-08 (ii), ajeno por su sujeto al código cambiado): lo clasifica QA.
+- **PAUSA (2026-10-14), el propietario apaga el equipo. Cómo retomar:** la fase 2 (QA) **se interrumpió a mitad y no entregó nada**. En este repositorio no escribió nada (el árbol está limpio salvo el bloque derivado). En el árbol de evidencia (`/home/juan/dev/ArnesJuan-evidencia`) dejó **comiteado** su entorno y el **procedimiento de atribución del FAIL de reloj, fijado antes de correr** (`9cd647b`, `hotfix-1.36.1/qa/`), y **sin comitear** cuatro salidas parciales (`10-`, `20-`, `21-`, `30-ataques.sh`), que **no cuentan como evidencia**. **Siguiente acción al volver:** despachar de nuevo la fase 2 a QA (Opus) sobre `9e97bd7`, con el mismo encargo (está en la transcripción de la sesión y su resumen en el `CHANGELOG`), diciéndole que **reutilice el procedimiento ya comiteado en `9cd647b`** y que las salidas parciales sin comitear se rehacen. **Es la misma fase, no una pasada nueva**: no gasta contador. **Push de `hotfix/1.36.1`: pendiente del propietario** (commits locales `b504bbb`, `052ac4d`, `e3e1e02`, `9e97bd7` y el de esta pausa). Fase 0 cerrada el 2026-10-14: REQ-032 `pendiente`, P-032-1 (A) y P-032-2 (A). La autorización, literal, está en `PENDING_APPROVAL.md` § Resueltas, «Hotfix 1.36.1 (F-137-10) autorizado».
 - **El defecto:** desde 1.35.0, un `cp` sobre un archivo **existente** del proyecto se deniega **a todo el que no es el agente de código** (al `desarrollador`, con su `agent_id`, se le permite: re-medido el 2026-10-13; la medida del 2026-10-12 que decía «a cualquier agente» estaba mal construida, sin `agent_id`), también con `cp -T`.
 - **Fase 0 ENTREGADA (2026-10-13):** `requirements/REQ-032.md` en `borrador`, con 14 criterios, y su fila en el índice. **Parada: `P-032-1` y `P-032-2` PENDIENTES** (qué pasa con un destino que es directorio; qué es «archivo»). La primera nace de un error de redacción de la coordinadora en P-137-H. **Push de `hotfix/1.36.1`: pendiente del propietario.** El detector juzga `destino/` como si fuera un directorio, y la identificación del destino falla cerrada. Medido fuera de banda el 2026-10-12: 1.33.2 pasaba, y 1.35.0 y 1.36.0 deniegan. Un destino que no existe pasa. La redirección `cat … > …` también pasa.
 - **Criterio por propiedad, literal del propietario:** «un destino que existe y es archivo se juzga como archivo, en cp, mv e install».
@@ -564,7 +565,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-14 16:01
+## Estado derivado — 2026-10-14 16:06
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -574,7 +575,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `hotfix/1.36.1` @ `e3e1e02` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `hotfix/1.36.1` @ `9e97bd7` — limpio
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 30 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 9

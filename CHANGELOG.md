@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-14 · Hotfix 1.36.1: **pausa** por apagado del equipo; la fase 2 (QA) se interrumpió sin entregar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- La coordinadora detuvo la comisión de QA para que el apagado no la cortara a mitad. **No escribió nada en este repositorio.** En el árbol de evidencia dejó comiteado el procedimiento de atribución del FAIL de reloj, fijado antes de correr (`9cd647b`), y cuatro salidas parciales sin comitear que no cuentan.
+- **Al volver:** la fase 2 se despacha otra vez sobre `9e97bd7`, reutilizando ese procedimiento. Es la misma fase, sin gastar contador. Instrucciones en `docs/ESTADO.md`.
+
 ## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 1 (desarrollador): un destino de `cp`/`mv`/`install` que existe y es archivo regular se juzga como ese archivo; sección 48 del banco; versión 1.36.1
 > Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 358 k tokens) · agentes: `desarrollador` + la coordinadora.
 
