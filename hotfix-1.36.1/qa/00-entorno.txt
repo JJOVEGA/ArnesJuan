@@ -1,0 +1,15 @@
+fecha: 2026-10-14T16:09:30-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64
+bash: 5.3.9(1)-release
+jq: jq-1.8.2
+rama: hotfix/1.36.1 · cabeza: 9e97bd7edb556ef0c3fbaa2af48d6fd0f3969ade
+árbol limpio: 1 entradas
+línea base: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+$ diff -r <instalada> <git archive f22b905 hooks>
+idénticos
+sha256 candidata:
+66ff48e28f1a4430b6f03cef0149cf77b84d2448f9df5ddfe1d3cd558e9245e3  hooks/lib.sh
+8a82241967f0a8d78992a1672d5119686ec2c0411afb3562f6d63727a4c7abea  hooks/guard-codigo.sh
+be1d3270bc83f2eea2aae3e80042ba1ece6196a2a169d3802bb6a8b564d3f4f3  hooks/guard-completado.sh
+nproc: 12
+ 16:09:30 up 11 days,  6:14,  1 user,  load average: 2.63, 2.75, 3.04
