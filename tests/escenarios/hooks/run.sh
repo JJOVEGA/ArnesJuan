@@ -1694,7 +1694,11 @@ done
 # importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
 # Y 2314 → 2316 por QA-007-14 (P-136-R (A)): +2 en 47-decision-emitida.sh (104 → 106) —funciones `return` y `break`
 # importadas: `ls -la` sin decisión y un Write a src/ con deny, en menos de 5 s—; con 39e6128 mueren o no terminan.
-CASOS_ESPERADOS=2316
+# Y 2316 → 2570 por el hotfix 1.36.1 (REQ-032, F-137-10): +254 en la sección nueva 48-destino-de-cp-que-es-archivo.sh
+# —F/K 74 (12 filas × cp, mv, install × 2 árboles, y K3), A 42, C 12, D 42, N 6, U 48, T 12, G 12, M 4, el oráculo de
+# CA-01 y los procesos de CA-12—. Con los hooks de v1.36.0 como candidata salen 28 FAIL: las 21 filas F de M-032, las
+# 6 G y el oráculo (el fail-before). Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2570
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

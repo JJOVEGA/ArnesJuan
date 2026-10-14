@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
 ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
                                                          # los controles de medición de las sondas de coste
 ```
-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **1787 casos** (el número exacto lo cuadran
+Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **2570 casos** (el número exacto lo cuadran
 `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
 `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
 nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
@@ -324,6 +324,9 @@ Tres reglas nacidas de fallos reales:
 | Decisión emitida (47) | Pasada correctiva del paso 6 (P): QA-007-10, `ARNES_CWD_VISTO` heredada con el `cwd` inexistente de la entrada; QA-007-12, un `QA:` en disco de 140 000 bytes `0xFF` que el motivo cita; QA-007-11 (a), `FUNCNEST=1`, `SHELLOPTS=keyword`, `BASH_FUNC_jq%%` (Write a `src/`) y `BASH_COMPAT=31`, `BASHOPTS=compat40` (aviso) | **deny** «no se pudo determinar»; **deny** con el motivo en no más de 16 384 bytes; **deny** de guard-codigo; el aviso emitido. Con 8e11f87 y v1.35.0, los 7 FAIL (sin decisión, motivo de 48 781 bytes, JSON roto o sin aviso) |
 | Decisión emitida (47) | QA-007-13 (P): funciones `builtin` y `read` importadas del entorno, las dos devolviendo 0; `ls -la` y un `Write` de la coordinadora a `src/a.ts`, por `guard.sh` | **sin decisión** y **deny** de guard-codigo, los dos en menos de 5 s (`entrada.sh` limpia en modo POSIX con una lista estática); con 03cbf5e, el hook no termina y muere a los 60 s (FAIL, el fail-before) |
 | Decisión emitida (47) | QA-007-14 (P): funciones `return` y `break` importadas (builtins especiales); los mismos `ls -la` y `Write` | **sin decisión** y **deny**, en menos de 5 s (la lista estática lleva también los especiales); con 39e6128, el hook muere o no termina (FAIL, el fail-before) |
+| Destino de cp que es archivo (48) | REQ-032 CA-02 y CA-03 (a), con `cp`, `mv` e `install`: sobre un archivo **que existe** y no está protegido —un REQ por ruta absoluta y relativa, `docs/notas.md`, con `-T`, de la coordinadora, de `qa-tester` y de `analista-requerimientos`, y por un enlace a un archivo regular— (F1–F4, F6–F8); y el comando que menciona el estado terminal (G1, coordinadora y `desarrollador`) | **allow**; contra **v1.36.0** (f22b905, por SHA con `mat48`) **deny** con el motivo de no determinable que cita la ruta **con la barra final** (fail-before, en las tres órdenes) |
+| Destino de cp que es archivo (48) | controles: el agente de código (F5), destinos inexistentes (K1, K2, N1 `app` que casa `app/*`), `cat S > D` (K3); un archivo protegido por un enlace (K4) y por las rutas que llegan a él (A1–A7); el cierre de un REQ (C1, por `guard-completado`); destinos directorio, también por enlace (D1–D7); lo que no se sabe —directorio sin permiso, sin `cwd`, `..` sobre lo que no existe, el `cwd` de la entrada frente al del proceso, barra final, enlace roto, FIFO, `/dev/null`— (U1–U8); `-t`, `--target-directory` y la redirección con barra final (T1–T6); la excepción del manifiesto roto, que **no** se repara (M1, M2) | **igual** en la candidata y en v1.36.0; un enlace cuenta como el archivo al que resuelve (K4 **deny**); U1, U7 y los enlaces, **SKIP** con motivo donde no se pueden construir |
+| Destino de cp que es archivo (48) | el oráculo de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build` y F3— (P1, sonda de procesos) | iguales; **0** procesos añadidos. El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
 
 **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
 que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
@@ -348,6 +351,9 @@ motivo, y las que necesitan un enlace con un retorno de carro en el nombre, tamb
 La sección 47 (1.36.0, SEC-127 y QA-007-06) trae su propio lanzador y mide la candidata y v1.35.0. Lanza el
 hook **sin `env` delante**: medido en Linux/WSL2 con el `env` de uutils, `env … bash guard.sh <&-` abre el
 descriptor 0 sobre `/dev/null` y el caso deja de medir la entrada cerrada.
+La sección 48 (hotfix 1.36.1, REQ-032) trae su propio emisor y su lanzador, que admite un **directorio del
+proceso** distinto del `cwd` de la entrada (U4: lo que se mira es el archivo del `cwd` de la entrada, nunca el
+del proceso del hook), y mide la candidata y v1.36.0 por SHA (f22b905).
 
 **Los casos de coste no llevan relojes absolutos, y eso es deliberado.** Un umbral en segundos lo
 falsea la máquina, el runner del CI y la carga. Los de arriba son **cocientes de duplicación**

@@ -2252,14 +2252,28 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
       cp|mv|install|*/cp|*/mv|*/install)
         # El destino es el último operando del segmento; se prueba también su forma
         # de directorio (`cp x src` debe casar con el glob `src/*`).
-        local dest=""
+        # REQ-032 (M-032): esa forma de directorio sale MARCADA (`ARNES_FORMA_DIR` delante) para que
+        # quien juzga pueda no juzgarla cuando el destino existe y es un archivo regular
+        # (`arnes_destino_a_juzgar`). Con `-t`/`--target-directory` el operando que se toma aqui NO es el
+        # destino de la orden (es un origen; REQ-032 CA-10 deja su seleccion como esta): sale SIN marca,
+        # como en v1.36.0, y nunca deja de juzgarse (CA-08: lo que no se sabe no se toma por archivo).
+        local dest="" dirigido=0
         for ((j = i + 1; j < n; j++)); do
-          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*) continue ;; esac
+          case "${t[j]}" in
+            '>'|'|'|';'|'&&'|'||'|'&') break ;;
+            --t*) dirigido=1; continue ;;
+            --*) continue ;;
+            -*t*) dirigido=1; continue ;;
+            -*) continue ;;
+          esac
           dest="${t[j]}"
         done
         if [ -n "$dest" ]; then
           sal+=("$dest")
-          case "$dest" in */) ;; *) sal+=("$dest/") ;; esac
+          case "$dest" in
+            */) ;;
+            *) if [ "$dirigido" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
+          esac
         fi ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
@@ -2324,6 +2338,38 @@ _arnes_estado_ausente_c() {
   case "$2" in ''|*[!A-Za-z0-9_-]*) return 1 ;; esac
   case "$1" in *[![:ascii:]]*) return 1 ;; esac
   [[ ${1,,} != *"${2,,}"* ]]
+}
+
+# LA FORMA DE DIRECTORIO DEL DESTINO DE `cp`/`mv`/`install`, Y CUANDO NO SE JUZGA (REQ-032, M-032).
+# El detector emite el destino y, detras, su forma `destino/` («escribe DENTRO de ese directorio»,
+# REQ-007 CA-47 punto 10), marcada con un tabulador delante: ningun destino del detector lleva uno,
+# porque el comando se trocea por blancos. Desde 1.35.0 la identidad de CA-47 declara no determinable
+# `archivo-existente/` y lo deniega a quien no es el agente de codigo: un `cp` sobre un archivo que
+# existe se denegaba por una forma de directorio que no designa nada.
+# `arnes_destino_a_juzgar <linea del detector>` -> ARNES_DESTINO (la ruta a juzgar, sin marca). Devuelve
+# 1 —«no se juzga»— SOLO para la forma marcada cuyo destino, identificado como lo identifica CA-47
+# (anclado en el `cwd` de la entrada, lectura fisica), EXISTE Y ES UN ARCHIVO REGULAR: el destino ya se
+# juzgo en la linea anterior. Un enlace cuenta como el archivo al que resuelve (P-032-2 (A)); cualquier
+# otra cosa —directorio, inexistente, no determinable, otro tipo, dos lecturas distintas— se juzga como
+# en v1.36.0. Ante la duda, se juzga.
+# SIN PROCESOS: `[[ -f ]]` es de bash, y la identidad del destino ya esta memorizada por la linea
+# anterior. Un enlace que la puerta no ha resuelto aun (su ambito no tiene patrones, y por eso no lo
+# resolvio) NO se resuelve aqui —costaria un `readlink`—: no se afirma, y se juzga como en v1.36.0, que
+# en ese ambito no puede denegar nada (`arnes_id_pertenece` sale «fuera» sin patrones).
+# La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
+# excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
+# directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
+ARNES_FORMA_DIR=$'\t'
+ARNES_DESTINO=''
+arnes_destino_a_juzgar() {
+  ARNES_DESTINO="$1"
+  [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
+  ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
+  arnes_identidad "${ARNES_DESTINO%/}"
+  [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
+  [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
+  [[ -f $ARNES_ID_O ]] && return 1
+  return 0
 }
 
 # LOS DESTINOS DE UN COMANDO, ANALIZADO UNA VEZ POR INVOCACION (CA-54, nota del 2026-10-03).
@@ -2514,6 +2560,9 @@ arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash
       destinos="${1:-}"; [ -n "$destinos" ] || return 0
       while IFS= read -r d; do
         [ -n "$d" ] || continue
+        # REQ-032: aqui la forma de directorio de `cp`/`mv`/`install` se juzga SIEMPRE, como en v1.36.0;
+        # solo se retira su marca (ver `arnes_destino_a_juzgar`: esta excepcion no la nombra REQ-032).
+        d="${d#"$ARNES_FORMA_DIR"}"
         arnes_identidad "$d"
         arnes_id_pertenece manifiesto || { solo_manifiesto=0; break; }
       done <<< "$destinos" ;;

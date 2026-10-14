@@ -412,6 +412,10 @@ arnes_guard_completado() {
     arnes_estado_ausente "$bash_cmd" "$estado_done" && return 0
     while IFS= read -r d; do
       [ -n "$d" ] || continue
+      # REQ-032 (M-032): la forma de directorio de un destino de `cp`/`mv`/`install` que existe y es un
+      # archivo regular no se juzga: el destino ya se juzgo en la linea anterior (lib.sh).
+      arnes_destino_a_juzgar "$d" || continue
+      d="$ARNES_DESTINO"
       arnes_identidad "$d"; arnes_id_pertenece req; rc=$?
       [ "$rc" -ne 1 ] || continue
       if grep -iqE "(^|[^a-zA-Z])${estado_done}([^a-zA-Z]|$)" <<< "$bash_cmd"; then

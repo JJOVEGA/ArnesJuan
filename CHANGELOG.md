@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 1 (desarrollador): un destino de `cp`/`mv`/`install` que existe y es archivo regular se juzga como ese archivo; sección 48 del banco; versión 1.36.1
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 358 k tokens) · agentes: `desarrollador` + la coordinadora.
+
+- **Arreglo (REQ-032 CA-01):** el detector de `Bash` marca la forma `destino/` de `cp`/`mv`/`install`, y `guard-codigo` y `guard-completado` no la juzgan cuando el destino, identificado por REQ-007 CA-47, existe y es archivo regular (un enlace cuenta como su archivo). Directorios, inexistentes, no determinables, otros tipos y `-t`/`--target-directory`, como en v1.36.0. La identidad de CA-47 no cambia. 0 procesos añadidos.
+- **Banco:** sección nueva `48-destino-de-cp-que-es-archivo.sh` (254 casos, fail-before contra v1.36.0 por SHA: 28 FAIL con los hooks de v1.36.0); `CASOS_ESPERADOS` 2316 → 2570. Banco completo en Linux/WSL2, tres corridas: la última **2558/1/11**, con el FAIL de reloj de REQ-017 CA-08 (ii) contra v1.32.1 (1,263×–1,300×; v1.36.0 recorre ese techo en las mismas condiciones y cabeza a cabeza la candidata da 0,89×–0,97×), escrito y sin clasificar por el desarrollador. Versión 1.36.1 en `plugin.json` y en el marketplace. Las notas `[1.36.1]` son de la fase 4.
+- **Registrado sin reparar:** la misma causa en la excepción del manifiesto roto (CA-10); y tres formas de M-032 cuyo efecto alcanza algo protegido por límites preexistentes (origen de `mv`, `cd` en el comando, expansiones). Detalle en el Historial de REQ-032.
+- **Comprobado por la coordinadora antes de comitear:** gates de §7 en rc 0; versión 1.36.1 en `plugin.json` y en el marketplace; la sección 48, modo 644 como las demás, **pasa** (vuelta parcial, 0 FAIL). Fichas **F-137-13** (las tres formas de M-032 que alcanzan lo protegido por límites preexistentes, para que las clasifique seguridad) registradas sin reparar.
+- **Un FAIL abierto, sin clasificar y escrito:** REQ-017 CA-08 (ii) («un REQ real de 6 líneas»), **1,263×–1,300× contra v1.32.1, con techo de 1,25×**, en la tercera corrida del banco (2558/1/11). Su sujeto es un `Edit` por `guard-completado`, que **no pasa por el código cambiado**; cabeza a cabeza contra v1.36.0, la candidata da 0,89×–0,97×; y con v1.36.0 como candidata la misma sonda también roza el techo. **No se desmiente repitiendo** (memoria del proyecto): lo clasifica QA en la fase 2, con su atribución medida.
+- **Avance (regla 6):** el arreglo está construido y medido; falta QA (fase 2).
+
 ## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 0 **cerrada**: P-032-1 (A) y P-032-2 (A) adoptadas; REQ-032 `pendiente`, contrato cerrado; ficha F-137-12
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, cierre de su misma comisión, ≈ 194 k tokens acumulados) · agentes: `analista-requerimientos` + la coordinadora.
 

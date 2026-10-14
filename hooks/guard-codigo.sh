@@ -142,6 +142,10 @@ arnes_guard_codigo() {
     if [ "$via_bash" -eq 1 ]; then
       while IFS= read -r cand; do
         [ -n "$cand" ] || continue
+        # REQ-032 (M-032): la forma de directorio de un destino de `cp`/`mv`/`install` que existe y es
+        # un archivo regular no se juzga: el destino ya se juzgo en la linea anterior (lib.sh).
+        arnes_destino_a_juzgar "$cand" || continue
+        cand="$ARNES_DESTINO"
         arnes_identidad "$cand"; arnes_id_pertenece codigo; rc=$?
         if [ "$rc" -eq 0 ]; then objetivo="$ARNES_ID_REL"; break; fi
         # El primer no determinable se recuerda, pero se sigue buscando: un destino que SI es
