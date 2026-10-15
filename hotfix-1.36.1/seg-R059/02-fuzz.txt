@@ -1,0 +1,4 @@
+PROTEGIDO v136=deny cand=allow [ D src/a.ts ] | mv docs/dsrc/a.ts docs/sub/../notas.md
+PROTEGIDO v136=deny cand=allow [ D src/a.ts ] | mv --force src/a.ts docs//notas.md
+PROTEGIDO v136=deny cand=allow [ D src/a.ts ] | mv -v /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/proj/src/a.ts /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/proj/docs/notas.md
+casos=700 movimientos=252 con_efecto_protegido=3

@@ -1,0 +1,24 @@
+v136=deny  cand=allow rc=0 cambio_protegido=[] | cp S docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | mv S docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | install S docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | cp -fv S docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | cp S src/a.ts docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | mv S src/a.ts docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | install S src/a.ts docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | cp -r src docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | cp -a hooks docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | mv -r src docs/notas.md
+v136=deny  cand=allow rc=1 cambio_protegido=[] | install -r src docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | install -p src/a.ts docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | cp -a docs/enlace-src docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | mv docs/enlace-src docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[ D src/a.ts ] | mv src/a.ts docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[ D src/a.ts ] | mv -f src/a.ts docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[] | mv -n src/a.ts docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[ D hooks/lib.sh ] | mv hooks/lib.sh docs/notas.md
+v136=deny  cand=allow rc=0 cambio_protegido=[ D .arnes/config.json ] | mv .arnes/config.json docs/notas.md
+v136=allow cand=allow rc=0 cambio_protegido=[ D src/a.ts ] | mv src/a.ts docs/nuevo.md
+v136=allow cand=allow rc=0 cambio_protegido=[ D src/a.ts ] | rm src/a.ts
+v136=allow cand=allow rc=0 cambio_protegido=[ M src/a.ts ] | cp S src/a.ts 2>/dev/null
+v136=allow cand=allow rc=0 cambio_protegido=[ M src/a.ts ] | (cp S src/a.ts)
+v136=allow cand=allow rc=0 cambio_protegido=[?? src/b.ts ] | cp S src/b.ts 2>/dev/null

@@ -1,0 +1,25 @@
+comando | 1.33.2 | 1.35.0 | 1.36.0 (f22b905 = instalado) | candidata (6f2b811)
+cp S src/a.ts 2>/dev/null | allow | allow | allow | allow
+cp S src/a.ts 2> /dev/null | allow | allow | allow | allow
+cp S src/a.ts 2>&1 | allow | allow | allow | allow
+cp S src/a.ts 1>&2 | allow | allow | allow | allow
+cp S src/a.ts 2>/tmp/e48 | allow | allow | allow | allow
+cp S src/a.ts # nada | allow | allow | allow | allow
+cp S src/a.ts < docs/sub | allow | allow | allow | allow
+cp -rt src docs/sub | allow | allow | allow | allow
+\cp S src/a.ts | allow | allow | allow | allow
+find src -name a.ts -exec cp S {} \; | allow | allow | allow | allow
+(cp S src/a.ts) | allow | allow | allow | allow
+cp S src/b.ts 2>/dev/null | allow | allow | allow | allow
+mv S src/a.ts 2>/dev/null | allow | allow | allow | allow
+cp S hooks/lib.sh 2>/dev/null | allow | allow | allow | allow
+cp S src/a.ts | deny | deny | deny | deny
+cat S > src/a.ts | deny | deny | deny | deny
+cp S docs/notas.md | allow | deny | deny | allow
+mv src/a.ts docs/notas.md | allow | deny | deny | allow
+mv .arnes/config.json docs/notas.md | allow | deny | deny | allow
+mv src/a.ts docs/nuevo.md | allow | allow | allow | allow
+rm src/a.ts | allow | allow | allow | allow
+unlink src/a.ts | allow | allow | allow | allow
+truncate -s 0 src/a.ts | allow | allow | allow | allow
+rm .arnes/config.json | allow | allow | allow | allow
