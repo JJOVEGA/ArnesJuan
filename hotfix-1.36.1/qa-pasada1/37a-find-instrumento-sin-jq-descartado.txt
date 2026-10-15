@@ -1,0 +1,10 @@
+fecha: 2026-10-15T09:13:14-06:00  find del sistema: /usr/bin/find (find (GNU findutils) 4.10.0)
+cp S docs/notas.md     | v1.36.0=deny  | candidata: find normal=SIN-DECISION/allow  sin find=SIN-DECISION/allow  find falla=deny   find vacío=deny 
+cp S docs/hl           | v1.36.0=deny  | candidata: find normal=deny   sin find=SIN-DECISION/allow  find falla=deny   find vacío=deny 
+ls -la                 | v1.36.0=SIN-DECISION/allow | candidata: find normal=SIN-DECISION/allow  sin find=SIN-DECISION/allow  find falla=SIN-DECISION/allow  find vacío=SIN-DECISION/allow
+cp S src/a.ts          | v1.36.0=deny  | candidata: find normal=deny   sin find=SIN-DECISION/allow  find falla=deny   find vacío=deny 
+--- la hermana de L1 en v1.36.0: el último operando es un directorio
+echo src | xargs cp -r docs/sub    | v1.36.0=SIN-DECISION/allow candidata=SIN-DECISION/allow
+efecto: a.ts sub 
+rc=0
+DESCARTADO: el PATH «sin find» no llevaba ~/.local/bin, donde vive jq; el hook no decidía por falta de jq, no de find. Rehecho en 37-find.txt.

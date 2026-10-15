@@ -1,0 +1,11 @@
+fecha: 2026-10-15T09:12:37-06:00  candidata: /home/juan/dev/ArnesJuan-v1.36/hooks  v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+L1   v1.36.0=deny  candidata=allow src/ CAMBIA  | echo src/a.ts | xargs cp S
+L2   v1.36.0=deny  candidata=allow src/ CAMBIA  | xargs -a docs/lista cp S
+L3   v1.36.0=deny  candidata=allow src/ CAMBIA  | cat docs/lista | xargs mv S
+L4   v1.36.0=deny  candidata=allow src/ CAMBIA  | cat docs/lista | xargs install S
+L5   v1.36.0=deny  candidata=allow src/ intacto | echo docs/notas.md | xargs cp S
+L6   v1.36.0=deny  candidata=deny  src/ CAMBIA  | cp S docs/notas.md && cp S src/a.ts
+L7   v1.36.0=deny  candidata=deny  src/ CAMBIA  | cp S src/a.ts;cp S docs/notas.md
+L8   v1.36.0=deny  candidata=deny  src/ CAMBIA  | cp S docs/notas.md & cp S src/a.ts
+casos: 8
+rc=0

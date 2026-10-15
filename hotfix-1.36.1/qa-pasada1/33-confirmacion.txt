@@ -1,0 +1,46 @@
+fecha: 2026-10-15T09:11:30-06:00  candidata: /home/juan/dev/ArnesJuan-v1.36/hooks  v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks  (cwd de la entrada = raíz del proyecto)
+--- (a) redirección de stdin: el detector toma el archivo de entrada por destino
+A1    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < docs/notas.md  [coordinadora]
+A2    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < /dev/null  [coordinadora]
+A3    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < S  [coordinadora]
+A4    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < docs/notas.md  [qa-tester]
+A5    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | mv S src/a.ts < docs/notas.md  [coordinadora]
+A6    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | install S src/a.ts < docs/notas.md  [coordinadora]
+A7    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts nuevo.ts ; a.ts=a ) | prep: -                            | cp S src/nuevo.ts < docs/notas.md  [coordinadora]
+--- (b) redirección con descriptor numérico: el detector toma el número por destino
+B1    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts 2>/dev/null  [coordinadora]
+B2    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: printf x > 2                 | cp S src/a.ts 2>/dev/null  [coordinadora]
+B3    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: printf x > 2                 | cp S src/a.ts 2>&1  [coordinadora]
+B4    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts 2>&1  [coordinadora]
+--- (c) comentario final: el detector toma la última palabra del comentario por destino
+C1    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts # nada  [coordinadora]
+C2    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts  # copia de docs/notas.md  [coordinadora]
+C3    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts # ver S  [coordinadora]
+C4    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts # ver docs/sub  [coordinadora]
+--- (d) -t disfrazado: el detector toma el último origen por destino y no ve el -t
+D1    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts notas.md ; a.ts=a ) | prep: -                            | cp -t src docs/notas.md  [coordinadora]
+D2    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts notas.md ; a.ts=a ) | prep: -                            | cp "-t" src docs/notas.md  [coordinadora]
+D3    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts sub ; a.ts=a )   | prep: -                            | cp -r -t src docs/sub  [coordinadora]
+D4    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts sub ; a.ts=a )   | prep: -                            | cp -r "-t" src docs/sub  [coordinadora]
+D5    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts sub ; a.ts=a )   | prep: -                            | cp -rt src docs/sub  [coordinadora]
+D6    v1.36.0=deny  candidata=deny  src/ CAMBIA (S a.ts ; a.ts=a )     | prep: -                            | cp \-t src S  [coordinadora]
+D7    v1.36.0=deny  candidata=deny  src/ CAMBIA (S a.ts ; a.ts=a )     | prep: -                            | cp '--target-directory=src' S  [coordinadora]
+D8    v1.36.0=deny  candidata=deny  src/ CAMBIA (S a.ts ; a.ts=a )     | prep: -                            | T=-t; cp $T src S  [coordinadora]
+D9    v1.36.0=allow candidata=allow src/ intacto                       | prep: -                            | cp -t src docs/nuevo.md  [coordinadora]
+--- (e) enlace DURO a un archivo protegido, fuera del ámbito: oráculo cat > frente a cp
+E1    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: ln src/a.ts docs/hl          | cat S > docs/hl  [coordinadora]
+E2    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: ln src/a.ts docs/hl          | cp S docs/hl  [coordinadora]
+--- (f) F-137-13
+F1    v1.36.0=deny  candidata=allow src/ CAMBIA (; a.ts=)              | prep: -                            | mv src/a.ts docs/notas.md  [coordinadora]
+F2    v1.36.0=allow candidata=allow src/ CAMBIA (; a.ts=)              | prep: -                            | mv src/a.ts docs/nuevo.md  [coordinadora]
+F3    v1.36.0=deny  candidata=allow src/ intacto                       | prep: printf x > a.ts              | cd src && cp S a.ts  [coordinadora]
+F4    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cd src && cp ../S a.ts  [coordinadora]
+F5    v1.36.0=deny  candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: printf x > a.ts              | cd src && cp ../S a.ts  [coordinadora]
+F6    v1.36.0=deny  candidata=deny  src/ CAMBIA (a.ts ; a.ts=S )       | prep: printf x > "\$X"             | X=src/a.ts; cp S $X  [coordinadora]
+F7    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | X=src/a.ts; cp S $X  [coordinadora]
+F8    v1.36.0=deny  candidata=deny  src/ intacto                       | prep: printf x > "\$X"             | cp S $X  [coordinadora]
+--- (g) hermanas preexistentes de (a): la entrada estándar desde un directorio (bash la abre y cp corre)
+G1    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < docs/sub  [coordinadora]
+G2    v1.36.0=allow candidata=allow src/ CAMBIA (a.ts ; a.ts=S )       | prep: -                            | cp S src/a.ts < docs  [coordinadora]
+casos: 36
+rc=0

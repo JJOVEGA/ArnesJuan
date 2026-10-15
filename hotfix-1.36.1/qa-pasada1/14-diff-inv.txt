@@ -1,0 +1,103 @@
+1,29d0
+< FAIL	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo : el insensible base mide 136630µs y no llega a 150000µs (es el que derivaba a N× del suelo);
+< FAIL	REQ-032 F1 cp coordinadora: cp S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F1 install coordinadora: install S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F1 mv coordinadora: mv S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F2 cp coordinadora: cp S requirements/REQ-X.md (cwd <raíz>) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede recorrer (sin permiso, no es un direc>
+< FAIL	REQ-032 F2 install coordinadora: install S requirements/REQ-X.md (cwd <raíz>) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede recorrer (sin permiso, no es un direc>
+< FAIL	REQ-032 F2 mv coordinadora: mv S requirements/REQ-X.md (cwd <raíz>) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede recorrer (sin permiso, no es un direc>
+< FAIL	REQ-032 F3 cp coordinadora: cp S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F3 install coordinadora: install S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F3 mv coordinadora: mv S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F4 cp coordinadora: cp -T S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F4 install coordinadora: install -T S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F4 mv coordinadora: mv -T S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F6 cp qa-tester: cp S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F6 install qa-tester: install S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F6 mv qa-tester: mv S <raíz>/docs/notas.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 F7 cp analista-requerimientos: cp S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F7 install analista-requerimientos: install S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F7 mv analista-requerimientos: mv S <raíz>/requirements/REQ-X.md candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md' de la ruta existe pero no se puede reco>
+< FAIL	REQ-032 F8 cp coordinadora: cp S <raíz>/docs/enlace-notas (-> notas.md) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas' de la ruta existe pero no se puede recorrer (si>
+< FAIL	REQ-032 F8 install coordinadora: install S <raíz>/docs/enlace-notas (-> notas.md) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas' de la ruta existe pero no se puede recorrer (si>
+< FAIL	REQ-032 F8 mv coordinadora: mv S <raíz>/docs/enlace-notas (-> notas.md) candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas' de la ruta existe pero no se puede recorrer (si>
+< FAIL	REQ-032 G1 cp coordinadora: cp S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 G1 cp desarrollador: cp S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: este comando escribe en '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/' y menciona 'completado', y no se pudo determinar a que archivo escribe: el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de l>
+< FAIL	REQ-032 G1 install coordinadora: install S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 G1 install desarrollador: install S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: este comando escribe en '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/' y menciona 'completado', y no se pudo determinar a que archivo escribe: el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de l>
+< FAIL	REQ-032 G1 mv coordinadora: mv S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/': el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de la ruta existe pero no se puede recorrer (sin permis>
+< FAIL	REQ-032 G1 mv desarrollador: mv S <raíz>/docs/notas.md && echo completado candidata  esperado=allow got=deny  <ARNES: este comando escribe en '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md/' y menciona 'completado', y no se pudo determinar a que archivo escribe: el directorio '/tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md' de l>
+< FAIL	REQ-032 O1 CA-01 oráculo: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D  cp coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; mv coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; install coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; cp coordinadora requirements/REQ-X.md: deny frente a cat allow; mv coordinadora requirements/REQ-X.md: deny frente a cat allow; install coordinadora requirements/REQ-X.md: deny frente a cat allow; cp coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; mv coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; install coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; cp qa-tester /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; mv qa-tester /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; install qa-tester /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/notas.md: deny frente a cat allow; cp analista-requerimientos /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; mv analista-requerimientos /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; install analista-requerimientos /tmp/tmp.dNfdqDFtG0/proj-1684803/requirements/REQ-X.md: deny frente a cat allow; cp coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas: deny frente a cat allow; mv coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas: deny frente a cat allow; install coordinadora /tmp/tmp.dNfdqDFtG0/proj-1684803/docs/enlace-notas: deny frente a cat allow;
+1497d1467
+< PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+1529a1500
+> PASS	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=N derivado de Nns/vuelta para N× el suelo de Nµs que declara el JUEZ —la sonda publica suelo=Nµs y no decide—; sensible Nµs · insensible Nµs, ninguno pegado al suelo)
+1551c1522
+< PASS	REQ-023 CA-03 (reservada) entrada al azar U+BD874 = $'\362\275\241\264', semilla ARNES_SEMILLA_41=19879 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+---
+> PASS	REQ-023 CA-03 (reservada) entrada al azar U+E1F10 = $'\363\241\274\220', semilla ARNES_SEMILLA_41=623 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+1899a1871
+> PASS	REQ-032 F1 cp coordinadora: cp S <raíz>/requirements/REQ-X.md candidata  (allow)
+1900a1873
+> PASS	REQ-032 F1 install coordinadora: install S <raíz>/requirements/REQ-X.md candidata  (allow)
+1901a1875
+> PASS	REQ-032 F1 mv coordinadora: mv S <raíz>/requirements/REQ-X.md candidata  (allow)
+1902a1877
+> PASS	REQ-032 F2 cp coordinadora: cp S requirements/REQ-X.md (cwd <raíz>) candidata  (allow)
+1903a1879
+> PASS	REQ-032 F2 install coordinadora: install S requirements/REQ-X.md (cwd <raíz>) candidata  (allow)
+1904a1881
+> PASS	REQ-032 F2 mv coordinadora: mv S requirements/REQ-X.md (cwd <raíz>) candidata  (allow)
+1905a1883
+> PASS	REQ-032 F3 cp coordinadora: cp S <raíz>/docs/notas.md candidata  (allow)
+1906a1885
+> PASS	REQ-032 F3 install coordinadora: install S <raíz>/docs/notas.md candidata  (allow)
+1907a1887
+> PASS	REQ-032 F3 mv coordinadora: mv S <raíz>/docs/notas.md candidata  (allow)
+1908a1889
+> PASS	REQ-032 F4 cp coordinadora: cp -T S <raíz>/requirements/REQ-X.md candidata  (allow)
+1909a1891
+> PASS	REQ-032 F4 install coordinadora: install -T S <raíz>/requirements/REQ-X.md candidata  (allow)
+1910a1893
+> PASS	REQ-032 F4 mv coordinadora: mv -T S <raíz>/requirements/REQ-X.md candidata  (allow)
+1917a1901
+> PASS	REQ-032 F6 cp qa-tester: cp S <raíz>/docs/notas.md candidata  (allow)
+1918a1903
+> PASS	REQ-032 F6 install qa-tester: install S <raíz>/docs/notas.md candidata  (allow)
+1919a1905
+> PASS	REQ-032 F6 mv qa-tester: mv S <raíz>/docs/notas.md candidata  (allow)
+1920a1907
+> PASS	REQ-032 F7 cp analista-requerimientos: cp S <raíz>/requirements/REQ-X.md candidata  (allow)
+1921a1909
+> PASS	REQ-032 F7 install analista-requerimientos: install S <raíz>/requirements/REQ-X.md candidata  (allow)
+1922a1911
+> PASS	REQ-032 F7 mv analista-requerimientos: mv S <raíz>/requirements/REQ-X.md candidata  (allow)
+1923a1913
+> PASS	REQ-032 F8 cp coordinadora: cp S <raíz>/docs/enlace-notas (-> notas.md) candidata  (allow)
+1924a1915
+> PASS	REQ-032 F8 install coordinadora: install S <raíz>/docs/enlace-notas (-> notas.md) candidata  (allow)
+1925a1917
+> PASS	REQ-032 F8 mv coordinadora: mv S <raíz>/docs/enlace-notas (-> notas.md) candidata  (allow)
+1926a1919
+> PASS	REQ-032 G1 cp coordinadora: cp S <raíz>/docs/notas.md && echo completado candidata  (allow)
+1927a1921
+> PASS	REQ-032 G1 cp desarrollador: cp S <raíz>/docs/notas.md && echo completado candidata  (allow)
+1928a1923
+> PASS	REQ-032 G1 install coordinadora: install S <raíz>/docs/notas.md && echo completado candidata  (allow)
+1929a1925
+> PASS	REQ-032 G1 install desarrollador: install S <raíz>/docs/notas.md && echo completado candidata  (allow)
+1930a1927
+> PASS	REQ-032 G1 mv coordinadora: mv S <raíz>/docs/notas.md && echo completado candidata  (allow)
+1931a1929
+> PASS	REQ-032 G1 mv desarrollador: mv S <raíz>/docs/notas.md && echo completado candidata  (allow)
+2005c2003,2004
+< PASS	REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B) (candidata/v1.36.0: «ls -la» 1/1 «npm run build» 1/1 «cp S <raíz>/docs/notas.md» 3/3 «cp S <raíz>/docs/h3-b» 3/3)
+---
+> PASS	REQ-032 O1 CA-01 oráculo: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D  (N comparaciones, todas iguales)
+> PASS	REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B) (candidata/v1.36.0: «ls -la» 1/1 «npm run build» 1/1 «cp S <raíz>/docs/notas.md» 3/3 «cp S <raíz>/docs/h3-b» 4/3)
+2710a2710
+> SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta N o más repeticiones resueltas de v1.32.1 y todas por encima de N× · v1.32.1: N× N× N× N× N× (N de N resueltas) · este árbol: N× N× N× N× N× (N de N resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto
+2713c2713
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
+---
+> SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× (#N:no-converge(N/N) ) · presupuesto fijo, no se repite

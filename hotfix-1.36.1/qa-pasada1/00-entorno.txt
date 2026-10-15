@@ -1,0 +1,13 @@
+fecha: 2026-10-15T09:09:03-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 · bash 5.3.9(1)-release · jq-1.8.2 · find: bfs 4.1.1 · nproc 12
+rama: hotfix/1.36.1 · cabeza: 264dfa92c0e65d0da03177cf3f9cb1ab47c59855
+árbol:  M docs/ESTADO.md 
+diff -r <instalada 1.36.0> <git archive f22b905 hooks>: idénticos
+759ff50 materializado en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arboles/p759/hooks
+3adf42db5b1463bd55d827992b5442e280441317f66c749233a3bbaaccd33cce  hooks/lib.sh
+8a82241967f0a8d78992a1672d5119686ec2c0411afb3562f6d63727a4c7abea  hooks/guard-codigo.sh
+be1d3270bc83f2eea2aae3e80042ba1ece6196a2a169d3802bb6a8b564d3f4f3  hooks/guard-completado.sh
+f17098a5651fc579c0f276bb77f60fc01640dc2aa7f04d696578f837a485e5ea  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arboles/p759/hooks/lib.sh
+procesos previos: 0
+carga:  09:09:03 up 11 days,  9:03,  1 user,  load average: 0.44, 1.29, 1.46
+nota: en el shell interactivo de QA 'find' es una función (bfs); los hooks, en su propio bash, usan /usr/bin/find = GNU findutils 4.10.0

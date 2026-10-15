@@ -1,0 +1,16 @@
+fecha: 2026-10-15T09:22:57-06:00
+E0    v1.36.0=deny  candidata=allow esperado=allow OK | cp S docs/notas.md
+E1    v1.36.0=deny  candidata=deny  esperado=deny  OK | cp S docs/notas.md && echo "hecho"
+E2    v1.36.0=deny  candidata=deny  esperado=deny  OK | cp S docs/notas.md && echo 'hecho'
+E3    v1.36.0=deny  candidata=deny  esperado=deny  OK | cp S docs/notas.md && echo $HOME
+E4    v1.36.0=allow candidata=allow esperado=deny  DIFIERE | cp S docs/notas.md # copia
+E5    v1.36.0=deny  candidata=deny  esperado=deny  OK | cp S docs/notas.md && wc -l < docs/notas.md
+E6    v1.36.0=allow candidata=allow esperado=deny  DIFIERE | cp S docs/notas.md⏎echo hecho
+E7    v1.36.0=deny  candidata=deny  esperado=deny  OK | cp S docs/notas.md && ls *.md
+E8    v1.36.0=deny  candidata=allow esperado=allow OK | cp S docs/notas.md && echo hecho > docs/log.txt
+E9    v1.36.0=deny  candidata=allow esperado=allow OK | cp S docs/notas.md | cat
+E10   v1.36.0=deny  candidata=allow esperado=allow OK | cp S docs/notas.md; ls -la
+E11   v1.36.0=deny  candidata=allow esperado=allow OK | X=1 cp S docs/notas.md
+E12   v1.36.0=deny  candidata=allow esperado=allow OK | cp -v S docs/notas.md && echo 50% hecho, user@host: a+b
+E13   v1.36.0=deny  candidata=allow esperado=allow OK | cp S docs/notas.md && echo ñandú
+rc=0
