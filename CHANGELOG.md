@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · `P-032-3` (A) adoptada: pasada correctiva acotada a QA-032-01; **F-137-14 pasa a ser el hotfix 1.36.2**, que se abre al publicar 1.36.1; la fusión de `main` en `cand/1.37.0`, después de 1.36.2
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-3**, literal en la cola. Donde no se pueda asegurar que el último operando es el destino (redirección o comentario detrás, `-t`/`-rt`), vuelve lo de v1.36.0 (`deny`), con un caso del banco por cada forma. Nada más entra.
+- **F-137-14:** el propietario lo califica de bypass de la garantía central por una forma cotidiana. 1.36.1 se publica declarándolo, con su forma y su salida, y la gravedad la fija seguridad en la fase 3. **Hotfix 1.36.2** con contrato propio: el destino de `cp`/`mv`/`install` se determina leyendo los operandos como lo hace la orden.
+- **Lo que añade la coordinadora:** el enlace duro de QA-032-01 no lo cubre la letra de la regla (allí el último operando **es** el destino), y queda con F-137-13 para el auditor. El `-t` escrito de otra forma cae en «no se puede asegurar».
+- **Avance (regla 6):** la pasada correctiva tiene su alcance decidido; el analista escribe el criterio.
+
 ## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: QA **con hallazgos** — el arreglo abre `allow` sobre código protegido en formas con señuelo (QA-032-01, `contrato`); v1.36.0 ya deja pasar formas corrientes de la misma raíz (F-137-14); `P-032-3` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 307 k tokens en la reanudación) · agentes: `qa-tester` + la coordinadora.
 

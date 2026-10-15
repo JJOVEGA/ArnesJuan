@@ -43,7 +43,39 @@
 
 ## Pendientes
 
-### P-032-3 — Hotfix 1.36.1, fase 2: **el arreglo abre un `allow` sobre código protegido en formas donde el último operando no es el destino (QA-032-01)**; y QA encontró que **v1.36.0 ya deja pasar** formas corrientes de esa misma raíz (F-137-14). ¿Qué entra en la pasada correctiva, y qué se hace con lo preexistente?
+_(Vacía desde el 2026-10-15: P-032-3 resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **P-032-3 (A)**: pasada correctiva acotada a QA-032-01; **F-137-14 → hotfix 1.36.2 inmediato**, abierto al publicar 1.36.1; la fusión de `main` en `cand/1.37.0`, **después de 1.36.2**
+
+**Texto del propietario, literal** (mensaje del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-032-3: (A). Pasada correctiva limitada a QA-032-01: donde no se
+> pueda asegurar que el último operando es el destino (redirección detrás,
+> comentario detrás, -t/-rt), se vuelve al comportamiento de v1.36.0 (deny).
+> Caso de banco por cada forma. QA re-verifica; seguridad; notas [1.36.1];
+> publicación mía. Nada más entra.
+>
+> F-137-14: es un bypass de la garantía central (quien no es el agente de
+> código escribe código protegido) por una forma cotidiana (2>/dev/null).
+> Preexistente en 1.35.0 y 1.36.0; 1.36.1 no lo empeora y se publica
+> declarándolo. Seguridad fija la gravedad en la fase 3 y la nota de 1.36.1
+> la lleva con su forma y su salida. Decisión: 1.36.2 inmediato, abierto al
+> publicar 1.36.1, con su contrato propio: el destino de cp/mv/install se
+> determina leyendo los operandos como lo hace la orden (opciones, -t/-T,
+> redirecciones y comentarios aparte), no «el último operando». Fail-before
+> con las formas ya reproducidas. No entra en 1.37.
+>
+> Al cerrar 1.36.1: push, CI, y la fusión de main en cand/1.37.0 después de
+> 1.36.2, no antes, para traer los dos arreglos juntos.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Un caso de QA-032-01 que la regla adoptada no cubre por su letra: el enlace duro.** `cp S docs/hl`, con `docs/hl` como enlace duro a `src/a.ts`: aquí el último operando **sí es** el destino. Lo que pasa es que la identidad de CA-47 no ve los enlaces duros, y eso es un límite declarado «sin promesa». Ya en v1.36.0, `cat S > docs/hl` pasa. **Queda con F-137-13** (formas de M-032 que alcanzan lo protegido por límites anteriores), cuya clase fija el auditor en la fase 3. No se repara en la pasada, porque «nada más entra». Si el propietario lo quiere dentro, lo dice.
+- **El `-t` escrito de otra forma** (`"-t"`, `'-t'`, `\-t`, `-""t`, `"--target-directory=…"`, `$T`) cae en «no se puede asegurar»: una opción entrecomillada, escapada o expandida no se puede leer sin interpretar el shell, y por la regla adoptada se vuelve a `deny`.
+- **La fila 2b de `docs/PLAN.md`** (en `cand/1.37.0`) pasa a decir «después de 1.36.2». Se corrige en esa rama.
+
+### P-032-3 (texto de la consulta, conservado; resuelta arriba) — Hotfix 1.36.1, fase 2: **el arreglo abre un `allow` sobre código protegido en formas donde el último operando no es el destino (QA-032-01)**; y QA encontró que **v1.36.0 ya deja pasar** formas corrientes de esa misma raíz (F-137-14). ¿Qué entra en la pasada correctiva, y qué se hace con lo preexistente?
 
 **Qué detiene, y qué no.** Detiene la pasada correctiva, la fase 3 (seguridad) y el cierre del hotfix. **No detiene** nada más.
 
@@ -79,8 +111,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-3»; si no, corrige):
 
 > **P-032-3: opción (A).** Pasada correctiva acotada a QA-032-01: la marca no se retira cuando el segmento no permite afirmar que su último operando es el destino, y esas formas vuelven a lo de v1.36.0. El analista lo escribe en REQ-032, el desarrollador lo repara y QA verifica (vuelta 1 de 3). F-137-14 no entra en 1.36.1: el auditor fija su clase y severidad en la fase 3, y con eso decido si va en 1.36.2 o en 1.37. INS-032-1 queda como `instrumento`.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-14) — **P-032-1 (A) y P-032-2 (A), con una precisión**: un directorio se juzga como hoy; «archivo» es un archivo regular **después de resolver la identidad de CA-47**; corrección de la medida del `desarrollador` registrada
 
