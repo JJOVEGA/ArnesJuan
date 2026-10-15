@@ -1,5 +1,11 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-10-15 · Hotfix 1.36.1, pasada correctiva de QA-032-01 (desarrollador): REQ-032 CA-15
+`hotfix-1.36.1/dev-pasada1/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `48b8a0a` con los cambios sin commit, Linux/WSL2:
+- sección 48: 370/0 en la candidata; con v1.36.0, 28 FAIL (M-032, como antes; las R `deny`); con `9e97bd7`, 54 FAIL (las R salvo R5 y R6);
+- banco 2673/1/12 (2686): el FAIL es REQ-021 CA-03 (c), la calibración de `sonda-reloj` (no ejecuta hooks), PASS en v1.36.0 y en dos corridas sueltas;
+- procesos 0 añadidos; reloj CA-12 (c) 0,91×–0,99×; autoprueba 117/0; gates rc 0.
+
 ## 2026-10-14 · Hotfix 1.36.1, fase 1 (desarrollador): REQ-032, evidencia del arreglo
 `hotfix-1.36.1/dev-fase1/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `e3e1e02` con los cambios sin commit (sha256 en `00-entorno.txt`), Linux/WSL2:
 - sección 48: 254/0 en la candidata; con los hooks de v1.36.0, 28 FAIL (el fail-before de M-032 en cp, mv e install, G1 y el oráculo);

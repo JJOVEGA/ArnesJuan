@@ -1,0 +1,12 @@
+# Desde /home/juan/dev/ArnesJuan-v1.36 (rama hotfix/1.36.1, cabeza 48b8a0a + cambios de la pasada), Linux/WSL2.
+H136=/home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks; H9E=<git archive 9e97bd7 hooks>
+bash tests/escenarios/hooks/run.sh secciones/48-destino-de-cp-que-es-archivo.sh                     > 20-s48-candidata.txt
+ARNES_HOOKS_DIR=$H136 bash tests/escenarios/hooks/run.sh secciones/48-destino-de-cp-que-es-archivo.sh > 21-s48-v1.36.0-como-candidata.txt
+ARNES_HOOKS_DIR=$H9E  bash tests/escenarios/hooks/run.sh secciones/48-destino-de-cp-que-es-archivo.sh > 22-s48-9e97bd7-como-candidata.txt
+bash tests/escenarios/hooks/run.sh > 10-banco-candidata.txt;  bash tests/escenarios/hooks/inventario.sh 10-… > 11-inv-candidata.txt
+diff ../dev-fase1/11-inv-antes.txt 11-inv-candidata.txt > 12-diff-inv-v1.36.0-candidata.txt
+diff ../dev-fase1/16-inv-despues-3-final.txt 11-inv-candidata.txt > 13-diff-inv-9e97bd7-candidata.txt
+bash 30-formas-ca15.sh hooks $H136 > 31-…;  bash 30-formas-ca15.sh $H9E $H136 > 32-…;  bash ../dev-fase1/32-observaciones.sh hooks $H136 > 33-…
+bash ../dev-fase1/40-reloj-ca12c.sh hooks $H136 > 41-reloj-ca12c.txt
+bash tests/escenarios/hooks/run.sh secciones/38-sondas-compartidas-2-la-calibracion.sh > 46-s38-2-candidata-{1,2}.txt
+bash tests/escenarios/hooks/autoprueba-corredor.sh > 50-autoprueba.txt;  gates de AGENTS.md §7 > 60-gates.txt;  git diff > 70-diff-pasada.patch

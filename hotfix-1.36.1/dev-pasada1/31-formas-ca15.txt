@@ -1,0 +1,97 @@
+candidata v1.36.0 agente comando
+deny   deny   coord      cp S src/a.ts < docs/notas.md
+deny   deny   coord      cp S src/a.ts 2>/dev/null
+deny   deny   coord      cp S src/a.ts 2>&1
+deny   deny   coord      cp S src/a.ts  # copia de docs/notas.md
+deny   deny   coord      cp -t src docs/notas.md
+deny   deny   coord      cp -rt src docs/notas.md
+deny   deny   coord      cp "-t" src docs/notas.md
+deny   deny   coord      cp '-t' src docs/notas.md
+deny   deny   coord      cp \-t src docs/notas.md
+deny   deny   coord      cp -""t src docs/notas.md
+deny   deny   coord      cp "--target-directory=src" docs/notas.md
+deny   deny   coord      T=-t; cp $T src docs/notas.md
+deny   deny   coord      cp "-t" requirements docs/notas.md && echo completado
+allow  allow  coord      cp S "src/a.ts"
+deny   deny   coord      cp docs/notas.md "src/a.ts"
+allow  deny   coord      cp S docs/notas.md
+deny   deny   coord      mv S src/a.ts < docs/notas.md
+deny   deny   coord      mv S src/a.ts 2>/dev/null
+deny   deny   coord      mv S src/a.ts 2>&1
+deny   deny   coord      mv S src/a.ts  # copia de docs/notas.md
+deny   deny   coord      mv -t src docs/notas.md
+deny   deny   coord      mv -rt src docs/notas.md
+deny   deny   coord      mv "-t" src docs/notas.md
+deny   deny   coord      mv '-t' src docs/notas.md
+deny   deny   coord      mv \-t src docs/notas.md
+deny   deny   coord      mv -""t src docs/notas.md
+deny   deny   coord      mv "--target-directory=src" docs/notas.md
+deny   deny   coord      T=-t; mv $T src docs/notas.md
+deny   deny   coord      mv "-t" requirements docs/notas.md && echo completado
+allow  allow  coord      mv S "src/a.ts"
+deny   deny   coord      mv docs/notas.md "src/a.ts"
+allow  deny   coord      mv S docs/notas.md
+deny   deny   coord      install S src/a.ts < docs/notas.md
+deny   deny   coord      install S src/a.ts 2>/dev/null
+deny   deny   coord      install S src/a.ts 2>&1
+deny   deny   coord      install S src/a.ts  # copia de docs/notas.md
+deny   deny   coord      install -t src docs/notas.md
+deny   deny   coord      install -rt src docs/notas.md
+deny   deny   coord      install "-t" src docs/notas.md
+deny   deny   coord      install '-t' src docs/notas.md
+deny   deny   coord      install \-t src docs/notas.md
+deny   deny   coord      install -""t src docs/notas.md
+deny   deny   coord      install "--target-directory=src" docs/notas.md
+deny   deny   coord      T=-t; install $T src docs/notas.md
+deny   deny   coord      install "-t" requirements docs/notas.md && echo completado
+allow  allow  coord      install S "src/a.ts"
+deny   deny   coord      install docs/notas.md "src/a.ts"
+allow  deny   coord      install S docs/notas.md
+deny   deny   qa-tester  cp S src/a.ts < docs/notas.md
+deny   deny   qa-tester  cp S src/a.ts 2>/dev/null
+deny   deny   qa-tester  cp S src/a.ts 2>&1
+deny   deny   qa-tester  cp S src/a.ts  # copia de docs/notas.md
+deny   deny   qa-tester  cp -t src docs/notas.md
+deny   deny   qa-tester  cp -rt src docs/notas.md
+deny   deny   qa-tester  cp "-t" src docs/notas.md
+deny   deny   qa-tester  cp '-t' src docs/notas.md
+deny   deny   qa-tester  cp \-t src docs/notas.md
+deny   deny   qa-tester  cp -""t src docs/notas.md
+deny   deny   qa-tester  cp "--target-directory=src" docs/notas.md
+deny   deny   qa-tester  T=-t; cp $T src docs/notas.md
+deny   deny   qa-tester  cp "-t" requirements docs/notas.md && echo completado
+allow  allow  qa-tester  cp S "src/a.ts"
+deny   deny   qa-tester  cp docs/notas.md "src/a.ts"
+allow  deny   qa-tester  cp S docs/notas.md
+deny   deny   qa-tester  mv S src/a.ts < docs/notas.md
+deny   deny   qa-tester  mv S src/a.ts 2>/dev/null
+deny   deny   qa-tester  mv S src/a.ts 2>&1
+deny   deny   qa-tester  mv S src/a.ts  # copia de docs/notas.md
+deny   deny   qa-tester  mv -t src docs/notas.md
+deny   deny   qa-tester  mv -rt src docs/notas.md
+deny   deny   qa-tester  mv "-t" src docs/notas.md
+deny   deny   qa-tester  mv '-t' src docs/notas.md
+deny   deny   qa-tester  mv \-t src docs/notas.md
+deny   deny   qa-tester  mv -""t src docs/notas.md
+deny   deny   qa-tester  mv "--target-directory=src" docs/notas.md
+deny   deny   qa-tester  T=-t; mv $T src docs/notas.md
+deny   deny   qa-tester  mv "-t" requirements docs/notas.md && echo completado
+allow  allow  qa-tester  mv S "src/a.ts"
+deny   deny   qa-tester  mv docs/notas.md "src/a.ts"
+allow  deny   qa-tester  mv S docs/notas.md
+deny   deny   qa-tester  install S src/a.ts < docs/notas.md
+deny   deny   qa-tester  install S src/a.ts 2>/dev/null
+deny   deny   qa-tester  install S src/a.ts 2>&1
+deny   deny   qa-tester  install S src/a.ts  # copia de docs/notas.md
+deny   deny   qa-tester  install -t src docs/notas.md
+deny   deny   qa-tester  install -rt src docs/notas.md
+deny   deny   qa-tester  install "-t" src docs/notas.md
+deny   deny   qa-tester  install '-t' src docs/notas.md
+deny   deny   qa-tester  install \-t src docs/notas.md
+deny   deny   qa-tester  install -""t src docs/notas.md
+deny   deny   qa-tester  install "--target-directory=src" docs/notas.md
+deny   deny   qa-tester  T=-t; install $T src docs/notas.md
+deny   deny   qa-tester  install "-t" requirements docs/notas.md && echo completado
+allow  allow  qa-tester  install S "src/a.ts"
+deny   deny   qa-tester  install docs/notas.md "src/a.ts"
+allow  deny   qa-tester  install S docs/notas.md

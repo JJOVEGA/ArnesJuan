@@ -1,0 +1,10 @@
+candidata v1.36.0  comando (coordinadora, cwd <raíz>; <raíz>/a.ts y <raíz>/$X existen como archivos regulares)
+allow    allow    mv src/a.ts docs/nuevo.md
+allow    deny     mv src/a.ts docs/notas.md
+allow    deny     cd src && cp S a.ts
+allow    allow    cd src && cat S > a.ts
+deny     deny     cp S $X
+allow    allow    cat S > $X
+allow    deny     cp --backup S docs/notas.md
+deny     deny     cp -t src docs/notas.md
+allow    deny     cp S1 S2 docs/notas.md
