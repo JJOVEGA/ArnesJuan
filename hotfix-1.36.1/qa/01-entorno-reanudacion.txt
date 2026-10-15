@@ -1,0 +1,11 @@
+reanudación: 2026-10-15T07:02:33-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 · bash 5.3.9(1)-release · jq-1.8.2 · nproc 12
+rama: hotfix/1.36.1 · cabeza: c5746f0a989e788d84acac47594a71b45176364a (código de 9e97bd7; diff 9e97bd7..HEAD: CHANGELOG.md docs/ESTADO.md )
+diff 9e97bd7..HEAD en hooks/ tests/ requirements/: [] (vacío = igual)
+$ diff -r <instalada 1.36.0> <git archive f22b905 hooks>
+idénticos
+66ff48e28f1a4430b6f03cef0149cf77b84d2448f9df5ddfe1d3cd558e9245e3  hooks/lib.sh
+8a82241967f0a8d78992a1672d5119686ec2c0411afb3562f6d63727a4c7abea  hooks/guard-codigo.sh
+be1d3270bc83f2eea2aae3e80042ba1ece6196a2a169d3802bb6a8b564d3f4f3  hooks/guard-completado.sh
+procesos de la corrida anterior: ninguno (pgrep vacío)
+carga:  07:02:33 up 11 days,  6:57,  1 user,  load average: 5.74, 5.10, 5.25

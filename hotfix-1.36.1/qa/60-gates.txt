@@ -1,0 +1,11 @@
+$ for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0
+$ jq -e . hooks/hooks.json >/dev/null
+rc=0
+$ jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+rc=0
+--- CA-13
+plugin.json: 1.36.1
+marketplace.json: ["1.36.1","1.36.1"]
+--- gates de .arnes/config.json (idénticas a §7)
+["for f in hooks/*.sh tools/*.sh; do bash -n \"$f\" || exit 1; done","jq -e . hooks/hooks.json >/dev/null","jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null"]

@@ -1,0 +1,20 @@
+inicio 2026-10-15T07:16:34-06:00 · load average: 5.10, 6.32, 6.41
+ls -la · decisión candidata=allow v1.36.0=allow
+  #1 candidata=199460µs v1.36.0=225166µs razón=885‰ · load average: 5.10, 6.32, 6.41
+  #2 candidata=209669µs v1.36.0=209678µs razón=999‰ · load average: 5.17, 6.32, 6.41
+  #3 candidata=219618µs v1.36.0=190172µs razón=1154‰ · load average: 5.17, 6.32, 6.41
+  #4 candidata=180798µs v1.36.0=178364µs razón=1013‰ · load average: 5.15, 6.30, 6.40
+  #5 candidata=184971µs v1.36.0=186649µs razón=991‰ · load average: 5.15, 6.30, 6.40
+npm run build · decisión candidata=allow v1.36.0=allow
+  #1 candidata=189571µs v1.36.0=181541µs razón=1044‰ · load average: 5.06, 6.26, 6.39
+  #2 candidata=190330µs v1.36.0=175814µs razón=1082‰ · load average: 5.06, 6.26, 6.39
+  #3 candidata=172720µs v1.36.0=181986µs razón=949‰ · load average: 5.14, 6.25, 6.38
+  #4 candidata=170137µs v1.36.0=171693µs razón=990‰ · load average: 5.14, 6.25, 6.38
+  #5 candidata=152471µs v1.36.0=156258µs razón=975‰ · load average: 5.13, 6.23, 6.38
+cp S <raíz>/docs/notas.md · decisión candidata=allow v1.36.0="permissionDecision":"deny"
+  #1 candidata=208326µs v1.36.0=219388µs razón=949‰ · load average: 5.13, 6.23, 6.38
+  #2 candidata=227391µs v1.36.0=229136µs razón=992‰ · load average: 5.12, 6.21, 6.37
+  #3 candidata=251436µs v1.36.0=258139µs razón=974‰ · load average: 5.19, 6.21, 6.37
+  #4 candidata=248924µs v1.36.0=265408µs razón=937‰ · load average: 5.19, 6.21, 6.37
+  #5 candidata=257199µs v1.36.0=260450µs razón=987‰ · load average: 5.25, 6.20, 6.36
+rc=0
