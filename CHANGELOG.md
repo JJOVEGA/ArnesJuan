@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 3: **seguridad SIN VETO** (R-059); REQ-032 `Seguridad: aprobado`; SEC-135 (F-137-14, `contrato`, alta) y SEC-136 (retirada de archivos protegidos, `contrato`, media); `P-032-6` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`, ≈ 277 k tokens) · agentes: `auditor-seguridad` + la coordinadora.
+
+- **R-059, sin veto:** el paso de `deny` a `allow` queda acotado a lo no protegido y declarado (M-032), comprobado con un barrido de 700 comandos ejecutados de verdad. **V7**, el `mv` que borra un origen protegido: `instrumento` para REQ-032, porque era `allow` en 1.33.2 y su estado final ya se alcanzaba en v1.36.0.
+- **SEC-135 (= F-137-14): `contrato`, ALTA.** Dos mecanismos: el último operando no es el destino, y el detector no reconoce la orden (`\cp`, `find -exec` y el subshell `(cp …)`, nuevo). **SEC-136: `contrato`, media.** Las puertas no juzgan la retirada de archivos protegidos: `rm`, `unlink`, el origen de `mv`, `git rm`; y `rm .arnes/config.json` deja inertes las puertas. Ficha **F-137-15**. **Reproducidos por la coordinadora** en v1.36.0. Los dos son preexistentes y `instrumento` en REQ-032.
+- Evidencia del auditor archivada por la coordinadora en el árbol de evidencia (`hotfix-1.36.1/seg-R059/`, `5100518`).
+- **Cola: `P-032-6`:** el alcance de 1.36.2 (reconocer la orden), la ventana de SEC-136 y si se cierra REQ-032 al terminar la fase 4.
+
 ## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: **QA APROBADO** tras la vuelta 2 (QA-032-01 y QA-032-02 cerrados); la lista cerrada de opciones, revisada
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`qa-tester`, ≈ 380 k tokens en esta re-verificación) · agente: `qa-tester`.
 

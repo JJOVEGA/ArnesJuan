@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
 
-- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 3 de 4, siguiente acción: el `auditor-seguridad` revisa REQ-032, la clase de F-137-13 (V7, el `mv` que borra un origen protegido) y la gravedad de F-137-14.** QA aprobado tras la vuelta 2 (2 de 3): QA-032-01 y QA-032-02 cerrados; banco 2849/0/13. Write-back del analista hecho (`30568fd`). Desarrollador: la regla invertida en `_arnes_cmd_llano` (sección 48 546/0, fail-before 53 FAIL contra `264dfa9`; banco 2850/0/12). La regla: el arreglo sólo actúa sobre UNA invocación simple de `cp`/`mv`/`install` (primera palabra literal, sin caracteres de shell, sin tuberías ni encadenar ni subshells ni redirecciones, opciones de una lista cerrada). **SALIDA DECIDIDA POR EL PROPIETARIO: si la vuelta 2 no cierra QA-032-01, NO HAY VUELTA 3: 1.36.1 no se publica, el código vuelve a v1.36.0 y F-137-10 entra en 1.36.2 junto con F-137-14.** El PR #61 (borrador) sigue en borrador.
+- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 4 de 4, siguiente acción: el propietario decide `P-032-6` (alcance de 1.36.2, ventana de SEC-136, cerrar REQ-032); después, el analista hace el write-back y las notas `[1.36.1]`.** Fase 3 cerrada **sin veto** (R-059): REQ-032 `Seguridad: aprobado`. SEC-135 (= F-137-14, `contrato`, alta) y SEC-136 (retirada de archivos protegidos, `contrato`, media; F-137-15), preexistentes; no bloquean REQ-032. QA aprobado tras la vuelta 2 (2 de 3): QA-032-01 y QA-032-02 cerrados; banco 2849/0/13. Write-back del analista hecho (`30568fd`). Desarrollador: la regla invertida en `_arnes_cmd_llano` (sección 48 546/0, fail-before 53 FAIL contra `264dfa9`; banco 2850/0/12). La regla: el arreglo sólo actúa sobre UNA invocación simple de `cp`/`mv`/`install` (primera palabra literal, sin caracteres de shell, sin tuberías ni encadenar ni subshells ni redirecciones, opciones de una lista cerrada). **SALIDA DECIDIDA POR EL PROPIETARIO: si la vuelta 2 no cierra QA-032-01, NO HAY VUELTA 3: 1.36.1 no se publica, el código vuelve a v1.36.0 y F-137-10 entra en 1.36.2 junto con F-137-14.** El PR #61 (borrador) sigue en borrador.
 - *(Pausa del 2026-10-14 superada: la fase 2 se retomó el 2026-10-15 en la misma comisión de QA, y las salidas interrumpidas quedaron descartadas y rotuladas, `437ee5c` en el árbol de evidencia.)*
 - **FASE 2 (QA) ENTREGADA el 2026-10-15: `con-hallazgos`; PARADA, `P-032-3` PENDIENTE.** **QA-032-01 (`contrato`):** formas donde el último operando no es el destino (`< archivo`, comentario final, `-t` disfrazado, enlace duro) pasan de `deny` a `allow` sobre código protegido con el arreglo. **Reproducido por la coordinadora** sobre `hooks/lib.sh`. **F-137-14:** v1.36.0 publicada **ya** deja escribir código protegido con `cp … 2>/dev/null`, con un comentario final o con `cp -rt` (reproducido también). Lo demás, conforme: sección 48 254/0; banco 2557/0/13; autoprueba 117/0; 0 procesos; la marca de tabulador no se puede fabricar. **INS-032-1:** el FAIL de reloj no es atribuible (mediana 1,013 frente a v1.36.0). Recomendación: (A) pasada correctiva acotada a QA-032-01; F-137-14 con clase del auditor y ventana aparte.
 - **El defecto:** desde 1.35.0, un `cp` sobre un archivo **existente** del proyecto se deniega **a todo el que no es el agente de código** (al `desarrollador`, con su `agent_id`, se le permite: re-medido el 2026-10-13; la medida del 2026-10-12 que decía «a cualquier agente» estaba mal construida, sin `agent_id`), también con `cp -T`.
@@ -566,7 +566,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-15 14:43
+## Estado derivado — 2026-10-15 15:05
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -576,7 +576,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `hotfix/1.36.1` @ `77b71f7` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `hotfix/1.36.1` @ `6f2b811` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 30 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 9
@@ -601,6 +601,6 @@ _Sólo los REQ abiertos; los 14 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-032 | pendiente | aprobado | pendiente | critico | ins-032-1(instrumento) |
+| REQ-032 | pendiente | aprobado | aprobado | critico | ins-032-1(instrumento),sec-135(instrumen… |
 
 <!-- ARNES:DERIVADO fin -->

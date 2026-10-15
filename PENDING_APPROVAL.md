@@ -43,7 +43,51 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-15: P-032-5 resuelta por el propietario, en § Resueltas.)_
+### P-032-6 — Hotfix 1.36.1, fase 3 cerrada **sin veto**. Tres decisiones agrupadas antes de las notas y del cierre: (1) ¿1.36.2 reconoce también la orden (subshell, `\cp`, `find -exec`)? (2) ¿Cuándo se arregla SEC-136, la retirada de archivos protegidos? (3) ¿Cierro REQ-032 al terminar la fase 4?
+
+**Qué detiene, y qué no.** **No detiene** la fase 4 en lo que no depende de esto: el write-back del analista. Las **notas `[1.36.1]`** sí dependen de (1) y (2), porque dicen dónde se arregla cada cosa. **Cerrar** REQ-032 es una de tus condiciones de parada, y por eso va en (3).
+
+**Lo que dijo seguridad (R-059, `docs/seguridad/registro-seguridad.md`), en corto:**
+- **Sin veto: el paso de `deny` a `allow` queda acotado a destinos no protegidos y declarado.** Lo comprobó con un barrido de 700 comandos ejecutados de verdad.
+- **V7** (el `mv` que borra un origen protegido): `instrumento` para REQ-032, **no bloquea**. Ya era `allow` en 1.33.2, y en v1.36.0 se llega al mismo estado con `cat … > …; rm …`.
+- **F-137-14 = SEC-135, `contrato`, ALTA.** Dos mecanismos: (i) el último operando no es el destino; (ii) **el detector no reconoce la orden**: `\cp`, `find -exec` y, **nuevo, el subshell `(cp S src/a.ts)`**.
+- **SEC-136, `contrato`, media:** ninguna puerta juzga la **retirada** de un archivo protegido. **Lo reproduje yo en v1.36.0:** `rm hooks/lib.sh`, `git rm hooks/lib.sh` y **`rm .arnes/config.json`, que deja inertes todas las puertas**, pasan. Ficha F-137-15.
+
+#### (1) ¿El contrato de 1.36.2 incluye reconocer la orden?
+
+Tu texto de 1.36.2 dice: «el destino de cp/mv/install se determina leyendo los operandos como lo hace la orden (opciones, -t/-T, redirecciones y comentarios aparte)». Eso cubre el mecanismo (i). El (ii) —que `\cp`, `(cp …)` o `find -exec cp` no se reconozcan como `cp`— **no está en tu literal**.
+- **(A) Sí:** 1.36.2 reconoce la orden por propiedad, con el subshell, `\cp` y `find -exec` en el fail-before.
+  - *Consecuencia:* cierra SEC-135 entero, que es lo que pide su severidad. Un contrato algo más grande.
+- **(B) No:** 1.36.2 cubre sólo (i), y (ii) queda como límite declarado hasta 1.37.
+  - *Consecuencia:* 1.36.2 sale antes, pero `(cp S src/a.ts)` sigue escribiendo código protegido.
+
+**Recomendación: (A).**
+
+#### (2) SEC-136: la ventana
+
+- **(A) Lo que recomienda el auditor:** 1.36.2 juzga **los orígenes de `mv`**, que es lo que §5 promete; `rm`, `unlink` y `git rm` van con la **puerta posterior de 1.37** (pieza b); y en 1.36.2 se **declara en `AGENTS.md` §13**, con `rm .arnes/config.json` nombrado.
+  - *Consecuencia:* cumple la promesa de §5 en el próximo hotfix y deja la clase general para el mecanismo que la resuelve de fondo.
+- **(B) Todo a 1.37.**
+  - *Consecuencia:* §5 sigue prometiendo `mv` sin cumplirlo hasta entonces.
+- **(C) Todo a 1.36.2**, incluido `rm`.
+  - *Consecuencia:* 1.36.2 crece mucho: una puerta para retiradas es un mecanismo nuevo, no un arreglo.
+
+**Recomendación: (A).**
+
+#### (3) ¿Cierro REQ-032 al terminar la fase 4?
+
+REQ-032 tiene `QA: aprobado` y `Seguridad: aprobado`, y sus `Hallazgos abiertos:` son todos `instrumento`; la puerta deja cerrarlo (lo comprobó el auditor, con control). Marcarlo `completado` es «cerrar un REQ», una de tus condiciones de parada.
+- **(A) Sí:** al terminar la fase 4 (write-back y notas), lo marco `completado` con `Edit`, la puerta lo juzga en vivo, y hago commit, push y CI.
+  - *Consecuencia:* el PR #61 llega a ti listo para fusionar.
+- **(B) No:** lo cierras tú al publicar.
+
+**Recomendación: (A).**
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-6»; si no, corrige):
+
+> **P-032-6. (1) (A):** el contrato de 1.36.2 incluye reconocer la orden por propiedad (subshell, `\cp`, `find -exec`, en el fail-before), además de leer los operandos. **(2) (A):** 1.36.2 juzga los orígenes de `mv` y declara SEC-136 en `AGENTS.md` §13, nombrando `rm .arnes/config.json`; `rm`, `unlink` y `git rm` van con la puerta posterior de 1.37. Las notas `[1.36.1]` lo dicen así. **(3) (A):** al terminar la fase 4, la coordinadora cierra REQ-032 con `Edit`, juzgado en vivo; después, commit, push y CI. Fusión, tag y publicación: míos.
 
 ## Resueltas
 
