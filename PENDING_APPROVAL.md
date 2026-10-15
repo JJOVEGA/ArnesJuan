@@ -43,7 +43,37 @@
 
 ## Pendientes
 
-### P-032-4 — Hotfix 1.36.1: **el enlace duro, ¿dentro o fuera de la pasada correctiva?** La opción (A) de P-032-3 que redacté **lo listaba**; tu texto adoptado **no lo nombra**
+_(Vacía desde el 2026-10-15: P-032-4 resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **P-032-4 (B)**: el enlace duro entra en la pasada correctiva; las notas `[1.36.1]` dicen el alcance del arreglo; el contrato de 1.36.2 nombra quitar esa restricción
+
+**Texto del propietario, literal** (mensaje del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-032-4 (B). Un destino de cp/mv/install que existe, es archivo
+> regular y tiene más de un enlace duro (número de enlaces > 1) no se juzga
+> como ese archivo: vuelve al deny de v1.36.0. Si leer el número de enlaces
+> exige un proceso, sólo se paga en esa rama (destino existente de
+> cp/mv/install), nunca en el camino común; se declara con su cifra, como el
+> coste de decidir de SEC-120. Casos de banco: enlace duro en docs/ a
+> hooks/lib.sh y a src/a.ts, deny; enlace duro entre dos archivos de docs/,
+> deny declarado como restricción aceptada.
+>
+> Después: QA verifica la pasada entera sobre el código final (una vuelta),
+> seguridad con la gravedad de F-137-14, notas [1.36.1].
+>
+> Las notas [1.36.1] dicen explícitamente el alcance del arreglo: sólo cubre
+> cp/mv/install escritos sin caracteres de shell (comillas, $, #, <, saltos);
+> con ellos la orden sigue denegándose como en v1.36.0, y la salida es
+> escribir el comando sin esos caracteres o usar una redirección simple.
+> INS-032-2 y PR-137-1, registrados. El contrato de 1.36.2 nombra como
+> objetivo quitar esa restricción leyendo el destino con la gramática de la
+> orden.
+
+**Lo que añade la coordinadora:** el enlace duro lo añade el **mismo desarrollador** dentro de la **misma pasada correctiva** (vuelta 1 de 3, sin gastar otra). QA verifica después la pasada entera, una sola vez. El objetivo de 1.36.2 queda escrito en la ficha F-137-14.
+
+### P-032-4 (texto de la consulta, conservado; resuelta arriba) — Hotfix 1.36.1: **el enlace duro, ¿dentro o fuera de la pasada correctiva?** La opción (A) de P-032-3 que redacté **lo listaba**; tu texto adoptado **no lo nombra**
 
 **Actualización (2026-10-15):** la pasada correctiva **está hecha** sin el enlace duro (CA-15 cerrado: R1 a R17 en `deny`, sección 48 con 370/0; banco 2673/1/12, y el FAIL es la calibración de una sonda que no ejecuta hooks, INS-032-2). **La re-verificación de QA espera esta decisión**, para correr el banco una vez sobre el código final y no dos. Si eliges (B), el desarrollador lo añade: dejó marcado dónde va.
 
@@ -66,8 +96,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-4 (B)»; si no, corrige):
 
 > **P-032-4 (B):** el enlace duro entra en la pasada correctiva. Cuando el destino es un archivo regular con más de un enlace, la forma `destino/` no se retira y vuelve lo de v1.36.0. Lleva un caso del banco, y el proceso de más en ese camino se declara en CA-12 (b). El analista ajusta CA-04, CA-09 y CA-15 en el write-back de la fase 4; QA lo verifica en la misma re-verificación.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-15) — **P-032-3 (A)**: pasada correctiva acotada a QA-032-01; **F-137-14 → hotfix 1.36.2 inmediato**, abierto al publicar 1.36.1; la fusión de `main` en `cand/1.37.0`, **después de 1.36.2**
 

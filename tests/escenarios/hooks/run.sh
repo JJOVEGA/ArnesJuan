@@ -1702,7 +1702,11 @@ done
 # bloque R, 58 filas × 2 árboles: R1–R13 con cp, R1 y R7–R12 con mv e install (R14, R15), y R16 (último operando entre
 # comillas) y R17 (salto de línea), desde la coordinadora y desde qa-tester—. Todas deny en la candidata y en v1.36.0;
 # con los hooks de 9e97bd7 (la entrega anterior) como candidata, 54 FAIL. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2686
+# Y 2686 → 2722 por P-032-4 (B), el enlace duro, en la misma pasada: +36 en la 48 (370 → 406) —el bloque H, 18 filas
+# × 2 árboles: H1 (a hooks/lib.sh, protegido), H2 (a src/a.ts) y H3 (entre dos archivos de docs/, restricción aceptada),
+# con cp, mv e install, desde la coordinadora y desde qa-tester—. deny en la candidata y en v1.36.0; con los hooks de
+# 759ff50 como candidata, los 18 FAIL. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2722
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

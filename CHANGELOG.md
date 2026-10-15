@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · REQ-032, P-032-4 (B) en la misma pasada (vuelta 1 de 3): un destino de `cp`/`mv`/`install` con más de un enlace duro vuelve a la decisión de v1.36.0
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Arreglo:** `arnes_destino_a_juzgar` sólo retira la marca de `destino/` si el archivo regular tiene **un** enlace (`find -links 1`, memorizado por archivo; ante cualquier fallo, la marca se queda). **Coste declarado:** 0 procesos añadidos en el camino común; +1 (`find`) en la rama del destino existente de `cp`/`mv`/`install`.
+- **Banco:** bloque H de la sección 48 (H1 a `hooks/lib.sh`, H2 a `src/a.ts`, H3 entre dos archivos de `docs/`, restricción aceptada), `deny` en la candidata y en v1.36.0, 18 FAIL con `759ff50`; `CASOS_ESPERADOS` 2686 → 2722. Banco 2707/2/13: los dos FAIL son de reloj (REQ-017 CA-08 (ii)) y de la sonda de descendencia (REQ-021 CA-04.1), fuera de la 48.
+- **Avance (regla 6):** la pasada, con el enlace duro, está construida y medida; falta QA.
+- **Registrado por la coordinadora:** P-032-4 (B), literal en la cola, con el alcance de las notas `[1.36.1]` y el objetivo de 1.36.2 (escrito en F-137-14). Los dos FAIL de fuera de la 48 no son parada por P-136-E: **INS-032-3** (sección 38/3, que no ejecuta hooks) e **INS-032-1** (el reloj de REQ-017 CA-08 (ii), ya mostrado no atribuible). Gates en rc 0. **Siguiente:** QA verifica la pasada entera sobre el código final, en una vuelta.
+
 ## [Interno] — 2026-10-15 · REQ-032, pasada correctiva de QA-032-01 (vuelta 1 de 3): la marca de `destino/` sólo se retira si el último operando es con seguridad el destino (CA-15)
 > Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 431 k tokens acumulados en su comisión) · agentes: `desarrollador` + la coordinadora.
 

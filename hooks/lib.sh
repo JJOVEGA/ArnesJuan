@@ -2377,10 +2377,24 @@ _arnes_estado_ausente_c() {
 # del lado de conservar la forma `destino/` (CA-15). Lo que queda —letras, cifras, no ASCII, blanco y
 # `% & + , - . / : ; = > @ _ |`— lo trocea el detector como el shell; `>` lo resuelve el detector por
 # segmento (sin marca si el segmento acaba en una redireccion). Una vez por comando, sin procesos.
-# AMPLIACION PREVISTA (P-032-4, pendiente del propietario; NO implementada): un archivo regular con mas de
-# un enlace duro no retiraria la marca; seria una condicion mas al final de `arnes_destino_a_juzgar`, con
-# el proceso que cueste, solo en ese camino.
+# EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
+# enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
+# archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
+# lee el numero de enlaces sin un proceso, asi que `_arnes_un_solo_enlace` cuesta UN `find` y SOLO en esta
+# rama: destino de `cp`/`mv`/`install` con la marca, comando llano, destino que existe y es archivo regular.
+# Nunca en el camino comun (sin escrituras no hay marca) ni con un destino que no existe. Memorizado por
+# archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
+# afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
 ARNES_FORMA_DIR=$'\t'
+declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
+_arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
+  local r
+  if [[ -z ${ARNES_NLINK1[$1]+x} ]]; then
+    r="$(find "$1" -maxdepth 0 -type f -links 1 -print 2>/dev/null)"
+    if [[ -n $r && $r == "$1" ]]; then ARNES_NLINK1[$1]=si; else ARNES_NLINK1[$1]=no; fi
+  fi
+  [[ ${ARNES_NLINK1[$1]} == si ]]
+}
 ARNES_DESTINO=''
 ARNES_LLANO_CMD=''; ARNES_LLANO=''   # memoria por invocacion; nacen vacias al cargar (no se heredan)
 _arnes_cmd_llano() {   # 0 = el comando (`ARNES_CMD`) no lleva nada que el detector no siga
@@ -2399,7 +2413,8 @@ arnes_destino_a_juzgar() {
   arnes_identidad "${ARNES_DESTINO%/}"
   [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
   [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
-  [[ -f $ARNES_ID_O ]] && return 1
+  [[ -f $ARNES_ID_O ]] || return 0
+  _arnes_un_solo_enlace "$ARNES_ID_O" && return 1   # P-032-4 (B): con mas de un enlace duro, como v1.36.0
   return 0
 }
 
