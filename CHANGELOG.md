@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: QA **con hallazgos** — el arreglo abre `allow` sobre código protegido en formas con señuelo (QA-032-01, `contrato`); v1.36.0 ya deja pasar formas corrientes de la misma raíz (F-137-14); `P-032-3` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 307 k tokens en la reanudación) · agentes: `qa-tester` + la coordinadora.
+
+- **Reanudación tras el apagado:** misma comisión, sin gastar contador. Salidas interrumpidas descartadas y rotuladas (`437ee5c`); todo se rehízo el 2026-10-15 sobre `9e97bd7`, con el procedimiento de reloj fijado antes de medir (`9cd647b`).
+- **QA-032-01 (`contrato`, bloquea):** el detector toma como destino el último operando. Con `< archivo`, un comentario final, un `-t` escrito de otra forma o un enlace duro, ese operando no es el destino. v1.36.0 denegaba esas formas por accidente y la candidata las permite: **escribe de verdad código protegido**. Contradice REQ-032 CA-04 y la autorización del propietario. **Reproducido por la coordinadora** fuera de banda sobre `hooks/lib.sh`.
+- **F-137-14 (preexistente):** **v1.36.0 ya deja** escribir código protegido con `cp … 2>/dev/null`, `2>&1`, un comentario final, `< directorio` o `cp -rt`. Reproducido también por la coordinadora. Es la misma raíz, fuera de REQ-032. Su clase la fija el auditor.
+- **Conforme:** sección 48 254/0 (v1.36.0: 28 FAIL); banco 2557/0/13; inventario sin cambios de decisión fuera de la 48; autoprueba 117/0; gates rc 0; 0 procesos añadidos; la marca de tabulador no se puede fabricar.
+- **INS-032-1 (`instrumento`):** el FAIL de reloj de REQ-017 CA-08 (ii) no es atribuible (candidata/v1.36.0, mediana 1,013).
+- **REQ-032:** `QA: con-hallazgos (…)`, `Hallazgos abiertos: QA-032-01 (contrato), INS-032-1 (instrumento)`. Informe en `docs/qa/REQ-032.md`.
+- **Cola: `P-032-3`.** Recomendación (A): pasada correctiva acotada a QA-032-01; F-137-14 aparte, con la clase del auditor.
+- **Avance (regla 6):** el arreglo está medido y su defecto acotado; falta decidir el alcance de la pasada correctiva.
+
 ## [Interno] — 2026-10-14 · Hotfix 1.36.1: **pausa** por apagado del equipo; la fase 2 (QA) se interrumpió sin entregar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

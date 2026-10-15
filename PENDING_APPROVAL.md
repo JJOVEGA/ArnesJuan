@@ -43,7 +43,42 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-14: P-032-1 y P-032-2 resueltas por el propietario, en § Resueltas.)_
+### P-032-3 — Hotfix 1.36.1, fase 2: **el arreglo abre un `allow` sobre código protegido en formas donde el último operando no es el destino (QA-032-01)**; y QA encontró que **v1.36.0 ya deja pasar** formas corrientes de esa misma raíz (F-137-14). ¿Qué entra en la pasada correctiva, y qué se hace con lo preexistente?
+
+**Qué detiene, y qué no.** Detiene la pasada correctiva, la fase 3 (seguridad) y el cierre del hotfix. **No detiene** nada más.
+
+**Lo que midió QA** (`docs/qa/REQ-032.md`; ejecutando de verdad en proyectos limpios) **y reproduje yo fuera de banda, sin escribir nada**, sobre `hooks/lib.sh` (protegido) con `docs/PLAN.md` como señuelo:
+
+| Forma, emitida por la coordinadora | v1.36.0 | Candidata | Qué es |
+|---|---|---|---|
+| `cp S hooks/lib.sh < docs/PLAN.md` | deny | **allow** | **QA-032-01**: el arreglo lo abre |
+| `cp S hooks/lib.sh  # copia de docs/PLAN.md` | deny | **allow** | QA-032-01 |
+| `cp "-t" hooks docs/PLAN.md` (y `'-t'`, `\-t`, `$T`…) | deny | **allow** | QA-032-01 |
+| `cp S hooks/lib.sh` | deny | deny | control |
+| `cp S hooks/lib.sh 2>/dev/null` | **allow** | allow | **F-137-14**: ya abierto en v1.36.0 |
+| `cp S hooks/lib.sh # nada` | **allow** | allow | F-137-14 |
+| `cp -rt hooks docs/sub` | **allow** | allow | F-137-14 |
+
+**La raíz es una sola.** El detector toma como destino el **último operando**, y con una redirección, un comentario, un `-t` disfrazado o un enlace duro, ese operando no es el destino. En v1.36.0 esas formas se denegaban **por accidente** cuando el último operando era un archivo existente. El arreglo quita el accidente, y aparece lo que había debajo. **Cada forma de QA-032-01 tiene una hermana que v1.36.0 ya dejaba abierta**, así que el arreglo no abre una clase nueva de agujero, pero sí abre instancias que hoy están cerradas. Y eso contradice tu autorización («Sobre un archivo protegido no hay movimiento: sigue en `deny`») y REQ-032 CA-04.
+
+**El resto de la fase 2 sale bien:** el fail-before y el pass-after (sección 48: 254/0 la candidata; v1.36.0, 28 FAIL); el banco completo (2557/0/13, inventario sin cambios de decisión fuera de la 48); la autoprueba (117/0); 0 procesos añadidos. La marca de tabulador **no se puede fabricar**; enlaces, `..`, `cwd`, FIFO y dispositivos, sin cambio. **El FAIL de reloj no es atribuible:** mediana 1,013 frente a v1.36.0, con un procedimiento fijado antes de medir. Queda como **INS-032-1**, `instrumento`.
+
+**Las opciones:**
+
+- **(A) Pasada correctiva acotada a QA-032-01:** no retirar la marca cuando el segmento no permite afirmar que su último operando es el destino (redirecciones, comentarios, `-t` escrito de otra forma, enlace duro…). Esas formas vuelven a lo de v1.36.0. **F-137-14 se queda como estaba**, registrado, con su ventana por decidir.
+  - *Consecuencia:* 1.36.1 sale cumpliendo tu autorización y CA-04, sin abrir nada que hoy esté cerrado, y respetando «nada más entra». Es la pasada prevista (vuelta 1 de 3). Pero 1.36.1 se publica **sabiendo** que `cp … 2>/dev/null` deja escribir código protegido.
+- **(B) Aceptar QA-032-01 como límite declarado:** el analista reescribe CA-04 y lo declara.
+  - *Consecuencia:* 1.36.1 abre `allow` sobre código protegido en formas que hoy se deniegan, contra tu propia autorización. **No la recomiendo.**
+- **(C) Ensanchar el hotfix para que el detector identifique bien el destino**, lo que cierra QA-032-01 **y** F-137-14.
+  - *Consecuencia:* cierra un fallo en abierto de una protección publicada, y en su forma más corriente. Pero rompe «nada más entra», mete un cambio mayor en el detector dentro de un hotfix, y pide un contrato nuevo del analista (otra comisión) y una superficie mayor para QA y seguridad.
+
+**Mi recomendación: (A) para 1.36.1, y decidir F-137-14 aparte y pronto.** Para F-137-14, el auditor fija su clase y severidad en la fase 3 de este mismo hotfix, y con esa clase delante decides si va en un **1.36.2** inmediato o en 1.37 (la pieza b, la post-condición de filesystem, es la defensa de fondo de esta especie). Que compartan raíz no obliga a llevarlos en el mismo vehículo, y mezclarlos ahora retrasa un arreglo ya medido por uno que todavía no tiene contrato.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-3»; si no, corrige):
+
+> **P-032-3: opción (A).** Pasada correctiva acotada a QA-032-01: la marca no se retira cuando el segmento no permite afirmar que su último operando es el destino, y esas formas vuelven a lo de v1.36.0. El analista lo escribe en REQ-032, el desarrollador lo repara y QA verifica (vuelta 1 de 3). F-137-14 no entra en 1.36.1: el auditor fija su clase y severidad en la fase 3, y con eso decido si va en 1.36.2 o en 1.37. INS-032-1 queda como `instrumento`.
 
 ## Resueltas
 
