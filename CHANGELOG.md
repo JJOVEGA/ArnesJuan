@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Plan de 1.37: la tabla queda **sustituida** por la corrección de rumbo del propietario (registrada en `hotfix/1.36.2`)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (registro en esta rama, en pausa, para que una sesión que retome desde aquí no siga el orden viejo).
+
+- Nota de sustitución encima de la tabla de 1.37 de `docs/PLAN.md`, con la cita del propietario y el orden nuevo. La decisión completa está en `hotfix/1.36.2` y llega aquí con la fusión de `main` (paso 2b), donde se reconcilia.
+
 ## [Interno] — 2026-10-15 · Plan de 1.37: **hotfix 1.36.2** (F-137-14) entre 1.36.1 y la fusión; la fusión de `main` en `cand/1.37.0` pasa a **después de 1.36.2** (P-032-3)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (registro hecho en esta rama, en pausa, para que una sesión que retome desde aquí no fusione antes de tiempo).
 
