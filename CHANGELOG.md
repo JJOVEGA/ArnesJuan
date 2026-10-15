@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · `P-032-6` adoptada: 1.36.2 reconoce toda invocación efectiva de `cp`/`mv`/`install`; SEC-136 con la excepción de `.arnes/config.json` en 1.36.2 y un requisito para la pieza b; cierre de REQ-032 autorizado
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-6**, literal en la cola. (1) El contrato de 1.36.2: «toda invocación efectiva de cp/mv/install, se escriba como se escriba, se juzga por su destino real; si no se puede determinar, deny». (2) SEC-136: el origen de `mv` en 1.36.2; borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente en 1.36.2; `rm`, `unlink` y `git rm` con la puerta posterior de 1.37, **que no puede depender sólo del manifiesto que vigila**; declarado en §13. (3) Cerrar REQ-032 al terminar la fase 4, con `Edit`.
+- Escrito en F-137-14 y F-137-15. El requisito de la pieza b se lleva al plan de `cand/1.37.0` en el paso 2b (anotado en ESTADO).
+
 ## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 3: **seguridad SIN VETO** (R-059); REQ-032 `Seguridad: aprobado`; SEC-135 (F-137-14, `contrato`, alta) y SEC-136 (retirada de archivos protegidos, `contrato`, media); `P-032-6` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`, ≈ 277 k tokens) · agentes: `auditor-seguridad` + la coordinadora.
 

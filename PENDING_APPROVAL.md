@@ -43,7 +43,42 @@
 
 ## Pendientes
 
-### P-032-6 — Hotfix 1.36.1, fase 3 cerrada **sin veto**. Tres decisiones agrupadas antes de las notas y del cierre: (1) ¿1.36.2 reconoce también la orden (subshell, `\cp`, `find -exec`)? (2) ¿Cuándo se arregla SEC-136, la retirada de archivos protegidos? (3) ¿Cierro REQ-032 al terminar la fase 4?
+_(Vacía desde el 2026-10-15: P-032-6 resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **P-032-6**: 1.36.2 reconoce toda invocación efectiva de `cp`/`mv`/`install`; SEC-136 como propone el auditor **más** una excepción para `.arnes/config.json` y un requisito para la pieza b; cierre de REQ-032 autorizado
+
+**Texto del propietario, literal** (mensaje del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-032-6:
+>
+> 1. Alcance de 1.36.2: incluye reconocer \cp, command cp, (cp …), subshells,
+>    find -exec y xargs como cp/mv/install. Misma garantía, misma gravedad.
+>    Contrato por propiedad: «toda invocación efectiva de cp/mv/install, se
+>    escriba como se escriba, se juzga por su destino real; si no se puede
+>    determinar, deny».
+>
+> 2. SEC-136: como propone el auditor (juzgar el origen de mv en 1.36.2;
+>    rm/unlink/git rm con la puerta posterior de 1.37; declarado en §13), MÁS
+>    una excepción estrecha en 1.36.2: borrar, mover o vaciar .arnes/config.json
+>    se deniega a todo agente. Es el interruptor que apaga todas las puertas,
+>    incluida la posterior de 1.37. Y requisito escrito para la pieza b: la
+>    puerta posterior no puede depender sólo del manifiesto que vigila; si el
+>    manifiesto desaparece en un proyecto que lo tenía, eso mismo es un evento
+>    a denegar o revertir.
+>
+> 3. Cierre de REQ-032 al terminar la fase 4: autorizado, por Edit con la
+>    puerta en vivo. El PR #61 me llega listo para fusionar; la publicación
+>    (fusión, tag v1.36.1) es mía.
+>
+> Notas [1.36.1]: SEC-135 y SEC-136 declarados con su forma, su gravedad y la
+> versión en que se reparan; la restricción del arreglo (sólo cp/mv/install
+> sueltos y sin caracteres de shell), con su salida.
+
+**Lo que añade la coordinadora:** el alcance de 1.36.2, la excepción del manifiesto y el requisito de la pieza b quedan escritos en las fichas F-137-14 y F-137-15. La pieza b vive en el plan de `cand/1.37.0`, y su requisito se lleva a esa fila **al fusionar `main` en `cand/1.37.0` (paso 2b)**; queda anotado en ESTADO para que no se pierda. Las notas `[1.36.1]` las redacta el analista en un borrador, y la coordinadora las copia a `CHANGELOG.md` comprobando el ancla: es la lección de `a23a026`.
+
+### P-032-6 (texto de la consulta, conservado; resuelta arriba) — Hotfix 1.36.1, fase 3 cerrada **sin veto**. Tres decisiones agrupadas antes de las notas y del cierre: (1) ¿1.36.2 reconoce también la orden (subshell, `\cp`, `find -exec`)? (2) ¿Cuándo se arregla SEC-136, la retirada de archivos protegidos? (3) ¿Cierro REQ-032 al terminar la fase 4?
 
 **Qué detiene, y qué no.** **No detiene** la fase 4 en lo que no depende de esto: el write-back del analista. Las **notas `[1.36.1]`** sí dependen de (1) y (2), porque dicen dónde se arregla cada cosa. **Cerrar** REQ-032 es una de tus condiciones de parada, y por eso va en (3).
 
@@ -88,8 +123,6 @@ REQ-032 tiene `QA: aprobado` y `Seguridad: aprobado`, y sus `Hallazgos abiertos:
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-6»; si no, corrige):
 
 > **P-032-6. (1) (A):** el contrato de 1.36.2 incluye reconocer la orden por propiedad (subshell, `\cp`, `find -exec`, en el fail-before), además de leer los operandos. **(2) (A):** 1.36.2 juzga los orígenes de `mv` y declara SEC-136 en `AGENTS.md` §13, nombrando `rm .arnes/config.json`; `rm`, `unlink` y `git rm` van con la puerta posterior de 1.37. Las notas `[1.36.1]` lo dicen así. **(3) (A):** al terminar la fase 4, la coordinadora cierra REQ-032 con `Edit`, juzgado en vivo; después, commit, push y CI. Fusión, tag y publicación: míos.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-15) — **P-032-5 (C), vuelta 2 de 3**: el arreglo sólo actúa sobre UNA invocación simple de `cp`/`mv`/`install` con una lista cerrada de opciones; **si la vuelta 2 no cierra QA-032-01, no hay vuelta 3: 1.36.1 no se publica**
 
