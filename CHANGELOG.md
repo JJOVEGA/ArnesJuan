@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: **QA APROBADO** tras la vuelta 2 (QA-032-01 y QA-032-02 cerrados); la lista cerrada de opciones, revisada
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`qa-tester`, ≈ 380 k tokens en esta re-verificación) · agente: `qa-tester`.
+
+- **QA-032-01 cerrado:** todas las formas de las tres rondas —`xargs` y `find -exec` incluidas, con `mv` e `install`— dan la decisión de v1.36.0. QA intentó romper la lista de lo aceptado con 37 casos propios y **ninguno** abre un destino protegido. **QA-032-02 cerrado:** el write-back describe lo construido.
+- **Lista de opciones aprobada:** `-f -i -n -p -v -r -R -a -u` y sus formas largas exactas, sin argumento. Fuera: `-t -T -- -`, las de argumento, `-b` y las de enlace.
+- **Sección 48 546/0**; contra `264dfa9`, 53 FAIL; contra v1.36.0, 29 FAIL (M-032). **Banco 2849/0/13**; autoprueba 117/0; gates rc 0; **ningún `allow` → `deny` en todo el banco**. Camino común, 0 procesos; rama del enlace, +1. INS-032-1 (mediana 1,009) e INS-032-2, `instrumento`.
+- **V7, para seguridad:** `mv src/a.ts docs/notas.md` pasa de `deny` a `allow` y **borra el origen protegido**. Es M-032 por la letra, va con F-137-13 y su clase la fija el auditor. **La coordinadora añade, medido en v1.36.0:** `rm hooks/lib.sh` y `mv hooks/lib.sh docs/nuevo.md` **ya pasan**, así que borrar código protegido ya era posible sin el arreglo.
+- REQ-032: `QA: aprobado (vuelta 2, 2026-10-15, código 77b71f7)`, `Hallazgos abiertos: INS-032-1 (instrumento)`. **Siguiente:** fase 3, seguridad.
+
 ## [Interno] — 2026-10-15 · REQ-032, vuelta 2 de 3 (QA-032-02, P-032-5 (C)): la marca de `destino/` sólo se retira en UNA invocación simple de `cp`/`mv`/`install`
 > Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 
