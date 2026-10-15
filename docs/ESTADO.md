@@ -10,7 +10,16 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — hotfix 1.36.1 en curso (rama `hotfix/1.36.1` desde `v1.36.0`, 2026-10-13)
+## ⏸ RETOMAR AQUÍ — v1.36.1 publicada (2026-10-15); hotfix 1.36.2 abierto en `hotfix/1.36.2`, esperando su autorización
+
+**Este bloque es el único vigente en la rama `hotfix/1.36.2`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es historia. **La ventana 1.37 sigue en pausa en `cand/1.37.0`** (`origin` `1e5cb54`).
+
+- **v1.36.1 PUBLICADA el 2026-10-15** por orden expresa del propietario: `main` en `e21baef` (fusión del PR #61), tag `v1.36.1`. CI de `main` sobre `e21baef`: run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 de ellos INCONCLUSO de rendimiento, que no acreditan).
+- **Instalación estable: 1.36.1** en este equipo (alcances `user` y `project`, `e21baef`; hooks idénticos al tag). **Rige desde el próximo reinicio.**
+- **Plan autorizado vigente: ninguno.** Siguiente acción: **el propietario adopta `P-137-I`**, la autorización del hotfix 1.36.2, que está en `## Pendientes` lista para adoptar. Lleva sus dos condiciones: **tope de dos pasadas correctivas** (si tras la segunda aparecen formas nuevas, 1.36.2 sale con lo que cierra de verdad —como mínimo el manifiesto y el origen de `mv`— y SEC-135 pasa a la pieza b), y el **requisito de la pieza b como límite** (la puerta posterior no depende sólo del manifiesto que vigila).
+- **Después de 1.36.2:** fusionar `main` en `cand/1.37.0` (paso 2b), llevando a la fila de la pieza b el requisito de P-032-6 (2) y corrigiendo la forma del defecto en la nota de `[1.36.0]` y en F-137-10 (a quien no es el agente de código).
+
+## Historia — hotfix 1.36.1 (rama `hotfix/1.36.1` desde `v1.36.0`, 2026-10-13 → 2026-10-15), publicado en `e21baef`
 
 **Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
 
@@ -566,7 +575,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-15 16:46
+## Estado derivado — 2026-10-15 17:48
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -576,13 +585,13 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `hotfix/1.36.1` @ `a86a315` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `hotfix/1.36.2` @ `e21baef` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 0
-**REQ:** 30 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 9
+**Aprobaciones pendientes:** 1
+**REQ:** 30 — completado 15 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 14 completados no se listan._
+_Sólo los REQ abiertos; los 15 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|
@@ -601,6 +610,5 @@ _Sólo los REQ abiertos; los 14 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-032 | pendiente | aprobado | aprobado | critico | ins-032-1(instrumento),sec-135(instrumen… |
 
 <!-- ARNES:DERIVADO fin -->

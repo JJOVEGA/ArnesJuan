@@ -43,9 +43,88 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-15: P-032-6 resuelta por el propietario, en § Resueltas.)_
+### P-137-I — **Hotfix 1.36.2 (SEC-135 y la parte de SEC-136 decidida): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
+
+**Qué detiene, y qué no.** Mientras no la adoptes, el hotfix 1.36.2 **no empieza**. La rama `hotfix/1.36.2` ya existe desde `e21baef`, y su primer commit registra la publicación de 1.36.1. No detiene nada más.
+
+**Comprobaciones de la coordinadora antes de redactarla** (`AGENTS.md` §6):
+1. **El analista no se omite.** Este proyecto no declara la vía proporcional, y hace falta un REQ nuevo (REQ-033, el siguiente libre en esta rama), así que la fase 0 es suya.
+2. **La rama sale de `v1.36.1`** (= `e21baef` = `origin/main`), sin nada de 1.37.
+3. **Nos gobierna la instalación estable 1.36.1** desde el próximo reinicio (actualizada el 2026-10-15; hooks idénticos al tag). Sigue teniendo SEC-135 y SEC-136: quien no es el agente de código no hace `cp` con caracteres de shell, y nadie toca `.arnes/config.json`.
+
+---
+
+**La autorización, lista para adoptar** (si estás de acuerdo, basta «adopto P-137-I»; si no, corrige):
+
+> ## Autorización — hotfix 1.36.2 (SEC-135 y SEC-136, parte decidida)
+>
+> ## Decisiones del propietario (P-032-3, P-032-4 y P-032-6, ya adoptadas; aquí se citan, no se reabren)
+> - **Contrato por propiedad de SEC-135:** «toda invocación efectiva de cp/mv/install, se escriba como se escriba, se juzga por su destino real; si no se puede determinar, deny». Incluye reconocer `\cp`, `command cp`, `(cp …)`, subshells, `find -exec` y `xargs` como `cp`/`mv`/`install`, y leer los operandos como lo hace la orden (opciones, `-t`/`-T`, redirecciones y comentarios aparte), no «el último operando».
+> - **Objetivo:** quitar las restricciones de 1.36.1 (sólo `cp`/`mv`/`install` sueltos y sin caracteres de shell) leyendo el destino con la gramática de la orden.
+> - **SEC-136 en 1.36.2:** se juzga el **origen de `mv`**; **borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente**; y se declara SEC-136 en `AGENTS.md` §13 (y en su plantilla), nombrando `rm .arnes/config.json`. `rm`, `unlink` y `git rm` van con la puerta posterior de 1.37.
+> - **Fail-before contra v1.36.1** con las formas ya reproducidas: `2>/dev/null`, `2> /dev/null`, `2>&1`, `1>&2`, `2>archivo`, comentario final, `< directorio`, `-rt`, `-t` disfrazado, `\cp`, `command cp`, `(cp …)`, `find -exec`, `xargs`, y el origen protegido de `mv`. Más los controles: lo protegido sigue en `deny`; lo que 1.36.1 permite sigue permitido o se declara.
+> - **Tope de pasadas: dos pasadas correctivas como máximo.** Si QA sigue encontrando formas nuevas tras la segunda, **no hay tercera**: 1.36.2 se publica con lo que cierra de verdad —como mínimo, el manifiesto y el origen de `mv`—, SEC-135 queda declarado con sus formas exactas, y su reparación pasa a la pieza b de 1.37 (post-condición), que cierra la clase entera.
+>
+> ## Plan autorizado (cada fase termina en commit local; la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: REQ-033 con el contrato de arriba, los casos del fail-before, las clases de movimiento que se declaran (de `allow` a `deny`: las formas de SEC-135 y SEC-136 que se cierran; de `deny` a `allow`: lo legítimo que 1.36.1 restringía y 1.36.2 libera), el coste, la regresión y las notas `[1.36.2]` como entregable. Y la salida del tope, escrita.
+> Fase 1 — desarrollador: el arreglo, los casos en el banco con su fail-before contra v1.36.1, la regresión completa, la autoprueba y la versión 1.36.2 en `plugin.json` y en el marketplace. Sin procesos nuevos en el camino común; si hacen falta en una rama, se declaran con su cifra.
+> Fase 2 — QA (Opus): repite el fail-before y el pass-after, el banco y la autoprueba, e **intenta romperlo** con formas propias. Como máximo, dos pasadas correctivas dentro del contador (y el tope de arriba).
+> Fase 3 — seguridad, sólo con QA favorable: que lo protegido no se abre por ninguna forma, que los movimientos están declarados, y la clase de lo que quede de SEC-135 si se activa el tope. Puede vetar.
+> Fase 4 — analista: write-back de REQ-033, la fila de SEC-136 en `AGENTS.md` §13 y su plantilla, y el borrador de las notas `[1.36.2]`. La coordinadora: copia las notas, **cierra REQ-033 con `Edit`, juzgado en vivo**, y hace commit validado, push y CI.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, trazabilidad, CHANGELOG, ESTADO e índices; orden y presupuesto de cada despacho (≈ 200 k analista, ≈ 400 k desarrollador, ≈ 350 k QA, ≈ 250 k seguridad: la escala que se midió en 1.36.1); ajustes del banco que no cambian ningún veredicto ni contrato; registrar defectos nuevos sin repararlos; el push de la rama al cerrar y marcar el PR listo cuando el CI esté en verde.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Cambio de contrato o de alcance; un movimiento de `deny` a `allow` sobre algo protegido, o cualquier movimiento fuera de las clases declaradas; un veredicto del banco que cambia fuera de lo declarado, en un caso que ejecuta el código del cambio (una sonda que mide la máquina se registra como `instrumento` y el plan sigue: P-136-E); aceptar o aplazar un riesgo; **activar el tope de dos pasadas** (te presento lo que cierra y lo que pasa a la pieza b); un control del proveedor que detenga algo; publicar, fusionar o etiquetar.
+>
+> ## Si la sesión se corta
+> La siguiente lee este plan en la cola y en ESTADO y continúa desde la última fase comiteada. No vuelve a pedir la autorización.
+>
+> ## Límites
+> - **Lo que 1.36.2 no resuelve, y queda para la pieza b de 1.37:** `rm`, `unlink` y `git rm` de SEC-136, y la clase entera de escrituras que ningún detector de texto ve (intérpretes, programas que escriben por su cuenta). **Requisito ya decidido para esa pieza (P-032-6 (2)): la puerta posterior no puede depender sólo del manifiesto que vigila; si el manifiesto desaparece en un proyecto que lo tenía, eso mismo es un evento a denegar o revertir.**
+> - Nada de F-137-9 ni de las piezas a–d. Nada de F-137-12 (el glob con sufijo) salvo que caiga por la misma propiedad, y entonces se dice.
+> - Fusión, tag y publicación: míos. Al publicar 1.36.2, se fusiona `main` en `cand/1.37.0` (paso 2b).
+> - Push de `hotfix/1.36.2`: recordármelo al terminar cada fase.
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **v1.36.1 PUBLICADA** (`main` `e21baef`, tag `v1.36.1`, PR #61) por orden expresa del propietario; **registro, instalación estable y autorización de 1.36.2**, con dos condiciones
+
+**Textos del propietario, literales** (mensajes del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`). El primero, con las órdenes de publicación:
+
+> Luego has esto o
+>
+>     cd ~/dev/ArnesJuan-v1.36
+>     gh pr merge 61 --repo JJOVEGA/ArnesJuan --merge
+>     git fetch origin && git log --oneline -1 origin/main
+>     git tag -a v1.36.1 origin/main -m "ArnesJuan v1.36.1 — cp/mv/install sobre archivo existente (F-137-10, REQ-032); SEC-135 y SEC-136 declarados; ver CHANGELOG [1.36.1]"
+>     git push origin v1.36.1
+
+El segundo:
+
+> Confirmo los tres: registra la publicación de 1.36.1 como primer commit de
+> hotfix/1.36.2 (desde e21baef), actualiza la instalación estable a 1.36.1 y
+> prepara la autorización de 1.36.2 con el contrato de P-032-6.
+>
+> Dos condiciones para esa autorización:
+> - Tope: dos pasadas correctivas como máximo. Si QA sigue encontrando formas
+>   nuevas tras la segunda, no hay tercera: 1.36.2 se publica con lo que
+>   cierra de verdad (como mínimo el manifiesto y el origen de mv), SEC-135
+>   queda declarado con sus formas exactas y su reparación pasa a la pieza b
+>   de 1.37 (post-condición), que cierra la clase entera.
+> - La puerta posterior de 1.37 no puede depender sólo del manifiesto que
+>   vigila (requisito ya decidido): que figure en la autorización como límite
+>   de lo que 1.36.2 no resuelve.
+>
+> Avísame cuando el CI de main termine sobre e21baef.
+
+**Lo que hizo y comprobó la coordinadora:**
+- **Fusión** del PR #61 (`gh pr merge --merge`): `MERGED` 2026-10-15T23:44:33Z, commit **`e21baef`**, que une `f22b905` (v1.36.0) y `4d4a6a5` (la cabeza validada). El primer `fetch` falló por un corte de TLS **después** de la fusión; se comprobó con `gh` antes de repetir nada, y sólo se repitió el `fetch`.
+- **Tag `v1.36.1`** (anotado, objeto `7cebafe`) → `e21baef`, y su push a `origin`.
+- **CI de `main` sobre `e21baef`:** run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 de ellos INCONCLUSO de rendimiento, que no acreditan).
+- **Instalación estable 1.36.1** en este equipo: marketplace actualizado; alcances `user` y `project` (`/mnt/c/Users/JVega`) en `1.36.1`, `gitCommitSha` `e21baef`; **los hooks instalados son idénticos a los de `v1.36.1`** (`diff -r` vacío contra `git archive v1.36.1 hooks`). **Rige desde el próximo reinicio.**
+- **Rama `hotfix/1.36.2`** desde `e21baef`; este registro es su primer commit. **La autorización de 1.36.2 está arriba, en `## Pendientes` (`P-137-I`)**, con las dos condiciones.
 
 ### RESUELTA (propietario, 2026-10-15) — **P-032-6**: 1.36.2 reconoce toda invocación efectiva de `cp`/`mv`/`install`; SEC-136 como propone el auditor **más** una excepción para `.arnes/config.json` y un requisito para la pieza b; cierre de REQ-032 autorizado
 

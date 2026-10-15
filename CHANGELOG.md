@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Registro de la publicación de **v1.36.1** (`main` `e21baef`, tag `v1.36.1`, PR #61; CI de `main` en verde); instalación estable a 1.36.1; apertura de `hotfix/1.36.2` con su autorización (`P-137-I`) lista para adoptar
+> Origen: GitHub (commit local, primero de `hotfix/1.36.2`) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Publicación, por orden expresa del propietario** (órdenes literales en la cola): PR #61 `MERGED`, `main` en `e21baef` (padres `f22b905` y `4d4a6a5`); tag anotado `v1.36.1` → `e21baef`, con push. Un corte de TLS en el primer `fetch` llegó **después** de la fusión; se comprobó con `gh` antes de repetir nada. **CI de `main`: run `38825377862`, success** (2824/0/38). La entrada `[1.36.1]` pasa a «PUBLICADA»; su texto no se reescribe.
+- **Instalación estable 1.36.1** en este equipo: alcances `user` y `project`, `e21baef`; hooks idénticos a los del tag (`diff -r` vacío). Rige desde el próximo reinicio.
+- **`hotfix/1.36.2`** desde `e21baef`. **`P-137-I`** en `## Pendientes`: la autorización del hotfix 1.36.2 con el contrato de P-032-6, **el tope de dos pasadas correctivas** con su salida (como mínimo el manifiesto y el origen de `mv`; SEC-135 a la pieza b) y **el requisito de la pieza b como límite**.
+- **Avance (regla 6):** 1.36.1 está en manos de los proyectos; 1.36.2 está a una adopción de empezar.
+
 ## [GitHub] — 2026-10-15 · **Hotfix 1.36.1 cerrado (commit validado):** REQ-032 `completado` (por `Edit`, juzgado en vivo); notas `[1.36.1]` copiadas del borrador; PR #61 listo para la fusión del propietario
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora y subagentes) · agentes: `analista-requerimientos` (fase 4), la coordinadora.
 
@@ -11,6 +19,8 @@ CHANGELOG — ArnesJuan
 - **Avance (regla 6):** el hotfix 1.36.1 está entregado. Fusión, tag `v1.36.1` y publicación: del propietario. Al publicarse se abre 1.36.2.
 
 ## [1.36.1] — 2026-10-15 · Hotfix: un `cp`, `mv` o `install` suelto sobre un archivo existente que no está protegido vuelve a pasar —la regresión de 1.35.0, F-137-10—, con lo protegido en `deny` y el alcance del arreglo a la vista; y dos fallos en abierto preexistentes, SEC-135 (alta) y SEC-136 (media), declarados con su versión de reparación
+
+> **PUBLICADA el 2026-10-15.** `main` en `e21baef` (fusión del PR #61, `hotfix/1.36.1`), tag `v1.36.1` sobre esa fusión. CI de `main`: run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 INCONCLUSO de rendimiento). *(Añadido al publicar; el texto de las notas no se reescribe.)*
 
 > Origen: GitHub (commit de versión) · usuario: Juan · agentes: `analista-requerimientos`, `desarrollador`,
 > `qa-tester` y `auditor-seguridad` (Opus 5.5; `qa-tester` en Opus por la decisión del propietario de `AGENTS.md`
