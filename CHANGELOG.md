@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Plan de 1.37: **hotfix 1.36.2** (F-137-14) entre 1.36.1 y la fusión; la fusión de `main` en `cand/1.37.0` pasa a **después de 1.36.2** (P-032-3)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora (registro hecho en esta rama, en pausa, para que una sesión que retome desde aquí no fusione antes de tiempo).
+
+- `docs/PLAN.md`: nueva fila **2a**, el hotfix 1.36.2 (F-137-14), con el texto literal del propietario. La fila **2b** se corrige: la fusión va **tras publicar 1.36.2**, «para traer los dos arreglos juntos». Lleva además el recordatorio de corregir, al fusionar, la forma del defecto de 1.36.1 en la nota de `[1.36.0]` y en F-137-10: **a quien no es el agente de código**.
+- La decisión completa (P-032-3) está en la cola de la rama `hotfix/1.36.1`, que es donde se tomó; llega aquí con la fusión.
+
 ## [Interno] — 2026-10-13 · `P-137-H` adoptada con ajustes: hotfix 1.36.1 autorizado en la rama `hotfix/1.36.1` desde `v1.36.0`; `cand/1.37.0` en pausa hasta publicar 1.36.1
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
