@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-01 (CA-15 nuevo, la regla de la pasada correctiva); `P-032-4` en la cola (el enlace duro, que mi opción (A) listaba y el texto adoptado no)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 237 k tokens acumulados en su comisión) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **CA-15:** la forma `destino/` sólo se deja de juzgar cuando el segmento permite asegurar que el último operando es el destino. Con una redirección o un comentario detrás, o con `-t`/`-rt`/`--target-directory` en cualquier forma, manda la decisión de v1.36.0. Casos R1 a R15, uno por forma. Ajustes en las Convenciones, CA-01, CA-04 (dos límites declarados: F-137-14, y el enlace duro con F-137-13), CA-09, CA-10 y CA-14 (las notas declaran F-137-14). `Hallazgos abiertos:` sin tocar.
+- **`P-032-4`:** la opción (A) de P-032-3, redactada por la coordinadora, **listaba el enlace duro**; el texto adoptado no lo nombra, y la nota posterior de la coordinadora lo dejó fuera sin señalarlo. Recomendación (B): dentro, al precio de un proceso declarado en el camino de `cp` sobre un archivo existente.
+- **Avance (regla 6):** el criterio de la pasada está escrito; el desarrollador empieza con lo que no depende de P-032-4.
+
 ## [Interno] — 2026-10-15 · `P-032-3` (A) adoptada: pasada correctiva acotada a QA-032-01; **F-137-14 pasa a ser el hotfix 1.36.2**, que se abre al publicar 1.36.1; la fusión de `main` en `cand/1.37.0`, después de 1.36.2
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

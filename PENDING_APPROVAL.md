@@ -43,7 +43,27 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-15: P-032-3 resuelta por el propietario, en § Resueltas.)_
+### P-032-4 — Hotfix 1.36.1: **el enlace duro, ¿dentro o fuera de la pasada correctiva?** La opción (A) de P-032-3 que redacté **lo listaba**; tu texto adoptado **no lo nombra**
+
+**Qué detiene, y qué no.** Detiene **sólo** la decisión sobre el enlace duro dentro de la pasada correctiva. El desarrollador **empieza ya** con lo que no depende de ella: CA-15, es decir redirecciones, comentarios y `-t`/`-rt` en cualquier forma. Si eliges (B), se le añade en la misma pasada.
+
+**El error es mío, y lo digo primero.** La opción (A) de P-032-3 decía, literal: «no retirar la marca cuando el segmento no permite afirmar que su último operando es el destino (redirecciones, comentarios, `-t` escrito de otra forma, **enlace duro**…)». Tú adoptaste «(A)» con tu propio texto: «donde no se pueda asegurar que el último operando es el destino (redirección detrás, comentario detrás, -t/-rt)». Después, en mi nota de la cola, dejé el enlace duro fuera por la letra de tu regla, **sin decirte que mi opción lo incluía**. El analista lo vio al escribir CA-15.
+
+**Qué es el caso.** `cp S docs/hl`, con `docs/hl` como **enlace duro** a `src/a.ts` (protegido): la coordinadora **reescribe `src/a.ts`**. Lo midió QA ejecutándolo de verdad. v1.36.0 lo denegaba por accidente, y la candidata lo permite. Aquí el último operando **sí es** el destino: lo que falla es que la identidad de REQ-007 CA-47 **no ve los enlaces duros** (frontera «sin promesa»). Por eso, ya en v1.36.0, `cat S > docs/hl` pasa.
+
+**Opciones:**
+- **(A) Fuera.** Queda como límite declarado en REQ-032 (CA-04 (ii) y CA-09, ya escritos así), con F-137-13, y el auditor lo clasifica en la fase 3.
+  - *Consecuencia:* 1.36.1 abre por `cp` una instancia que hoy está cerrada, aunque la hermana por redirección ya estaba abierta. Contradice tu frase de P-137-H: «Sobre un archivo protegido no hay movimiento: sigue en `deny`».
+- **(B) Dentro.** La marca **no** se retira cuando el destino es un archivo regular con **más de un enlace**, y esa forma vuelve a lo de v1.36.0 (`deny`). Lleva un caso del banco.
+  - *Consecuencia:* cumple tu frase de P-137-H. **Cuesta un proceso** (`stat`) sólo en el camino de `cp`/`mv`/`install` sobre un archivo existente, nunca en el camino común: bash no sabe contar enlaces sin él. REQ-032 CA-12 (b) admite ese coste **declarado**. Un archivo con varios enlaces que no toque nada protegido seguirá denegándose como en v1.36.0: no es regresión, sólo no se arregla.
+
+**Mi recomendación: (B).** Es la lectura que tu autorización ya decía («sobre un archivo protegido no hay movimiento»), y el coste es un proceso en un camino poco frecuente, declarado. La hermana por redirección (`cat S > docs/hl`) sigue abierta como límite de CA-47, y eso es otra cosa, preexistente.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-4 (B)»; si no, corrige):
+
+> **P-032-4 (B):** el enlace duro entra en la pasada correctiva. Cuando el destino es un archivo regular con más de un enlace, la forma `destino/` no se retira y vuelve lo de v1.36.0. Lleva un caso del banco, y el proceso de más en ese camino se declara en CA-12 (b). El analista ajusta CA-04, CA-09 y CA-15 en el write-back de la fase 4; QA lo verifica en la misma re-verificación.
 
 ## Resueltas
 
