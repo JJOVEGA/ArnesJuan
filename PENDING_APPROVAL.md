@@ -43,7 +43,45 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-15: P-032-4 resuelta por el propietario, en § Resueltas.)_
+### P-032-5 — Hotfix 1.36.1: **la re-verificación de QA encontró otra forma llana que abre `allow` sobre código protegido: `xargs`** (QA-032-01 sigue abierto). ¿Vuelta 2, y con qué regla?
+
+**Qué detiene, y qué no.** Detiene la vuelta 2, la fase 3 (seguridad) y el cierre del hotfix. **No detiene** el write-back del analista (QA-032-02), que se hace con la regla que elijas y no gasta vuelta.
+
+**Lo que midió QA** (`docs/qa/REQ-032.md`, «Re-verificación de la pasada correctiva»; ejecutando de verdad) **y reproduje yo fuera de banda sobre `hooks/lib.sh`, sin escribir nada:**
+
+| Forma (coordinadora) | v1.36.0 | Candidata `264dfa9` |
+|---|---|---|
+| `echo hooks/lib.sh \| xargs cp docs/PLAN.md` | deny | **allow** (escribe `hooks/lib.sh`) |
+| `xargs -a docs/lista cp docs/PLAN.md` | deny | **allow** |
+| `cp S hooks/lib.sh` | deny | deny |
+
+`xargs` añade el destino desde su entrada, así que el último operando que ve el detector es un **origen**. También con `mv` e `install`. Tiene una hermana preexistente: `echo src | xargs cp -r docs/sub` ya pasaba en v1.36.0, de la familia de F-137-14.
+
+**Todo lo demás de la pasada, conforme:**
+- Las formas de QA-032-01 de la fase 2 y el **enlace duro** (H1–H3, con su fail-before contra `759ff50`) dan `deny`; si `find` falta o falla, también.
+- Sección 48: 406/0. **Banco completo: 2709/0/13**, cuadrado. Autoprueba 117/0. 0 procesos añadidos en el camino común.
+- **Los FAIL de reloj y de calibración no son atribuibles:** INS-032-1 (mediana 1,001), INS-032-2 e INS-032-3, confirmados como `instrumento`.
+- La regla del comando llano hace exactamente lo declarado.
+
+**QA-032-02 (`contrato`):** REQ-032 todavía dice que el enlace duro queda en `allow` y que la regla es por segmento. Falta el write-back del analista.
+
+**Lo que dejan tres pasadas.** QA ha encontrado ya **tres tandas** de formas en las que «el último operando» no es el destino: redirecciones, comentarios y `-t` disfrazado; luego un destino entrecomillado y un salto de línea; ahora `xargs`. La regla de la pasada es una **lista de lo que no se acepta**, y cada pasada encuentra un nombre más que no estaba en ella. **Es la misma lección que la de CA-66 en F-136-17:** cerrar el tipo de defecto, no el caso.
+
+**Opciones:**
+- **(A) Vuelta 2 con la lista ampliada:** no retirar la marca si delante de la orden hay algo que le añade argumentos (`xargs` y semejantes).
+  - *Consecuencia:* cierra este caso. Lo previsible es que la vuelta 3, la última, encuentre otro.
+- **(B) Aceptarlo:** declararlo en las notas con F-137-14 y repararlo en 1.36.2.
+  - *Consecuencia:* 1.36.1 abre por `xargs` lo que hoy está cerrado, contra tu autorización («sobre un archivo protegido no hay movimiento»). **No la recomiendo.**
+- **(C) Vuelta 2 con una lista de lo que sí se acepta:** la marca **sólo** se retira cuando **el comando entero** es una sola invocación simple: `cp`, `mv` o `install` como **primera palabra**, llana, sin tubería, sin encadenar (`&&`, `||`, `;`, `&`), sin subshell y sin nada delante. Cualquier otra forma conserva la decisión de v1.36.0.
+  - *Consecuencia:* **cierra el tipo de defecto**: lo que no es exactamente `cp|mv|install … DESTINO` se queda como en v1.36.0, y no hay que adivinar qué otra orden aporta argumentos. **Restringe más el arreglo:** `cp S docs/notas.md && echo hecho` vuelve a `deny`, como en v1.36.0. Ya no hay movimiento, pero sí una restricción que se declara, y el caso G1 de la sección 48 cambia de expectativa con su justificación. La 1.36.2, que leerá el destino con la gramática de la orden, es la que quita todas estas restricciones.
+
+**Mi recomendación: (C).** El arreglo de 1.36.1 queda pequeño y seguro: corrige el `cp` llano y suelto, que es el caso diario, y no puede abrir nada que hoy esté cerrado. La versión completa es la 1.36.2. Gasta la vuelta 2 de 3.
+
+---
+
+**Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-5 (C)»; si no, corrige):
+
+> **P-032-5 (C):** vuelta 2 de 3. La forma `destino/` sólo se deja de juzgar cuando el comando entero es una sola invocación simple de `cp`, `mv` o `install` como primera palabra, llana, sin tubería, sin encadenar, sin subshell y sin nada delante. Cualquier otra forma conserva la decisión de v1.36.0. Las formas con `xargs` (y `mv`, `install`) entran como casos del banco, en `deny`. Lo que vuelve a `deny` respecto de la pasada (por ejemplo, `cp S D && echo hecho`) se declara como restricción, y las notas `[1.36.1]` lo dicen junto al resto del alcance. El analista hace el write-back de QA-032-02 con esta regla; el desarrollador repara; QA verifica.
 
 ## Resueltas
 

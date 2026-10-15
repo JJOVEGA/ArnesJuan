@@ -14,7 +14,7 @@
 
 **Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
 
-- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 2 de 4, pasada correctiva (vuelta 1 de 3) HECHA sin validar, con el enlace duro (P-032-4 (B)); siguiente acción: QA re-verifica la pasada entera sobre el código final, una vez.** Después: seguridad (fase 3, con la gravedad de F-137-14) y notas `[1.36.1]` (fase 4). CA-15 escrito por el analista; pasada del desarrollador: R1–R17 `deny`, sección 48 370/0, banco 2673/1/12 (el FAIL es INS-032-2, calibración que no ejecuta hooks). **Después de 1.36.1 viene el hotfix 1.36.2 (F-137-14)**, abierto al publicar 1.36.1, y **sólo después de 1.36.2** se fusiona `main` en `cand/1.37.0`. Fase 1 entregada el 2026-10-14 (sin validar): arreglo en `hooks/lib.sh` y las dos puertas, sección 48 (254 casos, fail-before 28 FAIL contra v1.36.0), `CASOS_ESPERADOS` 2570, versión 1.36.1. **Un FAIL de reloj sin clasificar** (REQ-017 CA-08 (ii), ajeno por su sujeto al código cambiado): lo clasifica QA.
+- **Plan autorizado vigente: hotfix 1.36.1 (F-137-10), fase 2 de 4. Vuelta 1 de 3 re-verificada por QA: `con-hallazgos`. PARADA, `P-032-5` PENDIENTE:** `echo src/a.ts | xargs cp S` pasa de `deny` a `allow` (reproducido). Lo demás, conforme: banco 2709/0/13, sección 48 406/0, enlace duro en `deny`. Recomendación (C): vuelta 2 con lista de lo que sí se acepta (sólo una invocación simple de `cp`/`mv`/`install`). Después: seguridad (fase 3, con la gravedad de F-137-14) y notas `[1.36.1]` (fase 4). CA-15 escrito por el analista; pasada del desarrollador: R1–R17 `deny`, sección 48 370/0, banco 2673/1/12 (el FAIL es INS-032-2, calibración que no ejecuta hooks). **Después de 1.36.1 viene el hotfix 1.36.2 (F-137-14)**, abierto al publicar 1.36.1, y **sólo después de 1.36.2** se fusiona `main` en `cand/1.37.0`. Fase 1 entregada el 2026-10-14 (sin validar): arreglo en `hooks/lib.sh` y las dos puertas, sección 48 (254 casos, fail-before 28 FAIL contra v1.36.0), `CASOS_ESPERADOS` 2570, versión 1.36.1. **Un FAIL de reloj sin clasificar** (REQ-017 CA-08 (ii), ajeno por su sujeto al código cambiado): lo clasifica QA.
 - *(Pausa del 2026-10-14 superada: la fase 2 se retomó el 2026-10-15 en la misma comisión de QA, y las salidas interrumpidas quedaron descartadas y rotuladas, `437ee5c` en el árbol de evidencia.)*
 - **FASE 2 (QA) ENTREGADA el 2026-10-15: `con-hallazgos`; PARADA, `P-032-3` PENDIENTE.** **QA-032-01 (`contrato`):** formas donde el último operando no es el destino (`< archivo`, comentario final, `-t` disfrazado, enlace duro) pasan de `deny` a `allow` sobre código protegido con el arreglo. **Reproducido por la coordinadora** sobre `hooks/lib.sh`. **F-137-14:** v1.36.0 publicada **ya** deja escribir código protegido con `cp … 2>/dev/null`, con un comentario final o con `cp -rt` (reproducido también). Lo demás, conforme: sección 48 254/0; banco 2557/0/13; autoprueba 117/0; 0 procesos; la marca de tabulador no se puede fabricar. **INS-032-1:** el FAIL de reloj no es atribuible (mediana 1,013 frente a v1.36.0). Recomendación: (A) pasada correctiva acotada a QA-032-01; F-137-14 con clase del auditor y ventana aparte.
 - **El defecto:** desde 1.35.0, un `cp` sobre un archivo **existente** del proyecto se deniega **a todo el que no es el agente de código** (al `desarrollador`, con su `agent_id`, se le permite: re-medido el 2026-10-13; la medida del 2026-10-12 que decía «a cualquier agente» estaba mal construida, sin `agent_id`), también con `cp -T`.
@@ -566,7 +566,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-15 09:06
+## Estado derivado — 2026-10-15 09:24
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -576,7 +576,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `hotfix/1.36.1` @ `759ff50` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `hotfix/1.36.1` @ `264dfa9` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 30 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 9
@@ -601,6 +601,6 @@ _Sólo los REQ abiertos; los 14 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-032 | pendiente | con-hallazgos | pendiente | critico | qa-032-01(contrato),ins-032-1(instrument… |
+| REQ-032 | pendiente | con-hallazgos | pendiente | critico | qa-032-01(contrato),qa-032-02(contrato),… |
 
 <!-- ARNES:DERIVADO fin -->

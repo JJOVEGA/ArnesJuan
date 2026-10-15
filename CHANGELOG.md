@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · Hotfix 1.36.1: re-verificación de QA de la vuelta 1 — **con hallazgos**: `xargs` abre `allow` sobre código protegido (QA-032-01 sigue abierto); el REQ no refleja P-032-4 (QA-032-02); `P-032-5` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 377 k tokens en esta re-verificación) · agentes: `qa-tester` + la coordinadora.
+
+- **Conforme:** las formas de QA-032-01 de la fase 2 y el enlace duro (H1–H3) dan `deny`, también si `find` falta o falla. Sección 48 406/0; **banco 2709/0/13** cuadrado; autoprueba 117/0; gates rc 0; 0 procesos en el camino común. INS-032-1 (mediana 1,001), INS-032-2 e INS-032-3 confirmados como `instrumento`. PR-137-1: el diff es ASCII y es lo probado.
+- **QA-032-01 sigue abierto:** `echo src/a.ts | xargs cp S`, `xargs -a lista cp S` y lo mismo con `mv`/`install` pasan de `deny` a `allow` y escriben código protegido. **Reproducido por la coordinadora** sobre `hooks/lib.sh`.
+- **QA-032-02 (`contrato`):** REQ-032 no refleja P-032-4 (B) ni que la regla mira el comando entero; falta el write-back del analista.
+- **Cola: `P-032-5`.** Recomendación (C): vuelta 2 con una lista de lo que sí se acepta —sólo una invocación simple de `cp`/`mv`/`install`—, que cierra el tipo de defecto y no sólo el caso.
+- **Avance (regla 6):** el arreglo está casi entero; falta cerrar el tipo de forma que lo rodea.
+
 ## [Interno] — 2026-10-15 · REQ-032, P-032-4 (B) en la misma pasada (vuelta 1 de 3): un destino de `cp`/`mv`/`install` con más de un enlace duro vuelve a la decisión de v1.36.0
 > Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 
