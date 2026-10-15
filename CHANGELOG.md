@@ -1,5 +1,8 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-10-15 · Hotfix 1.36.1, vuelta 2 de 3 (QA-032-02, P-032-5 (C)), desarrollador
+`hotfix-1.36.1/dev-vuelta2/` sobre `hotfix/1.36.1` en `30568fd` con los cambios sin commit, Linux/WSL2: sección 48 546/0; con v1.36.0 29 FAIL (M-032, L1, H4k, oráculo); con `264dfa9` 53 FAIL (X, P2–P8, E1, O1, F4, G1); banco 2850/0/12; procesos 0 añadidos en el camino común, ≤ 1 en la rama del enlace; reloj 0,99×–1,03×; autoprueba 117/0; gates rc 0.
+
 ## 2026-10-15 · Hotfix 1.36.1, pasada correctiva, el enlace duro (P-032-4 (B)), desarrollador
 `hotfix-1.36.1/dev-pasada1b/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `759ff50` con el cambio sin commit, Linux/WSL2:
 - sección 48: 406/0; con v1.36.0 28 FAIL (M-032); con `759ff50` 18 FAIL (las filas H);

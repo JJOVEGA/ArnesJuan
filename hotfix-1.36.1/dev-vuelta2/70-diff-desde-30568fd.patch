@@ -1,0 +1,250 @@
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 1598ec5..01c1fc2 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -2364,19 +2364,14 @@ _arnes_estado_ausente_c() {
+ # La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
+ # excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
+ # directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
+-# REQ-032 CA-15 (QA-032-01, P-032-3 (A)): la marca SOLO se retira si el comando permite asegurar que el
+-# ultimo operando es el destino. El detector trocea un texto del que ya se quitaron las comillas (con su
+-# contenido), y en el que `$(`, `)` y los escapes no se distinguen: `cp "-t" src docs/notas.md`,
+-# `cp S src/a.ts < docs/notas.md`, `cp S src/a.ts # docs/notas.md` o `T=-t; cp $T src docs/notas.md` le
+-# llegan con un ultimo operando que NO es el destino. Por eso se mira el comando tal como llego
+-# (`ARNES_CMD`, el mismo que analizan las dos puertas) y, si lleva un solo caracter ASCII de los que el
+-# shell interpreta y el tokenizador del detector no sigue —comillas, `\`, `$`, acento grave, parentesis,
+-# llaves, corchetes, `*`, `?`, `~`, `!`, `#`, `<`, `^`— o un caracter de control (salto de linea, retorno de
+-# carro, tabulador…), no se retira ninguna marca: la decision es la de v1.36.0. Es del comando ENTERO y no
+-# del segmento a proposito: el segmento del detector no se puede situar en el texto original, y la duda cae
+-# del lado de conservar la forma `destino/` (CA-15). Lo que queda —letras, cifras, no ASCII, blanco y
+-# `% & + , - . / : ; = > @ _ |`— lo trocea el detector como el shell; `>` lo resuelve el detector por
+-# segmento (sin marca si el segmento acaba en una redireccion). Una vez por comando, sin procesos.
++# REQ-032 CA-15 (QA-032-02, P-032-5 (C)): LISTA DE LO QUE SE ACEPTA, no de lo que se rechaza. La marca
++# SOLO se retira si el comando ENTERO, tal como llego (`ARNES_CMD`, el mismo que analizan las dos puertas,
++# y no el texto desentrecomillado del detector), es UNA invocacion simple: `_arnes_cmd_llano`, abajo, es el
++# sitio unico de las condiciones (1) a (3). Cualquier otra forma —comillas, escapes, expansiones,
++# tuberias (`echo src/a.ts | xargs cp S`), encadenados, redirecciones, prefijos (`sudo cp`, `\cp`,
++# `/bin/cp`, `VAR=x cp`), una orden que no es la primera palabra (`xargs -a lista cp S`), una opcion
++# fuera de la lista— conserva la forma `destino/`: la decision es la de v1.36.0. Antes (P-032-3 (A)) era
++# una lista de lo rechazado, y `xargs` la rodeo (QA-032-02). Una vez por comando, sin procesos.
+ # EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
+ # enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
+ # archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
+@@ -2396,20 +2391,51 @@ _arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exact
+   [[ ${ARNES_NLINK1[$1]} == si ]]
+ }
+ ARNES_DESTINO=''
+-ARNES_LLANO_CMD=''; ARNES_LLANO=''   # memoria por invocacion; nacen vacias al cargar (no se heredan)
+-_arnes_cmd_llano() {   # 0 = el comando (`ARNES_CMD`) no lleva nada que el detector no siga
+-  if [[ -z $ARNES_LLANO || $ARNES_LLANO_CMD != "${ARNES_CMD-}" ]]; then
+-    ARNES_LLANO_CMD="${ARNES_CMD-}"; ARNES_LLANO=si
+-    # shellcheck disable=SC1003  -- la barra invertida va dentro de la clase a proposito
+-    [[ $ARNES_LLANO_CMD == *[\"\'\\\$\`\(\)\{\}\[\]\*\?\~\!\#\<\^[:cntrl:]]* ]] && ARNES_LLANO=no
+-  fi
+-  [[ $ARNES_LLANO == si ]]
++# `_arnes_cmd_llano` -> 0 si `ARNES_CMD` es UNA invocacion simple de `cp`, `mv` o `install`, y deja en
++# ARNES_LLANO_DEST su ultimo operando (el destino). Todas, o no (REQ-032 CA-15):
++#   (2) cada caracter es de este conjunto, y ningun otro: letras y cifras ASCII, el blanco ' ' y
++#       `. / _ + , : @ % = -`. Fuera, por tanto, todo lo que el shell interpreta (comillas, `\`, `$`, acento
++#       grave, `| ; & < > ( ) { } [ ] * ? ~ ! # ^`), todo caracter de control (salto de linea, retorno de
++#       carro, tabulador: una sola linea, blancos solo ' ') y todo caracter no ASCII. Las letras van
++#       ESCRITAS una a una, no como rango ni como clase: no dependen del locale.
++#   (1) la primera palabra es exactamente `cp`, `mv` o `install` (ni ruta, ni prefijo, ni asignacion);
++#   (3) toda palabra que empieza por `-` es una opcion de la LISTA CERRADA (REQ-032, Historial del
++#       2026-10-15, vuelta 2): cortas `f i n p v r R a u`, solas o agrupadas con solo esas letras; largas
++#       exactas `--force --interactive --no-clobber --verbose --recursive --archive --update`. Ninguna lleva
++#       argumento, asi que ninguna consume un operando ni cambia cual es el destino. Fuera: `-t`, `-T`, `--`,
++#       `-` y cualquier otra (tambien `--update=…`, `-S`, `-m`, `-b`…);
++#   y al menos dos operandos (origen y destino).
++# El enlace unico, la condicion (4), lo comprueba `_arnes_un_solo_enlace`. Memorizado por comando.
++ARNES_LLANO_CMD=''; ARNES_LLANO=''; ARNES_LLANO_DEST=''   # nacen vacias al cargar (no se heredan)
++_arnes_cmd_llano() {
++  local c="${ARNES_CMD-}" x d='' n=0 reponer_f=0
++  if [[ -n $ARNES_LLANO && $ARNES_LLANO_CMD == "$c" ]]; then [[ $ARNES_LLANO == si ]]; return; fi
++  ARNES_LLANO_CMD="$c"; ARNES_LLANO=no; ARNES_LLANO_DEST=''
++  [[ $c == *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\ ./_+,:@%=-]* ]] && return 1
++  local -a w; local IFS=' '
++  case $- in *f*) reponer_f=1 ;; esac
++  set -f
++  # shellcheck disable=SC2206  -- se quiere el troceado por blancos, con globbing apagado
++  w=($c)
++  [ "$reponer_f" -eq 1 ] || set +f
++  case "${w[0]-}" in cp|mv|install) ;; *) return 1 ;; esac
++  for x in "${w[@]:1}"; do
++    case "$x" in
++      --force|--interactive|--no-clobber|--verbose|--recursive|--archive|--update) ;;
++      -|--*) return 1 ;;
++      -*) [[ ${x:1} == *[!finpvrRau]* ]] && return 1 ;;
++      *) n=$((n + 1)); d="$x" ;;
++    esac
++  done
++  (( n >= 2 )) || return 1
++  ARNES_LLANO=si; ARNES_LLANO_DEST="$d"
+ }
+ arnes_destino_a_juzgar() {
+   ARNES_DESTINO="$1"
+   [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
+   ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
+   _arnes_cmd_llano || return 0
++  [[ ${ARNES_DESTINO%/} == "$ARNES_LLANO_DEST" ]] || return 0   # el destino del detector es el de la orden
+   arnes_identidad "${ARNES_DESTINO%/}"
+   [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
+   [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index 633bf99..0e004f0 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
+ ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                          # los controles de medición de las sondas de coste
+ ```
+-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **2722 casos** (el número exacto lo cuadran
++Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **2862 casos** (el número exacto lo cuadran
+ `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+ `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+ nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+@@ -324,11 +324,12 @@ Tres reglas nacidas de fallos reales:
+ | Decisión emitida (47) | Pasada correctiva del paso 6 (P): QA-007-10, `ARNES_CWD_VISTO` heredada con el `cwd` inexistente de la entrada; QA-007-12, un `QA:` en disco de 140 000 bytes `0xFF` que el motivo cita; QA-007-11 (a), `FUNCNEST=1`, `SHELLOPTS=keyword`, `BASH_FUNC_jq%%` (Write a `src/`) y `BASH_COMPAT=31`, `BASHOPTS=compat40` (aviso) | **deny** «no se pudo determinar»; **deny** con el motivo en no más de 16 384 bytes; **deny** de guard-codigo; el aviso emitido. Con 8e11f87 y v1.35.0, los 7 FAIL (sin decisión, motivo de 48 781 bytes, JSON roto o sin aviso) |
+ | Decisión emitida (47) | QA-007-13 (P): funciones `builtin` y `read` importadas del entorno, las dos devolviendo 0; `ls -la` y un `Write` de la coordinadora a `src/a.ts`, por `guard.sh` | **sin decisión** y **deny** de guard-codigo, los dos en menos de 5 s (`entrada.sh` limpia en modo POSIX con una lista estática); con 03cbf5e, el hook no termina y muere a los 60 s (FAIL, el fail-before) |
+ | Decisión emitida (47) | QA-007-14 (P): funciones `return` y `break` importadas (builtins especiales); los mismos `ls -la` y `Write` | **sin decisión** y **deny**, en menos de 5 s (la lista estática lleva también los especiales); con 39e6128, el hook muere o no termina (FAIL, el fail-before) |
+-| Destino de cp que es archivo (48) | REQ-032 CA-02 y CA-03 (a), con `cp`, `mv` e `install`: sobre un archivo **que existe** y no está protegido —un REQ por ruta absoluta y relativa, `docs/notas.md`, con `-T`, de la coordinadora, de `qa-tester` y de `analista-requerimientos`, y por un enlace a un archivo regular— (F1–F4, F6–F8); y el comando que menciona el estado terminal (G1, coordinadora y `desarrollador`) | **allow**; contra **v1.36.0** (f22b905, por SHA con `mat48`) **deny** con el motivo de no determinable que cita la ruta **con la barra final** (fail-before, en las tres órdenes) |
++| Destino de cp que es archivo (48) | REQ-032 CA-02 y CA-03 (a), con `cp`, `mv` e `install`: sobre un archivo **que existe** y no está protegido —un REQ por ruta absoluta y relativa, `docs/notas.md`, de la coordinadora, de `qa-tester` y de `analista-requerimientos`, y por un enlace a un archivo regular— (F1–F3, F6–F8; F4 con `-T` y G1, el comando que menciona el estado terminal, son desde la vuelta 2 restricciones declaradas: **deny** como en v1.36.0) | **allow**; contra **v1.36.0** (f22b905, por SHA con `mat48`) **deny** con el motivo de no determinable que cita la ruta **con la barra final** (fail-before, en las tres órdenes) |
+ | Destino de cp que es archivo (48) | controles: el agente de código (F5), destinos inexistentes (K1, K2, N1 `app` que casa `app/*`), `cat S > D` (K3); un archivo protegido por un enlace (K4) y por las rutas que llegan a él (A1–A7); el cierre de un REQ (C1, por `guard-completado`); destinos directorio, también por enlace (D1–D7); lo que no se sabe —directorio sin permiso, sin `cwd`, `..` sobre lo que no existe, el `cwd` de la entrada frente al del proceso, barra final, enlace roto, FIFO, `/dev/null`— (U1–U8); `-t`, `--target-directory` y la redirección con barra final (T1–T6); la excepción del manifiesto roto, que **no** se repara (M1, M2) | **igual** en la candidata y en v1.36.0; un enlace cuenta como el archivo al que resuelve (K4 **deny**); U1, U7 y los enlaces, **SKIP** con motivo donde no se pueden construir |
+ | Destino de cp que es archivo (48) | REQ-032 CA-15 (QA-032-01): el último operando no se puede asegurar como destino —redirección de entrada, `2>/dev/null` y `2>&1` con un archivo `2`, comentario, `-t`/`-rt`, `-t` entre comillas, escapada, partida por comillas o por una expansión, `--target-directory=` entre comillas, el último operando entre comillas, un salto de línea— con `cp` (y con `mv` e `install` las de R1 y R7–R12), de la coordinadora y de `qa-tester` (R1–R17) | **deny** en la candidata y en v1.36.0 (la decisión de v1.36.0); con los hooks de 9e97bd7, la entrega anterior, **allow** salvo R5 y R6 |
+ | Destino de cp que es archivo (48) | P-032-4 (B), el enlace duro: un destino en `docs/` enlazado duro a `hooks/lib.sh` (H1, `hooks/*` protegido en este proyecto) o a `src/a.ts` (H2), y entre dos archivos de `docs/` (H3, restricción aceptada), con `cp`, `mv` e `install`, de la coordinadora y de `qa-tester` | **deny** en la candidata y en v1.36.0; con los hooks de 759ff50 **allow** (fail-before); sin enlaces duros, **SKIP** con motivo |
+-| Destino de cp que es archivo (48) | el oráculo de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build`, F3 y H3— (P1, sonda de procesos) | iguales; **0** procesos añadidos en el camino común; en la rama del destino existente, como mucho el `find` de P-032-4 (B). El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
++| Destino de cp que es archivo (48) | REQ-032 CA-15, vuelta 2 (QA-032-02, P-032-5 (C)): la marca sólo se retira si el comando ENTERO es una invocación simple de `cp`/`mv`/`install` con opciones de la lista. `xargs` que aporta el destino (X1–X4, con las tres órdenes), `find -exec` (X5), prefijos (`\cp`, `command`, `sudo`, `nice`, `env`, `timeout`, `VAR=x`, `/bin/cp`: P1–P8), encadenados, tubería y redirección (E1), opciones fuera de la lista (O1: `-T`, `--`, `-b`, `install -m`), el número de enlaces ilegible (H4a–c, con su control H4k) y opciones de la lista (L1); G1 y F4 pasan a restricción | **la decisión de v1.36.0**: deny, salvo X5 y P1, que v1.36.0 ya permite (igualdad, familia de F-137-14); L1 y H4k **allow** (M-032); con los hooks de 264dfa9, X, P2–P8, E1 (menos la redirección), O1, F4 y G1 **allow** (fail-before) |
++| Destino de cp que es archivo (48) | el ORÁCULO de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build`, F3 y H3— (P1, sonda de procesos) | iguales; **0** procesos añadidos en el camino común; en la rama del destino existente, como mucho el `find` de P-032-4 (B). El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index 362d701..4dfcf78 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1706,7 +1706,11 @@ done
+ # × 2 árboles: H1 (a hooks/lib.sh, protegido), H2 (a src/a.ts) y H3 (entre dos archivos de docs/, restricción aceptada),
+ # con cp, mv e install, desde la coordinadora y desde qa-tester—. deny en la candidata y en v1.36.0; con los hooks de
+ # 759ff50 como candidata, los 18 FAIL. Ninguna otra sección cambia su número.
+-CASOS_ESPERADOS=2722
++# Y 2722 → 2862 por la vuelta 2 de REQ-032 (QA-032-02, P-032-5 (C)): +140 en la 48 (406 → 546) —70 filas × 2 árboles,
++# coordinadora y qa-tester: X1, X2 y X5 con cp, mv e install, X3, X4, P1–P8, E1 (4), O1 (4), L1 (4, opciones de la
++# lista) y H4a/b/c/k—. F4 y G1 pasan a esperar deny (restricciones de CA-15). Con los hooks de 264dfa9 como candidata,
++# 53 FAIL. Ninguna otra sección cambia su número.
++CASOS_ESPERADOS=2862
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+index 9f5208f..07a8688 100644
+--- a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
++++ b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+@@ -9,18 +9,19 @@
+ #   A  CA-04 (un archivo protegido, por las rutas que llegan a él) · C  CA-05 (el cierre se deriva) ·
+ #   D  CA-06 (destino directorio) · N  CA-07 (destino inexistente) · U  CA-08 (lo que no se sabe) ·
+ #   T  CA-10 (`-t`, `--target-directory` y la redirección con barra final, como estaban) ·
+-#   G  M-032 por `guard-completado`: el comando que menciona el estado terminal (CA-09, por propiedad) ·
++#   G  el comando que menciona el estado terminal: restricción declarada desde la vuelta 2 (CA-15 (2)) ·
+ #   R  CA-15 (QA-032-01): redirección, comentario, `-t` en cualquier forma, comillas o salto de línea: la decisión
+ #      de v1.36.0 (R1–R13, y R14/R15 = R1 y R7–R12 con `mv` e `install`; R16 y R17, formas halladas en la pasada) ·
+ #   H  P-032-4 (B): un destino con más de un enlace duro vuelve a la decisión de v1.36.0 (H1–H3) ·
+ #   M  la excepción del manifiesto roto: la causa está también ahí y NO se repara (CA-10; registrada) ·
+-#   O  el oráculo de CA-01 (`cat S > D`) · P  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida.
++#   ORÁCULO  CA-01 (`cat S > D`) · P1  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida ·
++#   X, P1–P8, E1, O1, H4, L  CA-15 vuelta 2 (P-032-5 (C)): sólo una invocación simple, con opciones de la lista.
+ # DOS ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`) y v1.36.0 (f22b905), por SHA con `mat48` (copia de
+ # `mat47`); sin ella, SKIP y motivo, nunca PASS. Las filas se juzgan por guard.sh —lo que recibe el cliente—
+ # salvo C (guard-completado). Las que dependen de enlaces simbólicos, de una FIFO, de un directorio en modo
+ # 000 o de /dev/null salen SKIP con motivo donde no se pueden construir. Esto NO es la validación en el host.
+-CASOS_ESPERADOS_SECCION=406
+-PISO_AUTONOMO_SECCION=75  # 24 preámbulo (líneas 1-24, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 25-48) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 72-98)
++CASOS_ESPERADOS_SECCION=546
++PISO_AUTONOMO_SECCION=76  # 25 preámbulo (líneas 1-25, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 26-49) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 73-99)
+ seccion_nueva "--- 48 · el destino de cp/mv/install que existe y es archivo (REQ-032, hotfix 1.36.1) ---"
+ REPO48="${SEC_DIR%/}/../../../.."; MAT48_RUTAS='hooks'; MAT48_REG=''; MAT48_T0=0; MAT48_REF='-'
+ mat48_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT48_REG, UNA sola línea (la lee `sonda_lee`)
+@@ -103,7 +104,7 @@ for o in cp mv install; do
+   fila48 "F1 $o coordinadora: $o S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" - "$o S $R48/REQ-X.md")"
+   fila48 "F2 $o coordinadora: $o S requirements/REQ-X.md (cwd <raíz>)" guard.sh allow deny - "requirements/REQ-X.md/'" "$(j48 "$P48" - "$o S requirements/REQ-X.md")"
+   fila48 "F3 $o coordinadora: $o S <raíz>/docs/notas.md" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" - "$o S $P48/docs/notas.md")"
+-  fila48 "F4 $o coordinadora: $o -T S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" - "$o -T S $R48/REQ-X.md")"
++  fila48 "F4 $o coordinadora: $o -T S <raíz>/requirements/REQ-X.md (RESTRICCIÓN: -T fuera de la lista, CA-15 (3))" guard.sh deny deny "$ND48" - "$(j48 "$P48" - "$o -T S $R48/REQ-X.md")"
+   fila48 "F6 $o qa-tester: $o S <raíz>/docs/notas.md" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" qa-tester "$o S $P48/docs/notas.md")"
+   fila48 "F7 $o analista-requerimientos: $o S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" analista-requerimientos "$o S $R48/REQ-X.md")"
+   fila48c "$LN48" "$LN48_MOT" "F8 $o coordinadora: $o S <raíz>/docs/enlace-notas (-> notas.md)" guard.sh allow deny - "enlace-notas/'" "$(j48 "$P48" - "$o S $P48/docs/enlace-notas")"
+@@ -196,10 +197,10 @@ for a in - qa-tester; do
+   done
+ done
+ 
+-# --- G: M-032 por guard-completado — el comando menciona el estado terminal y el destino es un archivo fuera ------
++# --- G: el comando menciona el estado terminal; desde la vuelta 2 (P-032-5 (C)) es una RESTRICCIÓN declarada -----
+ for o in cp mv install; do
+   for a in - desarrollador; do
+-    fila48 "G1 $o ${a/#-/coordinadora}: $o S <raíz>/docs/notas.md && echo completado" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" "$a" "$o S $P48/docs/notas.md && echo completado")"
++    fila48 "G1 $o ${a/#-/coordinadora}: $o S <raíz>/docs/notas.md && echo completado (RESTRICCIÓN: no es una sola invocación, CA-15 (2))" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S $P48/docs/notas.md && echo completado")"
+   done
+ done
+ 
+@@ -211,7 +212,7 @@ fila48 "M2 coordinadora: printf '{}' > .arnes/config.json con el manifiesto roto
+ PD48="$P48"
+ 
+ # --- O: el oráculo de CA-01 — con el destino existente, la orden decide como `cat S > D` -------------------------
+-nom48="REQ-032 O1 CA-01 oráculo: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D"
++nom48="REQ-032 ORÁCULO CA-01: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D"
+ mal48=''; n48=0
+ dests48=("$P48|-|$R48/REQ-X.md" "$P48|-|requirements/REQ-X.md" "$P48|-|$P48/docs/notas.md" "$P48|qa-tester|$P48/docs/notas.md"
+   "$P48|analista-requerimientos|$R48/REQ-X.md" "$P48|desarrollador|$R48/REQ-X.md" "$P48|-|$P48/src/a.ts" "$P48|qa-tester|$P48/src/a.ts"
+@@ -244,8 +245,52 @@ for a in - qa-tester; do
+   done
+ done
+ 
++# --- Vuelta 2 (QA-032-02, P-032-5 (C)): la marca sólo se retira en UNA invocación simple de cp/mv/install -------
++# Lo demás conserva la decisión de v1.36.0. L: opciones de la lista (M-032). `docs/lista` dice `src/a.ts`.
++printf 'src/a.ts\n' > "$P48/docs/lista"
++X5E=allow   # X5, medido el 2026-10-15: v1.36.0 PERMITE (el detector toma `\` por destino); se exige igualdad. Familia de F-137-14 (1.36.2)
++FF48="$RAIZ/ff48-$BASHPID"; FN48="$RAIZ/fn48-$BASHPID"; RP48="$RAIZ/rp48-$BASHPID"; RPF48="$RAIZ/rpf48-$BASHPID"
++mkdir -p "$FF48" "$FN48" "$RP48" "$RPF48"; printf '#!/bin/sh\nexit 1\n' > "$FF48/find"; printf '#!/bin/sh\nexit 0\n' > "$FN48/find"; chmod +x "$FF48/find" "$FN48/find"
++# PATH sin `find` (H4c) y su control con `find` (H4k): sólo lo que los hooks usan; el control dice si basta.
++for b in jq grep git readlink realpath mktemp cat tail head sed awk tr cut sort wc ls cp mv rm ln mkdir dirname basename stat date sleep touch chmod tee cmp iconv timeout env sh bash uname cygpath; do
++  x="$(type -P "$b" 2>/dev/null)" && { ln -s "$x" "$RP48/$b"; ln -s "$x" "$RPF48/$b"; }
++done
++x="$(type -P find 2>/dev/null)" && ln -s "$x" "$RPF48/find"
++for a in - qa-tester; do
++  q="${a/#-/coordinadora}"
++  for o in cp mv install; do
++    fila48 "X1 $o $q: echo src/a.ts | xargs $o docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "echo src/a.ts | xargs $o docs/notas.md")"
++    fila48 "X2 $o $q: xargs -a docs/lista $o docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "xargs -a docs/lista $o docs/notas.md")"
++    fila48 "X5 $o $q: find src -name a.ts -exec $o docs/notas.md {} \; (igual que v1.36.0: allow, familia de F-137-14)" guard.sh "$X5E" "$X5E" - - "$(j48 "$P48" "$a" "find src -name a.ts -exec $o docs/notas.md {} \;")"
++  done
++  fila48 "X3 mv $q: cat docs/lista | xargs mv docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cat docs/lista | xargs mv docs/notas.md")"
++  fila48 "X4 install $q: cat docs/lista | xargs install docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cat docs/lista | xargs install docs/notas.md")"
++  for k in 'P1|\cp' 'P2|command cp' 'P3|sudo cp' 'P4|nice cp' 'P5|env cp' 'P6|timeout 5 cp' 'P7|VAR=x cp' 'P8|/bin/cp'; do
++    e='deny'; c="$ND48"; m=''
++    # P1, medido el 2026-10-15: v1.36.0 PERMITE `\cp …` (el detector no la reconoce como `cp`: no ve ninguna escritura);
++    # CA-15 pide entonces la igualdad. Familia de F-137-14.
++    [ "${k%%|*}" != P1 ] || { e=allow; c=-; m=' (igual que v1.36.0: allow, el detector no ve la orden; familia de F-137-14)'; }
++    fila48 "${k%%|*} $q: ${k#*|} S docs/notas.md$m" guard.sh "$e" "$e" "$c" - "$(j48 "$P48" "$a" "${k#*|} S docs/notas.md")"
++  done
++  for k in '&& echo hecho' '; ls' '| cat' '> /dev/null'; do
++    fila48 "E1 $q: cp S docs/notas.md $k (RESTRICCIÓN: no es una sola invocación)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cp S docs/notas.md $k")"
++  done
++  for k in 'cp -T' 'cp --' 'cp -b' 'install -m 644'; do
++    fila48 "O1 $q: $k S docs/notas.md (opción fuera de la lista)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$k S docs/notas.md")"
++  done
++  for k in 'cp -fv' 'mv -n' 'install -pv' 'cp --force --verbose'; do
++    fila48 "L1 $q: $k S docs/notas.md (opciones de la lista: M-032)" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" "$a" "$k S docs/notas.md")"
++  done
++  # H4: el número de enlaces ilegible —find que falla, que no dice nada, ausente del PATH— y el control del PATH.
++  j="$(j48 "$P48" "$a" "cp S docs/notas.md")"
++  ( PATH="$FF48:$PATH"; fila48 "H4a $q: cp S docs/notas.md con un find que falla" guard.sh deny deny "$ND48" - "$j" )
++  ( PATH="$FN48:$PATH"; fila48 "H4b $q: cp S docs/notas.md con un find sin salida" guard.sh deny deny "$ND48" - "$j" )
++  ( PATH="$RP48"; fila48 "H4c $q: cp S docs/notas.md sin find en el PATH" guard.sh deny deny "$ND48" - "$j" )
++  ( PATH="$RPF48"; fila48 "H4k $q: cp S docs/notas.md con ese mismo PATH y find (control: el PATH basta)" guard.sh allow deny - "notas.md/'" "$j" )
++done
++
+ # --- P: CA-12 (a)(b) — procesos frente a v1.36.0 en la misma corrida: 0 añadidos ----------------------------------
+-nom48="REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B)"
++nom48="REQ-032 PROC CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B)"
+ if [ "$RV48_OK" != si ]; then v48 SKIP "$nom48  $RV48_MOT"
+ else
+   f48="$RAIZ/j48-$BASHPID.json"; mal48=''; med48=''
