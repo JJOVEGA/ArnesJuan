@@ -10,14 +10,16 @@
 #   D  CA-06 (destino directorio) · N  CA-07 (destino inexistente) · U  CA-08 (lo que no se sabe) ·
 #   T  CA-10 (`-t`, `--target-directory` y la redirección con barra final, como estaban) ·
 #   G  M-032 por `guard-completado`: el comando que menciona el estado terminal (CA-09, por propiedad) ·
+#   R  CA-15 (QA-032-01): redirección, comentario, `-t` en cualquier forma, comillas o salto de línea: la decisión
+#      de v1.36.0 (R1–R13, y R14/R15 = R1 y R7–R12 con `mv` e `install`; R16 y R17, formas halladas en la pasada) ·
 #   M  la excepción del manifiesto roto: la causa está también ahí y NO se repara (CA-10; registrada) ·
 #   O  el oráculo de CA-01 (`cat S > D`) · P  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida.
 # DOS ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`) y v1.36.0 (f22b905), por SHA con `mat48` (copia de
 # `mat47`); sin ella, SKIP y motivo, nunca PASS. Las filas se juzgan por guard.sh —lo que recibe el cliente—
 # salvo C (guard-completado). Las que dependen de enlaces simbólicos, de una FIFO, de un directorio en modo
 # 000 o de /dev/null salen SKIP con motivo donde no se pueden construir. Esto NO es la validación en el host.
-CASOS_ESPERADOS_SECCION=254
-PISO_AUTONOMO_SECCION=72  # 21 preámbulo (líneas 1-21, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 22-45) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 69-95)
+CASOS_ESPERADOS_SECCION=370
+PISO_AUTONOMO_SECCION=74  # 23 preámbulo (líneas 1-23, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 24-47) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 71-97)
 seccion_nueva "--- 48 · el destino de cp/mv/install que existe y es archivo (REQ-032, hotfix 1.36.1) ---"
 REPO48="${SEC_DIR%/}/../../../.."; MAT48_RUTAS='hooks'; MAT48_REG=''; MAT48_T0=0; MAT48_REF='-'
 mat48_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT48_REG, UNA sola línea (la lee `sonda_lee`)
@@ -166,6 +168,32 @@ fila48 "T3 coordinadora: cp -vt src docs/notas.md" guard.sh deny deny "$ND48" - 
 fila48 "T4 coordinadora: mv -t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" - "mv -t src docs/notas.md")"
 fila48 "T5 coordinadora: install -t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" - "install -t src docs/notas.md")"
 fila48 "T6 coordinadora: echo x > docs/notas.md/ (redirección con barra final)" guard.sh deny deny "$ND48" - "$(j48 "$P48" - "echo x > docs/notas.md/")"
+
+# --- R: CA-15 (QA-032-01, P-032-3 (A)) — si el segmento no permite asegurar que el último operando es el destino,
+# la decisión es la de v1.36.0. Desde la coordinadora y desde qa-tester; `<raíz>/2` es un archivo regular (R2, R3).
+printf '2\n' > "$P48/2"
+for a in - qa-tester; do
+  q="${a/#-/coordinadora}"
+  for o in cp mv install; do
+    if [ "$o" = cp ]; then
+      fila48 "R2 $o $q: $o S src/a.ts 2>/dev/null (con un archivo 2)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts 2>/dev/null")"
+      fila48 "R3 $o $q: $o S src/a.ts 2>&1 (con un archivo 2)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts 2>&1")"
+      fila48 "R4 $o $q: $o S src/a.ts  # copia de docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts  # copia de docs/notas.md")"
+      fila48 "R5 $o $q: $o -t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o -t src docs/notas.md")"
+      fila48 "R6 $o $q: $o -rt src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o -rt src docs/notas.md")"
+      fila48 "R13 $o $q: $o \"-t\" requirements docs/notas.md && echo completado" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \"-t\" requirements docs/notas.md && echo completado")"
+      fila48 "R16 $o $q: $o docs/notas.md \"src/a.ts\" (el último operando entre comillas)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o docs/notas.md \"src/a.ts\"")"
+      fila48 "R17 $o $q: $o S src/a.ts, salto de línea, echo docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts"$'\n'"echo docs/notas.md")"
+    fi
+    fila48 "R1 $o $q: $o S src/a.ts < docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts < docs/notas.md")"
+    fila48 "R7 $o $q: $o \"-t\" src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \"-t\" src docs/notas.md")"
+    fila48 "R8 $o $q: $o '-t' src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o '-t' src docs/notas.md")"
+    fila48 "R9 $o $q: $o \\-t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \\-t src docs/notas.md")"
+    fila48 "R10 $o $q: $o -\"\"t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o -\"\"t src docs/notas.md")"
+    fila48 "R11 $o $q: $o \"--target-directory=src\" docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \"--target-directory=src\" docs/notas.md")"
+    fila48 "R12 $o $q: T=-t; $o \$T src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "T=-t; $o \$T src docs/notas.md")"
+  done
+done
 
 # --- G: M-032 por guard-completado — el comando menciona el estado terminal y el destino es un archivo fuera ------
 for o in cp mv install; do

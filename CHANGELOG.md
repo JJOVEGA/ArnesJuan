@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · REQ-032, pasada correctiva de QA-032-01 (vuelta 1 de 3): la marca de `destino/` sólo se retira si el último operando es con seguridad el destino (CA-15)
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 431 k tokens acumulados en su comisión) · agentes: `desarrollador` + la coordinadora.
+
+- **Arreglo:** el detector no marca `destino/` si el segmento acaba en una redirección de salida (`2>/dev/null`, `2>&1`), además de `-t`; y `arnes_destino_a_juzgar` no retira ninguna marca si el comando lleva comillas, `\`, `$`, acento grave, paréntesis, llaves, corchetes, `* ? ~ ! # < ^` o un carácter de control (salto de línea incluido). Ahí la decisión es la de v1.36.0. Sin procesos. El enlace duro (`P-032-4`) no se implementa.
+- **Banco:** sección 48 de 254 a 370 casos (bloque R: R1–R17, coordinadora y `qa-tester`), todas `deny` en la candidata y en v1.36.0; con los hooks de `9e97bd7`, 54 FAIL. `CASOS_ESPERADOS` 2570 → 2686. Banco 2673/1/12: el FAIL es REQ-021 CA-03 (c), la calibración de `sonda-reloj` (no ejecuta hooks).
+- **Comprobado por la coordinadora:** gates en rc 0. La sección 38/2, la del único FAIL del banco, **no ejecuta ningún hook**: es la calibración de una sonda. Se registra como **INS-032-2** (`instrumento`) por la precisión del propietario P-136-E, y el plan sigue. **PR-137-1:** el desarrollador editó una línea de `hooks/lib.sh` con `python3` y no con `Edit`, contra `AGENTS.md` §13; lo declaró él mismo. Sin efecto en el contenido.
+- **Efecto declarado de la regla conservadora:** un comando con comillas, `$`, `#`, `<` u otros caracteres de shell **conserva la decisión de v1.36.0**, así que el arreglo del `cp` sólo alcanza a los comandos llanos. Ante la duda, `deny`, como manda CA-15. De paso, la forma `X=src/a.ts; cp S $X` de F-137-13 vuelve a `deny`, sin movimiento frente a v1.36.0.
+- **El enlace duro (`P-032-4`) no está implementado**; la re-verificación de QA espera la decisión.
+- **Avance (regla 6):** la pasada está construida y medida; falta la decisión del enlace duro y, después, QA.
+
 ## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-01 (CA-15 nuevo, la regla de la pasada correctiva); `P-032-4` en la cola (el enlace duro, que mi opción (A) listaba y el texto adoptado no)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 237 k tokens acumulados en su comisión) · agentes: `analista-requerimientos` + la coordinadora.
 

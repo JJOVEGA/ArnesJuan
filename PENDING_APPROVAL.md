@@ -45,6 +45,8 @@
 
 ### P-032-4 — Hotfix 1.36.1: **el enlace duro, ¿dentro o fuera de la pasada correctiva?** La opción (A) de P-032-3 que redacté **lo listaba**; tu texto adoptado **no lo nombra**
 
+**Actualización (2026-10-15):** la pasada correctiva **está hecha** sin el enlace duro (CA-15 cerrado: R1 a R17 en `deny`, sección 48 con 370/0; banco 2673/1/12, y el FAIL es la calibración de una sonda que no ejecuta hooks, INS-032-2). **La re-verificación de QA espera esta decisión**, para correr el banco una vez sobre el código final y no dos. Si eliges (B), el desarrollador lo añade: dejó marcado dónde va.
+
 **Qué detiene, y qué no.** Detiene **sólo** la decisión sobre el enlace duro dentro de la pasada correctiva. El desarrollador **empieza ya** con lo que no depende de ella: CA-15, es decir redirecciones, comentarios y `-t`/`-rt` en cualquier forma. Si eliges (B), se le añade en la misma pasada.
 
 **El error es mío, y lo digo primero.** La opción (A) de P-032-3 decía, literal: «no retirar la marca cuando el segmento no permite afirmar que su último operando es el destino (redirecciones, comentarios, `-t` escrito de otra forma, **enlace duro**…)». Tú adoptaste «(A)» con tu propio texto: «donde no se pueda asegurar que el último operando es el destino (redirección detrás, comentario detrás, -t/-rt)». Después, en mi nota de la cola, dejé el enlace duro fuera por la letra de tu regla, **sin decirte que mi opción lo incluía**. El analista lo vio al escribir CA-15.

@@ -2257,13 +2257,18 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
         # (`arnes_destino_a_juzgar`). Con `-t`/`--target-directory` el operando que se toma aqui NO es el
         # destino de la orden (es un origen; REQ-032 CA-10 deja su seleccion como esta): sale SIN marca,
         # como en v1.36.0, y nunca deja de juzgarse (CA-08: lo que no se sabe no se toma por archivo).
-        local dest="" dirigido=0
+        # REQ-032 CA-15 (QA-032-01): tampoco se marca si el segmento acaba en una REDIRECCION de salida
+        # (`2>/dev/null` se lee aqui como el operando `2`): no se puede asegurar que el ultimo operando sea
+        # el destino. Lo que este texto ya no deja ver —comillas, escapes, expansiones, `<`, `#`— lo mira
+        # `arnes_destino_a_juzgar` sobre el comando entero antes de retirar la marca.
+        local dest="" sin_marca=0
         for ((j = i + 1; j < n; j++)); do
           case "${t[j]}" in
-            '>'|'|'|';'|'&&'|'||'|'&') break ;;
-            --t*) dirigido=1; continue ;;
+            '>') sin_marca=1; break ;;
+            '|'|';'|'&&'|'||'|'&') break ;;
+            --t*) sin_marca=1; continue ;;
             --*) continue ;;
-            -*t*) dirigido=1; continue ;;
+            -*t*) sin_marca=1; continue ;;
             -*) continue ;;
           esac
           dest="${t[j]}"
@@ -2272,7 +2277,7 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
           sal+=("$dest")
           case "$dest" in
             */) ;;
-            *) if [ "$dirigido" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
+            *) if [ "$sin_marca" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
           esac
         fi ;;
       sed|perl|*/sed|*/perl)
@@ -2359,12 +2364,38 @@ _arnes_estado_ausente_c() {
 # La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
 # excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
 # directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
+# REQ-032 CA-15 (QA-032-01, P-032-3 (A)): la marca SOLO se retira si el comando permite asegurar que el
+# ultimo operando es el destino. El detector trocea un texto del que ya se quitaron las comillas (con su
+# contenido), y en el que `$(`, `)` y los escapes no se distinguen: `cp "-t" src docs/notas.md`,
+# `cp S src/a.ts < docs/notas.md`, `cp S src/a.ts # docs/notas.md` o `T=-t; cp $T src docs/notas.md` le
+# llegan con un ultimo operando que NO es el destino. Por eso se mira el comando tal como llego
+# (`ARNES_CMD`, el mismo que analizan las dos puertas) y, si lleva un solo caracter ASCII de los que el
+# shell interpreta y el tokenizador del detector no sigue —comillas, `\`, `$`, acento grave, parentesis,
+# llaves, corchetes, `*`, `?`, `~`, `!`, `#`, `<`, `^`— o un caracter de control (salto de linea, retorno de
+# carro, tabulador…), no se retira ninguna marca: la decision es la de v1.36.0. Es del comando ENTERO y no
+# del segmento a proposito: el segmento del detector no se puede situar en el texto original, y la duda cae
+# del lado de conservar la forma `destino/` (CA-15). Lo que queda —letras, cifras, no ASCII, blanco y
+# `% & + , - . / : ; = > @ _ |`— lo trocea el detector como el shell; `>` lo resuelve el detector por
+# segmento (sin marca si el segmento acaba en una redireccion). Una vez por comando, sin procesos.
+# AMPLIACION PREVISTA (P-032-4, pendiente del propietario; NO implementada): un archivo regular con mas de
+# un enlace duro no retiraria la marca; seria una condicion mas al final de `arnes_destino_a_juzgar`, con
+# el proceso que cueste, solo en ese camino.
 ARNES_FORMA_DIR=$'\t'
 ARNES_DESTINO=''
+ARNES_LLANO_CMD=''; ARNES_LLANO=''   # memoria por invocacion; nacen vacias al cargar (no se heredan)
+_arnes_cmd_llano() {   # 0 = el comando (`ARNES_CMD`) no lleva nada que el detector no siga
+  if [[ -z $ARNES_LLANO || $ARNES_LLANO_CMD != "${ARNES_CMD-}" ]]; then
+    ARNES_LLANO_CMD="${ARNES_CMD-}"; ARNES_LLANO=si
+    # shellcheck disable=SC1003  -- la barra invertida va dentro de la clase a proposito
+    [[ $ARNES_LLANO_CMD == *[\"\'\\\$\`\(\)\{\}\[\]\*\?\~\!\#\<\^[:cntrl:]]* ]] && ARNES_LLANO=no
+  fi
+  [[ $ARNES_LLANO == si ]]
+}
 arnes_destino_a_juzgar() {
   ARNES_DESTINO="$1"
   [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
   ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
+  _arnes_cmd_llano || return 0
   arnes_identidad "${ARNES_DESTINO%/}"
   [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
   [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0

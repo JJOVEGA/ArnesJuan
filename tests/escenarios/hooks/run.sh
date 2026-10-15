@@ -1698,7 +1698,11 @@ done
 # —F/K 74 (12 filas × cp, mv, install × 2 árboles, y K3), A 42, C 12, D 42, N 6, U 48, T 12, G 12, M 4, el oráculo de
 # CA-01 y los procesos de CA-12—. Con los hooks de v1.36.0 como candidata salen 28 FAIL: las 21 filas F de M-032, las
 # 6 G y el oráculo (el fail-before). Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2570
+# Y 2570 → 2686 por la pasada correctiva de QA-032-01 (REQ-032 CA-15, P-032-3 (A)): +116 en la 48 (254 → 370) —el
+# bloque R, 58 filas × 2 árboles: R1–R13 con cp, R1 y R7–R12 con mv e install (R14, R15), y R16 (último operando entre
+# comillas) y R17 (salto de línea), desde la coordinadora y desde qa-tester—. Todas deny en la candidata y en v1.36.0;
+# con los hooks de 9e97bd7 (la entrega anterior) como candidata, 54 FAIL. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2686
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
