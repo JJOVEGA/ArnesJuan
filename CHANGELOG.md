@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · `P-032-5` (C) adoptada: vuelta 2 de 3 con una lista de lo que sí se acepta; **si no cierra QA-032-01, 1.36.1 no se publica**
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-5**, literal en la cola. El arreglo sólo actúa cuando el comando entero es **una** invocación de `cp`, `mv` o `install`, con todas estas condiciones: la orden es la primera palabra y está escrita literalmente; no hay caracteres de shell, tuberías, encadenados, subshells ni redirecciones; y las opciones salen de una lista cerrada que propone el desarrollador y revisa QA (`-t`, `-T` y `--` vuelven a v1.36.0). Fuera de eso, todo como en v1.36.0, y las formas que vuelven a `deny` se declaran como restricción en las notas.
+- **QA-032-02:** write-back del analista (el enlace duro y esta regla); no gasta vuelta. QA re-verifica incluyendo `xargs`, `find -exec` y todas las formas anteriores.
+- **Salida decidida:** si la vuelta 2 no cierra QA-032-01, **no hay vuelta 3**; 1.36.1 no se publica, el código vuelve a v1.36.0 y F-137-10 pasa a 1.36.2 con F-137-14. Escrita también en ESTADO.
+- **Push del propietario:** `origin/hotfix/1.36.1` en `0f717d6`; PR #61 en borrador.
+
 ## [Interno] — 2026-10-15 · Hotfix 1.36.1: re-verificación de QA de la vuelta 1 — **con hallazgos**: `xargs` abre `allow` sobre código protegido (QA-032-01 sigue abierto); el REQ no refleja P-032-4 (QA-032-02); `P-032-5` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 377 k tokens en esta re-verificación) · agentes: `qa-tester` + la coordinadora.
 

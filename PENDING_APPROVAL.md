@@ -43,7 +43,37 @@
 
 ## Pendientes
 
-### P-032-5 — Hotfix 1.36.1: **la re-verificación de QA encontró otra forma llana que abre `allow` sobre código protegido: `xargs`** (QA-032-01 sigue abierto). ¿Vuelta 2, y con qué regla?
+_(Vacía desde el 2026-10-15: P-032-5 resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **P-032-5 (C), vuelta 2 de 3**: el arreglo sólo actúa sobre UNA invocación simple de `cp`/`mv`/`install` con una lista cerrada de opciones; **si la vuelta 2 no cierra QA-032-01, no hay vuelta 3: 1.36.1 no se publica**
+
+**Texto del propietario, literal** (mensaje del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-032-5 (C), vuelta 2 de 3. El arreglo sólo actúa cuando el comando
+> entero es UNA invocación de cp, mv o install, con estas condiciones, todas:
+> - es la primera palabra del comando, escrita literalmente (no \cp,
+>   command cp, sudo/nice/env/timeout cp, ni asignaciones VAR=x delante);
+> - sin caracteres de shell, sin tuberías, sin encadenar (;, &&, ||, &),
+>   sin subshells, sin redirecciones;
+> - opciones sólo de una lista cerrada que el desarrollador propone y QA
+>   revisa (las de uso diario: -f, -i, -n, -p, -v y similares); cualquier
+>   otra opción, -t/-T y -- incluidos, vuelve a v1.36.0.
+> Fuera de eso, todo igual que en v1.36.0. Las formas sueltas que vuelven a
+> deny (cp … && echo, etc.) se declaran como restricción en las notas.
+>
+> QA-032-02: write-back del analista en REQ-032 (enlace duro y esta regla);
+> no gasta vuelta. QA re-verifica la vuelta 2 incluyendo xargs, find -exec,
+> y todas las formas de las rondas anteriores.
+>
+> Si la vuelta 2 no cierra QA-032-01, no hay vuelta 3: 1.36.1 no se publica,
+> el código vuelve a v1.36.0 y F-137-10 entra en 1.36.2 junto con F-137-14,
+> con la gramática de la orden.
+
+**Lo que añade la coordinadora:** el orden es analista (write-back de QA-032-02, con la regla y el enlace duro) → desarrollador (vuelta 2) → QA (re-verificación). El PR #61 (borrador, cabeza `0f717d6`) **sigue en borrador**: esa cabeza tiene QA-032-01 abierto. **La salida si la vuelta 2 no cierra** queda escrita también en `docs/ESTADO.md`, para que ninguna sesión abra una vuelta 3.
+
+### P-032-5 (texto de la consulta, conservado; resuelta arriba) — Hotfix 1.36.1: **la re-verificación de QA encontró otra forma llana que abre `allow` sobre código protegido: `xargs`** (QA-032-01 sigue abierto). ¿Vuelta 2, y con qué regla?
 
 **Qué detiene, y qué no.** Detiene la vuelta 2, la fase 3 (seguridad) y el cierre del hotfix. **No detiene** el write-back del analista (QA-032-02), que se hace con la regla que elijas y no gasta vuelta.
 
@@ -82,8 +112,6 @@
 **Decisión propuesta, lista para adoptar** (si estás de acuerdo, basta «adopto P-032-5 (C)»; si no, corrige):
 
 > **P-032-5 (C):** vuelta 2 de 3. La forma `destino/` sólo se deja de juzgar cuando el comando entero es una sola invocación simple de `cp`, `mv` o `install` como primera palabra, llana, sin tubería, sin encadenar, sin subshell y sin nada delante. Cualquier otra forma conserva la decisión de v1.36.0. Las formas con `xargs` (y `mv`, `install`) entran como casos del banco, en `deny`. Lo que vuelve a `deny` respecto de la pasada (por ejemplo, `cp S D && echo hecho`) se declara como restricción, y las notas `[1.36.1]` lo dicen junto al resto del alcance. El analista hace el write-back de QA-032-02 con esta regla; el desarrollador repara; QA verifica.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-15) — **P-032-4 (B)**: el enlace duro entra en la pasada correctiva; las notas `[1.36.1]` dicen el alcance del arreglo; el contrato de 1.36.2 nombra quitar esa restricción
 
