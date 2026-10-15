@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-02 (CA-15 como lista de lo que se acepta; enlace duro en `deny`; salida sin vuelta 3); no gasta vuelta
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (analista) · agente: `analista-requerimientos`.
+
+- **CA-15**, reescrito con el literal de P-032-5 (C): cuatro condiciones —una invocación con la orden como primera palabra literal; comando llano en una línea; opciones de una lista cerrada que propone el desarrollador y revisa QA; un solo enlace (P-032-4 (B))—. Si falta cualquiera, decide v1.36.0. Casos R1–R17, H1–H4, X1–X5 (`xargs`, `find -exec`), P1–P8 (prefijos), G1, E1 y O1.
+- **Restricciones declaradas:** G1 (`cp S docs/notas.md && echo completado`) y F4 (`cp -T`) vuelven a `deny` sin movimiento frente a v1.36.0; también los encadenados, los prefijos, `/bin/cp`, las opciones fuera de la lista y H3.
+- **CA-04, CA-09, CA-12 (b), CA-14:** el enlace duro, en `deny`; M-032 sólo existe dentro de CA-15; techo de **1 proceso añadido**, sólo en la rama del número de enlaces; las notas llevan el alcance exacto.
+- **Salida si la vuelta 2 no cierra:** escrita en el REQ (CA-15 y la nota «Contador y salida»).
+
 ## [Interno] — 2026-10-15 · `P-032-5` (C) adoptada: vuelta 2 de 3 con una lista de lo que sí se acepta; **si no cierra QA-032-01, 1.36.1 no se publica**
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
