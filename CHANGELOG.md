@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · **Corrección de rumbo del propietario:** P-137-I retirada; 1.36.2 **mínima** (manifiesto intocable y origen de `mv`); 1.37 empieza por el coste; métrica: tokens por REQ cerrado; `P-137-J` lista para adoptar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión del propietario, literal** en la cola («CORRECCIÓN DE RUMBO»), en `docs/PLAN.md` (sección nueva «★ PLAN VIGENTE», que manda sobre el resto del archivo y sobre la tabla de 1.37 de `cand/1.37.0`) y en ESTADO: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.»
+- **1.36.2 mínima:** borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente, y se juzga el origen de `mv`. Una pasada correctiva; QA y analista en Sonnet. **SEC-135 entero** y `rm`/`unlink`/`git rm` de SEC-136 pasan a la pieza b de 1.37 y se declaran en las notas `[1.36.2]`. Sustituye lo que P-032-6 (1) y (2) decía de 1.36.2.
+- **1.37, en este orden:** rigor proporcional por defecto; modelo por rol; pieza b (con su requisito del manifiesto); F-137-9 y adelgazamiento de `AGENTS.md`; plan de desarrollo, spike de mod y 2b. Tope de dos pasadas por intervención. **Métrica:** tokens por REQ cerrado, por rol, en el Arnés y en SENDA, comparados con 1.36.0; si 1.37 no la baja, se para y se revisa.
+- **`P-137-J`** en `## Pendientes`, en una página. P-137-I queda conservada como retirada.
+- **Avance (regla 6):** el plan cambia de rumbo y la siguiente intervención es una sesión corta.
+
 ## [Interno] — 2026-10-15 · Registro de la publicación de **v1.36.1** (`main` `e21baef`, tag `v1.36.1`, PR #61; CI de `main` en verde); instalación estable a 1.36.1; apertura de `hotfix/1.36.2` con su autorización (`P-137-I`) lista para adoptar
 > Origen: GitHub (commit local, primero de `hotfix/1.36.2`) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 

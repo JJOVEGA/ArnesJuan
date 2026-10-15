@@ -43,7 +43,86 @@
 
 ## Pendientes
 
-### P-137-I — **Hotfix 1.36.2 (SEC-135 y la parte de SEC-136 decidida): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
+### P-137-J — **Hotfix 1.36.2 mínimo: autorización lista para adoptar** (sustituye a P-137-I, retirada)
+
+**Dos cosas que la coordinadora comprobó y que la autorización recoge:** (1) este proyecto no declara la vía proporcional (`AGENTS.md` §6) y hace falta un REQ nuevo (REQ-033), así que el analista no se omite, como pediste; (2) `AGENTS.md` §5 manda QA en Opus en este repositorio, y **tu decisión lo sustituye para esta intervención**: QA y analista en Sonnet.
+
+> ## Autorización — hotfix 1.36.2 mínimo (una sesión)
+>
+> ## Decisiones del propietario (2026-10-15; sustituyen lo que en P-032-6 (1) y (2) decía de 1.36.2)
+> - **Alcance, sólo esto:** borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente; y se juzga el **origen** de `mv`, porque mover un archivo protegido es escribirlo.
+> - **Fuera:** SEC-135 pasa entero a la pieza b de 1.37; `rm`, `unlink` y `git rm` (SEC-136), también a 1.37. Los dos se declaran en las notas `[1.36.2]` con sus formas exactas; SEC-135, con su gravedad alta.
+> - **Tope: una pasada correctiva.** Si no cierra, 1.36.2 se publica sin esa parte, y la parte que no cerró se declara.
+>
+> ## Plan autorizado (cada fase termina en commit local; la siguiente empieza sin pedir permiso)
+> Fase 0 — analista (**Sonnet**): REQ-033, un contrato corto. Las dos propiedades; el fail-before contra v1.36.1 (`rm .arnes/config.json`, `mv .arnes/config.json x`, `: > .arnes/config.json`, `mv hooks/lib.sh docs/x.md`, `mv hooks/lib.sh docs/PLAN.md`); los controles (lo legítimo sigue igual); y las notas como entregable.
+> Fase 1 — desarrollador (Opus): el arreglo, los casos del banco con su fail-before, el banco completo, la autoprueba y la versión 1.36.2. Sin procesos nuevos en el camino común.
+> Fase 2 — QA (**Sonnet**): el fail-before y el pass-after, el banco, e intentar romperlo. Una pasada correctiva como máximo.
+> Fase 3 — seguridad (Opus), sólo con QA favorable. Puede vetar.
+> Fase 4 — analista (Sonnet): write-back y notas `[1.36.2]`. La coordinadora cierra REQ-033 con `Edit`, juzgado en vivo, y hace commit validado, push y CI. Y registra **la métrica**: tokens por rol en REQ-033, comparados con 1.36.0 y 1.36.1.
+>
+> ## Lo que decide la coordinadora sola
+> Texto, registro e índices; orden y presupuesto de los despachos (orientativo: ≈ 60 k analista, ≈ 150 k desarrollador, ≈ 100 k QA, ≈ 100 k seguridad); registrar defectos nuevos sin repararlos; aplicar el tope (retirar la parte que no cierre y declararla); el push al cerrar y marcar el PR listo con el CI en verde.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Cambio de alcance; un movimiento de `deny` a `allow` sobre algo protegido o fuera de lo declarado; un veredicto del banco que cambia en un caso que ejecuta el código del cambio (las sondas de reloj se registran como `instrumento`: P-136-E); un veto de seguridad; publicar, fusionar o etiquetar.
+>
+> ## Si la sesión se corta
+> Se lee este plan en la cola y en ESTADO, y se continúa desde la última fase comiteada.
+>
+> ## Límites
+> Rama `hotfix/1.36.2` (desde `e21baef`). **No se toca `AGENTS.md`:** SEC-135 y SEC-136 se declaran en las notas; §13 va con el adelgazamiento de 1.37. Nada de 1.37. **Lo que 1.36.2 no resuelve:** SEC-135, `rm`/`unlink`/`git rm` y el hueco C, que son de la pieza b, y su requisito: la puerta posterior no puede depender sólo del manifiesto que vigila. Push de la rama: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-15) — **CORRECCIÓN DE RUMBO: P-137-I retirada; 1.36.2 mínima (una sesión); 1.37 empieza por el coste; métrica del objetivo: tokens por REQ cerrado**
+
+**Texto del propietario, literal** (mensaje del 2026-10-15 a la sesión coordinadora del worktree `ArnesJuan-v1.36`; los encabezados `##` del original van citados con `> ` para no cerrar esta sección):
+
+> No adopto P-137-I. La sustituye esta decisión del propietario; regístrala
+> literal en la cola, docs/PLAN.md y ESTADO, y marca P-137-I como retirada.
+>
+> El objetivo del Arnés es que los agentes construyan software real con
+> disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado
+> demasiado por perseguir formas de bash; se corrige el rumbo.
+>
+> ## 1.36.2 — mínima (una sesión)
+> Alcance, sólo esto:
+> - Borrar, mover o vaciar .arnes/config.json → deny a todo agente.
+> - Juzgar el ORIGEN de mv (mover un archivo protegido = escribirlo).
+> Fuera: SEC-135 pasa entero a la pieza b de 1.37 (la puerta posterior
+> cierra la clase sin perseguir formas). Se declara en las notas [1.36.2] con
+> sus formas exactas y su gravedad alta. rm/unlink/git rm, igual: 1.37.
+> Tope: una pasada correctiva. Si no cierra, se publica sin esa parte.
+> Ciclo: analista (contrato corto) → desarrollador → QA → seguridad; QA y
+> analista en Sonnet para esta intervención.
+>
+> ## 1.37 — empieza por el coste, en este orden
+> 1. Rigor proporcional por defecto: flujo ligero (desarrollador → banco →
+>    hecho) para cambios normales; flujo completo sólo para dinero, sesión,
+>    seguridad, datos y el propio Arnés. Política en .arnes/config.json.
+> 2. Modelo por rol: analista y QA de rutina en Sonnet; Opus para
+>    desarrollador en trabajo difícil y para seguridad. /compact entre fases.
+> 3. Pieza b: puerta posterior (qué cambió después de cada orden), con el
+>    requisito del manifiesto; cierra SEC-135, SEC-136 y el hueco C.
+> 4. F-137-9 (partir REQ-007) y adelgazamiento de AGENTS.md.
+> 5. Plan de desarrollo; spike de mod; 2b.
+> Tope por intervención: dos pasadas correctivas; a la tercera se decide.
+>
+> ## Métrica del objetivo
+> Tokens por REQ cerrado, por rol, en el Arnés y en SENDA. Se registra al
+> cerrar cada intervención y se compara con 1.36.0. Si 1.37 no la baja, se
+> para y se revisa.
+>
+> Prepara la autorización nueva de 1.36.2 con este alcance, lista para
+> adoptar. Debe caber en una página.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Lo que esta decisión sustituye:** P-137-I (retirada, abajo) y, en lo que decían de 1.36.2, P-032-6 (1) y (2). **SEC-135 entero** y `rm`/`unlink`/`git rm` de SEC-136 **pasan a la pieza b de 1.37**. Se conservan el requisito de la pieza b (la puerta posterior no depende sólo del manifiesto) y la fusión de `main` en `cand/1.37.0` tras 1.36.2.
+- **Registrado también** en `docs/PLAN.md` de esta rama, como plan vigente, y en ESTADO. En `cand/1.37.0`, su tabla de 1.37 queda **sustituida** por esta decisión (nota en esa rama), y se reconcilia al fusionar (paso 2b).
+- **La autorización nueva de 1.36.2 es `P-137-J`**, en `## Pendientes`, en una página. **Nota sobre `AGENTS.md` §5:** manda QA en Opus en este repositorio, y la decisión del propietario lo sustituye para esta intervención.
+
+### P-137-I (RETIRADA por el propietario el 2026-10-15; texto conservado) — **Hotfix 1.36.2 (SEC-135 y la parte de SEC-136 decidida): autorización lista para adoptar**, con la forma de `templates/autorizacion.md`
 
 **Qué detiene, y qué no.** Mientras no la adoptes, el hotfix 1.36.2 **no empieza**. La rama `hotfix/1.36.2` ya existe desde `e21baef`, y su primer commit registra la publicación de 1.36.1. No detiene nada más.
 
@@ -86,8 +165,6 @@
 > - Nada de F-137-9 ni de las piezas a–d. Nada de F-137-12 (el glob con sufijo) salvo que caiga por la misma propiedad, y entonces se dice.
 > - Fusión, tag y publicación: míos. Al publicar 1.36.2, se fusiona `main` en `cand/1.37.0` (paso 2b).
 > - Push de `hotfix/1.36.2`: recordármelo al terminar cada fase.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-15) — **v1.36.1 PUBLICADA** (`main` `e21baef`, tag `v1.36.1`, PR #61) por orden expresa del propietario; **registro, instalación estable y autorización de 1.36.2**, con dos condiciones
 

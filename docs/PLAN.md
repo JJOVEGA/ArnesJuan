@@ -9,6 +9,60 @@
 > hueco se paga una vez. Por eso el coste va antes que las puertas, aunque las puertas suenen más
 > urgentes.
 
+## ★ PLAN VIGENTE — corrección de rumbo del propietario (2026-10-15): 1.36.2 mínima; 1.37 empieza por el coste
+
+**Esta sección manda sobre cualquier otra de este archivo y sobre la tabla de 1.37 de `cand/1.37.0`**, que queda sustituida y se reconcilia al fusionar `main` en esa rama (tras 1.36.2). Decisión literal del propietario (también en `PENDING_APPROVAL.md` § Resueltas, «CORRECCIÓN DE RUMBO»):
+
+> No adopto P-137-I. La sustituye esta decisión del propietario; regístrala
+> literal en la cola, docs/PLAN.md y ESTADO, y marca P-137-I como retirada.
+>
+> El objetivo del Arnés es que los agentes construyan software real con
+> disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado
+> demasiado por perseguir formas de bash; se corrige el rumbo.
+>
+> ## 1.36.2 — mínima (una sesión)
+> Alcance, sólo esto:
+> - Borrar, mover o vaciar .arnes/config.json → deny a todo agente.
+> - Juzgar el ORIGEN de mv (mover un archivo protegido = escribirlo).
+> Fuera: SEC-135 pasa entero a la pieza b de 1.37 (la puerta posterior
+> cierra la clase sin perseguir formas). Se declara en las notas [1.36.2] con
+> sus formas exactas y su gravedad alta. rm/unlink/git rm, igual: 1.37.
+> Tope: una pasada correctiva. Si no cierra, se publica sin esa parte.
+> Ciclo: analista (contrato corto) → desarrollador → QA → seguridad; QA y
+> analista en Sonnet para esta intervención.
+>
+> ## 1.37 — empieza por el coste, en este orden
+> 1. Rigor proporcional por defecto: flujo ligero (desarrollador → banco →
+>    hecho) para cambios normales; flujo completo sólo para dinero, sesión,
+>    seguridad, datos y el propio Arnés. Política en .arnes/config.json.
+> 2. Modelo por rol: analista y QA de rutina en Sonnet; Opus para
+>    desarrollador en trabajo difícil y para seguridad. /compact entre fases.
+> 3. Pieza b: puerta posterior (qué cambió después de cada orden), con el
+>    requisito del manifiesto; cierra SEC-135, SEC-136 y el hueco C.
+> 4. F-137-9 (partir REQ-007) y adelgazamiento de AGENTS.md.
+> 5. Plan de desarrollo; spike de mod; 2b.
+> Tope por intervención: dos pasadas correctivas; a la tercera se decide.
+>
+> ## Métrica del objetivo
+> Tokens por REQ cerrado, por rol, en el Arnés y en SENDA. Se registra al
+> cerrar cada intervención y se compara con 1.36.0. Si 1.37 no la baja, se
+> para y se revisa.
+>
+> Prepara la autorización nueva de 1.36.2 con este alcance, lista para
+> adoptar. Debe caber en una página.
+
+**En una tabla, para seguirlo** (la coordinadora sólo resume; manda el texto de arriba):
+
+| Orden | Qué | Estado |
+|---|---|---|
+| 1.36.2 | `.arnes/config.json` intocable (borrar, mover, vaciar → `deny`) y el **origen** de `mv` juzgado. Una pasada correctiva. QA y analista en Sonnet. SEC-135 y `rm`/`unlink`/`git rm` se declaran y van a 1.37 | Autorización `P-137-J` pendiente de adoptar |
+| 1.37 · 1 | Rigor proporcional por defecto (flujo ligero para lo normal; completo para dinero, sesión, seguridad, datos y el propio Arnés); política en `.arnes/config.json` | — |
+| 1.37 · 2 | Modelo por rol (analista y QA de rutina en Sonnet; Opus para desarrollador difícil y seguridad); `/compact` entre fases | — |
+| 1.37 · 3 | **Pieza b**, puerta posterior: qué cambió después de cada orden; cierra SEC-135, SEC-136 y el hueco C. **Requisito:** no depende sólo del manifiesto que vigila (P-032-6 (2)) | — |
+| 1.37 · 4 | F-137-9 (partir REQ-007) y adelgazamiento de `AGENTS.md` | — |
+| 1.37 · 5 | Plan de desarrollo; spike de mod; 2b | — |
+| Siempre | **Tope por intervención: dos pasadas correctivas**; a la tercera se decide (1.36.2: una). **Métrica:** tokens por REQ cerrado, por rol, en el Arnés y en SENDA, registrada al cerrar cada intervención y comparada con 1.36.0; si 1.37 no la baja, se para y se revisa | — |
+
 ## Qué significa «terminado»
 
 El arnés estará terminado cuando se cumplan las tres a la vez:
