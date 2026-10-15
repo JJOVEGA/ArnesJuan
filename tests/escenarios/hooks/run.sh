@@ -1694,7 +1694,23 @@ done
 # importadas del entorno: `ls -la` sin decisión y un Write a src/ con deny, los dos en menos de 5 s—; con 03cbf5e, 60 s.
 # Y 2314 → 2316 por QA-007-14 (P-136-R (A)): +2 en 47-decision-emitida.sh (104 → 106) —funciones `return` y `break`
 # importadas: `ls -la` sin decisión y un Write a src/ con deny, en menos de 5 s—; con 39e6128 mueren o no terminan.
-CASOS_ESPERADOS=2316
+# Y 2316 → 2570 por el hotfix 1.36.1 (REQ-032, F-137-10): +254 en la sección nueva 48-destino-de-cp-que-es-archivo.sh
+# —F/K 74 (12 filas × cp, mv, install × 2 árboles, y K3), A 42, C 12, D 42, N 6, U 48, T 12, G 12, M 4, el oráculo de
+# CA-01 y los procesos de CA-12—. Con los hooks de v1.36.0 como candidata salen 28 FAIL: las 21 filas F de M-032, las
+# 6 G y el oráculo (el fail-before). Ninguna otra sección cambia su número.
+# Y 2570 → 2686 por la pasada correctiva de QA-032-01 (REQ-032 CA-15, P-032-3 (A)): +116 en la 48 (254 → 370) —el
+# bloque R, 58 filas × 2 árboles: R1–R13 con cp, R1 y R7–R12 con mv e install (R14, R15), y R16 (último operando entre
+# comillas) y R17 (salto de línea), desde la coordinadora y desde qa-tester—. Todas deny en la candidata y en v1.36.0;
+# con los hooks de 9e97bd7 (la entrega anterior) como candidata, 54 FAIL. Ninguna otra sección cambia su número.
+# Y 2686 → 2722 por P-032-4 (B), el enlace duro, en la misma pasada: +36 en la 48 (370 → 406) —el bloque H, 18 filas
+# × 2 árboles: H1 (a hooks/lib.sh, protegido), H2 (a src/a.ts) y H3 (entre dos archivos de docs/, restricción aceptada),
+# con cp, mv e install, desde la coordinadora y desde qa-tester—. deny en la candidata y en v1.36.0; con los hooks de
+# 759ff50 como candidata, los 18 FAIL. Ninguna otra sección cambia su número.
+# Y 2722 → 2862 por la vuelta 2 de REQ-032 (QA-032-02, P-032-5 (C)): +140 en la 48 (406 → 546) —70 filas × 2 árboles,
+# coordinadora y qa-tester: X1, X2 y X5 con cp, mv e install, X3, X4, P1–P8, E1 (4), O1 (4), L1 (4, opciones de la
+# lista) y H4a/b/c/k—. F4 y G1 pasan a esperar deny (restricciones de CA-15). Con los hooks de 264dfa9 como candidata,
+# 53 FAIL. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2862
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

@@ -2252,14 +2252,33 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
       cp|mv|install|*/cp|*/mv|*/install)
         # El destino es el último operando del segmento; se prueba también su forma
         # de directorio (`cp x src` debe casar con el glob `src/*`).
-        local dest=""
+        # REQ-032 (M-032): esa forma de directorio sale MARCADA (`ARNES_FORMA_DIR` delante) para que
+        # quien juzga pueda no juzgarla cuando el destino existe y es un archivo regular
+        # (`arnes_destino_a_juzgar`). Con `-t`/`--target-directory` el operando que se toma aqui NO es el
+        # destino de la orden (es un origen; REQ-032 CA-10 deja su seleccion como esta): sale SIN marca,
+        # como en v1.36.0, y nunca deja de juzgarse (CA-08: lo que no se sabe no se toma por archivo).
+        # REQ-032 CA-15 (QA-032-01): tampoco se marca si el segmento acaba en una REDIRECCION de salida
+        # (`2>/dev/null` se lee aqui como el operando `2`): no se puede asegurar que el ultimo operando sea
+        # el destino. Lo que este texto ya no deja ver —comillas, escapes, expansiones, `<`, `#`— lo mira
+        # `arnes_destino_a_juzgar` sobre el comando entero antes de retirar la marca.
+        local dest="" sin_marca=0
         for ((j = i + 1; j < n; j++)); do
-          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*) continue ;; esac
+          case "${t[j]}" in
+            '>') sin_marca=1; break ;;
+            '|'|';'|'&&'|'||'|'&') break ;;
+            --t*) sin_marca=1; continue ;;
+            --*) continue ;;
+            -*t*) sin_marca=1; continue ;;
+            -*) continue ;;
+          esac
           dest="${t[j]}"
         done
         if [ -n "$dest" ]; then
           sal+=("$dest")
-          case "$dest" in */) ;; *) sal+=("$dest/") ;; esac
+          case "$dest" in
+            */) ;;
+            *) if [ "$sin_marca" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
+          esac
         fi ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
@@ -2324,6 +2343,105 @@ _arnes_estado_ausente_c() {
   case "$2" in ''|*[!A-Za-z0-9_-]*) return 1 ;; esac
   case "$1" in *[![:ascii:]]*) return 1 ;; esac
   [[ ${1,,} != *"${2,,}"* ]]
+}
+
+# LA FORMA DE DIRECTORIO DEL DESTINO DE `cp`/`mv`/`install`, Y CUANDO NO SE JUZGA (REQ-032, M-032).
+# El detector emite el destino y, detras, su forma `destino/` («escribe DENTRO de ese directorio»,
+# REQ-007 CA-47 punto 10), marcada con un tabulador delante: ningun destino del detector lleva uno,
+# porque el comando se trocea por blancos. Desde 1.35.0 la identidad de CA-47 declara no determinable
+# `archivo-existente/` y lo deniega a quien no es el agente de codigo: un `cp` sobre un archivo que
+# existe se denegaba por una forma de directorio que no designa nada.
+# `arnes_destino_a_juzgar <linea del detector>` -> ARNES_DESTINO (la ruta a juzgar, sin marca). Devuelve
+# 1 —«no se juzga»— SOLO para la forma marcada cuyo destino, identificado como lo identifica CA-47
+# (anclado en el `cwd` de la entrada, lectura fisica), EXISTE Y ES UN ARCHIVO REGULAR: el destino ya se
+# juzgo en la linea anterior. Un enlace cuenta como el archivo al que resuelve (P-032-2 (A)); cualquier
+# otra cosa —directorio, inexistente, no determinable, otro tipo, dos lecturas distintas— se juzga como
+# en v1.36.0. Ante la duda, se juzga.
+# SIN PROCESOS: `[[ -f ]]` es de bash, y la identidad del destino ya esta memorizada por la linea
+# anterior. Un enlace que la puerta no ha resuelto aun (su ambito no tiene patrones, y por eso no lo
+# resolvio) NO se resuelve aqui —costaria un `readlink`—: no se afirma, y se juzga como en v1.36.0, que
+# en ese ambito no puede denegar nada (`arnes_id_pertenece` sale «fuera» sin patrones).
+# La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
+# excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
+# directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
+# REQ-032 CA-15 (QA-032-02, P-032-5 (C)): LISTA DE LO QUE SE ACEPTA, no de lo que se rechaza. La marca
+# SOLO se retira si el comando ENTERO, tal como llego (`ARNES_CMD`, el mismo que analizan las dos puertas,
+# y no el texto desentrecomillado del detector), es UNA invocacion simple: `_arnes_cmd_llano`, abajo, es el
+# sitio unico de las condiciones (1) a (3). Cualquier otra forma —comillas, escapes, expansiones,
+# tuberias (`echo src/a.ts | xargs cp S`), encadenados, redirecciones, prefijos (`sudo cp`, `\cp`,
+# `/bin/cp`, `VAR=x cp`), una orden que no es la primera palabra (`xargs -a lista cp S`), una opcion
+# fuera de la lista— conserva la forma `destino/`: la decision es la de v1.36.0. Antes (P-032-3 (A)) era
+# una lista de lo rechazado, y `xargs` la rodeo (QA-032-02). Una vez por comando, sin procesos.
+# EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
+# enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
+# archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
+# lee el numero de enlaces sin un proceso, asi que `_arnes_un_solo_enlace` cuesta UN `find` y SOLO en esta
+# rama: destino de `cp`/`mv`/`install` con la marca, comando llano, destino que existe y es archivo regular.
+# Nunca en el camino comun (sin escrituras no hay marca) ni con un destino que no existe. Memorizado por
+# archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
+# afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
+ARNES_FORMA_DIR=$'\t'
+declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
+_arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
+  local r
+  if [[ -z ${ARNES_NLINK1[$1]+x} ]]; then
+    r="$(find "$1" -maxdepth 0 -type f -links 1 -print 2>/dev/null)"
+    if [[ -n $r && $r == "$1" ]]; then ARNES_NLINK1[$1]=si; else ARNES_NLINK1[$1]=no; fi
+  fi
+  [[ ${ARNES_NLINK1[$1]} == si ]]
+}
+ARNES_DESTINO=''
+# `_arnes_cmd_llano` -> 0 si `ARNES_CMD` es UNA invocacion simple de `cp`, `mv` o `install`, y deja en
+# ARNES_LLANO_DEST su ultimo operando (el destino). Todas, o no (REQ-032 CA-15):
+#   (2) cada caracter es de este conjunto, y ningun otro: letras y cifras ASCII, el blanco ' ' y
+#       `. / _ + , : @ % = -`. Fuera, por tanto, todo lo que el shell interpreta (comillas, `\`, `$`, acento
+#       grave, `| ; & < > ( ) { } [ ] * ? ~ ! # ^`), todo caracter de control (salto de linea, retorno de
+#       carro, tabulador: una sola linea, blancos solo ' ') y todo caracter no ASCII. Las letras van
+#       ESCRITAS una a una, no como rango ni como clase: no dependen del locale.
+#   (1) la primera palabra es exactamente `cp`, `mv` o `install` (ni ruta, ni prefijo, ni asignacion);
+#   (3) toda palabra que empieza por `-` es una opcion de la LISTA CERRADA (REQ-032, Historial del
+#       2026-10-15, vuelta 2): cortas `f i n p v r R a u`, solas o agrupadas con solo esas letras; largas
+#       exactas `--force --interactive --no-clobber --verbose --recursive --archive --update`. Ninguna lleva
+#       argumento, asi que ninguna consume un operando ni cambia cual es el destino. Fuera: `-t`, `-T`, `--`,
+#       `-` y cualquier otra (tambien `--update=…`, `-S`, `-m`, `-b`…);
+#   y al menos dos operandos (origen y destino).
+# El enlace unico, la condicion (4), lo comprueba `_arnes_un_solo_enlace`. Memorizado por comando.
+ARNES_LLANO_CMD=''; ARNES_LLANO=''; ARNES_LLANO_DEST=''   # nacen vacias al cargar (no se heredan)
+_arnes_cmd_llano() {
+  local c="${ARNES_CMD-}" x d='' n=0 reponer_f=0
+  if [[ -n $ARNES_LLANO && $ARNES_LLANO_CMD == "$c" ]]; then [[ $ARNES_LLANO == si ]]; return; fi
+  ARNES_LLANO_CMD="$c"; ARNES_LLANO=no; ARNES_LLANO_DEST=''
+  [[ $c == *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\ ./_+,:@%=-]* ]] && return 1
+  local -a w; local IFS=' '
+  case $- in *f*) reponer_f=1 ;; esac
+  set -f
+  # shellcheck disable=SC2206  -- se quiere el troceado por blancos, con globbing apagado
+  w=($c)
+  [ "$reponer_f" -eq 1 ] || set +f
+  case "${w[0]-}" in cp|mv|install) ;; *) return 1 ;; esac
+  for x in "${w[@]:1}"; do
+    case "$x" in
+      --force|--interactive|--no-clobber|--verbose|--recursive|--archive|--update) ;;
+      -|--*) return 1 ;;
+      -*) [[ ${x:1} == *[!finpvrRau]* ]] && return 1 ;;
+      *) n=$((n + 1)); d="$x" ;;
+    esac
+  done
+  (( n >= 2 )) || return 1
+  ARNES_LLANO=si; ARNES_LLANO_DEST="$d"
+}
+arnes_destino_a_juzgar() {
+  ARNES_DESTINO="$1"
+  [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
+  ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
+  _arnes_cmd_llano || return 0
+  [[ ${ARNES_DESTINO%/} == "$ARNES_LLANO_DEST" ]] || return 0   # el destino del detector es el de la orden
+  arnes_identidad "${ARNES_DESTINO%/}"
+  [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
+  [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
+  [[ -f $ARNES_ID_O ]] || return 0
+  _arnes_un_solo_enlace "$ARNES_ID_O" && return 1   # P-032-4 (B): con mas de un enlace duro, como v1.36.0
+  return 0
 }
 
 # LOS DESTINOS DE UN COMANDO, ANALIZADO UNA VEZ POR INVOCACION (CA-54, nota del 2026-10-03).
@@ -2514,6 +2632,9 @@ arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash
       destinos="${1:-}"; [ -n "$destinos" ] || return 0
       while IFS= read -r d; do
         [ -n "$d" ] || continue
+        # REQ-032: aqui la forma de directorio de `cp`/`mv`/`install` se juzga SIEMPRE, como en v1.36.0;
+        # solo se retira su marca (ver `arnes_destino_a_juzgar`: esta excepcion no la nombra REQ-032).
+        d="${d#"$ARNES_FORMA_DIR"}"
         arnes_identidad "$d"
         arnes_id_pertenece manifiesto || { solo_manifiesto=0; break; }
       done <<< "$destinos" ;;

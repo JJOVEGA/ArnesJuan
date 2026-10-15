@@ -2,6 +2,342 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-15 · **Hotfix 1.36.1 cerrado (commit validado):** REQ-032 `completado` (por `Edit`, juzgado en vivo); notas `[1.36.1]` copiadas del borrador; PR #61 listo para la fusión del propietario
+> Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora y subagentes) · agentes: `analista-requerimientos` (fase 4), la coordinadora.
+
+- **Fase 4:** el analista hizo el write-back de §9 en REQ-032 (SEC-135 y SEC-136 clasificados por R-059, V7, las restricciones, el coste y las ventanas de P-032-6) y el borrador `docs/arnes/notas-1.36.1-borrador.md`. La coordinadora le añadió la línea del CI y su propio modelo, y lo copió entero debajo de esta entrada. Comprobado que `## [1.36.1]` aparece una sola vez y que empieza en su encabezado.
+- **Cierre de REQ-032** (P-032-6 (3)): `Estado: pendiente` → `completado` con `Edit`; `guard-completado` lo admitió en vivo, con QA y seguridad aprobados, cola vacía y hallazgos sólo `instrumento`. Fila en su Historial y en el índice.
+- **CI:** `a86a315` success (run `38818908273`, 2823/0/39); `0f717d6` failure (run `38798052406`) por INS-032-1, declarado en las notas y no desmentido. La corrida de esta cabeza, que sólo añade registro y notas, llega con el push.
+- **Avance (regla 6):** el hotfix 1.36.1 está entregado. Fusión, tag `v1.36.1` y publicación: del propietario. Al publicarse se abre 1.36.2.
+
+## [1.36.1] — 2026-10-15 · Hotfix: un `cp`, `mv` o `install` suelto sobre un archivo existente que no está protegido vuelve a pasar —la regresión de 1.35.0, F-137-10—, con lo protegido en `deny` y el alcance del arreglo a la vista; y dos fallos en abierto preexistentes, SEC-135 (alta) y SEC-136 (media), declarados con su versión de reparación
+
+> Origen: GitHub (commit de versión) · usuario: Juan · agentes: `analista-requerimientos`, `desarrollador`,
+> `qa-tester` y `auditor-seguridad` (Opus 5.5; `qa-tester` en Opus por la decisión del propietario de `AGENTS.md`
+> §5) y la coordinadora (Opus 5.5) · gobernado por la instalación estable **1.36.0**
+
+**Estas notas no publican nada.** El propietario lo dejó escrito: «la publicación (fusión, tag v1.36.1) es mía»
+(P-032-6 (3), `PENDING_APPROVAL.md` § Resueltas). **CI (`hooks-en-linux`) del PR #61:** sobre `a86a315`, cuyo
+código es el aprobado por QA y seguridad, **success** (run `38818908273`: 2823 PASS, 0 FAIL, 39 SKIP, 2 de ellos
+INCONCLUSO de rendimiento, que no acreditan). Antes, sobre `0f717d6`, **failure** (run `38798052406`) por un solo
+caso, la sonda de reloj de REQ-017 CA-08 (ii) con 1,304× frente al techo de 1,25×: es **INS-032-1**, medido no
+atribuible al cambio (más abajo), y **no se desmiente** con la corrida verde posterior. La corrida sobre la cabeza
+final, que sólo añade registro y estas notas, llega con su push.
+
+**De dónde salen.** Las decisiones del propietario están literales en `PENDING_APPROVAL.md` § Resueltas: la
+autorización del hotfix (2026-10-13, P-137-H con tres ajustes), P-032-1 y P-032-2 (2026-10-14) y P-032-3 a P-032-6
+(2026-10-15). El contrato vive en `requirements/REQ-032.md`, que es la sede de todo lo que sigue.
+
+---
+
+### Qué cambia
+
+**El código de 1.36.1 es el de `77b71f7`.** Se construyó en `9e97bd7` (fase 1), `759ff50` y `264dfa9` (pasada
+correctiva, vuelta 1) y `77b71f7` (vuelta 2), y sólo toca `hooks/lib.sh`, `hooks/guard-codigo.sh` y
+`hooks/guard-completado.sh`. Es un parche: no cambia la identificación del destino (REQ-007 CA-47) ni ninguna otra
+puerta.
+
+#### La regresión que se repara (F-137-10)
+
+**Desde 1.35.0, un `cp`, `mv` o `install` sobre un archivo existente se denegaba a quien no es el agente de
+código** —la sesión coordinadora y los demás subagentes—, también con `cp -T`, aunque el archivo no estuviera
+protegido. El agente de código, con su `agent_id`, pasaba. El motivo citaba la ruta **con una barra final**
+(«no se pudo determinar a que archivo escribe '…/REQ-007.md/'»). La causa: el detector juzgaba siempre, además del
+destino, su forma de directorio `destino/`, y desde 1.35.0 esa forma, sobre un archivo, no se puede determinar y
+se deniega.
+
+- **Medido:** 1.33.2 no la tenía; 1.35.0 y 1.36.0, sí. Las demás versiones, no medidas.
+- **Efecto:** fallaba del lado cerrado —no abría permisos— y bloqueaba escrituras legítimas en todos los proyectos
+  con esas versiones. La redirección (`cat S > destino`) seguía pasando.
+
+#### El arreglo y su alcance exacto (REQ-032 CA-15)
+
+**El arreglo sólo actúa sobre un `cp`, `mv` o `install` suelto y sin caracteres de shell** (P-032-6). En ese caso,
+y sólo en ese, la puerta juzga el archivo destino y deja de juzgar la forma `destino/`. **El destino mismo se
+juzga siempre.** Tienen que cumplirse **todas** estas condiciones:
+
+1. **Una sola invocación, con la orden como primera palabra, escrita literalmente:** `cp`, `mv` o `install`.
+2. **Sin caracteres de shell, sin tuberías, sin encadenar (`;`, `&&`, `||`, `&`), sin subshells, sin
+   redirecciones y en una sola línea.** El comando sólo puede llevar letras y cifras ASCII, el blanco y
+   `. / _ + , : @ % = -` (sede: `_arnes_cmd_llano`, `hooks/lib.sh`).
+3. **Opciones sólo de una lista cerrada:** cortas `-f -i -n -p -v -r -R -a -u`, solas o agrupadas sólo con esas
+   letras, y largas exactas `--force --interactive --no-clobber --verbose --recursive --archive --update` (sin
+   `=`). Ninguna lleva argumento. La propuso el desarrollador y la aprobó QA.
+4. **El destino es un archivo regular** —un enlace simbólico a uno cuenta como ese archivo— **con un solo enlace
+   duro**.
+
+Y, en lo construido, al menos dos operandos, con el destino como último operando.
+
+**Las restricciones: fuera de eso, la orden sigue decidiéndose como en v1.36.0**, que sobre un archivo existente
+es `deny` para quien no es el agente de código. Ejemplos **no exhaustivos**:
+- con caracteres de shell: comillas, `$`, `#`, `<`, `>`, `*` o un salto de línea;
+- encadenada o en tubería: `cp S docs/notas.md && echo hecho`, `cp … ; ls`, `cp … | cat`;
+- con un prefijo o la ruta de la orden: `\cp`, `command cp`, `sudo`, `nice`, `env`, `timeout … cp`, `VAR=x cp`,
+  `/bin/cp`;
+- con `-t`, `-T`, `--`, `-` o cualquier opción fuera de la lista; en particular, **`cp -T` sigue denegándose**;
+- con un nombre que lleva caracteres **no ASCII** (una tilde);
+- con un destino que tiene **más de un enlace duro**, también entre dos archivos no protegidos (restricción
+  aceptada por el propietario).
+
+**La salida**, en palabras del propietario: «escribir el comando sin esos caracteres o usar una redirección
+simple» (P-032-4 (B)); es decir, el `cp` suelto, o `cat S > destino`. **Las quita 1.36.2**, que leerá el destino
+con la gramática de la orden.
+
+#### El movimiento declarado (M-032), y lo que no cambia
+
+**El único paso de `deny` a `allow`** es la clase M-032 (REQ-032 CA-09). La forman los `cp`, `mv` e `install` que
+cumplen las cuatro condiciones, sobre un archivo existente **no protegido**, que v1.36.0 denegaba sólo por la
+forma `destino/`. **Restituye lo que daba 1.33.2.** Sus casos, con las tres órdenes: el REQ con ruta absoluta y
+relativa, un archivo de `docs/`, el mismo `cp` emitido por `qa-tester` o por `analista-requerimientos`, y un
+enlace simbólico a un archivo no protegido (CA-02, F1–F3 y F6–F8).
+
+**Lo que no cambia —lo protegido sigue en `deny`—**, en v1.36.0 y en 1.36.1:
+- un archivo protegido, para quien no es el agente de código, por cualquier ruta que la identidad del destino
+  reconozca: relativa, con `..`, con barras repetidas, por un directorio enlazado, o por un enlace simbólico o
+  **duro** que lleva a él;
+- cerrar un REQ por `cp` con el estado terminal en el comando, que se sigue derivando a `Edit`/`Write`;
+- un destino que es un directorio, que se sigue juzgando como `directorio/`; un destino que no existe; y lo que no
+  se puede determinar.
+
+**Medido por seguridad** (R-059 §1): un barrido de 700 comandos llanos ejecutados de verdad no encontró **ninguna
+escritura** de un archivo protegido que v1.36.0 no permitiera.
+
+**V7, el único efecto sobre algo protegido:** `mv src/a.ts docs/notas.md` —con `docs/notas.md` existente y no
+protegido— pasa de `deny` a `allow` y **retira el origen protegido** `src/a.ts`. Lo clasificó R-059 §2 como
+`instrumento` respecto de REQ-032, porque:
+- los **orígenes** de `mv` nunca se juzgaron: `mv src/a.ts docs/nuevo.md`, `rm src/a.ts` y `unlink src/a.ts` ya
+  pasaban en 1.33.2, 1.35.0 y 1.36.0;
+- **V7 mismo era `allow` en 1.33.2**, y es parte de lo que M-032 restituye;
+- en v1.36.0 se llega al mismo estado con `cat src/a.ts > docs/notas.md; rm src/a.ts`.
+
+Su raíz es SEC-136 (abajo).
+
+#### El coste
+
+**Un proceso (`find`), sólo en la rama del destino existente de `cp`/`mv`/`install`**, para leer el número de
+enlaces. **0 procesos añadidos en el camino común.** Si `find` falta, falla o no devuelve el archivo, no se afirma
+«un solo enlace» y la decisión es la de v1.36.0. Medido por QA, misma corrida:
+- `ls -la` y `npm run build`: 1 frente a 1;
+- `cp S docs/notas.md`: 3 frente a 3;
+- enlace duro: 4 frente a 3.
+
+Reloj frente a v1.36.0: máximo 1,077×, dentro del techo de 1,25×.
+
+---
+
+### Dos fallos en abierto preexistentes, declarados (no los introduce ni los empeora 1.36.1)
+
+#### SEC-135 — `contrato` · severidad **ALTA** (R-059 §3) · se repara en **1.36.2**
+
+**Quien no es el agente de código escribe código protegido con `cp`, `mv` o `install` escritos de formas
+cotidianas.** Medido en 1.33.2, 1.35.0, 1.36.0 y 1.36.1, que no lo empeora: da la misma decisión que v1.36.0. Dos
+mecanismos; ejemplos **no exhaustivos**:
+- **(i) el último operando no es el destino:** `cp S src/a.ts 2>/dev/null`, `2>&1`, un comentario final
+  (`cp S src/a.ts # nada`), `< directorio`, `cp -rt src docs/sub`. También crea código protegido, y vale con `mv`;
+- **(ii) el detector no reconoce la orden:** `\cp S src/a.ts`, `find src -name a.ts -exec cp S {} \;` y el
+  **subshell** `(cp S src/a.ts)`.
+
+Es ALTA porque falla en abierto la garantía central de `guard-codigo` y **no exige intención**: `2>/dev/null` es de
+los añadidos más habituales. **Se repara en 1.36.2**, con el contrato que fijó el propietario (P-032-6 (1)): «toda
+invocación efectiva de cp/mv/install, se escriba como se escriba, se juzga por su destino real; si no se puede
+determinar, deny». Incluye reconocer `\cp`, `command cp`, `(cp …)`, los subshells, `find -exec` y `xargs`. **Hasta
+entonces:** no confíes en la puerta para estas formas; el efecto queda en `git status`.
+
+#### SEC-136 — `contrato` · severidad **media** (R-059 §4) · se repara en **1.36.2** (en parte) y **1.37**
+
+**Ninguna puerta de `Bash` juzga la retirada de un archivo protegido.** Quien no es el agente de código lo borra o
+lo saca de su sitio con `rm`, `unlink`, el origen de `mv` o `git rm`. Medido en 1.33.2, 1.35.0 y 1.36.0. **Y
+`rm .arnes/config.json` deja inertes todas las puertas**, porque sin manifiesto los hooks son inertes por diseño.
+Es media porque el efecto es visible (`git status`, git lo devuelve si estaba comiteado), salvo esa instancia.
+
+Por decisión del propietario (P-032-6 (2)):
+- **en 1.36.2:** se juzga el origen de `mv`, se declara en `AGENTS.md` §13, y borrar, mover o vaciar
+  `.arnes/config.json` se deniega a todo agente;
+- **en 1.37:** `rm`, `unlink` y `git rm`, con la puerta posterior (pieza b). Con un requisito escrito: esa puerta
+  no puede depender sólo del manifiesto que vigila, y si el manifiesto desaparece en un proyecto que lo tenía, eso
+  mismo es un evento a denegar o revertir.
+
+---
+
+### Límites y hallazgos `instrumento`
+
+- **O-59-1:** restituir 1.33.2 incluye `cp` hacia un REQ existente o hacia `PENDING_APPROVAL.md`, cuyo
+  **contenido** no se juzga desde `Bash`. Un archivo que dice `Estado: completado` cierra el REQ igual que
+  `cat … > …` ya lo hacía en v1.36.0 (límite de `AGENTS.md` §13: la detección lee el texto del comando; la
+  respuesta es la puerta posterior).
+- **O-59-2:** el número de enlaces depende del sistema de archivos. Sin medir en Windows/MSYS ni en `drvfs`/`9p`.
+- **O-59-3:** `find` se toma del `PATH`, que es la frontera de confianza del entorno ya declarada (SEC-131).
+- **O-59-4:** `cd src && cp ../S a.ts` y `X=src/a.ts; cp S $X` vuelven a la decisión de v1.36.0, que es `allow`
+  y escribe `src/a.ts`: son de la familia de SEC-135.
+- **INS-032-1, INS-032-2 e INS-032-3** (`instrumento`, no atribuibles al cambio). Son el reloj de REQ-017 CA-08
+  (ii) —mediana 1,009 frente a v1.36.0— y dos sondas de REQ-021 (calibración y descendencia) que no ejecutan
+  ningún hook. Van a la revisión de las sondas de 1.37.
+- **PR-137-1** (proceso, `instrumento`): una línea de `hooks/lib.sh` se editó por consola en vez de con `Edit`,
+  declarada por el `desarrollador`.
+- **Windows/MSYS y el host, sin medir.** Todo lo medido es Linux/WSL2.
+
+---
+
+### Firmas
+
+| | Resultado | Sede |
+|---|---|---|
+| QA | **aprobado**, vuelta 2 de 3, código `77b71f7`: QA-032-01 y QA-032-02 cerrados; banco 2849 PASS, 0 FAIL, 13 SKIP (cuadre 2862); autoprueba 117/0; gates en verde; ningún `allow` → `deny` frente a v1.36.0 | `docs/qa/REQ-032.md`, V1–V10 |
+| Seguridad | **R-059, aprobado, sin veto**: el paso de `deny` a `allow` queda acotado a destinos no protegidos y declarado; abre SEC-135 y SEC-136 | `docs/seguridad/registro-seguridad.md`, R-059 |
+
+En `Hallazgos abiertos:` de REQ-032 quedan INS-032-1, SEC-135 y SEC-136, los tres `instrumento` respecto de ese
+REQ. SEC-135 y SEC-136 siguen siendo `contrato` en su sede y **no se dan por cerrados**.
+
+---
+
+### Hacia 1.36.2 y 1.37
+
+- **1.36.2, inmediato** (abierto al publicar 1.36.1): SEC-135 entero; el origen de `mv` y `.arnes/config.json` de
+  SEC-136; y quitar las restricciones de 1.36.1, leyendo el destino con la gramática de la orden.
+- **1.37:** `rm`, `unlink` y `git rm` de SEC-136, con la puerta posterior.
+- `main` se fusiona en `cand/1.37.0` **después de 1.36.2**, para que 1.37 lleve los dos arreglos juntos.
+
+## [Interno] — 2026-10-15 · `P-032-6` adoptada: 1.36.2 reconoce toda invocación efectiva de `cp`/`mv`/`install`; SEC-136 con la excepción de `.arnes/config.json` en 1.36.2 y un requisito para la pieza b; cierre de REQ-032 autorizado
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-6**, literal en la cola. (1) El contrato de 1.36.2: «toda invocación efectiva de cp/mv/install, se escriba como se escriba, se juzga por su destino real; si no se puede determinar, deny». (2) SEC-136: el origen de `mv` en 1.36.2; borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente en 1.36.2; `rm`, `unlink` y `git rm` con la puerta posterior de 1.37, **que no puede depender sólo del manifiesto que vigila**; declarado en §13. (3) Cerrar REQ-032 al terminar la fase 4, con `Edit`.
+- Escrito en F-137-14 y F-137-15. El requisito de la pieza b se lleva al plan de `cand/1.37.0` en el paso 2b (anotado en ESTADO).
+
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 3: **seguridad SIN VETO** (R-059); REQ-032 `Seguridad: aprobado`; SEC-135 (F-137-14, `contrato`, alta) y SEC-136 (retirada de archivos protegidos, `contrato`, media); `P-032-6` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`, ≈ 277 k tokens) · agentes: `auditor-seguridad` + la coordinadora.
+
+- **R-059, sin veto:** el paso de `deny` a `allow` queda acotado a lo no protegido y declarado (M-032), comprobado con un barrido de 700 comandos ejecutados de verdad. **V7**, el `mv` que borra un origen protegido: `instrumento` para REQ-032, porque era `allow` en 1.33.2 y su estado final ya se alcanzaba en v1.36.0.
+- **SEC-135 (= F-137-14): `contrato`, ALTA.** Dos mecanismos: el último operando no es el destino, y el detector no reconoce la orden (`\cp`, `find -exec` y el subshell `(cp …)`, nuevo). **SEC-136: `contrato`, media.** Las puertas no juzgan la retirada de archivos protegidos: `rm`, `unlink`, el origen de `mv`, `git rm`; y `rm .arnes/config.json` deja inertes las puertas. Ficha **F-137-15**. **Reproducidos por la coordinadora** en v1.36.0. Los dos son preexistentes y `instrumento` en REQ-032.
+- Evidencia del auditor archivada por la coordinadora en el árbol de evidencia (`hotfix-1.36.1/seg-R059/`, `5100518`).
+- **Cola: `P-032-6`:** el alcance de 1.36.2 (reconocer la orden), la ventana de SEC-136 y si se cierra REQ-032 al terminar la fase 4.
+
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: **QA APROBADO** tras la vuelta 2 (QA-032-01 y QA-032-02 cerrados); la lista cerrada de opciones, revisada
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`qa-tester`, ≈ 380 k tokens en esta re-verificación) · agente: `qa-tester`.
+
+- **QA-032-01 cerrado:** todas las formas de las tres rondas —`xargs` y `find -exec` incluidas, con `mv` e `install`— dan la decisión de v1.36.0. QA intentó romper la lista de lo aceptado con 37 casos propios y **ninguno** abre un destino protegido. **QA-032-02 cerrado:** el write-back describe lo construido.
+- **Lista de opciones aprobada:** `-f -i -n -p -v -r -R -a -u` y sus formas largas exactas, sin argumento. Fuera: `-t -T -- -`, las de argumento, `-b` y las de enlace.
+- **Sección 48 546/0**; contra `264dfa9`, 53 FAIL; contra v1.36.0, 29 FAIL (M-032). **Banco 2849/0/13**; autoprueba 117/0; gates rc 0; **ningún `allow` → `deny` en todo el banco**. Camino común, 0 procesos; rama del enlace, +1. INS-032-1 (mediana 1,009) e INS-032-2, `instrumento`.
+- **V7, para seguridad:** `mv src/a.ts docs/notas.md` pasa de `deny` a `allow` y **borra el origen protegido**. Es M-032 por la letra, va con F-137-13 y su clase la fija el auditor. **La coordinadora añade, medido en v1.36.0:** `rm hooks/lib.sh` y `mv hooks/lib.sh docs/nuevo.md` **ya pasan**, así que borrar código protegido ya era posible sin el arreglo.
+- REQ-032: `QA: aprobado (vuelta 2, 2026-10-15, código 77b71f7)`, `Hallazgos abiertos: INS-032-1 (instrumento)`. **Siguiente:** fase 3, seguridad.
+
+## [Interno] — 2026-10-15 · REQ-032, vuelta 2 de 3 (QA-032-02, P-032-5 (C)): la marca de `destino/` sólo se retira en UNA invocación simple de `cp`/`mv`/`install`
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Arreglo:** `_arnes_cmd_llano` comprueba, sobre el comando crudo, que es una sola invocación: primera palabra `cp`, `mv` o `install`; sólo `[A-Za-z0-9]`, el blanco y `. / _ + , : @ % = -`; opciones de una lista cerrada sin argumento (`-f -i -n -p -v -r -R -a -u` y sus largas). Lo demás vuelve a v1.36.0. Sin procesos nuevos.
+- **Banco:** sección 48 de 406 a 546 casos (X, P1–P8, E1, O1, L1, H4); F4 y G1 pasan a restricción (`deny`, como v1.36.0); 53 FAIL con `264dfa9`. `CASOS_ESPERADOS` 2722 → 2862. Banco 2850/0/12.
+- **Avance (regla 6):** la vuelta 2 está construida y medida; falta QA, y es la última vuelta.
+- **Comprobado por la coordinadora** fuera de banda sobre `hooks/lib.sh`: `xargs`, `<` y los encadenados vuelven a `deny`, y el `cp` simple (también `cp -fv`) sobre un archivo existente no protegido pasa. Gates en rc 0. **Y dos agujeros de v1.36.0, que el hotfix no cambia:** `\cp S hooks/lib.sh` y `find … -exec cp S {} \;` escriben código protegido. Van con F-137-14, para 1.36.2.
+
+## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-02 (CA-15 como lista de lo que se acepta; enlace duro en `deny`; salida sin vuelta 3); no gasta vuelta
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (analista) · agente: `analista-requerimientos`.
+
+- **CA-15**, reescrito con el literal de P-032-5 (C): cuatro condiciones —una invocación con la orden como primera palabra literal; comando llano en una línea; opciones de una lista cerrada que propone el desarrollador y revisa QA; un solo enlace (P-032-4 (B))—. Si falta cualquiera, decide v1.36.0. Casos R1–R17, H1–H4, X1–X5 (`xargs`, `find -exec`), P1–P8 (prefijos), G1, E1 y O1.
+- **Restricciones declaradas:** G1 (`cp S docs/notas.md && echo completado`) y F4 (`cp -T`) vuelven a `deny` sin movimiento frente a v1.36.0; también los encadenados, los prefijos, `/bin/cp`, las opciones fuera de la lista y H3.
+- **CA-04, CA-09, CA-12 (b), CA-14:** el enlace duro, en `deny`; M-032 sólo existe dentro de CA-15; techo de **1 proceso añadido**, sólo en la rama del número de enlaces; las notas llevan el alcance exacto.
+- **Salida si la vuelta 2 no cierra:** escrita en el REQ (CA-15 y la nota «Contador y salida»).
+
+## [Interno] — 2026-10-15 · `P-032-5` (C) adoptada: vuelta 2 de 3 con una lista de lo que sí se acepta; **si no cierra QA-032-01, 1.36.1 no se publica**
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-5**, literal en la cola. El arreglo sólo actúa cuando el comando entero es **una** invocación de `cp`, `mv` o `install`, con todas estas condiciones: la orden es la primera palabra y está escrita literalmente; no hay caracteres de shell, tuberías, encadenados, subshells ni redirecciones; y las opciones salen de una lista cerrada que propone el desarrollador y revisa QA (`-t`, `-T` y `--` vuelven a v1.36.0). Fuera de eso, todo como en v1.36.0, y las formas que vuelven a `deny` se declaran como restricción en las notas.
+- **QA-032-02:** write-back del analista (el enlace duro y esta regla); no gasta vuelta. QA re-verifica incluyendo `xargs`, `find -exec` y todas las formas anteriores.
+- **Salida decidida:** si la vuelta 2 no cierra QA-032-01, **no hay vuelta 3**; 1.36.1 no se publica, el código vuelve a v1.36.0 y F-137-10 pasa a 1.36.2 con F-137-14. Escrita también en ESTADO.
+- **Push del propietario:** `origin/hotfix/1.36.1` en `0f717d6`; PR #61 en borrador.
+
+## [Interno] — 2026-10-15 · Hotfix 1.36.1: re-verificación de QA de la vuelta 1 — **con hallazgos**: `xargs` abre `allow` sobre código protegido (QA-032-01 sigue abierto); el REQ no refleja P-032-4 (QA-032-02); `P-032-5` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 377 k tokens en esta re-verificación) · agentes: `qa-tester` + la coordinadora.
+
+- **Conforme:** las formas de QA-032-01 de la fase 2 y el enlace duro (H1–H3) dan `deny`, también si `find` falta o falla. Sección 48 406/0; **banco 2709/0/13** cuadrado; autoprueba 117/0; gates rc 0; 0 procesos en el camino común. INS-032-1 (mediana 1,001), INS-032-2 e INS-032-3 confirmados como `instrumento`. PR-137-1: el diff es ASCII y es lo probado.
+- **QA-032-01 sigue abierto:** `echo src/a.ts | xargs cp S`, `xargs -a lista cp S` y lo mismo con `mv`/`install` pasan de `deny` a `allow` y escriben código protegido. **Reproducido por la coordinadora** sobre `hooks/lib.sh`.
+- **QA-032-02 (`contrato`):** REQ-032 no refleja P-032-4 (B) ni que la regla mira el comando entero; falta el write-back del analista.
+- **Cola: `P-032-5`.** Recomendación (C): vuelta 2 con una lista de lo que sí se acepta —sólo una invocación simple de `cp`/`mv`/`install`—, que cierra el tipo de defecto y no sólo el caso.
+- **Avance (regla 6):** el arreglo está casi entero; falta cerrar el tipo de forma que lo rodea.
+
+## [Interno] — 2026-10-15 · REQ-032, P-032-4 (B) en la misma pasada (vuelta 1 de 3): un destino de `cp`/`mv`/`install` con más de un enlace duro vuelve a la decisión de v1.36.0
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Arreglo:** `arnes_destino_a_juzgar` sólo retira la marca de `destino/` si el archivo regular tiene **un** enlace (`find -links 1`, memorizado por archivo; ante cualquier fallo, la marca se queda). **Coste declarado:** 0 procesos añadidos en el camino común; +1 (`find`) en la rama del destino existente de `cp`/`mv`/`install`.
+- **Banco:** bloque H de la sección 48 (H1 a `hooks/lib.sh`, H2 a `src/a.ts`, H3 entre dos archivos de `docs/`, restricción aceptada), `deny` en la candidata y en v1.36.0, 18 FAIL con `759ff50`; `CASOS_ESPERADOS` 2686 → 2722. Banco 2707/2/13: los dos FAIL son de reloj (REQ-017 CA-08 (ii)) y de la sonda de descendencia (REQ-021 CA-04.1), fuera de la 48.
+- **Avance (regla 6):** la pasada, con el enlace duro, está construida y medida; falta QA.
+- **Registrado por la coordinadora:** P-032-4 (B), literal en la cola, con el alcance de las notas `[1.36.1]` y el objetivo de 1.36.2 (escrito en F-137-14). Los dos FAIL de fuera de la 48 no son parada por P-136-E: **INS-032-3** (sección 38/3, que no ejecuta hooks) e **INS-032-1** (el reloj de REQ-017 CA-08 (ii), ya mostrado no atribuible). Gates en rc 0. **Siguiente:** QA verifica la pasada entera sobre el código final, en una vuelta.
+
+## [Interno] — 2026-10-15 · REQ-032, pasada correctiva de QA-032-01 (vuelta 1 de 3): la marca de `destino/` sólo se retira si el último operando es con seguridad el destino (CA-15)
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 431 k tokens acumulados en su comisión) · agentes: `desarrollador` + la coordinadora.
+
+- **Arreglo:** el detector no marca `destino/` si el segmento acaba en una redirección de salida (`2>/dev/null`, `2>&1`), además de `-t`; y `arnes_destino_a_juzgar` no retira ninguna marca si el comando lleva comillas, `\`, `$`, acento grave, paréntesis, llaves, corchetes, `* ? ~ ! # < ^` o un carácter de control (salto de línea incluido). Ahí la decisión es la de v1.36.0. Sin procesos. El enlace duro (`P-032-4`) no se implementa.
+- **Banco:** sección 48 de 254 a 370 casos (bloque R: R1–R17, coordinadora y `qa-tester`), todas `deny` en la candidata y en v1.36.0; con los hooks de `9e97bd7`, 54 FAIL. `CASOS_ESPERADOS` 2570 → 2686. Banco 2673/1/12: el FAIL es REQ-021 CA-03 (c), la calibración de `sonda-reloj` (no ejecuta hooks).
+- **Comprobado por la coordinadora:** gates en rc 0. La sección 38/2, la del único FAIL del banco, **no ejecuta ningún hook**: es la calibración de una sonda. Se registra como **INS-032-2** (`instrumento`) por la precisión del propietario P-136-E, y el plan sigue. **PR-137-1:** el desarrollador editó una línea de `hooks/lib.sh` con `python3` y no con `Edit`, contra `AGENTS.md` §13; lo declaró él mismo. Sin efecto en el contenido.
+- **Efecto declarado de la regla conservadora:** un comando con comillas, `$`, `#`, `<` u otros caracteres de shell **conserva la decisión de v1.36.0**, así que el arreglo del `cp` sólo alcanza a los comandos llanos. Ante la duda, `deny`, como manda CA-15. De paso, la forma `X=src/a.ts; cp S $X` de F-137-13 vuelve a `deny`, sin movimiento frente a v1.36.0.
+- **El enlace duro (`P-032-4`) no está implementado**; la re-verificación de QA espera la decisión.
+- **Avance (regla 6):** la pasada está construida y medida; falta la decisión del enlace duro y, después, QA.
+
+## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-01 (CA-15 nuevo, la regla de la pasada correctiva); `P-032-4` en la cola (el enlace duro, que mi opción (A) listaba y el texto adoptado no)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 237 k tokens acumulados en su comisión) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **CA-15:** la forma `destino/` sólo se deja de juzgar cuando el segmento permite asegurar que el último operando es el destino. Con una redirección o un comentario detrás, o con `-t`/`-rt`/`--target-directory` en cualquier forma, manda la decisión de v1.36.0. Casos R1 a R15, uno por forma. Ajustes en las Convenciones, CA-01, CA-04 (dos límites declarados: F-137-14, y el enlace duro con F-137-13), CA-09, CA-10 y CA-14 (las notas declaran F-137-14). `Hallazgos abiertos:` sin tocar.
+- **`P-032-4`:** la opción (A) de P-032-3, redactada por la coordinadora, **listaba el enlace duro**; el texto adoptado no lo nombra, y la nota posterior de la coordinadora lo dejó fuera sin señalarlo. Recomendación (B): dentro, al precio de un proceso declarado en el camino de `cp` sobre un archivo existente.
+- **Avance (regla 6):** el criterio de la pasada está escrito; el desarrollador empieza con lo que no depende de P-032-4.
+
+## [Interno] — 2026-10-15 · `P-032-3` (A) adoptada: pasada correctiva acotada a QA-032-01; **F-137-14 pasa a ser el hotfix 1.36.2**, que se abre al publicar 1.36.1; la fusión de `main` en `cand/1.37.0`, después de 1.36.2
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-032-3**, literal en la cola. Donde no se pueda asegurar que el último operando es el destino (redirección o comentario detrás, `-t`/`-rt`), vuelve lo de v1.36.0 (`deny`), con un caso del banco por cada forma. Nada más entra.
+- **F-137-14:** el propietario lo califica de bypass de la garantía central por una forma cotidiana. 1.36.1 se publica declarándolo, con su forma y su salida, y la gravedad la fija seguridad en la fase 3. **Hotfix 1.36.2** con contrato propio: el destino de `cp`/`mv`/`install` se determina leyendo los operandos como lo hace la orden.
+- **Lo que añade la coordinadora:** el enlace duro de QA-032-01 no lo cubre la letra de la regla (allí el último operando **es** el destino), y queda con F-137-13 para el auditor. El `-t` escrito de otra forma cae en «no se puede asegurar».
+- **Avance (regla 6):** la pasada correctiva tiene su alcance decidido; el analista escribe el criterio.
+
+## [Interno] — 2026-10-15 · Hotfix 1.36.1, fase 2: QA **con hallazgos** — el arreglo abre `allow` sobre código protegido en formas con señuelo (QA-032-01, `contrato`); v1.36.0 ya deja pasar formas corrientes de la misma raíz (F-137-14); `P-032-3` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (`qa-tester`, ≈ 307 k tokens en la reanudación) · agentes: `qa-tester` + la coordinadora.
+
+- **Reanudación tras el apagado:** misma comisión, sin gastar contador. Salidas interrumpidas descartadas y rotuladas (`437ee5c`); todo se rehízo el 2026-10-15 sobre `9e97bd7`, con el procedimiento de reloj fijado antes de medir (`9cd647b`).
+- **QA-032-01 (`contrato`, bloquea):** el detector toma como destino el último operando. Con `< archivo`, un comentario final, un `-t` escrito de otra forma o un enlace duro, ese operando no es el destino. v1.36.0 denegaba esas formas por accidente y la candidata las permite: **escribe de verdad código protegido**. Contradice REQ-032 CA-04 y la autorización del propietario. **Reproducido por la coordinadora** fuera de banda sobre `hooks/lib.sh`.
+- **F-137-14 (preexistente):** **v1.36.0 ya deja** escribir código protegido con `cp … 2>/dev/null`, `2>&1`, un comentario final, `< directorio` o `cp -rt`. Reproducido también por la coordinadora. Es la misma raíz, fuera de REQ-032. Su clase la fija el auditor.
+- **Conforme:** sección 48 254/0 (v1.36.0: 28 FAIL); banco 2557/0/13; inventario sin cambios de decisión fuera de la 48; autoprueba 117/0; gates rc 0; 0 procesos añadidos; la marca de tabulador no se puede fabricar.
+- **INS-032-1 (`instrumento`):** el FAIL de reloj de REQ-017 CA-08 (ii) no es atribuible (candidata/v1.36.0, mediana 1,013).
+- **REQ-032:** `QA: con-hallazgos (…)`, `Hallazgos abiertos: QA-032-01 (contrato), INS-032-1 (instrumento)`. Informe en `docs/qa/REQ-032.md`.
+- **Cola: `P-032-3`.** Recomendación (A): pasada correctiva acotada a QA-032-01; F-137-14 aparte, con la clase del auditor.
+- **Avance (regla 6):** el arreglo está medido y su defecto acotado; falta decidir el alcance de la pasada correctiva.
+
+## [Interno] — 2026-10-14 · Hotfix 1.36.1: **pausa** por apagado del equipo; la fase 2 (QA) se interrumpió sin entregar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- La coordinadora detuvo la comisión de QA para que el apagado no la cortara a mitad. **No escribió nada en este repositorio.** En el árbol de evidencia dejó comiteado el procedimiento de atribución del FAIL de reloj, fijado antes de correr (`9cd647b`), y cuatro salidas parciales sin comitear que no cuentan.
+- **Al volver:** la fase 2 se despacha otra vez sobre `9e97bd7`, reutilizando ese procedimiento. Es la misma fase, sin gastar contador. Instrucciones en `docs/ESTADO.md`.
+
+## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 1 (desarrollador): un destino de `cp`/`mv`/`install` que existe y es archivo regular se juzga como ese archivo; sección 48 del banco; versión 1.36.1
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 (`desarrollador`, ≈ 358 k tokens) · agentes: `desarrollador` + la coordinadora.
+
+- **Arreglo (REQ-032 CA-01):** el detector de `Bash` marca la forma `destino/` de `cp`/`mv`/`install`, y `guard-codigo` y `guard-completado` no la juzgan cuando el destino, identificado por REQ-007 CA-47, existe y es archivo regular (un enlace cuenta como su archivo). Directorios, inexistentes, no determinables, otros tipos y `-t`/`--target-directory`, como en v1.36.0. La identidad de CA-47 no cambia. 0 procesos añadidos.
+- **Banco:** sección nueva `48-destino-de-cp-que-es-archivo.sh` (254 casos, fail-before contra v1.36.0 por SHA: 28 FAIL con los hooks de v1.36.0); `CASOS_ESPERADOS` 2316 → 2570. Banco completo en Linux/WSL2, tres corridas: la última **2558/1/11**, con el FAIL de reloj de REQ-017 CA-08 (ii) contra v1.32.1 (1,263×–1,300×; v1.36.0 recorre ese techo en las mismas condiciones y cabeza a cabeza la candidata da 0,89×–0,97×), escrito y sin clasificar por el desarrollador. Versión 1.36.1 en `plugin.json` y en el marketplace. Las notas `[1.36.1]` son de la fase 4.
+- **Registrado sin reparar:** la misma causa en la excepción del manifiesto roto (CA-10); y tres formas de M-032 cuyo efecto alcanza algo protegido por límites preexistentes (origen de `mv`, `cd` en el comando, expansiones). Detalle en el Historial de REQ-032.
+- **Comprobado por la coordinadora antes de comitear:** gates de §7 en rc 0; versión 1.36.1 en `plugin.json` y en el marketplace; la sección 48, modo 644 como las demás, **pasa** (vuelta parcial, 0 FAIL). Fichas **F-137-13** (las tres formas de M-032 que alcanzan lo protegido por límites preexistentes, para que las clasifique seguridad) registradas sin reparar.
+- **Un FAIL abierto, sin clasificar y escrito:** REQ-017 CA-08 (ii) («un REQ real de 6 líneas»), **1,263×–1,300× contra v1.32.1, con techo de 1,25×**, en la tercera corrida del banco (2558/1/11). Su sujeto es un `Edit` por `guard-completado`, que **no pasa por el código cambiado**; cabeza a cabeza contra v1.36.0, la candidata da 0,89×–0,97×; y con v1.36.0 como candidata la misma sonda también roza el techo. **No se desmiente repitiendo** (memoria del proyecto): lo clasifica QA en la fase 2, con su atribución medida.
+- **Avance (regla 6):** el arreglo está construido y medido; falta QA (fase 2).
+
+## [Interno] — 2026-10-14 · Hotfix 1.36.1, fase 0 **cerrada**: P-032-1 (A) y P-032-2 (A) adoptadas; REQ-032 `pendiente`, contrato cerrado; ficha F-137-12
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, cierre de su misma comisión, ≈ 194 k tokens acumulados) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **Decisión del propietario**, literal en la cola: un directorio se juzga como hoy (`directorio/`); «archivo» es un archivo regular **después de resolver la identidad de CA-47** (SEC-122), así que un enlace a un archivo regular cuenta como ese archivo; los demás tipos, como en v1.36.0. La corrección de la medida del `desarrollador` queda registrada: la regresión deniega **a quien no es el agente de código**.
+- **REQ-032 cerrado** por el analista en su misma comisión: CA-01 (definición de «archivo»); CA-02 con F5 (el `desarrollador`) como control, F6 y F7 para `qa-tester` y el analista, F8 (enlace a un archivo no protegido, M-032) y **K4** (enlace a un archivo protegido, `deny` antes y después: el control que exige la precisión); CA-06 con el texto definitivo; CA-09 (casos de M-032: F1–F4, F6–F8); CA-14 con la forma exacta. `Estado: pendiente`.
+- **Ficha F-137-12** (preexistente, sin medir): con un glob con sufijo, un `cp` hacia el directorio puede no casar con el ámbito. Fuera del hotfix por P-032-1.
+- **Avance (regla 6):** el contrato está cerrado; empieza la fase 1 (desarrollador).
+
+## [Interno] — 2026-10-13 · Hotfix 1.36.1, fase 0: REQ-032 escrito (`borrador`, 14 criterios); `P-032-1` y `P-032-2` en la cola; corrección de una medida de la coordinadora
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora) y Opus (analista, ≈ 166 k tokens) · agentes: `analista-requerimientos` + la coordinadora.
+
+- **REQ-032** (`requirements/REQ-032.md`), con su fila en el índice: CA-01, la propiedad, literal del propietario; CA-02, fail-before y pass-after contra v1.36.0; CA-03, `mv` e `install`; CA-04, lo protegido sigue en `deny`; CA-05, el cierre por `cp` se sigue derivando; CA-06, directorios; CA-07, destino inexistente; CA-08, ante la duda, lo de v1.36.0; CA-09, la clase de movimiento M-032 con sus casos; CA-10, el límite del propietario; CA-11, regresión; CA-12, coste; CA-13, versión; CA-14, notas `[1.36.1]`. `Rigor: critico`, `Sensible a seguridad: sí`.
+- **Causa confirmada en el código por la coordinadora** (`hooks/lib.sh:2252-2263`): para `cp`, `mv` e `install` el detector juzga el destino y también `destino/`; sobre un archivo existente, `destino/` no se puede recorrer y la identificación falla cerrada. Las tres órdenes pasan por la misma rama.
+- **Cola: `P-032-1`** (un destino que es directorio: «`directorio/nombre`», como decía P-137-H por un **error de redacción de la coordinadora**, o como hoy) y **`P-032-2`** (qué es «archivo»). Recomendación (A) en las dos.
+- **Corrección de una medida de la coordinadora:** el caso del `desarrollador` del 2026-10-12 se midió sin `agent_id`. Re-medido con su forma real, **al `desarrollador` se le permite**; el defecto deniega **a todo el que no es el agente de código**. La nota de regresión de `[1.36.0]` y la ficha F-137-10, en `cand/1.37.0` (que aún no está en `main`), dicen de más: se corrigen en el paso 2b.
+- **Avance (regla 6):** el contrato está escrito; faltan dos decisiones para cerrarlo.
+
+## [Interno] — 2026-10-13 · Hotfix 1.36.1 (F-137-10) abierto: rama `hotfix/1.36.1` desde `v1.36.0`; autorización registrada; fase 0 al `analista-requerimientos`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Autorización del propietario**, literal en `PENDING_APPROVAL.md` § Resueltas: P-137-H adoptada con tres ajustes. Alcance único: «un destino que existe y es archivo se juzga como archivo, en cp, mv e install»; fail-before contra v1.36.0, con los controles de seguridad (un `cp` sobre un archivo protegido sigue en `deny`, y el paso de `deny` a `allow` se declara como clase de movimiento con sus casos); nada más entra.
+- **La rama parte de `v1.36.0` (`f22b905`):** esta cola y este ESTADO no traen la historia de 1.37, que está en `cand/1.37.0` (`origin` `ab22d02`). Se juntan al fusionar `main` en `cand/1.37.0` tras publicar.
+- **Avance (regla 6):** el hotfix empieza por el contrato del analista.
+
 ## [Interno] — 2026-10-07 · Corrección del commit `da0525b`: el recuadro de aviso del borrador se había copiado al CHANGELOG delante de la entrada `[1.36.0]` (un `index` que casó con una frase partida); retirado; ESTADO cerrado; borrador con su nota en el sitio correcto
 > Origen: GitHub (commit local con push) · usuario: Juan · modelo de IA: Fable 5.1 · agente: la coordinadora.
 
