@@ -1706,7 +1706,11 @@ done
 # × 2 árboles: H1 (a hooks/lib.sh, protegido), H2 (a src/a.ts) y H3 (entre dos archivos de docs/, restricción aceptada),
 # con cp, mv e install, desde la coordinadora y desde qa-tester—. deny en la candidata y en v1.36.0; con los hooks de
 # 759ff50 como candidata, los 18 FAIL. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2722
+# Y 2722 → 2862 por la vuelta 2 de REQ-032 (QA-032-02, P-032-5 (C)): +140 en la 48 (406 → 546) —70 filas × 2 árboles,
+# coordinadora y qa-tester: X1, X2 y X5 con cp, mv e install, X3, X4, P1–P8, E1 (4), O1 (4), L1 (4, opciones de la
+# lista) y H4a/b/c/k—. F4 y G1 pasan a esperar deny (restricciones de CA-15). Con los hooks de 264dfa9 como candidata,
+# 53 FAIL. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2862
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

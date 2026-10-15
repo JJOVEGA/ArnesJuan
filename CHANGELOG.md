@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-15 · REQ-032, vuelta 2 de 3 (QA-032-02, P-032-5 (C)): la marca de `destino/` sólo se retira en UNA invocación simple de `cp`/`mv`/`install`
+> Origen: GitHub (commit local de la coordinadora, sin validar) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **Arreglo:** `_arnes_cmd_llano` comprueba, sobre el comando crudo, que es una sola invocación: primera palabra `cp`, `mv` o `install`; sólo `[A-Za-z0-9]`, el blanco y `. / _ + , : @ % = -`; opciones de una lista cerrada sin argumento (`-f -i -n -p -v -r -R -a -u` y sus largas). Lo demás vuelve a v1.36.0. Sin procesos nuevos.
+- **Banco:** sección 48 de 406 a 546 casos (X, P1–P8, E1, O1, L1, H4); F4 y G1 pasan a restricción (`deny`, como v1.36.0); 53 FAIL con `264dfa9`. `CASOS_ESPERADOS` 2722 → 2862. Banco 2850/0/12.
+- **Avance (regla 6):** la vuelta 2 está construida y medida; falta QA, y es la última vuelta.
+- **Comprobado por la coordinadora** fuera de banda sobre `hooks/lib.sh`: `xargs`, `<` y los encadenados vuelven a `deny`, y el `cp` simple (también `cp -fv`) sobre un archivo existente no protegido pasa. Gates en rc 0. **Y dos agujeros de v1.36.0, que el hotfix no cambia:** `\cp S hooks/lib.sh` y `find … -exec cp S {} \;` escriben código protegido. Van con F-137-14, para 1.36.2.
+
 ## [Interno] — 2026-10-15 · REQ-032: write-back de QA-032-02 (CA-15 como lista de lo que se acepta; enlace duro en `deny`; salida sin vuelta 3); no gasta vuelta
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (analista) · agente: `analista-requerimientos`.
 

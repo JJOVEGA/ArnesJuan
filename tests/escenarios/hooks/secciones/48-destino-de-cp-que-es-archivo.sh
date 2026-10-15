@@ -9,18 +9,19 @@
 #   A  CA-04 (un archivo protegido, por las rutas que llegan a él) · C  CA-05 (el cierre se deriva) ·
 #   D  CA-06 (destino directorio) · N  CA-07 (destino inexistente) · U  CA-08 (lo que no se sabe) ·
 #   T  CA-10 (`-t`, `--target-directory` y la redirección con barra final, como estaban) ·
-#   G  M-032 por `guard-completado`: el comando que menciona el estado terminal (CA-09, por propiedad) ·
+#   G  el comando que menciona el estado terminal: restricción declarada desde la vuelta 2 (CA-15 (2)) ·
 #   R  CA-15 (QA-032-01): redirección, comentario, `-t` en cualquier forma, comillas o salto de línea: la decisión
 #      de v1.36.0 (R1–R13, y R14/R15 = R1 y R7–R12 con `mv` e `install`; R16 y R17, formas halladas en la pasada) ·
 #   H  P-032-4 (B): un destino con más de un enlace duro vuelve a la decisión de v1.36.0 (H1–H3) ·
 #   M  la excepción del manifiesto roto: la causa está también ahí y NO se repara (CA-10; registrada) ·
-#   O  el oráculo de CA-01 (`cat S > D`) · P  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida.
+#   ORÁCULO  CA-01 (`cat S > D`) · P1  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida ·
+#   X, P1–P8, E1, O1, H4, L  CA-15 vuelta 2 (P-032-5 (C)): sólo una invocación simple, con opciones de la lista.
 # DOS ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`) y v1.36.0 (f22b905), por SHA con `mat48` (copia de
 # `mat47`); sin ella, SKIP y motivo, nunca PASS. Las filas se juzgan por guard.sh —lo que recibe el cliente—
 # salvo C (guard-completado). Las que dependen de enlaces simbólicos, de una FIFO, de un directorio en modo
 # 000 o de /dev/null salen SKIP con motivo donde no se pueden construir. Esto NO es la validación en el host.
-CASOS_ESPERADOS_SECCION=406
-PISO_AUTONOMO_SECCION=75  # 24 preámbulo (líneas 1-24, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 25-48) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 72-98)
+CASOS_ESPERADOS_SECCION=546
+PISO_AUTONOMO_SECCION=76  # 25 preámbulo (líneas 1-25, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 26-49) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 73-99)
 seccion_nueva "--- 48 · el destino de cp/mv/install que existe y es archivo (REQ-032, hotfix 1.36.1) ---"
 REPO48="${SEC_DIR%/}/../../../.."; MAT48_RUTAS='hooks'; MAT48_REG=''; MAT48_T0=0; MAT48_REF='-'
 mat48_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT48_REG, UNA sola línea (la lee `sonda_lee`)
@@ -103,7 +104,7 @@ for o in cp mv install; do
   fila48 "F1 $o coordinadora: $o S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" - "$o S $R48/REQ-X.md")"
   fila48 "F2 $o coordinadora: $o S requirements/REQ-X.md (cwd <raíz>)" guard.sh allow deny - "requirements/REQ-X.md/'" "$(j48 "$P48" - "$o S requirements/REQ-X.md")"
   fila48 "F3 $o coordinadora: $o S <raíz>/docs/notas.md" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" - "$o S $P48/docs/notas.md")"
-  fila48 "F4 $o coordinadora: $o -T S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" - "$o -T S $R48/REQ-X.md")"
+  fila48 "F4 $o coordinadora: $o -T S <raíz>/requirements/REQ-X.md (RESTRICCIÓN: -T fuera de la lista, CA-15 (3))" guard.sh deny deny "$ND48" - "$(j48 "$P48" - "$o -T S $R48/REQ-X.md")"
   fila48 "F6 $o qa-tester: $o S <raíz>/docs/notas.md" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" qa-tester "$o S $P48/docs/notas.md")"
   fila48 "F7 $o analista-requerimientos: $o S <raíz>/requirements/REQ-X.md" guard.sh allow deny - "REQ-X.md/'" "$(j48 "$P48" analista-requerimientos "$o S $R48/REQ-X.md")"
   fila48c "$LN48" "$LN48_MOT" "F8 $o coordinadora: $o S <raíz>/docs/enlace-notas (-> notas.md)" guard.sh allow deny - "enlace-notas/'" "$(j48 "$P48" - "$o S $P48/docs/enlace-notas")"
@@ -196,10 +197,10 @@ for a in - qa-tester; do
   done
 done
 
-# --- G: M-032 por guard-completado — el comando menciona el estado terminal y el destino es un archivo fuera ------
+# --- G: el comando menciona el estado terminal; desde la vuelta 2 (P-032-5 (C)) es una RESTRICCIÓN declarada -----
 for o in cp mv install; do
   for a in - desarrollador; do
-    fila48 "G1 $o ${a/#-/coordinadora}: $o S <raíz>/docs/notas.md && echo completado" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" "$a" "$o S $P48/docs/notas.md && echo completado")"
+    fila48 "G1 $o ${a/#-/coordinadora}: $o S <raíz>/docs/notas.md && echo completado (RESTRICCIÓN: no es una sola invocación, CA-15 (2))" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S $P48/docs/notas.md && echo completado")"
   done
 done
 
@@ -211,7 +212,7 @@ fila48 "M2 coordinadora: printf '{}' > .arnes/config.json con el manifiesto roto
 PD48="$P48"
 
 # --- O: el oráculo de CA-01 — con el destino existente, la orden decide como `cat S > D` -------------------------
-nom48="REQ-032 O1 CA-01 oráculo: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D"
+nom48="REQ-032 ORÁCULO CA-01: sobre cada destino que existe (F1-F8, K4, A1-A4), cp, mv e install deciden como cat S > D"
 mal48=''; n48=0
 dests48=("$P48|-|$R48/REQ-X.md" "$P48|-|requirements/REQ-X.md" "$P48|-|$P48/docs/notas.md" "$P48|qa-tester|$P48/docs/notas.md"
   "$P48|analista-requerimientos|$R48/REQ-X.md" "$P48|desarrollador|$R48/REQ-X.md" "$P48|-|$P48/src/a.ts" "$P48|qa-tester|$P48/src/a.ts"
@@ -244,8 +245,52 @@ for a in - qa-tester; do
   done
 done
 
+# --- Vuelta 2 (QA-032-02, P-032-5 (C)): la marca sólo se retira en UNA invocación simple de cp/mv/install -------
+# Lo demás conserva la decisión de v1.36.0. L: opciones de la lista (M-032). `docs/lista` dice `src/a.ts`.
+printf 'src/a.ts\n' > "$P48/docs/lista"
+X5E=allow   # X5, medido el 2026-10-15: v1.36.0 PERMITE (el detector toma `\` por destino); se exige igualdad. Familia de F-137-14 (1.36.2)
+FF48="$RAIZ/ff48-$BASHPID"; FN48="$RAIZ/fn48-$BASHPID"; RP48="$RAIZ/rp48-$BASHPID"; RPF48="$RAIZ/rpf48-$BASHPID"
+mkdir -p "$FF48" "$FN48" "$RP48" "$RPF48"; printf '#!/bin/sh\nexit 1\n' > "$FF48/find"; printf '#!/bin/sh\nexit 0\n' > "$FN48/find"; chmod +x "$FF48/find" "$FN48/find"
+# PATH sin `find` (H4c) y su control con `find` (H4k): sólo lo que los hooks usan; el control dice si basta.
+for b in jq grep git readlink realpath mktemp cat tail head sed awk tr cut sort wc ls cp mv rm ln mkdir dirname basename stat date sleep touch chmod tee cmp iconv timeout env sh bash uname cygpath; do
+  x="$(type -P "$b" 2>/dev/null)" && { ln -s "$x" "$RP48/$b"; ln -s "$x" "$RPF48/$b"; }
+done
+x="$(type -P find 2>/dev/null)" && ln -s "$x" "$RPF48/find"
+for a in - qa-tester; do
+  q="${a/#-/coordinadora}"
+  for o in cp mv install; do
+    fila48 "X1 $o $q: echo src/a.ts | xargs $o docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "echo src/a.ts | xargs $o docs/notas.md")"
+    fila48 "X2 $o $q: xargs -a docs/lista $o docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "xargs -a docs/lista $o docs/notas.md")"
+    fila48 "X5 $o $q: find src -name a.ts -exec $o docs/notas.md {} \; (igual que v1.36.0: allow, familia de F-137-14)" guard.sh "$X5E" "$X5E" - - "$(j48 "$P48" "$a" "find src -name a.ts -exec $o docs/notas.md {} \;")"
+  done
+  fila48 "X3 mv $q: cat docs/lista | xargs mv docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cat docs/lista | xargs mv docs/notas.md")"
+  fila48 "X4 install $q: cat docs/lista | xargs install docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cat docs/lista | xargs install docs/notas.md")"
+  for k in 'P1|\cp' 'P2|command cp' 'P3|sudo cp' 'P4|nice cp' 'P5|env cp' 'P6|timeout 5 cp' 'P7|VAR=x cp' 'P8|/bin/cp'; do
+    e='deny'; c="$ND48"; m=''
+    # P1, medido el 2026-10-15: v1.36.0 PERMITE `\cp …` (el detector no la reconoce como `cp`: no ve ninguna escritura);
+    # CA-15 pide entonces la igualdad. Familia de F-137-14.
+    [ "${k%%|*}" != P1 ] || { e=allow; c=-; m=' (igual que v1.36.0: allow, el detector no ve la orden; familia de F-137-14)'; }
+    fila48 "${k%%|*} $q: ${k#*|} S docs/notas.md$m" guard.sh "$e" "$e" "$c" - "$(j48 "$P48" "$a" "${k#*|} S docs/notas.md")"
+  done
+  for k in '&& echo hecho' '; ls' '| cat' '> /dev/null'; do
+    fila48 "E1 $q: cp S docs/notas.md $k (RESTRICCIÓN: no es una sola invocación)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "cp S docs/notas.md $k")"
+  done
+  for k in 'cp -T' 'cp --' 'cp -b' 'install -m 644'; do
+    fila48 "O1 $q: $k S docs/notas.md (opción fuera de la lista)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$k S docs/notas.md")"
+  done
+  for k in 'cp -fv' 'mv -n' 'install -pv' 'cp --force --verbose'; do
+    fila48 "L1 $q: $k S docs/notas.md (opciones de la lista: M-032)" guard.sh allow deny - "notas.md/'" "$(j48 "$P48" "$a" "$k S docs/notas.md")"
+  done
+  # H4: el número de enlaces ilegible —find que falla, que no dice nada, ausente del PATH— y el control del PATH.
+  j="$(j48 "$P48" "$a" "cp S docs/notas.md")"
+  ( PATH="$FF48:$PATH"; fila48 "H4a $q: cp S docs/notas.md con un find que falla" guard.sh deny deny "$ND48" - "$j" )
+  ( PATH="$FN48:$PATH"; fila48 "H4b $q: cp S docs/notas.md con un find sin salida" guard.sh deny deny "$ND48" - "$j" )
+  ( PATH="$RP48"; fila48 "H4c $q: cp S docs/notas.md sin find en el PATH" guard.sh deny deny "$ND48" - "$j" )
+  ( PATH="$RPF48"; fila48 "H4k $q: cp S docs/notas.md con ese mismo PATH y find (control: el PATH basta)" guard.sh allow deny - "notas.md/'" "$j" )
+done
+
 # --- P: CA-12 (a)(b) — procesos frente a v1.36.0 en la misma corrida: 0 añadidos ----------------------------------
-nom48="REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B)"
+nom48="REQ-032 PROC CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B)"
 if [ "$RV48_OK" != si ]; then v48 SKIP "$nom48  $RV48_MOT"
 else
   f48="$RAIZ/j48-$BASHPID.json"; mal48=''; med48=''

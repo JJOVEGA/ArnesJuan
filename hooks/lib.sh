@@ -2364,19 +2364,14 @@ _arnes_estado_ausente_c() {
 # La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
 # excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
 # directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
-# REQ-032 CA-15 (QA-032-01, P-032-3 (A)): la marca SOLO se retira si el comando permite asegurar que el
-# ultimo operando es el destino. El detector trocea un texto del que ya se quitaron las comillas (con su
-# contenido), y en el que `$(`, `)` y los escapes no se distinguen: `cp "-t" src docs/notas.md`,
-# `cp S src/a.ts < docs/notas.md`, `cp S src/a.ts # docs/notas.md` o `T=-t; cp $T src docs/notas.md` le
-# llegan con un ultimo operando que NO es el destino. Por eso se mira el comando tal como llego
-# (`ARNES_CMD`, el mismo que analizan las dos puertas) y, si lleva un solo caracter ASCII de los que el
-# shell interpreta y el tokenizador del detector no sigue —comillas, `\`, `$`, acento grave, parentesis,
-# llaves, corchetes, `*`, `?`, `~`, `!`, `#`, `<`, `^`— o un caracter de control (salto de linea, retorno de
-# carro, tabulador…), no se retira ninguna marca: la decision es la de v1.36.0. Es del comando ENTERO y no
-# del segmento a proposito: el segmento del detector no se puede situar en el texto original, y la duda cae
-# del lado de conservar la forma `destino/` (CA-15). Lo que queda —letras, cifras, no ASCII, blanco y
-# `% & + , - . / : ; = > @ _ |`— lo trocea el detector como el shell; `>` lo resuelve el detector por
-# segmento (sin marca si el segmento acaba en una redireccion). Una vez por comando, sin procesos.
+# REQ-032 CA-15 (QA-032-02, P-032-5 (C)): LISTA DE LO QUE SE ACEPTA, no de lo que se rechaza. La marca
+# SOLO se retira si el comando ENTERO, tal como llego (`ARNES_CMD`, el mismo que analizan las dos puertas,
+# y no el texto desentrecomillado del detector), es UNA invocacion simple: `_arnes_cmd_llano`, abajo, es el
+# sitio unico de las condiciones (1) a (3). Cualquier otra forma —comillas, escapes, expansiones,
+# tuberias (`echo src/a.ts | xargs cp S`), encadenados, redirecciones, prefijos (`sudo cp`, `\cp`,
+# `/bin/cp`, `VAR=x cp`), una orden que no es la primera palabra (`xargs -a lista cp S`), una opcion
+# fuera de la lista— conserva la forma `destino/`: la decision es la de v1.36.0. Antes (P-032-3 (A)) era
+# una lista de lo rechazado, y `xargs` la rodeo (QA-032-02). Una vez por comando, sin procesos.
 # EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
 # enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
 # archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
@@ -2396,20 +2391,51 @@ _arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exact
   [[ ${ARNES_NLINK1[$1]} == si ]]
 }
 ARNES_DESTINO=''
-ARNES_LLANO_CMD=''; ARNES_LLANO=''   # memoria por invocacion; nacen vacias al cargar (no se heredan)
-_arnes_cmd_llano() {   # 0 = el comando (`ARNES_CMD`) no lleva nada que el detector no siga
-  if [[ -z $ARNES_LLANO || $ARNES_LLANO_CMD != "${ARNES_CMD-}" ]]; then
-    ARNES_LLANO_CMD="${ARNES_CMD-}"; ARNES_LLANO=si
-    # shellcheck disable=SC1003  -- la barra invertida va dentro de la clase a proposito
-    [[ $ARNES_LLANO_CMD == *[\"\'\\\$\`\(\)\{\}\[\]\*\?\~\!\#\<\^[:cntrl:]]* ]] && ARNES_LLANO=no
-  fi
-  [[ $ARNES_LLANO == si ]]
+# `_arnes_cmd_llano` -> 0 si `ARNES_CMD` es UNA invocacion simple de `cp`, `mv` o `install`, y deja en
+# ARNES_LLANO_DEST su ultimo operando (el destino). Todas, o no (REQ-032 CA-15):
+#   (2) cada caracter es de este conjunto, y ningun otro: letras y cifras ASCII, el blanco ' ' y
+#       `. / _ + , : @ % = -`. Fuera, por tanto, todo lo que el shell interpreta (comillas, `\`, `$`, acento
+#       grave, `| ; & < > ( ) { } [ ] * ? ~ ! # ^`), todo caracter de control (salto de linea, retorno de
+#       carro, tabulador: una sola linea, blancos solo ' ') y todo caracter no ASCII. Las letras van
+#       ESCRITAS una a una, no como rango ni como clase: no dependen del locale.
+#   (1) la primera palabra es exactamente `cp`, `mv` o `install` (ni ruta, ni prefijo, ni asignacion);
+#   (3) toda palabra que empieza por `-` es una opcion de la LISTA CERRADA (REQ-032, Historial del
+#       2026-10-15, vuelta 2): cortas `f i n p v r R a u`, solas o agrupadas con solo esas letras; largas
+#       exactas `--force --interactive --no-clobber --verbose --recursive --archive --update`. Ninguna lleva
+#       argumento, asi que ninguna consume un operando ni cambia cual es el destino. Fuera: `-t`, `-T`, `--`,
+#       `-` y cualquier otra (tambien `--update=…`, `-S`, `-m`, `-b`…);
+#   y al menos dos operandos (origen y destino).
+# El enlace unico, la condicion (4), lo comprueba `_arnes_un_solo_enlace`. Memorizado por comando.
+ARNES_LLANO_CMD=''; ARNES_LLANO=''; ARNES_LLANO_DEST=''   # nacen vacias al cargar (no se heredan)
+_arnes_cmd_llano() {
+  local c="${ARNES_CMD-}" x d='' n=0 reponer_f=0
+  if [[ -n $ARNES_LLANO && $ARNES_LLANO_CMD == "$c" ]]; then [[ $ARNES_LLANO == si ]]; return; fi
+  ARNES_LLANO_CMD="$c"; ARNES_LLANO=no; ARNES_LLANO_DEST=''
+  [[ $c == *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\ ./_+,:@%=-]* ]] && return 1
+  local -a w; local IFS=' '
+  case $- in *f*) reponer_f=1 ;; esac
+  set -f
+  # shellcheck disable=SC2206  -- se quiere el troceado por blancos, con globbing apagado
+  w=($c)
+  [ "$reponer_f" -eq 1 ] || set +f
+  case "${w[0]-}" in cp|mv|install) ;; *) return 1 ;; esac
+  for x in "${w[@]:1}"; do
+    case "$x" in
+      --force|--interactive|--no-clobber|--verbose|--recursive|--archive|--update) ;;
+      -|--*) return 1 ;;
+      -*) [[ ${x:1} == *[!finpvrRau]* ]] && return 1 ;;
+      *) n=$((n + 1)); d="$x" ;;
+    esac
+  done
+  (( n >= 2 )) || return 1
+  ARNES_LLANO=si; ARNES_LLANO_DEST="$d"
 }
 arnes_destino_a_juzgar() {
   ARNES_DESTINO="$1"
   [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
   ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
   _arnes_cmd_llano || return 0
+  [[ ${ARNES_DESTINO%/} == "$ARNES_LLANO_DEST" ]] || return 0   # el destino del detector es el de la orden
   arnes_identidad "${ARNES_DESTINO%/}"
   [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
   [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
