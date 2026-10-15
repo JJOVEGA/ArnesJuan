@@ -1,0 +1,67 @@
+--- el REQ sujeto (6 líneas):
+# REQ-100
+Estado: en-revisión
+Sensible a seguridad: no
+QA: aprobado
+Seguridad: n/a
+Rigor: estandar
+--- decisión del sujeto en cada árbol (debe ser la misma):
+  /home/juan/dev/ArnesJuan-v1.36/hooks: 
+  /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks: 
+  /tmp/tmp.h7H8eHZ9BL/h132/hooks: 
+--- camino de código: llamadas a la función nueva en una traza bash -x de la candidata
+  arnes_destino_a_juzgar: 0 llamadas; ARNES_FORMA_DIR leída en 1 líneas de traza; total de líneas de traza: 1843
+  traza de v1.36.0: 1841 líneas (misma cifra = mismo camino ejecutado, salvo la asignación de la constante)
+  diff: 82,83d81
+  diff: < ++ ARNES_FORMA_DIR=$'\t'
+  diff: < ++ ARNES_DESTINO=
+  diff: 1822c1820
+  diff: < + tmp=/tmp/tmp.36UFTHW0aX
+  diff: ---
+  diff: > + tmp=/tmp/tmp.j9SvjO1ADp
+  diff: 1828c1826
+  diff: < + rm -f /tmp/tmp.36UFTHW0aX
+  diff: ---
+  diff: > + rm -f /tmp/tmp.j9SvjO1ADp
+ronda 1 · load average: 2.06, 1.92, 2.45
+  P1 min_a=143004µs min_b=146094µs razón=978‰
+  P2 min_a=152185µs min_b=140090µs razón=1086‰
+  P3 min_a=162021µs min_b=125151µs razón=1294‰
+ronda 2 · load average: 1.97, 1.91, 2.44
+  P2 min_a=143714µs min_b=114735µs razón=1252‰
+  P3 min_a=148707µs min_b=115630µs razón=1286‰
+  P1 min_a=152709µs min_b=144439µs razón=1057‰
+ronda 3 · load average: 1.89, 1.89, 2.44
+  P3 min_a=146676µs min_b=118651µs razón=1236‰
+  P1 min_a=141573µs min_b=150845µs razón=938‰
+  P2 min_a=139186µs min_b=121902µs razón=1141‰
+ronda 4 · load average: 1.82, 1.88, 2.43
+  P1 min_a=182357µs min_b=168574µs razón=1081‰
+  P2 min_a=166334µs min_b=131183µs razón=1267‰
+  P3 min_a=172988µs min_b=134685µs razón=1284‰
+ronda 5 · load average: 2.08, 1.93, 2.44
+  P2 min_a=168127µs min_b=133313µs razón=1261‰
+  P3 min_a=147374µs min_b=123760µs razón=1190‰
+  P1 min_a=213363µs min_b=174973µs razón=1219‰
+ronda 6 · load average: 2.14, 1.95, 2.44
+  P3 min_a=208460µs min_b=149274µs razón=1396‰
+  P1 min_a=155307µs min_b=154246µs razón=1006‰
+  P2 min_a=195668µs min_b=144911µs razón=1350‰
+ronda 7 · load average: 2.21, 1.97, 2.45
+  P1 min_a=180049µs min_b=173875µs razón=1035‰
+  P2 min_a=218661µs min_b=161080µs razón=1357‰
+  P3 min_a=185445µs min_b=142796µs razón=1298‰
+ronda 8 · load average: 2.28, 1.99, 2.45
+  P2 min_a=200261µs min_b=148184µs razón=1351‰
+  P3 min_a=177237µs min_b=131261µs razón=1350‰
+  P1 min_a=175602µs min_b=173738µs razón=1010‰
+ronda 9 · load average: 2.61, 2.07, 2.47
+  P3 min_a=205743µs min_b=164729µs razón=1248‰
+  P1 min_a=194548µs min_b=206250µs razón=943‰
+  P2 min_a=169622µs min_b=138228µs razón=1227‰
+ronda 10 · load average: 2.56, 2.07, 2.47
+  P1 min_a=182869µs min_b=164560µs razón=1111‰
+  P2 min_a=214421µs min_b=175000µs razón=1225‰
+  P3 min_a=214004µs min_b=162555µs razón=1316‰
+fin · 2026-10-14T16:20:53-06:00 · load average: 2.64, 2.10, 2.47
+rc=0

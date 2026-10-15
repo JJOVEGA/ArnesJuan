@@ -1,0 +1,98 @@
+--- el REQ sujeto (6 líneas):
+# REQ-100
+Estado: en-revisión
+Sensible a seguridad: no
+QA: aprobado
+Seguridad: n/a
+Rigor: estandar
+--- decisión del sujeto en cada árbol (debe ser la misma):
+  /home/juan/dev/ArnesJuan-v1.36/hooks: 
+  /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks: 
+  /tmp/tmp.xqihylGwT8/h132/hooks: 
+--- camino de código: llamadas a la función nueva en una traza bash -x de la candidata
+  arnes_destino_a_juzgar: 0 llamadas; ARNES_FORMA_DIR leída en 1 líneas de traza; total de líneas de traza: 1843
+  traza de v1.36.0: 1841 líneas (misma cifra = mismo camino ejecutado, salvo la asignación de la constante)
+  diff: 82,83d81
+  diff: < ++ ARNES_FORMA_DIR=$'\t'
+  diff: < ++ ARNES_DESTINO=
+  diff: 1822c1820
+  diff: < + tmp=/tmp/tmp.kSYuF7Pb8A
+  diff: ---
+  diff: > + tmp=/tmp/tmp.objJlbTjMH
+  diff: 1828c1826
+  diff: < + rm -f /tmp/tmp.kSYuF7Pb8A
+  diff: ---
+  diff: > + rm -f /tmp/tmp.objJlbTjMH
+ronda 1 · load average: 1.44, 1.81, 2.46
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1230565-1792016312279662 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.44 jobs=desconocido k=4 r=6 us=220683>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1231111-1792016314509997 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.44 jobs=desconocido k=4 r=6 us=240962>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1231668-1792016316945347 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.57 jobs=desconocido k=4 r=6 us=237272>
+ronda 2 · load average: 1.57, 1.83, 2.47
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1232214-1792016319337955 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.57 jobs=desconocido k=4 r=6 us=197964>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1232760-1792016321337736 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.60 jobs=desconocido k=4 r=6 us=202510>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1233306-1792016323383092 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.60 jobs=desconocido k=4 r=6 us=217338>
+ronda 3 · load average: 1.60, 1.83, 2.46
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1233866-1792016325583003 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.60 jobs=desconocido k=4 r=6 us=183694>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1234419-1792016327441828 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.79 jobs=desconocido k=4 r=6 us=207251>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1234965-1792016329537255 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.79 jobs=desconocido k=4 r=6 us=201882>
+ronda 4 · load average: 1.81, 1.87, 2.47
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1235519-1792016331578175 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.81 jobs=desconocido k=4 r=6 us=216874>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1236065-1792016333764431 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.81 jobs=desconocido k=4 r=6 us=237145>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1236611-1792016336156568 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.15 jobs=desconocido k=4 r=6 us=221006>
+ronda 5 · load average: 2.15, 1.94, 2.49
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1237160-1792016338386357 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.15 jobs=desconocido k=4 r=6 us=158439>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1237700-1792016339989260 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.15 jobs=desconocido k=4 r=6 us=176780>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1238246-1792016341775297 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.13 jobs=desconocido k=4 r=6 us=184360>
+ronda 6 · load average: 2.13, 1.94, 2.49
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1238796-1792016343637819 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.13 jobs=desconocido k=4 r=6 us=171079>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1239349-1792016345366396 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=2.13 jobs=desconocido k=4 r=6 us=193285>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1239889-1792016347321840 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.96 jobs=desconocido k=4 r=6 us=183920>
+ronda 7 · load average: 1.96, 1.91, 2.47
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1240438-1792016349185105 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.96 jobs=desconocido k=4 r=6 us=187623>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1240984-1792016351079223 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.89 jobs=desconocido k=4 r=6 us=172638>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1241524-1792016352824543 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.89 jobs=desconocido k=4 r=6 us=224371>
+ronda 8 · load average: 1.89, 1.89, 2.46
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1242073-1792016355106170 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.89 jobs=desconocido k=4 r=6 us=175719>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1242627-1792016356880552 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.81 jobs=desconocido k=4 r=6 us=185188>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1243171-1792016358747231 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.81 jobs=desconocido k=4 r=6 us=191917>
+ronda 9 · load average: 1.81, 1.88, 2.46
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1243720-1792016360688599 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.81 jobs=desconocido k=4 r=6 us=179324>
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1244260-1792016362501423 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.75 jobs=desconocido k=4 r=6 us=195710>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1244806-1792016364476704 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.75 jobs=desconocido k=4 r=6 us=206797>
+ronda 10 · load average: 1.77, 1.87, 2.44
+  P1 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1245355-1792016366569904 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.77 jobs=desconocido k=4 r=6 us=239132>
+  P2 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1245978-1792016368984492 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.77 jobs=desconocido k=4 r=6 us=187070>
+  P3 NO RESUELTA (estado=ok
+estado=-) <sonda=reloj modo=medicion estado=ok motivo=- corrida=desconocido invocacion=1246518-1792016370874993 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=1.77 jobs=desconocido k=4 r=6 us=181508>
+fin · 2026-10-14T16:19:32-06:00 · load average: 1.79, 1.87, 2.44
+rc=0
+INTENTO FALLIDO DEL INSTRUMENTO DE QA (no es medida): el lector de 41-reloj-ca08.sh casaba 'disc_estado=-' con 'estado=' y daba toda ronda por no resuelta; detenido en la ronda 6. Corregido el lector (campo con espacio delante) y repetido el procedimiento entero en 42-reloj-ca08.txt.

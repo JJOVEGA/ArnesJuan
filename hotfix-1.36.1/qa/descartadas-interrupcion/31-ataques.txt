@@ -1,0 +1,431 @@
+fecha: 2026-10-14T16:14:04-06:00  candidata: /home/juan/dev/ArnesJuan-v1.36/hooks  v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+(@P = la raíz del proyecto de fixture; globs src/* y app/*; requirements_dir requirements)
+
+=== 1. Enlaces (último componente, intermedio, cadenas, absolutos) y rutas equivalentes
+E1 | agente=coordinadora | cwd=<raíz> | cp S docs/enlace-src
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E2 | agente=coordinadora | cwd=<raíz> | cp S docs/enlace2
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E3 | agente=coordinadora | cwd=<raíz> | cp S docs/dsrc/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E4 | agente=coordinadora | cwd=<raíz> | cp S docs/dsrc-abs/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E5 | agente=coordinadora | cwd=<raíz> | cp S docs/dsrc/../docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/dsrc/../docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/dsrc/../docs/notas.md' 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/dsrc/../docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/dsrc/../docs/notas.md' 
+   movimiento: =
+   efecto: nada protegido cambió
+E6 | agente=coordinadora | cwd=<raíz> | cp S @P/docs/../src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E7 | agente=coordinadora | cwd=<raíz> | cp S ./src/./a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E8 | agente=coordinadora | cwd=<raíz> | cp S @P//src///a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E9 | agente=coordinadora | cwd=docs | cp S ../src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+E10 | agente=coordinadora | cwd=docs/sub | cp S ../../src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+E11 | agente=qa-tester | cwd=<raíz> | mv S docs/enlace-src
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de el subagente 'qa-tester')
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de el subagente 'qa-tester')
+   movimiento: =
+   efecto: nada protegido cambió
+E12 | agente=coordinadora | cwd=<raíz> | install S docs/enlace-src
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+E13 | agente=coordinadora | cwd=<raíz> | cp S docs/enlace-req && echo completado
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/enlace-req/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/enlace-req' de la ruta existe pero
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E14 | agente=desarrollador | cwd=<raíz> | cp S docs/enlace-req && echo completado
+   v1.36.0:   deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E15 | agente=coordinadora | cwd=<raíz> | cp S docs/hl
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/hl/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/hl' de la ruta existe pero no se puede rec
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E16 | agente=coordinadora | cwd=<raíz> | cp S src/sub/b.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/sub/b.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinado
+   candidata: deny  ARNES: el comando escribe en 'src/sub/b.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinado
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+E17 | agente=coordinadora | cwd=src | cp S a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+E18 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts/
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'src/a.ts/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/src/a.ts' de la ruta existe pero no se puede r
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'src/a.ts/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/src/a.ts' de la ruta existe pero no se puede r
+   movimiento: =
+   efecto: nada protegido cambió
+
+=== 2. cwd de la entrada frente al del proceso
+W1 | agente=coordinadora | cwd=<raíz> | cp S src
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Esc
+   candidata: deny  ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Esc
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+W2 | agente=coordinadora | cwd=<raíz> | cp S src
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Esc
+   candidata: deny  ARNES: el comando escribe en 'src/', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora). Esc
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+W3 | agente=coordinadora | cwd=docs | cp S notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no se pu
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+W4 | agente=coordinadora | cwd=src | cp S a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+W5 | agente=coordinadora | cwd=- | cp S @P/src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+W6 | agente=coordinadora | cwd=- | cp S @P/docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' d
+   candidata: allow
+   movimiento: deny->allow
+
+=== 3. Tipos especiales
+X1 | agente=coordinadora | cwd=<raíz> | cp S docs/fifo
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/fifo/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/fifo' de la ruta existe pero no se puede
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/fifo/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/fifo' de la ruta existe pero no se puede
+   movimiento: =
+   efecto: nada protegido cambió
+X2 | agente=coordinadora | cwd=<raíz> | cp S /dev/null
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '/dev/null/': el directorio '/dev/null' de la ruta existe pero no se puede recorrer (sin permiso, n
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe '/dev/null/': el directorio '/dev/null' de la ruta existe pero no se puede recorrer (sin permiso, n
+   movimiento: =
+   efecto: nada protegido cambió
+X3 | agente=coordinadora | cwd=<raíz> | cp S /dev/stdout
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '/dev/stdout/': el directorio '/dev/stdout' de la ruta existe pero no se puede recorrer (sin permis
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe '/dev/stdout/': el directorio '/dev/stdout' de la ruta existe pero no se puede recorrer (sin permis
+   movimiento: =
+   efecto: nada protegido cambió
+X4 | agente=coordinadora | cwd=<raíz> | cp S /dev/fd/1
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '/dev/fd/1/': el directorio '/dev/fd/1' de la ruta existe pero no se puede recorrer (sin permiso, n
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe '/dev/fd/1/': el directorio '/dev/fd/1' de la ruta existe pero no se puede recorrer (sin permiso, n
+   movimiento: =
+   efecto: nada protegido cambió
+X5 | agente=coordinadora | cwd=<raíz> | cp S /proc/self/fd/1
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '/proc/self/fd/1/': el directorio '/proc/self/fd/1' de la ruta existe pero no se puede recorrer (si
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe '/proc/self/fd/1/': el directorio '/proc/self/fd/1' de la ruta existe pero no se puede recorrer (si
+   movimiento: =
+   efecto: nada protegido cambió
+
+=== 4. La marca (tabulador) fabricada por quien escribe el comando
+M1 | agente=coordinadora | cwd=<raíz> | cp S		src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+M2 | agente=coordinadora | cwd=<raíz> | cp S 	docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+M3 | agente=coordinadora | cwd=<raíz> | echo x >	src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+M4 | agente=coordinadora | cwd=<raíz> | cp S $'\t'src/a.ts
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: nada protegido cambió
+M5 | agente=coordinadora | cwd=<raíz> | cp S 	
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'S/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/S' de la ruta existe pero no se puede recorrer (sin p
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+M6 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts	# docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+
+=== 5. -t, --target-directory, grupos cortos y sus disfraces
+T1 | agente=coordinadora | cwd=<raíz> | cp -t src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T2 | agente=coordinadora | cwd=<raíz> | cp -tsrc docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T3 | agente=coordinadora | cwd=<raíz> | cp -avt src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T4 | agente=coordinadora | cwd=<raíz> | cp --target-directory src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T5 | agente=coordinadora | cwd=<raíz> | cp --target-dir=src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T6 | agente=coordinadora | cwd=<raíz> | cp --ta=src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T7 | agente=coordinadora | cwd=<raíz> | cp "-t" src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T8 | agente=coordinadora | cwd=<raíz> | cp '-t' src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T9 | agente=coordinadora | cwd=<raíz> | cp \-t src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T10 | agente=coordinadora | cwd=<raíz> | cp -""t src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T11 | agente=coordinadora | cwd=<raíz> | cp "--target-directory=src" docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T12 | agente=coordinadora | cwd=<raíz> | T=-t; cp $T src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T13 | agente=coordinadora | cwd=<raíz> | mv "-t" src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T14 | agente=coordinadora | cwd=<raíz> | install "-t" src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T15 | agente=qa-tester | cwd=<raíz> | cp "-t" src docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+T16 | agente=coordinadora | cwd=<raíz> | cp -T S docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+T17 | agente=coordinadora | cwd=<raíz> | cp --no-target-directory S docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+T18 | agente=coordinadora | cwd=<raíz> | cp -t src -- docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+
+=== 6. El operando que el detector toma por destino NO es el destino (formas vecinas)
+V1 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts 2>/dev/null
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '2/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/2' de la ruta existe pero no se puede recorrer (sin p
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V2 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts 2>&1
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '2/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/2' de la ruta existe pero no se puede recorrer (sin p
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V3 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts # docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V4 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts #docs/notas.md
+   v1.36.0:   allow
+   candidata: allow
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V5 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts </dev/null docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+V6 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts < docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V7 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts 2>docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '2/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/2' de la ruta existe pero no se puede recorrer (sin p
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V8 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts & cp S docs/notas.md
+   v1.36.0:   deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   candidata: deny  ARNES: el comando escribe en 'src/a.ts', que es código de la app; sólo el agente 'desarrollador' puede hacerlo (intento de la sesión coordinadora).
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+V9 | agente=coordinadora | cwd=<raíz> | cp S "src/a.ts" docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+V10 | agente=coordinadora | cwd=<raíz> | cp S src/a.ts 2>/dev/null; true
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '2/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/2' de la ruta existe pero no se puede recorrer (sin p
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+
+=== 7. F-137-13: las tres formas
+F1 | agente=coordinadora | cwd=<raíz> | mv src/a.ts docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+F1b | agente=coordinadora | cwd=<raíz> | mv src/a.ts docs/nuevo.md
+   v1.36.0:   allow
+   candidata: allow
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+F1c | agente=qa-tester | cwd=<raíz> | mv src/a.ts docs/notas.md
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+F2 | agente=coordinadora | cwd=<raíz> | cd src && cp S a.ts
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'a.ts/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/a.ts' de la ruta existe pero no se puede recorrer 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+F2b | agente=coordinadora | cwd=<raíz> | cd src && cp S nuevo.ts
+   v1.36.0:   allow
+   candidata: allow
+   movimiento: =
+   efecto: nada protegido cambió
+F3 | agente=coordinadora | cwd=<raíz> | cp S $X
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '$X/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/$X' de la ruta existe pero no se puede recorrer (sin
+   candidata: allow
+   movimiento: deny->allow
+   efecto: nada protegido cambió
+F3b | agente=coordinadora | cwd=<raíz> | X=src/a.ts; cp S $X
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe '$X/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/$X' de la ruta existe pero no se puede recorrer (sin
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+
+=== 8. El cierre de un REQ por cp (CA-05) y sus variantes
+C1 | agente=coordinadora | cwd=<raíz> | cp S requirements/REQ-X.md && echo completado
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/requirements/REQ-X.md' de la ruta
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C2 | agente=desarrollador | cwd=<raíz> | cp S requirements/REQ-X.md && echo completado
+   v1.36.0:   deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C3 | agente=coordinadora | cwd=requirements | cp S REQ-X.md # completado
+   v1.36.0:   deny  ARNES: este comando escribe en 'requirements/completado' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+   candidata: deny  ARNES: este comando escribe en 'requirements/completado' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las 
+   movimiento: =
+   efecto: nada protegido cambió
+C4 | agente=coordinadora | cwd=<raíz> | cp S ./requirements/../requirements/REQ-X.md; echo COMPLETADO
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe './requirements/../requirements/REQ-X.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/./requirements/
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C5 | agente=coordinadora | cwd=<raíz> | mv S requirements/REQ-X.md && echo completado
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/requirements/REQ-X.md' de la ruta
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C6 | agente=coordinadora | cwd=<raíz> | install S requirements/REQ-X.md && echo completado
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'requirements/REQ-X.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/requirements/REQ-X.md' de la ruta
+   candidata: deny  ARNES: este comando escribe en 'requirements/REQ-X.md' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las pu
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C7 | agente=coordinadora | cwd=<raíz> | cp S requirements && echo completado
+   v1.36.0:   deny  ARNES: este comando escribe en 'requirements/' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2
+   candidata: deny  ARNES: este comando escribe en 'requirements/' y menciona 'completado'. La transicion de estado de un REQ no puede juzgarse desde Bash: las puertas A2
+   movimiento: =
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+C8 | agente=coordinadora | cwd=<raíz> | cp "-t" requirements docs/notas.md && echo completado
+   v1.36.0:   deny  ARNES: no se pudo determinar a que archivo escribe 'docs/notas.md/': el directorio '/tmp/tmp.mH2V8LMFDk/proj/docs/notas.md' de la ruta existe pero no 
+   candidata: allow
+   movimiento: deny->allow
+   efecto: CAMBIÓ algo protegido (src/app/requirements)
+
+=== 9. Manifiesto roto
+R1 | agente=coordinadora | cwd=<raíz> | cp S docs/notas.md
+   v1.36.0:   deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   candidata: deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   movimiento: =
+   efecto: nada protegido cambió
+R2 | agente=coordinadora | cwd=<raíz> | cp S .arnes/config.json
+   v1.36.0:   deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   candidata: deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   movimiento: =
+   efecto: nada protegido cambió
+R3 | agente=desarrollador | cwd=<raíz> | cp S docs/notas.md
+   v1.36.0:   deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   candidata: deny  ARNES: '.arnes/config.json' existe pero NO se puede leer como objeto JSON (invalido, vacio, 'null' o un array), asi que ninguna puerta sabe que rutas 
+   movimiento: =
+   efecto: nada protegido cambió
+R4 | agente=coordinadora | cwd=<raíz> | ls -la
+   v1.36.0:   allow
+   candidata: allow
+   movimiento: =
+   efecto: nada protegido cambió
+
+casos: 82
+rc=0

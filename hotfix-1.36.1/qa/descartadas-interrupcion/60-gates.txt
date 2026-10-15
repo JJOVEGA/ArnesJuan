@@ -1,0 +1,45 @@
+$ for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+rc=0
+$ jq -e . hooks/hooks.json >/dev/null
+rc=0
+$ jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+rc=0
+--- CA-13: versiones
+1.36.1
+["1.36.1","1.36.1"]
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+index b336b0d..1d55ed0 100644
+--- a/.claude-plugin/marketplace.json
++++ b/.claude-plugin/marketplace.json
+@@ -5,14 +5,14 @@
+   },
+   "metadata": {
+     "description": "Marketplace del arnés de agentes de Juan.",
+-    "version": "1.36.0"
++    "version": "1.36.1"
+   },
+   "plugins": [
+     {
+       "name": "arnes-juan",
+       "source": "./",
+       "description": "Arnés genérico de 4 agentes para desarrollo asistido por IA con pipeline, quality gates y trazabilidad.",
+-      "version": "1.36.0"
++      "version": "1.36.1"
+     }
+   ]
+ }
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+index 0385f09..ad6e40f 100644
+--- a/.claude-plugin/plugin.json
++++ b/.claude-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "arnes-juan",
+   "description": "Arnés genérico de 4 agentes (requerimientos, desarrollo, QA, seguridad) para Claude Code: pipeline con quality gates, memoria en archivos, changelog auditable y documentación viva. Reutilizable entre proyectos y clientes.",
+-  "version": "1.36.0",
++  "version": "1.36.1",
+   "author": {
+     "name": "Juan"
+   }
+--- gates del manifiesto .arnes/config.json
+["for f in hooks/*.sh tools/*.sh; do bash -n \"$f\" || exit 1; done","jq -e . hooks/hooks.json >/dev/null","jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null"]

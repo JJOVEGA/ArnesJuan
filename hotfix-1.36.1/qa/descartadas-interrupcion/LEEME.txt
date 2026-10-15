@@ -1,0 +1,1 @@
+Salidas y scripts de la fase 2 de QA del 2026-10-14, interrumpida por el apagado del equipo: no cuentan como evidencia (pueden haber quedado cortadas); las corridas se rehacen el 2026-10-15 en el directorio padre.
