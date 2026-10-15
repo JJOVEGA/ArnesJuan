@@ -1,0 +1,4 @@
+bash -n rc=0
+hooks.json rc=0
+plugin/marketplace rc=0
+versiones: 1.36.1 ["1.36.1","1.36.1"]

@@ -1,0 +1,18 @@
+fecha: 2026-10-15T14:27:39-06:00  candidata: /home/juan/dev/ArnesJuan-v1.36/hooks  v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+== destino protegido por enlace simbólico o duro, con opciones de la lista
+S1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f S docs/hl
+== origen protegido leído con -a/-r (source), destino no protegido: M-032 legítimo
+R1    v1.36.0=allow candidata=allow =       protegido intacto  | cp -a src/a.ts docs/copia.ts
+R2    v1.36.0=allow candidata=allow =       protegido intacto  | cp -r src docs/sub
+== destino es el último operando pero cp lo trata como dir por múltiples fuentes
+T1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f S src/a.ts src
+T2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f docs/d1 docs/notas.md src/a.ts
+== espacios y formas del troceado
+W1    v1.36.0=deny  candidata=deny  =       protegido intacto  |   cp   S   src/a.ts  
+W2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S  src/a.ts
+== mayúsculas/mezcla de opciones de la lista
+C1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -R S src/a.ts
+C2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -fRpv S src/a.ts
+C3    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -faux S src/a.ts
+casos: 10
+rc=0

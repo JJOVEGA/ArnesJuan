@@ -1,0 +1,37 @@
+fecha: 2026-10-15T14:26:24-06:00  candidata: /home/juan/dev/ArnesJuan-v1.36/hooks  v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks
+== origen que es directorio (cp -r / -a), destino archivo o inexistente
+D1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -r docs/sub src/a.ts
+D2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -a docs/sub src/a.ts
+D3    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -r docs/sub app/x
+D4    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -R docs/sub src/nuevo
+== -f -n -i -p -u -v con destino archivo o directorio protegido
+O1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f S src/a.ts
+O2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -n S src/a.ts
+O3    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -p S src/a.ts
+O4    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -u S src/a.ts
+O5    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -fi S src/a.ts
+O6    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -v S src
+O7    v1.36.0=deny  candidata=deny  =       protegido intacto  | install -p S src/a.ts
+O8    v1.36.0=deny  candidata=deny  =       protegido intacto  | mv -f S src/a.ts
+== operandos que empiezan por - sin ser opciones (tras -- no; aquí sin --)
+G1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S -f
+G2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -- S src/a.ts
+G3    v1.36.0=allow candidata=allow =       protegido intacto  | cp S src/a.ts extra
+G4    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f -- S src/a.ts
+== un solo operando (n<2): no debería retirar la marca
+U1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp src/a.ts
+U2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp -f src/a.ts
+== nombres raros del conjunto permitido en el destino
+N1    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S src/a=b.ts
+N2    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S src/a.ts
+N3    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S ./src/a.ts
+N4    v1.36.0=deny  candidata=deny  =       protegido intacto  | cp S src/sub/u.ts
+N5    v1.36.0=allow candidata=allow =       protegido intacto  | cp S +x
+== find -exec y otros portadores del destino, llanos
+X1    v1.36.0=allow candidata=allow =       protegido intacto  | find docs -name notas.md -exec cp S {} ;
+X2    v1.36.0=allow candidata=allow =       protegido intacto  | find src -name a.ts -exec cp S {} +
+== cp con tres operandos y el del medio protegido (varios orígenes, un destino dir)
+M1    v1.36.0=allow candidata=allow =       protegido intacto  | cp S src/a.ts docs/sub
+M2    v1.36.0=allow candidata=allow =       protegido intacto  | mv src/orig.ts S docs
+casos: 27
+rc=0

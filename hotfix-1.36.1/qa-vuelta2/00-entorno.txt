@@ -1,0 +1,7 @@
+fecha: 2026-10-15T14:22:08-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 · bash 5.3.9(1)-release · jq-1.8.2 · /usr/bin/find: find (GNU findutils) 4.10.0
+rama: hotfix/1.36.1 · cabeza: 77b71f765c4c1e392076be238a016777b62c0204
+árbol:  M docs/ESTADO.md 
+instalada 1.36.0 = f22b905: idénticos
+e3a06e194c5b9111953411e8cb6e79c81425c863980ddf6b9b958ec9f3bff913  hooks/lib.sh
+carga:  14:22:08 up 11 days, 14:16,  1 user,  load average: 1.30, 2.40, 2.37
