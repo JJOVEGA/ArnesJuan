@@ -1,0 +1,149 @@
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 5637e26..1598ec5 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -2377,10 +2377,24 @@ _arnes_estado_ausente_c() {
+ # del lado de conservar la forma `destino/` (CA-15). Lo que queda —letras, cifras, no ASCII, blanco y
+ # `% & + , - . / : ; = > @ _ |`— lo trocea el detector como el shell; `>` lo resuelve el detector por
+ # segmento (sin marca si el segmento acaba en una redireccion). Una vez por comando, sin procesos.
+-# AMPLIACION PREVISTA (P-032-4, pendiente del propietario; NO implementada): un archivo regular con mas de
+-# un enlace duro no retiraria la marca; seria una condicion mas al final de `arnes_destino_a_juzgar`, con
+-# el proceso que cueste, solo en ese camino.
++# EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
++# enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
++# archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
++# lee el numero de enlaces sin un proceso, asi que `_arnes_un_solo_enlace` cuesta UN `find` y SOLO en esta
++# rama: destino de `cp`/`mv`/`install` con la marca, comando llano, destino que existe y es archivo regular.
++# Nunca en el camino comun (sin escrituras no hay marca) ni con un destino que no existe. Memorizado por
++# archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
++# afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
+ ARNES_FORMA_DIR=$'\t'
++declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
++_arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
++  local r
++  if [[ -z ${ARNES_NLINK1[$1]+x} ]]; then
++    r="$(find "$1" -maxdepth 0 -type f -links 1 -print 2>/dev/null)"
++    if [[ -n $r && $r == "$1" ]]; then ARNES_NLINK1[$1]=si; else ARNES_NLINK1[$1]=no; fi
++  fi
++  [[ ${ARNES_NLINK1[$1]} == si ]]
++}
+ ARNES_DESTINO=''
+ ARNES_LLANO_CMD=''; ARNES_LLANO=''   # memoria por invocacion; nacen vacias al cargar (no se heredan)
+ _arnes_cmd_llano() {   # 0 = el comando (`ARNES_CMD`) no lleva nada que el detector no siga
+@@ -2399,7 +2413,8 @@ arnes_destino_a_juzgar() {
+   arnes_identidad "${ARNES_DESTINO%/}"
+   [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
+   [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
+-  [[ -f $ARNES_ID_O ]] && return 1
++  [[ -f $ARNES_ID_O ]] || return 0
++  _arnes_un_solo_enlace "$ARNES_ID_O" && return 1   # P-032-4 (B): con mas de un enlace duro, como v1.36.0
+   return 0
+ }
+ 
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index 10d3412..633bf99 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -32,7 +32,7 @@ bash tests/escenarios/hooks/autoprueba-corredor.sh       # la autoprueba del cor
+ ARNES_SONDA_CONTROLES=1 bash tests/escenarios/hooks/run.sh secciones/37-coste-del-escaner-7-*.sh
+                                                          # los controles de medición de las sondas de coste
+ ```
+-Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **2686 casos** (el número exacto lo cuadran
++Requiere `jq`. Sale con código ≠ 0 si algún caso falla. **2722 casos** (el número exacto lo cuadran
+ `CASOS_ESPERADOS_SECCION` en cada archivo y `CASOS_ESPERADOS` al final de `run.sh`). La línea
+ `Resultado:` cuenta **aparte** los `SKIP` que son **INCONCLUSO** —una sonda de coste que no acreditó
+ nada en esa corrida— y los nombra debajo; el código de salida **no** depende de ellos
+@@ -327,7 +327,8 @@ Tres reglas nacidas de fallos reales:
+ | Destino de cp que es archivo (48) | REQ-032 CA-02 y CA-03 (a), con `cp`, `mv` e `install`: sobre un archivo **que existe** y no está protegido —un REQ por ruta absoluta y relativa, `docs/notas.md`, con `-T`, de la coordinadora, de `qa-tester` y de `analista-requerimientos`, y por un enlace a un archivo regular— (F1–F4, F6–F8); y el comando que menciona el estado terminal (G1, coordinadora y `desarrollador`) | **allow**; contra **v1.36.0** (f22b905, por SHA con `mat48`) **deny** con el motivo de no determinable que cita la ruta **con la barra final** (fail-before, en las tres órdenes) |
+ | Destino de cp que es archivo (48) | controles: el agente de código (F5), destinos inexistentes (K1, K2, N1 `app` que casa `app/*`), `cat S > D` (K3); un archivo protegido por un enlace (K4) y por las rutas que llegan a él (A1–A7); el cierre de un REQ (C1, por `guard-completado`); destinos directorio, también por enlace (D1–D7); lo que no se sabe —directorio sin permiso, sin `cwd`, `..` sobre lo que no existe, el `cwd` de la entrada frente al del proceso, barra final, enlace roto, FIFO, `/dev/null`— (U1–U8); `-t`, `--target-directory` y la redirección con barra final (T1–T6); la excepción del manifiesto roto, que **no** se repara (M1, M2) | **igual** en la candidata y en v1.36.0; un enlace cuenta como el archivo al que resuelve (K4 **deny**); U1, U7 y los enlaces, **SKIP** con motivo donde no se pueden construir |
+ | Destino de cp que es archivo (48) | REQ-032 CA-15 (QA-032-01): el último operando no se puede asegurar como destino —redirección de entrada, `2>/dev/null` y `2>&1` con un archivo `2`, comentario, `-t`/`-rt`, `-t` entre comillas, escapada, partida por comillas o por una expansión, `--target-directory=` entre comillas, el último operando entre comillas, un salto de línea— con `cp` (y con `mv` e `install` las de R1 y R7–R12), de la coordinadora y de `qa-tester` (R1–R17) | **deny** en la candidata y en v1.36.0 (la decisión de v1.36.0); con los hooks de 9e97bd7, la entrega anterior, **allow** salvo R5 y R6 |
+-| Destino de cp que es archivo (48) | el oráculo de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build` y F3— (P1, sonda de procesos) | iguales; **0** procesos añadidos. El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
++| Destino de cp que es archivo (48) | P-032-4 (B), el enlace duro: un destino en `docs/` enlazado duro a `hooks/lib.sh` (H1, `hooks/*` protegido en este proyecto) o a `src/a.ts` (H2), y entre dos archivos de `docs/` (H3, restricción aceptada), con `cp`, `mv` e `install`, de la coordinadora y de `qa-tester` | **deny** en la candidata y en v1.36.0; con los hooks de 759ff50 **allow** (fail-before); sin enlaces duros, **SKIP** con motivo |
++| Destino de cp que es archivo (48) | el oráculo de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build`, F3 y H3— (P1, sonda de procesos) | iguales; **0** procesos añadidos en el camino común; en la rama del destino existente, como mucho el `find` de P-032-4 (B). El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index ecd09c2..362d701 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1702,7 +1702,11 @@ done
+ # bloque R, 58 filas × 2 árboles: R1–R13 con cp, R1 y R7–R12 con mv e install (R14, R15), y R16 (último operando entre
+ # comillas) y R17 (salto de línea), desde la coordinadora y desde qa-tester—. Todas deny en la candidata y en v1.36.0;
+ # con los hooks de 9e97bd7 (la entrega anterior) como candidata, 54 FAIL. Ninguna otra sección cambia su número.
+-CASOS_ESPERADOS=2686
++# Y 2686 → 2722 por P-032-4 (B), el enlace duro, en la misma pasada: +36 en la 48 (370 → 406) —el bloque H, 18 filas
++# × 2 árboles: H1 (a hooks/lib.sh, protegido), H2 (a src/a.ts) y H3 (entre dos archivos de docs/, restricción aceptada),
++# con cp, mv e install, desde la coordinadora y desde qa-tester—. deny en la candidata y en v1.36.0; con los hooks de
++# 759ff50 como candidata, los 18 FAIL. Ninguna otra sección cambia su número.
++CASOS_ESPERADOS=2722
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+index 5e6755f..9f5208f 100644
+--- a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
++++ b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+@@ -12,14 +12,15 @@
+ #   G  M-032 por `guard-completado`: el comando que menciona el estado terminal (CA-09, por propiedad) ·
+ #   R  CA-15 (QA-032-01): redirección, comentario, `-t` en cualquier forma, comillas o salto de línea: la decisión
+ #      de v1.36.0 (R1–R13, y R14/R15 = R1 y R7–R12 con `mv` e `install`; R16 y R17, formas halladas en la pasada) ·
++#   H  P-032-4 (B): un destino con más de un enlace duro vuelve a la decisión de v1.36.0 (H1–H3) ·
+ #   M  la excepción del manifiesto roto: la causa está también ahí y NO se repara (CA-10; registrada) ·
+ #   O  el oráculo de CA-01 (`cat S > D`) · P  CA-12 (a)(b), procesos frente a v1.36.0 en la misma corrida.
+ # DOS ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`) y v1.36.0 (f22b905), por SHA con `mat48` (copia de
+ # `mat47`); sin ella, SKIP y motivo, nunca PASS. Las filas se juzgan por guard.sh —lo que recibe el cliente—
+ # salvo C (guard-completado). Las que dependen de enlaces simbólicos, de una FIFO, de un directorio en modo
+ # 000 o de /dev/null salen SKIP con motivo donde no se pueden construir. Esto NO es la validación en el host.
+-CASOS_ESPERADOS_SECCION=370
+-PISO_AUTONOMO_SECCION=74  # 23 preámbulo (líneas 1-23, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 24-47) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 71-97)
++CASOS_ESPERADOS_SECCION=406
++PISO_AUTONOMO_SECCION=75  # 24 preámbulo (líneas 1-24, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO48, mat48_reg y mat48, copia de mat47, líneas 25-48) + 27 bloque indivisible mayor (g48, juicio48, fila48 y fila48c, líneas 72-98)
+ seccion_nueva "--- 48 · el destino de cp/mv/install que existe y es archivo (REQ-032, hotfix 1.36.1) ---"
+ REPO48="${SEC_DIR%/}/../../../.."; MAT48_RUTAS='hooks'; MAT48_REG=''; MAT48_T0=0; MAT48_REF='-'
+ mat48_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT48_REG, UNA sola línea (la lee `sonda_lee`)
+@@ -227,22 +228,40 @@ for e48 in "${dests48[@]}"; do
+ done
+ if [ -n "$mal48" ]; then v48 FAIL "$nom48 $mal48"; else v48 PASS "$nom48  ($n48 comparaciones, todas iguales)"; fi
+ 
++# --- H: P-032-4 (B) — un destino con más de un enlace duro vuelve a la decisión de v1.36.0 ------------------------
++# En este proyecto se protege además `hooks/*`. Si el sistema no crea enlaces duros, SKIP con motivo.
++jq '.codigo_app.globs += ["hooks/*"]' "$P48/.arnes/config.json" > "$P48/.arnes/c48" && mv "$P48/.arnes/c48" "$P48/.arnes/config.json"
++mkdir -p "$P48/hooks"; printf 'l\n' > "$P48/hooks/lib.sh"; printf 'h\n' > "$P48/docs/h3-a"
++ln "$P48/hooks/lib.sh" "$P48/docs/hl-lib" 2>/dev/null; ln "$P48/src/a.ts" "$P48/docs/hl-a" 2>/dev/null; ln "$P48/docs/h3-a" "$P48/docs/h3-b" 2>/dev/null
++HL48=no; HL48_MOT='aquí no se pudo crear un enlace duro: la fila no mediría un enlace duro'
++[ "$P48/docs/hl-lib" -ef "$P48/hooks/lib.sh" ] && [ "$P48/docs/hl-a" -ef "$P48/src/a.ts" ] && [ "$P48/docs/h3-b" -ef "$P48/docs/h3-a" ] && HL48=si
++for a in - qa-tester; do
++  q="${a/#-/coordinadora}"
++  for o in cp mv install; do
++    fila48c "$HL48" "$HL48_MOT" "H1 $o $q: $o S docs/hl-lib (enlace duro a hooks/lib.sh, protegido)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S docs/hl-lib")"
++    fila48c "$HL48" "$HL48_MOT" "H2 $o $q: $o S docs/hl-a (enlace duro a src/a.ts, protegido)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S docs/hl-a")"
++    fila48c "$HL48" "$HL48_MOT" "H3 $o $q: $o S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B))" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S docs/h3-b")"
++  done
++done
++
+ # --- P: CA-12 (a)(b) — procesos frente a v1.36.0 en la misma corrida: 0 añadidos ----------------------------------
+-nom48="REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) y cp sobre docs/notas.md (F3) no añaden ninguno"
++nom48="REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B)"
+ if [ "$RV48_OK" != si ]; then v48 SKIP "$nom48  $RV48_MOT"
+ else
+   f48="$RAIZ/j48-$BASHPID.json"; mal48=''; med48=''
+-  for k48 in 'ls -la' 'npm run build' "cp S $P48/docs/notas.md"; do
++  pk48=('ls -la' 'npm run build' "cp S $P48/docs/notas.md"); [ "$HL48" != si ] || pk48+=("cp S $P48/docs/h3-b")
++  for k48 in "${pk48[@]}"; do
+     printf '%s' "$(j48 "$P48" - "$k48")" > "$f48"; pr48=''
+     [ -s "$f48" ] || { mal48+=" $k48: la entrada salió vacía, no midió"; continue; }
+     for h48 in "$HOOKS_DIR" "$RV48/hooks"; do
+       r48="$("$UTIL_DIR/sonda-procesos.sh" --dir-trabajo "$RAIZ" --etiqueta "48-procesos" \
+-        --binarios 'jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git readlink realpath cygpath' \
++        --binarios 'jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git readlink realpath cygpath find stat' \
+         --sujeto "CLAUDE_PROJECT_DIR='$P48' bash '$h48/guard.sh' < '$f48'" 2>/dev/null)"
+       if sonda_lee "$r48" && [ "${SONDA[estado]}" = ok ]; then pr48+="${SONDA[cuenta]:-x} "; else pr48+="x "; mal48+=" $k48: la sonda no midió (${SONDA_MOTIVO:-${SONDA[motivo]:-?}})"; fi
+     done
+     read -r pc48 pb48 <<< "$pr48"; k48="${k48/"$P48"/<raíz>}"; med48+=" «$k48» $pc48/$pb48"
+-    case "$pc48$pb48" in *x*) ;; *) [ "$pc48" -le "$pb48" ] || mal48+=" «$k48»: $pc48 > $pb48" ;; esac
++    x48=0; case "$k48" in cp*) x48=1 ;; esac   # la rama del destino existente: el `find` declarado (P-032-4 (B))
++    case "$pc48$pb48" in *x*) ;; *) [ "$pc48" -le $(( pb48 + x48 )) ] || mal48+=" «$k48»: $pc48 > $pb48 + $x48" ;; esac
+   done
+   rm -f "$f48"
+   case "$mal48" in *'no midió'*) v48 SKIP "$nom48 $mal48" ;; '') v48 PASS "$nom48 (candidata/v1.36.0:$med48)" ;; *) v48 FAIL "$nom48 $mal48 (candidata/v1.36.0:$med48)" ;; esac

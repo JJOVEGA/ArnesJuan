@@ -1,0 +1,64 @@
+1c1,2
+< FAIL	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo : el sensible base mide 149296µs y no llega a 150000µs;
+---
+> FAIL	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  mín(r) N× > techo N× en las N de N resueltas: N× N× N× N× N× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+> FAIL	REQ-021 CA-04.1 la sonda mata y DECLARA a su descendencia hasta el NIETO, sin apoyarse en jobs : el hijo directo SIGUIÓ VIVO tras la invocación;
+1469d1469
+< PASS	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  máx(cociente) N× <= techo N× en N de N resueltas: N× N× N× N× N× · calibración resuelta: v1.32.1 recorre [N×, N×] en N de N
+1480d1479
+< PASS	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  máx(r) N× <= techo N× en N de N resueltas: N× N× N× N× N× (todas resueltas)
+1501a1501
+> PASS	REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo  (cal_n=N derivado de Nns/vuelta para N× el suelo de Nµs que declara el JUEZ —la sonda publica suelo=Nµs y no decide—; sensible Nµs · insensible Nµs, ninguno pegado al suelo)
+1507d1506
+< PASS	REQ-021 CA-04.1 la sonda mata y DECLARA a su descendencia hasta el NIETO, sin apoyarse en jobs  (vivos=N, mecanismo proc+marca; el sujeto deja abuelo y nieto y ninguno sobrevive)
+1523c1522
+< PASS	REQ-023 CA-03 (reservada) entrada al azar U+C5A79 = $'\363\205\251\271', semilla ARNES_SEMILLA_41=32120 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+---
+> PASS	REQ-023 CA-03 (reservada) entrada al azar U+92A4A = $'\362\222\251\212', semilla ARNES_SEMILLA_41=16340 (bash 5.3.9(1)-release)  N/N DENY en la candidata (713ac68 las dejaba cerrar: N/N)
+1931a1931,1966
+> PASS	REQ-032 H1 cp coordinadora: cp S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 cp coordinadora: cp S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H1 cp qa-tester: cp S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 cp qa-tester: cp S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H1 install coordinadora: install S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 install coordinadora: install S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H1 install qa-tester: install S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 install qa-tester: install S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H1 mv coordinadora: mv S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 mv coordinadora: mv S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H1 mv qa-tester: mv S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) candidata  (deny)
+> PASS	REQ-032 H1 mv qa-tester: mv S docs/hl-lib (enlace duro a hooks/lib.sh, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 cp coordinadora: cp S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 cp coordinadora: cp S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 cp qa-tester: cp S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 cp qa-tester: cp S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 install coordinadora: install S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 install coordinadora: install S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 install qa-tester: install S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 install qa-tester: install S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 mv coordinadora: mv S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 mv coordinadora: mv S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H2 mv qa-tester: mv S docs/hl-a (enlace duro a src/a.ts, protegido) candidata  (deny)
+> PASS	REQ-032 H2 mv qa-tester: mv S docs/hl-a (enlace duro a src/a.ts, protegido) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 cp coordinadora: cp S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 cp coordinadora: cp S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 cp qa-tester: cp S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 cp qa-tester: cp S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 install coordinadora: install S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 install coordinadora: install S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 install qa-tester: install S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 install qa-tester: install S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 mv coordinadora: mv S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 mv coordinadora: mv S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+> PASS	REQ-032 H3 mv qa-tester: mv S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) candidata  (deny)
+> PASS	REQ-032 H3 mv qa-tester: mv S docs/h3-b (enlace duro entre dos archivos de docs/, ninguno protegido: deny, RESTRICCIÓN ACEPTADA por P-032-4 (B)) v1.36.0 (control, decide igual)  (deny)
+1969c2004
+< PASS	REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) y cp sobre docs/notas.md (F3) no añaden ninguno (candidata/v1.36.0: «ls -la» 1/1 «npm run build» 1/1 «cp S <raíz>/docs/notas.md» 2/3)
+---
+> PASS	REQ-032 P1 CA-12 procesos frente a v1.36.0: ls -la y npm run build (camino común) no añaden ninguno; la rama del destino existente (F3; H3, enlace duro) añade como mucho el find de P-032-4 (B) (candidata/v1.36.0: «ls -la» 1/1 «npm run build» 1/1 «cp S <raíz>/docs/notas.md» 3/3 «cp S <raíz>/docs/h3-b» 4/3)
+2674a2710
+> SKIP	REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica  [INCONCLUSO] [rendimiento] la calibración NO resolvió: hacen falta N o más repeticiones resueltas de v1.32.1 y todas por encima de N× · v1.32.1: N× N× N× N× N× (N de N resueltas) · este árbol: N× N× N× N× N× (N de N resueltas) · no es FAIL del candidato: el instrumento no demostró ver el defecto
+2677c2713
+< SKIP	REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite
+---
+> SKIP	REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de N× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo N× cae DENTRO del recorrido [N×, N×] de N razones resueltas de N: N× N× N× N× N× (todas resueltas) · presupuesto fijo, no se repite

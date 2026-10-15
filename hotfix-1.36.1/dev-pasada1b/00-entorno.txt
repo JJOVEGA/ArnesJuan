@@ -1,0 +1,7 @@
+fecha: 2026-10-15T09:05:22-06:00
+host: Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 · bash 5.3.9(1)-release · jq-1.8.2 · find: bfs 4.1.1
+rama: hotfix/1.36.1 · cabeza: 759ff505987f3a99e7c8148d1f92d28c4c87a0ed (+ cambios del enlace duro, sin commit)
+línea base v1.36.0: /home/juan/.claude/plugins/cache/arnes-juan/arnes-juan/1.36.0/hooks · 759ff50 por git archive en /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/h759
+3adf42db5b1463bd55d827992b5442e280441317f66c749233a3bbaaccd33cce  hooks/lib.sh
+8a82241967f0a8d78992a1672d5119686ec2c0411afb3562f6d63727a4c7abea  hooks/guard-codigo.sh
+be1d3270bc83f2eea2aae3e80042ba1ece6196a2a169d3802bb6a8b564d3f4f3  hooks/guard-completado.sh

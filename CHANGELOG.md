@@ -1,5 +1,11 @@
 # CHANGELOG — rama de evidencia
 
+## 2026-10-15 · Hotfix 1.36.1, pasada correctiva, el enlace duro (P-032-4 (B)), desarrollador
+`hotfix-1.36.1/dev-pasada1b/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `759ff50` con el cambio sin commit, Linux/WSL2:
+- sección 48: 406/0; con v1.36.0 28 FAIL (M-032); con `759ff50` 18 FAIL (las filas H);
+- procesos: camino común 0 añadidos; rama del destino existente +1 (`find`); reloj 1,01×–1,05×;
+- banco 2707/2/13 (reloj REQ-017 CA-08 (ii) e instrumento REQ-021 CA-04.1, fuera de la 48); autoprueba 117/0; gates rc 0.
+
 ## 2026-10-15 · Hotfix 1.36.1, pasada correctiva de QA-032-01 (desarrollador): REQ-032 CA-15
 `hotfix-1.36.1/dev-pasada1/` (resumen en su `README.md`), sobre `hotfix/1.36.1` en `48b8a0a` con los cambios sin commit, Linux/WSL2:
 - sección 48: 370/0 en la candidata; con v1.36.0, 28 FAIL (M-032, como antes; las R `deny`); con `9e97bd7`, 54 FAIL (las R salvo R5 y R6);

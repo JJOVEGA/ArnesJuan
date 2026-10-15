@@ -1,0 +1,16 @@
+--- 38/3 · los instrumentos de tests/util/: la descendencia, el estadístico y el juez (REQ-021 CA-04, CA-02 y CA-10) ---
+  PASS  REQ-021 CA-04.1 la sonda mata y DECLARA a su descendencia hasta el NIETO, sin apoyarse en jobs  (vivos=2, mecanismo proc+marca; el sujeto deja abuelo y nieto y ninguno sobrevive)
+  PASS  REQ-021 CA-04.1 fail-before: el mismo sujeto SIN la mitad de descendencia deja vivo al nieto  (PID 1615771 y su descendencia siguen vivos sin la barrida; esta sección los recoge)
+  PASS  REQ-021 CA-04.1 el descendiente REPARENTADO se ve y se mata: el recorrido por children no lo alcanza y la marca de entorno sí  (vivos=1, mecanismo proc+marca; el doble fork lo reparenta a init y no sobrevive)
+  PASS  REQ-021 CA-04.1 fail-before: sin la marca de entorno, el MISMO sujeto publica vivos=0 con el reparentado vivo  (la copia sin la marca publica vivos=0 y deja el proceso vivo; esta sección lo recoge)
+  PASS  REQ-021 CA-04.4 el directorio de envoltorios es privado y se retira también en el camino de error  (estado=sin-sujeto y 0 directorios sonda-procesos-* en el temporal de la vuelta)
+  PASS  REQ-021 CA-04.5 un PATH con componente vacío o relativo no se mide: se dice  (las cuatro formas —':' inicial, ':' final, '::' y '.'— dan estado=path-inseguro, ninguna un número)
+  PASS  REQ-021 CA-04.3 las rutas se resuelven con type -P y el envoltorio generado lleva la ruta ABSOLUTA, no una re-resolución por PATH
+  PASS  REQ-021 CA-02.5 una muestra MIXTA —reloj bajo instrumentación de procesos— no es publicable  (un envoltorio por proceso mide el envoltorio: estado=mixta, instrumentada=si y sin número)
+  PASS  REQ-021 CA-02.1/CA-02.4 el mínimo lo impone la sonda —no hay vía para pedir la media— y bajo el suelo no publica número  (estado=suelo con min=6µs bajo el suelo de 50000µs, y ninguna opción de media)
+  PASS  REQ-021 CA-02.2/CA-02.3/CA-06 con DOS sujetos las series se alternan a,b,a,b y el registro trae los dos mínimos, los máximos, la razón y sus condiciones  (razón 0.947× entre dos sujetos idénticos, con carga=1.72 y corrida declarada)
+  PASS  REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también  (13 registros → PASS SKIP SKIP SKIP FAIL FAIL FAIL FAIL FAIL FAIL FAIL SKIP PASS )
+  PASS  REQ-021 CA-10.2 vivos>0 en una CALIBRACIÓN es FAIL y en una MEDICIÓN es SKIP: no es el mismo hecho  (la misma calibración con vivos=2 es FAIL y con vivos=0 pasa; en medición el mismo hecho da SKIP, arriba)
+aviso: vuelta parcial (1 de 62 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 12 PASS, 0 FAIL
