@@ -1,0 +1,8 @@
+mv -t docs .arnes/config.json
+ln -sf x .arnes/config.json
+rm -rf .
+git rm -r --cached .
+mv a b c
+rm -rf build
+grep rm .arnes/config.json
+cd .arnes && rm config.json

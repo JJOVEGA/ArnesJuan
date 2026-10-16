@@ -1,0 +1,10 @@
+mv -t docs .arnes/config.json      cand=deny  v1.36.1=allow
+ln -sf x .arnes/config.json        cand=deny  v1.36.1=allow
+rm -rf .                           cand=deny  v1.36.1=allow
+git rm -r --cached .               cand=deny  v1.36.1=allow
+mv a b c                           cand=allow v1.36.1=allow
+rm -rf build                       cand=allow v1.36.1=allow
+grep rm .arnes/config.json         cand=deny  v1.36.1=allow
+cd .arnes && rm config.json        cand=allow v1.36.1=allow
+manifiesto roto, coordinadora: printf '{}' > .arnes/config.json -> allow (v1.36.1 allow)
+manifiesto roto, coordinadora: mv .arnes/config.json x -> deny (v1.36.1 deny)

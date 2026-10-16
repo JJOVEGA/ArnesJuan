@@ -1,0 +1,282 @@
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+index 1d55ed0..46c6388 100644
+--- a/.claude-plugin/marketplace.json
++++ b/.claude-plugin/marketplace.json
+@@ -5,14 +5,14 @@
+   },
+   "metadata": {
+     "description": "Marketplace del arnés de agentes de Juan.",
+-    "version": "1.36.1"
++    "version": "1.36.2"
+   },
+   "plugins": [
+     {
+       "name": "arnes-juan",
+       "source": "./",
+       "description": "Arnés genérico de 4 agentes para desarrollo asistido por IA con pipeline, quality gates y trazabilidad.",
+-      "version": "1.36.1"
++      "version": "1.36.2"
+     }
+   ]
+ }
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+index ad6e40f..e110222 100644
+--- a/.claude-plugin/plugin.json
++++ b/.claude-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "arnes-juan",
+   "description": "Arnés genérico de 4 agentes (requerimientos, desarrollo, QA, seguridad) para Claude Code: pipeline con quality gates, memoria en archivos, changelog auditable y documentación viva. Reutilizable entre proyectos y clientes.",
+-  "version": "1.36.1",
++  "version": "1.36.2",
+   "author": {
+     "name": "Juan"
+   }
+diff --git a/hooks/guard-codigo.sh b/hooks/guard-codigo.sh
+index 8e847f6..60082cf 100755
+--- a/hooks/guard-codigo.sh
++++ b/hooks/guard-codigo.sh
+@@ -120,6 +120,8 @@ arnes_guard_codigo() {
+       # nada y bloquearlo no protegeria ninguna invariante"). El aviso del manifiesto roto
+       # se emite siempre que el manifiesto SE CONSULTA, que es siempre que hay algo que
+       # juzgar con el.
++      # REQ-033 CA-01: retirar el manifiesto, a TODO agente; antes del corte, sin leerlo (lib.sh).
++      arnes_deny_retira_manifiesto
+       [ -n "$escrituras" ] || return 0
+     fi
+   else
+@@ -132,6 +134,8 @@ arnes_guard_codigo() {
+   # Recibe los destinos ya detectados (no los vuelve a analizar): con Bash solo alcanza a
+   # un comando que escribe, y ese analisis ya esta hecho aqui arriba.
+   arnes_deny_manifiesto_roto "$escrituras"
++  # REQ-033 CA-01: escribir el manifiesto por Bash, o vaciarlo con un Write, a TODO agente (lib.sh).
++  arnes_deny_escribe_manifiesto "$escrituras"
+ 
+   # ¿ES CODIGO DE LA APP? Se decide por la IDENTIDAD DEL DESTINO (REQ-007 CA-47, ADR-016), no
+   # por el texto de la ruta: `<raiz>/docs/../src/a.ts`, un directorio enlazado a `src/` o
+diff --git a/hooks/guard-completado.sh b/hooks/guard-completado.sh
+index b01b571..9e92379 100755
+--- a/hooks/guard-completado.sh
++++ b/hooks/guard-completado.sh
+@@ -365,6 +365,7 @@ arnes_guard_completado() {
+       # R2 (SEC-129, REQ-007 CA-68 (i)): cualquier otro codigo que 0 no es «no escribe»: el analisis no
+       # concluyo. Medido en modo POSIX: rc 1 y la lista vacia, que se leia como un comando que no escribe.
+       [ "$rc" -eq 0 ] || arnes_deny_rc_analizador "$rc" guard-completado
++      arnes_deny_retira_manifiesto   # REQ-033 CA-01, como en `guard-codigo`
+       [ -n "$escrituras" ] || return 0 ;;
+     Edit|Write|MultiEdit)
+       [ -n "$fp" ] || return 0 ;;
+@@ -376,6 +377,7 @@ arnes_guard_completado() {
+   # Los destinos ya estan detectados en la via Bash; en Edit/Write la escritura es cierta
+   # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
+   arnes_deny_manifiesto_roto "${escrituras:-}"
++  arnes_deny_escribe_manifiesto "${escrituras:-}"   # REQ-033 CA-01, como en `guard-codigo`
+ 
+   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
+ 
+diff --git a/hooks/lib.sh b/hooks/lib.sh
+index 01c1fc2..e93de05 100755
+--- a/hooks/lib.sh
++++ b/hooks/lib.sh
+@@ -2261,17 +2261,21 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
+         # (`2>/dev/null` se lee aqui como el operando `2`): no se puede asegurar que el ultimo operando sea
+         # el destino. Lo que este texto ya no deja ver —comillas, escapes, expansiones, `<`, `#`— lo mira
+         # `arnes_destino_a_juzgar` sobre el comando entero antes de retirar la marca.
+-        local dest="" sin_marca=0
++        # REQ-033: `ops`, los operandos (sin el argumento de un `-t` separado), para los origenes de `mv`.
++        local dest="" sin_marca=0 objt=0 cont=0 n_ops=0; local -a ops=()
+         for ((j = i + 1; j < n; j++)); do
+           case "${t[j]}" in
+             '>') sin_marca=1; break ;;
+             '|'|';'|'&&'|'||'|'&') break ;;
+-            --t*) sin_marca=1; continue ;;
++            --target-directory) sin_marca=1; objt=1; cont=1; continue ;;
++            --t*) sin_marca=1; cont=1; continue ;;
+             --*) continue ;;
+-            -*t*) sin_marca=1; continue ;;
++            -*t) sin_marca=1; objt=1; cont=1; continue ;;
++            -*t*) sin_marca=1; cont=1; continue ;;
+             -*) continue ;;
+           esac
+           dest="${t[j]}"
++          if [ "$objt" -eq 1 ]; then objt=0; else ops+=("$dest"); fi
+         done
+         if [ -n "$dest" ]; then
+           sal+=("$dest")
+@@ -2279,7 +2283,32 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
+             */) ;;
+             *) if [ "$sin_marca" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
+           esac
+-        fi ;;
++        fi
++        # REQ-033 CA-02/CA-01: cada ORIGEN de `mv` es una escritura (sin marca) y una RETIRADA. Con `-t`
++        # todos los operandos son origenes, y el ultimo ya salio arriba.
++        case "$tok" in
++          mv|*/mv)
++            n_ops=$(( ${#ops[@]} - 1 + cont ))
++            for ((j = 0; j < n_ops; j++)); do
++              [ "$cont" -eq 1 ] && [ "$j" -eq $(( ${#ops[@]} - 1 )) ] || sal+=("${ops[j]}")
++              sal+=("$ARNES_RETIRO${ops[j]}")
++            done ;;
++        esac ;;
++      rm|unlink|truncate|shred|*/rm|*/unlink|*/truncate|*/shred)
++        # REQ-033 CA-01: RETIRADAS, solo contra el manifiesto (otros archivos no cambian, CA-08).
++        for ((j = i + 1; j < n; j++)); do
++          x="${t[j]}"
++          case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
++          sal+=("$ARNES_RETIRO$x")
++        done ;;
++      ln|*/ln)
++        # REQ-033 CA-01: `ln -f` sustituye su ultimo operando: RETIRADA.
++        x=''
++        for ((j = i + 1; j < n; j++)); do
++          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
++          x="${t[j]}"
++        done
++        [ -z "$x" ] || sal+=("$ARNES_RETIRO$x") ;;
+       sed|perl|*/sed|*/perl)
+         local en_sitio=0
+         for ((j = i + 1; j < n; j++)); do
+@@ -2381,6 +2410,9 @@ _arnes_estado_ausente_c() {
+ # archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
+ # afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
+ ARNES_FORMA_DIR=$'\t'
++# REQ-033: marca de RETIRADA (rm, unlink, truncate, shred, ln, origen de mv). Ningun token lleva tabuladores;
++# `arnes_escrituras_de` la separa a `ARNES_RETIROS` antes de que nadie lea `ARNES_ESCRITURAS`.
++ARNES_RETIRO=$'\t\t'
+ declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
+ _arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
+   local r
+@@ -2467,15 +2499,82 @@ arnes_escrituras_de() {   # <comando> -> ARNES_ESCRITURAS ; rc de `arnes_bash_es
+   if [ -n "$ARNES_ESCR_LISTO" ] && [ "$1" = "$ARNES_ESCR_CMD" ]; then
+     if [ "${#1}" -le "$ARNES_BASH_MAX_ANALISIS" ] || [ -n "${ARNES_TECHO:-}" ] \
+        || { [ -n "${ARNES_MANIFEST_LISTO:-}" ] && { [ -z "${ARNES_BASH_MAX:-}" ] || ! _arnes_techo_excede; }; }; then
+-      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"
++      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"; _arnes_separa_retiros
+       return "$ARNES_ESCR_RC"
+     fi
+   fi
+   ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"; rc=$?
+   ARNES_ESCR_LISTO=1; ARNES_ESCR_CMD="$1"; ARNES_ESCR_OUT="$ARNES_ESCRITURAS"; ARNES_ESCR_RC=$rc
++  _arnes_separa_retiros
+   return "$rc"
+ }
+ 
++# REQ-033: las RETIRADAS pasan a `ARNES_RETIROS`, sin marca; sin ninguna (camino comun) no recorre nada.
++_arnes_separa_retiros() {
++  ARNES_RETIROS=''
++  [[ $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_RETIRO"* ]] || return 0
++  local l e=''
++  while IFS= read -r l; do
++    if [[ $l == "$ARNES_RETIRO"* ]]; then ARNES_RETIROS+="${l#"$ARNES_RETIRO"}"$'\n'; else e+="$l"$'\n'; fi
++  done <<< "$ARNES_ESCRITURAS"
++  ARNES_ESCRITURAS="${e%$'\n'}"
++}
++
++# --- REQ-033 CA-01: nadie retira ni vacia el manifiesto, tampoco el agente de codigo (identidad: CA-47).
++# Retirar <ruta> lo retira si ES el manifiesto o un directorio que lo contiene dentro de la raiz. Lo no
++# determinable no se toma por el: `rm` de otros no cambia (CA-08); el origen de `mv` lo juzga guard-codigo.
++_arnes_retira_manifiesto() {   # <ruta>
++  arnes_identidad "$1"
++  arnes_id_pertenece manifiesto && return 0
++  [[ $ARNES_ID_E == ok ]] || return 1
++  _arnes_bajo "$ARNES_ID_F" "$ARNES_RAIZ_FIS" || return 1
++  [[ -z ${ARNES_BAJO%/} || ${ARNES_BAJO%/} == .arnes ]]
++}
++_arnes_deny_manifiesto() {   # <ruta como llego> <que hace la orden>
++  local quien
++  if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
++  else quien="la sesión coordinadora"; fi
++  arnes_cita_ruta "$1"
++  arnes_deny "ARNES: $2 el manifiesto del arnés ('$ARNES_MANIF_REL', aquí $ARNES_CITA_RUTA). Borrar, mover o vaciar el manifiesto, o reescribirlo sin pasar por Edit/Write, deja inertes o sin medir todas las puertas del proyecto, y no se permite a ningún agente, tampoco al agente de código (intento de $quien; REQ-033 CA-01). Para cambiarlo, el agente de código lo escribe con Edit/Write y con su contenido completo; si el proyecto deja de usar el arnés, lo retira una persona fuera de la sesión."
++}
++# Antes de leer el manifiesto: `rm` de otro archivo no gasta su `jq`.
++arnes_deny_retira_manifiesto() {
++  [ -n "${ARNES_RETIROS:-}" ] || return 0
++  local d
++  while IFS= read -r d; do
++    [ -n "$d" ] || continue
++    _arnes_retira_manifiesto "$d" && _arnes_deny_manifiesto "$d" "este comando borra, mueve o sustituye"
++  done <<< "$ARNES_RETIROS"
++  return 0
++}
++# Escribirlo por Bash, o un Write sin contenido (un `jq`, memorizado). Tras `arnes_deny_manifiesto_roto`:
++# con el manifiesto roto, la reparacion de REQ-007 CA-60 no cambia.
++ARNES_MANIF_CONTENIDO=''
++arnes_deny_escribe_manifiesto() {   # [destinos de escritura de Bash, uno por linea]
++  local d
++  case "$ARNES_TOOL" in
++    Bash)
++      [ "${ARNES_MANIFEST_ROTO:-0}" != 1 ] || return 0
++      while IFS= read -r d; do
++        [ -n "$d" ] || continue
++        d="${d#"$ARNES_FORMA_DIR"}"
++        arnes_identidad "$d"
++        arnes_id_pertenece manifiesto && _arnes_deny_manifiesto "$d" "este comando escribe por Bash"
++      done <<< "${1:-}" ;;
++    Write)
++      [ -n "$ARNES_FP" ] || return 0
++      arnes_identidad "$ARNES_FP"; arnes_id_pertenece manifiesto || return 0
++      if [ -z "$ARNES_MANIF_CONTENIDO" ]; then
++        ARNES_JQ=''
++        arnes_jq_str "$ARNES_INPUT" -r '.tool_input.content | if type == "string" and test("[^ \t\r\n]") then "lleno" else "vacio" end' \
++          || ARNES_JQ=vacio
++        ARNES_MANIF_CONTENIDO="${ARNES_JQ:-vacio}"
++      fi
++      [ "$ARNES_MANIF_CONTENIDO" = lleno ] || _arnes_deny_manifiesto "$ARNES_FP" "este Write deja sin contenido" ;;
++  esac
++  return 0
++}
++
+ # --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------
+ # `IFS= read -r -d '' x < f` es la forma barata de leer un archivo entero en bash: un
+ # solo builtin, cero forks. Tiene un borde que costó un fallo en abierto medido
+diff --git a/tests/escenarios/hooks/README.md b/tests/escenarios/hooks/README.md
+index 0e004f0..72f08c5 100644
+--- a/tests/escenarios/hooks/README.md
++++ b/tests/escenarios/hooks/README.md
+@@ -326,10 +326,12 @@ Tres reglas nacidas de fallos reales:
+ | Decisión emitida (47) | QA-007-14 (P): funciones `return` y `break` importadas (builtins especiales); los mismos `ls -la` y `Write` | **sin decisión** y **deny**, en menos de 5 s (la lista estática lleva también los especiales); con 39e6128, el hook muere o no termina (FAIL, el fail-before) |
+ | Destino de cp que es archivo (48) | REQ-032 CA-02 y CA-03 (a), con `cp`, `mv` e `install`: sobre un archivo **que existe** y no está protegido —un REQ por ruta absoluta y relativa, `docs/notas.md`, de la coordinadora, de `qa-tester` y de `analista-requerimientos`, y por un enlace a un archivo regular— (F1–F3, F6–F8; F4 con `-T` y G1, el comando que menciona el estado terminal, son desde la vuelta 2 restricciones declaradas: **deny** como en v1.36.0) | **allow**; contra **v1.36.0** (f22b905, por SHA con `mat48`) **deny** con el motivo de no determinable que cita la ruta **con la barra final** (fail-before, en las tres órdenes) |
+ | Destino de cp que es archivo (48) | controles: el agente de código (F5), destinos inexistentes (K1, K2, N1 `app` que casa `app/*`), `cat S > D` (K3); un archivo protegido por un enlace (K4) y por las rutas que llegan a él (A1–A7); el cierre de un REQ (C1, por `guard-completado`); destinos directorio, también por enlace (D1–D7); lo que no se sabe —directorio sin permiso, sin `cwd`, `..` sobre lo que no existe, el `cwd` de la entrada frente al del proceso, barra final, enlace roto, FIFO, `/dev/null`— (U1–U8); `-t`, `--target-directory` y la redirección con barra final (T1–T6); la excepción del manifiesto roto, que **no** se repara (M1, M2) | **igual** en la candidata y en v1.36.0; un enlace cuenta como el archivo al que resuelve (K4 **deny**); U1, U7 y los enlaces, **SKIP** con motivo donde no se pueden construir |
+-| Destino de cp que es archivo (48) | REQ-032 CA-15 (QA-032-01): el último operando no se puede asegurar como destino —redirección de entrada, `2>/dev/null` y `2>&1` con un archivo `2`, comentario, `-t`/`-rt`, `-t` entre comillas, escapada, partida por comillas o por una expansión, `--target-directory=` entre comillas, el último operando entre comillas, un salto de línea— con `cp` (y con `mv` e `install` las de R1 y R7–R12), de la coordinadora y de `qa-tester` (R1–R17) | **deny** en la candidata y en v1.36.0 (la decisión de v1.36.0); con los hooks de 9e97bd7, la entrega anterior, **allow** salvo R5 y R6 |
++| Destino de cp que es archivo (48) | REQ-032 CA-15 (QA-032-01): el último operando no se puede asegurar como destino —redirección de entrada, `2>/dev/null` y `2>&1` con un archivo `2`, comentario, `-t`/`-rt`, `-t` entre comillas, escapada, partida por comillas o por una expansión, `--target-directory=` entre comillas, el último operando entre comillas, un salto de línea— con `cp` (y con `mv` e `install` las de R1 y R7–R12), de la coordinadora y de `qa-tester` (R1–R17) | **deny** en la candidata y en v1.36.0 (la decisión de v1.36.0); con los hooks de 9e97bd7, la entrega anterior, **allow** salvo R5 y R6. Desde 1.36.2 (REQ-033 CA-02) R1 con `mv` cita el código de la app: `src/a.ts` es un origen |
+ | Destino de cp que es archivo (48) | P-032-4 (B), el enlace duro: un destino en `docs/` enlazado duro a `hooks/lib.sh` (H1, `hooks/*` protegido en este proyecto) o a `src/a.ts` (H2), y entre dos archivos de `docs/` (H3, restricción aceptada), con `cp`, `mv` e `install`, de la coordinadora y de `qa-tester` | **deny** en la candidata y en v1.36.0; con los hooks de 759ff50 **allow** (fail-before); sin enlaces duros, **SKIP** con motivo |
+ | Destino de cp que es archivo (48) | REQ-032 CA-15, vuelta 2 (QA-032-02, P-032-5 (C)): la marca sólo se retira si el comando ENTERO es una invocación simple de `cp`/`mv`/`install` con opciones de la lista. `xargs` que aporta el destino (X1–X4, con las tres órdenes), `find -exec` (X5), prefijos (`\cp`, `command`, `sudo`, `nice`, `env`, `timeout`, `VAR=x`, `/bin/cp`: P1–P8), encadenados, tubería y redirección (E1), opciones fuera de la lista (O1: `-T`, `--`, `-b`, `install -m`), el número de enlaces ilegible (H4a–c, con su control H4k) y opciones de la lista (L1); G1 y F4 pasan a restricción | **la decisión de v1.36.0**: deny, salvo X5 y P1, que v1.36.0 ya permite (igualdad, familia de F-137-14); L1 y H4k **allow** (M-032); con los hooks de 264dfa9, X, P2–P8, E1 (menos la redirección), O1, F4 y G1 **allow** (fail-before) |
+ | Destino de cp que es archivo (48) | el ORÁCULO de CA-01 —sobre cada destino existente de F, K4 y A, `cp`, `mv` e `install` deciden como `cat S > D`— (O1) y los procesos de CA-12 (a)(b) frente a v1.36.0 —`ls -la`, `npm run build`, F3 y H3— (P1, sonda de procesos) | iguales; **0** procesos añadidos en el camino común; en la rama del destino existente, como mucho el `find` de P-032-4 (B). El reloj de CA-12 (c) se mide fuera del banco (evidencia del hotfix) |
++| Manifiesto y origen de mv (49) | REQ-033 CA-01 y CA-02 (hotfix 1.36.2): retirar o vaciar `.arnes/config.json` —`rm`, `unlink`, `git rm`, `mv` con él de origen, `rm -rf .arnes`, `: >`, `>`, `truncate`, `cp /dev/null`, `tee`, `sed -i`, un `Write` vacío o de blancos—, de la coordinadora, de `qa-tester` y del agente de código (A1–A3w); el origen protegido de `mv` con destino inexistente, existente o varios orígenes, y el origen no determinable (A4, A5, U1), de la coordinadora y de `qa-tester` | **deny** con el motivo que nombra el manifiesto o el código; contra **v1.36.1** (e21baef, por SHA con `mat49`) **allow** (fail-before) |
++| Manifiesto y origen de mv (49) | CA-04, controles: `mv` y `rm` de lo no protegido, la lectura del manifiesto (`cat`, `jq`), el agente de código moviendo código y escribiendo el manifiesto con contenido por `Write`, la coordinadora escribiendo código, `rm hooks/lib.sh` (fuera del alcance, CA-08) y un `mv` con destino protegido (C1–C7); y CA-06, procesos y reloj frente a v1.36.1 | **igual** en los dos árboles; **0** procesos añadidos en `ls -la`, como mucho 1 en `mv`, `rm` y el `Write` del manifiesto (+1 de la emisión donde la candidata deniega); el reloj, ≤ 1,25 × donde los procesos son los mismos (**SKIP** con motivo bajo el suelo de 50 ms), y anotado sin juzgar donde se añade un proceso declarado |
+ 
+ **Desde REQ-023 CA-13, un `Edit` de `requirements/` que la puerta no puede reconstruir se deniega antes
+ que cualquier otra puerta.** Por eso los casos que miden otra puerta de `guard-completado` usan
+diff --git a/tests/escenarios/hooks/run.sh b/tests/escenarios/hooks/run.sh
+index 4dfcf78..aa29c3c 100755
+--- a/tests/escenarios/hooks/run.sh
++++ b/tests/escenarios/hooks/run.sh
+@@ -1710,7 +1710,9 @@ done
+ # coordinadora y qa-tester: X1, X2 y X5 con cp, mv e install, X3, X4, P1–P8, E1 (4), O1 (4), L1 (4, opciones de la
+ # lista) y H4a/b/c/k—. F4 y G1 pasan a esperar deny (restricciones de CA-15). Con los hooks de 264dfa9 como candidata,
+ # 53 FAIL. Ninguna otra sección cambia su número.
+-CASOS_ESPERADOS=2862
++# Y 2862 → 2952 por el hotfix 1.36.2 (REQ-033): +90 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
++# e21baef), más PROC y RELOJ de CA-06—. Ninguna otra sección cambia su número.
++CASOS_ESPERADOS=2952
+ # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
+ # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
+ # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
+diff --git a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+index 07a8688..d526ce8 100644
+--- a/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
++++ b/tests/escenarios/hooks/secciones/48-destino-de-cp-que-es-archivo.sh
+@@ -187,7 +187,10 @@ for a in - qa-tester; do
+       fila48 "R16 $o $q: $o docs/notas.md \"src/a.ts\" (el último operando entre comillas)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o docs/notas.md \"src/a.ts\"")"
+       fila48 "R17 $o $q: $o S src/a.ts, salto de línea, echo docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts"$'\n'"echo docs/notas.md")"
+     fi
+-    fila48 "R1 $o $q: $o S src/a.ts < docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts < docs/notas.md")"
++    # REQ-033 CA-02 (hotfix 1.36.2): con `mv`, `src/a.ts` es un ORIGEN y se juzga como escritura; la decisión
++    # sigue siendo deny, y el motivo de la candidata cita ahora el código de la app (v1.36.0 sin cita).
++    c48="$ND48"; [ "$o" != mv ] || c48="$SRC48"
++    fila48 "R1 $o $q: $o S src/a.ts < docs/notas.md" guard.sh deny deny "$c48" - "$(j48 "$P48" "$a" "$o S src/a.ts < docs/notas.md")"
+     fila48 "R7 $o $q: $o \"-t\" src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \"-t\" src docs/notas.md")"
+     fila48 "R8 $o $q: $o '-t' src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o '-t' src docs/notas.md")"
+     fila48 "R9 $o $q: $o \\-t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \\-t src docs/notas.md")"

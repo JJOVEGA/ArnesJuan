@@ -1,0 +1,3 @@
+G1 bash -n: ok
+G2 hooks.json: ok
+G3 plugin/marketplace: ok
