@@ -17,7 +17,7 @@
 - **v1.36.1 PUBLICADA el 2026-10-15** por orden expresa del propietario: `main` en `e21baef` (fusión del PR #61), tag `v1.36.1`. CI de `main` sobre `e21baef`: run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 de ellos INCONCLUSO de rendimiento, que no acreditan).
 - **Instalación estable: 1.36.1** en este equipo (alcances `user` y `project`, `e21baef`; hooks idénticos al tag). **Rige desde el próximo reinicio.**
 - **CORRECCIÓN DE RUMBO del propietario (2026-10-15)**, literal en la cola («CORRECCIÓN DE RUMBO») y en `docs/PLAN.md` § «★ PLAN VIGENTE»: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.» **P-137-I, retirada.** 1.36.2 **mínima**: `.arnes/config.json` intocable y el origen de `mv`; una pasada correctiva; QA y analista en Sonnet. SEC-135 entero y `rm`/`unlink`/`git rm`, a la pieza b de 1.37. **1.37 empieza por el coste:** rigor proporcional, modelo por rol, pieza b, F-137-9 y adelgazamiento de `AGENTS.md`, y después lo demás. **Métrica:** tokens por REQ cerrado, por rol, comparados con 1.36.0.
-- **Plan autorizado vigente: hotfix 1.36.2 mínimo (P-137-J, adoptada el 2026-10-16), fase 0 de 4, siguiente acción: el analista (Sonnet) escribe REQ-033.** Alcance: `.arnes/config.json` intocable y el origen de `mv`. Una pasada correctiva. Sin tocar `AGENTS.md`. Al cerrar: la coordinadora cierra REQ-033 con `Edit` y registra **la métrica** (tokens por rol frente a 1.36.0 y 1.36.1) y **la calidad de QA en Sonnet** (hallazgos, pasadas).
+- **Plan autorizado vigente: hotfix 1.36.2 mínimo (P-137-J, adoptada el 2026-10-16), fase 1 de 4, siguiente acción: el desarrollador (Opus) implementa REQ-033.** Fase 0 hecha: REQ-033 `pendiente`, ocho criterios. Alcance: `.arnes/config.json` intocable y el origen de `mv`. Una pasada correctiva. Sin tocar `AGENTS.md`. Al cerrar: la coordinadora cierra REQ-033 con `Edit` y registra **la métrica** (tokens por rol frente a 1.36.0 y 1.36.1) y **la calidad de QA en Sonnet** (hallazgos, pasadas).
 - **Después de 1.36.2:** fusionar `main` en `cand/1.37.0` (paso 2b), llevando a la fila de la pieza b el requisito de P-032-6 (2) y corrigiendo la forma del defecto en la nota de `[1.36.0]` y en F-137-10 (a quien no es el agente de código).
 
 ## Historia — hotfix 1.36.1 (rama `hotfix/1.36.1` desde `v1.36.0`, 2026-10-13 → 2026-10-15), publicado en `e21baef`
@@ -576,7 +576,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-15 17:55
+## Estado derivado — 2026-10-16 06:54
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -586,10 +586,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `hotfix/1.36.2` @ `a2aec8a` — limpio
+**Repositorio:** `hotfix/1.36.2` @ `bc35e79` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 1
-**REQ:** 30 — completado 15 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
+**Aprobaciones pendientes:** 0
+**REQ:** 31 — completado 15 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 9
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 15 completados no se listan._
@@ -611,5 +611,6 @@ _Sólo los REQ abiertos; los 15 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
+| REQ-033 | pendiente | pendiente | pendiente | critico | sec-135(instrumento),sec-136(instrumento… |
 
 <!-- ARNES:DERIVADO fin -->

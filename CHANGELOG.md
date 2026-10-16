@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 0: REQ-033 escrito (`pendiente`, ocho criterios) por el analista en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **REQ-033**: CA-01, el manifiesto no se borra, se mueve ni se vacía, a ningún agente; CA-02, el origen de `mv` se juzga como escritura; CA-03, fail-before contra v1.36.1 con las cinco formas del propietario; CA-04, controles; CA-05, regresión; CA-06, 0 procesos en el camino común; CA-07, la versión; CA-08, las notas (SEC-135 a la pieza b; `rm`/`unlink`/`git rm` a 1.37; `AGENTS.md` sin cambio). Una pasada correctiva como tope.
+- **Detalles decididos por el analista** (en el Historial): «vaciar» es toda escritura del manifiesto por `Bash` (también para el `desarrollador`, que sigue por `Edit`/`Write`), más un `Write` vacío; «borrar» alcanza `rm`, `unlink`, `git rm` y el origen de `mv`, sólo para el manifiesto.
+- **Avance (regla 6):** el contrato está listo; empieza la fase 1.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2 mínimo **autorizado** (`P-137-J` adoptada): fase 0 al analista, en Sonnet
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
