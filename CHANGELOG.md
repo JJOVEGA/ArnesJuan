@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1, fase 0 cerrada: `P-137-N` (A) resuelta; REQ-034 corregido (sin declarar → como hoy); fase 1 al desarrollador
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-N (A)**, literal en la cola: sin los cinco ámbitos declarados, el proyecto se comporta como hoy; «nunca sube el coste de un proyecto instalado por actualizar». REQ-034 lo refleja en CA-04, CA-09 y CA-10, en la pregunta 2 y en la Correspondencia.
+- **Coste del analista en la fase 0:** 140 858 tokens acumulados, tres pasadas, por encima de su ≈ 120 k.
+- Resultado: contrato cerrado; fase 1 despachada.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1: `P-137-M` resuelta (1 A, 2 A, 3 A) y reflejada en REQ-034 (`pendiente`); parada en `P-137-N`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

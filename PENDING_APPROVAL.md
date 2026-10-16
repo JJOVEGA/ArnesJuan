@@ -43,7 +43,23 @@
 
 ## Pendientes
 
-### P-137-N — **«Sin declarar, flujo completo»: ¿«como hoy» o «todo `critico`»?** (REQ-034, contradicción interna)
+_(Vacía desde el 2026-10-16: P-137-N resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-16) — **P-137-N (A)**: sin declarar los cinco ámbitos, el proyecto se comporta como hoy; nunca sube el coste de un proyecto instalado por actualizar
+
+**Texto del propietario, literal** (mensaje del 2026-10-16 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-N (A): sin declarar los cinco ámbitos, el proyecto se
+> comporta como hoy; ligero no se aplica y el analista clasifica con los
+> criterios de siempre (estandar, o critico si es sensible). Nunca sube el
+> coste de un proyecto instalado por actualizar. El analista corrige CA-04,
+> CA-09 y CA-10 en una pasada corta; sigue con la fase 1.
+
+**Lo que añade la coordinadora, rotulado como suyo:** el propietario hizo el push de `cand/1.37.0`, y está comprobado. El analista corrige los tres criterios y después va la fase 1.
+
+### P-137-N (texto de la consulta, conservado; resuelta arriba) — **«Sin declarar, flujo completo»: ¿«como hoy» o «todo `critico`»?** (REQ-034, contradicción interna)
 
 **Qué pasó.** Tu precisión en P-137-M dice «sin declarar, flujo completo». El analista la escribió como **`critico`**: en CA-04, CA-09 y CA-10, los REQ nuevos de un proyecto sin los cinco ámbitos declarados van «con QA y auditoría de seguridad» (l. 16). Pero en el mismo REQ, la pregunta 2 resuelta (l. 155–157) sigue diciendo, como la opción 2 (A) que adoptaste, que un proyecto instalado recibe el bloque **inerte** y **su comportamiento no cambia** hasta que lo completa. Las dos cosas no pueden ser ciertas a la vez.
 
@@ -55,8 +71,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-N (A): sin los cinco ámbitos declarados, ligero no opera y se clasifica como hoy; un proyecto instalado no cambia hasta que los declare. El analista lo corrige en CA-04, CA-09 y CA-10 y sigue la fase 1.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-M: 1 (A), 2 (A), 3 (A)**; REQ-034 a `pendiente`, fase 1
 
