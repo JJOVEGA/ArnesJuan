@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 3: seguridad **con hallazgos, sin veto** (R-060): SEC-137 y SEC-138, `contrato`, preexistentes; se resuelven con texto
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`) · agente: `auditor-seguridad`.
+
+- **No abre nada** frente a v1.36.1, y cumple CA-01 y CA-02 en las formas llanas, con 68 órdenes por 3 agentes y dos formas de proyecto.
+- **SEC-137 (`contrato`, media):** mover el directorio que contiene código protegido (`mv hooks docs/h`) no se juzga como origen. **SEC-138 (`contrato`, media):** el manifiesto se puede dejar sin reglas por `Edit`/`Write` (`{}`, o un `Edit` que lo vacía), y en un proyecto consumidor —sin el manifiesto en `codigo_app.globs`— lo puede hacer cualquier agente; el motivo del `deny` nuevo es falso allí (su corrección toca `hooks/`, va a 1.37). Los dos, ya en v1.36.1.
+- **Dictamen:** 1.36.2 se puede publicar si REQ-033 y las notas lo dicen con precisión (cuatro puntos en R-060). Lo resuelve un write-back del analista; después, la firma `aprobado` sobre el mismo código. SEC-136 pasa a `en-mitigación`.
+- Evidencia del auditor archivada por la coordinadora (`hotfix-1.36.2/seg-R060/`).
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2 cerrada: **QA (Sonnet) APROBADO** tras la única pasada correctiva; QA-033-01 y QA-033-02 cerrados (el segundo, como límite declarado)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
 
