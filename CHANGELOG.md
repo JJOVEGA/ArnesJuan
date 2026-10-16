@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1: `P-137-M` resuelta (1 A, 2 A, 3 A) y reflejada en REQ-034 (`pendiente`); parada en `P-137-N`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-M**, literal en la cola. REQ-034 la refleja en las Preguntas abiertas, la Correspondencia y CA-01, 02, 03, 04, 09, 10 y 11; pasa a `pendiente`.
+- **P-137-N:** «sin declarar, flujo completo» quedó escrito como `critico` en CA-04, 09 y 10, y contradice la pregunta 2 resuelta («inerte; su comportamiento no cambia»). La fase 1 queda parada hasta que el propietario decida.
+- **Coste:** analista 137 163 acumulados (+12 268 en esta pasada).
+- Resultado: contrato casi cerrado; falta P-137-N.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1, fase 0 (analista, Sonnet): REQ-034 en `borrador`, 13 criterios; parada en `P-137-M`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

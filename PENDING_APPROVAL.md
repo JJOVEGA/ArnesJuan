@@ -43,7 +43,36 @@
 
 ## Pendientes
 
-### P-137-M — **REQ-034 (1.37 · 1): tres preguntas del contrato antes de implementar** (`requirements/REQ-034.md` § «Preguntas abiertas», «Correspondencia con el encargo»)
+### P-137-N — **«Sin declarar, flujo completo»: ¿«como hoy» o «todo `critico`»?** (REQ-034, contradicción interna)
+
+**Qué pasó.** Tu precisión en P-137-M dice «sin declarar, flujo completo». El analista la escribió como **`critico`**: en CA-04, CA-09 y CA-10, los REQ nuevos de un proyecto sin los cinco ámbitos declarados van «con QA y auditoría de seguridad» (l. 16). Pero en el mismo REQ, la pregunta 2 resuelta (l. 155–157) sigue diciendo, como la opción 2 (A) que adoptaste, que un proyecto instalado recibe el bloque **inerte** y **su comportamiento no cambia** hasta que lo completa. Las dos cosas no pueden ser ciertas a la vez.
+
+**Qué detiene, y qué no.** Detiene la fase 1, para no implementar una de las dos lecturas y tener que rehacerla. Afecta a una regla del analista y a su texto en las plantillas, no a la puerta: en ninguno de los dos casos cambia `hooks/`, y ninguno baja un rigor.
+
+**Opciones**
+- **(A) — recomendada: «sin declarar = como hoy».** `ligero` no opera, y el analista clasifica con los criterios de siempre (`estandar`, o `critico` si es sensible o toca lo que el proyecto declara crítico). *Consecuencia:* un proyecto instalado no cambia hasta que declare sus ámbitos, que es lo que dice 2 (A). Ahorrar es opcional para quien lo active.
+- **(B) — literal: «sin declarar = `critico`».** Todo REQ nuevo de un proyecto sin declarar lleva QA y seguridad. *Consecuencia:* sube el coste en **todos** los proyectos instalados desde que actualicen. Los empuja a declarar los ámbitos, pero contradice 2 (A) («inerte») y el objetivo del coste.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-N (A): sin los cinco ámbitos declarados, ligero no opera y se clasifica como hoy; un proyecto instalado no cambia hasta que los declare. El analista lo corrige en CA-04, CA-09 y CA-10 y sigue la fase 1.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-16) — **P-137-M: 1 (A), 2 (A), 3 (A)**; REQ-034 a `pendiente`, fase 1
+
+**Texto del propietario, literal** (mensaje del 2026-10-16 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-M: 1 (A), 2 (A), 3 (A).
+> - Ligero = el Rigor: ligero de hoy, ampliado a todo cambio fuera de los
+>   cinco ámbitos; sin QA ni seguridad; REQ corto del analista.
+> - Sólo funciona cuando el proyecto declara sus cinco ámbitos; sin
+>   declarar, flujo completo. arnes-init los pregunta al instalar.
+> - «Sesión» = identidad y autenticación del usuario final.
+> Sigue con la fase 1.
+
+**Lo que añade la coordinadora, rotulado como suyo:** el analista refleja la decisión en REQ-034, en las Preguntas abiertas y en la Correspondencia, con esta entrada como autorización citada, y lo pasa a `pendiente`. Después, la fase 1 al desarrollador en Opus.
+
+### P-137-M (texto de la consulta, conservado; resuelta arriba) — **REQ-034 (1.37 · 1): tres preguntas del contrato antes de implementar** (`requirements/REQ-034.md` § «Preguntas abiertas», «Correspondencia con el encargo»)
 
 **Qué detiene, y qué no.** REQ-034 está en `borrador` y **no se implementa** hasta que decidas (`AGENTS.md` §6, regla 1). No detiene nada más: no hay otra intervención en curso. Esta entrada impide **cerrar** un REQ mientras esté en la cola, y no hay ninguno que cerrar.
 
@@ -64,8 +93,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-M: 1 (A), 2 (A), 3 (A). REQ-034 pasa a `pendiente` y sigue la fase 1.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-L adoptada: 1.37 · 1, rigor proporcional por defecto, autorizada**; SEC-137 y SEC-138 a la pieza b; modelo por rol como **regla de 1.37**
 
