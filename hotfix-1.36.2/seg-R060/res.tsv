@@ -1,0 +1,205 @@
+agente	cmd	base	cand
+-	ls -la	allow	allow
+desarrollador	ls -la	allow	allow
+qa-tester	ls -la	allow	allow
+-	rm .arnes/config.json	allow	deny
+desarrollador	rm .arnes/config.json	allow	deny
+qa-tester	rm .arnes/config.json	allow	deny
+-	rm -f .arnes/config.json	allow	deny
+desarrollador	rm -f .arnes/config.json	allow	deny
+qa-tester	rm -f .arnes/config.json	allow	deny
+-	rm -rf .arnes	allow	deny
+desarrollador	rm -rf .arnes	allow	deny
+qa-tester	rm -rf .arnes	allow	deny
+-	rm -rf .	allow	deny
+desarrollador	rm -rf .	allow	deny
+qa-tester	rm -rf .	allow	deny
+-	rm -rf ./	allow	deny
+desarrollador	rm -rf ./	allow	deny
+qa-tester	rm -rf ./	allow	deny
+-	rm -rf ../p	allow	deny
+desarrollador	rm -rf ../p	allow	deny
+qa-tester	rm -rf ../p	allow	deny
+-	rm -rf /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/.arnes	allow	deny
+desarrollador	rm -rf /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/.arnes	allow	deny
+qa-tester	rm -rf /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/.arnes	allow	deny
+-	unlink .arnes/config.json	allow	deny
+desarrollador	unlink .arnes/config.json	allow	deny
+qa-tester	unlink .arnes/config.json	allow	deny
+-	git rm .arnes/config.json	allow	deny
+desarrollador	git rm .arnes/config.json	allow	deny
+qa-tester	git rm .arnes/config.json	allow	deny
+-	git rm --cached .arnes/config.json	allow	deny
+desarrollador	git rm --cached .arnes/config.json	allow	deny
+qa-tester	git rm --cached .arnes/config.json	allow	deny
+-	git mv .arnes/config.json x.json	allow	deny
+desarrollador	git mv .arnes/config.json x.json	allow	deny
+qa-tester	git mv .arnes/config.json x.json	allow	deny
+-	mv .arnes/config.json x.json	allow	deny
+desarrollador	mv .arnes/config.json x.json	allow	deny
+qa-tester	mv .arnes/config.json x.json	allow	deny
+-	mv .arnes x	allow	deny
+desarrollador	mv .arnes x	allow	deny
+qa-tester	mv .arnes x	allow	deny
+-	mv -t docs .arnes/config.json	deny	deny
+desarrollador	mv -t docs .arnes/config.json	allow	deny
+qa-tester	mv -t docs .arnes/config.json	deny	deny
+-	mv --target-directory=docs .arnes/config.json	deny	deny
+desarrollador	mv --target-directory=docs .arnes/config.json	allow	deny
+qa-tester	mv --target-directory=docs .arnes/config.json	deny	deny
+-	mv --target-directory docs .arnes/config.json	deny	deny
+desarrollador	mv --target-directory docs .arnes/config.json	allow	deny
+qa-tester	mv --target-directory docs .arnes/config.json	deny	deny
+-	mv -f .arnes/config.json docs/	allow	deny
+desarrollador	mv -f .arnes/config.json docs/	allow	deny
+qa-tester	mv -f .arnes/config.json docs/	allow	deny
+-	mv ./.arnes/./config.json /tmp/zz	allow	deny
+desarrollador	mv ./.arnes/./config.json /tmp/zz	allow	deny
+qa-tester	mv ./.arnes/./config.json /tmp/zz	allow	deny
+-	mv .arnes/../.arnes/config.json y	allow	deny
+desarrollador	mv .arnes/../.arnes/config.json y	allow	deny
+qa-tester	mv .arnes/../.arnes/config.json y	allow	deny
+-	: > .arnes/config.json	allow	deny
+desarrollador	: > .arnes/config.json	allow	deny
+qa-tester	: > .arnes/config.json	allow	deny
+-	> .arnes/config.json	allow	deny
+desarrollador	> .arnes/config.json	allow	deny
+qa-tester	> .arnes/config.json	allow	deny
+-	echo {} > .arnes/config.json	allow	deny
+desarrollador	echo {} > .arnes/config.json	allow	deny
+qa-tester	echo {} > .arnes/config.json	allow	deny
+-	truncate -s0 .arnes/config.json	allow	deny
+desarrollador	truncate -s0 .arnes/config.json	allow	deny
+qa-tester	truncate -s0 .arnes/config.json	allow	deny
+-	cp /dev/null .arnes/config.json	allow	deny
+desarrollador	cp /dev/null .arnes/config.json	allow	deny
+qa-tester	cp /dev/null .arnes/config.json	allow	deny
+-	tee .arnes/config.json < /dev/null	allow	deny
+desarrollador	tee .arnes/config.json < /dev/null	allow	deny
+qa-tester	tee .arnes/config.json < /dev/null	allow	deny
+-	sed -i d .arnes/config.json	allow	deny
+desarrollador	sed -i d .arnes/config.json	allow	deny
+qa-tester	sed -i d .arnes/config.json	allow	deny
+-	ln -sf /dev/null .arnes/config.json	allow	deny
+desarrollador	ln -sf /dev/null .arnes/config.json	allow	deny
+qa-tester	ln -sf /dev/null .arnes/config.json	allow	deny
+-	shred -u .arnes/config.json	allow	deny
+desarrollador	shred -u .arnes/config.json	allow	deny
+qa-tester	shred -u .arnes/config.json	allow	deny
+-	mv hooks/lib.sh docs/x.md	allow	deny
+desarrollador	mv hooks/lib.sh docs/x.md	allow	allow
+qa-tester	mv hooks/lib.sh docs/x.md	allow	deny
+-	mv hooks/lib.sh docs/PLAN.md	allow	deny
+desarrollador	mv hooks/lib.sh docs/PLAN.md	allow	allow
+qa-tester	mv hooks/lib.sh docs/PLAN.md	allow	deny
+-	mv -t docs hooks/lib.sh	deny	deny
+desarrollador	mv -t docs hooks/lib.sh	allow	allow
+qa-tester	mv -t docs hooks/lib.sh	deny	deny
+-	mv -vt docs hooks/lib.sh	deny	deny
+desarrollador	mv -vt docs hooks/lib.sh	allow	allow
+qa-tester	mv -vt docs hooks/lib.sh	deny	deny
+-	mv -tdocs hooks/lib.sh	deny	deny
+desarrollador	mv -tdocs hooks/lib.sh	allow	allow
+qa-tester	mv -tdocs hooks/lib.sh	deny	deny
+-	mv --target-directory=docs hooks/lib.sh	deny	deny
+desarrollador	mv --target-directory=docs hooks/lib.sh	allow	allow
+qa-tester	mv --target-directory=docs hooks/lib.sh	deny	deny
+-	mv hooks docs/h	allow	allow
+desarrollador	mv hooks docs/h	allow	allow
+qa-tester	mv hooks docs/h	allow	allow
+-	mv hooks/lib.sh src/a.ts docs	allow	deny
+desarrollador	mv hooks/lib.sh src/a.ts docs	allow	allow
+qa-tester	mv hooks/lib.sh src/a.ts docs	allow	deny
+-	mv src docs/s	allow	allow
+desarrollador	mv src docs/s	allow	allow
+qa-tester	mv src docs/s	allow	allow
+-	mv docs/notas.md docs/n2.md	allow	allow
+desarrollador	mv docs/notas.md docs/n2.md	allow	allow
+qa-tester	mv docs/notas.md docs/n2.md	allow	allow
+-	mv docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	mv docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	mv docs/notas.md hooks/lib.sh	deny	deny
+-	mv docs/notas.md src/	deny	deny
+desarrollador	mv docs/notas.md src/	allow	allow
+qa-tester	mv docs/notas.md src/	deny	deny
+-	cp docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	cp docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	cp docs/notas.md hooks/lib.sh	deny	deny
+-	cp -t hooks docs/notas.md	deny	deny
+desarrollador	cp -t hooks docs/notas.md	allow	allow
+qa-tester	cp -t hooks docs/notas.md	deny	deny
+-	rm hooks/lib.sh	allow	allow
+desarrollador	rm hooks/lib.sh	allow	allow
+qa-tester	rm hooks/lib.sh	allow	allow
+-	rm docs/notas.md	allow	allow
+desarrollador	rm docs/notas.md	allow	allow
+qa-tester	rm docs/notas.md	allow	allow
+-	cat .arnes/config.json	allow	allow
+desarrollador	cat .arnes/config.json	allow	allow
+qa-tester	cat .arnes/config.json	allow	allow
+-	jq . .arnes/config.json	allow	allow
+desarrollador	jq . .arnes/config.json	allow	allow
+qa-tester	jq . .arnes/config.json	allow	allow
+-	git diff .arnes/config.json	allow	allow
+desarrollador	git diff .arnes/config.json	allow	allow
+qa-tester	git diff .arnes/config.json	allow	allow
+-	mv -S .bak docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	mv -S .bak docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	mv -S .bak docs/notas.md hooks/lib.sh	deny	deny
+-	mv -b docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	mv -b docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	mv -b docs/notas.md hooks/lib.sh	deny	deny
+-	mv -- hooks/lib.sh docs/z	allow	deny
+desarrollador	mv -- hooks/lib.sh docs/z	allow	allow
+qa-tester	mv -- hooks/lib.sh docs/z	allow	deny
+-	mv -n hooks/lib.sh docs/z && echo	allow	deny
+desarrollador	mv -n hooks/lib.sh docs/z && echo	allow	allow
+qa-tester	mv -n hooks/lib.sh docs/z && echo	allow	deny
+-	mv hooks/lib.sh docs/z; ls	allow	deny
+desarrollador	mv hooks/lib.sh docs/z; ls	allow	allow
+qa-tester	mv hooks/lib.sh docs/z; ls	allow	deny
+-	ls; mv docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	ls; mv docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	ls; mv docs/notas.md hooks/lib.sh	deny	deny
+-	echo a > docs/x; mv docs/x hooks/lib.sh	deny	deny
+desarrollador	echo a > docs/x; mv docs/x hooks/lib.sh	allow	allow
+qa-tester	echo a > docs/x; mv docs/x hooks/lib.sh	deny	deny
+-	mv "hooks/lib.sh" docs/y.md	allow	allow
+desarrollador	mv "hooks/lib.sh" docs/y.md	allow	allow
+qa-tester	mv "hooks/lib.sh" docs/y.md	allow	allow
+-	rm ".arnes/config.json"	allow	allow
+desarrollador	rm ".arnes/config.json"	allow	allow
+qa-tester	rm ".arnes/config.json"	allow	allow
+-	cd .arnes && rm config.json	allow	allow
+desarrollador	cd .arnes && rm config.json	allow	allow
+qa-tester	cd .arnes && rm config.json	allow	allow
+-	rm .arnes/conf*	allow	allow
+desarrollador	rm .arnes/conf*	allow	allow
+qa-tester	rm .arnes/conf*	allow	allow
+-	mv .arnes/config.json{,.bak}	allow	allow
+desarrollador	mv .arnes/config.json{,.bak}	allow	allow
+qa-tester	mv .arnes/config.json{,.bak}	allow	allow
+-	install docs/notas.md hooks/lib.sh	deny	deny
+desarrollador	install docs/notas.md hooks/lib.sh	allow	allow
+qa-tester	install docs/notas.md hooks/lib.sh	deny	deny
+-	dd if=/dev/zero of=.arnes/config.json	allow	deny
+desarrollador	dd if=/dev/zero of=.arnes/config.json	allow	deny
+qa-tester	dd if=/dev/zero of=.arnes/config.json	allow	deny
+-	dd if=/dev/zero of=hooks/lib.sh	deny	deny
+desarrollador	dd if=/dev/zero of=hooks/lib.sh	allow	allow
+qa-tester	dd if=/dev/zero of=hooks/lib.sh	deny	deny
+-	mv /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/hooks/lib.sh /tmp/q	allow	deny
+desarrollador	mv /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/hooks/lib.sh /tmp/q	allow	allow
+qa-tester	mv /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/p/hooks/lib.sh /tmp/q	allow	deny
+-	mv hooks/lib.sh	deny	deny
+desarrollador	mv hooks/lib.sh	allow	allow
+qa-tester	mv hooks/lib.sh	deny	deny
+-	mv	allow	allow
+desarrollador	mv	allow	allow
+qa-tester	mv	allow	allow
+-	rm	allow	allow
+desarrollador	rm	allow	allow
+qa-tester	rm	allow	allow
+-	mv -t	allow	allow
+desarrollador	mv -t	allow	allow
+qa-tester	mv -t	allow	allow
