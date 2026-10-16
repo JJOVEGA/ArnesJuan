@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del contrato: write-back de QA-033-01 y QA-033-02 en REQ-033
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **CA-06 por rama:** camino común, 0 procesos y 1,25× (sin cambio); `mv` con origen protegido, `rm` y `Write` del manifiesto, +1 proceso; `Write` vacío, +2; reloj de las ramas nuevas con un techo declarado de **1,30×** (máximo medido 1,26×; cifra operativa, fijada por el analista y aceptada por la coordinadora). La sección 49 juzga cada rama contra su techo, sin omitir ninguna.
+- **Límites declarados (QA-033-02):** rutas entre comillas, `cd` dentro del comando, globs y llaves, sin movimiento frente a v1.36.1. Familia de SEC-135, a la pieza b de 1.37; las notas `[1.36.2]` lo declaran.
+- **Restricciones aceptadas:** la reparación del manifiesto roto (REQ-007 CA-60) y las sobre-denegaciones raras (`grep rm|ln|truncate` sobre el manifiesto, `git rm -r --cached .`).
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2: QA (Sonnet) **con hallazgos**: QA-033-01 (el coste de CA-06 no se cumple y no se declara) y QA-033-02 (rutas entre comillas, de la familia de SEC-135); ninguno exige tocar `hooks/`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
 
