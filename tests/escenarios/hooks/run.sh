@@ -1712,7 +1712,12 @@ done
 # 53 FAIL. Ninguna otra sección cambia su número.
 # Y 2862 → 2960 por el hotfix 1.36.2 (REQ-033): +98 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
 # e21baef), más PROC y RELOJ de CA-06 por rama (5 ramas × 2, pasada correctiva QA-033-01)—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2960
+# Y 2960 → 3014 por REQ-034 (1.37 · 1, rigor proporcional): +54 de la sección 50 nueva —B1 (la plantilla trae
+# `rigor_politica`) y B2 (la orden de `arnes-upgrade` sobre los fixtures (a)–(e)), cada uno en la candidata y en v1.36.2
+# (46ee7ca, el fail-before); B3, los cinco cierres de CA-06 × cuatro manifiestos × dos árboles (control: decide igual y
+# sin aviso nuevo); y PROC, 0 procesos añadidos en dos ramas—. Por P-137-K (A) (REQ-034 CA-13), los cinco RELOJ de la
+# sección 49 que pasan su techo dicen SKIP `[INCONCLUSO] [rendimiento]` en vez de FAIL: no cambia ningún número.
+CASOS_ESPERADOS=3014
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

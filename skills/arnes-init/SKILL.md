@@ -74,6 +74,15 @@ marcador antes de hacer nada.
      (p. ej. `["src/*", "app/*"]`). Pregúntalas explícitamente; sin ellas la regla A1 no
      protege nada.
    - `quality_gates`: los MISMOS comandos que pusiste en `AGENTS.md §7` (deben coincidir).
+   - `rigor_politica.ambitos` (los `{{RIGOR_*_JSON}}`): **pregunta los cinco ámbitos, de a uno**
+     —dinero, sesión (identidad y autenticación del usuario final), seguridad, datos y arnés—:
+     *«¿qué rutas de este proyecto tocan <ámbito>? Si no tiene nada de eso, dilo.»* Escribe lo
+     respondido: una lista de globs (relativos a la raíz, sin decoración), o `"ninguno"` si dice
+     que no tiene nada. En **arnés** enseña la lista precargada y pregunta si la confirma o la
+     amplía. Un ámbito **sin respuesta o no entendida queda `[]`**, y entonces, en el resumen,
+     **nómbralo** y di que mientras haya un ámbito sin declarar `ligero` **no** se aplica y el
+     proyecto se comporta como hoy. Qué significa cada ámbito y cómo se aplica: `requirements/README.md`
+     § «Nivel de rigor»; no lo resumas aquí.
    - `{{ARNES_VERSION}}`: **NO lo teclees.** Léelo de `.claude-plugin/plugin.json`
      del propio plugin (`jq -r .version`). Una versión escrita a mano se desfasa de
      la real en cuanto el arnés sube de versión, y entonces el manifiesto miente

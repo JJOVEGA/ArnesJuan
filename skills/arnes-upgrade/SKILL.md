@@ -1542,6 +1542,36 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
   alimentar la lista, el veredicto ni la salida del hook; y los casos adversarios entran al banco antes del intento.
   Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
 
+### Hacia 1.37.0
+
+- **Manifiesto: `rigor_politica`, el bloque INERTE de la política de rigor (REQ-034 del arnés).** Con
+  ella declarada entera, lo normal nace `Rigor: ligero` (sin QA ni seguridad) y el flujo completo queda
+  para dinero, sesión, seguridad, datos y el propio arnés. **Llega sin declarar** —los cinco ámbitos en
+  `[]`— y así **no cambia nada**: `ligero` no se aplica, el proyecto se comporta como hoy y actualizar
+  **no sube su coste**. Ningún hook la lee; los REQ existentes **no se reclasifican**, y tu `AGENTS.md`
+  no se toca. Qué es cada ámbito y cómo se aplica: `requirements/README.md` § «Nivel de rigor».
+  **Paso de migración.** La orden **sólo lee** el manifiesto y escribe en su salida el manifiesto
+  nuevo (por `Bash` nadie puede reescribirlo: REQ-033 del arnés):
+
+  <!-- orden: rigor_politica (REQ-034 CA-10; la ejecuta la sección 50 del banco del arnés) -->
+  ```bash
+  jq 'if type != "object" then error("no es un objeto JSON: no se toca")
+      elif has("rigor_politica") then error("ya tiene rigor_politica: se conserva tal cual")
+      else . + {rigor_politica: {_doc: "SIN DECLARAR: mientras un ámbito valga [], ligero NO se aplica y el proyecto se comporta como antes. Reglas: requirements/README.md § Nivel de rigor.",
+                                 defecto: "ligero",
+                                 ambitos: {dinero: [], sesion: [], seguridad: [], datos: [], arnes: []}}}
+      end' .arnes/config.json
+  ```
+  - **Código 0:** escribe esa salida, entera y tal cual, en `.arnes/config.json` con `Write`. `jq`
+    rehace los blancos (sangría, líneas vacías); claves, orden y valores se conservan, y en la Fase 4
+    se comprueba: `jq -c 'del(.rigor_politica)'` del nuevo es igual a `jq -c .` del anterior. Si el
+    proyecto tiene el manifiesto en `codigo_app.globs`, ese `Write` es del `desarrollador`.
+  - **Código distinto de 0** (ya tiene el bloque, o el manifiesto no se puede leer): **no escribas
+    nada** e informa el mensaje. Una segunda pasada deja el archivo idéntico.
+  - Al terminar, dile al propietario que **mientras no declare los cinco ámbitos** todo sigue como
+    hoy. **No le sugieras** la declaración de la vía proporcional: es otra cosa y es acto suyo
+    (`AGENTS.md` §6, sede normativa).
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

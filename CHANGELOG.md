@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1, fase 1 (desarrollador, Opus): REQ-034 implementado, **sin validar**; `P-137-O` en la cola
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **Implementado:**
+  - `rigor_politica` en `templates/arnes-config.json.tpl`;
+  - la regla del analista, con sus 4 casos, en `agents/analista-requerimientos.md`;
+  - la sede de la política en `requirements/README.md` y en su plantilla;
+  - una frase en `templates/AGENTS.md.tpl` §6;
+  - `arnes-init`, que pregunta los cinco ámbitos;
+  - `arnes-upgrade`, con una orden de **sólo lectura**: la skill escribe con `Write`, porque REQ-033 deniega la escritura del manifiesto por `Bash`;
+  - la sección 50 del banco (54 casos) y CA-13 en la 49. `CASOS_ESPERADOS` pasa de 2960 a 3014.
+- **Comprobación del desarrollador:** banco 3001 PASS, 0 FAIL, 13 SKIP; autoprueba 117/0; la sección 50 en v1.36.2 da 48 PASS y 6 FAIL (fail-before). La coordinadora comprobó `hooks/` (0 bytes de diff contra v1.36.2), las quality gates y que todo lo cambiado está en `Archivos:`. Texto añadido: +3 020 B, frente a un techo de 4 096.
+- **Coste:** 238 892 tokens según la notificación; el informe decía ≈ 135 k.
+- **F-137-16** (`instrumento`): la sección 33 busca el nombre del manifiesto en toda la plantilla.
+- **P-137-O:** CA-13 se acotó a la sección 49 aunque la decisión del propietario es general, y «como hoy» conserva el `ligero` de lo sin lógica.
+- Resultado: lista para QA; dependencia, P-137-O, para cerrar.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1, fase 0 cerrada: `P-137-N` (A) resuelta; REQ-034 corregido (sin declarar → como hoy); fase 1 al desarrollador
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

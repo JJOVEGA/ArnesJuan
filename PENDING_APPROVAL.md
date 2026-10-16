@@ -43,7 +43,20 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-16: P-137-N resuelta por el propietario, en § Resueltas.)_
+### P-137-O — **REQ-034, fase 1 entregada: dos lecturas de tus decisiones que conviene que confirmes** (QA sigue mientras tanto)
+
+**Qué detiene, y qué no.** No detiene a QA ni a seguridad: los dos validan lo construido. Detiene **cerrar** REQ-034 (`guard-completado`, mientras esté en la cola) y, si eliges ampliar en la pregunta 1, añade una pasada del desarrollador. Esa pasada **no gasta vuelta del tope**, porque no viene de un hallazgo.
+
+**1. ¿P-137-K alcanza a todas las sondas de reloj o sólo a las de la sección 49?** Tu decisión dice «una sonda de reloj que pasa su techo en el CI da INCONCLUSO», y que entra en «la intervención que toque el banco primero». Esta intervención lo toca. El contrato (CA-13), en cambio, lo **acotó** a «las sondas de reloj operativas de la sección 49 (INS-033-1) y nada más», y la Correspondencia no lo declaró como diferencia. El desarrollador lo implementó así, con un fail-before forzado: 5 FAIL de reloj pasan a 5 INCONCLUSO. Quedan sondas de reloj en las secciones 25, 37 y 38, y en 1.36.1 una de ellas ya dio FAIL (INS-032-1). Algunas miden un **contrato que es de tiempo** (REQ-017 CA-08: «el análisis de `Bash` en el máximo baja de 5 s»), no una cifra operativa.
+- **(A) — recomendada:** queda en la sección 49 en 1.37 · 1. El resto entra en la **pieza b (1.37 · 3)**, que rehace el banco de `Bash`, con un **inventario** previo del analista: cada sonda de reloj, si es operativa o contrato de tiempo, y qué pasa con ella. *Consecuencia:* 1.37 · 1 no crece. El rojo de `main` (INS-033-1) queda cerrado, y otra sonda de reloj puede dar un rojo hasta 1.37 · 3.
+- **(B):** se amplía ahora a todas las sondas de reloj operativas. *Consecuencia:* una pasada más del analista (el inventario) y otra del desarrollador, ≈ 60–100 k; y hay que decidir sonda a sonda las que son contrato de tiempo.
+
+**2. «Como hoy» conserva el `ligero` de lo que no tiene lógica.** Tu P-137-N dice «ligero no se aplica y el analista clasifica con los criterios de siempre (estandar, o critico si es sensible)» y «nunca sube el coste». Leído al pie de la letra, un proyecto instalado perdería el `ligero` que hoy usa para cambios sin lógica, y le subiría el coste. El desarrollador lo escribió como «**como antes de la política**»: el `ligero` ampliado no se aplica, y el de lo sin lógica sigue como estaba.
+- **(A) — recomendada:** confirmar esa lectura. *Consecuencia:* cumple las dos frases a la vez.
+- **(B):** al pie de la letra, sin ningún `ligero` hasta declarar los ámbitos. *Consecuencia:* sube el coste de los proyectos instalados que hoy usan `ligero`, que es lo que «nunca sube el coste» prohíbe.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-O: 1 (A), con el inventario de sondas de reloj en la pieza b; 2 (A), «como hoy» = como antes de la política, incluido el `ligero` de lo sin lógica.
 
 ## Resueltas
 

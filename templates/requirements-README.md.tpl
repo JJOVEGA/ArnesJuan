@@ -140,7 +140,7 @@ siempre. Lo fija el analista en la cabecera del REQ.
 
 | Nivel | Qué corre | Cuándo |
 |---|---|---|
-| `ligero` | analista + desarrollador + quality gates | Sin lógica: textos, etiquetas, ajustes de presentación |
+| `ligero` | analista + desarrollador + quality gates | Normal: fuera de los cinco ámbitos de la política (abajo) |
 
 > `ligero` salta **sólo** los veredictos de QA y seguridad. La clase del hallazgo, las aprobaciones humanas
 > pendientes y las quality gates corren igual que en cualquier otro nivel.
@@ -150,6 +150,27 @@ siempre. Lo fija el analista en la cabecera del REQ.
 **Qué REQ de ESTE proyecto cae en cada nivel se decide en `AGENTS.md`, no aquí.** Los
 criterios de arriba son independientes del dominio a propósito: el arnés trae el mecanismo,
 cada proyecto pone el mapeo con sus ejemplos concretos.
+
+**La política de rigor (`rigor_politica` de `.arnes/config.json`) — sede única de cómo se aplica.**
+- La aplica el analista **al crear** el REQ, escribiendo `Rigor:` y `Sensible a seguridad:`.
+  **Ninguna puerta la lee**, y un REQ existente no se reclasifica.
+- **Declarada** = los cinco ámbitos (`dinero`, `sesion`, `seguridad`, `datos`, `arnes`) con una
+  lista de globs no vacía o `"ninguno"`. `[]`, un ámbito ausente, otro tipo, la clave ausente o un
+  JSON ilegible = **sin declarar**, y entonces el proyecto **se comporta como antes de la
+  política**: `ligero` sólo lo sin lógica (textos, etiquetas, presentación), lo demás `estandar`, y
+  `critico` lo sensible o lo que declare `AGENTS.md` §6.
+- Declarada, un REQ es **normal** sólo si su **efecto** no alcanza ningún ámbito: **dinero** (lo
+  que cobra, abona, calcula o muestra como importe), **sesión** (identidad y autenticación del
+  usuario final), **seguridad** (autorización, secretos, rutas protegidas, controles), **datos**
+  (personales, esquema, migración, borrado) o **arnés** (lo que el arnés instala y gobierna a los
+  agentes). Los globs son ayuda **necesaria y no suficiente**: que ninguno case no prueba nada.
+  Normal → `Rigor: ligero`, `Sensible a seguridad: no`, `QA: pendiente`, `Seguridad: n/a`.
+  Ámbito alcanzado → `critico`, y sensible si toca sesión, seguridad o datos personales.
+  **Ante la duda, completo.**
+- La política sólo da `ligero` a lo que sin ella no sería `critico`, y no toca el suelo de abajo.
+  Quitar un glob o vaciar un ámbito **baja** el rigor: exige la firma del auditor. Es norma para
+  quien lee, sin comprobación mecánica; si el manifiesto no está en `codigo_app.globs`, cualquier
+  agente puede editarlo.
 
 **Reglas de gobierno:**
 - **Lo fija el analista.** El auditor **puede subirlo**; nadie lo baja sin su firma.

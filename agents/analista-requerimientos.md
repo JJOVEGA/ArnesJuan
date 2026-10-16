@@ -111,8 +111,19 @@ demostración se exige por encima de las quality gates, que corren siempre.
 
 La pregunta que lo decide: **¿alguien puede ver, decidir o cobrar distinto si esto está mal?**
 Si la respuesta es no, y tampoco toca datos personales, identidad, acceso, un documento con
-efecto legal ni un cambio irreversible, no es `critico`. Si además **no tiene lógica** —textos,
-etiquetas, ajustes de presentación— es `ligero`.
+efecto legal ni un cambio irreversible, no es `critico`.
+
+**Al crear el REQ aplicas la política de rigor** (`rigor_politica` de `.arnes/config.json`): lee
+el manifiesto y sigue `requirements/README.md` § «Nivel de rigor», su sede única; no la
+reinterpretes aquí. Decide el **efecto**, no la ruta. Cuatro casos resueltos:
+- **Normal** (política declarada; cambiar el orden de un listado, sin importes ni datos
+  personales) → `Rigor: ligero`, `Sensible a seguridad: no`, `QA: pendiente`, `Seguridad: n/a`.
+- **Ámbito** (redondeo de un total: dinero; caducidad del inicio de sesión: sesión; quién ve
+  una ruta: seguridad; columna nueva de clientes: datos; editar `AGENTS.md`: arnés) →
+  `critico`, y sensible en sesión, seguridad y datos personales.
+- **Política incompleta** (un ámbito en `[]`, ausente o mal escrito) → como antes de la política:
+  `ligero` sólo sin lógica, si no `estandar`; `critico` lo sensible o lo de `AGENTS.md` §6.
+- **Duda** (ningún glob casa, pero el cambio podría alterar un importe mostrado) → completo.
 
 Los ejemplos concretos de qué es crítico **en este proyecto** están en `AGENTS.md` §6. No los
 inventes: si el REQ no encaja claramente, pregunta.

@@ -481,7 +481,10 @@ desfasaría hacia el lado que **abre**.
 **Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
 esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
 quality gates), `estandar` (+ QA) o `critico` (+ auditoría de seguridad). Tabla completa en
-`requirements/README.md`.
+`requirements/README.md`. **Lo normal es `ligero`** cuando este proyecto declara entera su
+política (`rigor_politica` de `.arnes/config.json`): fuera de dinero, sesión, seguridad, datos y el
+propio arnés; sin declararla, todo sigue como antes. La aplica el analista al crear el REQ y
+ninguna puerta la lee; sus reglas viven sólo en `requirements/README.md` § «Nivel de rigor».
 
 **Qué es crítico EN ESTE PROYECTO:**
 {{CRITERIO_RIGOR_CRITICO}}

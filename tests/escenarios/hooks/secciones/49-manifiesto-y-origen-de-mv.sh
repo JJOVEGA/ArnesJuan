@@ -166,7 +166,9 @@ for r49 in "${ramas49[@]}"; do
   cif49="candidata/v1.36.1: $((rc49 / 1000))/$((rb49 / 1000)) ms, $(( rc49 * 1000 / rb49 ))/1000 ×"
   if [ "$rb49" -lt 50000 ]; then v49 SKIP "$nomr49  bajo el suelo de 50 ms en v1.36.1; no acredita ($cif49)"
   elif [ $(( rc49 * 100 )) -le $(( rb49 * t49 )) ]; then v49 PASS "$nomr49  ($cif49)"
-  else v49 FAIL "$nomr49  $rc49 us > ${t49:0:1},${t49:1} × $rb49 us ($cif49)"; fi
+  # P-137-K (A) del propietario (REQ-034 CA-13; causa INS-033-1): una sonda de reloj OPERATIVA que pasa su techo da
+  # INCONCLUSO de rendimiento —no acredita y no pone el banco en rojo—; el FAIL queda para procesos y veredictos.
+  else v49 SKIP "$nomr49  [INCONCLUSO] [rendimiento] pasa su techo operativo: $rc49 us > ${t49:0:1},${t49:1} × $rb49 us ($cif49); no acredita y no es FAIL (P-137-K)"; fi
 done
 rm -f "$f49"
 rm -rf "$RV49"
