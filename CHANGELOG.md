@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2 cerrada: **QA (Sonnet) APROBADO** tras la única pasada correctiva; QA-033-01 y QA-033-02 cerrados (el segundo, como límite declarado)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
+
+- El write-back describe lo construido; la sección 49 juzga las cinco ramas contra su techo sin omitir ninguna. Banco **2945/0/15** (2 INCONCLUSO de rendimiento); sección 49 93/0/5 (relojes bajo el suelo); autoprueba 117/0; `hooks/` y `tools/` sin cambio desde `b8d8e46`. `Hallazgos abiertos:` sólo SEC-135 y SEC-136, `instrumento`. **Siguiente:** fase 3, seguridad.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del banco: la sección 49 juzga cada rama de CA-06 contra su techo declarado (QA-033-01); sin tocar `hooks/`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`desarrollador`) · agente: `desarrollador`.
 
