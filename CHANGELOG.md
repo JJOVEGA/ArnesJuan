@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 3 cerrada (seguridad, Opus): re-firma `Seguridad: aprobado` de REQ-033 tras el write-back de R-060
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
+
+- **Adenda a R-060**: CA-01, CA-02 y el borrador dicen lo exigido sin prometer más; firma `aprobado` sobre el código de `b8d8e46` (sin cambio en `hooks/`). SEC-137 y SEC-138 pasan a `instrumento` **respecto de REQ-033**; en su sede siguen `abierto`, para 1.37.
+- **Coordinadora, en el borrador de las notas:** la precisión del auditor (en un consumidor, a **todo agente**) y las firmas actualizadas.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 4 (analista, Sonnet): write-back de SEC-137 y SEC-138 en REQ-033 y borrador de las notas `[1.36.2]`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
 

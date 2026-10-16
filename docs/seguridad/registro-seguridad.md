@@ -11236,3 +11236,13 @@ Contra R-059 (REQ-032, código de `77b71f7`): los controles de lo protegido sigu
 - **SEC-136:** pasa a `en-mitigación` (la instancia del manifiesto, mitigada en el candidato).
 - **Estado de seguridad aprobado a vigilar** (para cuando esta firma pase a `aprobado`; no exhaustivo): toda RETIRADA lleva su marca y se separa antes de juzgar escrituras; la retirada se juzga contra el manifiesto **y** sus directorios contenedores dentro de la raíz; el origen de `mv` sale como escritura sin marca; el `Write` del manifiesto sin contenido deniega también si el `jq` falla; `arnes_deny_retira_manifiesto` va antes del corte de «no escribe».
 - **`docs/seguridad/gobernanza-datos.md`:** sin cambios.
+
+### Adenda a R-060 — re-firma de REQ-033 tras el write-back (`hotfix/1.36.2` @ `4d56706`, 2026-10-16) — **APROBADO**
+
+- **Qué se comprobó:** `hooks/` sin cambio desde `b8d8e46` (`git diff --quiet b8d8e46 4d56706 -- hooks/`), así que vale la medición de R-060 §1–§2 sin repetirla. Se leyeron el texto de CA-01 y CA-02 de REQ-033 y el borrador `docs/arnes/notas-1.36.2-borrador.md`.
+- **CA-01:** dice lo construido («formas llanas de `Bash`» y «`Write` sin contenido»), declara el límite de SEC-138 (`Edit`/`Write` con contenido, `{}` o `Edit` a cero bytes; cualquier agente si el manifiesto no está en `codigo_app.globs`), el motivo del `deny` falso en ese proyecto y la recomendación de los globs, y acota de forma expresa el título. **Conforme.**
+- **CA-02:** declara SEC-137 (el directorio que contiene lo protegido no se juzga como origen; con barra final, sí, O-60-1) y limita la promesa al archivo. **Conforme.**
+- **Borrador de notas:** lleva los cuatro puntos de R-060 §4, dice que no se afirma «a secas», y declara SEC-135 a SEC-138 con su versión. No promete más de lo medido. **Conforme.** Imprecisión menor, que no abre nada: «Antes, con 1.36.1, a quien no es el agente de código le pasaban…» se queda corto, porque en un proyecto consumidor pasaban a **todo** agente. Se puede dejar o cambiar por «a todo agente».
+- **Veredicto:** `Seguridad: aprobado` de REQ-033. SEC-137 y SEC-138 pasan a **`instrumento` respecto de REQ-033**, porque ya están declarados en el contrato y en las notas. **En su sede siguen `abierto`, a 1.37** (SEC-138 incluye el motivo del `deny`, que toca `hooks/`). SEC-136 sigue `en-mitigación`.
+- **Estado de seguridad aprobado de REQ-033** (contra el que se compara la próxima auditoría): el código de `b8d8e46` (blobs en R-060) y las propiedades de «Estado de seguridad aprobado a vigilar» de R-060 §6.
+- **Numeración:** sin cambio; próximos libres **R-061** y **SEC-139**.
