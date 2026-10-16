@@ -2261,17 +2261,21 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
         # (`2>/dev/null` se lee aqui como el operando `2`): no se puede asegurar que el ultimo operando sea
         # el destino. Lo que este texto ya no deja ver —comillas, escapes, expansiones, `<`, `#`— lo mira
         # `arnes_destino_a_juzgar` sobre el comando entero antes de retirar la marca.
-        local dest="" sin_marca=0
+        # REQ-033: `ops`, los operandos (sin el argumento de un `-t` separado), para los origenes de `mv`.
+        local dest="" sin_marca=0 objt=0 cont=0 n_ops=0; local -a ops=()
         for ((j = i + 1; j < n; j++)); do
           case "${t[j]}" in
             '>') sin_marca=1; break ;;
             '|'|';'|'&&'|'||'|'&') break ;;
-            --t*) sin_marca=1; continue ;;
+            --target-directory) sin_marca=1; objt=1; cont=1; continue ;;
+            --t*) sin_marca=1; cont=1; continue ;;
             --*) continue ;;
-            -*t*) sin_marca=1; continue ;;
+            -*t) sin_marca=1; objt=1; cont=1; continue ;;
+            -*t*) sin_marca=1; cont=1; continue ;;
             -*) continue ;;
           esac
           dest="${t[j]}"
+          if [ "$objt" -eq 1 ]; then objt=0; else ops+=("$dest"); fi
         done
         if [ -n "$dest" ]; then
           sal+=("$dest")
@@ -2279,7 +2283,32 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
             */) ;;
             *) if [ "$sin_marca" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
           esac
-        fi ;;
+        fi
+        # REQ-033 CA-02/CA-01: cada ORIGEN de `mv` es una escritura (sin marca) y una RETIRADA. Con `-t`
+        # todos los operandos son origenes, y el ultimo ya salio arriba.
+        case "$tok" in
+          mv|*/mv)
+            n_ops=$(( ${#ops[@]} - 1 + cont ))
+            for ((j = 0; j < n_ops; j++)); do
+              [ "$cont" -eq 1 ] && [ "$j" -eq $(( ${#ops[@]} - 1 )) ] || sal+=("${ops[j]}")
+              sal+=("$ARNES_RETIRO${ops[j]}")
+            done ;;
+        esac ;;
+      rm|unlink|truncate|shred|*/rm|*/unlink|*/truncate|*/shred)
+        # REQ-033 CA-01: RETIRADAS, solo contra el manifiesto (otros archivos no cambian, CA-08).
+        for ((j = i + 1; j < n; j++)); do
+          x="${t[j]}"
+          case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          sal+=("$ARNES_RETIRO$x")
+        done ;;
+      ln|*/ln)
+        # REQ-033 CA-01: `ln -f` sustituye su ultimo operando: RETIRADA.
+        x=''
+        for ((j = i + 1; j < n; j++)); do
+          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          x="${t[j]}"
+        done
+        [ -z "$x" ] || sal+=("$ARNES_RETIRO$x") ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
         for ((j = i + 1; j < n; j++)); do
@@ -2381,6 +2410,9 @@ _arnes_estado_ausente_c() {
 # archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
 # afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
 ARNES_FORMA_DIR=$'\t'
+# REQ-033: marca de RETIRADA (rm, unlink, truncate, shred, ln, origen de mv). Ningun token lleva tabuladores;
+# `arnes_escrituras_de` la separa a `ARNES_RETIROS` antes de que nadie lea `ARNES_ESCRITURAS`.
+ARNES_RETIRO=$'\t\t'
 declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
 _arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
   local r
@@ -2467,13 +2499,80 @@ arnes_escrituras_de() {   # <comando> -> ARNES_ESCRITURAS ; rc de `arnes_bash_es
   if [ -n "$ARNES_ESCR_LISTO" ] && [ "$1" = "$ARNES_ESCR_CMD" ]; then
     if [ "${#1}" -le "$ARNES_BASH_MAX_ANALISIS" ] || [ -n "${ARNES_TECHO:-}" ] \
        || { [ -n "${ARNES_MANIFEST_LISTO:-}" ] && { [ -z "${ARNES_BASH_MAX:-}" ] || ! _arnes_techo_excede; }; }; then
-      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"
+      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"; _arnes_separa_retiros
       return "$ARNES_ESCR_RC"
     fi
   fi
   ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"; rc=$?
   ARNES_ESCR_LISTO=1; ARNES_ESCR_CMD="$1"; ARNES_ESCR_OUT="$ARNES_ESCRITURAS"; ARNES_ESCR_RC=$rc
+  _arnes_separa_retiros
   return "$rc"
+}
+
+# REQ-033: las RETIRADAS pasan a `ARNES_RETIROS`, sin marca; sin ninguna (camino comun) no recorre nada.
+_arnes_separa_retiros() {
+  ARNES_RETIROS=''
+  [[ $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_RETIRO"* ]] || return 0
+  local l e=''
+  while IFS= read -r l; do
+    if [[ $l == "$ARNES_RETIRO"* ]]; then ARNES_RETIROS+="${l#"$ARNES_RETIRO"}"$'\n'; else e+="$l"$'\n'; fi
+  done <<< "$ARNES_ESCRITURAS"
+  ARNES_ESCRITURAS="${e%$'\n'}"
+}
+
+# --- REQ-033 CA-01: nadie retira ni vacia el manifiesto, tampoco el agente de codigo (identidad: CA-47).
+# Retirar <ruta> lo retira si ES el manifiesto o un directorio que lo contiene dentro de la raiz. Lo no
+# determinable no se toma por el: `rm` de otros no cambia (CA-08); el origen de `mv` lo juzga guard-codigo.
+_arnes_retira_manifiesto() {   # <ruta>
+  arnes_identidad "$1"
+  arnes_id_pertenece manifiesto && return 0
+  [[ $ARNES_ID_E == ok ]] || return 1
+  _arnes_bajo "$ARNES_ID_F" "$ARNES_RAIZ_FIS" || return 1
+  [[ -z ${ARNES_BAJO%/} || ${ARNES_BAJO%/} == .arnes ]]
+}
+_arnes_deny_manifiesto() {   # <ruta como llego> <que hace la orden>
+  local quien
+  if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+  else quien="la sesión coordinadora"; fi
+  arnes_cita_ruta "$1"
+  arnes_deny "ARNES: $2 el manifiesto del arnés ('$ARNES_MANIF_REL', aquí $ARNES_CITA_RUTA). Borrar, mover o vaciar el manifiesto, o reescribirlo sin pasar por Edit/Write, deja inertes o sin medir todas las puertas del proyecto, y no se permite a ningún agente, tampoco al agente de código (intento de $quien; REQ-033 CA-01). Para cambiarlo, el agente de código lo escribe con Edit/Write y con su contenido completo; si el proyecto deja de usar el arnés, lo retira una persona fuera de la sesión."
+}
+# Antes de leer el manifiesto: `rm` de otro archivo no gasta su `jq`.
+arnes_deny_retira_manifiesto() {
+  [ -n "${ARNES_RETIROS:-}" ] || return 0
+  local d
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    _arnes_retira_manifiesto "$d" && _arnes_deny_manifiesto "$d" "este comando borra, mueve o sustituye"
+  done <<< "$ARNES_RETIROS"
+  return 0
+}
+# Escribirlo por Bash, o un Write sin contenido (un `jq`, memorizado). Tras `arnes_deny_manifiesto_roto`:
+# con el manifiesto roto, la reparacion de REQ-007 CA-60 no cambia.
+ARNES_MANIF_CONTENIDO=''
+arnes_deny_escribe_manifiesto() {   # [destinos de escritura de Bash, uno por linea]
+  local d
+  case "$ARNES_TOOL" in
+    Bash)
+      [ "${ARNES_MANIFEST_ROTO:-0}" != 1 ] || return 0
+      while IFS= read -r d; do
+        [ -n "$d" ] || continue
+        d="${d#"$ARNES_FORMA_DIR"}"
+        arnes_identidad "$d"
+        arnes_id_pertenece manifiesto && _arnes_deny_manifiesto "$d" "este comando escribe por Bash"
+      done <<< "${1:-}" ;;
+    Write)
+      [ -n "$ARNES_FP" ] || return 0
+      arnes_identidad "$ARNES_FP"; arnes_id_pertenece manifiesto || return 0
+      if [ -z "$ARNES_MANIF_CONTENIDO" ]; then
+        ARNES_JQ=''
+        arnes_jq_str "$ARNES_INPUT" -r '.tool_input.content | if type == "string" and test("[^ \t\r\n]") then "lleno" else "vacio" end' \
+          || ARNES_JQ=vacio
+        ARNES_MANIF_CONTENIDO="${ARNES_JQ:-vacio}"
+      fi
+      [ "$ARNES_MANIF_CONTENIDO" = lleno ] || _arnes_deny_manifiesto "$ARNES_FP" "este Write deja sin contenido" ;;
+  esac
+  return 0
 }
 
 # --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------

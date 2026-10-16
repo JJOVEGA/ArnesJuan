@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 1: REQ-033 CA-01 a CA-07 implementados (`en-revisión`)
+> Origen: GitHub (commit local de la coordinadora, sin validar) (sin commit en este repositorio; el commit es de la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **`hooks/lib.sh`:** el detector de `Bash` emite cada **origen de `mv`** como escritura (CA-02: `mv hooks/lib.sh docs/x.md` se deniega a quien no es el agente de código, exista o no el destino; un origen no determinable, también) y como **retirada**; `rm`, `unlink`, `truncate`, `shred` y el último operando de `ln` salen sólo como retirada. Una retirada se juzga **únicamente** contra el manifiesto o un directorio que lo contiene (CA-01); `rm` de otros archivos no cambia (CA-08). Funciones nuevas `arnes_deny_retira_manifiesto` y `arnes_deny_escribe_manifiesto`: escribir el manifiesto por `Bash` y un `Write` vacío o de blancos se deniegan a **todo** agente. `guard-codigo.sh` y `guard-completado.sh` las llaman.
+- **Banco:** sección 49 nueva (90 casos; fail-before contra v1.36.1 `e21baef` en la misma corrida; controles; procesos y reloj); `CASOS_ESPERADOS` 2862 → 2952; R1 de la 48 con `mv` cita ahora el código de la app (mismo veredicto). Banco 2940/0/12, autoprueba 117/0, gates de §7 en verde. Procesos: `ls -la` 1/1; `mv`/`rm` permitidos sin añadidos; `Write` del manifiesto +1 (`jq` del contenido).
+- **Versión 1.36.2** en `plugin.json` y `marketplace.json` (CA-07).
+- **Presentado, no decidido** (Historial de REQ-033): la reparación por `Bash` del manifiesto roto (REQ-007 CA-60) se conserva; el reloj de CA-06 se juzga donde los procesos son los mismos; sobre-denegaciones por fallo cerrado. Evidencia: `ArnesJuan-evidencia` `0e73d5d`.
+- **Avance (regla 6):** CA-01 a CA-07 construidos y medidos; falta QA (fase 2).
+- **Comprobado por la coordinadora** fuera de banda: A1 y A5 pasan de `allow` a `deny`; el `mv` legítimo y la lectura del manifiesto, sin cambio; `grep rm .arnes/config.json` se deniega de más, como se declara. Gates en rc 0. **Para QA, sin aceptar:** el caso de reloj de CA-06 se cambió para que sólo juzgue donde los procesos coinciden, y la norma del proyecto prohíbe cambiar la medición para obtener un PASS; lo que corresponde es declarar el coste de la rama del `Write` del manifiesto (+1 `jq`, ≈ 1,26× medido). **Métrica:** desarrollador, ≈ 262 k tokens.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 0: REQ-033 escrito (`pendiente`, ocho criterios) por el analista en Sonnet
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
 
