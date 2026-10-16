@@ -120,6 +120,8 @@ arnes_guard_codigo() {
       # nada y bloquearlo no protegeria ninguna invariante"). El aviso del manifiesto roto
       # se emite siempre que el manifiesto SE CONSULTA, que es siempre que hay algo que
       # juzgar con el.
+      # REQ-033 CA-01: retirar el manifiesto, a TODO agente; antes del corte, sin leerlo (lib.sh).
+      arnes_deny_retira_manifiesto
       [ -n "$escrituras" ] || return 0
     fi
   else
@@ -132,6 +134,8 @@ arnes_guard_codigo() {
   # Recibe los destinos ya detectados (no los vuelve a analizar): con Bash solo alcanza a
   # un comando que escribe, y ese analisis ya esta hecho aqui arriba.
   arnes_deny_manifiesto_roto "$escrituras"
+  # REQ-033 CA-01: escribir el manifiesto por Bash, o vaciarlo con un Write, a TODO agente (lib.sh).
+  arnes_deny_escribe_manifiesto "$escrituras"
 
   # ¿ES CODIGO DE LA APP? Se decide por la IDENTIDAD DEL DESTINO (REQ-007 CA-47, ADR-016), no
   # por el texto de la ruta: `<raiz>/docs/../src/a.ts`, un directorio enlazado a `src/` o
@@ -142,6 +146,10 @@ arnes_guard_codigo() {
     if [ "$via_bash" -eq 1 ]; then
       while IFS= read -r cand; do
         [ -n "$cand" ] || continue
+        # REQ-032 (M-032): la forma de directorio de un destino de `cp`/`mv`/`install` que existe y es
+        # un archivo regular no se juzga: el destino ya se juzgo en la linea anterior (lib.sh).
+        arnes_destino_a_juzgar "$cand" || continue
+        cand="$ARNES_DESTINO"
         arnes_identidad "$cand"; arnes_id_pertenece codigo; rc=$?
         if [ "$rc" -eq 0 ]; then objetivo="$ARNES_ID_REL"; break; fi
         # El primer no determinable se recuerda, pero se sigue buscando: un destino que SI es

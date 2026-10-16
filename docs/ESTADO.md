@@ -10,9 +10,45 @@
 > No es una publicación ni sustituye este tablero. Su estado y sus límites están en
 > `docs/estabilizacion/`.
 
-## ⏸ RETOMAR AQUÍ — ventana 1.37.0 abierta; 1.36.0 publicada (2026-10-08)
+## ⏸ RETOMAR AQUÍ — v1.36.2 publicada (2026-10-16); `main` fusionado en `cand/1.37.0` (paso 2b); 1.37 sin intervención autorizada
 
-**Este bloque es el único vigente en la rama `cand/1.37.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`, misma carpeta). Todo lo que está debajo es historia.
+**Este bloque es el único vigente en la rama `cand/1.37.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es historia: los dos hotfixes y la pausa de 1.37, conservados al fusionar.
+
+- **v1.36.2 PUBLICADA el 2026-10-16** por el propietario: PR #62 fusionado (`main` `46ee7ca`, 14:41:44Z), tag anotado `v1.36.2` → `46ee7ca`. **CI del PR** sobre `3a0e221`: run `38915129365`, **success** (2922 PASS, 0 FAIL, 38 SKIP; 2 INCONCLUSO de rendimiento). **CI de `main`** sobre `46ee7ca`, mismo árbol (`dd3e505`): run `38917844057`, **failure** (2919 PASS, **3 FAIL**, 38 SKIP): las tres sondas de reloj de REQ-033 CA-06 por encima de su techo operativo de 1,30× (1,33×, 1,47×, 1,31×). `instrumento` por P-137-J (**INS-033-1**, `docs/PENDIENTES.md`); no se relanzó.
+- **Instalación estable: 1.36.2** (alcances `user` y `project`, `46ee7ca`; `hooks/` idéntico al tag). **Rige desde el próximo reinicio.**
+- **Paso 2b HECHO (2026-10-16):** `main` fusionado en `cand/1.37.0`. Conflictos sólo en documentos (`cand` no tocaba código): las dos historias conservadas; la P-137-H, registrada en las dos ramas con el mismo texto del propietario, queda una vez, en la versión de `main`. Forma del defecto de 1.36.1 corregida en `[1.36.0]` y en F-137-10. `docs/PLAN.md` reconciliado: manda § «★ PLAN VIGENTE»; las filas 2, 2a y 2b de la tabla antigua, cerradas. **Banco entero sobre la fusión: 2945/0/15** (local); las tres sondas de INS-033-1 pasan aquí.
+- **Plan autorizado vigente: ninguno en ejecución.** Lo siguiente es **1.37 · 1, rigor proporcional por defecto** (`docs/PLAN.md` § «★ PLAN VIGENTE»), que necesita su autorización. **Decisión pendiente:** INS-033-1 (qué hace una sonda de reloj operativa que supera su techo en CI).
+- **Métrica de 1.36.2** (REQ-033; tokens de subagente, sin la coordinadora): analista 112 916 · desarrollador 277 287 · QA 124 228 · seguridad 134 543 · **total 648 974**: −59 % frente a 1.36.1, −89 % frente al tramo de 1.36.0 en Fable; **+58 % sobre el presupuesto orientativo de P-137-J (410 k)**.
+
+## Historia — hotfix 1.36.2 (rama `hotfix/1.36.2` desde `e21baef`, 2026-10-15 → 2026-10-16), publicado en `46ee7ca`
+
+*(Historia desde el 2026-10-16: lo sustituye el bloque vigente, arriba. El texto siguiente no se reescribe.)*
+
+- **v1.36.1 PUBLICADA el 2026-10-15** por orden expresa del propietario: `main` en `e21baef` (fusión del PR #61), tag `v1.36.1`. CI de `main` sobre `e21baef`: run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 de ellos INCONCLUSO de rendimiento, que no acreditan).
+- **Instalación estable: 1.36.1** en este equipo (alcances `user` y `project`, `e21baef`; hooks idénticos al tag). **Rige desde el próximo reinicio.**
+- **CORRECCIÓN DE RUMBO del propietario (2026-10-15)**, literal en la cola («CORRECCIÓN DE RUMBO») y en `docs/PLAN.md` § «★ PLAN VIGENTE»: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.» **P-137-I, retirada.** 1.36.2 **mínima**: `.arnes/config.json` intocable y el origen de `mv`; una pasada correctiva; QA y analista en Sonnet. SEC-135 entero y `rm`/`unlink`/`git rm`, a la pieza b de 1.37. **1.37 empieza por el coste:** rigor proporcional, modelo por rol, pieza b, F-137-9 y adelgazamiento de `AGENTS.md`, y después lo demás. **Métrica:** tokens por REQ cerrado, por rol, comparados con 1.36.0.
+- **Plan autorizado vigente: ninguno en ejecución. HOTFIX 1.36.2 CERRADO el 2026-10-16** (P-137-J, fase 4): REQ-033 `completado` por `Edit`, juzgado en vivo. QA (Sonnet) `aprobado` tras **una** pasada correctiva (QA-033-01, QA-033-02); seguridad (Opus) `aprobado` (R-060 y su adenda; SEC-137 y SEC-138 resueltos con texto). Banco 2945/0/15. Notas `[1.36.2]` en `CHANGELOG.md`. **Siguiente acción:** push de `hotfix/1.36.2`, PR a `main`, CI `hooks-en-linux` y marcar el PR listo; **la fusión, el tag y la publicación son del propietario.**
+- **Métrica de REQ-033** (tokens de subagente por rol; total de cada agente = su última cifra acumulada; la coordinadora no entra en el recuento): analista Sonnet 112 916 · desarrollador Opus 277 287 · QA Sonnet 124 228 · seguridad Opus 134 543 · **total 648 974**. Frente a 1.36.1 (REQ-032, 1 583 930): **−59 %** (analista −71 %, desarrollador −48 %, QA −67 %, seguridad −51 %). Frente al tramo de 1.36.0 en Fable (5 831 000, que no es un solo REQ): −89 %. Sobre los presupuestos orientativos de P-137-J (60/150/100/100 k) se pasó en todos los roles: ≈1,9×, 1,85×, 1,24× y 1,35×.
+- **Calidad de QA en Sonnet:** encontró **2** hallazgos `contrato`: QA-033-01 (el banco no juzgaba cada rama contra su techo) y QA-033-02 (rutas entre comillas). Hizo falta **1** pasada correctiva, dentro del tope. **No vio** SEC-137 (mover el directorio contenedor) ni SEC-138 (vaciar por `Edit`/`Write` `{}`), los dos preexistentes, que encontró seguridad en Opus.
+- **Después de 1.36.2:** fusionar `main` en `cand/1.37.0` (paso 2b), llevando a la fila de la pieza b el requisito de P-032-6 (2) y corrigiendo la forma del defecto en la nota de `[1.36.0]` y en F-137-10 (a quien no es el agente de código).
+
+## Historia — hotfix 1.36.1 (rama `hotfix/1.36.1` desde `v1.36.0`, 2026-10-13 → 2026-10-15), publicado en `e21baef`
+
+**Este bloque es el único vigente en la rama `hotfix/1.36.1`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es la historia que esta rama hereda de `v1.36.0`. **La ventana 1.37 está en pausa en `cand/1.37.0`** (`origin` `ab22d02`), con su propio ESTADO.
+
+- **Plan autorizado vigente: ninguno. HOTFIX 1.36.1 CERRADO el 2026-10-15** (commit validado): REQ-032 `completado` por `Edit`, juzgado en vivo; QA aprobado (vuelta 2 de 3); seguridad sin veto (R-059); notas `[1.36.1]` en `CHANGELOG.md`; CI `a86a315` success (run `38818908273`). **Siguiente acción, del propietario:** fusionar el PR #61, etiquetar `v1.36.1` y publicar. **Después:** abrir el hotfix 1.36.2 (SEC-135 entero y la parte de SEC-136 que se decidió, P-032-6), con su autorización en la forma de `templates/autorizacion.md`; y, tras 1.36.2, fusionar `main` en `cand/1.37.0` (paso 2b), llevando a la fila de la pieza b el requisito de P-032-6 (2) y corrigiendo la forma del defecto en la nota de `[1.36.0]` y en F-137-10.
+- *(Pausa del 2026-10-14 superada: la fase 2 se retomó el 2026-10-15 en la misma comisión de QA, y las salidas interrumpidas quedaron descartadas y rotuladas, `437ee5c` en el árbol de evidencia.)*
+- **FASE 2 (QA) ENTREGADA el 2026-10-15: `con-hallazgos`; PARADA, `P-032-3` PENDIENTE.** **QA-032-01 (`contrato`):** formas donde el último operando no es el destino (`< archivo`, comentario final, `-t` disfrazado, enlace duro) pasan de `deny` a `allow` sobre código protegido con el arreglo. **Reproducido por la coordinadora** sobre `hooks/lib.sh`. **F-137-14:** v1.36.0 publicada **ya** deja escribir código protegido con `cp … 2>/dev/null`, con un comentario final o con `cp -rt` (reproducido también). Lo demás, conforme: sección 48 254/0; banco 2557/0/13; autoprueba 117/0; 0 procesos; la marca de tabulador no se puede fabricar. **INS-032-1:** el FAIL de reloj no es atribuible (mediana 1,013 frente a v1.36.0). Recomendación: (A) pasada correctiva acotada a QA-032-01; F-137-14 con clase del auditor y ventana aparte.
+- **El defecto:** desde 1.35.0, un `cp` sobre un archivo **existente** del proyecto se deniega **a todo el que no es el agente de código** (al `desarrollador`, con su `agent_id`, se le permite: re-medido el 2026-10-13; la medida del 2026-10-12 que decía «a cualquier agente» estaba mal construida, sin `agent_id`), también con `cp -T`.
+- **Fase 0 ENTREGADA (2026-10-13):** `requirements/REQ-032.md` en `borrador`, con 14 criterios, y su fila en el índice. **Parada: `P-032-1` y `P-032-2` PENDIENTES** (qué pasa con un destino que es directorio; qué es «archivo»). La primera nace de un error de redacción de la coordinadora en P-137-H. **Push de `hotfix/1.36.1`: pendiente del propietario.** El detector juzga `destino/` como si fuera un directorio, y la identificación del destino falla cerrada. Medido fuera de banda el 2026-10-12: 1.33.2 pasaba, y 1.35.0 y 1.36.0 deniegan. Un destino que no existe pasa. La redirección `cat … > …` también pasa.
+- **Criterio por propiedad, literal del propietario:** «un destino que existe y es archivo se juzga como archivo, en cp, mv e install».
+- **Fases:** 0 analista (REQ nuevo) → 1 desarrollador → 2 QA (Opus) → 3 seguridad → 4 analista (write-back y notas `[1.36.1]`). Al cerrar, la coordinadora hace push y abre PR con CI. **La publicación es del propietario.**
+- **Push de `hotfix/1.36.1`: se le recuerda al propietario al terminar cada fase.**
+- **Mientras dure, gobierna la 1.36.0 instalada, que tiene el defecto:** nada de `cp` sobre archivos existentes.
+
+## Historia — ventana 1.37.0 en `cand/1.37.0` hasta su pausa por los hotfixes (2026-10-08 → 2026-10-13)
+
+*(Historia desde el 2026-10-16: lo sustituye el bloque vigente, arriba; la rama se pausó el 2026-10-13 para los hotfixes 1.36.1 y 1.36.2. El texto siguiente no se reescribe.)*
 
 - **1.36.0 publicada el 2026-10-08:** `main` en `f22b905` (fusión del PR #60), tag `v1.36.0`. CI de `main`: run `37790430987`, **success** (2278/0/38; autoprueba 117/0). Registro: `PENDING_APPROVAL.md` § Resueltas y la línea «PUBLICADA» de las notas `[1.36.0]`.
 - **Cabeza de partida de 1.37:** `cand/1.37.0` desde `f22b905`. Sin push.
@@ -587,7 +623,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-13 08:49
+## Estado derivado — 2026-10-16 08:49
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -597,13 +633,13 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `cb9dc9e` — limpio
+**Repositorio:** `cand/1.37.0` @ `5160385` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 1
-**REQ:** 29 — completado 14 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
+**REQ:** 31 — completado 16 · en-revisión 5 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
-_Sólo los REQ abiertos; los 14 completados no se listan._
+_Sólo los REQ abiertos; los 16 completados no se listan._
 
 | REQ | Estado | QA | Seguridad | Rigor | Hallazgos abiertos |
 |---|---|---|---|---|---|

@@ -2252,15 +2252,63 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
       cp|mv|install|*/cp|*/mv|*/install)
         # El destino es el último operando del segmento; se prueba también su forma
         # de directorio (`cp x src` debe casar con el glob `src/*`).
-        local dest=""
+        # REQ-032 (M-032): esa forma de directorio sale MARCADA (`ARNES_FORMA_DIR` delante) para que
+        # quien juzga pueda no juzgarla cuando el destino existe y es un archivo regular
+        # (`arnes_destino_a_juzgar`). Con `-t`/`--target-directory` el operando que se toma aqui NO es el
+        # destino de la orden (es un origen; REQ-032 CA-10 deja su seleccion como esta): sale SIN marca,
+        # como en v1.36.0, y nunca deja de juzgarse (CA-08: lo que no se sabe no se toma por archivo).
+        # REQ-032 CA-15 (QA-032-01): tampoco se marca si el segmento acaba en una REDIRECCION de salida
+        # (`2>/dev/null` se lee aqui como el operando `2`): no se puede asegurar que el ultimo operando sea
+        # el destino. Lo que este texto ya no deja ver —comillas, escapes, expansiones, `<`, `#`— lo mira
+        # `arnes_destino_a_juzgar` sobre el comando entero antes de retirar la marca.
+        # REQ-033: `ops`, los operandos (sin el argumento de un `-t` separado), para los origenes de `mv`.
+        local dest="" sin_marca=0 objt=0 cont=0 n_ops=0; local -a ops=()
         for ((j = i + 1; j < n; j++)); do
-          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*) continue ;; esac
+          case "${t[j]}" in
+            '>') sin_marca=1; break ;;
+            '|'|';'|'&&'|'||'|'&') break ;;
+            --target-directory) sin_marca=1; objt=1; cont=1; continue ;;
+            --t*) sin_marca=1; cont=1; continue ;;
+            --*) continue ;;
+            -*t) sin_marca=1; objt=1; cont=1; continue ;;
+            -*t*) sin_marca=1; cont=1; continue ;;
+            -*) continue ;;
+          esac
           dest="${t[j]}"
+          if [ "$objt" -eq 1 ]; then objt=0; else ops+=("$dest"); fi
         done
         if [ -n "$dest" ]; then
           sal+=("$dest")
-          case "$dest" in */) ;; *) sal+=("$dest/") ;; esac
-        fi ;;
+          case "$dest" in
+            */) ;;
+            *) if [ "$sin_marca" -eq 0 ]; then sal+=("$ARNES_FORMA_DIR$dest/"); else sal+=("$dest/"); fi ;;
+          esac
+        fi
+        # REQ-033 CA-02/CA-01: cada ORIGEN de `mv` es una escritura (sin marca) y una RETIRADA. Con `-t`
+        # todos los operandos son origenes, y el ultimo ya salio arriba.
+        case "$tok" in
+          mv|*/mv)
+            n_ops=$(( ${#ops[@]} - 1 + cont ))
+            for ((j = 0; j < n_ops; j++)); do
+              [ "$cont" -eq 1 ] && [ "$j" -eq $(( ${#ops[@]} - 1 )) ] || sal+=("${ops[j]}")
+              sal+=("$ARNES_RETIRO${ops[j]}")
+            done ;;
+        esac ;;
+      rm|unlink|truncate|shred|*/rm|*/unlink|*/truncate|*/shred)
+        # REQ-033 CA-01: RETIRADAS, solo contra el manifiesto (otros archivos no cambian, CA-08).
+        for ((j = i + 1; j < n; j++)); do
+          x="${t[j]}"
+          case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          sal+=("$ARNES_RETIRO$x")
+        done ;;
+      ln|*/ln)
+        # REQ-033 CA-01: `ln -f` sustituye su ultimo operando: RETIRADA.
+        x=''
+        for ((j = i + 1; j < n; j++)); do
+          case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
+          x="${t[j]}"
+        done
+        [ -z "$x" ] || sal+=("$ARNES_RETIRO$x") ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
         for ((j = i + 1; j < n; j++)); do
@@ -2326,6 +2374,108 @@ _arnes_estado_ausente_c() {
   [[ ${1,,} != *"${2,,}"* ]]
 }
 
+# LA FORMA DE DIRECTORIO DEL DESTINO DE `cp`/`mv`/`install`, Y CUANDO NO SE JUZGA (REQ-032, M-032).
+# El detector emite el destino y, detras, su forma `destino/` («escribe DENTRO de ese directorio»,
+# REQ-007 CA-47 punto 10), marcada con un tabulador delante: ningun destino del detector lleva uno,
+# porque el comando se trocea por blancos. Desde 1.35.0 la identidad de CA-47 declara no determinable
+# `archivo-existente/` y lo deniega a quien no es el agente de codigo: un `cp` sobre un archivo que
+# existe se denegaba por una forma de directorio que no designa nada.
+# `arnes_destino_a_juzgar <linea del detector>` -> ARNES_DESTINO (la ruta a juzgar, sin marca). Devuelve
+# 1 —«no se juzga»— SOLO para la forma marcada cuyo destino, identificado como lo identifica CA-47
+# (anclado en el `cwd` de la entrada, lectura fisica), EXISTE Y ES UN ARCHIVO REGULAR: el destino ya se
+# juzgo en la linea anterior. Un enlace cuenta como el archivo al que resuelve (P-032-2 (A)); cualquier
+# otra cosa —directorio, inexistente, no determinable, otro tipo, dos lecturas distintas— se juzga como
+# en v1.36.0. Ante la duda, se juzga.
+# SIN PROCESOS: `[[ -f ]]` es de bash, y la identidad del destino ya esta memorizada por la linea
+# anterior. Un enlace que la puerta no ha resuelto aun (su ambito no tiene patrones, y por eso no lo
+# resolvio) NO se resuelve aqui —costaria un `readlink`—: no se afirma, y se juzga como en v1.36.0, que
+# en ese ambito no puede denegar nada (`arnes_id_pertenece` sale «fuera» sin patrones).
+# La usan las dos puertas que juzgan destinos de `Bash` (`guard-codigo`, `guard-completado`). La
+# excepcion del manifiesto roto (`arnes_deny_manifiesto_roto`) solo retira la marca y juzga la forma de
+# directorio como en v1.36.0: REQ-032 no la nombra (CA-10).
+# REQ-032 CA-15 (QA-032-02, P-032-5 (C)): LISTA DE LO QUE SE ACEPTA, no de lo que se rechaza. La marca
+# SOLO se retira si el comando ENTERO, tal como llego (`ARNES_CMD`, el mismo que analizan las dos puertas,
+# y no el texto desentrecomillado del detector), es UNA invocacion simple: `_arnes_cmd_llano`, abajo, es el
+# sitio unico de las condiciones (1) a (3). Cualquier otra forma —comillas, escapes, expansiones,
+# tuberias (`echo src/a.ts | xargs cp S`), encadenados, redirecciones, prefijos (`sudo cp`, `\cp`,
+# `/bin/cp`, `VAR=x cp`), una orden que no es la primera palabra (`xargs -a lista cp S`), una opcion
+# fuera de la lista— conserva la forma `destino/`: la decision es la de v1.36.0. Antes (P-032-3 (A)) era
+# una lista de lo rechazado, y `xargs` la rodeo (QA-032-02). Una vez por comando, sin procesos.
+# EL ENLACE DURO (P-032-4 (B), decision del propietario del 2026-10-15): un archivo regular con MAS DE UN
+# enlace duro no retira la marca —la identidad de CA-47 no ve los enlaces duros (frontera F3), y el mismo
+# archivo puede estar dentro de una zona protegida con otro nombre—: la decision es la de v1.36.0. Bash no
+# lee el numero de enlaces sin un proceso, asi que `_arnes_un_solo_enlace` cuesta UN `find` y SOLO en esta
+# rama: destino de `cp`/`mv`/`install` con la marca, comando llano, destino que existe y es archivo regular.
+# Nunca en el camino comun (sin escrituras no hay marca) ni con un destino que no existe. Memorizado por
+# archivo: las dos puertas no lo pagan dos veces. Si `find` falta, falla o no responde con la ruta, no se
+# afirma «un solo enlace» y la marca se queda (CA-08). `find` esta en la lista estatica de `entrada.sh`.
+ARNES_FORMA_DIR=$'\t'
+# REQ-033: marca de RETIRADA (rm, unlink, truncate, shred, ln, origen de mv). Ningun token lleva tabuladores;
+# `arnes_escrituras_de` la separa a `ARNES_RETIROS` antes de que nadie lea `ARNES_ESCRITURAS`.
+ARNES_RETIRO=$'\t\t'
+declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
+_arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
+  local r
+  if [[ -z ${ARNES_NLINK1[$1]+x} ]]; then
+    r="$(find "$1" -maxdepth 0 -type f -links 1 -print 2>/dev/null)"
+    if [[ -n $r && $r == "$1" ]]; then ARNES_NLINK1[$1]=si; else ARNES_NLINK1[$1]=no; fi
+  fi
+  [[ ${ARNES_NLINK1[$1]} == si ]]
+}
+ARNES_DESTINO=''
+# `_arnes_cmd_llano` -> 0 si `ARNES_CMD` es UNA invocacion simple de `cp`, `mv` o `install`, y deja en
+# ARNES_LLANO_DEST su ultimo operando (el destino). Todas, o no (REQ-032 CA-15):
+#   (2) cada caracter es de este conjunto, y ningun otro: letras y cifras ASCII, el blanco ' ' y
+#       `. / _ + , : @ % = -`. Fuera, por tanto, todo lo que el shell interpreta (comillas, `\`, `$`, acento
+#       grave, `| ; & < > ( ) { } [ ] * ? ~ ! # ^`), todo caracter de control (salto de linea, retorno de
+#       carro, tabulador: una sola linea, blancos solo ' ') y todo caracter no ASCII. Las letras van
+#       ESCRITAS una a una, no como rango ni como clase: no dependen del locale.
+#   (1) la primera palabra es exactamente `cp`, `mv` o `install` (ni ruta, ni prefijo, ni asignacion);
+#   (3) toda palabra que empieza por `-` es una opcion de la LISTA CERRADA (REQ-032, Historial del
+#       2026-10-15, vuelta 2): cortas `f i n p v r R a u`, solas o agrupadas con solo esas letras; largas
+#       exactas `--force --interactive --no-clobber --verbose --recursive --archive --update`. Ninguna lleva
+#       argumento, asi que ninguna consume un operando ni cambia cual es el destino. Fuera: `-t`, `-T`, `--`,
+#       `-` y cualquier otra (tambien `--update=…`, `-S`, `-m`, `-b`…);
+#   y al menos dos operandos (origen y destino).
+# El enlace unico, la condicion (4), lo comprueba `_arnes_un_solo_enlace`. Memorizado por comando.
+ARNES_LLANO_CMD=''; ARNES_LLANO=''; ARNES_LLANO_DEST=''   # nacen vacias al cargar (no se heredan)
+_arnes_cmd_llano() {
+  local c="${ARNES_CMD-}" x d='' n=0 reponer_f=0
+  if [[ -n $ARNES_LLANO && $ARNES_LLANO_CMD == "$c" ]]; then [[ $ARNES_LLANO == si ]]; return; fi
+  ARNES_LLANO_CMD="$c"; ARNES_LLANO=no; ARNES_LLANO_DEST=''
+  [[ $c == *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\ ./_+,:@%=-]* ]] && return 1
+  local -a w; local IFS=' '
+  case $- in *f*) reponer_f=1 ;; esac
+  set -f
+  # shellcheck disable=SC2206  -- se quiere el troceado por blancos, con globbing apagado
+  w=($c)
+  [ "$reponer_f" -eq 1 ] || set +f
+  case "${w[0]-}" in cp|mv|install) ;; *) return 1 ;; esac
+  for x in "${w[@]:1}"; do
+    case "$x" in
+      --force|--interactive|--no-clobber|--verbose|--recursive|--archive|--update) ;;
+      -|--*) return 1 ;;
+      -*) [[ ${x:1} == *[!finpvrRau]* ]] && return 1 ;;
+      *) n=$((n + 1)); d="$x" ;;
+    esac
+  done
+  (( n >= 2 )) || return 1
+  ARNES_LLANO=si; ARNES_LLANO_DEST="$d"
+}
+arnes_destino_a_juzgar() {
+  ARNES_DESTINO="$1"
+  [[ $1 == "$ARNES_FORMA_DIR"* ]] || return 0
+  ARNES_DESTINO="${1#"$ARNES_FORMA_DIR"}"
+  _arnes_cmd_llano || return 0
+  [[ ${ARNES_DESTINO%/} == "$ARNES_LLANO_DEST" ]] || return 0   # el destino del detector es el de la orden
+  arnes_identidad "${ARNES_DESTINO%/}"
+  [[ $ARNES_ID_E == ok && $ARNES_ID_V == 0 && $ARNES_ID_B == 0 && $ARNES_ID_X == 1 ]] || return 0
+  [[ $ARNES_ID_K == 0 || $ARNES_ID_R == 1 ]] || return 0
+  [[ -f $ARNES_ID_O ]] || return 0
+  _arnes_un_solo_enlace "$ARNES_ID_O" && return 1   # P-032-4 (B): con mas de un enlace duro, como v1.36.0
+  return 0
+}
+
 # LOS DESTINOS DE UN COMANDO, ANALIZADO UNA VEZ POR INVOCACION (CA-54, nota del 2026-10-03).
 # `guard-codigo` y `guard-completado` corren en el mismo proceso (`guard.sh`) y analizaban el MISMO
 # comando dos veces, cada una en su sustitucion de comandos: medido, un segundo entero de los ~9 s de
@@ -2349,13 +2499,80 @@ arnes_escrituras_de() {   # <comando> -> ARNES_ESCRITURAS ; rc de `arnes_bash_es
   if [ -n "$ARNES_ESCR_LISTO" ] && [ "$1" = "$ARNES_ESCR_CMD" ]; then
     if [ "${#1}" -le "$ARNES_BASH_MAX_ANALISIS" ] || [ -n "${ARNES_TECHO:-}" ] \
        || { [ -n "${ARNES_MANIFEST_LISTO:-}" ] && { [ -z "${ARNES_BASH_MAX:-}" ] || ! _arnes_techo_excede; }; }; then
-      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"
+      ARNES_ESCRITURAS="$ARNES_ESCR_OUT"; _arnes_separa_retiros
       return "$ARNES_ESCR_RC"
     fi
   fi
   ARNES_ESCRITURAS="$(arnes_bash_escrituras "$1")"; rc=$?
   ARNES_ESCR_LISTO=1; ARNES_ESCR_CMD="$1"; ARNES_ESCR_OUT="$ARNES_ESCRITURAS"; ARNES_ESCR_RC=$rc
+  _arnes_separa_retiros
   return "$rc"
+}
+
+# REQ-033: las RETIRADAS pasan a `ARNES_RETIROS`, sin marca; sin ninguna (camino comun) no recorre nada.
+_arnes_separa_retiros() {
+  ARNES_RETIROS=''
+  [[ $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_RETIRO"* ]] || return 0
+  local l e=''
+  while IFS= read -r l; do
+    if [[ $l == "$ARNES_RETIRO"* ]]; then ARNES_RETIROS+="${l#"$ARNES_RETIRO"}"$'\n'; else e+="$l"$'\n'; fi
+  done <<< "$ARNES_ESCRITURAS"
+  ARNES_ESCRITURAS="${e%$'\n'}"
+}
+
+# --- REQ-033 CA-01: nadie retira ni vacia el manifiesto, tampoco el agente de codigo (identidad: CA-47).
+# Retirar <ruta> lo retira si ES el manifiesto o un directorio que lo contiene dentro de la raiz. Lo no
+# determinable no se toma por el: `rm` de otros no cambia (CA-08); el origen de `mv` lo juzga guard-codigo.
+_arnes_retira_manifiesto() {   # <ruta>
+  arnes_identidad "$1"
+  arnes_id_pertenece manifiesto && return 0
+  [[ $ARNES_ID_E == ok ]] || return 1
+  _arnes_bajo "$ARNES_ID_F" "$ARNES_RAIZ_FIS" || return 1
+  [[ -z ${ARNES_BAJO%/} || ${ARNES_BAJO%/} == .arnes ]]
+}
+_arnes_deny_manifiesto() {   # <ruta como llego> <que hace la orden>
+  local quien
+  if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+  else quien="la sesión coordinadora"; fi
+  arnes_cita_ruta "$1"
+  arnes_deny "ARNES: $2 el manifiesto del arnés ('$ARNES_MANIF_REL', aquí $ARNES_CITA_RUTA). Borrar, mover o vaciar el manifiesto, o reescribirlo sin pasar por Edit/Write, deja inertes o sin medir todas las puertas del proyecto, y no se permite a ningún agente, tampoco al agente de código (intento de $quien; REQ-033 CA-01). Para cambiarlo, el agente de código lo escribe con Edit/Write y con su contenido completo; si el proyecto deja de usar el arnés, lo retira una persona fuera de la sesión."
+}
+# Antes de leer el manifiesto: `rm` de otro archivo no gasta su `jq`.
+arnes_deny_retira_manifiesto() {
+  [ -n "${ARNES_RETIROS:-}" ] || return 0
+  local d
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    _arnes_retira_manifiesto "$d" && _arnes_deny_manifiesto "$d" "este comando borra, mueve o sustituye"
+  done <<< "$ARNES_RETIROS"
+  return 0
+}
+# Escribirlo por Bash, o un Write sin contenido (un `jq`, memorizado). Tras `arnes_deny_manifiesto_roto`:
+# con el manifiesto roto, la reparacion de REQ-007 CA-60 no cambia.
+ARNES_MANIF_CONTENIDO=''
+arnes_deny_escribe_manifiesto() {   # [destinos de escritura de Bash, uno por linea]
+  local d
+  case "$ARNES_TOOL" in
+    Bash)
+      [ "${ARNES_MANIFEST_ROTO:-0}" != 1 ] || return 0
+      while IFS= read -r d; do
+        [ -n "$d" ] || continue
+        d="${d#"$ARNES_FORMA_DIR"}"
+        arnes_identidad "$d"
+        arnes_id_pertenece manifiesto && _arnes_deny_manifiesto "$d" "este comando escribe por Bash"
+      done <<< "${1:-}" ;;
+    Write)
+      [ -n "$ARNES_FP" ] || return 0
+      arnes_identidad "$ARNES_FP"; arnes_id_pertenece manifiesto || return 0
+      if [ -z "$ARNES_MANIF_CONTENIDO" ]; then
+        ARNES_JQ=''
+        arnes_jq_str "$ARNES_INPUT" -r '.tool_input.content | if type == "string" and test("[^ \t\r\n]") then "lleno" else "vacio" end' \
+          || ARNES_JQ=vacio
+        ARNES_MANIF_CONTENIDO="${ARNES_JQ:-vacio}"
+      fi
+      [ "$ARNES_MANIF_CONTENIDO" = lleno ] || _arnes_deny_manifiesto "$ARNES_FP" "este Write deja sin contenido" ;;
+  esac
+  return 0
 }
 
 # --- Lectura de un archivo del disco, sin procesos y SIN mentir ----------------
@@ -2514,6 +2731,9 @@ arnes_deny_manifiesto_roto() {   # [destinos de escritura ya detectados por Bash
       destinos="${1:-}"; [ -n "$destinos" ] || return 0
       while IFS= read -r d; do
         [ -n "$d" ] || continue
+        # REQ-032: aqui la forma de directorio de `cp`/`mv`/`install` se juzga SIEMPRE, como en v1.36.0;
+        # solo se retira su marca (ver `arnes_destino_a_juzgar`: esta excepcion no la nombra REQ-032).
+        d="${d#"$ARNES_FORMA_DIR"}"
         arnes_identidad "$d"
         arnes_id_pertenece manifiesto || { solo_manifiesto=0; break; }
       done <<< "$destinos" ;;

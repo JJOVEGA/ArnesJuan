@@ -9,6 +9,60 @@
 > hueco se paga una vez. Por eso el coste va antes que las puertas, aunque las puertas suenen más
 > urgentes.
 
+## ★ PLAN VIGENTE — corrección de rumbo del propietario (2026-10-15): 1.36.2 mínima; 1.37 empieza por el coste
+
+**Esta sección manda sobre cualquier otra de este archivo y sobre la tabla de 1.37 de `cand/1.37.0`**, que queda sustituida y se reconcilia al fusionar `main` en esa rama (tras 1.36.2). Decisión literal del propietario (también en `PENDING_APPROVAL.md` § Resueltas, «CORRECCIÓN DE RUMBO»):
+
+> No adopto P-137-I. La sustituye esta decisión del propietario; regístrala
+> literal en la cola, docs/PLAN.md y ESTADO, y marca P-137-I como retirada.
+>
+> El objetivo del Arnés es que los agentes construyan software real con
+> disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado
+> demasiado por perseguir formas de bash; se corrige el rumbo.
+>
+> ## 1.36.2 — mínima (una sesión)
+> Alcance, sólo esto:
+> - Borrar, mover o vaciar .arnes/config.json → deny a todo agente.
+> - Juzgar el ORIGEN de mv (mover un archivo protegido = escribirlo).
+> Fuera: SEC-135 pasa entero a la pieza b de 1.37 (la puerta posterior
+> cierra la clase sin perseguir formas). Se declara en las notas [1.36.2] con
+> sus formas exactas y su gravedad alta. rm/unlink/git rm, igual: 1.37.
+> Tope: una pasada correctiva. Si no cierra, se publica sin esa parte.
+> Ciclo: analista (contrato corto) → desarrollador → QA → seguridad; QA y
+> analista en Sonnet para esta intervención.
+>
+> ## 1.37 — empieza por el coste, en este orden
+> 1. Rigor proporcional por defecto: flujo ligero (desarrollador → banco →
+>    hecho) para cambios normales; flujo completo sólo para dinero, sesión,
+>    seguridad, datos y el propio Arnés. Política en .arnes/config.json.
+> 2. Modelo por rol: analista y QA de rutina en Sonnet; Opus para
+>    desarrollador en trabajo difícil y para seguridad. /compact entre fases.
+> 3. Pieza b: puerta posterior (qué cambió después de cada orden), con el
+>    requisito del manifiesto; cierra SEC-135, SEC-136 y el hueco C.
+> 4. F-137-9 (partir REQ-007) y adelgazamiento de AGENTS.md.
+> 5. Plan de desarrollo; spike de mod; 2b.
+> Tope por intervención: dos pasadas correctivas; a la tercera se decide.
+>
+> ## Métrica del objetivo
+> Tokens por REQ cerrado, por rol, en el Arnés y en SENDA. Se registra al
+> cerrar cada intervención y se compara con 1.36.0. Si 1.37 no la baja, se
+> para y se revisa.
+>
+> Prepara la autorización nueva de 1.36.2 con este alcance, lista para
+> adoptar. Debe caber en una página.
+
+**En una tabla, para seguirlo** (la coordinadora sólo resume; manda el texto de arriba):
+
+| Orden | Qué | Estado |
+|---|---|---|
+| 1.36.2 | `.arnes/config.json` intocable (borrar, mover, vaciar → `deny`) y el **origen** de `mv` juzgado. Una pasada correctiva. QA y analista en Sonnet. SEC-135 y `rm`/`unlink`/`git rm` se declaran y van a 1.37 | **Publicada el 2026-10-16** (`main` `46ee7ca`, tag `v1.36.2`, PR #62); CI de `main` con 3 FAIL de reloj, `instrumento` (INS-033-1) |
+| 1.37 · 1 | Rigor proporcional por defecto (flujo ligero para lo normal; completo para dinero, sesión, seguridad, datos y el propio Arnés); política en `.arnes/config.json` | — |
+| 1.37 · 2 | Modelo por rol (analista y QA de rutina en Sonnet; Opus para desarrollador difícil y seguridad); `/compact` entre fases | — |
+| 1.37 · 3 | **Pieza b**, puerta posterior: qué cambió después de cada orden; cierra SEC-135, SEC-136 y el hueco C. **Requisito:** no depende sólo del manifiesto que vigila (P-032-6 (2)) | — |
+| 1.37 · 4 | F-137-9 (partir REQ-007) y adelgazamiento de `AGENTS.md` | — |
+| 1.37 · 5 | Plan de desarrollo; spike de mod; 2b | — |
+| Siempre | **Tope por intervención: dos pasadas correctivas**; a la tercera se decide (1.36.2: una). **Métrica:** tokens por REQ cerrado, por rol, en el Arnés y en SENDA, registrada al cerrar cada intervención y comparada con 1.36.0; si 1.37 no la baja, se para y se revisa | — |
+
 ## Qué significa «terminado»
 
 El arnés estará terminado cuando se cumplan las tres a la vez:
@@ -424,14 +478,14 @@ Que el arnés ayude a construir aplicaciones **más rápido, con menos coste y s
 
 **Orden revisado por el propietario el 2026-10-13 (P-137-F, literal en la cola):** «1. Hotfix 1.36.1 — F-137-10 … 2. F-137-9 — partir REQ-007 por dominio … 3. Después: a) plan de desarrollo, c) adelgazamiento, b) post-condición, d) spike de mod, 2b.» La tabla lo refleja.
 
-> **⚠ TABLA SUSTITUIDA (2026-10-15) por la corrección de rumbo del propietario.** Lo que manda está en la rama `hotfix/1.36.2` (`docs/PLAN.md` § «★ PLAN VIGENTE» y `PENDING_APPROVAL.md` § Resueltas, «CORRECCIÓN DE RUMBO»), que llega aquí al fusionar `main` tras 1.36.2. En corto, literal: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.» 1.36.2 mínima (manifiesto intocable y origen de `mv`); **1.37 empieza por el coste**: 1. rigor proporcional por defecto; 2. modelo por rol; 3. pieza b (cierra SEC-135, SEC-136 y el hueco C); 4. F-137-9 y adelgazamiento de `AGENTS.md`; 5. plan de desarrollo, spike de mod y 2b. Métrica: tokens por REQ cerrado. **No se sigue la tabla de abajo:** se conserva como historia y se reconcilia en el paso 2b.
+> **⚠ TABLA SUSTITUIDA (2026-10-15) por la corrección de rumbo del propietario.** Lo que manda está en la rama `hotfix/1.36.2` (`docs/PLAN.md` § «★ PLAN VIGENTE» y `PENDING_APPROVAL.md` § Resueltas, «CORRECCIÓN DE RUMBO»), que **llegó aquí con la fusión de `main` del 2026-10-16** (paso 2b) y está arriba, § «★ PLAN VIGENTE», que es lo que manda. En corto, literal: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.» 1.36.2 mínima (manifiesto intocable y origen de `mv`); **1.37 empieza por el coste**: 1. rigor proporcional por defecto; 2. modelo por rol; 3. pieza b (cierra SEC-135, SEC-136 y el hueco C); 4. F-137-9 y adelgazamiento de `AGENTS.md`; 5. plan de desarrollo, spike de mod y 2b. Métrica: tokens por REQ cerrado. **No se sigue la tabla de abajo:** se conserva como historia y se reconcilia en el paso 2b.
 
 | Orden | Intervención | Qué | Estado |
 |---|---|---|---|
 | 1 | **F-136-17** | Partir `REQ-007.md` (868 KB medidos, no los 660 de la ficha) y sacar su historia; es la causa del coste del analista en 1.36.0 (≈ 2,9 M tokens en el tramo final) y de que los techos de SEC-115 lo alcancen. **La rotación por sección no sirve aquí** (F-137-2, F-137-3): la historia se movió verbatim a `docs/historia/REQ-007/` con un puntero por bloque | **CERRADA el 2026-10-13 — cumple a medias** (P-137-F/G). REQ-007 = 479 582 B, por encima del techo del `Write`; `Edit` medido en 8 955 B por llamada (1,81× el original); ≈ 388 KB de historia fuera con punteros; CA-66 y CA-69, enteros en el REQ (son contrato). Ahorro del analista no demostrado. QA aprobado (2 pasadas de 3); seguridad sin veto (R-058). Salida de fondo: F-137-9 |
-| 2 | **Hotfix 1.36.1** (F-137-10) | **Alcance único, literal del propietario (2026-10-12):** «el detector de escrituras reconoce el destino de cp (y de mv e install, si comparten la causa) como archivo cuando lo es; fail-before contra v1.36.0 con los casos ya medidos a mano (REQ, PLAN.md, desarrollador, cp -T, destino inexistente); regresión completa del banco. Ciclo entero: desarrollador → QA → seguridad.» **Se abre al cerrar F-136-17** (fase 4 y commit validado), antes de a). Nada más entra en 1.36.1. Mientras tanto, regresión conocida declarada en las notas de 1.36.0 | Pendiente: se abre al cerrar F-136-17 |
-| 2a | **Hotfix 1.36.2** (F-137-14) | **Literal del propietario (P-032-3, 2026-10-15):** «1.36.2 inmediato, abierto al publicar 1.36.1, con su contrato propio: el destino de cp/mv/install se determina leyendo los operandos como lo hace la orden (opciones, -t/-T, redirecciones y comentarios aparte), no «el último operando». Fail-before con las formas ya reproducidas. No entra en 1.37.» Es el bypass de la garantía central por formas cotidianas (`cp … 2>/dev/null`, comentario final, `cp -rt`), preexistente en 1.35.0 y 1.36.0, que 1.36.1 publica declarado | Pendiente: se abre al publicar 1.36.1 |
-| 2b | **Tras publicar 1.36.2** (no tras 1.36.1): **fusión de `main` en `cand/1.37.0`** | **Literal del propietario (P-137-H, 2026-10-13):** «Anota en docs/PLAN.md el paso que sigue a la publicación de 1.36.1: fusión de main en cand/1.37.0, para que 1.37 lleve el arreglo del cp y no vuelva a publicarlo roto.» Se esperan conflictos en los archivos de registro (`PENDING_APPROVAL.md`, `CHANGELOG.md`, `docs/ESTADO.md`, `docs/PLAN.md`): se resuelven conservando las dos historias, sin perder una línea de ninguna. El banco se corre entero sobre el resultado antes de seguir con F-137-9 **Corregido por P-032-3 (2026-10-15), literal:** «la fusión de main en cand/1.37.0 después de 1.36.2, no antes, para traer los dos arreglos juntos.» Al fusionar, corregir también la forma del defecto de 1.36.1 en la nota de regresión de `[1.36.0]` y en F-137-10: se deniega **a quien no es el agente de código** (el `desarrollador` con `agent_id` pasaba), no «a cualquier agente» | Pendiente: tras la publicación de 1.36.2 |
+| 2 | **Hotfix 1.36.1** (F-137-10) | **Alcance único, literal del propietario (2026-10-12):** «el detector de escrituras reconoce el destino de cp (y de mv e install, si comparten la causa) como archivo cuando lo es; fail-before contra v1.36.0 con los casos ya medidos a mano (REQ, PLAN.md, desarrollador, cp -T, destino inexistente); regresión completa del banco. Ciclo entero: desarrollador → QA → seguridad.» **Se abre al cerrar F-136-17** (fase 4 y commit validado), antes de a). Nada más entra en 1.36.1. Mientras tanto, regresión conocida declarada en las notas de 1.36.0 | **Publicado el 2026-10-15** (`main` `e21baef`, tag `v1.36.1`, PR #61) |
+| 2a | **Hotfix 1.36.2** (F-137-14) | **Literal del propietario (P-032-3, 2026-10-15):** «1.36.2 inmediato, abierto al publicar 1.36.1, con su contrato propio: el destino de cp/mv/install se determina leyendo los operandos como lo hace la orden (opciones, -t/-T, redirecciones y comentarios aparte), no «el último operando». Fail-before con las formas ya reproducidas. No entra en 1.37.» Es el bypass de la garantía central por formas cotidianas (`cp … 2>/dev/null`, comentario final, `cp -rt`), preexistente en 1.35.0 y 1.36.0, que 1.36.1 publica declarado | **Sustituida por la corrección de rumbo (2026-10-15):** 1.36.2 salió mínima (publicada el 2026-10-16); F-137-14 = SEC-135 va entero a la pieza b (★ 1.37 · 3) |
+| 2b | **Tras publicar 1.36.2** (no tras 1.36.1): **fusión de `main` en `cand/1.37.0`** | **Literal del propietario (P-137-H, 2026-10-13):** «Anota en docs/PLAN.md el paso que sigue a la publicación de 1.36.1: fusión de main en cand/1.37.0, para que 1.37 lleve el arreglo del cp y no vuelva a publicarlo roto.» Se esperan conflictos en los archivos de registro (`PENDING_APPROVAL.md`, `CHANGELOG.md`, `docs/ESTADO.md`, `docs/PLAN.md`): se resuelven conservando las dos historias, sin perder una línea de ninguna. El banco se corre entero sobre el resultado antes de seguir con F-137-9 **Corregido por P-032-3 (2026-10-15), literal:** «la fusión de main en cand/1.37.0 después de 1.36.2, no antes, para traer los dos arreglos juntos.» Al fusionar, corregir también la forma del defecto de 1.36.1 en la nota de regresión de `[1.36.0]` y en F-137-10: se deniega **a quien no es el agente de código** (el `desarrollador` con `agent_id` pasaba), no «a cualquier agente» | **Hecho el 2026-10-16:** `main` fusionado en `cand/1.37.0`, las dos historias conservadas; forma del defecto corregida en `[1.36.0]` y en F-137-10 (línea fechada, sin reescribir); banco entero sobre el resultado |
 | 3 | **F-137-9** — partir REQ-007 **por dominio** | **Literal del propietario (P-137-F, 2026-10-13):** «partir REQ-007 por dominio (CA-47 y los puntos de Bash en un REQ propio; cabeceras y cierre en otro). Cambio de contrato: el analista escribe primero el contrato de la partición y para antes de ejecutar.» Es la salida de fondo de lo que F-136-17 no alcanzó: lo vigente de REQ-007 (≈ 378 KB) no cabe en un archivo por diseño | Pendiente: tras el hotfix 1.36.1 |
 | 4 | **a)** | Plan de desarrollo: `docs/PLAN.md` como fuente; la coordinadora continúa sola salvo gates; línea derivada en ESTADO (recoge la ficha del campo derivado) | — |
 | 5 | **c)** | Adelgazamiento con rigor proporcional: roles, gates y la tabla de §13 a `.arnes/config.json`; `AGENTS.md` a la mitad; historia a `docs/`; rigor proporcional por defecto; analista en modelo más barato y `/compact` entre fases | — |
