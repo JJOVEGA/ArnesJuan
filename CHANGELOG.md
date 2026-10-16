@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2: QA (Sonnet) **con hallazgos**: QA-033-01 (el coste de CA-06 no se cumple y no se declara) y QA-033-02 (rutas entre comillas, de la familia de SEC-135); ninguno exige tocar `hooks/`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
+
+- **Conforme:** las cinco formas pasan de `allow` a `deny` en la misma corrida; banco 2940/0/12; autoprueba 117/0; gates. La reparación del manifiesto roto es aceptable y las sobre-denegaciones se declaran.
+- **QA-033-01 (`contrato`):** el caso de reloj se cambió para obtener un PASS, y eso no se acepta; hay que declarar en CA-06 el coste de cada rama con su cifra.
+- **QA-033-02 (`contrato`):** las rutas entre comillas no las ve el detector. Ya pasaba en v1.36.1, así que no hay movimiento. Es de la familia de SEC-135 y va a la pieza b, por la decisión del propietario; se declara en CA-01, CA-02 y CA-08.
+- **Siguiente:** la única pasada correctiva = write-back del analista + ajuste del caso de reloj de la sección 49. Sin tocar `hooks/`.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 1: REQ-033 CA-01 a CA-07 implementados (`en-revisión`)
 > Origen: GitHub (commit local de la coordinadora, sin validar) (sin commit en este repositorio; el commit es de la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
 
