@@ -365,6 +365,7 @@ arnes_guard_completado() {
       # R2 (SEC-129, REQ-007 CA-68 (i)): cualquier otro codigo que 0 no es «no escribe»: el analisis no
       # concluyo. Medido en modo POSIX: rc 1 y la lista vacia, que se leia como un comando que no escribe.
       [ "$rc" -eq 0 ] || arnes_deny_rc_analizador "$rc" guard-completado
+      arnes_deny_retira_manifiesto   # REQ-033 CA-01, como en `guard-codigo`
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
@@ -376,6 +377,7 @@ arnes_guard_completado() {
   # Los destinos ya estan detectados en la via Bash; en Edit/Write la escritura es cierta
   # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
   arnes_deny_manifiesto_roto "${escrituras:-}"
+  arnes_deny_escribe_manifiesto "${escrituras:-}"   # REQ-033 CA-01, como en `guard-codigo`
 
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
 

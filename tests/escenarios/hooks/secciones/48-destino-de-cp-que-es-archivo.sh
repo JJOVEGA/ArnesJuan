@@ -187,7 +187,10 @@ for a in - qa-tester; do
       fila48 "R16 $o $q: $o docs/notas.md \"src/a.ts\" (el último operando entre comillas)" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o docs/notas.md \"src/a.ts\"")"
       fila48 "R17 $o $q: $o S src/a.ts, salto de línea, echo docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts"$'\n'"echo docs/notas.md")"
     fi
-    fila48 "R1 $o $q: $o S src/a.ts < docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o S src/a.ts < docs/notas.md")"
+    # REQ-033 CA-02 (hotfix 1.36.2): con `mv`, `src/a.ts` es un ORIGEN y se juzga como escritura; la decisión
+    # sigue siendo deny, y el motivo de la candidata cita ahora el código de la app (v1.36.0 sin cita).
+    c48="$ND48"; [ "$o" != mv ] || c48="$SRC48"
+    fila48 "R1 $o $q: $o S src/a.ts < docs/notas.md" guard.sh deny deny "$c48" - "$(j48 "$P48" "$a" "$o S src/a.ts < docs/notas.md")"
     fila48 "R7 $o $q: $o \"-t\" src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \"-t\" src docs/notas.md")"
     fila48 "R8 $o $q: $o '-t' src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o '-t' src docs/notas.md")"
     fila48 "R9 $o $q: $o \\-t src docs/notas.md" guard.sh deny deny "$ND48" - "$(j48 "$P48" "$a" "$o \\-t src docs/notas.md")"

@@ -2,6 +2,146 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2 CERRADO (fase 4, coordinadora): REQ-033 `completado` por `Edit` juzgado en vivo; notas `[1.36.2]`; métrica por rol
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **REQ-033 `completado`**: la puerta lo juzgó en vivo (QA y seguridad `aprobado`, cola vacía, gates en verde, hallazgos sólo `instrumento`). Fila de Historial y fila del índice, que ahora dice la promesa exacta («por las formas llanas de `Bash` o un `Write` sin contenido»).
+- **Notas `[1.36.2]`** copiadas tal cual del borrador.
+- **Métrica** (tokens de subagente; sin la coordinadora): analista 112 916 · desarrollador 277 287 · QA 124 228 · seguridad 134 543 · total **648 974**: **−59 %** frente a 1.36.1 (1 583 930) y −89 % frente al tramo de 1.36.0 en Fable. Sobre el presupuesto orientativo de P-137-J se pasó en los cuatro roles.
+- **QA en Sonnet**: 2 hallazgos `contrato` y 1 pasada correctiva; no vio SEC-137 ni SEC-138 (preexistentes), que encontró seguridad.
+- Resultado: 1.36.2 lista para el PR; falta el CI `hooks-en-linux` sobre la cabeza y la decisión de publicar, que es del propietario.
+
+## [1.36.2] — 2026-10-16 · Hotfix mínimo: el manifiesto `.arnes/config.json` no se borra, no se mueve y no se vacía por las formas llanas de `Bash` ni por un `Write` sin contenido, y mover un archivo protegido cuenta como escribirlo; SEC-135 a SEC-138 declarados con su versión de reparación
+
+> Origen: borrador del `analista-requerimientos` (REQ-033) · agentes: `analista-requerimientos` y `qa-tester` en Sonnet (excepción del propietario, P-137-J), `desarrollador` y `auditor-seguridad` · gobernado por la instalación estable **1.36.1**.
+> **Estas notas no publican nada:** la fusión, el tag y la publicación son del propietario.
+
+**Qué cambia** (REQ-033, CA-01 y CA-02). Antes, con 1.36.1, `rm`, `mv` y `: >` sobre el manifiesto pasaban —en este repositorio, también al agente de código; en un proyecto consumidor que no lo incluye en `codigo_app.globs`, a **todo agente**—, y sin manifiesto todas las puertas quedan inertes. Ahora, a **todo agente**, el manifiesto no se puede borrar, mover ni vaciar **por las formas llanas de `Bash`** (`rm`, `unlink`, `git rm`, `mv`, `: >`, `truncate`, `cp /dev/null`, `tee`, `sed -i`; ejemplos no exhaustivos) **ni por un `Write` sin contenido**. Y el **origen** de `mv` se juzga como escritura de ese archivo. Los cinco casos medidos (v1.36.1 → 1.36.2):
+
+| Caso | Agente | v1.36.1 | 1.36.2 |
+|---|---|---|---|
+| `rm .arnes/config.json` | coordinadora y agente de código | allow | deny |
+| `mv .arnes/config.json x` | coordinadora y agente de código | allow | deny |
+| `: > .arnes/config.json` | agente de código | allow | deny |
+| `mv hooks/lib.sh docs/x.md` | coordinadora | allow | deny |
+| `mv hooks/lib.sh docs/PLAN.md` | coordinadora | allow | deny |
+
+Ningún veredicto pasa de `deny` a `allow` (R-060 §1). **No** se dice «el manifiesto no se puede borrar» a secas: lo que no cambia está debajo.
+
+**Coste por rama** (CA-06, cifras operativas; el camino común no cambia: 0 procesos añadidos, de contrato, y 1,25× de reloj):
+
+| Rama | Procesos añadidos | Reloj medido |
+|---|---|---|
+| `mv` con origen protegido | +1 | ≈ 1,11–1,19× |
+| `rm` del manifiesto | +1 | ≈ 1,24× |
+| `Write` del manifiesto con contenido | +1 | ≈ 1,20× |
+| `Write` vacío del manifiesto | +2 | ≈ 1,22× |
+
+Techo declarado de reloj por rama: 1,30× (máximo medido 1,26×). La sección 49 juzga todas las ramas.
+
+**Lo que NO cambia, con su versión**
+- **SEC-135** (`contrato`, severidad **alta**, preexistente; a la **pieza b de 1.37**, la puerta posterior): `cp`/`mv`/`install` con `2>/dev/null`, el comentario final, `< directorio`, `-rt`, `\cp`, `find -exec`, el subshell `(cp …)` y `xargs` escriben código protegido a quien no es el agente de código; y, de la misma familia, las **rutas entre comillas**, el `cd` dentro del comando, los **globs** y las **llaves** no se ven (QA-033-02), igual que en 1.36.1.
+- **SEC-136** (`contrato`, media): `rm`, `unlink` y `git rm` de **cualquier archivo distinto del manifiesto** siguen sin juzgarse. A 1.37.
+- **SEC-137** (`contrato`, media): mover el **directorio** que contiene código protegido (`mv hooks docs/h`, `git mv hooks …`) no se juzga como origen; con barra final (`mv hooks/ docs/h`) sí. A 1.37.
+- **SEC-138** (`contrato`, media): el manifiesto **sigue pudiéndose dejar sin reglas por `Edit`/`Write`** con contenido (`{}`, o un `Edit` que lo vacía). En un proyecto cuyo `codigo_app.globs` **no** incluye `.arnes/config.json` —la forma que genera `arnes-init`— **cualquier agente** puede hacerlo, y el motivo del `deny` nuevo («el agente de código lo escribe con Edit/Write») no es cierto allí; corregirlo es de 1.37.
+- **Recomendación para proyectos consumidores: añadir `.arnes/config.json` a `codigo_app.globs`.**
+- `AGENTS.md` §13 no cambia en 1.36.2.
+
+**Los cuatro puntos del dictamen de seguridad (R-060)**
+1. El manifiesto no se puede borrar, mover ni vaciar por las formas llanas de `Bash` ni por un `Write` sin contenido, a ningún agente; no «a secas».
+2. Sigue pudiéndose dejar sin reglas con `Edit`/`Write` con contenido, y en un proyecto que no lo incluye en `codigo_app.globs` lo puede hacer cualquier agente (SEC-138).
+3. Las rutas entre comillas, el `cd` dentro del comando, los globs y las llaves no se ven, igual que en 1.36.1 (QA-033-02, SEC-135).
+4. El origen de `mv` se juzga cuando es el archivo protegido; mover el directorio que lo contiene no (SEC-137), y `rm` de código protegido tampoco (SEC-136), a 1.37.
+
+**Restricciones aceptadas.** Un manifiesto ya roto puede repararse (y vaciarse) por `Bash` (REQ-007 CA-60); borrarlo o moverlo sigue denegado. Sobre-denegaciones raras: `grep rm|ln|truncate .arnes/config.json` (el nombre de la orden como patrón con el manifiesto de operando) y `git rm -r --cached .`. Leer el manifiesto (`cat`, `jq`, `git diff/log/show`, `wc`) no se deniega.
+
+**Firmas.** QA: aprobado tras **una** pasada correctiva (QA-033-01 y QA-033-02, resueltos por write-back y por la sección 49 juzgando todas las ramas). Seguridad: **`aprobado`** (R-060 y su adenda, 2026-10-16): R-060 dio «con hallazgos, sin veto»; SEC-137 y SEC-138 se resolvieron sólo con texto (este REQ y estas notas), y el auditor re-firmó sobre el mismo código (`hooks/` sin cambio desde `b8d8e46`). SEC-135 a SEC-138 quedan `instrumento` respecto de REQ-033 y abiertos en su sede, para 1.37. Lo gobierna la instalación estable **1.36.1**; la 1.36.2 no se gobierna a sí misma.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 3 cerrada (seguridad, Opus): re-firma `Seguridad: aprobado` de REQ-033 tras el write-back de R-060
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
+
+- **Adenda a R-060**: CA-01, CA-02 y el borrador dicen lo exigido sin prometer más; firma `aprobado` sobre el código de `b8d8e46` (sin cambio en `hooks/`). SEC-137 y SEC-138 pasan a `instrumento` **respecto de REQ-033**; en su sede siguen `abierto`, para 1.37.
+- **Coordinadora, en el borrador de las notas:** la precisión del auditor (en un consumidor, a **todo agente**) y las firmas actualizadas.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 4 (analista, Sonnet): write-back de SEC-137 y SEC-138 en REQ-033 y borrador de las notas `[1.36.2]`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **CA-01** dice lo construido: el manifiesto no se borra, mueve ni vacía **por las formas llanas de `Bash` ni por un `Write` sin contenido**; límite SEC-138 (`Edit`/`Write` con `{}`; en un consumidor sin el manifiesto en los globs, cualquier agente), con la recomendación de añadirlo a los globs. **CA-02**: límite SEC-137 (mover el directorio contenedor). Los dos van a 1.37.
+- **Borrador de las notas** en `docs/arnes/notas-1.36.2-borrador.md`, con los cuatro puntos de R-060 §4.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 3: seguridad **con hallazgos, sin veto** (R-060): SEC-137 y SEC-138, `contrato`, preexistentes; se resuelven con texto
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`) · agente: `auditor-seguridad`.
+
+- **No abre nada** frente a v1.36.1, y cumple CA-01 y CA-02 en las formas llanas, con 68 órdenes por 3 agentes y dos formas de proyecto.
+- **SEC-137 (`contrato`, media):** mover el directorio que contiene código protegido (`mv hooks docs/h`) no se juzga como origen. **SEC-138 (`contrato`, media):** el manifiesto se puede dejar sin reglas por `Edit`/`Write` (`{}`, o un `Edit` que lo vacía), y en un proyecto consumidor —sin el manifiesto en `codigo_app.globs`— lo puede hacer cualquier agente; el motivo del `deny` nuevo es falso allí (su corrección toca `hooks/`, va a 1.37). Los dos, ya en v1.36.1.
+- **Dictamen:** 1.36.2 se puede publicar si REQ-033 y las notas lo dicen con precisión (cuatro puntos en R-060). Lo resuelve un write-back del analista; después, la firma `aprobado` sobre el mismo código. SEC-136 pasa a `en-mitigación`.
+- Evidencia del auditor archivada por la coordinadora (`hotfix-1.36.2/seg-R060/`).
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2 cerrada: **QA (Sonnet) APROBADO** tras la única pasada correctiva; QA-033-01 y QA-033-02 cerrados (el segundo, como límite declarado)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
+
+- El write-back describe lo construido; la sección 49 juzga las cinco ramas contra su techo sin omitir ninguna. Banco **2945/0/15** (2 INCONCLUSO de rendimiento); sección 49 93/0/5 (relojes bajo el suelo); autoprueba 117/0; `hooks/` y `tools/` sin cambio desde `b8d8e46`. `Hallazgos abiertos:` sólo SEC-135 y SEC-136, `instrumento`. **Siguiente:** fase 3, seguridad.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del banco: la sección 49 juzga cada rama de CA-06 contra su techo declarado (QA-033-01); sin tocar `hooks/`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`desarrollador`) · agente: `desarrollador`.
+
+- Casos de procesos y de reloj por rama (las cinco de CA-06), sin la regla que omitía las ramas con procesos de más; si una serie no llega al suelo de 50 ms, SKIP con motivo, nunca PASS. **En el banco completo, las cinco ramas pasan** (el `Write` del manifiesto con contenido, 1,276× frente a 1,30×, cerca del techo). Banco **2948/0/12**; autoprueba 117/0; gates en verde; `hooks/` sin cambio frente a `56bccba`.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del contrato: write-back de QA-033-01 y QA-033-02 en REQ-033
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **CA-06 por rama:** camino común, 0 procesos y 1,25× (sin cambio); `mv` con origen protegido, `rm` y `Write` del manifiesto, +1 proceso; `Write` vacío, +2; reloj de las ramas nuevas con un techo declarado de **1,30×** (máximo medido 1,26×; cifra operativa, fijada por el analista y aceptada por la coordinadora). La sección 49 juzga cada rama contra su techo, sin omitir ninguna.
+- **Límites declarados (QA-033-02):** rutas entre comillas, `cd` dentro del comando, globs y llaves, sin movimiento frente a v1.36.1. Familia de SEC-135, a la pieza b de 1.37; las notas `[1.36.2]` lo declaran.
+- **Restricciones aceptadas:** la reparación del manifiesto roto (REQ-007 CA-60) y las sobre-denegaciones raras (`grep rm|ln|truncate` sobre el manifiesto, `git rm -r --cached .`).
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 2: QA (Sonnet) **con hallazgos**: QA-033-01 (el coste de CA-06 no se cumple y no se declara) y QA-033-02 (rutas entre comillas, de la familia de SEC-135); ninguno exige tocar `hooks/`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (`qa-tester`) · agente: `qa-tester`.
+
+- **Conforme:** las cinco formas pasan de `allow` a `deny` en la misma corrida; banco 2940/0/12; autoprueba 117/0; gates. La reparación del manifiesto roto es aceptable y las sobre-denegaciones se declaran.
+- **QA-033-01 (`contrato`):** el caso de reloj se cambió para obtener un PASS, y eso no se acepta; hay que declarar en CA-06 el coste de cada rama con su cifra.
+- **QA-033-02 (`contrato`):** las rutas entre comillas no las ve el detector. Ya pasaba en v1.36.1, así que no hay movimiento. Es de la familia de SEC-135 y va a la pieza b, por la decisión del propietario; se declara en CA-01, CA-02 y CA-08.
+- **Siguiente:** la única pasada correctiva = write-back del analista + ajuste del caso de reloj de la sección 49. Sin tocar `hooks/`.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 1: REQ-033 CA-01 a CA-07 implementados (`en-revisión`)
+> Origen: GitHub (commit local de la coordinadora, sin validar) (sin commit en este repositorio; el commit es de la coordinadora) · usuario: Juan · modelo de IA: Opus 5.5 · agente: `desarrollador`.
+
+- **`hooks/lib.sh`:** el detector de `Bash` emite cada **origen de `mv`** como escritura (CA-02: `mv hooks/lib.sh docs/x.md` se deniega a quien no es el agente de código, exista o no el destino; un origen no determinable, también) y como **retirada**; `rm`, `unlink`, `truncate`, `shred` y el último operando de `ln` salen sólo como retirada. Una retirada se juzga **únicamente** contra el manifiesto o un directorio que lo contiene (CA-01); `rm` de otros archivos no cambia (CA-08). Funciones nuevas `arnes_deny_retira_manifiesto` y `arnes_deny_escribe_manifiesto`: escribir el manifiesto por `Bash` y un `Write` vacío o de blancos se deniegan a **todo** agente. `guard-codigo.sh` y `guard-completado.sh` las llaman.
+- **Banco:** sección 49 nueva (90 casos; fail-before contra v1.36.1 `e21baef` en la misma corrida; controles; procesos y reloj); `CASOS_ESPERADOS` 2862 → 2952; R1 de la 48 con `mv` cita ahora el código de la app (mismo veredicto). Banco 2940/0/12, autoprueba 117/0, gates de §7 en verde. Procesos: `ls -la` 1/1; `mv`/`rm` permitidos sin añadidos; `Write` del manifiesto +1 (`jq` del contenido).
+- **Versión 1.36.2** en `plugin.json` y `marketplace.json` (CA-07).
+- **Presentado, no decidido** (Historial de REQ-033): la reparación por `Bash` del manifiesto roto (REQ-007 CA-60) se conserva; el reloj de CA-06 se juzga donde los procesos son los mismos; sobre-denegaciones por fallo cerrado. Evidencia: `ArnesJuan-evidencia` `0e73d5d`.
+- **Avance (regla 6):** CA-01 a CA-07 construidos y medidos; falta QA (fase 2).
+- **Comprobado por la coordinadora** fuera de banda: A1 y A5 pasan de `allow` a `deny`; el `mv` legítimo y la lectura del manifiesto, sin cambio; `grep rm .arnes/config.json` se deniega de más, como se declara. Gates en rc 0. **Para QA, sin aceptar:** el caso de reloj de CA-06 se cambió para que sólo juzgue donde los procesos coinciden, y la norma del proyecto prohíbe cambiar la medición para obtener un PASS; lo que corresponde es declarar el coste de la rama del `Write` del manifiesto (+1 `jq`, ≈ 1,26× medido). **Métrica:** desarrollador, ≈ 262 k tokens.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 0: REQ-033 escrito (`pendiente`, ocho criterios) por el analista en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **REQ-033**: CA-01, el manifiesto no se borra, se mueve ni se vacía, a ningún agente; CA-02, el origen de `mv` se juzga como escritura; CA-03, fail-before contra v1.36.1 con las cinco formas del propietario; CA-04, controles; CA-05, regresión; CA-06, 0 procesos en el camino común; CA-07, la versión; CA-08, las notas (SEC-135 a la pieza b; `rm`/`unlink`/`git rm` a 1.37; `AGENTS.md` sin cambio). Una pasada correctiva como tope.
+- **Detalles decididos por el analista** (en el Historial): «vaciar» es toda escritura del manifiesto por `Bash` (también para el `desarrollador`, que sigue por `Edit`/`Write`), más un `Write` vacío; «borrar» alcanza `rm`, `unlink`, `git rm` y el origen de `mv`, sólo para el manifiesto.
+- **Avance (regla 6):** el contrato está listo; empieza la fase 1.
+
+## [Interno] — 2026-10-16 · Hotfix 1.36.2 mínimo **autorizado** (`P-137-J` adoptada): fase 0 al analista, en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-137-J**, literal en la cola, con sus tres decisiones de redacción: `AGENTS.md` no se toca; QA en Sonnet como excepción a §5 para esta intervención (el cambio de §5 entra en 1.37); la coordinadora cierra REQ-033 con `Edit`. **Al cerrar:** tokens por rol frente a 1.36.0 y 1.36.1, y la calidad de QA en Sonnet.
+- **Avance (regla 6):** empieza el contrato corto.
+
+## [Interno] — 2026-10-15 · **Corrección de rumbo del propietario:** P-137-I retirada; 1.36.2 **mínima** (manifiesto intocable y origen de `mv`); 1.37 empieza por el coste; métrica: tokens por REQ cerrado; `P-137-J` lista para adoptar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Decisión del propietario, literal** en la cola («CORRECCIÓN DE RUMBO»), en `docs/PLAN.md` (sección nueva «★ PLAN VIGENTE», que manda sobre el resto del archivo y sobre la tabla de 1.37 de `cand/1.37.0`) y en ESTADO: «El objetivo del Arnés es que los agentes construyan software real con disciplina, RÁPIDO y con POCO COSTE. Las últimas versiones han pagado demasiado por perseguir formas de bash; se corrige el rumbo.»
+- **1.36.2 mínima:** borrar, mover o vaciar `.arnes/config.json` se deniega a todo agente, y se juzga el origen de `mv`. Una pasada correctiva; QA y analista en Sonnet. **SEC-135 entero** y `rm`/`unlink`/`git rm` de SEC-136 pasan a la pieza b de 1.37 y se declaran en las notas `[1.36.2]`. Sustituye lo que P-032-6 (1) y (2) decía de 1.36.2.
+- **1.37, en este orden:** rigor proporcional por defecto; modelo por rol; pieza b (con su requisito del manifiesto); F-137-9 y adelgazamiento de `AGENTS.md`; plan de desarrollo, spike de mod y 2b. Tope de dos pasadas por intervención. **Métrica:** tokens por REQ cerrado, por rol, en el Arnés y en SENDA, comparados con 1.36.0; si 1.37 no la baja, se para y se revisa.
+- **`P-137-J`** en `## Pendientes`, en una página. P-137-I queda conservada como retirada.
+- **Avance (regla 6):** el plan cambia de rumbo y la siguiente intervención es una sesión corta.
+
+## [Interno] — 2026-10-15 · Registro de la publicación de **v1.36.1** (`main` `e21baef`, tag `v1.36.1`, PR #61; CI de `main` en verde); instalación estable a 1.36.1; apertura de `hotfix/1.36.2` con su autorización (`P-137-I`) lista para adoptar
+> Origen: GitHub (commit local, primero de `hotfix/1.36.2`) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **Publicación, por orden expresa del propietario** (órdenes literales en la cola): PR #61 `MERGED`, `main` en `e21baef` (padres `f22b905` y `4d4a6a5`); tag anotado `v1.36.1` → `e21baef`, con push. Un corte de TLS en el primer `fetch` llegó **después** de la fusión; se comprobó con `gh` antes de repetir nada. **CI de `main`: run `38825377862`, success** (2824/0/38). La entrada `[1.36.1]` pasa a «PUBLICADA»; su texto no se reescribe.
+- **Instalación estable 1.36.1** en este equipo: alcances `user` y `project`, `e21baef`; hooks idénticos a los del tag (`diff -r` vacío). Rige desde el próximo reinicio.
+- **`hotfix/1.36.2`** desde `e21baef`. **`P-137-I`** en `## Pendientes`: la autorización del hotfix 1.36.2 con el contrato de P-032-6, **el tope de dos pasadas correctivas** con su salida (como mínimo el manifiesto y el origen de `mv`; SEC-135 a la pieza b) y **el requisito de la pieza b como límite**.
+- **Avance (regla 6):** 1.36.1 está en manos de los proyectos; 1.36.2 está a una adopción de empezar.
+
 ## [GitHub] — 2026-10-15 · **Hotfix 1.36.1 cerrado (commit validado):** REQ-032 `completado` (por `Edit`, juzgado en vivo); notas `[1.36.1]` copiadas del borrador; PR #61 listo para la fusión del propietario
 > Origen: GitHub (commit con push) · usuario: Juan · modelo de IA: Opus 5.5 (coordinadora y subagentes) · agentes: `analista-requerimientos` (fase 4), la coordinadora.
 
@@ -11,6 +151,8 @@ CHANGELOG — ArnesJuan
 - **Avance (regla 6):** el hotfix 1.36.1 está entregado. Fusión, tag `v1.36.1` y publicación: del propietario. Al publicarse se abre 1.36.2.
 
 ## [1.36.1] — 2026-10-15 · Hotfix: un `cp`, `mv` o `install` suelto sobre un archivo existente que no está protegido vuelve a pasar —la regresión de 1.35.0, F-137-10—, con lo protegido en `deny` y el alcance del arreglo a la vista; y dos fallos en abierto preexistentes, SEC-135 (alta) y SEC-136 (media), declarados con su versión de reparación
+
+> **PUBLICADA el 2026-10-15.** `main` en `e21baef` (fusión del PR #61, `hotfix/1.36.1`), tag `v1.36.1` sobre esa fusión. CI de `main`: run `38825377862`, **success** (2824 PASS, 0 FAIL, 38 SKIP; 2 INCONCLUSO de rendimiento). *(Añadido al publicar; el texto de las notas no se reescribe.)*
 
 > Origen: GitHub (commit de versión) · usuario: Juan · agentes: `analista-requerimientos`, `desarrollador`,
 > `qa-tester` y `auditor-seguridad` (Opus 5.5; `qa-tester` en Opus por la decisión del propietario de `AGENTS.md`
