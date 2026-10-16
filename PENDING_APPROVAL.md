@@ -43,7 +43,25 @@
 
 ## Pendientes
 
-### P-137-J — **Hotfix 1.36.2 mínimo: autorización lista para adoptar** (sustituye a P-137-I, retirada)
+_(Vacía desde el 2026-10-16: P-137-J adoptada por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-16) — **P-137-J adoptada con sus tres decisiones de redacción: hotfix 1.36.2 mínimo autorizado**
+
+**Texto del propietario, literal** (mensaje del 2026-10-16 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-J, con sus tres decisiones de redacción:
+> - AGENTS.md no se toca; SEC-135 y SEC-136 sólo en las notas.
+> - QA en Sonnet en esta intervención, como excepción a §5 decidida por mí;
+>   el cambio de §5 entra en 1.37 con el modelo por rol.
+> - Cierras REQ-033 con Edit al final de la fase 4.
+> Al cerrar, la métrica de tokens por rol frente a 1.36.0 y 1.36.1, y la
+> calidad de QA en Sonnet: hallazgos que encontró, pasadas que hicieron falta.
+
+**Lo que añade la coordinadora:** la medida de tokens se toma del uso que el arnés de Claude Code informa por comisión, sumado por rol, y se dice cómo se obtuvo. La calidad de QA en Sonnet se registra con sus hallazgos, su clase y las pasadas que hicieron falta, y con lo que encontraran después seguridad o la coordinadora y QA no vio.
+
+### P-137-J (texto de la propuesta, conservado; adoptada arriba) — **Hotfix 1.36.2 mínimo: autorización lista para adoptar** (sustituye a P-137-I, retirada)
 
 **Dos cosas que la coordinadora comprobó y que la autorización recoge:** (1) este proyecto no declara la vía proporcional (`AGENTS.md` §6) y hace falta un REQ nuevo (REQ-033), así que el analista no se omite, como pediste; (2) `AGENTS.md` §5 manda QA en Opus en este repositorio, y **tu decisión lo sustituye para esta intervención**: QA y analista en Sonnet.
 
@@ -72,8 +90,6 @@
 >
 > ## Límites
 > Rama `hotfix/1.36.2` (desde `e21baef`). **No se toca `AGENTS.md`:** SEC-135 y SEC-136 se declaran en las notas; §13 va con el adelgazamiento de 1.37. Nada de 1.37. **Lo que 1.36.2 no resuelve:** SEC-135, `rm`/`unlink`/`git rm` y el hueco C, que son de la pieza b, y su requisito: la puerta posterior no puede depender sólo del manifiesto que vigila. Push de la rama: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-15) — **CORRECCIÓN DE RUMBO: P-137-I retirada; 1.36.2 mínima (una sesión); 1.37 empieza por el coste; métrica del objetivo: tokens por REQ cerrado**
 

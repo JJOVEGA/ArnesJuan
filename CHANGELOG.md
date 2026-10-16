@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2 mínimo **autorizado** (`P-137-J` adoptada): fase 0 al analista, en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
+
+- **P-137-J**, literal en la cola, con sus tres decisiones de redacción: `AGENTS.md` no se toca; QA en Sonnet como excepción a §5 para esta intervención (el cambio de §5 entra en 1.37); la coordinadora cierra REQ-033 con `Edit`. **Al cerrar:** tokens por rol frente a 1.36.0 y 1.36.1, y la calidad de QA en Sonnet.
+- **Avance (regla 6):** empieza el contrato corto.
+
 ## [Interno] — 2026-10-15 · **Corrección de rumbo del propietario:** P-137-I retirada; 1.36.2 **mínima** (manifiesto intocable y origen de `mv`); 1.37 empieza por el coste; métrica: tokens por REQ cerrado; `P-137-J` lista para adoptar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus 5.5 · agente: la coordinadora.
 
