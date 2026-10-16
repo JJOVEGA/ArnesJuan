@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · `P-137-K` (A) adoptada (sonda de reloj sobre su techo en CI → INCONCLUSO); autorización de 1.37 · 1 (`P-137-L`) lista para adoptar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-K (A)**, literal en la cola: el FAIL queda para los contratos que no dependen del reloj (procesos, veredictos). Entra en la primera intervención de 1.37 que toque el banco. La ficha INS-033-1 queda con su decisión.
+- **P-137-L**, en `## Pendientes`:
+  - una página, con el presupuesto calibrado sobre lo real de 1.36.2: ≈ 670 k, con parada a 1,5× por rol;
+  - REQ-034, por el ciclo completo; este repositorio no cambia su política (todo `critico`);
+  - dice que SEC-137 y SEC-138 están declarados en las notas `[1.36.2]` con «A 1.37», **no** con «a la pieza b», y que la fila 1.37 · 3 no los nombraba. La adopción los lleva allí.
+- Resultado: 1.37 · 1 espera la adopción de P-137-L; ninguna intervención en ejecución.
+
 ## [GitHub] — 2026-10-16 · Registro de la publicación de **v1.36.2** (`main` `46ee7ca`, tag `v1.36.2`, PR #62); instalación estable a 1.36.2; **paso 2b**: `main` fusionado en `cand/1.37.0` y plan reconciliado
 > Origen: GitHub (commit de fusión) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

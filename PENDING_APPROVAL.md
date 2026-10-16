@@ -43,7 +43,76 @@
 
 ## Pendientes
 
-### P-137-K — **Una sonda de reloj operativa que supera su techo en el CI, ¿FAIL o INCONCLUSO?** (INS-033-1)
+### P-137-L — **1.37 · 1, rigor proporcional por defecto: autorización lista para adoptar**
+
+**Tres cosas que la coordinadora comprobó, por escrito (`AGENTS.md` §6):**
+1. **El analista no se omite.** Este proyecto no declara la vía proporcional, y además es una **capacidad nueva**, que lleva analista → desarrollador → QA → seguridad. Hace falta un REQ nuevo, **REQ-034**.
+2. **SEC-137 y SEC-138: declarados, pero no a la pieza b, y te lo digo en vez de confirmarlo.**
+   - Las notas `[1.36.2]` los declaran los dos, con su forma y su severidad, pero cada uno termina en «**A 1.37**», no en «a la pieza b».
+   - La fila 1.37 · 3 de `docs/PLAN.md` sólo nombra SEC-135, SEC-136 y el hueco C.
+   - Encajan en la pieza b: SEC-137 es una forma de `Bash` que una puerta posterior cierra como clase, y SEC-138 cae bajo su requisito («no depende sólo del manifiesto que vigila»).
+   - La autorización los lleva allí. Al adoptarla, añado SEC-137 y SEC-138 a esa fila. Las notas publicadas no se reescriben.
+3. **P-137-K (A) entra aquí si esta intervención toca el banco**, que es lo esperable si cambia algo que el banco certifica. Si no lo toca, va a la siguiente intervención que lo haga.
+
+> ## Autorización — 1.37 · 1, rigor proporcional por defecto
+>
+> ## Decisiones del propietario
+> - **Alcance, sólo esto:** lo que un proyecto hereda (plantillas, `arnes-init`/`arnes-upgrade`, agentes) trae el **flujo ligero por defecto** para lo normal, y el **completo** para dinero, sesión, seguridad, datos y el propio arnés. La política se declara en `.arnes/config.json` del proyecto.
+> - **Este repositorio no cambia de política:** todo REQ del arnés sigue `critico` por autoalojamiento. Ni `AGENTS.md` ni el `.arnes/config.json` de este repo se tocan.
+> - **El suelo no se toca:** `Sensible a seguridad: sí` sigue imponiendo `critico`; el auditor sube el rigor; nadie lo baja sin su firma.
+> - **SEC-137 y SEC-138 van a la pieza b (1.37 · 3)** junto con SEC-135 y SEC-136.
+> - **QA y analista en Sonnet**, como en 1.36.2, extendiendo mi excepción a §5 a esta intervención. Desarrollador y seguridad, en Opus. *(Dato de 1.36.2: QA en Sonnet no vio dos hallazgos preexistentes que encontró seguridad.)*
+>
+> ## Plan autorizado (cada fase termina en commit local en `cand/1.37.0`; la siguiente empieza sin pedir permiso)
+> Fase 0 — analista: REQ-034 con contrato corto. Qué es «lo normal» y qué es «completo», con los cinco ámbitos. Dónde vive la política y quién la aplica al nacer un REQ. Qué heredan los proyectos ya instalados. El fail-before y los controles: lo que hoy es `critico` sigue siéndolo.
+> Fase 1 — desarrollador: plantillas, skills y agentes; los casos del banco con fail-before; P-137-K si toca el banco; el banco completo y la autoprueba.
+> Fase 2 — QA: el fail-before, el pass-after y el banco, e intentar romperlo; sobre todo, que nada que hoy exige seguridad deje de exigirla.
+> Fase 3 — seguridad, sólo con QA favorable. Puede vetar.
+> Fase 4 — analista: write-back. La coordinadora cierra REQ-034 con `Edit` juzgado en vivo, hace commit validado y registra la métrica por rol. No se publica: 1.37 sale entera.
+>
+> ## Presupuesto (calibrado sobre lo real de 1.36.2, no sobre la estimación anterior)
+> Total de cada rol en 1.36.2, incluidas sus pasadas: analista 113 k, desarrollador 277 k, QA 124 k, seguridad 135 k; en total, 649 k. **Para 1.37 · 1: ≈ 120 k analista, ≈ 280 k desarrollador, ≈ 130 k QA, ≈ 140 k seguridad; total ≈ 670 k.** Cada agente se retoma entre sus fases en vez de lanzarse de nuevo. Si un rol pasa de 1,5× su cifra, la coordinadora para y me lo dice antes de seguir.
+>
+> ## Lo que decide la coordinadora sola
+> El texto, el registro y los índices; el orden de los despachos; registrar defectos nuevos sin repararlos; aplicar el tope.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> - Un cambio de alcance.
+> - Que el contrato exija que la **puerta** derive el rigor del manifiesto y con eso un cierre hoy denegado pase a `allow`: es un movimiento sobre una protección.
+> - Tocar `hooks/` más allá de lo que el contrato declare.
+> - Un veredicto del banco que cambie en un caso que ejecuta el código del cambio. Las sondas de reloj, `instrumento`.
+> - Un veto de seguridad; pasar de 1,5× el presupuesto de un rol; publicar.
+>
+> ## Tope
+> **Dos pasadas correctivas**; a la tercera se decide. Los contadores no se reinician.
+>
+> ## Si la sesión se corta
+> Se lee este plan en la cola y en ESTADO, y se sigue desde la última fase comiteada.
+>
+> ## Límites
+> Nada de 1.37 · 2 a 5. No se toca `AGENTS.md` ni `.arnes/config.json` de este repo. Push: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
+
+**Decisión propuesta, lista para adoptar:** «Adopto P-137-L.» Si corriges algo, basta con decir qué.
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-16) — **P-137-K (A)**: una sonda de reloj que pasa su techo en el CI da INCONCLUSO; el FAIL queda para los contratos que no dependen del reloj; entra en 1.37 en la intervención que toque el banco primero
+
+**Texto del propietario, literal** (mensaje del 2026-10-16 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-K (A): una sonda de reloj que pasa su techo en el CI da
+> INCONCLUSO (no acredita, no pone el CI en rojo); el FAIL queda para los
+> contratos que no dependen del reloj (procesos, veredictos). Entra en 1.37
+> sin hotfix, dentro de la intervención que toque el banco primero.
+>
+> Prepara la autorización de 1.37 · 1 (rigor proporcional por defecto), en
+> una página, con presupuesto calibrado sobre las cifras reales de 1.36.2,
+> no sobre la estimación anterior. Confirma en ella que SEC-137 y SEC-138
+> están declarados en las notas [1.36.2] y van a la pieza b.
+
+**Lo que añade la coordinadora, rotulado como suyo:** la decisión dice «procesos, **veredictos**», más que la propuesta, que decía sólo «procesos»; manda la tuya. La ficha INS-033-1 queda con su decisión. La autorización pedida es **P-137-L**, en `## Pendientes`. Push de `cand/1.37.0` hecho por el propietario y comprobado: `origin` = `d9f4b12`.
+
+### P-137-K (texto de la consulta, conservado; adoptada arriba) — **Una sonda de reloj operativa que supera su techo en el CI, ¿FAIL o INCONCLUSO?** (INS-033-1)
 
 **Qué pasó.** El CI de `main` sobre `46ee7ca` (run `38917844057`) dio **3 FAIL**; el del PR sobre `3a0e221` (run `38915129365`), 0. **Mismo árbol** (`dd3e505`). Los tres son las sondas de reloj de REQ-033 CA-06, por rama, contra el techo operativo de **1,30×**: 1,33× (`mv` con origen protegido), 1,47× (`rm` del manifiesto), 1,31× (`Write` vacío). El contrato de **procesos** (0 / +1 / +2) no falló. No se relanzó.
 
@@ -56,8 +125,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-K (A): una sonda de reloj operativa que supere su techo da INCONCLUSO de rendimiento, no FAIL; el FAIL queda para el contrato de procesos. Entra en 1.37 con el primer cambio del banco, sin hotfix. El rojo de `main` sobre `46ee7ca` queda registrado como INS-033-1 y no se relanza.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-16) — **v1.36.2 PUBLICADA** (`main` `46ee7ca`, tag `v1.36.2`, PR #62); registrar, actualizar la instalación estable y seguir con el paso 2b
 
