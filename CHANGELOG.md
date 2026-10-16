@@ -2,6 +2,11 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del banco: la sección 49 juzga cada rama de CA-06 contra su techo declarado (QA-033-01); sin tocar `hooks/`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`desarrollador`) · agente: `desarrollador`.
+
+- Casos de procesos y de reloj por rama (las cinco de CA-06), sin la regla que omitía las ramas con procesos de más; si una serie no llega al suelo de 50 ms, SKIP con motivo, nunca PASS. **En el banco completo, las cinco ramas pasan** (el `Write` del manifiesto con contenido, 1,276× frente a 1,30×, cerca del techo). Banco **2948/0/12**; autoprueba 117/0; gates en verde; `hooks/` sin cambio frente a `56bccba`.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, pasada correctiva (1 de 1), parte del contrato: write-back de QA-033-01 y QA-033-02 en REQ-033
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
 

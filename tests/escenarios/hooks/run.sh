@@ -1710,9 +1710,9 @@ done
 # coordinadora y qa-tester: X1, X2 y X5 con cp, mv e install, X3, X4, P1–P8, E1 (4), O1 (4), L1 (4, opciones de la
 # lista) y H4a/b/c/k—. F4 y G1 pasan a esperar deny (restricciones de CA-15). Con los hooks de 264dfa9 como candidata,
 # 53 FAIL. Ninguna otra sección cambia su número.
-# Y 2862 → 2952 por el hotfix 1.36.2 (REQ-033): +90 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
-# e21baef), más PROC y RELOJ de CA-06—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2952
+# Y 2862 → 2960 por el hotfix 1.36.2 (REQ-033): +98 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
+# e21baef), más PROC y RELOJ de CA-06 por rama (5 ramas × 2, pasada correctiva QA-033-01)—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=2960
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
