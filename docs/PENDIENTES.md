@@ -2473,3 +2473,8 @@ ninguna mata al hook.»
 ### F-137-16 — La sección 33 busca el nombre del manifiesto en **toda** la plantilla, no sólo en `codigo_app.globs` (`instrumento`)
 - **Medido por el desarrollador en REQ-034, fase 1 (2026-10-16):** el caso «REQ-007 CA-53 la ampliación NO se propaga…» busca `\.arnes/config\.json|\.claude-plugin` en todo `templates/arnes-config.json.tpl`. Cualquier `_doc` que nombre el manifiesto lo pone en rojo sin que cambie ningún glob. El primer texto de `rigor_politica` lo hacía; se evitó cambiando la redacción y **el caso no se tocó**.
 - **Clase `instrumento`:** es un falso positivo del banco y no abre nada. **Dueños:** `desarrollador` con `qa-tester`. Va a la siguiente intervención que toque esa sección.
+
+### F-137-17 — La orden de `arnes-upgrade` no informa ante un manifiesto **vacío** (0 bytes): devuelve código 0 y salida vacía (observación O-1 de QA, REQ-034)
+- **Medido por QA** (2026-10-16, `docs/qa/REQ-034.md`): CA-10 (d) pide que un manifiesto ilegible no se toque **y se informe**. Con 0 bytes no se toca, porque se escribe vacío sobre vacío, pero **no se informa**.
+- **Efecto:** ninguno sobre los datos. Es un aviso que falta.
+- **Clase:** sin clase para QA, que dice que no bloquea; la coordinadora lo registra como **`instrumento`** de la skill. **Dueño:** `desarrollador`. Entra en la próxima pasada del desarrollador sobre REQ-034, si la hay; si no, en la siguiente intervención que toque `arnes-upgrade`.

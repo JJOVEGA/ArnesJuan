@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1, fase 2 (QA, Sonnet): **con hallazgos**, QA-034-01 (`contrato`); parada en `P-137-O`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **QA:**
+  - fail-before de la sección 50 reproducido: 6 de 6 fallan en v1.36.2 y pasan en el candidato;
+  - banco 3002 PASS, 0 FAIL, 12 SKIP (3014);
+  - `hooks/` sin diff;
+  - 42 combinaciones de REQ y manifiesto sin ningún cierre denegado que pase a `allow`;
+  - `arnes-upgrade` es ejecutable por el `desarrollador` aunque el manifiesto esté en los globs;
+  - CA-13 forzado: 5 INCONCLUSO, y un FAIL de procesos sigue siendo FAIL.
+- **QA-034-01 (`contrato`):** CA-04, CA-09 y CA-10 dicen «`ligero` no se aplica» y lo construido conserva el de lo sin lógica. Se resuelve en el REQ con P-137-O, punto 2. **F-137-17** (O-1): la orden no informa ante un manifiesto vacío.
+- **No medido por QA:** la autoprueba como corrida aparte (el desarrollador dio 117/0) y la conducta del analista con los 4 casos.
+- **Coste:** QA 127 134 tokens; el informe decía ≈ 100 k.
+- Resultado: lo construido está validado salvo el texto; falta P-137-O para el write-back.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1, fase 1 (desarrollador, Opus): REQ-034 implementado, **sin validar**; `P-137-O` en la cola
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
