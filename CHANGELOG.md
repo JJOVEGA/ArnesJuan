@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 4 (analista, Sonnet): write-back de SEC-137 y SEC-138 en REQ-033 y borrador de las notas `[1.36.2]`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista) · agente: `analista-requerimientos`.
+
+- **CA-01** dice lo construido: el manifiesto no se borra, mueve ni vacía **por las formas llanas de `Bash` ni por un `Write` sin contenido**; límite SEC-138 (`Edit`/`Write` con `{}`; en un consumidor sin el manifiesto en los globs, cualquier agente), con la recomendación de añadirlo a los globs. **CA-02**: límite SEC-137 (mover el directorio contenedor). Los dos van a 1.37.
+- **Borrador de las notas** en `docs/arnes/notas-1.36.2-borrador.md`, con los cuatro puntos de R-060 §4.
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2, fase 3: seguridad **con hallazgos, sin veto** (R-060): SEC-137 y SEC-138, `contrato`, preexistentes; se resuelven con texto
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (`auditor-seguridad`) · agente: `auditor-seguridad`.
 
