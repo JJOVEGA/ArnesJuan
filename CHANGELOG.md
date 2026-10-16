@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1 **autorizada** (`P-137-L` adoptada con precisiones); fase 0 al analista, en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-L adoptada**, literal en la cola. El modelo por rol pasa a ser **regla de 1.37** (analista y QA en Sonnet; desarrollador y seguridad en Opus); §5 lo escribirá 1.37 · 2.
+- Presupuesto ≈ 670 k, con aviso a 1,5× por rol; dos pasadas correctivas. Al cerrar, la métrica se compara con 1.36.2.
+- **SEC-137 y SEC-138** quedan en la fila 1.37 · 3 de `docs/PLAN.md`; las notas publicadas no se tocan.
+- Resultado: la fase 0 (REQ-034) despachada; falta el contrato del analista.
+
 ## [Interno] — 2026-10-16 · `P-137-K` (A) adoptada (sonda de reloj sobre su techo en CI → INCONCLUSO); autorización de 1.37 · 1 (`P-137-L`) lista para adoptar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-### P-137-L — **1.37 · 1, rigor proporcional por defecto: autorización lista para adoptar**
+_(Vacía desde el 2026-10-16: P-137-L adoptada por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-16) — **P-137-L adoptada: 1.37 · 1, rigor proporcional por defecto, autorizada**; SEC-137 y SEC-138 a la pieza b; modelo por rol como **regla de 1.37**
+
+**Texto del propietario, literal** (mensaje del 2026-10-16 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-L, con:
+> - SEC-137 y SEC-138 a la fila 1.37 · 3 (pieza b); las notas publicadas no
+>   se tocan.
+> - Modelo por rol confirmado como regla de 1.37, no como excepción:
+>   analista y QA en Sonnet, desarrollador y seguridad en Opus. Así entra en
+>   §5 cuando 1.37 · 2 lo escriba.
+> - Presupuesto ~670k con aviso a 1,5× por rol; tope de dos pasadas;
+>   parada si el rigor derivado del manifiesto hace pasar un cierre que hoy
+>   se deniega.
+> Al cerrar: métrica por rol frente a 1.36.2.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Vigente:** la autorización de abajo, con estas precisiones, que prevalecen sobre su texto. El modelo por rol deja de ser una excepción y es la regla de 1.37; `AGENTS.md` §5 lo recogerá en 1.37 · 2, y hasta entonces su texto no se toca. Al cerrar, la métrica se compara con 1.36.2.
+- **Hecho al registrar:** SEC-137 y SEC-138 añadidos a la fila 1.37 · 3 de `docs/PLAN.md`.
+- **Fase 0 despachada:** al analista en Sonnet, que redacta REQ-034.
+
+### P-137-L (texto de la propuesta, conservado; adoptada arriba con sus precisiones) — **1.37 · 1, rigor proporcional por defecto: autorización lista para adoptar**
 
 **Tres cosas que la coordinadora comprobó, por escrito (`AGENTS.md` §6):**
 1. **El analista no se omite.** Este proyecto no declara la vía proporcional, y además es una **capacidad nueva**, que lleva analista → desarrollador → QA → seguridad. Hace falta un REQ nuevo, **REQ-034**.
@@ -93,8 +117,6 @@
 > Nada de 1.37 · 2 a 5. No se toca `AGENTS.md` ni `.arnes/config.json` de este repo. Push: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
 
 **Decisión propuesta, lista para adoptar:** «Adopto P-137-L.» Si corriges algo, basta con decir qué.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-K (A)**: una sonda de reloj que pasa su techo en el CI da INCONCLUSO; el FAIL queda para los contratos que no dependen del reloj; entra en 1.37 en la intervención que toque el banco primero
 
