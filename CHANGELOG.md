@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-16 · 1.37 · 1, fase 0 (analista, Sonnet): REQ-034 en `borrador`, 13 criterios; parada en `P-137-M`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **REQ-034**: la política de rigor vive en `templates/arnes-config.json.tpl` y la aplica el analista al nacer cada REQ. La **puerta no la lee**, así que `hooks/` no cambia (CA-06). Lo heredan `arnes-init` y `arnes-upgrade` (bloque inerte, idempotente), con la sección 50 del banco y P-137-K, condicional (CA-13).
+- **P-137-M**, en la cola: el flujo ligero (el `ligero` de hoy, ensanchado, frente a omitir al analista), el defecto sin mapeo y qué es «sesión».
+- **Coste:** analista 124 895 tokens (35 herramientas), por encima de su ≈ 120 k; su informe estimaba 60–70 k.
+- Resultado: contrato escrito; falta P-137-M para pasar a `pendiente` e implementar.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1 **autorizada** (`P-137-L` adoptada con precisiones); fase 0 al analista, en Sonnet
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

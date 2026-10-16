@@ -43,7 +43,27 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-16: P-137-L adoptada por el propietario, en § Resueltas.)_
+### P-137-M — **REQ-034 (1.37 · 1): tres preguntas del contrato antes de implementar** (`requirements/REQ-034.md` § «Preguntas abiertas», «Correspondencia con el encargo»)
+
+**Qué detiene, y qué no.** REQ-034 está en `borrador` y **no se implementa** hasta que decidas (`AGENTS.md` §6, regla 1). No detiene nada más: no hay otra intervención en curso. Esta entrada impide **cerrar** un REQ mientras esté en la cola, y no hay ninguno que cerrar.
+
+**Lo que el analista resolvió sin preguntarte, porque cabe en la autorización:** la puerta **no lee** la política. La aplica el analista al nacer el REQ, escribiendo `Rigor:`, así que `hooks/` no cambia y **tu parada no se activa**: ningún cierre que hoy se deniega pasa a `allow` (CA-06, con un diff vacío de `hooks/` y la misma batería de cierres con y sin la política).
+
+**1. El flujo ligero.** Pediste «desarrollador → banco → hecho». Hoy `Rigor: ligero` es analista + desarrollador + quality gates, para cambios «sin lógica», y la puerta ya lo cierra sin QA.
+- **(A) — recomendada:** el flujo ligero **es** el `ligero` de hoy, ensanchado a «normal: fuera de los cinco ámbitos». *Consecuencia:* se ahorran QA y seguridad, que es casi todo el coste. Queda un REQ corto del analista, porque omitirlo exige que cada proyecto declare la vía proporcional (§6).
+- **(B):** además se omite al analista, como dice tu texto. *Consecuencia:* es otro contrato. Sólo vale donde el propietario de cada proyecto declare la vía proporcional, y el arnés no puede declararla por él.
+- **(C):** lo normal sigue siendo `estandar`, con QA. *Consecuencia:* no ahorra lo que pediste.
+
+**2. El defecto sin mapeo.** «Por defecto ligero» choca con «el arnés trae el mecanismo, nunca el mapeo».
+- **(A) — recomendada:** `ligero` sólo opera cuando el proyecto declara sus cinco ámbitos. `arnes-init` los pregunta, y un proyecto ya instalado recibe el bloque **inerte** hasta que lo complete. Ante la duda, completo. *Consecuencia:* un proyecto nuevo ahorra desde el primer día; uno instalado, cuando rellena el bloque. Nadie trata un cobro como cambio normal sin haberlo dicho.
+- **(B):** `ligero` opera desde el primer día en los proyectos instalados. *Consecuencia:* el máximo ahorro, pero baja en silencio la revisión de proyectos que no lo pidieron.
+
+**3. «Sesión».** **(A) — recomendada:** la sesión del **usuario final**, es decir, identidad y autenticación. **(B):** la sesión de trabajo de los agentes. *Consecuencia de (B):* el ámbito cambia de sentido y el analista lo reescribe.
+
+**Dato de coste, por si cambia algo:** el analista ya gastó **124 895 tokens** (frente a ≈ 120 k para todo su rol); su informe estimaba 60–70 k. Todavía no llega al aviso de 1,5× (180 k).
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-M: 1 (A), 2 (A), 3 (A). REQ-034 pasa a `pendiente` y sigue la fase 1.
 
 ## Resueltas
 
