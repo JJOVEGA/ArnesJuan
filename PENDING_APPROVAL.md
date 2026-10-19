@@ -43,7 +43,27 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-19: P-137-O resuelta por el propietario, en § Resueltas.)_
+### P-137-P — **REQ-034: seguridad encontró tres hallazgos de texto con el tope agotado. ¿Una tercera pasada, sólo de texto?** (R-061)
+
+**Qué pasó.** Seguridad (R-061, 2026-10-19) dio `con-hallazgos`, **sin veto**. La puerta no abre nada: `hooks/` no cambia, y en **384 decisiones** propias comparadas con v1.36.2 no hay ninguna diferencia, con la política declarada, malformada o ausente. Tu parada no se activa. Los hallazgos son de **texto que heredan los proyectos**, clase `contrato`:
+- **SEC-139 (media):** la reducción de revisión descansa en **un solo juicio**, el del analista, y no se declara. Si clasifica como «normal» un cambio que toca dinero, sesión, seguridad o datos, el REQ cierra sin QA ni seguridad, y las tres salvaguardas dependen de ese mismo juicio: el suelo de sensibilidad, «ante la duda, completo» y el auditor que sube el rigor, que nunca recibe el REQ. *Resolución:* declararlo en CA-07 y en la sede. Analista.
+- **SEC-140 (baja):** la lista precargada del ámbito arnés no incluye `PENDING_APPROVAL.md`, que la puerta lee. *Resolución:* añadirlo y marcar la lista como no exhaustiva. Desarrollador.
+- **SEC-141 (baja):** la norma contra rebajar la política habla de «quitar un glob o vaciar un ámbito». Pero vaciar a `[]` **sube** la revisión, y la palanca real, declarar `"ninguno"`, no se nombra. *Resolución:* escribirla por propiedad: todo cambio que reduzca lo que alcanza un ámbito exige la firma del auditor. Analista, en CA-07 y la sede, y desarrollador, en el `_doc` de la plantilla.
+
+**Por qué te lo pregunto.** REQ-034 gastó sus **dos pasadas correctivas**, una por QA-034-01 y otra por QA-034-02, y a la tercera se decide contigo (P-137-L; `AGENTS.md` §6, regla 5). Agotar el tope no aprueba nada.
+
+**Qué detiene, y qué no.** Impide **cerrar** REQ-034, porque `guard-completado` deniega con un `contrato` abierto, y **publicar** 1.37.0 con REQ-034 dentro por delegación. No impide empezar a preparar 1.37 · 2.
+
+**Opciones**
+- **(A) — recomendada:** una **tercera pasada, sólo de texto**, acotada a SEC-139, SEC-140 y SEC-141. El analista escribe CA-07 y la sede; el desarrollador, la lista y el `_doc` de la plantilla. Después, comprobación corta de QA y re-firma de seguridad. Es la **vuelta 3 de 3** de dev↔QA: si no cierra, REQ-034 pasa a `bloqueado`, sin cuarta. *Consecuencia:* ≈ 50–60 k más, sin tocar código ni `hooks/`. Cabe en el techo de texto de CA-11 (van 3 020 de 4 096 B), y REQ-034 puede cerrar.
+- **(B):** REQ-034 a **`bloqueado`**, con los tres hallazgos abiertos. *Consecuencia:* 1.37 · 1 no se cierra; lo construido queda en la rama sin acreditar, y 1.37 no se publica por delegación con él dentro.
+
+**Coste hasta aquí (REQ-034):** analista 151 536 · desarrollador 256 034 · QA 146 607 · seguridad 148 882 · **total 703 059**, sobre el ≈ 670 k. Ningún rol pasa de 1,5×. Seguridad estimó «≈ 75 k» en su informe; la notificación dice 148 882.
+
+**Dato para 1.37 · 2 (modelo por rol):** QA en Sonnet aprobó sin ver tres hallazgos de texto que seguridad en Opus sí encontró. Es la segunda vez, tras SEC-137 y SEC-138 en 1.36.2.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-P (A): tercera pasada sólo de texto, acotada a SEC-139, SEC-140 y SEC-141; es la vuelta 3 de 3 y, si no cierra, REQ-034 pasa a bloqueado.
 
 ## Resueltas
 

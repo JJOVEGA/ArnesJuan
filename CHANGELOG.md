@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, fase 3: seguridad **con hallazgos, sin veto** (R-061): SEC-139, SEC-140 y SEC-141 (`contrato`, de texto); parada en `P-137-P` (tope agotado)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
+
+- **No abre nada:** `hooks/` sin cambio; ningún lector del manifiesto recorre claves de forma genérica; 384 decisiones propias iguales a v1.36.2, ninguna de `deny` a `allow`. `arnes-upgrade` y CA-13, conformes.
+- **SEC-139** (media): la clasificación «normal» es un punto único de fallo no declarado. **SEC-140** (baja): `PENDING_APPROVAL.md` falta en el ámbito arnés. **SEC-141** (baja): la norma contra rebajar la política se queda corta y no nombra `"ninguno"`. Observaciones O-61-1 y O-61-2, sin clase. Próximos libres: R-062 y SEC-142.
+- **P-137-P:** el tope de dos pasadas está gastado, y se pregunta al propietario por una tercera, sólo de texto.
+- **Coste:** seguridad 148 882 (el informe decía ≈ 75 k); REQ-034, 703 059 en total.
+- Resultado: lo construido no abre nada; faltan tres textos para cerrar.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, fase 2 cerrada: **QA (Sonnet) APROBADO** tras dos pasadas correctivas (QA-034-01 y QA-034-02 cerrados); fase 3 a seguridad
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 
