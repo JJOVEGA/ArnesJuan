@@ -9,8 +9,8 @@
 # DOS ÁRBOLES por fila: la CANDIDATA (hooks de `$HOOKS_DIR`; plantillas y skills del árbol de `$TPL_DIR`) y v1.36.2
 # (46ee7ca), por SHA con `mat50` (copia de `mat49`); sin ella, SKIP y motivo, nunca PASS. B1 y B2 son fail-before
 # (en v1.36.2 no se cumplen); B3 y PROC son controles (la puerta no cambia: CA-06, `git diff v1.36.2 -- hooks/` vacío).
-CASOS_ESPERADOS_SECCION=54
-PISO_AUTONOMO_SECCION=79  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO50, mat50_reg y mat50, copia de mat49, líneas 15-38) + 41 bloque indivisible mayor (B3: REQ, variantes, g50, cierres y su bucle, líneas 162-202)
+CASOS_ESPERADOS_SECCION=56
+PISO_AUTONOMO_SECCION=79  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO50, mat50_reg y mat50, copia de mat49, líneas 15-38) + 41 bloque indivisible mayor (B3: REQ, variantes, g50, cierres y su bucle, líneas 170-210)
 seccion_nueva "--- 50 · rigor proporcional: la política vive en el manifiesto y la puerta no la lee (REQ-034, 1.37 · 1) ---"
 REPO50="${SEC_DIR%/}/../../../.."; MAT50_RUTAS='hooks templates skills'; MAT50_REG=''; MAT50_T0=0; MAT50_REF='-'
 mat50_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT50_REG, UNA sola línea (la lee `sonda_lee`)
@@ -129,6 +129,13 @@ fxd50() {   # (d) manifiesto ilegible -> no se toca y se informa
   [ -n "$ERR50" ] || { MOT50='no informó nada'; return 1; }
   cmp -s "$FXD50/antes.json" "$FXD50/.arnes/config.json" || { MOT50='tocó el manifiesto ilegible'; return 1; }
 }
+fxd2_50() {   # (d) con 0 bytes (F-137-17): no se toca y se informa, como cualquier manifiesto ilegible
+  fx50_nuevo d2
+  : > "$FXD50/.arnes/config.json"
+  corre50 "$FXD50" || return 1
+  [ "$RC50" -ne 0 ] && [ -n "$ERR50" ] || { MOT50="no informó el manifiesto vacío (código $RC50)"; return 1; }
+  [ ! -s "$FXD50/.arnes/config.json" ] || { MOT50='escribió sobre el manifiesto vacío'; return 1; }
+}
 fxe50() {   # (e) el `Rigor:` de todo REQ existente y su `AGENTS.md` no cambian (hash)
   local antes='' despues=''
   fx50_nuevo e
@@ -157,6 +164,7 @@ fila50 "B2 CA-10 (a): sin bloque -> con bloque, cinco ámbitos [] y nada más ca
 fila50 "B2 CA-10 (b): bloque ya editado -> conservado byte a byte" fxb50
 fila50 "B2 CA-10 (c): segunda pasada -> archivo idéntico" fxc50
 fila50 "B2 CA-10 (d): manifiesto ilegible -> no se toca y se informa" fxd50
+fila50 "B2 CA-10 (d): manifiesto de 0 bytes -> no se toca y se informa (F-137-17)" fxd2_50
 fila50 "B2 CA-10 (e): el Rigor: de los REQ y el AGENTS.md no cambian (hash)" fxe50
 
 # --- B3: CA-06 — la batería de cierres decide igual con el manifiesto sin el bloque y con él, y sin aviso nuevo -------

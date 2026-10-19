@@ -1717,7 +1717,9 @@ done
 # (46ee7ca, el fail-before); B3, los cinco cierres de CA-06 × cuatro manifiestos × dos árboles (control: decide igual y
 # sin aviso nuevo); y PROC, 0 procesos añadidos en dos ramas—. Por P-137-K (A) (REQ-034 CA-13), los cinco RELOJ de la
 # sección 49 que pasan su techo dicen SKIP `[INCONCLUSO] [rendimiento]` en vez de FAIL: no cambia ningún número.
-CASOS_ESPERADOS=3014
+# Y 3014 → 3016 por la pasada correctiva 1 de REQ-034 (F-137-17): +2 en la 50 (54 → 56), el fixture del manifiesto de
+# 0 bytes, que la orden debe informar sin tocar, en la candidata y en v1.36.2.
+CASOS_ESPERADOS=3016
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

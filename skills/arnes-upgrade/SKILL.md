@@ -1555,12 +1555,13 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
 
   <!-- orden: rigor_politica (REQ-034 CA-10; la ejecuta la sección 50 del banco del arnés) -->
   ```bash
-  jq 'if type != "object" then error("no es un objeto JSON: no se toca")
-      elif has("rigor_politica") then error("ya tiene rigor_politica: se conserva tal cual")
-      else . + {rigor_politica: {_doc: "SIN DECLARAR: mientras un ámbito valga [], ligero NO se aplica y el proyecto se comporta como antes. Reglas: requirements/README.md § Nivel de rigor.",
-                                 defecto: "ligero",
-                                 ambitos: {dinero: [], sesion: [], seguridad: [], datos: [], arnes: []}}}
-      end' .arnes/config.json
+  jq -n '[inputs] as $todo
+      | if ($todo | length) != 1 or ($todo[0] | type) != "object" then error("no es un único objeto JSON (vacío, varios o de otro tipo): no se toca")
+        elif ($todo[0] | has("rigor_politica")) then error("ya tiene rigor_politica: se conserva tal cual")
+        else $todo[0] + {rigor_politica: {_doc: "SIN DECLARAR: mientras un ámbito valga [], no se aplica la ampliación de ligero a todo cambio normal; el ligero de lo sin lógica sigue como antes. Reglas: requirements/README.md § Nivel de rigor.",
+                                          defecto: "ligero",
+                                          ambitos: {dinero: [], sesion: [], seguridad: [], datos: [], arnes: []}}}
+        end' .arnes/config.json
   ```
   - **Código 0:** escribe esa salida, entera y tal cual, en `.arnes/config.json` con `Write`. `jq`
     rehace los blancos (sangría, líneas vacías); claves, orden y valores se conservan, y en la Fase 4

@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 1 de 2, parte de código (desarrollador, Opus): `_doc` de la orden de `arnes-upgrade` alineado con P-137-O; F-137-17 arreglada (**sin validar**)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **`_doc`**: «no se aplica la ampliación de ligero a todo cambio normal; el ligero de lo sin lógica sigue como antes».
+- **F-137-17**: la orden rechaza un manifiesto de 0 bytes o con varios documentos con código 5 e informa; antes salía con 0 y vacío. Fail-before medido; fixture `fxd2_50`. La sección 50 pasa a 56 casos y `CASOS_ESPERADOS` a 3016.
+- **Comprobación del desarrollador:** banco 2999 PASS, 0 FAIL, 17 SKIP (4 RELOJ más de la 49 bajo el suelo de 50 ms, por variación de la máquina); autoprueba 117/0. La coordinadora comprobó `hooks/` (0 bytes de diff contra v1.36.2) y las gates.
+- **Coste:** desarrollador 250 366 acumulados (+11 474).
+- Resultado: lista para la re-verificación de QA.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 1 de 2: `P-137-O` (1 A, 2 A) resuelta; write-back de QA-034-01 (analista, Sonnet)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
