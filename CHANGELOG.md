@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 2 de 2 (desarrollador, Opus): QA-034-02 corregido en `arnes-init` y en la plantilla del manifiesto (**sin validar**)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- `skills/arnes-init/SKILL.md` y el `_doc` de `templates/arnes-config.json.tpl` dicen: «no se aplica la ampliación de `ligero` a todo cambio normal; el `ligero` de lo sin lógica sigue como hoy». El barrido del desarrollador sobre `templates/`, `skills/`, `agents/` y los dos README, también con frases partidas, no encuentra una tercera.
+- **Comprobación del desarrollador:** sección 50, 56/0; banco 2999 PASS, 0 FAIL, 17 SKIP (3016); autoprueba 117/0. `hooks/` con 0 bytes de diff contra v1.36.2, comprobado por la coordinadora.
+- **Coste:** desarrollador 256 034 acumulados (+5 668).
+- Resultado: lista para la verificación final de QA; es la última pasada del tope.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, re-verificación de QA (Sonnet): QA-034-01 resuelto; **QA-034-02** (`contrato`), un residuo en `arnes-init`; pasada correctiva 2 de 2 al desarrollador
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 

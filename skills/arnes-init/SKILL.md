@@ -80,8 +80,9 @@ marcador antes de hacer nada.
      respondido: una lista de globs (relativos a la raíz, sin decoración), o `"ninguno"` si dice
      que no tiene nada. En **arnés** enseña la lista precargada y pregunta si la confirma o la
      amplía. Un ámbito **sin respuesta o no entendida queda `[]`**, y entonces, en el resumen,
-     **nómbralo** y di que mientras haya un ámbito sin declarar `ligero` **no** se aplica y el
-     proyecto se comporta como hoy. Qué significa cada ámbito y cómo se aplica: `requirements/README.md`
+     **nómbralo** y di que mientras haya un ámbito sin declarar **no** se aplica la ampliación de
+     `ligero` a todo cambio normal: el `ligero` de lo sin lógica sigue como hoy y el proyecto se
+     comporta como hoy. Qué significa cada ámbito y cómo se aplica: `requirements/README.md`
      § «Nivel de rigor»; no lo resumas aquí.
    - `{{ARNES_VERSION}}`: **NO lo teclees.** Léelo de `.claude-plugin/plugin.json`
      del propio plugin (`jq -r .version`). Una versión escrita a mano se desfasa de
