@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 1 de 2: `P-137-O` (1 A, 2 A) resuelta; write-back de QA-034-01 (analista, Sonnet)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-O**, literal en la cola. P-137-K queda en la sección 49; el inventario de las demás sondas de reloj va a la pieza b, en la fila 1.37 · 3 de `docs/PLAN.md`.
+- **REQ-034:** CA-04, CA-09 y CA-10 recogen que, sin declarar, el `ligero` de lo sin lógica sigue como hoy y no se aplica la ampliación. CA-13 y la Correspondencia declaran la acotación. `skills/arnes-upgrade/SKILL.md`, la frase de «Hacia 1.37.0».
+- **Resto:** el `_doc` dentro de la orden `jq` de la skill (l. 1560) sigue diciendo «ligero NO se aplica». Es código que el banco ejecuta, así que va al desarrollador en esta misma pasada.
+- **Coste:** analista 151 536 acumulados, a 1,26× su ≈ 120 k.
+- Resultado: el texto del REQ está alineado; falta el `_doc` y la re-verificación de QA.
+
 ## [Interno] — 2026-10-16 · 1.37 · 1, fase 2 (QA, Sonnet): **con hallazgos**, QA-034-01 (`contrato`); parada en `P-137-O`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 

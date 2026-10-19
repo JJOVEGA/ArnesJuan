@@ -1547,8 +1547,8 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
 - **Manifiesto: `rigor_politica`, el bloque INERTE de la política de rigor (REQ-034 del arnés).** Con
   ella declarada entera, lo normal nace `Rigor: ligero` (sin QA ni seguridad) y el flujo completo queda
   para dinero, sesión, seguridad, datos y el propio arnés. **Llega sin declarar** —los cinco ámbitos en
-  `[]`— y así **no cambia nada**: `ligero` no se aplica, el proyecto se comporta como hoy y actualizar
-  **no sube su coste**. Ningún hook la lee; los REQ existentes **no se reclasifican**, y tu `AGENTS.md`
+  `[]`— y así **no cambia nada**: no se aplica la ampliación de `ligero` a todo cambio normal, el `ligero` de
+  cambios sin lógica sigue como hoy, el proyecto se comporta como hoy y actualizar **no sube su coste**. Ningún hook la lee; los REQ existentes **no se reclasifican**, y tu `AGENTS.md`
   no se toca. Qué es cada ámbito y cómo se aplica: `requirements/README.md` § «Nivel de rigor».
   **Paso de migración.** La orden **sólo lee** el manifiesto y escribe en su salida el manifiesto
   nuevo (por `Bash` nadie puede reescribirlo: REQ-033 del arnés):

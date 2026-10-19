@@ -43,7 +43,26 @@
 
 ## Pendientes
 
-### P-137-O — **REQ-034, fase 1 entregada: dos lecturas de tus decisiones que conviene que confirmes** (QA sigue mientras tanto)
+_(Vacía desde el 2026-10-19: P-137-O resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-19) — **P-137-O: 1 (A), 2 (A)**; P-137-K queda en la sección 49 y el inventario de sondas de reloj va a la pieza b; «como hoy» conserva el `ligero` de lo sin lógica
+
+**Texto del propietario, literal** (mensaje del 2026-10-19 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-O: 1 (A), 2 (A). Sin declarar los cinco ámbitos, el ligero de
+> cambios sin lógica sigue como hoy; lo que no se aplica es la ampliación a
+> todo cambio normal. El analista reescribe CA-04, CA-09, CA-10 y la skill en
+> ese sentido; QA re-verifica, incluida la autoprueba por separado; después
+> seguridad. F-137-17 registrada.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- El punto 1 (A) lleva a la fila 1.37 · 3 de `docs/PLAN.md` el inventario previo de las sondas de reloj: cuáles son operativas y cuáles contrato de tiempo, y qué pasa con cada una.
+- La Correspondencia de REQ-034 declara la acotación de CA-13 con esta autorización citada.
+- El write-back es del analista; es la vuelta 1 de 3 de dev↔QA del REQ, y no hay pasada del desarrollador.
+
+### P-137-O (texto de la consulta, conservado; resuelta arriba) — **REQ-034, fase 1 entregada: dos lecturas de tus decisiones que conviene que confirmes** (QA sigue mientras tanto)
 
 **Qué detiene, y qué no** *(actualizado tras QA, 2026-10-16)*. **Ahora detiene la intervención.** QA dio `con-hallazgos` por **QA-034-01** (`contrato`): CA-04, CA-09 y CA-10 dicen «`ligero` no se aplica», y lo construido conserva el de lo sin lógica. Es exactamente la pregunta 2. Hasta que decidas no se puede escribir el write-back, QA no re-verifica y seguridad no empieza: sólo entra con QA favorable (`AGENTS.md` §6). El código y el banco están limpios: 3002/0/12, y ningún cierre denegado pasa a `allow` en 42 combinaciones. Si eliges ampliar en la pregunta 1, añade una pasada del desarrollador, que no gasta vuelta del tope porque no viene de un hallazgo.
 
@@ -57,8 +76,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-O: 1 (A), con el inventario de sondas de reloj en la pieza b; 2 (A), «como hoy» = como antes de la política, incluido el `ligero` de lo sin lógica.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-N (A)**: sin declarar los cinco ámbitos, el proyecto se comporta como hoy; nunca sube el coste de un proyecto instalado por actualizar
 
