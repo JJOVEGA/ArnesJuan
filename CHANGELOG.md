@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, fase 2 cerrada: **QA (Sonnet) APROBADO** tras dos pasadas correctivas (QA-034-01 y QA-034-02 cerrados); fase 3 a seguridad
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **Verificación final** sobre `074b777`:
+  - las dos frases de QA-034-02 dicen el sentido de P-137-O;
+  - el barrido independiente de QA no encuentra otra forma;
+  - banco 3001 PASS, 0 FAIL, 15 SKIP (3016, 3 INCONCLUSO de rendimiento); sección 50, 56/0; **autoprueba por separado, 117/0**;
+  - `hooks/`, `tools/`, `.github/`, `AGENTS.md` y `.arnes/config.json` sin diff contra v1.36.2.
+- REQ-034: `en-revisión`, `QA: aprobado`, `Hallazgos abiertos: (ninguno)`.
+- **Coste:** QA 146 607 acumulados (1,13× su ≈ 130 k). Pasadas: 2 de 2; vueltas dev↔QA: 2 de 3.
+- Resultado: lista para seguridad.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 2 de 2 (desarrollador, Opus): QA-034-02 corregido en `arnes-init` y en la plantilla del manifiesto (**sin validar**)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
