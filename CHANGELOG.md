@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-19 · 1.37 · 1, re-verificación de QA (Sonnet): QA-034-01 resuelto; **QA-034-02** (`contrato`), un residuo en `arnes-init`; pasada correctiva 2 de 2 al desarrollador
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **QA:**
+  - el REQ, la skill `arnes-upgrade` y su `_doc` coinciden con lo construido;
+  - la orden nueva pasa la regresión (CRLF, bloque parcial, `null`, `[1,2]`, 0 bytes, dos documentos) y los seis fixtures fallan en v1.36.2; O-1 / F-137-17 cerrada;
+  - banco 3000 PASS, 0 FAIL, 16 SKIP (3016); **autoprueba por separado, 117/0**.
+- **QA-034-02 (`contrato`):** `skills/arnes-init/SKILL.md` l. 82-84 dice que `ligero` «no se aplica». **La coordinadora, al barrer, encontró la misma frase** en el `_doc` de `templates/arnes-config.json.tpl` l. 58, que QA no vio. Las dos van en la pasada 2 de 2, que es la vuelta 2 de 3 de dev↔QA.
+- **Coste:** QA 138 653 acumulados, 1,07× su ≈ 130 k.
+- Resultado: falta una frase en dos archivos para aprobar.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, pasada correctiva 1 de 2, parte de código (desarrollador, Opus): `_doc` de la orden de `arnes-upgrade` alineado con P-137-O; F-137-17 arreglada (**sin validar**)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
