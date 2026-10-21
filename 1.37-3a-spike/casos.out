@@ -1,0 +1,26 @@
+| Caso | Agente | Orden | rc orden | v1.36.2 Pre | ¿cambió lo vigilado? | Post | ¿vigilado = antes al final? |
+|---|---|---|---|---|---|---|---|
+| SEC-135 | qa-tester | `cp x hooks/lib.sh 2>/dev/null` | rc 0 | allow (inerte) | sí | block | sí |
+| SEC-135 | qa-tester | `\cp x hooks/lib.sh` | rc 0 | allow (inerte) | sí | block | sí |
+| SEC-135 | coordinadora | `cp x hooks/lib.sh 2>/dev/null` | rc 0 | allow (inerte) | sí | block | sí |
+| SEC-136 | qa-tester | `rm hooks/guard.sh` | rc 0 | allow (inerte) | sí | block | sí |
+| SEC-137 | qa-tester | `mv hooks h2` | rc 0 | allow (inerte) | sí | block | sí |
+| SEC-138 | qa-tester | `printf '{}' > .arnes/config.json` | rc 0 | deny | sí | block | sí |
+| SEC-138 | qa-tester | `cp /dev/null .arnes/config.json` | rc 0 | deny | sí | block | sí |
+| SEC-138 | qa-tester | `python3 -c "open('.arnes/config.json','w').write('{}')"` | rc 0 | allow (inerte) | sí | block | sí |
+| PR-137-2 | qa-tester | `python3 -c "open('hooks/lib.sh','a').write('#x')"` | rc 0 | allow (inerte) | sí | block | sí |
+| PR-137-2 | qa-tester | `perl -e 'open(F,">>hooks/lib.sh"); print F "#x"'` | rc 0 | allow (inerte) | sí | block | sí |
+| cp -p + touch -r | qa-tester | `cp hooks/lib.sh /tmp/l.$$ && printf "#x" >> hooks/lib.sh && touch -r /tmp/l.$$ hooks/lib.sh` | rc 0 | deny | sí | block | sí |
+| orden que falla | qa-tester | `cp x hooks/lib.sh; false` | rc 1 | deny | sí | block | sí |
+| agente_codigo reescrito | qa-tester | `printf '{"agentes":{"agente_codigo":"qa-tester"}}' > .arnes/config.json` | rc 0 | deny | sí | block | sí |
+| sin manifiesto + ataque | qa-tester | `cp x hooks/lib.sh` | rc 0 | allow (inerte) | sí | block | sí |
+| manifiesto y hooks a la vez | qa-tester | `rm .arnes/config.json && rm hooks/guard.sh` | rc 0 | deny | sí | block | sí |
+| CONTROL | desarrollador | `printf '#x' >> hooks/lib.sh` | rc 0 | allow (inerte) | sí | — | no |
+| CONTROL | arnes-juan:desarrollador | `rm hooks/guard.sh` | rc 0 | allow (inerte) | sí | — | no |
+| FP ls | qa-tester | `ls` | rc 0 | allow (inerte) | no | — | sí |
+| FP git status | qa-tester | `git status` | rc 0 | allow (inerte) | no | — | sí |
+| FP cat | qa-tester | `cat hooks/lib.sh` | rc 0 | allow (inerte) | no | — | sí |
+| FP src | qa-tester | `printf y > src/a.js` | rc 0 | allow (inerte) | no | — | sí |
+| FP docs | coordinadora | `python3 -c "open('docs/n.md','w').write('n')"` | rc 0 | allow (inerte) | no | — | sí |
+| FP? cambio de rama | coordinadora | `git checkout -q -b otra && cp x hooks/x.sh && git add -A && git -c user.email=a@b -c user.name=a commit -qm c && git checkout -q - && git checkout -q otra` | rc 0 | deny | sí | block | sí |
+| FP? git checkout sin cambio | coordinadora | `git checkout -q -b otra2 && git checkout -q -` | rc 0 | allow (inerte) | no | — | sí |

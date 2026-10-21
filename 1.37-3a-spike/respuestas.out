@@ -1,0 +1,15 @@
+bloquear   disco: SIGUE el cambio  salida: {"decision":"block","reason":"ARNES (puerta posterior): esta orden cambió .arnes/config.json o hooks/ y la ejecutó qa-tester, que no es el agente de código (desarrollador). El cambio SIGUE en disco."}
+restaurar  disco: restaurado       salida: ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+ambas      disco: restaurado       salida: ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+{"decision":"block","reason":"ARNES (puerta posterior): esta orden cambió .arnes/config.json o hooks/ y la ejecutó qa-tester, que no es el agente de código (desarrollador). Se restauró el estado de antes de la orden. Ese cambio es del agente de código."}
+--- la orden borra el estado de la puerta además de atacar
+disco: SIGUE el cambio | ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+{"decision":"block","reason":"ARNES (puerta posterior): no hay foto de antes de esta orden, así que no se puede saber si cambió .arnes/config.json o hooks/. Una puerta que no puede medir no deja pasar."}
+--- la orden falsifica la foto de antes (escribe la de después en el estado)
+disco: SIGUE el cambio | (ninguna)
+--- escritura diferida (segundo plano): ocurre después del Post
+post: ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+siguiente orden: disco: SIGUE el cambio | ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+--- sin tool_use_id
+disco: restaurado | ARNES (puerta posterior): lo vigilado cambió desde la última foto; se toma como nueva base.
+{"decision":"block","reason":"ARNES (puerta posterior): esta orden cambió .arnes/config.json o hooks/ y la ejecutó qa-tester, que no es el agente de código (desarrollador). Se restauró el estado de antes de la orden. Ese cambio es del agente de código."}
