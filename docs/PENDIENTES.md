@@ -2484,3 +2484,9 @@ ninguna mata al hook.»
 - **Por qué:** SEC-139 (R-061). El ahorro de `ligero` (REQ-034) descansa en un solo juicio, el del analista al clasificar, y ninguna máquina lo comprueba. En 1.37 · 1 se **declara**; esta ficha es la comprobación.
 - **Cuándo:** con la pieza b (1.37 · 3), que ya mira qué cambió después de cada orden. **No ahora.** Va a la puerta de cierre (`guard-completado`), así que toca `hooks/` y lleva su propio contrato, con el analista.
 - **Dueños:** `analista-requerimientos` (contrato) y `desarrollador` (puerta), con `auditor-seguridad`.
+
+### INS-034-1 — Hallazgo `instrumento`, no atribuible al cambio: la sonda de reloj de REQ-017 CA-08 (ii) da FAIL en la tercera pasada de REQ-034 (la misma de INS-032-1)
+- **Medido por el desarrollador** (2026-10-21, banco completo, Linux/WSL2): `REQ-017 CA-08 (ii) un REQ real de 6 líneas`, reloj frente a v1.32.1, mínimo **1,254×** contra el techo de **1,25×**, con las 5 de 5 resueltas entre 1,254× y 1,345×. Banco: 3001 PASS, **1 FAIL**, 14 SKIP (3016). En las dos corridas anteriores de esta intervención, la misma sonda dio INCONCLUSO, con un recorrido de 1,22× a 1,325×.
+- **No atribuible al cambio:** `hooks/` es idéntico a v1.36.2 (0 bytes de diff), y la pasada sólo cambió texto de plantillas y requisitos. La sonda mide el coste de la puerta, que no cambió.
+- **Clase `instrumento`**, por P-136-E y por la regla de P-137-L («las sondas de reloj, `instrumento`»). **No se relanzó** para obtener un verde. P-137-K (A) no la alcanza porque está acotada a la sección 49, y su tratamiento va al **inventario de sondas de reloj de la pieza b** (P-137-O, 1 (A)).
+- **Dueños:** `desarrollador` (banco) con `qa-tester`.

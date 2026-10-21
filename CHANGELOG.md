@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1, tercera pasada, parte del desarrollador (Opus): SEC-140 y el `_doc` de SEC-141 en la plantilla del manifiesto (**sin validar**); INS-034-1
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **SEC-140:** `PENDING_APPROVAL.md` entra en el ámbito `arnes` precargado, y la lista se declara no exhaustiva. **SEC-141:** el `_doc` sigue la sede. Sin nombrar el manifiesto (F-137-16); la plantilla renderizada pasa `jq -e .`.
+- **Comprobación:** sección 50, 56/0; autoprueba 117/0; `hooks/` con 0 bytes de diff (comprobado por la coordinadora); techo de CA-11, +3 620 de 4 096. **Banco: 3001 PASS, 1 FAIL, 14 SKIP**: el FAIL es la sonda de reloj de REQ-017 CA-08 (ii), 1,254× contra 1,25×, la misma de INS-032-1. Registrada como **INS-034-1** (`instrumento`, no atribuible al cambio) y **no relanzada**.
+- **Coste:** desarrollador 260 921 acumulados (+4 887).
+- Resultado: falta la comprobación de QA y la re-firma de seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1: `P-137-P` (A) resuelta; tercera pasada (vuelta 3 de 3), parte de texto (analista, Sonnet): SEC-139 declarado como riesgo y SEC-141 por propiedad; ficha F-137-18
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

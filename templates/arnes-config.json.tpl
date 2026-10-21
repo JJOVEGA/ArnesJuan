@@ -55,14 +55,14 @@
   },
 
   "rigor_politica": {
-    "_doc": "Qué cambio es NORMAL (nace `Rigor: ligero`, sin QA ni seguridad) y cuál alcanza un ámbito y va por el flujo completo. NINGÚN HOOK LA LEE: la aplica el `analista-requerimientos` al crear el REQ, escribiendo `Rigor:` y `Sensible a seguridad:` en su cabecera, y `guard-completado` sigue juzgando sólo esa cabecera. Cada ámbito es una lista de globs (relativos a la raíz, sin decoración) o el literal \"ninguno\" (el proyecto no tiene nada en ese ámbito). `[]`, un ámbito ausente, un tipo erróneo o esta clave ausente = SIN DECLARAR, y con un solo ámbito sin declarar NO se aplica la ampliación de `ligero` a todo cambio normal: el `ligero` de lo sin lógica sigue como hoy y el analista clasifica como siempre. Los globs son ayuda necesaria y no suficiente: decide el EFECTO del cambio, y ante la duda, flujo completo. Lo que hoy es `critico` lo sigue siendo. Quitar un glob o vaciar un ámbito baja el rigor: exige la firma del `auditor-seguridad`, y si este manifiesto no está en `codigo_app.globs`, cualquier agente puede editar esto (se recomienda añadirlo). Reglas: `requirements/README.md` § «Nivel de rigor».",
+    "_doc": "Qué cambio es NORMAL (nace `Rigor: ligero`, sin QA ni seguridad) y cuál alcanza un ámbito y va por el flujo completo. NINGÚN HOOK LA LEE: la aplica el `analista-requerimientos` al crear el REQ, escribiendo `Rigor:` y `Sensible a seguridad:` en su cabecera, y `guard-completado` sigue juzgando sólo esa cabecera. Cada ámbito es una lista de globs (relativos a la raíz, sin decoración) o el literal \"ninguno\" (el proyecto no tiene nada en ese ámbito). `[]`, un ámbito ausente, un tipo erróneo o esta clave ausente = SIN DECLARAR, y con un solo ámbito sin declarar NO se aplica la ampliación de `ligero` a todo cambio normal: el `ligero` de lo sin lógica sigue como hoy y el analista clasifica como siempre. Los globs son ayuda necesaria y no suficiente: decide el EFECTO del cambio, y ante la duda, flujo completo. Lo que hoy es `critico` lo sigue siendo. Todo cambio que reduzca lo que alcanza un ámbito (ejemplos no exhaustivos: quitar o estrechar un glob, declararlo \"ninguno\") exige la firma del `auditor-seguridad`; vaciarlo a `[]` lo deja sin declarar y no rebaja nada. La lista precargada de `arnes` no es exhaustiva: añade lo que en este proyecto gobierne a los agentes. Y si este manifiesto no está en `codigo_app.globs`, cualquier agente puede editar esto (se recomienda añadirlo). Reglas: `requirements/README.md` § «Nivel de rigor».",
     "defecto": "ligero",
     "ambitos": {
       "dinero": {{RIGOR_DINERO_JSON}},
       "sesion": {{RIGOR_SESION_JSON}},
       "seguridad": {{RIGOR_SEGURIDAD_JSON}},
       "datos": {{RIGOR_DATOS_JSON}},
-      "arnes": [".arnes/*", "AGENTS.md", "CLAUDE.md", ".claude/*", ".githooks/*", "requirements/README.md"]
+      "arnes": [".arnes/*", "AGENTS.md", "CLAUDE.md", ".claude/*", ".githooks/*", "requirements/README.md", "PENDING_APPROVAL.md"]
     }
   },
 
