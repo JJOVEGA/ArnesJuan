@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 1 cerrada (desarrollador, Opus): **banco a 0 FAIL** con D1, D2 y D3; REQ-035 `en-revisión` (**sin validar**)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **D1:** REQ-021 CA-10 y CA-10.2 juzgan un registro de calibración fijo y siguen siendo (b). Con la carga de INS-034-2 simulada (`cal_a=2582`), el candidato da 0 FAIL y `ca6eb53` da 3. Con el juez mutado siguen dando FAIL.
+- **D2:** REQ-021 CA-03 (c), en su mitad de µs, y REQ-017 CA-04 fail-before pasan por `coste_inconcluso`. Con el techo forzado, `ca6eb53` da 2 FAIL y el candidato 2 INCONCLUSO; los fallos que no son de reloj siguen en FAIL.
+- **D3:** `coste_inconcluso` documentado en el inventario y en el README del banco.
+- **Banco completo, con los textos dentro: 3005 PASS, 0 FAIL, 14 SKIP (3019).** Autoprueba 117/0; gates en verde; `hooks/` y `tools/` sin diff contra `ca6eb53`, comprobado por la coordinadora.
+- **Coste:** desarrollador del banco 294 927 acumulados; con el de textos (74 266), **369 193** para el rol, 1,42× su ≈ 260 k.
+- Resultado: banco cerrado; falta corregir CA-07 (analista) y después QA y seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: textos de REQ-035 (CA-05, CA-06, CA-08 y CA-07 salvo una frase), desarrollador en Opus, **sin validar**; PR-137-2
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 

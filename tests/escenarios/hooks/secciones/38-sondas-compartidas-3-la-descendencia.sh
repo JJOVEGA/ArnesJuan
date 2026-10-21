@@ -19,10 +19,10 @@ seccion_nueva "--- 38/3 · los instrumentos de tests/util/: la descendencia, el 
 
 num38() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
 
-# Los registros y los testigos de ESTA corrida, leídos una vez. Cuestan cero procesos.
-CALREL38=''; CALPRO38=''; TSTREL38=''; TSTPRO38=''
-[ -r "$RAIZ/cal-reloj" ]       && { IFS= read -r CALREL38 < "$RAIZ/cal-reloj" 2>/dev/null || :; }
-[ -r "$RAIZ/testigo-reloj" ]   && { read -r TSTREL38 < "$RAIZ/testigo-reloj" 2>/dev/null || :; }
+# P-137-S (D1, REQ-035 CA-02): CA-10 y CA-10.2 juzgan un registro de calibración del reloj FIJO —uno real de una corrida en Linux/WSL2, 2026-10-21, con la corrida de ésta— y su terna, no los de la corrida: con la máquina cargada la calibración real sale de banda (clase (a)) y no debe tumbar dos casos de clase (b) que prueban la lógica del juez.
+CALREL38="sonda=reloj modo=calibracion estado=ok motivo=- corrida=$ARNES_CORRIDA invocacion=3106419-1792604164112471 arbol=desconocido plataforma=linux-gnu-x86_64-bash5.3 carga=0.53 jobs=desconocido k=1 r=3 us=3178860 procesos=no-aplica vivos=0 descendencia=proc+marca instrumentada=no plazo=300 plazo_origen=arranque etiqueta=- min=189486 max=439601 min2=190923 disp=2319 acompanada=si min_a=189486 max_a=239858 min2_a=204903 min_b=190923 max_b=227130 min2_b=196058 razon=desconocido cal_a=2089 cal_b=1027 cal_n=161812 cal_margen=4 cal_ns_vuelta=1236 disc_param=161812 disc_obs=539 disc_estado=suelo suelo=50000"
+TSTREL38='852 1792604164107516 1792604164107525'   # testigo, marca de obtención y marca de invocación (anterioridad cumplida)
+CALDIR38="$RAIZ/calfija38-$BASHPID"; mkdir -p "$CALDIR38"; printf '%s\n' "$CALREL38" > "$CALDIR38/cal-reloj"; printf '%s\n' "$TSTREL38" > "$CALDIR38/testigo-reloj"
 
 # ---------- CA-04 · NINGUNA SONDA SOBREVIVE A SU INVOCACIÓN, POR DESCENDENCIA ----------
 # CON UN HIJO DIRECTO NO VALE: lo pasa una implementación ingenua, que es la que este
@@ -288,7 +288,7 @@ fi
 nom38="REQ-021 CA-10 el juez: estado≠ok es SKIP con motivo, registro vacío, ilegible o AMBIGUO es FAIL, y una corrida sin su calibración también"
 if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
   base38="sonda=reloj modo=medicion corrida=$ARNES_CORRIDA invocacion=i us=100000 procesos=0 vivos=0 min=90000"
-  obs38="$( {
+  obs38="$( RAIZ="$CALDIR38"; {   # la calibración que lee el juez es la FIJA (P-137-S, D1)
     sonda_usable p "$base38 estado=ok"            && echo "  PASS  usable"
     sonda_usable p "$base38 estado=suelo motivo=serie-bajo-el-suelo"   && echo "  PASS  no-deberia"
     sonda_usable p "$base38 estado=sin-linea-base motivo=x"            && echo "  PASS  no-deberia"
@@ -349,3 +349,4 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
 fi
 # Los contadores no se tocan de más: `sonda_usable` corrió dentro de una sustitución de
 # comandos, que es un subshell, y sus PASS/FAIL murieron con él.
+rm -rf "$CALDIR38"

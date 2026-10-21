@@ -490,6 +490,19 @@ corrida sana la sonda **converge**, así que el camino que importa —la abstenc
 nunca. Desde REQ-030 esa decisión es el juez del corredor `sonda_juez_razon`, y la prueba de
 siempre de 37/5 lo ejerce a **él**, no a una función retirada.
 
+### Desde 1.37, superar un techo de coste es INCONCLUSO; el plazo y el veredicto siguen en FAIL
+
+`requirements/REQ-035.md` (P-137-K, P-137-R y P-137-S). Qué sonda es de qué clase vive en
+`docs/arnes/v1.37.0-inventario-sondas-reloj.md`, su sede única. Una sonda de **clase (a)** —una
+magnitud medida con reloj que supera su techo o sale de su banda— imprime `SKIP <nombre>  [INCONCLUSO]
+[rendimiento]` y no suma FAIL; las de **clase (b)** —plazos, procesos y veredictos— dan FAIL igual que
+antes. Los techos no cambian. Los jueces de coste siguen diciendo FAIL, y así los prueban sus vectores
+fijos y los controles de 37/7; el caso real pasa su salida por `coste_inconcluso`, del corredor, que
+traduce **una** línea `FAIL` y deja tal cual todo lo demás. `cronometra_bash` se parte por su salida: el
+124 (no respondió) y el veredicto equivocado son FAIL, y DESBOCADO es INCONCLUSO. REQ-021 CA-10 y
+CA-10.2 (38/3) juzgan un registro de calibración **fijo**, no el de la corrida, para que una calibración
+real fuera de banda no tumbe dos casos de clase (b).
+
 ### Las sondas de coste deciden sobre un presupuesto fijo y pueden decir INCONCLUSO (desde 1.35.0)
 
 `ADR-012`, contrato en `requirements/REQ-030.md`. **CA-03** (el cociente de duplicación) y **CA-08 (ii)**

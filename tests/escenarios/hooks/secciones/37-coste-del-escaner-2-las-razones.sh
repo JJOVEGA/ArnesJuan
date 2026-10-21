@@ -300,7 +300,7 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-04 fail-before" | grep -qi -- "$F
     if [ "$r37" -gt 2000 ]; then
       echo "  PASS  REQ-017 CA-04 fail-before: v1.32.1 cuesta $(awk -v c=$r37 'BEGIN{printf "%.3f", c/1000}')× lo de v1.32.0 y se pasa del techo 2,000×"; PASS=$((PASS+1))
     else
-      echo "  FAIL  REQ-017 CA-04 fail-before: v1.32.1 cuesta $(awk -v c=$r37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: el caso pasaría contra el árbol enfermo"; FAIL=$((FAIL+1))
+      coste_inconcluso "  FAIL  REQ-017 CA-04 fail-before: la razón delata a v1.32.1  v1.32.1 cuesta $(awk -v c=$r37 'BEGIN{printf "%.3f", c/1000}')× y NO se pasa: el caso pasaría contra el árbol enfermo"   # reloj: clase (a), P-137-S (D2)
     fi
   fi
 fi

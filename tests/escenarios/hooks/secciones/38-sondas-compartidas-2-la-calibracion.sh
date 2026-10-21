@@ -39,7 +39,7 @@ CALREL38=''; CALPRO38=''; TSTREL38=''; TSTPRO38=''
 # requerida. En una máquina bastante más rápida el mismo absoluto habría dicho `suelo`.
 nom38="REQ-021 CA-03 (c) el tamaño de cada mitad se DERIVA del suelo medido en esta corrida, se publica, y ninguna mitad queda pegada al suelo"
 if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
-  falla38=''
+  falla38=''; coste38=''
   if ! sonda_lee "$CALREL38"; then falla38=" la calibración de reloj no se puede leer: $SONDA_MOTIVO"
   elif [ "${SONDA[estado]}" != ok ]; then falla38=" la calibración no salió ok: ${SONDA[estado]}/${SONDA[motivo]:-}"
   else
@@ -57,8 +57,8 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
       # El campo se sigue exigiendo NUMÉRICO arriba (es condición de la medida, CA-06) y se
       # sigue publicando en el veredicto; lo que no hace es decidir.
       esp38=$(( SONDA_SUELO_US * (SONDA[cal_margen] - 1) ))
-      [ "${SONDA[min_a]}" -ge "$esp38" ] || falla38="$falla38 el sensible base mide ${SONDA[min_a]}µs y no llega a ${esp38}µs;"
-      [ "${SONDA[min_b]}" -ge "$esp38" ] || falla38="$falla38 el insensible base mide ${SONDA[min_b]}µs y no llega a ${esp38}µs (es el que derivaba a 1,4× del suelo);"
+      [ "${SONDA[min_a]}" -ge "$esp38" ] || coste38="$coste38 el sensible base mide ${SONDA[min_a]}µs y no llega a ${esp38}µs;"   # µs con reloj: clase (a), P-137-S (D2)
+      [ "${SONDA[min_b]}" -ge "$esp38" ] || coste38="$coste38 el insensible base mide ${SONDA[min_b]}µs y no llega a ${esp38}µs (es el que derivaba a 1,4× del suelo);"
       # …Y EL TAMAÑO SE RE-DERIVA AQUÍ desde el coste por vuelta que la sonda publicó: si
       # `cal_n` fuera un absoluto escrito a mano, no cuadraría con `cal_ns_vuelta`. El env
       # sólo puede SUBIRLO, así que se exige `>=`, nunca igualdad.
@@ -67,10 +67,10 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
         || falla38="$falla38 cal_n=${SONDA[cal_n]} queda por debajo de lo que su propio cal_ns_vuelta deriva (~$der38);"
     fi
   fi
-  if [ -z "$falla38" ]; then
-    echo "  PASS  $nom38  (cal_n=${SONDA[cal_n]} derivado de ${SONDA[cal_ns_vuelta]}ns/vuelta para ${SONDA[cal_margen]}× el suelo de ${SONDA_SUELO_US}µs que declara el JUEZ —la sonda publica suelo=${SONDA[suelo]}µs y no decide—; sensible ${SONDA[min_a]}µs · insensible ${SONDA[min_b]}µs, ninguno pegado al suelo)"; PASS=$((PASS+1))
+  if [ -n "$falla38" ]; then echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))   # lo que no es reloj manda: clase (b)
+  elif [ -n "$coste38" ]; then coste_inconcluso "  FAIL  $nom38  la mitad medida con reloj no llega a su suelo:$coste38"
   else
-    echo "  FAIL  $nom38 :$falla38"; FAIL=$((FAIL+1))
+    echo "  PASS  $nom38  (cal_n=${SONDA[cal_n]} derivado de ${SONDA[cal_ns_vuelta]}ns/vuelta para ${SONDA[cal_margen]}× el suelo de ${SONDA_SUELO_US}µs que declara el JUEZ —la sonda publica suelo=${SONDA[suelo]}µs y no decide—; sensible ${SONDA[min_a]}µs · insensible ${SONDA[min_b]}µs, ninguno pegado al suelo)"; PASS=$((PASS+1))
   fi
 fi
 
