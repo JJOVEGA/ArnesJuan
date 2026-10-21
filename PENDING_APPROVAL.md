@@ -43,7 +43,34 @@
 
 ## Pendientes
 
-### P-137-T — **REQ-035, QA-035-02: REQ-017 CA-04 fail-before, ¿(a) o (b)?** Te di una premisa inexacta en P-137-S
+_(Vacía desde el 2026-10-21: P-137-T resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-T**: REQ-017 CA-04 fail-before se clasifica **por lo que mide**, releyendo la línea; desarrollador y QA, **Opus explícito** en este repositorio; PR-137-2 a 1.37 · 4 y a la pieza b
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> P-137-T: REQ-017 CA-04 fail-before se clasifica por lo que mide. Si su
+> veredicto depende del reloj (el árbol viejo supera un techo de coste), es
+> clase (a), INCONCLUSO al salirse de banda. Si mide procesos o una decisión,
+> es (b), como C3. El analista relee la línea antes de clasificar, como
+> hiciste tú con 33-…-2, y el desarrollador ajusta según eso. Cierra la
+> pasada 1; sigue con QA y seguridad.
+>
+> Y confírmame el modelo efectivo con que corrieron el desarrollador de
+> textos y el del banco en REQ-035 (crítico). Si alguno fue Sonnet,
+> regístralo para QA. Desde aquí, en este repositorio, desarrollador y QA se
+> despachan con Opus explícito. PR-137-2 a la ficha de 1.37 · 4 y como caso
+> de prueba de la puerta posterior en 1.37 · 3.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Modelo efectivo, medido en las transcripciones**, contando sólo los turnos del asistente: desarrollador del banco, **Opus** (222 de 222); desarrollador de textos, **Opus** (37 de 37); QA, **Opus** (126 de 126); analista, **Sonnet** (92 de 92). **Ninguno de los dos desarrolladores corrió en Sonnet**, así que no hay nada que registrar para QA. Un registro con «opus» en la transcripción del analista es un resultado de herramienta, no un turno.
+- **Desde el 2026-10-21, en este repositorio, desarrollador y QA se despachan con `model: opus` explícito**, sea cual sea el rigor.
+- **PR-137-2:** a la fila 1.37 · 4 de `docs/PLAN.md` (qué archivos van siempre por `Edit` aunque ninguna puerta los mire) y como **caso de prueba de la puerta posterior** en 1.37 · 3: una edición de `AGENTS.md` por un intérprete, que la pieza b tiene que ver.
+- **QA-035-02:** el analista relee la línea de REQ-017 CA-04 fail-before y la de C3 y las clasifica por lo que miden; el desarrollador ajusta según eso; así se cierra la pasada 1.
+
+### P-137-T (texto de la consulta, conservado; resuelta arriba) — **REQ-035, QA-035-02: REQ-017 CA-04 fail-before, ¿(a) o (b)?** Te di una premisa inexacta en P-137-S
 
 **Qué pasó.** En P-137-S escribí que, «por la regla del inventario», `REQ-017 CA-04 fail-before` (37/2) es (a), y adoptaste D2 sobre esa frase. **QA en Opus demuestra que no es exacta** (`docs/qa/REQ-035.md`, QA-035-02, `contrato`). Esa sonda no da FAIL porque una medida supere un techo: da FAIL cuando el árbol **enfermo** (el que se construye lento a propósito) **no** supera 2×. Es decir, cuando el instrumento **no detecta** la regresión que debería ver. Es la misma forma que el control **C3** de 37/2, que el inventario deja en **(b)** como «avería del instrumento». Hoy el banco trata distinto dos casos iguales.
 
@@ -60,8 +87,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-T (A): REQ-017 CA-04 fail-before pasa a (b), como C3; QA-035-04 a la pieza b.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-S**: D1 (A), con un registro de calibración fijo; D2, las dos sondas a (a); los textos se adelantan en paralelo; REQ-035 vuelve a `pendiente`
 

@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · `P-137-T` resuelta: QA-035-02 se clasifica por lo que mide, releyendo la línea; desarrollador y QA, Opus explícito en este repositorio; modelos de REQ-035 confirmados
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-T**, literal en la cola. **Modelo efectivo, medido en los turnos del asistente:** los dos desarrolladores y QA, Opus en todos sus turnos; el analista, Sonnet en todos. Ninguno corrió en Sonnet pidiendo Opus.
+- **Regla desde hoy, en este repositorio:** desarrollador y QA, `model: opus` explícito.
+- **PR-137-2** pasa a la fila 1.37 · 4 y es caso de prueba de la puerta posterior (1.37 · 3), en `docs/PLAN.md` y `docs/PENDIENTES.md`.
+- Resultado: el analista relee QA-035-02 y C3 para cerrar la pasada 1.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 1 de 2, parte de contrato (analista, Sonnet): QA-035-01, inventario completado
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
