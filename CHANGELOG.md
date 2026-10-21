@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 4a, fase 0 cerrada: `P-137-X` (D) resuelta; REQ-036 `pendiente` (15 CA); fase 1 al desarrollador (Opus)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-X (D)**, literal en la cola. REQ-036 recoge la decisión, comprobado por la coordinadora contra el texto del propietario:
+  - CA-01, < 70 KB, y se acepta hasta 75 KB con 4/4;
+  - CA-13, parada sólo por encima de 75 KB;
+  - CA-14, lectura por destinatario, y ante la duda se lee;
+  - CA-15, la tabla de QA bloque por bloque;
+  - CA-04, lo explicativo se queda en el proyecto si no se demuestra la raíz del plugin.
+- **Coste:** analista 123 132 acumulados.
+- Resultado: contrato cerrado; fase 1 despachada.
+
 ## [Interno] — 2026-10-21 · 1.37 · 4a, fase 0 (analista, Sonnet): REQ-036 en `borrador` (13 CA); parada en `P-137-X`, el objetivo no se alcanza moviendo sólo lo explicativo
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

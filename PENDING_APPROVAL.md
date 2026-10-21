@@ -43,7 +43,34 @@
 
 ## Pendientes
 
-### P-137-X — **REQ-036 (4a): mover sólo lo explicativo no llega a 70 KB. ¿Cómo se alcanza el objetivo?** (Q-036-1)
+_(Vacía desde el 2026-10-21: P-137-X resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-X (D)**: lectura por destinatario; criterio de éxito de hasta 75 KB con 4/4; la salvaguarda de QA bloque por bloque; si no hay raíz del plugin demostrable, lo explicativo se queda en el proyecto
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-X (D): lectura por destinatario. Cada bloque normativo de
+> AGENTS.md y del README declara a quién obliga; cada definición de agente
+> lee los suyos; la coordinadora lo lee todo. Lo explicativo sale a
+> docs/explicacion/ dentro del plugin, con puntero.
+>
+> Criterio de éxito ajustado: el objetivo sigue siendo < 70 KB para el
+> analista, pero acepto hasta 75 KB medidos si la prueba de conducta da 4/4;
+> no paso a (C) por unos pocos KB. Sólo si (D) mide por encima de 75 KB se
+> evalúa (C), con la cifra delante.
+>
+> Salvaguarda obligatoria: QA comprueba bloque por bloque que todo agente
+> obligado por una regla la tiene entre sus lecturas, y lo deja en una tabla
+> en la evidencia. Si un bloque no tiene obligado claro, lo lee todo el
+> mundo (ante la duda, se lee).
+> Si no se demuestra cómo un agente del consumidor encuentra la raíz del
+> plugin, lo explicativo se queda en el proyecto y se declara.
+
+**Lo que añade la coordinadora, rotulado como suyo:** el analista transcribe la decisión en REQ-036 y lo pasa a `pendiente`. Después, la fase 1 al desarrollador en Opus explícito.
+
+### P-137-X (texto de la consulta, conservado; resuelta arriba) — **REQ-036 (4a): mover sólo lo explicativo no llega a 70 KB. ¿Cómo se alcanza el objetivo?** (Q-036-1)
 
 **Qué pasó.** El analista escribió REQ-036 en `borrador`, con 13 CA, y paró en tu parada: «que no se alcance el objetivo». Su estimación es **por muestreo, no medida** (no tiene consola): mover lo explicativo e histórico saca ≈ 29–40 KB, y la lectura quedaría en **≈ 100 KB**. Casi todo §6 y §13 es normativo.
 
@@ -61,8 +88,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-X (D): lectura por destinatario en `AGENTS.md` y en el README, más lo explicativo fuera con punteros; nada normativo se mueve ni se condensa. Si no llega a 70 KB, vuelve con el número medido antes de (C).
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-W adoptada: 1.37 · 4 autorizada**; `arnes-upgrade` muestra antes el diff; lo explicativo de un consumidor, preferiblemente dentro del plugin; parada entre 4a y 4b
 
