@@ -11319,3 +11319,17 @@ Contra R-059 (REQ-032, código de `77b71f7`): los controles de lo protegido sigu
 - **INS-034-1 no cambia el veredicto.** Es el FAIL de reloj de REQ-017 CA-08 (ii) sobre `hooks/`, que es byte a byte el de v1.36.2, en una pasada que sólo cambió texto. No hay mecanismo de seguridad que pueda haber regresado. Es `instrumento`. Ojo: si se reprodujera en CI, pondría `hooks-en-linux` en rojo, y eso es una puerta de fusión, no una firma mía.
 - **Veredicto:** `Seguridad: con-hallazgos (R-061 y adenda, 2026-10-21)`, sin veto. `Hallazgos abiertos:` de REQ-034 queda en SEC-139 (`instrumento`) y SEC-141 (`contrato`). **Alcance del bloqueo:** impide **cerrar** REQ-034 (`guard-completado`, `contrato` abierto) y **publicar por delegación** con REQ-034 dentro. No impide implementar ni probar. Afecta a una sola cláusula de texto en cuatro sitios. Evidencia: las líneas citadas arriba. Lo resuelve quitar la cláusula, comprobarlo y re-firmar. Exige una **cuarta pasada**, que la decide el propietario (P-137-P autorizó sólo la tercera).
 - **Numeración:** sin cambio; próximos libres **R-062** y **SEC-142**.
+
+### Adenda 2 a R-061 — firma de REQ-034 tras el borrado de P-137-Q (A) — `cand/1.37.0` @ `09d5e59`, texto de `4efc166` — 2026-10-21 — **APROBADO**
+
+- **Qué se comprobó:** `hooks/`, `tools/`, `.github/`, `AGENTS.md` y `.arnes/config.json` siguen idénticos a v1.36.2, así que la medición de R-061 §1 vale. El diff `548cde2..4efc166` en `requirements/REQ-034.md:84`, `requirements/README.md:173`, `templates/requirements-README.md.tpl:173` y el `_doc` de `templates/arnes-config.json.tpl:58` es **sólo el borrado** de «y no rebaja nada». `grep -c 'no rebaja'` da 0 en la sede, la gemela, la plantilla, el borrador de notas y `skills/arnes-upgrade/SKILL.md`.
+- **SEC-141 — `mitigado`.** La regla general por propiedad («todo cambio de la política que reduzca lo que alcanza un ámbito exige la firma del auditor», con ejemplos no exhaustivos) **cubre vaciar un ámbito**, porque vaciar reduce lo que ese ámbito alcanza. Ya no queda ninguna exención. «Vaciar a `[]` lo deja sin declarar» es una descripción verdadera y no dispensa de nada. Respecto de REQ-034 sale de `Hallazgos abiertos:`.
+- **SEC-139:** sin cambio. Sigue `en-mitigación` en su sede hasta F-137-18, y `instrumento` respecto de REQ-034. **INS-034-1 e INS-034-2** (reloj y calibración) no afectan: `hooks/` es el de v1.36.2 y el cambio es un borrado de texto.
+- **Veredicto:** `Seguridad: aprobado (R-061 y sus dos adendas, 2026-10-21)` en REQ-034.
+- **Estado de seguridad aprobado de REQ-034**, contra el que se compara la próxima auditoría:
+  - `hooks/` idéntico a v1.36.2, y ningún lector del manifiesto recorre claves genéricas;
+  - la orden de `arnes-upgrade` sólo lee, y falla cerrada con 0 bytes, varios valores, algo que no es objeto o el bloque ya presente;
+  - la sección 49 sólo convierte en SKIP la rama de reloj;
+  - la sede declara el riesgo de SEC-139 y escribe por propiedad la norma de rebaja de SEC-141, sin exenciones;
+  - `PENDING_APPROVAL.md` está en la lista precargada del ámbito arnés.
+- **Numeración:** sin cambio; próximos libres **R-062** y **SEC-142**.

@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-21 · **1.37 · 1 CERRADA** (commit validado): REQ-034 `completado` por `Edit` juzgado en vivo; métrica por rol frente a 1.36.2
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **Seguridad `aprobado`** (adenda 2 a R-061): SEC-141 `mitigado` tras el borrado; sólo queda SEC-139, `instrumento` respecto del REQ. **El primer intento de cierre lo denegó `guard-completado`**: la clase de SEC-139 iba sin coma («instrumento respecto de…») y no se leía como clase. La coordinadora puso sólo la coma, y el segundo intento pasó.
+- **La fase 4 del analista no se despachó:** los write-back de QA-034-01/02 y SEC-139/140/141 ya estaban en el REQ, verificados por QA y seguridad. Despacharla habría costado tokens sin contenido.
+- **Métrica (REQ-034):** analista 170 508 · desarrollador 260 921 · QA 170 396 · seguridad 171 399 · **total 773 224**: +19 % frente a 1.36.2, 1,15× el presupuesto de ≈ 670 k, −51 % frente a 1.36.1. Es una capacidad nueva frente a un hotfix.
+- **QA en Sonnet:** 2 `contrato` y 1 observación. No vio 4 hallazgos de texto ni la frase falsa, que encontraron la coordinadora y seguridad.
+- Resultado: 1.37 · 1 entregada; lo siguiente es 1.37 · 2, que necesita autorización.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1: QA (Sonnet) **renueva `aprobado`** sobre `4efc166` tras el borrado de P-137-Q; INS-034-2 (calibración de reloj con la máquina cargada)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 

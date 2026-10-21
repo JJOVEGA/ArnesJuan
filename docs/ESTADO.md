@@ -17,7 +17,10 @@
 - **v1.36.2 PUBLICADA el 2026-10-16** por el propietario: PR #62 fusionado (`main` `46ee7ca`, 14:41:44Z), tag anotado `v1.36.2` → `46ee7ca`. **CI del PR** sobre `3a0e221`: run `38915129365`, **success** (2922 PASS, 0 FAIL, 38 SKIP; 2 INCONCLUSO de rendimiento). **CI de `main`** sobre `46ee7ca`, mismo árbol (`dd3e505`): run `38917844057`, **failure** (2919 PASS, **3 FAIL**, 38 SKIP): las tres sondas de reloj de REQ-033 CA-06 por encima de su techo operativo de 1,30× (1,33×, 1,47×, 1,31×). `instrumento` por P-137-J (**INS-033-1**, `docs/PENDIENTES.md`); no se relanzó.
 - **Instalación estable: 1.36.2** (alcances `user` y `project`, `46ee7ca`; `hooks/` idéntico al tag). **Rige desde el próximo reinicio.**
 - **Paso 2b HECHO (2026-10-16):** `main` fusionado en `cand/1.37.0`. Conflictos sólo en documentos (`cand` no tocaba código): las dos historias conservadas; la P-137-H, registrada en las dos ramas con el mismo texto del propietario, queda una vez, en la versión de `main`. Forma del defecto de 1.36.1 corregida en `[1.36.0]` y en F-137-10. `docs/PLAN.md` reconciliado: manda § «★ PLAN VIGENTE»; las filas 2, 2a y 2b de la tabla antigua, cerradas. **Banco entero sobre la fusión: 2945/0/15** (local); las tres sondas de INS-033-1 pasan aquí.
-- **Plan autorizado vigente: 1.37 · 1, rigor proporcional por defecto (P-137-L, adoptada el 2026-10-16), fase 0 de 4: REQ-034 escrito en `borrador` (13 CA); REQ-034 `pendiente`, contrato cerrado (P-137-M y P-137-N resueltas). **Fase 1 entregada (sin validar):** REQ-034 `en-revisión`, `hooks/` sin cambio, banco 3001/0/13 (3014), desarrollador 238 892 tokens. **Fase 2 (QA, Sonnet): APROBADO** el 2026-10-19 sobre `074b777`, tras **dos** pasadas correctivas (QA-034-01 y QA-034-02 cerrados); banco 3001/0/15 (3016), autoprueba 117/0. **REQ-034 `BLOQUEADO` (2026-10-21)** por la regla del propietario en P-137-P: la tercera pasada (vuelta 3 de 3) no cerró. QA aprobó sobre `bd48920`, pero la re-firma de seguridad deja **SEC-141 abierto** por una frase falsa («vaciar a `[]` … no rebaja nada») que la pasada copió de una premisa de R-061. **PARADA en `P-137-Q`**: quitar esa frase como excepción, o dejarlo bloqueado. INS-034-1 (reloj de REQ-017 CA-08 (ii)), `instrumento`. Tokens: 752 357 (1,12× sobre ≈ 670 k).
+- **Plan autorizado vigente: ninguno en ejecución. 1.37 · 1 CERRADA el 2026-10-21:** REQ-034 `completado` por `Edit` juzgado en vivo (el primer intento lo denegó la puerta por una coma de formato en SEC-139). QA `aprobado` sobre `4efc166`; seguridad `aprobado` (R-061 y sus dos adendas). **Siguiente acción:** la autorización de **1.37 · 2, modelo por rol** (escribir §5; ya rige como regla), que es del propietario.
+- **Métrica de 1.37 · 1 (REQ-034)**, tokens de subagente sin la coordinadora: analista 170 508 · desarrollador 260 921 · QA 170 396 · seguridad 171 399 · **total 773 224**. Frente a 1.36.2 (648 974): **+19 %**; analista +51 %, desarrollador −6 %, QA +37 %, seguridad +27 %. Frente al presupuesto (≈ 670 k): **1,15×**; el analista llegó a 1,42×. Frente a 1.36.1: −51 %. **No es la misma clase de trabajo:** 1.36.2 fue un hotfix y 1.37 · 1 es una capacidad nueva con cuatro decisiones del propietario a mitad (P-137-M, N, O y P) y dos pasadas más (la tercera autorizada y el borrado).
+- **QA en Sonnet en 1.37 · 1:** encontró **2** `contrato` (QA-034-01 y 02) y la observación O-1 (F-137-17). **No vio** la frase del `_doc` de la plantilla, que encontró la coordinadora, ni SEC-139, SEC-140, SEC-141 ni la frase falsa de la tercera pasada, que encontró seguridad en Opus. Pasadas: dos correctivas, más la tercera autorizada y el borrado. **Es la segunda intervención seguida en que Sonnet aprueba y Opus encuentra.**
+- **Sondas de reloj y calibración que fallan por la máquina:** INS-033-1 (sección 49, ya INCONCLUSO por P-137-K), INS-034-1 (REQ-017 CA-08 (ii)) e INS-034-2 (calibración de REQ-021). El CI de `cand/1.37.0` puede salir rojo por ellas; su tratamiento es el inventario de la pieza b.
 - **Métrica de 1.36.2** (REQ-033; tokens de subagente, sin la coordinadora): analista 112 916 · desarrollador 277 287 · QA 124 228 · seguridad 134 543 · **total 648 974**: −59 % frente a 1.36.1, −89 % frente al tramo de 1.36.0 en Fable; **+58 % sobre el presupuesto orientativo de P-137-J (410 k)**.
 
 ## Historia — hotfix 1.36.2 (rama `hotfix/1.36.2` desde `e21baef`, 2026-10-15 → 2026-10-16), publicado en `46ee7ca`
@@ -623,7 +626,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-21 09:57
+## Estado derivado — 2026-10-21 09:58
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -633,7 +636,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `4efc166` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.37.0` @ `09d5e59` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.0` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
 **REQ:** 32 — completado 16 · en-revisión 5 · en-progreso 1 · bloqueado 2 · otros 8
@@ -658,6 +661,6 @@ _Sólo los REQ abiertos; los 16 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-034 | bloqueado | aprobado | con-hallazgos | critico | sec-139(instrumentorespectodereq-034:rie… |
+| REQ-034 | bloqueado | aprobado | aprobado | critico | sec-139(instrumentorespectodereq-034:rie… |
 
 <!-- ARNES:DERIVADO fin -->
