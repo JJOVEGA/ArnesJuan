@@ -43,7 +43,28 @@
 
 ## Pendientes
 
-### P-137-W — **1.37 · 4: adelgazar lo que lee el analista y partir REQ-007. Autorización lista para adoptar**
+_(Vacía desde el 2026-10-21: P-137-W adoptada por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-W adoptada: 1.37 · 4 autorizada**; `arnes-upgrade` muestra antes el diff; lo explicativo de un consumidor, preferiblemente dentro del plugin; parada entre 4a y 4b
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-W, con:
+> - arnes-upgrade lleva la versión delgada a los proyectos instalados,
+>   conservando lo que cada proyecto escribió en sus propios bloques; antes
+>   de aplicarla muestra el diff de lo que sale y adónde va. La prueba se
+>   hace en Adelantos después de publicar 1.37, como con 1.35.0.
+> - Lo explicativo en un consumidor: decide el analista en la fase 0; mi
+>   preferencia es que viva dentro del plugin (consultable, no leído en cada
+>   comisión), no copiado en cada proyecto.
+> - Los seis problemas de F-137-22, como los anotaste.
+> - Parada entre 4a y 4b como propones.
+
+**Lo que añade la coordinadora, rotulado como suyo:** las precisiones prevalecen sobre la autorización conservada debajo. La prueba en el proyecto consumidor es **posterior a publicar 1.37**, así que no entra en el ciclo de REQ-036. Fase 0 de 4a despachada al analista en Sonnet; desarrollador y QA, en Opus explícito.
+
+### P-137-W (texto de la propuesta, conservado; adoptada arriba con sus precisiones) — **1.37 · 4: adelgazar lo que lee el analista y partir REQ-007. Autorización lista para adoptar**
 
 **Punto de partida, medido** (los cuatro archivos que lee el analista de un consumidor, en bytes): la plantilla de `AGENTS.md`, 69 888 (§6 ocupa 37 295 y §13, 20 898); la del README de requisitos, 43 245 (las cinco secciones mayores van de 5 a 10 KB); la definición del analista, 15 471; el manifiesto con sus `_doc`, 9 970. **Total, ≈ 138 KB.** Para bajar de 70 KB hay que **recortar ≈ 70 KB**, casi todo de §6, §13 y el README. En este repositorio, `AGENTS.md` pesa 75 448, `requirements/README.md` 78 607 y REQ-007 479 582.
 
@@ -76,8 +97,6 @@
 > Dos pasadas correctivas por REQ; borrar texto propio no cuenta.
 
 **Decisión propuesta, lista para adoptar:** «Adopto P-137-W.»
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-V adoptada: spike de la puerta posterior**; y **ajuste del plan**: 1.37 · 4 va antes del REQ completo de la puerta posterior, con un objetivo medible
 

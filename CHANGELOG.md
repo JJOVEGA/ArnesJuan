@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 4 **autorizada** (`P-137-W` adoptada con precisiones); fase 0 de 4a al analista, en Sonnet
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-W**, literal en la cola:
+  - `arnes-upgrade` lleva la versión delgada a los proyectos instalados, conservando sus bloques propios y mostrando antes el diff; la prueba en el consumidor, después de publicar 1.37;
+  - lo explicativo de un consumidor, preferiblemente dentro del plugin, y lo decide el analista;
+  - los seis problemas de F-137-22;
+  - parada entre 4a y 4b.
+- Resultado: la fase 0 de REQ-036, despachada.
+
 ## [Interno] — 2026-10-21 · Autorización de 1.37 · 4 (`P-137-W`) lista para adoptar; ficha F-137-22 para el REQ 3b
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
