@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: relectura de QA-035-02 (analista, Sonnet): CA-04 fail-before es (a) y no cambia; C3 mide reloj, y va al propietario en `P-137-U`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **CA-04 fail-before** (37/2 l. 295-303): una razón de µs contra 2,000×, que corre siempre; es (a) y ya usa `coste_inconcluso`.
+- **C3** (l. 263-270): un cociente de reloj contra 2,6×. **La coordinadora comprobó** que es un control a demanda (`SKIP «no se pide»` sin `ARNES_SONDA_CONTROLES=1`) cuyo juez sólo da FAIL con «avería demostrada». Va al propietario como **P-137-U**, con (A), quedarse en (b) como decisión, recomendada.
+- **Coste:** analista 159 201 acumulados.
+- Resultado: QA-035-02 se resuelve sin código si se adopta (A).
+
 ## [Interno] — 2026-10-21 · `P-137-T` resuelta: QA-035-02 se clasifica por lo que mide, releyendo la línea; desarrollador y QA, Opus explícito en este repositorio; modelos de REQ-035 confirmados
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

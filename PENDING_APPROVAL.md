@@ -43,7 +43,24 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-T resuelta por el propietario, en § Resueltas.)_
+### P-137-U — **C3 mide reloj, al contrario de lo que suponía «como C3» de P-137-T. ¿Pasa a (a) o se queda en (b) por ser una decisión?**
+
+**Qué se releyó** (el analista y la coordinadora, en el código):
+- **REQ-017 CA-04 fail-before** (`37-coste-del-escaner-2-las-razones.sh` l. 295-303) compara una **razón de µs** entre v1.32.1 y v1.32.0 contra 2,000×, en **una medida que corre siempre**. Por tu regla es **(a)**, ya va a INCONCLUSO (`coste_inconcluso`) y **no cambia nada**. **QA-035-02 queda resuelto así.**
+- **C3** (l. 263-270) compara un **cociente medido con reloj** contra 2,6× (`sonda_juez_control_c3 … 2600`). Por la letra de tu regla sería **(a)**, y tu «como C3» suponía (b). Pero tiene dos rasgos que la regla no contempla:
+  1. **Es un control a demanda:** sin `ARNES_SONDA_CONTROLES=1` da `SKIP «no se pide»`. **Nunca pone rojo el CI ni el banco normal.**
+  2. **Su juez ya separa el ruido** (`run.sh`, `sonda_juez_control_c3`). Da INCONCLUSO si falta línea base, si hay pocas corridas resueltas o si caen a ambos lados del techo. Sólo da FAIL con **«AVERÍA DEMOSTRADA»**: todas las corridas resueltas por debajo del techo. Es una **decisión** tomada sobre la serie entera.
+
+**Qué detiene, y qué no.** Detiene la re-verificación de QA, porque (B) cambiaría código. Con (A) no hay nada que tocar, y QA sigue.
+
+**Opciones**
+- **(A) — recomendada:** C3 **se queda en (b)** como **decisión** («avería demostrada»), que tu regla manda a (b) («si mide procesos o **una decisión**»). *Consecuencia:* sin cambio de código; el inventario lo dice con estas líneas. La pasada 1 se cierra y QA re-verifica ya.
+- **(B):** C3 a **(a)**: su «avería demostrada» pasa a INCONCLUSO. *Consecuencia:* hay que tocar el juez en `run.sh` y el control WD de 37/7, que necesita ver ese FAIL (lo advirtió el desarrollador). Es más trabajo y una pasada más, y un instrumento averiado de verdad dejaría de verse, aunque sólo cuando se pide el control.
+
+**Coste de REQ-035 hasta aquí:** analista 159 201 · desarrollador 369 193 · QA 222 483 · **750 877**; falta seguridad.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-U (A): C3 se queda en (b) como decisión («avería demostrada», a demanda); CA-04 fail-before sigue en (a); QA-035-02 resuelto; QA re-verifica.
 
 ## Resueltas
 
