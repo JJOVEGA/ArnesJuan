@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 2: QA (**Opus**) **con hallazgos** en REQ-035: QA-035-01 y QA-035-02 (`contrato`, inventario); el código cumple; `P-137-T`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **QA:**
+  - ningún caso (b) acaba en INCONCLUSO: llamadas al traductor revisadas una por una contra el inventario;
+  - los controles (b) son idénticos en `ca6eb53` y en el candidato (hook que no responde en 07, 08, 25 y 47; proceso añadido; `deny` → `allow`);
+  - los (a), con el techo forzado, dan FAIL en la base e INCONCLUSO en el candidato, y PASS sin forzar;
+  - D1 acreditado;
+  - banco 3005/0/14 (3019) y autoprueba 117/0; CA-05 a CA-08 pasan.
+- **QA-035-01:** al inventario le faltan 47-lectura, 40 y el plazo de 33/2; todo es (b) y no cambia ningún veredicto. **QA-035-02:** REQ-017 CA-04 fail-before tiene la forma de C3, que es (b). La premisa de la coordinadora en P-137-S era inexacta, y vuelve al propietario como **P-137-T**. **QA-035-03** y **QA-035-04** (`instrumento`, preexistentes): la puerta de calibración de `sonda_usable` sin vector, y la sonda de procesos que no cuenta las órdenes por ruta absoluta.
+- **Coste:** QA 222 483 (1,31×). **Es el primer QA en Opus, y encontró en el contrato lo que nadie había visto.**
+- Resultado: el código está validado; falta el inventario y una decisión del propietario.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: CA-07 de REQ-035 corregido (analista, Sonnet): la frase «sube a Opus» va sólo en desarrollador y QA; fase 2 a QA en Opus
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

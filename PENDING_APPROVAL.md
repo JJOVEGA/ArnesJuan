@@ -43,7 +43,23 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-S resuelta por el propietario, en § Resueltas.)_
+### P-137-T — **REQ-035, QA-035-02: REQ-017 CA-04 fail-before, ¿(a) o (b)?** Te di una premisa inexacta en P-137-S
+
+**Qué pasó.** En P-137-S escribí que, «por la regla del inventario», `REQ-017 CA-04 fail-before` (37/2) es (a), y adoptaste D2 sobre esa frase. **QA en Opus demuestra que no es exacta** (`docs/qa/REQ-035.md`, QA-035-02, `contrato`). Esa sonda no da FAIL porque una medida supere un techo: da FAIL cuando el árbol **enfermo** (el que se construye lento a propósito) **no** supera 2×. Es decir, cuando el instrumento **no detecta** la regresión que debería ver. Es la misma forma que el control **C3** de 37/2, que el inventario deja en **(b)** como «avería del instrumento». Hoy el banco trata distinto dos casos iguales.
+
+**Qué detiene, y qué no.** Detiene **cerrar** REQ-035 (QA `con-hallazgos`). Lo demás sigue: el analista completa el inventario (QA-035-01) en paralelo, sin depender de esto.
+
+**Opciones**
+- **(A) — recomendada:** pasa a **(b)**, como C3. Un fail-before que comprueba que el instrumento ve una regresión es **lógica del instrumento**, no coste. Si deja de verla, debe ser rojo. *Riesgo de ruido bajo:* el árbol enfermo se hace lento a propósito y la carga frena por igual a los dos. *Consecuencia:* el desarrollador deshace el traductor en un solo sitio y el analista corrige su línea, ≈ 10–15 k dentro de la pasada correctiva 1. El banco sigue en 0 FAIL salvo que el instrumento se averíe.
+- **(B):** queda en (a) y **C3 también pasa a (a)**, por coherencia: todo control con reloj de un instrumento deja de poner rojo. *Consecuencia:* un instrumento que deja de detectar regresiones pasa sin verse. Como las sondas de coste ya no bloquean, eso no abre nada que bloquee hoy, pero la pieza b y F-137-18 dependen de que los instrumentos sirvan.
+- **(C):** se deja como está, con la descripción exacta registrada. *Consecuencia:* el banco mantiene dos casos iguales en clases distintas.
+
+**Además, registrado y sin reparar** (`instrumento`, preexistentes, dueño `desarrollador`): **QA-035-03**, ningún vector prueba la puerta de calibración de `sonda_usable`; **QA-035-04**, la sonda de procesos **no cuenta una orden con ruta absoluta** (`/bin/true`), así que un fork por ruta absoluta pasa la puerta de «0 procesos añadidos». La segunda importa para cualquier contrato de coste en procesos; propongo que vaya a la pieza b.
+
+**Coste de REQ-035 hasta aquí:** analista 149 517 · desarrollador 369 193 (banco y textos; 1,42×) · QA **222 483** (en Opus, 1,31×) · seguridad pendiente · **total 741 193**, sobre ≈ 730 k sin la prueba de conducta.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-T (A): REQ-017 CA-04 fail-before pasa a (b), como C3; QA-035-04 a la pieza b.
 
 ## Resueltas
 
