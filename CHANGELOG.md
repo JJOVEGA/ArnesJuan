@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 3: seguridad (Opus) **con hallazgos, sin veto** (R-062): SEC-142 (`contrato`, §5 no escribe P-137-T) y SEC-143 (`instrumento`); pasada correctiva 2 de 2
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
+
+- **No abre ningún fail-open:**
+  - muestra propia con hooks que no responden: la 47 (T2a, T2b, T3) y la mitad 124 de 07 y 25 dan FAIL;
+  - cada `coste_inconcluso` y `SONDA_CAL_CLASE=banda` revisado: ninguno cae sobre un (b);
+  - declarado en R-062: un hook de 20 a 25 s pasa de FAIL a INCONCLUSO (respondió antes de 40 y 60 s).
+- **Hallazgos:**
+  - **SEC-142** (`contrato`, baja): §5 no recoge «Opus explícito» de P-137-T, y la excepción editorial de §6 o un encargo sin REQ llevarían a Sonnet;
+  - **SEC-143** (`instrumento`, baja, preexistente): `ARNES_CRONO_HOLGURA` estira el plazo de la mitad 124;
+  - **QA-035-03**, aceptable como `instrumento`;
+  - **QA-035-04**, `instrumento` baja, que según seguridad **no** es de la pieza b por su naturaleza; la decisión sigue siendo del propietario.
+- **Residual declarado:** la cabecera del desarrollador pasa a `sonnet`; si quien despacha olvida `model`, corre en Sonnet, y ninguna puerta lo mira. Próximos libres: R-063 y SEC-145 (SEC-144 está reservado).
+- Resultado: una frase en §5 y el write-back de CA-05 para cerrar.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 2 cerrada: **QA (Opus) APROBADO** sobre `8f316f1` tras una pasada correctiva, sólo de contrato; fase 3 a seguridad
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 
