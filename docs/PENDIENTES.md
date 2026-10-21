@@ -2524,3 +2524,16 @@ ninguna mata al hook.»
 - **Origen:** R-062. La cabecera del desarrollador es `sonnet`; si quien despacha olvida `model`, el agente corre en Sonnet y ninguna puerta lo mira.
 - **Decisión del propietario (2026-10-21), literal:** «se mantiene sonnet en la cabecera (es el ahorro para los proyectos), y se cierra por proceso: cada despacho de un REQ crítico registra el modelo efectivo en la evidencia, y QA lo comprueba antes de aprobar. Ficha para la puerta posterior: si es comprobable mecánicamente, que lo sea.»
 - **Cómo se registra hoy:** el recuento de `"model"` en los turnos `"role":"assistant"` de la transcripción del agente, en la evidencia de su comisión. **Dueños:** la coordinadora (registro) y `qa-tester` (comprobación); la parte mecánica, con la pieza b.
+
+### F-137-22 — REQ 3b (la puerta posterior): los problemas que el spike dejó medidos, y lo obligatorio en su banco (decisión del propietario, 2026-10-21)
+- **Origen:** spike 1.37 · 3a, en la rama `spike/1.37-3-puerta-posterior` (`1895261`), con el informe `docs/arnes/v1.37.0-spike-puerta-posterior.md` en esa rama y la evidencia `1.37-3a-spike/`.
+- **Lo que el spike no resuelve.** El propietario pidió «los cinco problemas»; el informe declara **seis**, y van todos para no perder ninguno:
+  1. **concurrencia**: si el Post de otro agente llega antes, el cambio legítimo del desarrollador se pierde sin aviso y se culpa a quien no fue;
+  2. la orden puede **falsificar la foto** de antes, y la puerta se rodea;
+  3. si la orden **borra el estado** de la puerta, hay bloqueo, pero el cambio queda en disco;
+  4. una **escritura en segundo plano** después del Post se acepta como nueva base, con sólo un aviso;
+  5. un **cambio de rama legítimo** cuyo `hooks/` difiere se restaura, y el árbol queda distinto de `HEAD`;
+  6. en un **proyecto consumidor** no hay `hooks/` en el proyecto: lo que corre es `${CLAUDE_PLUGIN_ROOT}/hooks`.
+- **Caso de banco obligatorio, literal del propietario:** «el cambio de rama legítimo como caso de banco obligatorio».
+- **Windows/MSYS, declarado como no medido salvo que se mida.** El spike midió +8 ms y +5 procesos en Pre y en Post en Linux; en Windows, con las cifras del propio arnés, serían segundos por handler.
+- **Estimación del spike:** ≈ 400–550 k, más ≈ 100 k por cada vuelta dev↔QA. Se presupuesta cuando toque, después de 1.37 · 4.

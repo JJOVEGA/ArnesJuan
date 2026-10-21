@@ -43,7 +43,39 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-V adoptada por el propietario, en § Resueltas.)_
+### P-137-W — **1.37 · 4: adelgazar lo que lee el analista y partir REQ-007. Autorización lista para adoptar**
+
+**Punto de partida, medido** (los cuatro archivos que lee el analista de un consumidor, en bytes): la plantilla de `AGENTS.md`, 69 888 (§6 ocupa 37 295 y §13, 20 898); la del README de requisitos, 43 245 (las cinco secciones mayores van de 5 a 10 KB); la definición del analista, 15 471; el manifiesto con sus `_doc`, 9 970. **Total, ≈ 138 KB.** Para bajar de 70 KB hay que **recortar ≈ 70 KB**, casi todo de §6, §13 y el README. En este repositorio, `AGENTS.md` pesa 75 448, `requirements/README.md` 78 607 y REQ-007 479 582.
+
+> ## Autorización — 1.37 · 4
+>
+> ## Decisiones del propietario
+> - **Objetivo medible:** lo que lee el analista por comisión baja de ≈ 138 KB a **menos de 70 KB**. Se verifica **repitiendo la prueba de conducta de PC-034-1** (4 corridas, el mismo proyecto y los mismos encargos) con **el mismo resultado 4/4** y su coste por corrida.
+> - **Nada se pierde:** lo normativo queda en el sitio que lee el agente; lo histórico y lo explicativo pasan a `docs/` con punteros. Salvaguardas de F-136-17: lo que cita un hallazgo abierto no se mueve; cada bloque movido deja un puntero con ruta, ancla e identificadores; antes de mover, se barren las citas.
+> - **Dentro:** PR-137-1/2, qué archivos van **siempre por `Edit`** aunque ninguna puerta los mire; y F-137-19, borrar texto propio de la misma intervención no cuenta como pasada.
+> - **Proyectos ya instalados:** `arnes-upgrade` les lleva la versión delgada **conservando lo que el proyecto escribió en sus bloques propios**. Si no, el ahorro no les llega. *(Si prefieres sólo proyectos nuevos por ahora, dilo al adoptar.)*
+> - La coordinadora decide sola lo que no cambie una protección, un alcance o un riesgo, y lo informa al cierre.
+>
+> ## Plan autorizado (cada fase termina en commit local en `cand/1.37.0`)
+> **4a — adelgazar** (REQ-036, `critico`): las plantillas de `AGENTS.md` y del README, la definición del analista, los `_doc` del manifiesto, `arnes-upgrade` y, con la misma estructura, `AGENTS.md` y `requirements/README.md` de este repositorio.
+> - Fase 0, analista (Sonnet): el contrato corto. Qué es normativo y qué no, dónde va lo explicativo de un consumidor (que no tiene el `docs/` de este repositorio), y cómo se mide «lo que lee».
+> - Fase 1, desarrollador (Opus). Fase 2, QA (Opus). Fase 3, seguridad (Opus).
+> - Verificación: la prueba de conducta repetida.
+>
+> **4b — partir REQ-007** (F-137-9): el analista escribe el contrato de la partición y **para antes de ejecutar** (P-137-F); luego ejecución, QA y seguridad. Su ahorro es de este repositorio, no de los consumidores.
+>
+> ## Presupuesto (calibrado sobre REQ-034, 773 k, y REQ-035, 960 k más 355 k de conducta)
+> **4a:** analista ≈ 170 k · desarrollador ≈ 350 k · QA ≈ 250 k · seguridad ≈ 200 k · conducta ≈ 200 k (4 corridas con menos lectura) · **≈ 1,17 M**.
+> **4b:** analista ≈ 150 k · ejecución ≈ 150 k · QA ≈ 200 k · seguridad ≈ 150 k · **≈ 650 k**.
+> Aviso a 1,5× por rol. **Entre 4a y 4b, parada con la cifra medida**: si 4a no baja de 70 KB, se decide antes de seguir.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Mover algo que pudiera reducir una protección; que no se alcance el objetivo; el contrato de 4b antes de ejecutar; pasar de 1,5× en un rol; publicar.
+>
+> ## Tope
+> Dos pasadas correctivas por REQ; borrar texto propio no cuenta.
+
+**Decisión propuesta, lista para adoptar:** «Adopto P-137-W.»
 
 ## Resueltas
 

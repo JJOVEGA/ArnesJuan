@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · Autorización de 1.37 · 4 (`P-137-W`) lista para adoptar; ficha F-137-22 para el REQ 3b
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **Punto de partida medido:** la plantilla de `AGENTS.md`, 69 888 B (§6, 37 295 y §13, 20 898); la del README, 43 245; la definición del analista, 15 471; el manifiesto, 9 970. ≈ 138 KB, así que hay que recortar ≈ 70 KB.
+- **P-137-W:**
+  - **4a**, REQ-036, adelgazar, con la prueba de conducta repetida como verificación: ≈ 1,17 M;
+  - **4b**, partir REQ-007 con parada antes de ejecutar: ≈ 650 k;
+  - parada entre las dos;
+  - una decisión para el propietario: llevar la versión delgada a los proyectos instalados por `arnes-upgrade`.
+- **F-137-22:** los seis problemas del spike (el propietario dijo cinco; el informe declara seis), el cambio de rama legítimo como caso de banco obligatorio y Windows declarado como no medido.
+- Resultado: 1.37 · 4 espera la adopción.
+
 ## [Interno] — 2026-10-21 · 1.37 · 3a hecho: el spike de la puerta posterior, medido y verificado (en su rama, sin publicar)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
