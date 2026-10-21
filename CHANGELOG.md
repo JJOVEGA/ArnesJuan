@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: **prueba de conducta de 1.37 · 1** (PC-034-1): el analista candidato clasificó 4 de 4 como pide la política; 354 646 tokens, ≈ 5,9× lo presupuestado
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (4 corridas), Opus (coordinadora) · agente: coordinadora.
+
+- **Normal → `ligero` (2/2); dinero → `critico` (2/2).** La definición es la del candidato (`f5f002d`), no la instalada; el proyecto, «tienda-demo», con los cinco ámbitos declarados. Evidencia: `1.37-1-conducta/` (commit `533630b` del árbol de evidencia).
+- **Límite:** son 2 corridas por caso, con casos nítidos, y el agente real no se probó. SEC-139 sigue siendo un riesgo declarado.
+- **Coste:** ≈ 88 k por corrida para escribir un REQ de 3–5 KB, casi todo leyendo las reglas: es el coste de base del analista y un dato para 1.37 · 4. El aviso de 1,5× está pasado y se le comunica al propietario.
+- Resultado: la conducta pedida, comprobada en lo nítido; falta la fase 0 de REQ-035.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2 **autorizada** (`P-137-R` adoptada con precisiones); fase 0 al analista, en Sonnet; prueba de conducta en paralelo
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

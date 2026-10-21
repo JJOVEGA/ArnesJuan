@@ -2503,3 +2503,10 @@ ninguna mata al hook.»
 - **Clase `instrumento`, por P-136-E** («una sonda que mide la máquina se registra como `instrumento` y el plan continúa»). Es la misma especie que INS-032-2. **No se relanzó** para obtener un verde. Va al inventario de sondas de reloj de la pieza b (P-137-O, 1 (A)).
 - **Corrección de la coordinadora:** en el encargo a QA escribió «cualquier otro FAIL es un FAIL de verdad», más estricto que P-136-E, que cubre también la calibración. Lo que manda es P-136-E.
 - **Dueños:** `desarrollador` (banco) con `qa-tester`.
+
+### PC-034-1 — Prueba de conducta de REQ-034 (P-137-R, punto 3): con los cinco ámbitos declarados, el analista **candidato** clasificó 4 de 4 como pide la política
+- **Evidencia:** árbol de evidencia, `1.37-1-conducta/` (commit `533630b`), con la definición usada, el manifiesto, los cuatro REQ y la tabla.
+- **Definición:** la del analista de `cand/1.37.0` en `f5f002d` (sha256 `46bf4e99dd1bf15d…`), **no** la instalada (1.36.2). Sonnet. Cada corrida es un agente general que lee esa definición como su rol; su prompt de sistema no es el del agente del plugin.
+- **Resultado:** el cambio normal (filtro por color) dio `Rigor: ligero`, `Sensible: no`, `Seguridad: n/a`, **2 de 2**. El de dinero (10 % de descuento en el total) dio `Rigor: critico`, `Sensible: no`, `Seguridad: pendiente`, **2 de 2**, y en `borrador` por preguntas legítimas (unidades o líneas, redondeo). Nada se escribió fuera de `requirements/`.
+- **Lo que no acredita:** son 2 corridas por caso, con casos nítidos; no se probó ninguno de frontera ni el agente real del plugin. **SEC-139 sigue siendo un riesgo declarado**, y su comprobación es F-137-18.
+- **Coste:** **354 646 tokens** (≈ 88 k por corrida) frente a ≈ 60 k presupuestados: **≈ 5,9×**, por encima del aviso de 1,5×. Lo pesado es **leer las reglas** (`AGENTS.md`, la definición y `requirements/README.md`) para escribir un REQ de 3–5 KB. **Coste de base de una comisión del analista, y dato para 1.37 · 4.**
