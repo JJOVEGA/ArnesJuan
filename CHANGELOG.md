@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: write-back de P-137-S (analista, Sonnet): D2 en el inventario y D1 en CA-02 de REQ-035
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **Inventario:** REQ-021 CA-03 (c) y REQ-017 CA-04 fail-before entran como (a); quedan 19 casos en 11 sondas.
+- **CA-02:** REQ-021 CA-10 y CA-10.2, con un registro de calibración fijo y el juez mutado, siguen siendo (b); objetivo, 0 FAIL. La parada queda resuelta por P-137-S.
+- Resultado: el contrato del banco está cerrado; el desarrollador del banco, retomado.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: `P-137-S` resuelta (D1 (A), D2 a (a), textos en paralelo); REQ-035 `bloqueado` → `pendiente`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
