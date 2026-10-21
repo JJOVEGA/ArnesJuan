@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 2 cerrada: **QA (Opus) APROBADO** sobre `8f316f1` tras una pasada correctiva, sólo de contrato; fase 3 a seguridad
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- QA-035-01 y QA-035-02, resueltos y comprobados contra el código. Siguen QA-035-03 y QA-035-04 (`instrumento`, preexistentes). Reutiliza el banco 3005/0/14 (3019), la autoprueba 117/0 y los fail-before: el diff de código desde `78f9ea9` es cero.
+- REQ-035 `en-revisión`. Pasadas: 1 de 2.
+- Resultado: lista para seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 1 cerrada (analista, Sonnet): C3 en (b), con la precisión de P-137-U en la regla del inventario; QA re-verifica
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
