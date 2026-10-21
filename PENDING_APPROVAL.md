@@ -43,7 +43,38 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-Q resuelta por el propietario, en § Resueltas.)_
+### P-137-R — **1.37 · 2, modelo por rol: autorización lista para adoptar**
+
+**Tres cosas que la coordinadora comprobó y que la autorización recoge:**
+1. **Un plazo no es un coste.** La sección 47 (`47-decision-emitida.sh`) prueba que el hook **emite su decisión** antes de 40 s (SEC-115). Si pasara a INCONCLUSO, un hook que el cliente mata sin denegar dejaría de verse. Por eso la autorización lo trata como **veredicto**, y sigue dando FAIL.
+2. **La cabecera de un agente declara un solo modelo** (`model:` en `agents/*.md`; hoy: analista `opus`, QA `sonnet`, desarrollador `opus`, seguridad `opus`). «QA en Opus si el REQ es crítico» no cabe ahí: lo aplica **quien despacha**, con el parámetro `model`. Por eso la regla se escribe en §5 y en las definiciones, y la cabecera lleva el modelo por defecto.
+3. **La prueba de conducta necesita el analista NUEVO.** El agente instalado es el de 1.36.2, que no conoce la política. La prueba tiene que correr con la definición del candidato (`agents/analista-requerimientos.md` de `cand/1.37.0`) y decir cuál usó.
+
+> ## Autorización — 1.37 · 2, modelo por rol
+>
+> ## Decisiones del propietario
+> - **Primero, P-137-K en todo el banco:** toda sonda de **reloj o calibración** que pase su techo da INCONCLUSO. Sólo dan FAIL los **procesos** y los **veredictos**, y un **plazo que decide si una decisión se emite** (sección 47, SEC-115) cuenta como veredicto. El analista hace antes el inventario de las sondas, una línea por sonda. Cierra INS-033-1, INS-034-1 e INS-034-2.
+> - **La regla del modelo por rol:** en `ligero` y `estandar`, analista y QA en Sonnet; en `critico`, analista en Sonnet, y QA y seguridad en Opus. El desarrollador, en Opus. Se escribe en `AGENTS.md` §5 de este repositorio, en `templates/AGENTS.md.tpl` §5 y en las definiciones de agente: analista `sonnet`, QA `sonnet` por defecto y `opus` en `critico` al despachar. Sustituye el bloque «QA corre con Opus en el autoalojamiento».
+> - **Contratos cortos:** el analista escribe lo **mínimo verificable**, no todo lo previsible. Rige en esta intervención, y se escribe en una frase de su definición.
+> - **Tope: dos pasadas correctivas.** Borrar texto propio de la misma intervención **no cuenta**. La regla general para la plantilla sigue siendo F-137-19, de 1.37 · 4.
+>
+> ## Plan autorizado (cada fase termina en commit local en `cand/1.37.0`)
+> Fase 0 — analista (Sonnet): REQ-035, contrato corto, con el inventario de sondas (reloj o calibración frente a plazo o veredicto) y la regla de §5.
+> Fase 1 — desarrollador (Opus): el banco primero, luego los textos: §5 de este repositorio y de la plantilla, y las cuatro definiciones. Banco completo y autoprueba.
+> Fase 2 — QA (**Opus**: el REQ es `critico`). Fase 3 — seguridad (Opus), sólo con QA favorable. Puede vetar.
+> Fase 4 — la coordinadora cierra REQ-035 con `Edit` juzgado en vivo y registra la métrica frente a 1.37 · 1.
+> **En paralelo, la prueba de conducta de 1.37 · 1** (la coordinadora; no toca el repositorio): un proyecto de prueba en el scratchpad con los cinco ámbitos declarados; el analista **candidato** (Sonnet) recibe dos encargos, un cambio normal y uno de dinero, **dos veces cada uno**. Se registra qué `Rigor:` escribe en cada corrida. El resultado va a `docs/PENDIENTES.md` y al árbol de evidencia, sin reparar nada.
+>
+> ## Presupuesto (calibrado sobre lo medido en 1.37 · 1: 171/261/170/171 k)
+> Analista ≈ 130 k (por debajo de lo medido; si el contrato corto no lo baja, se verá) · desarrollador ≈ 260 k · QA ≈ 170 k · seguridad ≈ 170 k · prueba de conducta ≈ 60 k · **total ≈ 790 k**. Aviso a 1,5× por rol.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Una sonda que no se sepa si es coste o veredicto; tocar `hooks/`; un veredicto del banco que cambie en un caso que ejecuta el código del cambio; un veto de seguridad; pasar de 1,5× en un rol; publicar.
+>
+> ## Límites
+> Nada de 1.37 · 3 a 5. Sólo §5 de `AGENTS.md` de este repositorio. Push: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
+
+**Decisión propuesta, lista para adoptar:** «Adopto P-137-R.» Si quieres al desarrollador en Sonnet en `ligero` y `estandar`, dilo al adoptar; la regla de arriba no lo nombra, y la coordinadora lo deja en Opus.
 
 ## Resueltas
 

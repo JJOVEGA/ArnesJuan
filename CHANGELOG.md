@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · Autorización de 1.37 · 2 (`P-137-R`) lista para adoptar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-R**, en `## Pendientes`, con los cuatro puntos del propietario: P-137-K en todo el banco, la regla del modelo por rol en §5 y en las definiciones, la prueba de conducta de 1.37 · 1 y los contratos cortos.
+- **Tres comprobaciones de la coordinadora** recogidas en la autorización:
+  - el plazo de la sección 47 (SEC-115) es un veredicto, no un coste;
+  - la cabecera `model:` admite un solo modelo, así que la regla por rigor la aplica quien despacha;
+  - la prueba de conducta tiene que usar la definición del analista **candidato**, no la instalada.
+- **Presupuesto ≈ 790 k**, sobre lo medido en 1.37 · 1.
+- Resultado: 1.37 · 2 espera la adopción.
+
 ## [GitHub] — 2026-10-21 · **1.37 · 1 CERRADA** (commit validado): REQ-034 `completado` por `Edit` juzgado en vivo; métrica por rol frente a 1.36.2
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
