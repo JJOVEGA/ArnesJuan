@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · REQ-036: `Archivos:` incluye las definiciones de desarrollador, QA y seguridad, que CA-14 exige (analista, Sonnet)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- La coordinadora vio el hueco al despachar la fase 1: cada definición tiene que leer lo suyo, y tres no estaban en el campo. Fila de Historial.
+- Resultado: el campo `Archivos:` queda completo para CA-14.
+
 ## [Interno] — 2026-10-21 · 1.37 · 4a, fase 0 cerrada: `P-137-X` (D) resuelta; REQ-036 `pendiente` (15 CA); fase 1 al desarrollador (Opus)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
