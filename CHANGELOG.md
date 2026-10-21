@@ -2,6 +2,20 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 3a hecho: el spike de la puerta posterior, medido y verificado (en su rama, sin publicar)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **Resultado:**
+  - 15 de 15 detectados y restaurados, 9 de ellos los deja pasar hoy v1.36.2 (SEC-135 a SEC-138, intérpretes, el proyecto sin manifiesto); 2 de 2 controles conservados;
+  - 0 falsos positivos en 6, más 1 en un cambio de rama, declarado;
+  - coste de +8 ms y +5 procesos en Pre y en Post;
+  - deny = restaurar.
+
+  La coordinadora repitió los 25 casos con la misma tabla. Rama en `1895261`; evidencia `1.37-3a-spike/` (`fc061de`).
+- **Lo que no resuelve:** la concurrencia, la foto falsificable, el estado borrable, el cambio de rama, el consumidor (`${CLAUDE_PLUGIN_ROOT}/hooks`) y Windows sin medir. **Estimación del 3b: ≈ 400–550 k**, más ≈ 100 k por vuelta.
+- **Coste:** 118 258 tokens (el informe decía ≈ 90 k), dentro de ≈ 150 k. Dos incidencias declaradas por el desarrollador en el scratchpad: un `sed -i` a un guion de prueba y un repositorio git creado por error y retirado.
+- Resultado: lo siguiente es 1.37 · 4, que necesita autorización.
+
 ## [Interno] — 2026-10-21 · Corrección: la rama del spike sale de `7e84a2c`, no de `a625c4f`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
