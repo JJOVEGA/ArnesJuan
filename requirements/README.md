@@ -170,7 +170,7 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 - La política sólo da `ligero` a lo que sin ella no sería `critico`, y no toca el suelo de abajo.
   **Todo cambio de la política que reduzca lo que alcanza un ámbito exige la firma del auditor**
   (ejemplos **no exhaustivos**: quitar o estrechar un glob, declarar `"ninguno"`). Vaciar un ámbito
-  a `[]` lo deja sin declarar y no rebaja nada. Es norma para quien lee, sin comprobación mecánica;
+  a `[]` lo deja sin declarar. Es norma para quien lee, sin comprobación mecánica;
   si el manifiesto no está en `codigo_app.globs`, cualquier agente puede editarlo.
   **Riesgo declarado (SEC-139): el ahorro del `ligero` descansa en el juicio del analista al
   clasificar.** Un REQ clasificado normal por error **cierra sin ninguna revisión de QA ni de

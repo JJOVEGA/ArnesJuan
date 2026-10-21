@@ -43,7 +43,29 @@
 
 ## Pendientes
 
-### P-137-Q — **REQ-034 `bloqueado`, como ordenaste: la tercera pasada no cerró por una frase falsa. ¿Se queda así o autorizas quitar esa frase?**
+_(Vacía desde el 2026-10-21: P-137-Q resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-Q (A)**, como excepción explícita y única: sólo borrar «y no rebaja nada» en los cuatro sitios; y una **regla nueva para la plantilla**: corregir borrando no es una pasada
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-Q (A), como excepción explícita y única a la regla de
+> «bloqueado sin más vueltas»: se autoriza sólo borrar «y no rebaja nada» en
+> los cuatro sitios, sin escribir texto nuevo. Comprobación de QA y firma de
+> seguridad. Si seguridad no firma, REQ-034 se queda bloqueado y la frase
+> queda borrada igualmente.
+>
+> Para la plantilla (regla nueva, no excepción): una corrección que SÓLO
+> borra texto introducido en la misma intervención, sin añadir nada, no
+> cuenta como pasada correctiva. Cualquier corrección que añada texto, sí.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **El borrado lo hace el analista**, porque el write-back de un hallazgo es suyo en este repositorio (`AGENTS.md` §9). Después, comprobación de QA y re-firma de seguridad. REQ-034 sigue `bloqueado` hasta la firma.
+- **La regla nueva para la plantilla es la ficha F-137-19** (`docs/PENDIENTES.md`). Cambia la norma de «Loop de error» que heredan los proyectos (`templates/AGENTS.md.tpl` §6), así que es cambio de contrato y **no** se escribe en esta intervención. Va con 1.37 · 4, adelgazamiento de `AGENTS.md`, salvo que el propietario la quiera antes. **No toca el `AGENTS.md` de este repositorio**, que no se edita.
+
+### P-137-Q (texto de la consulta, conservado; resuelta arriba) — **REQ-034 `bloqueado`, como ordenaste: la tercera pasada no cerró por una frase falsa. ¿Se queda así o autorizas quitar esa frase?**
 
 **Qué pasó.** La tercera pasada resolvió **SEC-139**, declarado como riesgo y ya `instrumento` para este REQ, y **SEC-140**, `mitigado`. QA aprobó sobre `bd48920`. Pero la re-firma de seguridad (adenda a R-061, 2026-10-21) deja **SEC-141 abierto** (`contrato`, baja) por una frase **que la propia pasada introdujo**: «Vaciar un ámbito a `[]` lo deja sin declarar y **no rebaja nada**». Es **falsa**. Sin declarar, rige la regla de antes, y un cambio de texto de `AGENTS.md` puede nacer `ligero`; con el ámbito arnés declarado, ese mismo cambio es `critico`. La frase exime de la firma del auditor justo esa palanca. **El error es de una premisa de R-061**, que el analista copió y QA no vio; el auditor lo corrige en su adenda.
 
@@ -63,8 +85,6 @@
 
 **Decisión propuesta, lista para adoptar** (si eliges A):
 > Adopto P-137-Q (A), como excepción a «sin más vueltas»: sólo borrar «y no rebaja nada» en los cuatro sitios, sin texto nuevo; QA comprueba y seguridad re-firma. Si no cierra, REQ-034 se queda bloqueado.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-P (A)**: tercera pasada, sólo texto, limitada a SEC-139, SEC-140 y SEC-141; SEC-139 se resuelve declarando el riesgo; ficha de puerta para la pieza b
 

@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1: `P-137-Q` (A) resuelta, como excepción única; «y no rebaja nada» **borrado** en los cuatro sitios (SEC-141); regla nueva para la plantilla en F-137-19
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-Q (A)**, literal en la cola. El analista borró «y no rebaja nada» en `REQ-034.md:84`, `requirements/README.md:173`, su gemela `:173` y el `_doc` de `templates/arnes-config.json.tpl:58`. Las citas de registro (REQ-034 l. 9 y 197) se conservan.
+- **Comprobado por la coordinadora:** el diff por palabras es sólo borrado, más la puntuación del corte, y la plantilla renderizada pasa `jq -e .`.
+- **F-137-19**, regla nueva del propietario para la plantilla: corregir sólo borrando texto de la misma intervención no cuenta como pasada correctiva. Va con 1.37 · 4 y no se escribe ahora.
+- **Coste:** analista 170 508 acumulados.
+- Resultado: falta la comprobación de QA y la re-firma; REQ-034 sigue `bloqueado` hasta la firma.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1: re-firma de seguridad **no concedida** (adenda a R-061: SEC-141 sigue abierto); **REQ-034 `bloqueado`** por la regla del propietario; `P-137-Q`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
 

@@ -2490,3 +2490,9 @@ ninguna mata al hook.»
 - **No atribuible al cambio:** `hooks/` es idéntico a v1.36.2 (0 bytes de diff), y la pasada sólo cambió texto de plantillas y requisitos. La sonda mide el coste de la puerta, que no cambió.
 - **Clase `instrumento`**, por P-136-E y por la regla de P-137-L («las sondas de reloj, `instrumento`»). **No se relanzó** para obtener un verde. P-137-K (A) no la alcanza porque está acotada a la sección 49, y su tratamiento va al **inventario de sondas de reloj de la pieza b** (P-137-O, 1 (A)).
 - **Dueños:** `desarrollador` (banco) con `qa-tester`.
+
+### F-137-19 — Plantilla, «Loop de error»: una corrección que **sólo borra** texto introducido en la misma intervención no cuenta como pasada correctiva (regla nueva del propietario, P-137-Q, 2026-10-21)
+- **Literal del propietario:** «Para la plantilla (regla nueva, no excepción): una corrección que SÓLO borra texto introducido en la misma intervención, sin añadir nada, no cuenta como pasada correctiva. Cualquier corrección que añada texto, sí.»
+- **Origen:** REQ-034, SEC-141. La tercera pasada introdujo una frase falsa, y quitarla exigió una excepción a «bloqueado sin más vueltas».
+- **Dónde va:** el contador de vueltas de `templates/AGENTS.md.tpl` §6, «Loop de error», y su sede de reglas 5. Es **cambio de contrato** y lleva analista y su ciclo. **Cuándo:** con 1.37 · 4 (adelgazamiento de `AGENTS.md`), salvo decisión del propietario. El `AGENTS.md` de este repositorio no se toca.
+- **Dueños:** `analista-requerimientos`, con `desarrollador` y `auditor-seguridad`. Ojo: es una regla que **relaja un contador**, y la sede advierte que no se reinicie por renombrar, así que el contrato tiene que acotar «sólo borra» y «en la misma intervención» de forma comprobable.
