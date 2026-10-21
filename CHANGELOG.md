@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: QA (Opus) **renueva `aprobado`** sobre `84f1bea` tras la pasada 2 (SEC-142); re-firma de seguridad pedida
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- La frase de P-137-T está en §5 (l. 98-100), y el diff de `AGENTS.md` desde `ca6eb53` queda entero en §5. CA-05 la exige y se cumple. Sin código nuevo desde `8f316f1`, así que reutiliza el banco 3005/0/14 y la autoprueba 117/0.
+- Resultado: falta la re-firma de seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 2 de 2: SEC-142, la regla de P-137-T escrita en `AGENTS.md` §5 y en CA-05 (**sin validar**)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Sonnet (analista), Opus (coordinadora) · agentes: `desarrollador`, `analista-requerimientos`, coordinadora.
 
