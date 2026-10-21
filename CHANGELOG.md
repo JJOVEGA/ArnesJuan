@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 1 cerrada (analista, Sonnet): C3 en (b), con la precisión de P-137-U en la regla del inventario; QA re-verifica
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **Inventario:** C3 en (b), y la regla dice, literal del propietario, que un juicio que ya distingue ruido de avería es (b) aunque use el reloj. La clase (a) queda en 19 casos en 11 sondas, y CA-04 fail-before sigue en (a). Fila de Historial en REQ-035.
+- Resultado: la pasada correctiva 1 (QA-035-01 y 02) cerrada sin cambios de código; QA en Opus, retomado.
+
 ## [Interno] — 2026-10-21 · `P-137-U` (A) resuelta: C3 se queda en (b), y la regla gana una precisión; modelo efectivo de REQ-035 recontado (desarrollador y QA, Opus en todos sus turnos)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
