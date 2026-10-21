@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · Decisiones del propietario tras 1.37 · 2 (QA-035-04, modelo efectivo, condiciones de coste de 1.37 · 3); spike de la pieza b (`P-137-V`) listo para adoptar
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **F-137-20:** QA-035-04 pasa a REQ-021, sonda de procesos; baja, sin fecha. **F-137-21:** el modelo efectivo de cada despacho de un REQ `critico` se registra en la evidencia y QA lo comprueba; en la pieza b, de forma mecánica si se puede.
+- **Para 1.37 · 3:**
+  - un spike de ≈ 150 k primero;
+  - la coordinadora decide sola lo que no cambia una protección, un alcance o un riesgo, y lo informa al cierre.
+- **P-137-V:** el spike vigila sólo `.arnes/config.json` y `hooks/`, con una lista fija, foto antes y después, y deny. Vive en su propia rama, sin entrar en `cand` ni instalarse, y por eso sin el ciclo de cuatro fases. Lo que salga entra después como REQ con su ciclo.
+- Resultado: 1.37 · 3 espera la adopción.
+
 ## [GitHub] — 2026-10-21 · **1.37 · 2 CERRADA** (commit validado): REQ-035 `completado` por `Edit` juzgado en vivo; métrica por rol frente a 1.37 · 1
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

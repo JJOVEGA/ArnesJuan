@@ -43,9 +43,68 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-U resuelta por el propietario, en § Resueltas.)_
+### P-137-V — **1.37 · 3, spike de la puerta posterior (≈ 150 k): autorización lista para adoptar**
+
+**Dos cosas que la coordinadora comprobó y que la autorización recoge:**
+1. **Un spike que no se publica no es un REQ.** Si el prototipo vive en una rama propia, **no entra en `cand/1.37.0`**, no se instala y no gobierna nada, entonces no lleva el ciclo de cuatro fases de `AGENTS.md` §6, que es para lo que llega a los proyectos. Así cabe en ≈ 150 k: un analista sólo para leer las reglas ya gasta ≈ 88 k (PC-034-1). Lo que salga del spike entra después como **REQ con su ciclo completo**, presupuestado con la cifra medida.
+2. **El requisito de la pieza b** (P-032-6 (2)): «la puerta posterior no puede depender sólo del manifiesto que vigila». Por eso el spike vigila una **lista fija** —`.arnes/config.json` y `hooks/`— que no lee del manifiesto.
+
+> ## Autorización — 1.37 · 3, spike de la puerta posterior
+>
+> ## Decisiones del propietario
+> - **Alcance, sólo esto:** un prototipo de puerta posterior que, alrededor de cada orden de `Bash`, toma una **foto** (huella) de `.arnes/config.json` y de `hooks/` **antes y después**, y **deniega** si cambió sin ser el agente de código. La lista es fija y no depende del manifiesto.
+> - **Qué mide** (contra v1.36.2 instalada):
+>   - detección, con éxito sobre intentos, en las formas que hoy escapan: SEC-135 (`cp … 2>/dev/null` a `hooks/`), SEC-136 (`rm hooks/x`), SEC-137 (`mv hooks …`), SEC-138 (vaciar el manifiesto) y la escritura por intérprete (`python3` a `hooks/`, la clase de PR-137-2);
+>   - falsos positivos en órdenes legítimas (`ls`, `git status`, escribir fuera de lo vigilado);
+>   - coste por orden, en ms y procesos;
+>   - **qué puede hacer de verdad un «deny» después de la orden**: bloquear, restaurar desde la foto o avisar. Esta respuesta es parte del resultado.
+> - **No entra en `cand/1.37.0`:** vive en la rama `spike/1.37-3-puerta-posterior` y se prueba con `ARNES_HOOKS_DIR` en proyectos efímeros. No se instala, no gobierna esta sesión y no se publica.
+>
+> ## Plan autorizado
+> Desarrollador (**Opus explícito**): prototipo, casos y medida, con un informe en `docs/arnes/v1.37.0-spike-puerta-posterior.md` en la rama del spike. La coordinadora verifica las cifras y te trae el resultado y el presupuesto del REQ de la pieza b.
+>
+> ## Presupuesto
+> **≈ 150 k en total**, con aviso a 1,5× (225 k).
+>
+> ## Cómo se decide
+> Lo que no cambie una protección, un alcance o un riesgo, lo decide la coordinadora sola y te lo informa al cierre.
+>
+> ## Cuándo paras y me preguntas (sólo esto)
+> Que el spike necesite tocar `cand/1.37.0` o la instalación estable; que una forma de vigilar cambie una protección vigente; pasar de 225 k; publicar.
+
+**Decisión propuesta, lista para adoptar:** «Adopto P-137-V.»
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **QA-035-04 a REQ-021**; el residual del modelo por defecto se cierra **por proceso**; **dos condiciones de coste para 1.37 · 3**
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> QA-035-04: ficha de REQ-021 (sonda de procesos), no de la pieza b; baja
+> prioridad, sin fecha.
+>
+> Residual del modelo por defecto: se mantiene sonnet en la cabecera (es el
+> ahorro para los proyectos), y se cierra por proceso: cada despacho de un
+> REQ crítico registra el modelo efectivo en la evidencia, y QA lo comprueba
+> antes de aprobar. Ficha para la puerta posterior: si es comprobable
+> mecánicamente, que lo sea.
+>
+> Antes de preparar 1.37 · 3: dame el resultado de la prueba de conducta
+> (qué Rigor: escribió el analista en cada una de las cuatro corridas) y por
+> qué costó 355k.
+>
+> Para 1.37 · 3, dos condiciones de coste:
+> - Empieza por un spike acotado (≈150k): la puerta posterior sólo sobre
+>   .arnes/config.json y hooks/, con foto antes/después y deny. Con esa cifra
+>   medida se presupuesta el resto.
+> - Menos paradas a mitad: lo que no cambie una protección, un alcance o un
+>   riesgo lo decide la coordinadora sola y me lo informa al cierre.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **QA-035-04 es F-137-20** (REQ-021, sonda de procesos; baja; sin fecha). Sale de la fila de la pieza b.
+- **El modelo efectivo, por proceso, es F-137-21.** Desde hoy, cada despacho de un REQ `critico` registra el modelo efectivo en su evidencia: el recuento de `"model"` en los turnos del asistente de su transcripción. QA lo comprueba antes de aprobar. Va también como ficha de la puerta posterior: que sea mecánico si se puede.
+- **La prueba de conducta** se respondió en el mensaje que acompaña esta entrada. Está en PC-034-1 y en el árbol de evidencia, `1.37-1-conducta/`.
+- **La autorización del spike de 1.37 · 3 es P-137-V**, en `## Pendientes`.
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-U (A)**: C3 se queda en (b); precisión a la regla del inventario; CA-04 fail-before en (a), sin cambios; QA re-verifica y entra seguridad
 

@@ -2515,3 +2515,12 @@ ninguna mata al hook.»
 - **Qué pasó (2026-10-21):** lo declaró él mismo en su informe («el archivo no es una ruta protegida»). Es cierto que `AGENTS.md` no está en `codigo_app.globs`, así que **ninguna puerta lo habría medido** con `Edit` tampoco. Pero `AGENTS.md` §13 manda las herramientas de edición para lo que una invariante protege, y el encargo lo pedía.
 - **Comprobado por la coordinadora:** el diff de `AGENTS.md` cae entero en §5 (l. 86–101, con §5 en 63–105 y §6 desde 106), como exige CA-05. El contenido no se revierte.
 - **Segunda vez** (PR-137-1 fue `hooks/lib.sh` en 1.36.2): instruir «con `Edit`» en el encargo no basta, porque el agente decide por su cuenta si la ruta «está protegida». **Dueño:** la coordinadora, en los encargos, con el analista para 1.37 · 4 (`AGENTS.md`, que la regla diga qué archivos van siempre por `Edit` aunque ninguna puerta los mire). **Destino decidido por el propietario (P-137-T, 2026-10-21):** a la ficha de 1.37 · 4, y como **caso de prueba de la puerta posterior** en 1.37 · 3.
+
+### F-137-20 — REQ-021, sonda de procesos: no cuenta las órdenes que no se resuelven por `PATH` (QA-035-04; baja; sin fecha)
+- **Medido por QA** (REQ-035, 2026-10-21): con `/bin/true` en el hook mide 5 frente a 5 y da PASS; con `cat` mide 6 frente a 5 y da FAIL. Un fork por ruta absoluta pasa la puerta de «0 procesos añadidos». Según seguridad (R-062), `./orden` y `"$BASH" -c` son de la misma clase, sin medir.
+- **Destino, decidido por el propietario (2026-10-21):** «ficha de REQ-021 (sonda de procesos), no de la pieza b; baja prioridad, sin fecha.» Clase `instrumento`. **Dueño:** `desarrollador`.
+
+### F-137-21 — El modelo efectivo de cada despacho se registra y QA lo comprueba; y, si se puede, mecánicamente (residual de REQ-035)
+- **Origen:** R-062. La cabecera del desarrollador es `sonnet`; si quien despacha olvida `model`, el agente corre en Sonnet y ninguna puerta lo mira.
+- **Decisión del propietario (2026-10-21), literal:** «se mantiene sonnet en la cabecera (es el ahorro para los proyectos), y se cierra por proceso: cada despacho de un REQ crítico registra el modelo efectivo en la evidencia, y QA lo comprueba antes de aprobar. Ficha para la puerta posterior: si es comprobable mecánicamente, que lo sea.»
+- **Cómo se registra hoy:** el recuento de `"model"` en los turnos `"role":"assistant"` de la transcripción del agente, en la evidencia de su comisión. **Dueños:** la coordinadora (registro) y `qa-tester` (comprobación); la parte mecánica, con la pieza b.
