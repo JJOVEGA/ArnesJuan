@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: textos de REQ-035 (CA-05, CA-06, CA-08 y CA-07 salvo una frase), desarrollador en Opus, **sin validar**; PR-137-2
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **`AGENTS.md` §5:** la tabla (analista Sonnet; desarrollador y QA, Sonnet y Opus en `critico`; seguridad Opus), y el bloque «QA corre con Opus…» sustituido por «Modelo por rol (P-137-R)». El diff queda dentro de §5, comprobado por la coordinadora. **`templates/AGENTS.md.tpl` §5**, la misma regla. **`model:`** `sonnet` en analista, desarrollador y QA, y `opus` en seguridad; «Quien despacha te sube a Opus en `critico`», en desarrollador y QA. **CA-08**, una viñeta en el analista.
+- **CA-07, una frase sin escribir:** pedía «sube a Opus» también en el analista, pero P-137-R dice «analista Sonnet siempre». Se corrige el CA con el analista cuando termine la comisión del banco, que también toca REQ-035.
+- **Techo de texto:** +4 059 B de 4 096 contra v1.36.2, a 37 B.
+- **PR-137-2:** `AGENTS.md` se editó con un script de Python y no con `Edit`. El diff es correcto y no se revierte.
+- **Coste:** 74 266 tokens (≈ 60 k presupuestados).
+- Resultado: los textos están, salvo la corrección de CA-07; el banco sigue en curso.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: write-back de P-137-S (analista, Sonnet): D2 en el inventario y D1 en CA-02 de REQ-035
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

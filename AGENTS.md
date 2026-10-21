@@ -83,22 +83,20 @@ aprueba cada fase.
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
-| `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |
-| `desarrollador` | Opus | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
-| `qa-tester` | **Opus** (sólo aquí; ver abajo) | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
+| `analista-requerimientos` | Sonnet | Levanta y documenta requerimientos en `requirements/` |
+| `desarrollador` | Sonnet; Opus en `critico` | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
+| `qa-tester` | Sonnet; Opus en `critico` | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
 | `auditor-seguridad` | Opus | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
 
 Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 
-> 🔒 **QA corre con Opus en el autoalojamiento (decisión del propietario, 2026-09-05).** Aquí el
-> `qa-tester` no valida una función de negocio: valida **el mecanismo que gobierna a todos los demás
-> proyectos**, e intenta romperlo. Se lanza con el modelo **Opus**, por encima del `sonnet` que
-> declara el agente.
->
-> **Cómo se aplica, y por qué así:** con el parámetro `model` de la herramienta `Agent` al despachar
-> el subagente, que tiene precedencia sobre el frontmatter. **No** se edita `agents/qa-tester.md` del
-> plugin: ese archivo lo heredan todos los proyectos que instalan el arnés, y esta decisión es de
-> este repositorio, no suya. Misma frontera que el resto de la política de autoalojamiento.
+> 🔒 **Modelo por rol (decisión del propietario, P-137-R, 2026-10-21).** Analista en Sonnet siempre;
+> desarrollador y QA en Sonnet en `ligero` y `estandar` y en Opus en `critico`; seguridad en Opus.
+> La cabecera `model:` de un agente declara un solo valor —el de defecto: Sonnet en analista,
+> desarrollador y QA; Opus en seguridad—, así que quien despacha pasa `model` a la herramienta
+> `Agent`, que tiene precedencia sobre la cabecera, y sube a Opus en `critico`. **En este
+> repositorio todo REQ es `critico`** por la política de autoalojamiento (§6): desarrollador, QA y
+> seguridad corren en Opus, y el analista en Sonnet.
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en

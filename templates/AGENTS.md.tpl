@@ -70,12 +70,12 @@ aprueba cada fase.
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
-| `analista-requerimientos` | Opus | Levanta y documenta requerimientos en `requirements/` |
-| `desarrollador` | Opus | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
-| `qa-tester` | Sonnet | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
+| `analista-requerimientos` | Sonnet | Levanta y documenta requerimientos en `requirements/` |
+| `desarrollador` | Sonnet; Opus en `critico` | Codifica los requerimientos + documentación **técnica**, dueño de `ARCHITECTURE.md` (vista de sistema e integración) |
+| `qa-tester` | Sonnet; Opus en `critico` | Prueba el trabajo del desarrollador, corre quality gates, escribe documentación de **usuario final** |
 | `auditor-seguridad` | Opus | Revisa seguridad y gobernanza; mantiene `docs/seguridad/`; puede vetar |
 
-Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
+Modelo por rol: analista en Sonnet siempre; desarrollador y QA en Sonnet en `ligero` y `estandar` y en Opus en `critico`; seguridad en Opus. La cabecera `model:` lleva un solo valor, el de defecto: quien despacha pasa `model` y sube a Opus en `critico`. Ajustable por proyecto.
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
