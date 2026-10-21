@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 2 de 2: SEC-142, la regla de P-137-T escrita en `AGENTS.md` §5 y en CA-05 (**sin validar**)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Sonnet (analista), Opus (coordinadora) · agentes: `desarrollador`, `analista-requerimientos`, coordinadora.
+
+- **`AGENTS.md` §5**, con `Edit` (comprobado en la transcripción): «en este repositorio el desarrollador y QA se despachan siempre con `model: opus` explícito, sea cual sea el rigor y aunque el encargo no tenga REQ (P-137-T)». Un solo trozo de diff, en la l. 99, dentro de §5 (que termina en la 107). La plantilla no cambia.
+- **REQ-035:** CA-05 lo exige; fila `cubierta` en la Correspondencia; Historial.
+- Resultado: última pasada del tope; faltan la comprobación de QA y la re-firma de seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 3: seguridad (Opus) **con hallazgos, sin veto** (R-062): SEC-142 (`contrato`, §5 no escribe P-137-T) y SEC-143 (`instrumento`); pasada correctiva 2 de 2
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
 

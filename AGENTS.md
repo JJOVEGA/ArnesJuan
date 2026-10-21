@@ -96,7 +96,9 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 > desarrollador y QA; Opus en seguridad—, así que quien despacha pasa `model` a la herramienta
 > `Agent`, que tiene precedencia sobre la cabecera, y sube a Opus en `critico`. **En este
 > repositorio todo REQ es `critico`** por la política de autoalojamiento (§6): desarrollador, QA y
-> seguridad corren en Opus, y el analista en Sonnet.
+> seguridad corren en Opus, y el analista en Sonnet. **Y no depende del rigor:** en este repositorio
+> el desarrollador y QA se despachan siempre con `model: opus` explícito, sea cual sea el rigor y
+> aunque el encargo no tenga REQ (P-137-T, 2026-10-21).
 
 > Documentación distribuida (no hay 5º agente "documentador"): cada agente documenta su
 > rebanada con el contexto vivo, y el `desarrollador` consolida la vista de arquitectura en
