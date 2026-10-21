@@ -12,8 +12,8 @@
 # están escritos una sola vez, en `38-sondas-compartidas-1-el-registro.sh`. `num38` viene
 # duplicado de allí: CA-04, CA-19 y H-04 de REQ-014 hacen imposible factorizarlo, y una
 # línea copiada cuesta menos que una puerta trasera entre secciones.
-CASOS_ESPERADOS_SECCION=13
-PISO_AUTONOMO_SECCION=98  # 20 preámbulo (líneas 1-20, con num38) + 6 maquinaria compartida duplicada (las lecturas de la calibración y los testigos de esta corrida, líneas 27-32) + 72 bloque indivisible mayor (CA-08 (iii): iii38, las dos mediciones de referencia y sus dos casos, líneas 256-327) · REQ-014 CA-18
+CASOS_ESPERADOS_SECCION=14  # 13 → 14 por REQ-035 CA-02: la calibración del reloj fuera de banda
+PISO_AUTONOMO_SECCION=102  # 20 preámbulo (líneas 1-20, con num38) + 6 maquinaria compartida duplicada (las lecturas de la calibración y los testigos de esta corrida, líneas 27-32) + 76 bloque indivisible mayor (CA-08 (iii): iii38, las dos mediciones de referencia y sus dos casos, líneas 256-331) · REQ-014 CA-18
 seccion_nueva "--- 38/2 · los instrumentos de tests/util/: la calibración y su procedencia (REQ-021 CA-03 y CA-08 (iii)) ---"
 
 num38() { case "${1:-}" in ''|*[!0-9]*) return 1 ;; esac; return 0; }
@@ -297,8 +297,12 @@ iii38() {   # <nombre> <instrumento> <registro de la medición de referencia>
     echo "  SKIP  $nombre  el denominador en procesos es cero: 0 sobre $cpr no es una razón"; return 0
   fi
   rp=$(( cpr * 1000 / mpr ))
+  # P-137-K (REQ-035 CA-02): la mitad en RELOJ que pasa el techo es coste, clase (a), y dice
+  # INCONCLUSO; la mitad en PROCESOS no mide tiempo, es clase (b) y sigue en FAIL —y manda—.
   if [ "$rr" -le "$TECHO38" ] && [ "$rp" -le "$TECHO38" ]; then
     echo "  PASS  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr), techo 6,000×"; PASS=$((PASS+1))
+  elif [ "$rp" -le "$TECHO38" ]; then
+    echo "  SKIP  $nombre  [INCONCLUSO] [rendimiento] pasa su techo operativo en reloj: $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) contra 6,000×, con procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr) dentro; el coste no es FAIL (P-137-K)"
   else
     echo "  FAIL  $nombre  reloj $(awk -v c=$rr 'BEGIN{printf "%.3f", c/1000}')× (${cus}µs sobre ${mus}µs) y procesos $(awk -v c=$rp 'BEGIN{printf "%.3f", c/1000}')× ($cpr sobre $mpr) contra el techo 6,000×"; FAIL=$((FAIL+1))
   fi
@@ -325,3 +329,37 @@ if num38 "${npro38:-}"; then
     --sujeto "for ((SP_REF_I = 0; SP_REF_I < $npro38; SP_REF_I++)); do grep -q x /dev/null || :; done" 2>/dev/null)"
 fi
 iii38 "REQ-021 CA-08 (iii) calibrar sonda-procesos.sh no cuesta más de 6× una medición suya con los MISMOS mandos" procesos "$mpro38"
+
+# ---------- REQ-035 CA-02 · LA CALIBRACIÓN DEL RELOJ FUERA DE BANDA ES INCONCLUSO ----------
+# P-137-R: la calibración de `sonda-reloj.sh` es clase (a) aunque falle por salir de su banda;
+# la de `sonda-procesos.sh` no mide tiempo y es (b), y cualquier otro motivo del reloj —aquí,
+# descendencia viva o ningún registro— sigue en FAIL. Se juzga con `sonda_juzga_calibracion`
+# REAL sobre los registros de ESTA corrida con UN campo cambiado, en un `RAIZ` propio: el primer
+# vector es el `a = 2582` de INS-034-2. Ningún vector depende de que la calibración real de esta
+# corrida haya salido en banda. FAIL-BEFORE: con el corredor de ca6eb53 los dos primeros salen FAIL.
+nom38="REQ-035 CA-02 la calibración del RELOJ fuera de banda es INCONCLUSO; la de procesos fuera de banda, la del reloj con descendencia viva y la que no dejó registro siguen en FAIL"
+if [ -z "$FILTRO" ] || printf '%s' "$nom38" | grep -qi -- "$FILTRO"; then
+  sus38() {   # <registro> <campo> <valor> -> el registro con ese campo cambiado, o nada
+    if [[ " $1 " =~ ^(.*\ $2=)[0-9]+(\ .*)$ ]]; then local r="${BASH_REMATCH[1]}$3${BASH_REMATCH[2]}"; r="${r# }"; printf '%s' "${r% }"; fi
+  }
+  cj38() {    # <instrumento> <registro, vacío = sin archivo> -> la clase de la salida
+    local d="$RAIZ/cal35-$BASHPID"; rm -rf "$d"; mkdir -p "$d"
+    [ -z "$2" ] || printf '%s\n' "$2" > "$d/cal-$1"
+    ( FILTRO=''; RAIZ="$d"; sonda_juzga_calibracion caso38 "$1" ) 2>&1 \
+      | sed -nE 's/^  SKIP  caso38  \[INCONCLUSO\] \[rendimiento\] .*/INCONCLUSO/p; t; s/^  (PASS|FAIL|SKIP)  caso38  .*/\1/p' | tr '\n' ' '
+    rm -rf "$d"
+  }
+  v1_38="$(sus38 "$CALREL38" cal_a 2582)"; v2_38="$(sus38 "$CALREL38" cal_b 1300)"
+  v3_38="$(sus38 "$CALPRO38" cal_a 2582)"; v4_38="$(sus38 "$(sus38 "$CALREL38" cal_a 2000)" vivos 2)"
+  if [ -z "$v1_38" ] || [ -z "$v2_38" ] || [ -z "$v3_38" ] || [ -z "$v4_38" ]; then
+    echo "  FAIL  $nom38  no se pudieron construir los registros desde la calibración de esta corrida (reloj=<${CALREL38:0:60}> procesos=<${CALPRO38:0:60}>)"; FAIL=$((FAIL+1))
+  else
+    obs38="$(cj38 reloj "$v1_38")$(cj38 reloj "$v2_38")$(cj38 procesos "$v3_38")$(cj38 reloj "$v4_38")$(cj38 reloj '')"
+    esp38='INCONCLUSO INCONCLUSO FAIL FAIL FAIL '
+    if [ "$obs38" = "$esp38" ]; then
+      echo "  PASS  $nom38  (reloj a=2582, reloj b=1300, procesos a=2582, reloj con vivos=2, sin registro → $obs38)"; PASS=$((PASS+1))
+    else
+      echo "  FAIL  $nom38  se esperaba <$esp38> y se obtuvo <$obs38>"; FAIL=$((FAIL+1))
+    fi
+  fi
+fi

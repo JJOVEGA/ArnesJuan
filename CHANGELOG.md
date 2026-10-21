@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 1 (desarrollador, Opus): el banco de REQ-035 hecho (**sin validar**); parada de CA-02 en `P-137-S`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **Banco:**
+  - `cronometra_bash` partido (DESBOCADO → INCONCLUSO; 124 y veredicto en FAIL);
+  - `coste_inconcluso`, y la calibración del reloj por banda;
+  - 34, 37/2-5 y 38/2;
+  - 3 casos nuevos, y `CASOS_ESPERADOS` de 3016 a 3019.
+
+  Los jueces no se tocan: la traducción va donde se llama al caso real, así que `esp09_37` y 37/6 quedan iguales. El fail-before contra `ca6eb53` está hecho, y los controles (b) siguen en FAIL. `hooks/` y `tools/` tienen 0 bytes de diff, comprobado por la coordinadora. Banco 3004/1/14 y autoprueba 117/0; la guarda final de `coste_inconcluso` se hizo después de la corrida completa.
+- **Parada (P-137-S):**
+  - **D1:** REQ-021 CA-10 y CA-10.2, de clase (b), leen la calibración real del reloj.
+  - **D2:** REQ-021 CA-03 (c) y REQ-017 CA-04 fail-before son sondas de reloj que faltaban en el inventario; la primera es el único FAIL.
+- **Coste:** desarrollador 256 486 (el informe decía ≈ 175 k).
+- Resultado: el banco casi hecho; faltan la decisión del propietario y los textos.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 0 (analista, Sonnet): REQ-035 `pendiente` (8 CA) e inventario de sondas de reloj; fase 1 al desarrollador (Opus)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

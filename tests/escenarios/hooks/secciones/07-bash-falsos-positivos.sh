@@ -2,7 +2,7 @@
 # Se ejecuta con `source` desde el corredor (`../run.sh`), en su propio subshell y con
 # los ayudantes compartidos ya definidos. No se ejecuta suelto y no hace `source` de
 # ninguna otra sección (invariantes 3 y 4 del README del banco).
-CASOS_ESPERADOS_SECCION=49
+CASOS_ESPERADOS_SECCION=50  # 49 → 50 por REQ-035 CA-02/CA-03: cronometra_bash partido por su salida, con hooks falsos
 PISO_AUTONOMO_SECCION=74  # 8 preámbulo + 0 maquinaria compartida duplicada + 66 bloque indivisible mayor · REQ-014 CA-18
 
   seccion_nueva "Bash — lo que NO debe denegar (falsos positivos):"
@@ -195,6 +195,39 @@ cronometra_bash "QA v2: control, la misma escritura sin el cuerpo delante -> den
 
 check "coordinadora: redirige un log fuera de los globs -> allow" allow guard-codigo.sh "$(emite_bash 'npm run build > /tmp/build.log 2>&1' "" "")"
 check "qa-tester escribe en tests/ (no es código de app) -> allow" allow guard-codigo.sh "$(emite_bash 'echo x > tests/a.test.ts' "a11" "arnes-juan:qa-tester")"
+
+# REQ-035 CA-02 y CA-03 (P-137-K): `cronometra_bash` SE PARTE POR SU SALIDA, y aquí se prueba con
+# hooks FALSOS —no los del árbol— para que cada salida se recorra en cada corrida y no sólo el
+# día en que una máquina cargada la provoca. DESBOCADO es coste, clase (a): INCONCLUSO. Un hook
+# que NO RESPONDE (124) y un veredicto equivocado son clase (b): FAIL. El hook mudo se prueba
+# esperando `allow`, que es donde un hook muerto pasaba por bueno; y el lento que además PERMITE,
+# porque el veredicto se juzga antes que el reloj. FAIL-BEFORE: con el corredor de ca6eb53 el
+# lento sale FAIL DESBOCADO en vez de INCONCLUSO. Holgura e intentos FIJOS: el entorno no los mueve.
+nom07="REQ-035 CA-02 y CA-03 cronometra_bash se parte por su salida: DESBOCADO es INCONCLUSO; no responder y el veredicto equivocado siguen en FAIL"
+if [ -z "$FILTRO" ] || printf '%s' "$nom07" | grep -qi -- "$FILTRO"; then
+  fal07="$RAIZ/falsos07-$BASHPID"
+  for k07 in rapido lento mudo permite lento-permite; do mkdir -p "$fal07/$k07"; done
+  d07='{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision": "deny"}}'
+  printf 'printf "%%s" %q\n' "$d07"          > "$fal07/rapido/guard-codigo.sh"
+  printf 'sleep 1\nprintf "%%s" %q\n' "$d07" > "$fal07/lento/guard-codigo.sh"
+  printf 'exec sleep 30\n'                   > "$fal07/mudo/guard-codigo.sh"
+  printf 'exit 0\n'                          > "$fal07/permite/guard-codigo.sh"
+  printf 'sleep 1\nexit 0\n'                 > "$fal07/lento-permite/guard-codigo.sh"
+  j07="$(emite_bash 'echo x > src/a.ts' "" "")"
+  c07() {   # <hook falso> <esperado> -> la clase de la salida de cronometra_bash, con presupuesto 200 ms
+    ( FILTRO=''; HOOKS_DIR="$fal07/$1"; CRONO_HOLGURA=4; CRONO_INTENTOS=3; cronometra_bash caso07 "$2" 200 "$j07" ) 2>&1 \
+      | sed -nE 's/^  PASS  caso07  .*/PASS/p; s/^  FAIL  caso07  NO RESPONDIO .*/FAIL-124/p; s/^  FAIL  caso07  esperado=.*/FAIL-VEREDICTO/p; s/^  FAIL  caso07  DESBOCADO.*/FAIL-DESBOCADO/p; s/^  SKIP  caso07  \[INCONCLUSO\] \[rendimiento\] DESBOCADO.*/INCONCLUSO/p; s/^  (PASS|FAIL|SKIP)  .*/OTRA/p' \
+      | tr '\n' ' '
+  }
+  obs07="$(c07 rapido deny)$(c07 lento deny)$(c07 mudo allow)$(c07 permite deny)$(c07 lento-permite deny)"
+  esp07='PASS INCONCLUSO FAIL-124 FAIL-VEREDICTO FAIL-VEREDICTO '
+  if [ "$obs07" = "$esp07" ]; then
+    echo "  PASS  $nom07  (rápido, lento, mudo, permite, lento que permite → $obs07)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom07  se esperaba <$esp07> y se obtuvo <$obs07>"; FAIL=$((FAIL+1))
+  fi
+  rm -rf "$fal07"
+fi
 
 # --- Clase del hallazgo: la unica puerta que existe para DEJAR PASAR ------------
 # Un defecto del propio arnes no puede impedir cerrar una funcion de negocio.

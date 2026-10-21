@@ -287,6 +287,14 @@ check() {
 #      Reintentar no cuesta nada en el camino feliz: solo se repite si la primera medida
 #      se paso del techo holgado.
 # El numero medido se imprime siempre: el banco sigue sirviendo de medicion.
+#
+# P-137-K (REQ-035 CA-02 y CA-03): EL HELPER SE PARTE POR SU SALIDA, y cada mitad conserva
+# su clase (`docs/arnes/v1.37.0-inventario-sondas-reloj.md`, sede única). La 2) —no
+# responder, 124— y la 1) —el veredicto— son clase (b) y siguen dando FAIL: un plazo que
+# pasara a INCONCLUSO dejaría de ver un hook que el cliente mata sin denegar (SEC-115). La
+# 3) —DESBOCADO, la mejor medida por encima del techo holgado— es COSTE, clase (a): dice
+# `SKIP [INCONCLUSO] [rendimiento]` y no suma FAIL. El techo no se toca; sólo cambia qué
+# veredicto da superarlo.
 CRONO_HOLGURA="${ARNES_CRONO_HOLGURA:-4}"
 CRONO_INTENTOS="${ARNES_CRONO_INTENTOS:-3}"
 
@@ -327,7 +335,28 @@ cronometra_bash() {   # <nombre> <esperado:deny|allow> <presupuesto_ms> <json>
     [ "$intento" -lt "$CRONO_INTENTOS" ] || break
     intento=$(( intento + 1 ))
   done
-  echo "  FAIL  $nombre  DESBOCADO: veredicto $got correcto, pero ${mejor}ms en la mejor de $CRONO_INTENTOS medidas (presupuesto ${presu}ms, techo holgado ${holgado}ms)"; diag; FAIL=$((FAIL+1))
+  echo "  SKIP  $nombre  [INCONCLUSO] [rendimiento] DESBOCADO: veredicto $got correcto, pero ${mejor}ms en la mejor de $CRONO_INTENTOS medidas (presupuesto ${presu}ms, techo holgado ${holgado}ms): pasa su techo operativo y el coste no es FAIL (P-137-K); el plazo de ${secs}s sí lo es"; diag
+}
+
+# coste_inconcluso <salida de UN juez de una sonda de CLASE (a)> — P-137-K (REQ-035 CA-02).
+# Los jueces de coste (`sonda_juez_duplicacion`, `sonda_juez_razon` y los locales de 37/2,
+# 37/3 y 37/4) siguen diciendo FAIL cuando la magnitud medida pasa su techo, y así los prueban
+# sus vectores fijos y los controles de 37/7 —para los que ese FAIL es DETECCIÓN, clase (b)—.
+# La traducción se hace AQUÍ, en el sitio de llamada del caso real de clase (a), y no dentro
+# del juez: cambiar el juez habría vuelto INCONCLUSO el FAIL que el control WD necesita ver.
+# Sólo traduce UNA línea `  FAIL  <nombre>  <evidencia>`; un PASS, un SKIP, una salida vacía
+# o de varias líneas salen tal cual, de modo que lo que no reconoce sigue en rojo.
+coste_inconcluso() {
+  local sal="${1-}" resto nom ev=''
+  [ -n "$sal" ] || return 0   # guarda de vacío (invariante 1): sin salida del juez no hay caso que traducir
+  case "$sal" in
+    *$'\n'*) printf '%s\n' "$sal"; return 0 ;;
+    "  FAIL  "?*) ;;
+    *) printf '%s\n' "$sal"; return 0 ;;
+  esac
+  resto="${sal#  FAIL  }"; nom="${resto%%  *}"
+  [ "$nom" = "$resto" ] || ev="${resto#*  }"
+  printf '  SKIP  %s  [INCONCLUSO] [rendimiento] pasa su techo operativo y el coste no es FAIL (P-137-K): %s\n' "$nom" "${ev:-sin evidencia}"
 }
 
 # check_motivo <nombre> <regex> <script> <json> — exige deny Y que el motivo lo explique.
@@ -996,10 +1025,13 @@ sonda_disc_prepara() {
 # calibración de ESTA corrida para ese instrumento NO sirve. Es lo que convierte «una vez
 # por corrida» en algo verificable: la calibración y las mediciones comparten el
 # identificador de corrida (CA-03 punto 5).
-SONDA_CAL_MOTIVO=''
+# SONDA_CAL_CLASE dice `banda` SÓLO cuando lo que falla es que un factor medido sale de su
+# banda —la única forma de clase (a) de la calibración (P-137-R, inventario)—; cualquier otro
+# motivo la deja vacía y sigue siendo FAIL. Lo lee `sonda_juzga_calibracion` y nadie más.
+SONDA_CAL_MOTIVO=''; SONDA_CAL_CLASE=''
 sonda_calibracion_falla() {   # <instrumento> [<registro> <terna del testigo>]
   local inst="${1:-}" reg="${2-}" terna="${3-}" archivo banda amin amax bmin bmax a b
-  SONDA_CAL_MOTIVO=''
+  SONDA_CAL_MOTIVO=''; SONDA_CAL_CLASE=''
   # Sin registro explícito se leen los de ESTA corrida. Con registro explícito se puede
   # juzgar una COPIA —lo que el residual de `tests/util/` exige: mutar la sonda en una copia
   # y comprobar que el juez REAL no la deja pasar (`ARNES_UTIL_DIR`, sin tocar el árbol)—.
@@ -1034,7 +1066,7 @@ sonda_calibracion_falla() {   # <instrumento> [<registro> <terna del testigo>]
   read -r amin amax bmin bmax <<< "$banda"
   if [ "$a" -lt "$amin" ] || [ "$a" -gt "$amax" ] || [ "$b" -lt "$bmin" ] || [ "$b" -gt "$bmax" ] || [ "$a" -le "$b" ]; then
     SONDA_CAL_MOTIVO="la calibración de '$inst' NO distingue el sujeto sensible del insensible: a=$a b=$b (banda a [$amin,$amax] · b [$bmin,$bmax], en milésimas)"
-    return 0
+    SONDA_CAL_CLASE=banda; return 0
   fi
   # …y la MITAD DISCORDANTE (a.2): el par en banda dice «los factores salen»; la discordante
   # dice «y salen de OBSERVAR el sujeto». Sin ella, la calibración de una sonda tautológica
@@ -1111,6 +1143,12 @@ sonda_juzga_calibracion() {
     echo "  FAIL  $nombre  la calibración de '$inst' no dejó registro: un instrumento que no se ejecuta produce el mismo silencio que uno que miente"; FAIL=$((FAIL+1)); return 0
   fi
   if sonda_calibracion_falla "$inst"; then
+    # P-137-R (REQ-035 CA-02): la calibración del RELOJ que sale de su banda es clase (a) —un
+    # factor medido con reloj fuera de banda, INS-034-2— y no pone el banco en rojo. La de
+    # `procesos` no mide tiempo y sigue en FAIL, igual que cualquier otro motivo del reloj.
+    if [ "$inst" = reloj ] && [ "$SONDA_CAL_CLASE" = banda ]; then
+      echo "  SKIP  $nombre  [INCONCLUSO] [rendimiento] sale de su banda operativa y la calibración del reloj no es FAIL (P-137-R): $SONDA_CAL_MOTIVO"; return 0
+    fi
     echo "  FAIL  $nombre  $SONDA_CAL_MOTIVO"; FAIL=$((FAIL+1)); return 0
   fi
   sonda_lee "$reg"
@@ -1719,7 +1757,12 @@ done
 # sección 49 que pasan su techo dicen SKIP `[INCONCLUSO] [rendimiento]` en vez de FAIL: no cambia ningún número.
 # Y 3014 → 3016 por la pasada correctiva 1 de REQ-034 (F-137-17): +2 en la 50 (54 → 56), el fixture del manifiesto de
 # 0 bytes, que la orden debe informar sin tocar, en la candidata y en v1.36.2.
-CASOS_ESPERADOS=3016
+# Y 3016 → 3019 por REQ-035 (1.37 · 2, P-137-K en todas las sondas del inventario): +1 en la 07 (49 → 50),
+# `cronometra_bash` partido por su salida con hooks falsos; +1 en la 37/5 (7 → 8), el traductor de coste
+# `coste_inconcluso` sobre vectores fijos; y +1 en la 38/2 (13 → 14), la calibración del reloj fuera de
+# banda. Los casos de clase (a) que pasan su techo dicen SKIP `[INCONCLUSO] [rendimiento]` en vez de FAIL:
+# no cambia ningún número por eso.
+CASOS_ESPERADOS=3019
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

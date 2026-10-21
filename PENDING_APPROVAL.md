@@ -43,7 +43,34 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-R adoptada por el propietario, en § Resueltas.)_
+### P-137-S — **REQ-035: el desarrollador paró en tu parada.** Dos casos de veredicto dependen del reloj real, y dos sondas de reloj faltaban en el inventario
+
+**Qué pasó.** El banco está hecho, **sin validar**:
+- 17 casos de clase (a) pasan a INCONCLUSO, con fail-before contra `ca6eb53`.
+- Los controles de clase (b) siguen en FAIL, idénticos en los dos árboles: un hook que no responde (07, 08, 25 y los 8 plazos de la 47), un proceso añadido y un `deny` que pasa a `allow`.
+- `hooks/` y `tools/` tienen 0 bytes de diff.
+- Banco 3004 PASS, 1 FAIL, 14 SKIP (3019); autoprueba 117/0.
+
+Los textos (CA-05 a CA-08) **no** se han hecho, porque mandaste el banco primero. REQ-035 está `bloqueado` (B-035-1).
+
+**D1 — tu parada («una sonda que no se sepa si es coste o veredicto»).** `REQ-021 CA-10` y `CA-10.2` (`38-…-3-la-descendencia.sh`) son **lógica del juez**, clase (b). Pero no le dan al juez un registro fijo: leen la **calibración real del reloj de la corrida**. Con la máquina cargada, la calibración se sale de su banda y estos dos casos dan **FAIL en los dos árboles**. El desarrollador lo reprodujo; es INS-034-2.
+- **(A) — recomendada:** **desacoplarlos**. Se les da un registro de calibración **fijo**, en vez del de la corrida. Siguen siendo (b), comprueban la misma lógica del juez y dejan de depender de la carga. Se acredita con una **mutación del juez**, que tiene que seguir dando FAIL. *Consecuencia:* ≈ 20–30 k del desarrollador. No es «cambiar el caso para que pase»: lo que cambia es la entrada, y la propiedad probada es la misma.
+- **(B):** cuando la calibración real que leen está fuera de banda, **heredan el INCONCLUSO**. *Consecuencia:* es más barato, pero la lógica del juez deja de probarse justo cuando la máquina va cargada.
+- **(C):** dejarlos así. *Consecuencia:* el CI puede salir rojo por carga.
+
+**D2 — dos sondas con reloj que el inventario no recoge** (CA-01):
+- `REQ-021 CA-03 (c)` (38/2) compara microsegundos medidos contra `suelo × (margen − 1)`. Es **el único FAIL** del banco, y también falla en `ca6eb53` con carga.
+- `REQ-017 CA-04 fail-before` (37/2) mide con reloj.
+
+Por la regla del inventario («una magnitud medida con reloj que supera un techo o sale de su banda»), las dos son **(a)**.
+- **Recomendación:** que el analista las añada al inventario como (a), y el desarrollador las pase por el mismo traductor. *Consecuencia:* el banco puede llegar a 0 FAIL (CA-04).
+
+**Qué detiene, y qué no.** Detiene el banco de REQ-035, y por tanto **cerrar** REQ-035. Los textos de CA-05 a CA-08 no dependen de esto. Tu orden fue «primero el banco», así que **esperan** a que decidas, salvo que digas otra cosa.
+
+**Coste hasta aquí (REQ-035):** analista 144 102 (presupuesto ≈ 130 k) · desarrollador **256 486** (presupuesto ≈ 260 k; su informe decía ≈ 175 k), con los textos y la pasada de D1/D2 todavía por hacer. Previsión del desarrollador: ≈ 320–340 k, **1,25–1,3×**, por debajo del aviso de 1,5× (390 k).
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-S: D1 (A), CA-10 y CA-10.2 con un registro de calibración fijo, acreditado con una mutación del juez; D2, las dos sondas al inventario como (a). Después, los textos de CA-05 a CA-08.
 
 ## Resueltas
 

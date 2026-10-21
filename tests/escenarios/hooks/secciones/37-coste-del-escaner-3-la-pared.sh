@@ -253,7 +253,7 @@ if [ -z "$FILTRO" ] || printf '%s' "$nom09_37" | grep -qi -- "$FILTRO"; then
   h1_37="$sinher09_37"; [ "$HER37_OK" != si ] || h1_37="$(pared37 "$HER37/hooks")" || true
   e2_37="$(pared37 "$HOOKS_DIR")" || true
   h2_37="$sinher09_37"; [ "$HER37_OK" != si ] || h2_37="$(pared37 "$HER37/hooks")" || true
-  dir09_37 "$nom09_37" "$e1_37" "$e2_37" "$h1_37" "$h2_37"
+  coste_inconcluso "$(dir09_37 "$nom09_37" "$e1_37" "$e2_37" "$h1_37" "$h2_37")"   # clase (a): P-137-K, REQ-035 CA-02
 fi
 
 # La DECISIÓN de arriba, con entradas sintéticas y en milisegundos. Sin esto, la única

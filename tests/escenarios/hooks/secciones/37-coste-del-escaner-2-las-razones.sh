@@ -238,7 +238,7 @@ fi
 nom37="REQ-017 CA-03 el escáner no crece más que linealmente: doblar la línea no cuadruplica"
 if [ -z "$FILTRO" ] || printf '%s' "$nom37" | grep -qi -- "$FILTRO"; then
   sal37="$(sonda_juez_duplicacion "$nom37" 2600 "$PARES37_ESTE" "$PARES37_HER" "$SINBASE37")"
-  printf '%s%s\n' "$sal37" "${NOMIDIO37:+ · la sonda no midió: $NOMIDIO37}"
+  coste_inconcluso "$sal37${NOMIDIO37:+ · la sonda no midió: $NOMIDIO37}"   # clase (a): P-137-K, REQ-035 CA-02
 fi
 
 # ---------- C3 · EL INSTRUMENTO QUE DECIDE CA-03 VE EL ÁRBOL CUADRÁTICO (REQ-030 CA-07 (g)) ----------
@@ -283,8 +283,8 @@ fi
 c37=''; b37=''
 mide37 "$LIB37" arnes_campo_linea 140000 10 && c37="$MED37_US"
 [ "$BAS37_OK" = si ] && { mide37 "$BAS37/hooks/lib.sh" arnes_norm_clave 140000 10 && b37="$MED37_US"; }
-razon37 "REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)" \
-  "$c37" "$b37" 2000 "razón contra v1.32.0"
+coste_inconcluso "$(razon37 "REQ-017 CA-04 el camino de campo no cuesta más de 2× lo que costaba en v1.32.0 (140 000 bytes sin CR)" \
+  "$c37" "$b37" 2000 "razón contra v1.32.0")"   # clase (a): P-137-K, REQ-035 CA-02
 
 # FAIL-BEFORE de CA-04, con k=2: el árbol enfermo se pasa de 2× por goleada.
 ch37=''; cb37=''

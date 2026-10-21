@@ -374,7 +374,7 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-05 reloj" | grep -qi -- "$FILTRO"
   if [ -z "$u_este47" ]; then
     echo "  SKIP  $nom47  ${motivo47:-no se pudo medir}"
   else
-    veredicto47 "$nom47" "$rc_her47" "$ut_her47" "$plazo47" "$u_este47" "$OUT_HER47" "$TRAB47"
+    coste_inconcluso "$(veredicto47 "$nom47" "$rc_her47" "$ut_her47" "$plazo47" "$u_este47" "$OUT_HER47" "$TRAB47")"   # clase (a): P-137-K
   fi
 fi
 if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-05 inventario" | grep -qi -- "$FILTRO"; then

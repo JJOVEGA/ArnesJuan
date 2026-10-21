@@ -14,7 +14,7 @@
 # PARTE 5 DE 5 POR REQ-014 CA-18: `mat47` viene DUPLICADO de
 # `37-coste-del-escaner-4-la-ruta-critica.sh`, donde está escrito su motivo largo, porque
 # CA-08 necesita el árbol heredado y CA-04 + CA-19 + H-04 hacen imposible factorizarlo.
-CASOS_ESPERADOS_SECCION=7
+CASOS_ESPERADOS_SECCION=8  # 7 → 8 por REQ-035 CA-02: el traductor de coste sobre vectores fijos
 PISO_AUTONOMO_SECCION=266  # 22 preámbulo (líneas 1-22) + 100 maquinaria compartida duplicada (num47 y mat47 con la línea base, líneas 23-122) + 144 bloque indivisible mayor (CA-08 entero: la medición de las dos magnitudes con su presupuesto fijo y los casos que la juzgan, líneas 124-267) · REQ-014 CA-18
 seccion_nueva "--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---"
 
@@ -233,7 +233,7 @@ for _cual47 in REQ-100 REQ-200; do
   nom47="REQ-017 CA-08 (ii) $_etq47: el reloj no sube más de 1,25× el de v1.32.1"
   if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
     sal47="$(sonda_juez_razon "$nom47" "$TECHO47" "${REPS47[$_cual47]:-}" "${SINBASE47[$_cual47]:-}")"
-    printf '%s%s\n' "$sal47" "${NOMIDIO47[$_cual47]:+ · la sonda no midió: ${NOMIDIO47[$_cual47]}}"
+    coste_inconcluso "$sal47${NOMIDIO47[$_cual47]:+ · la sonda no midió: ${NOMIDIO47[$_cual47]}}"   # clase (a): P-137-K, REQ-035 CA-02
   fi
 done
 
@@ -317,6 +317,29 @@ if [ -z "$FILTRO" ] || printf '%s' "REQ-017 CA-06 el corredor acusa" | grep -qi 
     printf '%s' "$out47" | tail -4 | sed 's/^/          /'
   fi
   rm -rf "$sint47"
+fi
+
+# ---------- REQ-035 CA-02 · EL TRADUCTOR DE COSTE, SOBRE VECTORES FIJOS ----------
+# `coste_inconcluso` (corredor) convierte en `SKIP [INCONCLUSO] [rendimiento]` el FAIL de un juez
+# de clase (a), en el sitio de llamada de 37/2, 37/3, 37/4, 37/5 y aquí arriba. Se prueba con las
+# salidas de los JUECES REALES —el de CA-08 (ii) que cruza el techo y el de CA-03 con calibración
+# resuelta— y con líneas fijas: un PASS, un SKIP, una salida vacía y una de varias líneas salen
+# tal cual, y el nombre y la evidencia del caso se conservan. FAIL-BEFORE: con el corredor de
+# ca6eb53 la función no existe y el caso sale FAIL. El FAIL del control C3 y el de WD (37/7) no
+# pasan por aquí: son clase (b) y sus jueces siguen diciendo FAIL.
+nom47="REQ-035 CA-02 el traductor de coste: el FAIL de un juez de clase (a) sale INCONCLUSO [rendimiento] con su nombre y su evidencia; lo demás sale tal cual"
+if [ -z "$FILTRO" ] || printf '%s' "$nom47" | grep -qi -- "$FILTRO"; then
+  t35() { coste_inconcluso "$1" | sed -nE 's/^  SKIP  caso35  \[INCONCLUSO\] \[rendimiento\] pasa su techo operativo y el coste no es FAIL \(P-137-K\): (.*)$/INCONCLUSO<\1>/p; t; s/^  (PASS|FAIL|SKIP)  caso35  .*/\1/p; t; s/^.+$/OTRA/p' | tr '\n' ' '; }
+  obs35="$(t35 "$(sonda_juez_razon caso35 "$TECHO47" "$(cinco47 1300000:1310000:1000000:1020000)")" | sed -E 's/<mín\(r\) 1\.300× > techo 1\.250× [^>]*>/<evidencia-del-juez>/')"
+  obs35+="$(t35 "$(sonda_juez_duplicacion caso35 2600 "$(cinco47 100000:300000)" "$(cinco47 100000:350000)")" | sed -E 's/<mín\(cociente\) 3\.000× > techo 2\.600× [^>]*>/<evidencia-del-juez>/')"
+  obs35+="$(t35 '  FAIL  caso35  x')$(t35 '  FAIL  caso35')$(t35 '  PASS  caso35  y')$(t35 '  SKIP  caso35  z')"
+  obs35+="$(t35 '')$(t35 $'  FAIL  caso35  a\n  FAIL  caso35  b')"
+  esp35='INCONCLUSO<evidencia-del-juez> INCONCLUSO<evidencia-del-juez> INCONCLUSO<x> INCONCLUSO<sin evidencia> PASS SKIP FAIL FAIL '
+  if [ "$obs35" = "$esp35" ]; then
+    echo "  PASS  $nom47  (8 vectores → $obs35)"; PASS=$((PASS+1))
+  else
+    echo "  FAIL  $nom47  se esperaba <$esp35> y se obtuvo <$obs35>"; FAIL=$((FAIL+1))
+  fi
 fi
 
 rm -rf "$HER47"

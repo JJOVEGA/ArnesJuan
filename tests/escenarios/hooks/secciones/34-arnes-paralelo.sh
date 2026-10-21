@@ -317,8 +317,12 @@ if [ -z "$FILTRO" ] || printf '%s' "paralelo: coste" | grep -qi -- "$FILTRO"; th
     # El techo del tiempo es HOLGADO a proposito: 2 000 ms es el criterio, y en esta
     # maquina se mide en decenas. Un techo pegado a lo medido produce rojos que la gente
     # aprende a relanzar, y un rojo que se relanza deja de significar algo.
+    # P-137-K (REQ-035 CA-02): pasar el techo es COSTE, clase (a) del inventario, y dice
+    # INCONCLUSO; un rc distinto de 0 es un veredicto, clase (b), y sigue en FAIL.
     if [ "$rc" -eq 0 ] && [ "$ms" -lt 2000 ]; then
       echo "  PASS  paralelo: 60 REQ y 200 archivos en ${ms}ms (techo 2000ms)"; PASS=$((PASS+1))
+    elif [ "$rc" -eq 0 ]; then
+      echo "  SKIP  paralelo: 60 REQ y 200 archivos  [INCONCLUSO] [rendimiento] pasa su techo operativo: ${ms}ms (techo 2000ms); el coste no es FAIL (P-137-K)"
     else
       echo "  FAIL  paralelo: 60 REQ y 200 archivos: rc=$rc, ${ms}ms (techo 2000ms)"; diag; FAIL=$((FAIL+1))
     fi
