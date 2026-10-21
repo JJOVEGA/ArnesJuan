@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-### P-137-U — **C3 mide reloj, al contrario de lo que suponía «como C3» de P-137-T. ¿Pasa a (a) o se queda en (b) por ser una decisión?**
+_(Vacía desde el 2026-10-21: P-137-U resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-U (A)**: C3 se queda en (b); precisión a la regla del inventario; CA-04 fail-before en (a), sin cambios; QA re-verifica y entra seguridad
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-U (A): C3 se queda en (b). Es una decisión sobre la serie
+> completa, con su propio filtro de ruido, y sólo corre con
+> ARNES_SONDA_CONTROLES=1. Precisión a la regla, para el inventario: una
+> sonda cuyo resultado es un juicio que ya distingue ruido de avería (FAIL
+> sólo con avería demostrada) es (b) aunque use el reloj. REQ-017 CA-04
+> fail-before se queda en (a) sin cambios. QA re-verifica y entra seguridad.
+>
+> Sigue sin respuesta: el modelo efectivo con que corrieron el desarrollador
+> (369k) y QA en REQ-035. Necesito saberlo antes de la firma de seguridad.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **El modelo efectivo**, recontado el 2026-10-21 sobre las transcripciones, sólo en los turnos `"role":"assistant"`:
+  - desarrollador del banco (≈ 295 k de los 369 k), **`claude-opus-5-5` en 222 de 222**;
+  - desarrollador de textos (≈ 74 k), **Opus en 37 de 37**;
+  - QA, **Opus en 126 de 126**;
+  - analista, Sonnet en 101 de 101.
+
+  **Ninguna comisión de REQ-035 que debía ir en Opus corrió en Sonnet.** La misma cifra está en la resolución de P-137-T.
+- La precisión a la regla la escribe el analista en el inventario. Después, QA re-verifica en Opus explícito, y entra seguridad en Opus.
+
+### P-137-U (texto de la consulta, conservado; resuelta arriba) — **C3 mide reloj, al contrario de lo que suponía «como C3» de P-137-T. ¿Pasa a (a) o se queda en (b) por ser una decisión?**
 
 **Qué se releyó** (el analista y la coordinadora, en el código):
 - **REQ-017 CA-04 fail-before** (`37-coste-del-escaner-2-las-razones.sh` l. 295-303) compara una **razón de µs** entre v1.32.1 y v1.32.0 contra 2,000×, en **una medida que corre siempre**. Por tu regla es **(a)**, ya va a INCONCLUSO (`coste_inconcluso`) y **no cambia nada**. **QA-035-02 queda resuelto así.**
@@ -61,8 +89,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-U (A): C3 se queda en (b) como decisión («avería demostrada», a demanda); CA-04 fail-before sigue en (a); QA-035-02 resuelto; QA re-verifica.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-T**: REQ-017 CA-04 fail-before se clasifica **por lo que mide**, releyendo la línea; desarrollador y QA, **Opus explícito** en este repositorio; PR-137-2 a 1.37 · 4 y a la pieza b
 

@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · `P-137-U` (A) resuelta: C3 se queda en (b), y la regla gana una precisión; modelo efectivo de REQ-035 recontado (desarrollador y QA, Opus en todos sus turnos)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-U (A)**, literal en la cola. Precisión del propietario: una sonda cuyo resultado es un juicio que ya distingue ruido de avería (FAIL sólo con avería demostrada) es (b), aunque use el reloj. CA-04 fail-before sigue en (a), sin cambios; QA-035-02 resuelto.
+- **Modelo efectivo:** desarrollador del banco, Opus en 222 de 222 turnos; de textos, 37 de 37; QA, 126 de 126.
+- Resultado: el analista escribe la precisión en el inventario; después, QA y seguridad.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: relectura de QA-035-02 (analista, Sonnet): CA-04 fail-before es (a) y no cambia; C3 mide reloj, y va al propietario en `P-137-U`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
