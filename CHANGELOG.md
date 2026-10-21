@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · Corrección: la rama del spike sale de `7e84a2c`, no de `a625c4f`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- La entrada anterior y la nota de la cola decían `a625c4f`. `spike/1.37-3-puerta-posterior` se creó después del commit de ese registro, así que su base es `7e84a2c`. La nota de la cola lleva la corrección; la entrada anterior no se reescribe.
+- Resultado: el registro queda fiel a `git log`.
+
 ## [Interno] — 2026-10-21 · `P-137-V` adoptada: el spike de la puerta posterior arranca en su propia rama; el plan se reordena (1.37 · 4 antes del REQ de la puerta posterior)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

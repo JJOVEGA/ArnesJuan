@@ -64,7 +64,7 @@ _(Vacía desde el 2026-10-21: P-137-V adoptada por el propietario, en § Resuelt
 > ~138 KB a menos de 70 KB, verificado con la misma prueba de conducta.
 
 **Lo que añade la coordinadora, rotulado como suyo:**
-- **El spike vive en su propio worktree,** `/home/juan/dev/ArnesJuan-spike-1.37-3`, en la rama `spike/1.37-3-puerta-posterior`, que sale de `cand/1.37.0` en `a625c4f`. Así no toca `cand/1.37.0` ni el árbol de esta sesión.
+- **El spike vive en su propio worktree,** `/home/juan/dev/ArnesJuan-spike-1.37-3`, en la rama `spike/1.37-3-puerta-posterior`, que sale de `cand/1.37.0` en **`7e84a2c`** *(corrección del 2026-10-21: aquí se escribió primero `a625c4f`, pero la rama se creó después del commit de este registro)*. Así no toca `cand/1.37.0` ni el árbol de esta sesión.
 - **El orden del plan queda así:** 1.37 · 3a, el spike; luego 1.37 · 4, adelgazar y partir REQ-007, con el objetivo de bajar de ≈ 138 KB a menos de 70 KB, medido con la prueba de conducta de PC-034-1; luego 1.37 · 3b, el REQ completo de la puerta posterior; luego 1.37 · 5.
 
 ### P-137-V (texto de la propuesta, conservado; adoptada arriba) — **1.37 · 3, spike de la puerta posterior (≈ 150 k): autorización lista para adoptar**
