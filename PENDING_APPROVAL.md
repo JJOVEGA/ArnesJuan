@@ -43,7 +43,26 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-P resuelta por el propietario, en § Resueltas.)_
+### P-137-Q — **REQ-034 `bloqueado`, como ordenaste: la tercera pasada no cerró por una frase falsa. ¿Se queda así o autorizas quitar esa frase?**
+
+**Qué pasó.** La tercera pasada resolvió **SEC-139**, declarado como riesgo y ya `instrumento` para este REQ, y **SEC-140**, `mitigado`. QA aprobó sobre `bd48920`. Pero la re-firma de seguridad (adenda a R-061, 2026-10-21) deja **SEC-141 abierto** (`contrato`, baja) por una frase **que la propia pasada introdujo**: «Vaciar un ámbito a `[]` lo deja sin declarar y **no rebaja nada**». Es **falsa**. Sin declarar, rige la regla de antes, y un cambio de texto de `AGENTS.md` puede nacer `ligero`; con el ámbito arnés declarado, ese mismo cambio es `critico`. La frase exime de la firma del auditor justo esa palanca. **El error es de una premisa de R-061**, que el analista copió y QA no vio; el auditor lo corrige en su adenda.
+
+**Lo que hizo la coordinadora, por tu regla** («Si no cierra, REQ-034 pasa a bloqueado sin más vueltas»): REQ-034 **`bloqueado`**, con su fila de Historial y la del índice. No se abrió ninguna vuelta más.
+
+**El bloqueo** (`AGENTS.md` §6, regla 2):
+- **(i) Qué impide:** **cerrar** REQ-034 (`guard-completado`, con un `contrato` abierto) y **publicar** 1.37.0 por delegación con REQ-034 dentro.
+- **(ii) Qué parte afecta:** sólo una frase, en cuatro sitios: `requirements/REQ-034.md:84`, `requirements/README.md:173`, `templates/requirements-README.md.tpl:173` y el `_doc` de `templates/arnes-config.json.tpl:58`. El código, `hooks/` y el banco no.
+- **(iii) Evidencia:** la adenda a R-061 en `docs/seguridad/registro-seguridad.md`, y `requirements/README.md:158-161` (sin declarar = como antes).
+- **(iv) Qué lo resuelve:** quitar «y no rebaja nada» en los cuatro sitios. La regla general de la línea anterior ya cubre vaciar un ámbito.
+
+**Opciones**
+- **(A) — recomendada, como excepción a tu regla y diciéndolo:** autorizar **sólo** borrar esas cuatro palabras en los cuatro sitios, sin texto nuevo. Después, comprobación de QA y re-firma, ≈ 25–35 k en total. *Por qué:* el defecto lo introdujo una premisa del revisor, no el trabajo; el arreglo es borrar, no escribir. Y lo construido —390 decisiones sin ninguna diferencia, el banco y la orden de `arnes-upgrade`— quedaría acreditado. *Consecuencia:* REQ-034 puede cerrar, y la regla «sin más vueltas» queda con una excepción tuya registrada.
+- **(B):** se queda **`bloqueado`**, como ordenaste. *Consecuencia:* 1.37 · 1 no se acredita; lo construido queda en la rama; la frase falsa sigue en lo que heredarían los proyectos, y habría que quitarla antes de publicar 1.37 con cualquier otro REQ. Se sigue con 1.37 · 2.
+
+**Coste de REQ-034 hasta aquí:** analista 167 612 · desarrollador 260 921 · QA 160 332 · seguridad 163 492 · **total 752 357**, contra ≈ 670 k (1,12×). Ningún rol pasa de 1,5×; el analista está en 1,40×.
+
+**Decisión propuesta, lista para adoptar** (si eliges A):
+> Adopto P-137-Q (A), como excepción a «sin más vueltas»: sólo borrar «y no rebaja nada» en los cuatro sitios, sin texto nuevo; QA comprueba y seguridad re-firma. Si no cierra, REQ-034 se queda bloqueado.
 
 ## Resueltas
 

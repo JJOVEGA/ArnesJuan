@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1: re-firma de seguridad **no concedida** (adenda a R-061: SEC-141 sigue abierto); **REQ-034 `bloqueado`** por la regla del propietario; `P-137-Q`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
+
+- **Adenda a R-061:** SEC-139 queda declarado (`instrumento` respecto de REQ-034, `en-mitigación` en su sede hasta F-137-18) y SEC-140, `mitigado`. **SEC-141 sigue abierto**: la frase «vaciar un ámbito a `[]` … no rebaja nada», que la tercera pasada copió de una premisa de R-061, es falsa, y el auditor corrige su premisa. INS-034-1 no cambia el veredicto.
+- **REQ-034 → `bloqueado`**, por «Si no cierra, REQ-034 pasa a bloqueado sin más vueltas» (P-137-P). Fila de Historial y del índice.
+- **P-137-Q:** (A) quitar sólo esa frase en cuatro sitios, como excepción, o (B) dejarlo bloqueado.
+- **Coste:** seguridad 163 492 acumulados; REQ-034, 752 357 en total.
+- Resultado: lo construido no abre nada y está validado por QA; una frase impide el cierre.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1, tercera pasada: **QA (Sonnet) APROBADO** sobre `bd48920`; re-firma de seguridad pedida
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 
