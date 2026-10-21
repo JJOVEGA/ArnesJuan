@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · `P-137-V` adoptada: el spike de la puerta posterior arranca en su propia rama; el plan se reordena (1.37 · 4 antes del REQ de la puerta posterior)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-V**, literal en la cola. El spike va en el worktree `ArnesJuan-spike-1.37-3`, rama `spike/1.37-3-puerta-posterior`, desde `a625c4f`; no entra en `cand` ni se instala.
+- **Plan:** 3a (spike) → 4 (adelgazar `AGENTS.md` y el README de requisitos, y partir REQ-007; **objetivo: de ≈ 138 KB a menos de 70 KB leídos por comisión del analista**, medido con PC-034-1) → 3b (el REQ de la puerta posterior) → 5.
+- Resultado: el spike, despachado al desarrollador en Opus.
+
 ## [Interno] — 2026-10-21 · Decisiones del propietario tras 1.37 · 2 (QA-035-04, modelo efectivo, condiciones de coste de 1.37 · 3); spike de la pieza b (`P-137-V`) listo para adoptar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

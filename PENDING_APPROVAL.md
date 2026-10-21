@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-### P-137-V — **1.37 · 3, spike de la puerta posterior (≈ 150 k): autorización lista para adoptar**
+_(Vacía desde el 2026-10-21: P-137-V adoptada por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-V adoptada: spike de la puerta posterior**; y **ajuste del plan**: 1.37 · 4 va antes del REQ completo de la puerta posterior, con un objetivo medible
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-V: spike de la puerta posterior en spike/1.37-3-puerta-posterior,
+> desarrollador en Opus, aviso a 225k, sin entrar en cand/1.37.0 ni
+> instalarse.
+>
+> Ajuste del plan: después del spike, 1.37 · 4 (adelgazar AGENTS.md y el
+> README de requisitos, y partir REQ-007) va ANTES del REQ completo de la
+> puerta posterior. La prueba de conducta mostró que leer reglas cuesta ~88k
+> por comisión del analista en cualquier proyecto; ese es el ahorro más
+> amplio que queda, y abarata también el REQ de la puerta posterior.
+> Objetivo medible de 1.37 · 4: lo que lee el analista por comisión baja de
+> ~138 KB a menos de 70 KB, verificado con la misma prueba de conducta.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **El spike vive en su propio worktree,** `/home/juan/dev/ArnesJuan-spike-1.37-3`, en la rama `spike/1.37-3-puerta-posterior`, que sale de `cand/1.37.0` en `a625c4f`. Así no toca `cand/1.37.0` ni el árbol de esta sesión.
+- **El orden del plan queda así:** 1.37 · 3a, el spike; luego 1.37 · 4, adelgazar y partir REQ-007, con el objetivo de bajar de ≈ 138 KB a menos de 70 KB, medido con la prueba de conducta de PC-034-1; luego 1.37 · 3b, el REQ completo de la puerta posterior; luego 1.37 · 5.
+
+### P-137-V (texto de la propuesta, conservado; adoptada arriba) — **1.37 · 3, spike de la puerta posterior (≈ 150 k): autorización lista para adoptar**
 
 **Dos cosas que la coordinadora comprobó y que la autorización recoge:**
 1. **Un spike que no se publica no es un REQ.** Si el prototipo vive en una rama propia, **no entra en `cand/1.37.0`**, no se instala y no gobierna nada, entonces no lleva el ciclo de cuatro fases de `AGENTS.md` §6, que es para lo que llega a los proyectos. Así cabe en ≈ 150 k: un analista sólo para leer las reglas ya gasta ≈ 88 k (PC-034-1). Lo que salga del spike entra después como **REQ con su ciclo completo**, presupuestado con la cifra medida.
@@ -73,8 +97,6 @@
 > Que el spike necesite tocar `cand/1.37.0` o la instalación estable; que una forma de vigilar cambie una protección vigente; pasar de 225 k; publicar.
 
 **Decisión propuesta, lista para adoptar:** «Adopto P-137-V.»
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **QA-035-04 a REQ-021**; el residual del modelo por defecto se cierra **por proceso**; **dos condiciones de coste para 1.37 · 3**
 
