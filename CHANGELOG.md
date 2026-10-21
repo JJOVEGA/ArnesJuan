@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, fase 0 (analista, Sonnet): REQ-035 `pendiente` (8 CA) e inventario de sondas de reloj; fase 1 al desarrollador (Opus)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **Inventario** (`docs/arnes/v1.37.0-inventario-sondas-reloj.md`): pasan a INCONCLUSO 17 casos de clase (a), coste o calibración de reloj, en 9 sondas. Siguen en FAIL los de clase (b): los plazos (sección 47 / SEC-115, sección 08, la mitad 124 de `cronometra_bash`), los procesos y los veredictos.
+- **Corrección de la coordinadora**, antes de implementar y con la fuente: la calibración de `sonda-reloj.sh` (INS-034-2) había quedado en (b) por ser una banda y no un techo. P-137-R dice «coste **y calibración**», así que va a (a); la de `sonda-procesos.sh` sigue en (b). CA-02 lleva la parada por dependencia oculta del reloj (REQ-021 CA-10 y CA-10.2).
+- **REQ-035:**
+  - P-137-K en todo el banco, con fail-before (CA-01 a CA-04, con `hooks/` y `tools/` sin diff);
+  - la regla del modelo por rol, en `AGENTS.md` §5, `templates/AGENTS.md.tpl` §5 y `model:` de las cuatro definiciones (CA-05 a CA-07);
+  - la frase de contratos cortos (CA-08).
+- **Coste:** analista 144 102 (el informe decía ≈ 90 k), 1,11× su ≈ 130 k.
+- Resultado: contrato cerrado; fase 1 despachada.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: **prueba de conducta de 1.37 · 1** (PC-034-1): el analista candidato clasificó 4 de 4 como pide la política; 354 646 tokens, ≈ 5,9× lo presupuestado
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (4 corridas), Opus (coordinadora) · agente: coordinadora.
 
