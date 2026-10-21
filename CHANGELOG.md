@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2, pasada correctiva 1 de 2, parte de contrato (analista, Sonnet): QA-035-01, inventario completado
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **Añadidos al inventario como (b):** `47-lectura-fallida-y-locale.sh` (su `us=` es medición, y los veredictos), la sección 40 (sin reloj ni `timeout`) y el plazo de `33-…-2` (el código 124 de `timeout`). La coordinadora lo comprobó en el código: `33-…-2` l. 42, `CRONO_RC -ne 124`. El recuento de (a) no cambia: 19 casos en 11 sondas.
+- **Coste:** analista 152 870 acumulados.
+- Resultado: QA-035-01 resuelto en el texto; QA-035-02 espera P-137-T.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 2: QA (**Opus**) **con hallazgos** en REQ-035: QA-035-01 y QA-035-02 (`contrato`, inventario); el código cumple; `P-137-T`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 
