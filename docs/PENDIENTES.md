@@ -2496,3 +2496,10 @@ ninguna mata al hook.»
 - **Origen:** REQ-034, SEC-141. La tercera pasada introdujo una frase falsa, y quitarla exigió una excepción a «bloqueado sin más vueltas».
 - **Dónde va:** el contador de vueltas de `templates/AGENTS.md.tpl` §6, «Loop de error», y su sede de reglas 5. Es **cambio de contrato** y lleva analista y su ciclo. **Cuándo:** con 1.37 · 4 (adelgazamiento de `AGENTS.md`), salvo decisión del propietario. El `AGENTS.md` de este repositorio no se toca.
 - **Dueños:** `analista-requerimientos`, con `desarrollador` y `auditor-seguridad`. Ojo: es una regla que **relaja un contador**, y la sede advierte que no se reinicie por renombrar, así que el contrato tiene que acotar «sólo borra» y «en la misma intervención» de forma comprobable.
+
+### INS-034-2 — Hallazgo `instrumento`, no atribuible al cambio: la calibración de `sonda-reloj.sh` rechaza la medida con la máquina cargada, y REQ-021 CA-03, CA-10 y CA-10.2 dan FAIL (como INS-032-2)
+- **Medido por QA** (2026-10-21, banco completo sobre `4efc166`, Linux/WSL2, carga media 8,26): 3000 PASS, **4 FAIL**, 12 SKIP (3016). Uno es INS-034-1. Los otros tres, `REQ-021 CA-03`, `CA-10` y `CA-10.2`, tienen una sola causa: la calibración rechazó la medida (a = 2582, fuera de la banda 1600–2400).
+- **No atribuible al cambio:** la pasada sólo borró cuatro palabras de texto; `hooks/`, `tools/` y `tests/` no cambian (`git diff v1.36.2 -- hooks/` vacío). La calibración mide la máquina, no el arnés.
+- **Clase `instrumento`, por P-136-E** («una sonda que mide la máquina se registra como `instrumento` y el plan continúa»). Es la misma especie que INS-032-2. **No se relanzó** para obtener un verde. Va al inventario de sondas de reloj de la pieza b (P-137-O, 1 (A)).
+- **Corrección de la coordinadora:** en el encargo a QA escribió «cualquier otro FAIL es un FAIL de verdad», más estricto que P-136-E, que cubre también la calibración. Lo que manda es P-136-E.
+- **Dueños:** `desarrollador` (banco) con `qa-tester`.

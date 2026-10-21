@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1: QA (Sonnet) **renueva `aprobado`** sobre `4efc166` tras el borrado de P-137-Q; INS-034-2 (calibración de reloj con la máquina cargada)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **QA:** el diff es sólo borrado; la sede y su gemela son idénticas; la plantilla pasa `jq -e .`. Sección 50, 56/0; autoprueba 117/0. Banco 3000 PASS, 4 FAIL, 12 SKIP (3016): INS-034-1 (reloj de REQ-017 CA-08 (ii)) e **INS-034-2** (REQ-021 CA-03, CA-10 y CA-10.2, la calibración rechazada con carga media 8,26), los dos `instrumento` por P-136-E, como INS-032-2. QA está de acuerdo con la clasificación y no se relanzó.
+- **Corrección de la coordinadora:** su encargo decía «cualquier otro FAIL es de verdad», más estricto que P-136-E. Lo dice INS-034-2.
+- Resultado: falta la re-firma de seguridad; REQ-034 sigue `bloqueado` hasta ella.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1: `P-137-Q` (A) resuelta, como excepción única; «y no rebaja nada» **borrado** en los cuatro sitios (SEC-141); regla nueva para la plantilla en F-137-19
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 
