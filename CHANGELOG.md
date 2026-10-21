@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1, tercera pasada: **QA (Sonnet) APROBADO** sobre `bd48920`; re-firma de seguridad pedida
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
+
+- **QA:**
+  - SEC-139 queda declarado como riesgo (P-137-P), SEC-141 por propiedad y SEC-140 en la plantilla; la sede y su gemela son idénticas, salvo la nota «en este repositorio»;
+  - techo de CA-11, +3 620 de 4 096;
+  - banco 3002 PASS, **1 FAIL**, 13 SKIP (3016). El FAIL es otra vez INS-034-1 (reloj, 1,287×), `instrumento`, no relanzado. Sección 50, 56/0; autoprueba 117/0.
+- **Coste:** QA 160 332 acumulados (1,23×).
+- Resultado: falta la re-firma de seguridad y la fase 4.
+
 ## [Interno] — 2026-10-21 · 1.37 · 1, tercera pasada, parte del desarrollador (Opus): SEC-140 y el `_doc` de SEC-141 en la plantilla del manifiesto (**sin validar**); INS-034-1
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
