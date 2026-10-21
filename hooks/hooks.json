@@ -29,6 +29,28 @@
         "hooks": [
           { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/guard.sh" }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/puerta-posterior.sh pre" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/puerta-posterior.sh post" }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/puerta-posterior.sh post" }
+        ]
       }
     ],
     "Stop": [

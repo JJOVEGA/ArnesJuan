@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · Spike 1.37 · 3a de la puerta posterior (rama `spike/1.37-3-puerta-posterior`; **no se publica ni se instala**)
+> Origen: GitHub (commit de la rama del spike) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora. Autorización: P-137-V.
+
+- **Prototipo:** `hooks/puerta-posterior.sh` y sus handlers en `hooks/hooks.json` (Pre de Bash, `PostToolUse` y `PostToolUseFailure`). Lista fija: `.arnes/config.json` y `hooks/**`. Foto antes y después, unidas por `session_id` más `tool_use_id`. Deny = restaurar más bloquear con motivo.
+- **Medido:** 15 de 15 intentos detectados y restaurados; 9 de ellos los deja pasar hoy v1.36.2. Los 2 controles del agente de código, conservados. 0 falsos positivos en 6 órdenes legítimas, más 1 en un cambio de rama, declarado. La coordinadora repitió los 25 casos y obtuvo la misma tabla. Coste: Pre +8 ms y +5 procesos (en paralelo con `guard.sh`); Post +8 ms y +5 procesos (en serie).
+- **Informe:** `docs/arnes/v1.37.0-spike-puerta-posterior.md`, con lo que no resuelve (la concurrencia, la foto falsificable, el estado borrable, el cambio de rama, el consumidor) y la estimación del REQ 3b.
+
 ## [Interno] — 2026-10-21 · `P-137-V` adoptada: el spike de la puerta posterior arranca en su propia rama; el plan se reordena (1.37 · 4 antes del REQ de la puerta posterior)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
