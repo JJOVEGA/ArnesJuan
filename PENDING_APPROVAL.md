@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-### P-137-R — **1.37 · 2, modelo por rol: autorización lista para adoptar**
+_(Vacía desde el 2026-10-21: P-137-R adoptada por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-R adoptada: 1.37 · 2, modelo por rol, autorizada**; los plazos son veredicto; desarrollador y QA según el rigor
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-R, con:
+> - Los plazos (SEC-115, sección 47 y cualquier otra que garantice que el
+>   hook decide a tiempo) son veredicto: siguen dando FAIL. Sólo las sondas
+>   de coste y calibración pasan a INCONCLUSO. El analista hace primero el
+>   inventario sonda por sonda.
+> - Desarrollador: Sonnet en ligero y estándar, Opus en crítico. La regla
+>   completa: analista Sonnet siempre; desarrollador y QA según rigor
+>   (Sonnet en ligero/estándar, Opus en crítico); seguridad Opus. La cabecera
+>   model: de cada agente lleva el modelo por defecto (Sonnet en analista,
+>   desarrollador y QA; Opus en seguridad) y quien despacha sube a Opus en
+>   crítico.
+> - La prueba de conducta usa la definición del analista del candidato, y el
+>   registro lo dice.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- Las precisiones de arriba prevalecen sobre la autorización conservada debajo.
+- **Esta intervención es `critico`**, por la política de autoalojamiento. Por la regla nueva: analista en Sonnet, y desarrollador, QA y seguridad en Opus.
+- **La prueba de conducta** usa la definición del analista copiada de `cand/1.37.0` en `f5f002d`, la de REQ-034, antes de que la fase 1 la toque.
+- Fase 0 despachada.
+
+### P-137-R (texto de la propuesta, conservado; adoptada arriba con sus precisiones) — **1.37 · 2, modelo por rol: autorización lista para adoptar**
 
 **Tres cosas que la coordinadora comprobó y que la autorización recoge:**
 1. **Un plazo no es un coste.** La sección 47 (`47-decision-emitida.sh`) prueba que el hook **emite su decisión** antes de 40 s (SEC-115). Si pasara a INCONCLUSO, un hook que el cliente mata sin denegar dejaría de verse. Por eso la autorización lo trata como **veredicto**, y sigue dando FAIL.
@@ -75,8 +103,6 @@
 > Nada de 1.37 · 3 a 5. Sólo §5 de `AGENTS.md` de este repositorio. Push: recordármelo al final de cada fase. Fusión, tag y publicación: míos.
 
 **Decisión propuesta, lista para adoptar:** «Adopto P-137-R.» Si quieres al desarrollador en Sonnet en `ligero` y `estandar`, dilo al adoptar; la regla de arriba no lo nombra, y la coordinadora lo deja en Opus.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-Q (A)**, como excepción explícita y única: sólo borrar «y no rebaja nada» en los cuatro sitios; y una **regla nueva para la plantilla**: corregir borrando no es una pasada
 

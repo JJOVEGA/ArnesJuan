@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2 **autorizada** (`P-137-R` adoptada con precisiones); fase 0 al analista, en Sonnet; prueba de conducta en paralelo
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-R**, literal en la cola:
+  - los plazos que garantizan que el hook decide a tiempo (SEC-115, sección 47 y cualquier otro) son **veredicto** y siguen dando FAIL; sólo coste y calibración pasan a INCONCLUSO;
+  - **la regla completa del modelo:** analista Sonnet siempre; desarrollador y QA, Sonnet en `ligero`/`estandar` y Opus en `critico`; seguridad Opus. La cabecera `model:` lleva el valor por defecto, y quien despacha sube a Opus en `critico`.
+- **La prueba de conducta** usa la definición del analista candidato, copiada de `f5f002d`.
+- Resultado: la fase 0 (REQ-035) y la prueba de conducta, despachadas.
+
 ## [Interno] — 2026-10-21 · Autorización de 1.37 · 2 (`P-137-R`) lista para adoptar
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
