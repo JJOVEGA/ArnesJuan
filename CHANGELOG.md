@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: `P-137-S` resuelta (D1 (A), D2 a (a), textos en paralelo); REQ-035 `bloqueado` → `pendiente`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-S**, literal en la cola. REQ-035 vuelve a `pendiente`, con su fila de Historial.
+- **Despacho:**
+  - el analista (Sonnet): las dos sondas al inventario y el write-back de D1;
+  - después, el desarrollador del banco (Opus, retomado): D1, D2 y D3;
+  - **en paralelo**, un desarrollador nuevo (Opus) sólo para los textos de CA-05 a CA-08. Sus archivos no coinciden con los del banco, y no escribe en REQ-035.
+- Push de `cand/1.37.0` hasta `6392cc9`, hecho por el propietario.
+- Resultado: el bloqueo B-035-1 está levantado.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 1 (desarrollador, Opus): el banco de REQ-035 hecho (**sin validar**); parada de CA-02 en `P-137-S`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 

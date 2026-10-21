@@ -43,7 +43,29 @@
 
 ## Pendientes
 
-### P-137-S — **REQ-035: el desarrollador paró en tu parada.** Dos casos de veredicto dependen del reloj real, y dos sondas de reloj faltaban en el inventario
+_(Vacía desde el 2026-10-21: P-137-S resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-S**: D1 (A), con un registro de calibración fijo; D2, las dos sondas a (a); los textos se adelantan en paralelo; REQ-035 vuelve a `pendiente`
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-S:
+> - D1 (A): REQ-021 CA-10 y CA-10.2 con registro de calibración fijo; se
+>   demuestra mutando el juez (sigue dando FAIL). Clase (b), veredicto.
+> - D2: el analista añade REQ-021 CA-03 (c) y REQ-017 CA-04 fail-before al
+>   inventario como clase (a); el desarrollador las trata igual que las
+>   demás. Objetivo: banco a 0 FAIL.
+> - Autorizo adelantar los textos (CA-05 a CA-08) en paralelo; no dependen
+>   del banco. REQ-035 vuelve a pendiente.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Orden:** el analista (Sonnet) primero, con el inventario y el write-back de D1. Después, el desarrollador del banco (Opus, retomado), con D1, D2 y D3.
+- **En paralelo con los dos**, un desarrollador **nuevo** (Opus, REQ `critico`) **sólo** para los textos: `AGENTS.md` §5, `templates/AGENTS.md.tpl` §5 y `agents/*.md`. Sus archivos no coinciden con los del banco ni con el inventario, y **no escribe en REQ-035**. La disyunción la declara el propietario; `tools/arnes-paralelo.sh` no la puede medir, porque decide por REQ y aquí hay uno solo.
+- REQ-035 `bloqueado` → `pendiente`, con una fila de Historial.
+
+### P-137-S (texto de la consulta, conservado; resuelta arriba) — **REQ-035: el desarrollador paró en tu parada.** Dos casos de veredicto dependen del reloj real, y dos sondas de reloj faltaban en el inventario
 
 **Qué pasó.** El banco está hecho, **sin validar**:
 - 17 casos de clase (a) pasan a INCONCLUSO, con fail-before contra `ca6eb53`.
@@ -71,8 +93,6 @@ Por la regla del inventario («una magnitud medida con reloj que supera un techo
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-S: D1 (A), CA-10 y CA-10.2 con un registro de calibración fijo, acreditado con una mutación del juez; D2, las dos sondas al inventario como (a). Después, los textos de CA-05 a CA-08.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-R adoptada: 1.37 · 2, modelo por rol, autorizada**; los plazos son veredicto; desarrollador y QA según el rigor
 
