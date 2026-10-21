@@ -43,7 +43,30 @@
 
 ## Pendientes
 
-### P-137-P — **REQ-034: seguridad encontró tres hallazgos de texto con el tope agotado. ¿Una tercera pasada, sólo de texto?** (R-061)
+_(Vacía desde el 2026-10-21: P-137-P resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-21) — **P-137-P (A)**: tercera pasada, sólo texto, limitada a SEC-139, SEC-140 y SEC-141; SEC-139 se resuelve declarando el riesgo; ficha de puerta para la pieza b
+
+**Texto del propietario, literal** (mensaje del 2026-10-21 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-P (A): tercera pasada, sólo texto, limitada a SEC-139, SEC-140
+> y SEC-141. Si no cierra, REQ-034 pasa a bloqueado sin más vueltas.
+>
+> SEC-139 se resuelve escribiendo el riesgo, no ocultándolo: el ahorro del
+> ligero descansa en el juicio del analista al clasificar, y así se declara
+> en CA-07, en el README de requisitos y en las notas. Ficha para la pieza b
+> (no ahora): al cerrar un REQ ligero, si sus cambios tocan rutas de los
+> cinco ámbitos declarados, el cierre exige estandar. Eso convierte el juicio
+> del analista en algo que la máquina comprueba.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- Es la vuelta 3 de 3 de dev↔QA de REQ-034.
+- **Orden:** el analista primero, con CA-07, la sede de `requirements/README.md` y su gemela, y el párrafo para las notas `[1.37.0]` en un borrador; después el desarrollador, con la lista y el `_doc` de la plantilla, que corre el banco sobre todo; luego la comprobación de QA y la re-firma de seguridad.
+- **La ficha de la puerta es F-137-18**, en `docs/PENDIENTES.md` y en la fila 1.37 · 3 de `docs/PLAN.md`.
+
+### P-137-P (texto de la consulta, conservado; resuelta arriba) — **REQ-034: seguridad encontró tres hallazgos de texto con el tope agotado. ¿Una tercera pasada, sólo de texto?** (R-061)
 
 **Qué pasó.** Seguridad (R-061, 2026-10-19) dio `con-hallazgos`, **sin veto**. La puerta no abre nada: `hooks/` no cambia, y en **384 decisiones** propias comparadas con v1.36.2 no hay ninguna diferencia, con la política declarada, malformada o ausente. Tu parada no se activa. Los hallazgos son de **texto que heredan los proyectos**, clase `contrato`:
 - **SEC-139 (media):** la reducción de revisión descansa en **un solo juicio**, el del analista, y no se declara. Si clasifica como «normal» un cambio que toca dinero, sesión, seguridad o datos, el REQ cierra sin QA ni seguridad, y las tres salvaguardas dependen de ese mismo juicio: el suelo de sensibilidad, «ante la duda, completo» y el auditor que sube el rigor, que nunca recibe el REQ. *Resolución:* declararlo en CA-07 y en la sede. Analista.
@@ -64,8 +87,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-P (A): tercera pasada sólo de texto, acotada a SEC-139, SEC-140 y SEC-141; es la vuelta 3 de 3 y, si no cierra, REQ-034 pasa a bloqueado.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-19) — **P-137-O: 1 (A), 2 (A)**; P-137-K queda en la sección 49 y el inventario de sondas de reloj va a la pieza b; «como hoy» conserva el `ligero` de lo sin lógica
 

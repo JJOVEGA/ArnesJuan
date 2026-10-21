@@ -2478,3 +2478,9 @@ ninguna mata al hook.»
 - **Medido por QA** (2026-10-16, `docs/qa/REQ-034.md`): CA-10 (d) pide que un manifiesto ilegible no se toque **y se informe**. Con 0 bytes no se toca, porque se escribe vacío sobre vacío, pero **no se informa**.
 - **Efecto:** ninguno sobre los datos. Es un aviso que falta.
 - **Clase:** sin clase para QA, que dice que no bloquea; la coordinadora lo registra como **`instrumento`** de la skill. **Dueño:** `desarrollador`. Entra en la próxima pasada del desarrollador sobre REQ-034, si la hay; si no, en la siguiente intervención que toque `arnes-upgrade`.
+
+### F-137-18 — Pieza b: al cerrar un REQ `ligero`, si sus cambios tocan rutas de los cinco ámbitos declarados, el cierre exige `estandar` (decisión del propietario, P-137-P, 2026-10-21)
+- **Literal del propietario:** «Ficha para la pieza b (no ahora): al cerrar un REQ ligero, si sus cambios tocan rutas de los cinco ámbitos declarados, el cierre exige estandar. Eso convierte el juicio del analista en algo que la máquina comprueba.»
+- **Por qué:** SEC-139 (R-061). El ahorro de `ligero` (REQ-034) descansa en un solo juicio, el del analista al clasificar, y ninguna máquina lo comprueba. En 1.37 · 1 se **declara**; esta ficha es la comprobación.
+- **Cuándo:** con la pieza b (1.37 · 3), que ya mira qué cambió después de cada orden. **No ahora.** Va a la puerta de cierre (`guard-completado`), así que toca `hooks/` y lleva su propio contrato, con el analista.
+- **Dueños:** `analista-requerimientos` (contrato) y `desarrollador` (puerta), con `auditor-seguridad`.

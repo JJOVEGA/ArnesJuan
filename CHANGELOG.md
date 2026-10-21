@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 1: `P-137-P` (A) resuelta; tercera pasada (vuelta 3 de 3), parte de texto (analista, Sonnet): SEC-139 declarado como riesgo y SEC-141 por propiedad; ficha F-137-18
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **P-137-P (A)**, literal en la cola. **F-137-18** (pieza b): al cerrar un REQ `ligero` cuyos cambios tocan rutas de los cinco ámbitos, el cierre exige `estandar`. Está en `docs/PENDIENTES.md` y en la fila 1.37 · 3.
+- **SEC-139:** «el ahorro del ligero descansa en el juicio del analista al clasificar», declarado en CA-07, en la sede y su gemela, y en el borrador nuevo `docs/arnes/notas-1.37.0-borrador.md`. **SEC-141:** todo cambio que reduzca lo que alcanza un ámbito, incluido declararlo `"ninguno"`, exige la firma del auditor.
+- **Techo de CA-11, medido por la coordinadora:** +3 620 B netos de 4 096. La frase de SEC-139 es igual en la sede y en su gemela.
+- **Coste:** analista 167 612 acumulados (1,40×; el aviso es a 180 k).
+- Resultado: falta SEC-140 y el `_doc` de la plantilla (desarrollador), después QA y la re-firma.
+
 ## [Interno] — 2026-10-19 · 1.37 · 1, fase 3: seguridad **con hallazgos, sin veto** (R-061): SEC-139, SEC-140 y SEC-141 (`contrato`, de texto); parada en `P-137-P` (tope agotado)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (auditor), Opus (coordinadora) · agentes: `auditor-seguridad`, coordinadora.
 

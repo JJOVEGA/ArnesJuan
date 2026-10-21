@@ -168,9 +168,15 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
   Ámbito alcanzado → `critico`, y sensible si toca sesión, seguridad o datos personales.
   **Ante la duda, completo.**
 - La política sólo da `ligero` a lo que sin ella no sería `critico`, y no toca el suelo de abajo.
-  Quitar un glob o vaciar un ámbito **baja** el rigor: exige la firma del auditor. Es norma para
-  quien lee, sin comprobación mecánica; si el manifiesto no está en `codigo_app.globs`, cualquier
-  agente puede editarlo.
+  **Todo cambio de la política que reduzca lo que alcanza un ámbito exige la firma del auditor**
+  (ejemplos **no exhaustivos**: quitar o estrechar un glob, declarar `"ninguno"`). Vaciar un ámbito
+  a `[]` lo deja sin declarar y no rebaja nada. Es norma para quien lee, sin comprobación mecánica;
+  si el manifiesto no está en `codigo_app.globs`, cualquier agente puede editarlo.
+  **Riesgo declarado (SEC-139): el ahorro del `ligero` descansa en el juicio del analista al
+  clasificar.** Un REQ clasificado normal por error **cierra sin ninguna revisión de QA ni de
+  seguridad**; el suelo de sensibilidad, «ante la duda, completo» y la facultad del auditor dependen
+  de ese mismo juicio o de que alguien despache al auditor, y ninguna puerta lo detecta. La
+  comprobación futura es la ficha F-137-18 (pieza b).
   *(En este repositorio no hay política: todo REQ del arnés es `critico` y sensible, `AGENTS.md` §6.)*
 
 **Reglas de gobierno:**
