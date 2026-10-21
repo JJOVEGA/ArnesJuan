@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-21 · **1.37 · 2 CERRADA** (commit validado): REQ-035 `completado` por `Edit` juzgado en vivo; métrica por rol frente a 1.37 · 1
+> Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **Seguridad `aprobado`** (adenda a R-062): SEC-142 `mitigado`; quedan QA-035-03, QA-035-04 y SEC-143, los tres `instrumento`.
+- **Lo entregado:**
+  - P-137-K en todo el banco, según el inventario: (a) a INCONCLUSO y (b) en FAIL; banco a 0 FAIL;
+  - la regla del modelo por rol en `AGENTS.md` §5, la plantilla y `model:`; en este repositorio, Opus explícito;
+  - contratos cortos en el analista.
+- **Métrica (REQ-035):** analista 163 945 · desarrollador 371 617 · QA 234 942 · seguridad 189 302 · **total 959 806**: +24 % frente a 1.37 · 1, 1,31× el presupuesto. Más la prueba de conducta, 354 646. **QA en Opus** encontró en el contrato lo que nadie había visto; las dos pasadas fueron de texto.
+- Resultado: 1.37 · 2 entregada; lo siguiente es 1.37 · 3, que necesita autorización.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2: QA (Opus) **renueva `aprobado`** sobre `84f1bea` tras la pasada 2 (SEC-142); re-firma de seguridad pedida
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (QA), Opus (coordinadora) · agentes: `qa-tester`, coordinadora.
 

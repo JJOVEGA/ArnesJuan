@@ -11367,3 +11367,20 @@ Contra R-059 (REQ-032, código de `77b71f7`): los controles de lo protegido sigu
   - CA-10 y CA-10.2 juzgan con las funciones reales sobre un registro fijo.
 - `docs/seguridad/gobernanza-datos.md`: sin cambios, porque este REQ no maneja datos.
 - **Numeración:** esta revisión es **R-062** y abre **SEC-142** y **SEC-143**. Próximos libres: **R-063** y **SEC-144**. **Ojo:** `SEC-144` está reservado a los ejemplos de `requirements/README.md` (lo dicen R-057 y R-059), así que el próximo libre **utilizable** es **SEC-145**.
+
+### Adenda a R-062 — re-firma de REQ-035 (`cand/1.37.0` @ `bdb5185`; QA renovó `aprobado` sobre `84f1bea`) — 2026-10-21
+
+- **Qué se comprobó:**
+  - `AGENTS.md:98-100` dice ahora: «**Y no depende del rigor:** en este repositorio el desarrollador y QA se despachan siempre con `model: opus` explícito, sea cual sea el rigor y aunque el encargo no tenga REQ (P-137-T, 2026-10-21)».
+  - El diff `ca6eb53..HEAD` de `AGENTS.md` es un solo bloque (`@@ -83,22 +83,22 @@`), dentro de §5.
+  - REQ-035 CA-05 exige la frase, y su tabla de correspondencia tiene la fila de P-137-T.
+  - `git diff 8f316f1..HEAD` de `hooks/`, `tools/`, `tests/`, `templates/`, `agents/`, `.github/` y `.arnes/config.json` está vacío. La medición de §1 de R-062 sigue valiendo.
+- **SEC-142 — `mitigado`.** La frase cierra los dos caminos que describí:
+  - la excepción editorial de §6 («sea cual sea el rigor»);
+  - el encargo sin REQ («aunque el encargo no tenga REQ»).
+  Está escrita por propiedad, no como lista. La plantilla no cambia, y está bien así: la decisión es de este repositorio. Sale del campo `Hallazgos abiertos:` de REQ-035.
+- **El residual de §3 sigue declarado.** Si nadie pasa `model`, la cabecera dice `sonnet`, y ninguna puerta lo comprueba. Lo sostiene la disciplina de la coordinadora.
+- **Siguen abiertos, `instrumento`, sin bloquear:** SEC-143, QA-035-03 y QA-035-04.
+- **Veredicto:** `Seguridad: aprobado (R-062 y su adenda, 2026-10-21)` en REQ-035.
+- **Estado de seguridad aprobado de REQ-035:** el de R-062, más §5 con Opus explícito para el desarrollador y QA en este repositorio, sin condición de rigor ni de REQ.
+- **Numeración:** sin cambio. Próximos libres: **R-063** y **SEC-145**, porque SEC-144 está reservado.
