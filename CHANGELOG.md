@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 2: CA-07 de REQ-035 corregido (analista, Sonnet): la frase «sube a Opus» va sólo en desarrollador y QA; fase 2 a QA en Opus
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- CA-07 queda coherente con P-137-R («analista Sonnet siempre») y con lo construido en `1f9637c`. Fila de Historial.
+- Resultado: contrato e implementación alineados; QA despachado.
+
 ## [Interno] — 2026-10-21 · 1.37 · 2, fase 1 cerrada (desarrollador, Opus): **banco a 0 FAIL** con D1, D2 y D3; REQ-035 `en-revisión` (**sin validar**)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 
