@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 4a, fase 0 (analista, Sonnet): REQ-036 en `borrador` (13 CA); parada en `P-137-X`, el objetivo no se alcanza moviendo sólo lo explicativo
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **REQ-036:**
+  - el objetivo es < 70 000 B, medido como lectura obligada más lo leído en las transcripciones, con las 4 corridas de PC-034-1 en 4/4;
+  - lo explicativo, a `docs/explicacion/`, que viaja dentro del plugin porque el marketplace usa `source: "./"`;
+  - las salvaguardas de F-136-17;
+  - `arnes-upgrade`, con diff previo y fixtures;
+  - la regla de `Edit` por propiedad;
+  - F-137-19 acotado con `git diff --numstat`;
+  - CA-13: si no se llega, no se condensa y se escala.
+- **Parada (Q-036-1 / P-137-X):** según la estimación del analista, por muestreo, quedaría en ≈ 100 KB. **La coordinadora midió** que unos 18,6 KB de §6 son reglas de la coordinadora y 21,3 KB de §13 son de desarrollador, QA y seguridad, y propone (D), la lectura por destinatario, sin mover ni condensar nada normativo.
+- **Coste:** analista 116 926.
+- Resultado: el contrato, casi cerrado; falta la decisión del propietario.
+
 ## [Interno] — 2026-10-21 · 1.37 · 4 **autorizada** (`P-137-W` adoptada con precisiones); fase 0 de 4a al analista, en Sonnet
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

@@ -43,7 +43,24 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-W adoptada por el propietario, en § Resueltas.)_
+### P-137-X — **REQ-036 (4a): mover sólo lo explicativo no llega a 70 KB. ¿Cómo se alcanza el objetivo?** (Q-036-1)
+
+**Qué pasó.** El analista escribió REQ-036 en `borrador`, con 13 CA, y paró en tu parada: «que no se alcance el objetivo». Su estimación es **por muestreo, no medida** (no tiene consola): mover lo explicativo e histórico saca ≈ 29–40 KB, y la lectura quedaría en **≈ 100 KB**. Casi todo §6 y §13 es normativo.
+
+**Lo que midió la coordinadora** (plantilla de `AGENTS.md`, en bytes): §6 = 37 295, y de eso son **reglas de la coordinadora** el bloque de las seis reglas (8 921), el de vías, despacho y comprobación (6 730), el mecanismo de la cola (1 956) y el paralelo (≈ 970), **≈ 18,6 KB**. §13 = 21 312, que aplican desarrollador, QA y seguridad. En el README de requisitos, «Veredictos de validación» (9 006) y «Clases de hallazgo» (7 828) son sobre todo de QA, seguridad y la puerta. **Lo que sí es del analista:** el nivel de rigor, qué es crítico, la escritura de criterios, `Archivos:`, la trazabilidad y §9.
+
+**Qué detiene, y qué no.** Detiene la fase 1 de REQ-036. Nada más está en curso.
+
+**Opciones**
+- **(A):** aceptar lo que dé mover sólo lo explicativo, ≈ 100 KB (−28 %). *Consecuencia:* no cumple tu objetivo.
+- **(B), la del analista:** la definición del analista no lee §13. *Consecuencia:* ≈ 80–85 KB estimados; tampoco llega.
+- **(D) — recomendada, de la coordinadora:** **lectura por destinatario**. Cada bloque normativo de `AGENTS.md` y del README declara **a quién obliga**, y la definición de cada agente le manda leer **los suyos**. La coordinadora, que orquesta, sigue leyendo todo. Además, lo explicativo sale con su puntero. **Nada normativo se mueve ni se condensa:** cada regla sigue donde la lee quien debe cumplirla. *Estimación:* ≈ 65–75 KB; las secciones están medidas y el reparto es estimación mía. *Riesgo:* que un agente deje de leer una regla que le obliga. *Control:* QA comprueba que todo bloque normativo tiene al menos a su obligado entre sus lectores, y la prueba de conducta da 4/4.
+- **(C):** condensar la redacción normativa, con revisión de equivalencia por seguridad. *Consecuencia:* es la única que asegura bajar de 70 KB y la que más arriesga el significado. **Sólo** si (D) no llega, y con el número medido delante.
+
+**Coste hasta aquí:** analista 116 926 (≈ 170 k para su rol).
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-X (D): lectura por destinatario en `AGENTS.md` y en el README, más lo explicativo fuera con punteros; nada normativo se mueve ni se condensa. Si no llega a 70 KB, vuelve con el número medido antes de (C).
 
 ## Resueltas
 
