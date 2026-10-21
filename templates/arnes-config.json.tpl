@@ -1,9 +1,9 @@
 {
-  "_doc": "Manifiesto machine-readable del arnés. Lo leen los hooks de enforcement del plugin (hooks/) en cada PreToolUse. Es la fuente de verdad EJECUTABLE de las invariantes que en AGENTS.md están en prosa. Editar aquí cambia el enforcement en un solo sitio.",
+  "_doc": "Manifiesto del arnés: lo leen los hooks. Explicación: AGENTS.md § 14, «Raíz (_doc)».",
   "arnes_version": "{{ARNES_VERSION}}",
 
   "agentes": {
-    "_doc": "El nombre llega al hook en el campo `agent_type`. Sólo `agente_codigo` puede editar `codigo_app.globs`. Basta el nombre corto: el hook tolera el prefijo del plugin que Claude Code añade en runtime (`arnes-juan:desarrollador`). Escribirlo CON prefijo es opcional y hace la comparación estricta con ese proveedor.",
+    "_doc": "Quién edita el código y el prefijo del plugin: AGENTS.md § 14, «agentes._doc».",
     "agente_codigo": "desarrollador",
     "conocidos": ["analista-requerimientos", "desarrollador", "qa-tester", "auditor-seguridad"]
   },
@@ -21,7 +21,7 @@
   },
 
   "estado_derivado": {
-    "_doc": "Bloque de continuidad que el hook Stop/SubagentStop DERIVA leyendo el disco y escribe entre marcadores en `archivo`. No lo redacta ningún agente: un resumen escrito por el modelo miente justo cuando más falta hace, que es cuando le queda poco contexto. Fuera de los marcadores no se toca nada. Pon `activo: false` para apagarlo.",
+    "_doc": "Bloque de continuidad derivado del disco: AGENTS.md § 14, «estado_derivado._doc».",
     "activo": true,
     "archivo": "docs/ESTADO.md"
   },

@@ -1762,7 +1762,11 @@ done
 # `coste_inconcluso` sobre vectores fijos; y +1 en la 38/2 (13 → 14), la calibración del reloj fuera de
 # banda. Los casos de clase (a) que pasan su techo dicen SKIP `[INCONCLUSO] [rendimiento]` en vez de FAIL:
 # no cambia ningún número por eso.
-CASOS_ESPERADOS=3019
+# Y 3019 → 3043 por REQ-036 (1.37 · 4a, adelgazar lo que lee cada agente): +24 de la sección 51 nueva —once filas
+# en la candidata y en 081cb10 (el fail-before: B1 la orden de `arnes-upgrade` sobre tres proyectos de prueba, B2 el
+# plan, B3 el manifiesto, B4 punteros y salvaguardas, B5 la medida, B7 las marcas, B8 CA-10 y CA-11), más el control
+# positivo de la salvaguarda (i) y el diff vacío de hooks/ y tools/—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3043
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

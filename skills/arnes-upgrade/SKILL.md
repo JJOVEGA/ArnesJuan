@@ -1573,6 +1573,172 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
     hoy. **No le sugieras** la declaración de la vía proporcional: es otra cosa y es acto suyo
     (`AGENTS.md` §6, sede normativa).
 
+- **Adelgazar lo que leen los agentes (REQ-036 del arnés, 1.37 · 4a).** `AGENTS.md` y
+  `requirements/README.md` llegan **marcados por destinatario**: cada bloque empieza con
+  `[[<id> · obliga: <roles>]]` y cada agente lee al empezar sólo los bloques que lo obligan (la regla,
+  en `AGENTS.md` bloque A-00). Además: tres `_doc` del manifiesto pasan, **literales**, a `AGENTS.md`
+  § 14 y en el manifiesto queda su puntero; los casos medidos de «Cómo se escribe un criterio que no
+  se desmiente» pasan, literales, al «Anexo explicativo» del mismo README; y `AGENTS.md` gana la regla
+  de qué archivos van siempre por `Edit` y la de la corrección que sólo borra. **Nada normativo se
+  mueve ni se condensa**, y lo explicativo **se queda en tu proyecto** (no hay forma demostrada de que
+  un agente encuentre la raíz del plugin: REQ-036 CA-04). **Necesita `jq` 1.6 o posterior.**
+  **Antes de aplicar, se ve.** La orden **sólo lee** y escribe en su salida; las rutas que escribe las
+  escribes tú con `Write`:
+  1. `PLUGIN` es la raíz del plugin instalado: dos niveles por encima del directorio base de esta
+     skill, que Claude Code te da al cargarla. La **base** es `.arnes/plantillas-origen/`, con los
+     mismos nombres que las plantillas (`AGENTS.md.tpl`, `requirements-README.md.tpl`,
+     `arnes-config.json.tpl`).
+  2. Ejecútala con `QUE=plan` y escribe su salida, entera, en `.arnes/migracion.md`. Enséñasela al
+     propietario: por cada bloque, su estado y, si sale texto, **de dónde sale, adónde va y el texto
+     que sale**. **No apliques nada hasta que lo confirme.**
+  3. Confirmado, ejecútala con `QUE=AGENTS.md`, `QUE=requirements/README.md` y
+     `QUE=.arnes/config.json`. **Código 0:** escribe la salida, entera y tal cual, en ese archivo con
+     `Write` (si el archivo está en `codigo_app.globs`, ese `Write` es del `desarrollador`). **Código
+     distinto de 0:** es `UNKNOWN`; **no escribas nada en ese archivo** e informa el mensaje.
+  4. Qué decide, por sección `## `: **INTACTO** —idéntica a la base salvo los valores de sus
+     marcadores `{{…}}`— se sustituye por la del destino **conservando esos valores**; **MODIFICADO**
+     sale como `CONFLICTO` y se conserva **byte a byte** —con su primera marca de lectura en `todos`:
+     ante la duda, se lee—; **ELIMINADO** sale como `CONFLICTO` y no se repone; **NUEVO** se añade. Sin
+     base, con encabezados repetidos, con secciones que la base no tiene o en otro orden, el archivo
+     entero es `UNKNOWN` y no se toca. En el manifiesto sólo cambian los `_doc` que el proyecto dejó
+     como la base; los demás valores no se tocan.
+  5. Fase 4 releyendo el disco, y al terminar, `.arnes/plantillas-origen/` con las plantillas de
+     1.37.0, como siempre.
+  **Límite declarado:** la sección 51 del banco del arnés mide el resultado de la orden sobre
+  proyectos de prueba, **no** que un agente siga esta skill.
+
+  <!-- orden: adelgazar (REQ-036 CA-08 y CA-09; la ejecuta la sección 51 del banco del arnés) -->
+  ```bash
+  : "${QUE:?QUE: plan, AGENTS.md, requirements/README.md o .arnes/config.json}"
+  : "${PLUGIN:?PLUGIN: la raíz del plugin instalado (dos niveles por encima del directorio de esta skill)}"
+  O=.arnes/plantillas-origen
+  md_jq='
+  def secciones:
+    reduce (split("\n")[]) as $x ({s: [{h: "", l: []}], f: false};
+      (.s | length - 1) as $k
+      | if ($x | startswith([96, 96, 96] | implode)) then .f = (.f | not) | .s[$k].l += [$x]
+        elif (.f | not) and ($x | startswith("## ")) then
+          (.s[$k].l) as $p
+          | ([range(0; $p | length)] | map(select(($p[.] | test("^\\[\\[.*\\]\\][ \t]*$")))) ) as $ms
+          | (if ($ms | length) > 0 and ($p[($ms[0]):] | all(. == "" or test("^\\[\\[.*\\]\\][ \t]*$"))) then $ms[0] else ($p | length) end) as $c
+          | .s[$k].l = $p[:$c] | .s += [{h: $x, l: ($p[$c:] + [$x])}]
+        else .s[$k].l += [$x] end) | .s;
+  def esc: gsub("(?<c>[.^$|?*+()\\[\\]{}\\\\])"; "\\\(.c)");
+  def pieza: [capture("^(?<n>[A-Z_]+)\\}\\}(?<r>[\\s\\S]*)$")] | .[0];
+  def patron:
+    split("{{") as $p
+    | reduce ($p[1:][]) as $q ({r: ($p[0] | esc), v: {}};
+        ($q | pieza) as $m
+        | if $m == null then .r += ("\\{\\{" + ($q | esc))
+          elif .v[$m.n] then .r += ("\\k<" + $m.n + ">" + ($m.r | esc))
+          else .v[$m.n] = true | .r += ("(?<" + $m.n + ">[\\s\\S]*?)" + ($m.r | esc)) end)
+    | "\\A" + .r + "\\z";
+  def rellena($cap):
+    split("{{") as $p
+    | reduce ($p[1:][]) as $q ({t: $p[0], ok: true};
+        ($q | pieza) as $m
+        | if $m == null then .t += ("{{" + $q)
+          elif ($cap | has($m.n)) then .t += ($cap[$m.n] + $m.r)
+          else .ok = false | .t += ("{{" + $q) end);
+  def texto: .l | join("\n");
+  def marca: [.l[] | select(test("^\\[\\[.*\\]\\][ \t]*$"))] | .[0];
+  ($b | secciones) as $B | ($n | secciones) as $N | ($s | secciones) as $S
+  | [$B[].h] as $hb | [$N[].h] as $hn | [$S[].h] as $hs
+  | def unk($m): {estado: "UNKNOWN", motivo: $m, texto: null, plan: []};
+    if ($hb | unique | length) != ($hb | length) or ($hn | unique | length) != ($hn | length)
+       or ($hs | unique | length) != ($hs | length) then unk("hay encabezados ## repetidos")
+    elif ([$hb[] | select(. as $h | any($hs[]; . == $h) | not)] | length) > 0 then unk("la plantilla destino retira secciones de la base")
+    elif ([$hn[] | select(. as $h | any($hb[]; . == $h) | not)] | length) > 0 then
+      unk("el proyecto tiene secciones que la base no tiene: " + ([$hn[] | select(. as $h | any($hb[]; . == $h) | not)] | join(" · ")))
+    elif ([$hb[] | select(. as $h | any($hn[]; . == $h))] != $hn) then unk("el proyecto cambió el orden de las secciones")
+    else
+      (reduce $B[] as $x ({c: {}, v: {}, u: []};
+         ([$N[] | select(.h == $x.h)] | .[0]) as $y
+         | if $y == null then .c[$x.h] = "ELIMINADO"
+           else ([($y | texto) | capture($x | texto | patron)] | .[0]) as $cap
+           | if $cap == null then .c[$x.h] = "MODIFICADO"
+             else .c[$x.h] = "INTACTO"
+             | reduce ($cap | to_entries[]) as $e (.;
+                 if (.v | has($e.key)) and .v[$e.key] != $e.value then .u += [$e.key] else .v[$e.key] = $e.value end)
+             end end)) as $cl
+      | if ($cl.u | length) > 0 then unk("un marcador tiene dos valores distintos en el proyecto: " + ($cl.u | unique | join(", ")))
+        else
+          (reduce $S[] as $x ({o: [], p: [], u: false};
+             ($cl.c[$x.h] // "NUEVO") as $e
+             | ([$N[] | select(.h == $x.h)] | .[0]) as $y
+             | if $e == "ELIMINADO" then .p += [{h: $x.h, e: "CONFLICTO", m: "el proyecto la borró: no se repone"}]
+               elif $e == "MODIFICADO" then
+                 ($x | marca) as $mk
+                 | .o += ((if $mk != null and ($x.l[0] == $mk) then ["[[" + ($mk | ltrimstr("[[") | sub(" ·.*$"; "")) + " · obliga: todos]]", ""] else [] end) + $y.l)
+                 | .p += [{h: $x.h, e: "CONFLICTO", m: "el proyecto la cambió: se conserva byte a byte; su marca de lectura queda en «todos»"}]
+               else ($x | texto | rellena($cl.v)) as $r
+                 | if $r.ok | not then .u = true | .p += [{h: $x.h, e: "UNKNOWN", m: "un marcador de la plantilla no tiene valor en el proyecto"}]
+                   else .o += ($r.t | split("\n"))
+                   | .p += [{h: $x.h, e: (if $e == "NUEVO" then "NUEVO" else "SAFE" end), viejo: (if $y == null then [] else $y.l end), nuevo: ($r.t | split("\n"))}]
+                   end end)) as $r
+          | ($r.o | join("\n")) as $t
+          | ($t | secciones | reduce .[] as $z ({}; reduce ($z.l[] | select(. != "")) as $l (.; .[$l] //= $z.h))) as $donde
+          | {estado: (if $r.u then "UNKNOWN" else "OK" end), motivo: "", texto: (if $r.u then null else $t end),
+             plan: [$r.p[] | if has("viejo") then (.nuevo) as $nv
+                               | .sale = [.viejo[] | select(. != "") | select(. as $l | any($nv[]; . == $l) | not)
+                                          | {l: ., a: ($donde[.] // "(no está en el resultado: se retira)")}] | del(.viejo, .nuevo)
+                             else . end]}
+        end
+    end
+  '
+  cfg_jq='
+  def tpl: gsub("\\{\\{[A-Z_]+\\}\\}"; "null") | fromjson;
+  ($b | tpl) as $B | ($s | tpl) as $S | (try ($n | fromjson) catch null) as $N
+  | if ($N | type) != "object" then {estado: "UNKNOWN", motivo: "el manifiesto no es un único objeto JSON", texto: null, plan: []}
+    else
+      (reduce ([$S | paths(type == "string")] | map(select(.[-1] | tostring | startswith("_doc"))))[] as $p
+        ({t: $n, p: [], u: false};
+         ($B | try getpath($p) catch null) as $bv | ($S | getpath($p)) as $sv | ($N | try getpath($p) catch null) as $nv
+         | if $bv == $sv then .
+           elif $bv == null then .p += [{h: ($p | join(".")), e: "UNKNOWN", m: "_doc que la base no tiene: no se añade"}] | .u = true
+           elif $nv != $bv then .p += [{h: ($p | join(".")), e: "CONFLICTO", m: "el proyecto lo cambió o lo quitó: se conserva"}]
+           else (($p[-1] | tojson) + ": " + ($bv | tojson)) as $o | (($p[-1] | tojson) + ": " + ($sv | tojson)) as $w
+             | if (.t | [indices($o)[]] | length) == 1 then .t = (.t | split($o) | join($w))
+                 | .p += [{h: ($p | join(".")), e: "SAFE", sale: [{l: $bv, a: $sv}]}]
+               else .u = true | .p += [{h: ($p | join(".")), e: "UNKNOWN", m: "no se localiza una sola vez en el texto"}] end
+           end)) as $r
+      | {estado: (if $r.u then "UNKNOWN" else "OK" end), motivo: "", texto: (if $r.u then null else $r.t end), plan: $r.p}
+    end
+  '
+  uno() {   # <archivo del proyecto> <plantilla>: imprime el JSON del resultado; sin base, UNKNOWN
+    local f="$1" t="$2" prog="$md_jq"
+    [ "$f" = .arnes/config.json ] && prog="$cfg_jq"
+    if [ ! -r "$O/$t" ]; then jq -n --arg m "no hay base: falta $O/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
+    elif [ ! -r "$PLUGIN/templates/$t" ]; then jq -n --arg m "no hay destino: falta $PLUGIN/templates/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
+    elif [ ! -r "$f" ]; then jq -n --arg m "no existe $f en el proyecto" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
+    else jq -n --rawfile b "$O/$t" --rawfile n "$f" --rawfile s "$PLUGIN/templates/$t" "$prog" \
+           || jq -n --arg m "no se pudo calcular el plan de $f" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
+    fi
+  }
+  case "$QUE" in
+    AGENTS.md) r="$(uno AGENTS.md AGENTS.md.tpl)" ;;
+    requirements/README.md) r="$(uno requirements/README.md requirements-README.md.tpl)" ;;
+    .arnes/config.json) r="$(uno .arnes/config.json arnes-config.json.tpl)" ;;
+    plan)
+      printf '# Migración hacia 1.37.0 — adelgazar lo que leen los agentes (REQ-036 del arnés)\n\n'
+      printf 'Nada se aplica hasta que el propietario lo confirme. Por cada bloque: estado y, si sale texto, de dónde sale, adónde va y el texto.\n'
+      for par in AGENTS.md:AGENTS.md.tpl requirements/README.md:requirements-README.md.tpl .arnes/config.json:arnes-config.json.tpl; do
+        uno "${par%%:*}" "${par#*:}" | jq -r --arg f "${par%%:*}" '
+          "\n## " + $f + " — " + .estado + (if .motivo != "" then ": " + .motivo else "" end)
+          + (if .estado == "UNKNOWN" then "\n\n**No se aplica nada de este archivo.**" else "" end),
+          (.plan[] | (if .h == "" then "(preámbulo)" else (.h | ltrimstr("## ")) end) as $h
+            | "\n### " + $h + " — " + .e + (if .m then ": " + .m else "" end),
+              (.sale // [] | .[] | "- **Sale** de `" + $f + "` § «" + $h + "»: " + (.l | tostring)
+                + "\n  **Va a:** " + (if $f == ".arnes/config.json" then "el puntero que lo sustituye: " + (.a | tostring)
+                                      else "`" + $f + "` § «" + (.a | tostring | ltrimstr("## ")) + "»" end)))'
+      done
+      exit 0 ;;
+    *) echo "QUE no reconocido: $QUE" >&2; exit 2 ;;
+  esac
+  [ "$(jq -r .estado <<< "$r")" = OK ] || { jq -r '"UNKNOWN: " + .motivo + ([.plan[] | select(.e == "UNKNOWN") | " · " + .h + ": " + .m] | join(""))' <<< "$r" >&2; exit 3; }
+  jq -j .texto <<< "$r"
+  ```
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

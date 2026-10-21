@@ -43,7 +43,29 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-21: P-137-X resuelta por el propietario, en § Resueltas.)_
+### P-137-Y — **REQ-036: `CLAUDE.md` importa `@AGENTS.md` entero en el contexto de todo agente, así que la lectura por destinatario no baja lo que recibe.** ¿Cómo seguimos?
+
+**Qué pasó.** El desarrollador terminó la fase 1, **sin validar**:
+- lo que la definición del analista le manda leer mide **74 294 B** (antes 138 574), dentro de tus 75 KB;
+- banco 3029/0/14 (3043); autoprueba 117/0; `hooks/` sin diff.
+
+Pero registró **D-036-1**, y la coordinadora lo confirma: `templates/CLAUDE.md.tpl` (l. 6) y el `CLAUDE.md` de este repositorio importan **`@AGENTS.md`**, y Claude Code lo inyecta **entero en el contexto de cada agente, subagentes incluidos**. Esta sesión y sus subagentes lo reciben así. Consecuencias:
+1. **En un consumidor, lo inyectado no baja.** La lectura por destinatario sólo ahorra lo que el agente **vuelve a leer**. Y la plantilla de `AGENTS.md` **creció** de 69 888 a 74 863 B por las marcas, así que lo inyectado **sube ≈ 5 KB**.
+2. **La medida de PC-034-1 no ve esto.** El proyecto de prueba no tiene `CLAUDE.md`, y sus corridas eran subagentes de esta sesión. Sus ≈ 88 k por corrida incluyen el `AGENTS.md` de **este** repositorio, ≈ 75 KB inyectados, además de los 138 KB leídos del proyecto. La coordinadora no lo vio al explicarte el coste.
+
+**Qué detiene, y qué no.** Detiene QA de REQ-036, porque validaría un objetivo que en la práctica no se cumple. Lo construido sirve para cualquiera de las opciones.
+
+**Opciones**
+- **(A) — recomendada:** **`CLAUDE.md` deja de importar `@AGENTS.md`.** En su lugar lleva una instrucción corta: lee `AGENTS.md` según tu rol, por sus marcas, y la coordinadora lo lee entero al empezar (§0). **Nada normativo se mueve ni se duplica:** `AGENTS.md` sigue siendo la sede y lo leen también otras herramientas. *Riesgo:* que la sesión principal no lea `AGENTS.md` entero. Lo controla la instrucción del propio `CLAUDE.md`, y las invariantes de máquina siguen en los hooks, que no dependen de él. *Alcance nuevo:* `templates/CLAUDE.md.tpl` y `arnes-upgrade` para `CLAUDE.md`; y, si lo autorizas, el `CLAUDE.md` de **este** repositorio, que hoy inyecta ≈ 78 KB a cada subagente.
+- **(B):** se mantiene el import y lo que hay que achicar es **`AGENTS.md` mismo**: las reglas de la coordinadora y §13 pasan a archivos por rol. *Consecuencia:* **mueve normativa**, en contra de tu «nada normativo se mueve», y crea sedes nuevas.
+- **(C):** se cierra 4a tal cual, y se declara que en consumidores con el import el ahorro es sólo de relectura. *Consecuencia:* el objetivo de P-137-W no se cumple en la práctica.
+
+**Medida corregida, para cualquier opción** (lo decide la coordinadora por fidelidad, y te lo informa): CA-02 se mide con **`claude -p`** en el proyecto de prueba, con su `CLAUDE.md` de plantilla y el plugin del candidato (`--plugin-dir`), aislado de este repositorio. Los tokens salen del JSON de uso; son 4 corridas, como en PC-034-1.
+
+**Coste hasta aquí (REQ-036):** analista 124 089 · desarrollador **357 467** (≈ 350 k, 1,02×).
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-Y (A): CLAUDE.md sin import de AGENTS.md, con instrucción de lectura por rol; también en este repositorio. CA-02 se mide con claude -p aislado.
 
 ## Resueltas
 

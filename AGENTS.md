@@ -1,10 +1,24 @@
 # AGENTS.md — ArnesJuan
 
+[[A-00 · obliga: todos]]
+
 > Archivo canónico de contexto y reglas del proyecto (estándar AGENTS.md, leído por
 > Claude Code, Codex, Cursor y otros). Cualquier IA que abra el proyecto lo lee primero.
 > Para Claude Code, `CLAUDE.md` importa este archivo.
+>
+> **Lectura por destinatario.** Cada bloque empieza con una marca `[[<id> · obliga: <roles>]]` y
+> llega hasta la marca siguiente. Los roles son `coordinadora`, `analista`, `desarrollador`, `qa`
+> y `seguridad`; `todos` los nombra a los cinco. Cada agente lee al empezar los bloques cuya marca
+> lo nombra o dice `todos` —su definición los lista, y la marca manda si la lista se queda atrás—,
+> y la coordinadora los lee **todos**. **Ante la duda, se lee:** un bloque cuyo obligado no está
+> claro lo leen todos. Un bloque marcado `explicativo` no obliga a nadie: se consulta cuando hace
+> falta el porqué. La marca decide **quién lee**, nunca **qué rige**: ninguna regla deja de
+> obligar a quien obliga por no estar en su lista. Para localizarlos: buscar `^\[\[` con número de
+> línea y leer cada bloque desde su marca hasta la siguiente.
 
 ---
+
+[[A-0 · obliga: todos]]
 
 ## 0. Ritual de inicio y cierre de sesión (leer primero)
 
@@ -17,6 +31,8 @@
 - Actualizar `docs/ESTADO.md` (fase, en progreso, próximo paso, bloqueos).
 - Actualizar el `Estado:` de los REQ que cambiaron.
 - Registrar en `CHANGELOG.md` (manual si no hay commit; obligatorio si hay commit).
+
+[[A-1 · obliga: todos]]
 
 ## 1. Qué es este proyecto
 
@@ -60,11 +76,15 @@ Plugin de Claude Code: un arnés de cuatro agentes (analista, desarrollador, QA,
 - La fusión a `main`, el tag de versión y la publicación son decisiones **humanas**, **delegadas** a la coordinadora por el propietario (2026-09-05) cuando todo está en verde; cualquier rojo o hallazgo abierto las devuelve al humano (§6 y `docs/gobernanza/autoalojamiento.md`). La instalación estable se actualiza después de publicar y verificar.
 - El manifiesto `.arnes/config.json` de este repo es el mapeo del arnés sobre sí mismo: `hooks/`, `tools/` y `.github/` son código protegido.
 
+[[A-5.1 · obliga: todos]]
+
 ## 5. Equipo de agentes de IA
 
 4 subagentes especializados (en `.claude/agents/`) + la sesión principal como **coordinadora**.
 Los subagentes NO se invocan entre sí; la sesión principal orquesta el bucle y el humano
 aprueba cada fase.
+
+[[A-5.2 · obliga: coordinadora]]
 
 > **La sesión coordinadora no edita el código de la app en directo.** Todo cambio de código
 > —incluida la **depuración de errores**— se delega en el `desarrollador`; luego `qa-tester`
@@ -80,6 +100,8 @@ aprueba cada fase.
 > una jaula**: impide el desvío por descuido, no contiene a quien se empeñe en rodearla
 > (alcance y límites reales en §13). Para cambiar qué cuenta como "código de la app", edita
 > el manifiesto.
+
+[[A-5.3 · obliga: todos]]
 
 | Agente | Modelo | Responsabilidad |
 |--------|--------|-----------------|
@@ -105,6 +127,8 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 > `ARCHITECTURE.md`. Si el proyecto crece y la consolidación pesa, se puede añadir luego un
 > agente `documentador` dedicado.
 
+[[A-6.1 · obliga: todos]]
+
 ## 6. Orquestación, loops de error y gates humanos
 
 **Flujo:** analista define REQ → desarrollador codifica → qa-tester valida → auditor-seguridad revisa → REQ `completado`.
@@ -119,6 +143,8 @@ Modelo asignado por dificultad y criticidad del rol; ajustable por proyecto.
 > por reclasificación automática de un agente. El coordinador reúne la evidencia y, **con todo en verde** (CI sin FAIL, SKIP explicados,
 > fail-before/pass-after, QA y auditor aprobados), **fusiona, etiqueta y publica por delegación
 > permanente del propietario (2026-09-05)**; cualquier rojo o hallazgo abierto devuelve la decisión a Juan. Procedimiento completo en `docs/gobernanza/autoalojamiento.md`.
+
+[[A-6.2 · obliga: todos]]
 
 **La vía de cada cambio se elige por su EFECTO, no por su tamaño ni por la extensión del archivo.**
 El flujo de arriba es el de una **capacidad nueva**. Una **reparación con diagnóstico y solución
@@ -210,6 +236,8 @@ que la trajo**.
 > **negativas** que un lector automático resolvía como afirmativas, y por eso la comprobación es de
 > quien lee y no de un patrón.
 
+[[A-6.3 · obliga: coordinadora]]
+
 **La fila 1 no levanta el control de edición de un archivo protegido.** Elegir vía decide **quién
 revisa**, nunca **quién puede escribir**. Una errata sin cambio de obligaciones la corrige la
 coordinadora **salvo que viva dentro de una ruta que `codigo_app.globs` (`.arnes/config.json`)
@@ -223,6 +251,8 @@ regla de autorización escrita en Markdown es gobernanza sensible; una prueba qu
 protección funciona tampoco es una simple edición documental. La coordinadora clasifica y **registra
 una justificación breve**; **no se abre una comisión sólo para clasificar**, y se escala únicamente
 una ambigüedad concreta que pueda **reducir una protección**.
+
+[[A-6.4 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 **En la vía de reparación, el desarrollador entrega el arreglo y su documentación EN LA MISMA
 ENTREGA** —incluido el write-back de §9—, y **QA verifica el cambio y sus dependencias**,
@@ -240,11 +270,15 @@ aparezca un efecto que no esté entre ellos, la obligación sigue en pie. **Y es
 depende de la comprobación de autorización de arriba:** un proyecto que no autorice la vía tiene
 **más** pasos, nunca menos.
 
+[[A-6.5 · obliga: coordinadora]]
+
 **`guard-completado` no decide a quién se despacha, y aquí no se usa como criterio.** Es una puerta
 de **cierre**: si se deja que ella lo resuelva, el trabajo llega hasta el final y **sólo entonces**
 se descubre que faltaba seguridad — el bucle tardío que esta vía existe para evitar. Y §13 la
 declara **inerte** sin `jq` o sin `.arnes/config.json`, de modo que en ese proyecto no calcularía
 nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
+
+[[A-6.6 · obliga: todos]]
 
 **Y las cuatro cosas que esta vía NO cambia, porque su ausencia sería la ambigüedad peligrosa:**
 
@@ -274,6 +308,8 @@ nada. La regla de despacho es la del párrafo anterior y se sostiene sola.
 4. **Los contadores no se reinician.** Una reparación que vuelve al mismo agente **gasta vuelta**,
    se llame como se llame, y **agotar vueltas nunca equivale a aprobar**
    (y tampoco se reinicia por cambiar de agente, de fase, de nombre o de REQ: regla 5, más abajo).
+
+[[A-6.7 · obliga: coordinadora]]
 
 **Antes de despachar una comisión que OMITE una fase, la coordinadora lo comprueba POR ESCRITO.**
 Es ella quien decide el despacho, así que es ella quien comprueba el permiso. La comprobación se
@@ -313,6 +349,8 @@ tiene **más** pasos, nunca menos.
 3. **No se afirma que cueste cero.** Que §0 obligue a leer `AGENTS.md` **no demuestra** que un
    agente lea esta sección con la profundidad que la comprobación exige. Ese coste no se ha medido.
 
+[[A-6.8 · obliga: coordinadora, qa, seguridad]]
+
 **El orden no es una sugerencia: es la condición de validez de la firma.** El
 `auditor-seguridad` no firma `Seguridad: aprobado` sobre un árbol que el `qa-tester` no ha
 validado, porque **no mira las quality gates**: su veredicto acredita la revisión de seguridad,
@@ -325,6 +363,8 @@ que nadie emitió. Buscar paralelismo aquí no ahorra tiempo: produce una firma 
 > `Seguridad: preventiva` en el REQ; nunca al invocarla: una excepción que se inventa
 > cuando hace falta no es una excepción, es una salida. Esa firma **no** cubre el código
 > posterior: cuando el código exista, la auditoría se repite en su turno.
+
+[[A-6.9 · obliga: coordinadora]]
 
 **Despacho en paralelo: sólo lo que la máquina declara disjunto, nunca por intuición.** La
 coordinadora **sólo** despacha comisiones en paralelo sobre REQ que `tools/arnes-paralelo.sh`
@@ -359,6 +399,8 @@ validez de la firma, no una preferencia de calendario. `tools/arnes-paralelo.sh`
 comprueba** —responde sobre archivos, y lo dice en su propia salida—, así que un `disjunto` nunca es
 permiso para saltárselas.
 
+[[A-6.10 · obliga: todos]]
+
 **Loop de error.** Empieza por lo que **NO** cambia, porque es lo que se perdería leyendo el
 resto de prisa: el `qa-tester` y el `auditor-seguridad` **detectan, registran con su clase y
 bloquean** lo que encuentren, y la seguridad puede **vetar** en cualquier momento; **ninguna
@@ -392,6 +434,8 @@ Agotado el tope, el REQ **no se queda abierto**: o cierra con el residual **decl
 (dueño, forzador medido y vencimiento) o pasa a `bloqueado` y se escala al humano. La
 seguridad puede **vetar** en cualquier momento.
 
+[[A-6.11 · obliga: coordinadora, desarrollador, qa, seguridad]]
+
 **No todo hallazgo bloquea.** Cada hallazgo abierto declara su clase en el campo
 `Hallazgos abiertos:` del REQ — `usuario/dinero`, `contrato` o `instrumento` (tabla completa
 en `requirements/README.md`). Sólo las dos primeras impiden cerrar. Un defecto **del propio
@@ -402,6 +446,8 @@ función de negocio**.
 > 🔒 **Cumplido por máquina:** `guard-completado` lee `Hallazgos abiertos:` y deniega el
 > cierre si alguno es `usuario/dinero` o `contrato` — y también si alguno **no declara clase**,
 > porque entonces la puerta no puede saber si bloquea.
+
+[[A-6.12 · obliga: coordinadora]]
 
 **La coordinación se orienta a entregas — seis reglas, y ésta es su sede única.** Son
 obligaciones de la **sesión coordinadora**, no de los subagentes. Se verifican leyendo el
@@ -435,6 +481,9 @@ desfasaría hacia el lado que **abre**.
    nombres, técnica de prueba— no pasan por esta comprobación. Qué ocurre con un REQ existente ya
    aprobado cuyo pedido no se conservó no lo decide esta regla: lo decide la definición del
    `analista-requerimientos`.
+
+[[A-6.13 · obliga: coordinadora, desarrollador, qa, seguridad]]
+
 2. **Todo bloqueo declara su alcance.** Venga de un hallazgo, de un veto, de la cola de
    aprobaciones o de una dependencia, declara **(i) qué acción impide** —nombrando **la acción
    concreta y la regla que la impide**, y clasificándola con las **cinco clases de acción** cuya
@@ -491,6 +540,9 @@ desfasaría hacia el lado que **abre**.
    definido** en el sentido de la regla 1. **Caso medido:** una pregunta encolada **de
    madrugada** dejó parado trabajo que nada impedía. Qué impide exactamente la cola, y qué no,
    está en «Mecanismo de gate», más abajo.
+
+[[A-6.14 · obliga: coordinadora]]
+
 5. **El presupuesto es del ciclo completo, no del agente.** La misma entrega se
    sigue **a través de todos los roles**, y **cambiar de agente, de fase o de nombre no reinicia
    ningún límite**. Los contadores existentes **se conservan tal cual** —el primero, el tope de
@@ -511,6 +563,8 @@ desfasaría hacia el lado que **abre**.
    aplicada al trabajo en vez de al número. Esa clase de defecto está definida, con sus
    instancias, en el requerimiento del arnés que introdujo estas reglas y en la sede donde el
    proyecto registre sus defectos de coordinación; aquí se **cita**, no se redefine.
+
+[[A-6.15 · obliga: todos]]
 
 **Nivel de rigor — cuánta ceremonia paga cada REQ.** No todo requerimiento merece el mismo
 esfuerzo. Cada REQ declara `Rigor:` en su cabecera: `ligero` (analista + desarrollador +
@@ -533,6 +587,8 @@ sensibilidad — exactamente como se juzgaba antes de que existieran los niveles
 > `Seguridad: aprobado` en `critico`. Un `Rigor: ligero` escrito sobre un REQ sensible **no
 > baja nada**: el suelo manda.
 
+[[A-6.16 · obliga: todos]]
+
 **Gates de aprobación humana** — las acciones siguientes esperan tu visto bueno y **no se
 ejecutan** sin él. Son **aprobaciones humanas**, de la clase de acción «**aprobar**» (regla 2):
 las concede una **persona** y **ningún hook las impone**. **Y es una lista de aprobaciones
@@ -546,6 +602,8 @@ autorizado ni desbloqueado**:
 - cambiar el ruleset, el workflow de CI o el manifiesto `.arnes/config.json` de este repo;
 - cualquier cambio en `hooks/` (el mecanismo): se trata como crítico por definición.
 (por defecto: cierre de cada fase, decisiones arquitecturales, y cambios que tocan datos/credenciales de producción).
+
+[[A-6.17 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 **Mecanismo de gate:** cuando una acción requiere aprobación, el agente escribe la decisión
 pendiente en `PENDING_APPROVAL.md` con la forma de la regla 4 —pregunta, opciones, recomendación
@@ -571,6 +629,8 @@ sigue**, y en ese segundo caso el proyecto **espera** — que es distinto de fab
 > el hook `guard-completado` (plugin) deniega marcar cualquier REQ como `completado`. El avance
 > no depende de que el modelo "recuerde" detenerse — con el alcance real descrito en §13.
 
+[[A-6.18 · obliga: coordinadora]]
+
 **Gates por fase (patrón tipo SPARC):** cada fase del roadmap tiene una puerta explícita —
 no se entra a la fase siguiente hasta cumplir el criterio de terminado de la actual + tu visto
 bueno. Las fases no se solapan en silencio.
@@ -580,10 +640,14 @@ terminado (evita trabajo de más). Presupuesto del proyecto: sin tope fijo; anot
 medición de tokens en runtime es opcional vía MCP (ver `.mcp.json.example`); el arnés no
 depende de él.
 
+[[A-6.19 · obliga: todos]]
+
 **Observabilidad (en archivos, no en infra):** la traza del proyecto vive en archivos legibles
 — `CHANGELOG.md` (qué cambió, quién, qué modelo), `docs/seguridad/registro-seguridad.md`
 (hallazgos) y `docs/ESTADO.md` (dónde vamos). Esa es la observabilidad por defecto; un backend
 de trazas/métricas es opcional vía MCP.
+
+[[A-7 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 ## 7. Quality Gates
 
@@ -607,11 +671,15 @@ se fijan por proyecto; si no se definieron, se usa el estándar del stack.
 > **deniega** si alguna falla (alcance real en §13). Mantén la lista de gates idéntica aquí y
 > en el manifiesto.
 
+[[A-8 · obliga: todos]]
+
 ## 8. CHANGELOG — reglas
 
 Cada entrada en `CHANGELOG.md` lleva: fecha, **Origen** (`GitHub` = commit / `Interno` = manual),
 usuario, modelo de IA, agente(s) y detalle. Todo commit DEBE actualizar `CHANGELOG.md` en el
 mismo commit (lo exige el hook `pre-commit`).
+
+[[A-9 · obliga: todos]]
 
 ## 9. Cambios de requerimientos (versionado y deriva)
 
@@ -649,6 +717,8 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
   nuevos → seguridad revisa). Un cambio de requerimiento **reabre** el trabajo; no es solo
   editar texto.
 
+[[A-10 · obliga: todos]]
+
 ## 10. Convenciones de trabajo
 
 - Idioma de documentación y comunicación: **español**.
@@ -659,11 +729,15 @@ cambio de legislación, una limitación detectada en pruebas, un parche de depen
   un ADR usando la plantilla del arnés (`templates/ADR.md.tpl`). No se borran; si una decisión
   se revierte, se crea un ADR nuevo que supersede al anterior.
 
+[[A-11 · obliga: coordinadora]]
+
 ## 11. Entrega
 
 El proyecto no se considera cerrado hasta generar `DELIVERY.md` (artefacto de cierre:
 resumen ejecutivo, changelog consolidado, estado de docs, módulos entregados, handoff)
 y obtener la aprobación del destinatario.
+
+[[A-12 · obliga: todos]]
 
 ## 12. Mapa de carpetas
 
@@ -684,6 +758,8 @@ DELIVERY.md            ← artefacto de cierre (al entregar)
 .claude/agents/        ← definiciones de los 4 agentes (del plugin)
 memory/                ← memoria/preferencias (no versionar secretos)
 ```
+
+[[A-13.1 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 ## 13. Enforcement por runtime (hooks del plugin)
 
@@ -774,6 +850,8 @@ presentación: la puerta y `tools/arnes-lectura.sh` leen el valor entero. Un blo
 continuidad en el que cuatro veredictos largos ocupan un tercio —y rompen la tabla— deja
 de servir para lo único que existe.
 
+[[A-13.2 · obliga: todos]]
+
 **La invariante manda sobre cualquier preferencia de herramienta.** Si una preferencia de sesión
 —una instrucción de estilo, una costumbre, un ajuste de configuración— empuja a hacer por la
 **consola** lo que las herramientas de edición hacen, esa preferencia **cede**: las puertas de
@@ -784,6 +862,16 @@ relacionara las dos cosas—, así que va escrito aquí y no en la cabeza de nad
 **quien configura una sesión no suele ser quien lee esta sección**. Regla operativa: para tocar un
 archivo que alguna invariante protege se usan las herramientas de edición; si hace falta la
 consola, se dice **por qué** y se asume que ninguna puerta lo va a medir.
+
+**Qué archivos van siempre por `Edit`, haya o no una puerta (PR-137-1 y PR-137-2).** Se enuncia por
+**propiedad**, no por lista de rutas: **todo archivo versionado del proyecto que un agente cambia a
+mano se cambia con `Edit`/`Write`/`MultiEdit`, haya o no una puerta que lo mire.** Escribirlo por
+consola —un intérprete (`python`, `node`…), `sed -i`, una redirección— exige declarar **por qué** en
+el informe de la comisión. **Límite declarado:** es norma para quien lee y **ninguna puerta lo
+comprueba**; PR-137-1 y PR-137-2 siguen clasificados `instrumento`, y su caso de prueba mecánico es de
+1.37 · 3.
+
+[[A-13.3 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 **Es una barandilla, no una jaula.** El hook impide que el modelo **se desvíe por descuido**;
 no contiene a un agente decidido a rodearlo. Concretamente:

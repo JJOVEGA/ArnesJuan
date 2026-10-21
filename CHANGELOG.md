@@ -2,6 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-21 · 1.37 · 4a, fase 1 (desarrollador, Opus): REQ-036 implementado, **sin validar**; parada en `P-137-Y` por D-036-1 (`CLAUDE.md` importa `@AGENTS.md`)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **Construido:**
+  - las marcas `[[id · obliga: roles]]` (36 en la plantilla, 34 en este repositorio, 15 en cada README) y las listas de lectura en las cuatro definiciones;
+  - lo explicativo de un consumidor, en un anexo del README, porque la raíz del plugin no se pudo demostrar (CA-04); en este repositorio, `docs/explicacion/`;
+  - los `_doc` acortados;
+  - `arnes-upgrade` con fusión a tres vías y plan previo;
+  - CA-10 y CA-11;
+  - la sección 51 (24 casos).
+- **Medida:** lo que el analista debe leer, 74 294 B (antes 138 574). Banco 3029/0/14 (3043); autoprueba 117/0; `hooks/` sin diff.
+- **D-036-1, confirmado por la coordinadora:** `templates/CLAUDE.md.tpl` y el `CLAUDE.md` de este repositorio importan `@AGENTS.md`, que se inyecta entero a todo agente; y la plantilla de `AGENTS.md` crece de 69 888 a 74 863 B. Las corridas de PC-034-1 incluían además el `AGENTS.md` de este repositorio, inyectado por la sesión. **P-137-Y:** (A) quitar el import (recomendada), (B) achicar `AGENTS.md` moviendo normativa, (C) cerrar tal cual. La medida de CA-02 se corrige con `claude -p` aislado. D-036-2 a D-036-5, registrados en el informe.
+- **Coste:** desarrollador 357 467 (≈ 350 k).
+- Resultado: la estrategia depende de P-137-Y.
+
 ## [Interno] — 2026-10-21 · REQ-036: `Archivos:` incluye las definiciones de desarrollador, QA y seguridad, que CA-14 exige (analista, Sonnet)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

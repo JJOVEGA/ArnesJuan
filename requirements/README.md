@@ -1,6 +1,14 @@
 # Requerimientos — ArnesJuan
 
+[[R-00 · obliga: todos]]
+
+**Lectura por destinatario:** este archivo se lee por bloques, con la misma marca y las mismas
+reglas que `AGENTS.md`, bloque A-00 —cada agente lee los bloques que lo nombran o dicen `todos`, la
+coordinadora los lee todos, y ante la duda se lee—.
+
 Esta carpeta es el **contrato compartido**: la única fuente de verdad sobre qué hay que hacer y qué falta. Todos los agentes leen y actualizan estos archivos.
+
+[[R-1 · obliga: todos]]
 
 ## Tipos
 - **REQ-xxx** — Requerimiento funcional (una capacidad del sistema).
@@ -17,6 +25,8 @@ Esta carpeta es el **contrato compartido**: la única fuente de verdad sobre qu�
 | `bloqueado` | Detenido por una dependencia o veto (indicar motivo) |
 
 Un REQ solo pasa a `completado` cuando: criterios de aceptación cumplidos + quality gates en verde + visto bueno de seguridad.
+
+[[R-2.1 · obliga: todos]]
 
 ## Veredictos de validación (campos del REQ)
 
@@ -43,6 +53,8 @@ de ser de este arnés.
     formal con remedio, dueño y umbral (`vetado`). Es el estado más común de una
     auditoría real, y **no cierra** un REQ crítico: como todo valor distinto de
     `aprobado`, sirve para decir la verdad, no para firmar.
+
+[[R-2.2 · obliga: coordinadora, qa, seguridad]]
 
 **Un valor fuera de estos vocabularios se avisa al escribirlo.** Si escribes un veredicto
 que la máquina no reconoce, el arnés te lo dice en ese momento —sin denegar la edición— y
@@ -79,6 +91,8 @@ El hook `guard-completado` **impide** marcar `completado` sin `QA: aprobado`, y 
 `Sensible a seguridad: sí` sin `Seguridad: aprobado`. Llegar a "aprobado" exige que los
 hallazgos estén resueltos **y reflejados en el REQ/NFR** (write-back, ver `AGENTS.md` §9).
 
+[[R-2.3 · obliga: todos]]
+
 **Cada clave de control se escribe una sola vez, y como la escribe la plantilla.** Las claves de
 control son las seis cuya presencia o ausencia decide el cierre: `Estado`, `QA`, `Seguridad`,
 `Sensible a seguridad`, `Hallazgos abiertos` y `Rigor` (lista cerrada; en el código del arnés vive una
@@ -104,6 +118,8 @@ siendo ambigua, aunque no toque el estado; la que la retira, la corrige o deshac
 deniega por esto. Para `Hallazgos abiertos` repetida con su forma exacta decide su propia regla, con
 los límites que esa regla declara («Clases de hallazgo», abajo).
 
+[[R-2.4 · obliga: coordinadora, desarrollador, qa, seguridad]]
+
 **Qué es una variante, por propiedad.** Una línea de la cabecera —antes del primer `## `, fuera de todo
 `<!-- … -->`, con dos puntos ASCII (`:`)— cuya clave, tras la tolerancia de siempre (blancos de los
 extremos, `*`, `_` y `` ` ``) y tras quitar **como mucho un** marcador de lista inicial (`-` o `+`
@@ -121,6 +137,8 @@ contiene un signo ASCII visible que no es letra —`>`, comillas, paréntesis, c
 cita, una mención o una referencia. Ejemplos **no exhaustivos**: `> Estado: completado`,
 `«Estado»: …`, `(QA): …`, `Q&A: …`.
 
+[[R-2.5 · obliga: todos]]
+
 **Fuera, y sin promesa:** una letra cambiada por otra que se le parece (`Hallazgоs` con `о` cirílica,
 letras de ancho completo); una letra ASCII de más, de menos o distinta (`Hallazgo abierto:`, `Rigr:`);
 unos dos puntos que no son ASCII (`：`); las líneas con un signo visible de los de arriba, aunque lleven
@@ -133,6 +151,8 @@ ausencia y ese límite **no las protege**. Esta regla mira la **clave**: el valo
 `old_string` sólo coincide tras la normalización que aplica la herramienta —comillas tipográficas,
 `\uXXXX`— **se deniega**. La norma está en REQ-023 CA-13 del repositorio del arnés (ADR-015), que es la
 vía de SEC-117. Para editar un REQ, copia el `old_string` literal del archivo.
+
+[[R-3 · obliga: todos]]
 
 ## Nivel de rigor
 Cuánta demostración se exige **por encima** de las quality gates, que son binarias y corren
@@ -204,6 +224,8 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
 - Un valor realmente desconocido conserva la derivación heredada: sensible →
   `critico`; no sensible → `estandar`. No garantiza conservar el nivel que el autor
   pretendía escribir; usa uno de los tres niveles válidos.
+
+[[R-4 · obliga: coordinadora, desarrollador, qa, seguridad]]
 
 ## Clases de hallazgo
 Todo hallazgo abierto se declara en el campo `Hallazgos abiertos:` de la cabecera, con
@@ -300,6 +322,8 @@ Por qué existe la clase `instrumento`: un defecto del propio arnés —un lecto
 umbral, un guardián— **no puede impedir cerrar una función de negocio**. Atacar
 guardianes es valioso y tiene su propio ciclo; los hallazgos que produzca entran como
 deuda con dueño, no reabren REQ de negocio.
+
+[[R-5.1 · obliga: analista, coordinadora]]
 
 ## El mapa de archivos: el campo `Archivos:`
 
@@ -409,6 +433,8 @@ retirar sin mentir sobre el alcance**.
 ni menos, con el coste de cada uno de los dos errores— es **REQ-022 CA-07** y se escribe en su ventana.
 Aquí sólo se retira del mapa una clase de artefacto que ninguna comisión escribe.
 
+[[R-5.2 · obliga: coordinadora]]
+
 **Quién lo lee:** `tools/arnes-paralelo.sh`. Interseca los conjuntos de dos REQ **expandiendo los
 globs contra el árbol real** —no comparando cadenas— y responde `disjunto` o `colisiona` nombrando
 el archivo compartido. Comparar cadenas declararía disjuntos `hooks/lib.sh` y `hooks/*.sh`, que es
@@ -430,6 +456,8 @@ mapa no hay paralelismo, y el modo por defecto —la serie— es el que ya se us
 disjuntos no autorizan a correr el `auditor-seguridad` a la vez que el `qa-tester`. Esa regla es
 aparte y vive en `AGENTS.md` §6.
 
+[[R-6 · obliga: todos]]
+
 ## Cambios de requerimientos
 Un REQ **no se reescribe encima**: se versiona. Todo cambio se anota en el **Historial de
 cambios** del REQ (fecha · antes→después · causa · ADR si aplica). Los cambios de fondo
@@ -441,16 +469,12 @@ generan un **ADR**. Si un REQ `completado` cambia, vuelve a `en-progreso`/`en-re
 **2. Criterios de aceptación en Gherkin:** **Dado** [contexto] **Cuando** [acción] **Entonces** [resultado].
 **3. Requisitos no funcionales** se documentan como NFR separados y se referencian desde los REQ.
 
+[[R-7 · obliga: analista, coordinadora, desarrollador, qa]]
+
 ## Cómo se escribe un criterio que no se desmiente
 
-**Medido, no opinado:** en un ciclo de trabajo de este arnés, **7 de 20** hallazgos no fueron que
-el código estuviera mal, sino que el **criterio decía algo falso sobre lo construido** —clase
-`contrato`—. Uno costó una **vuelta entera del bucle** (~50 min entre desarrollador, QA, control y
-write-back). Las tres primeras formas de abajo son exactamente las que se midieron en ese ciclo;
-**la cuarta se midió después, en la ventana 1.32.1, y sobre un criterio escrito ya con esta
-sección delante** — de ahí que no baste con escribir la **regla** que el código implementa en vez
-de la **lista** de casos que se le ocurrieron a quien redactó ese día: hay que además estar
-midiendo la magnitud que se degrada.
+*(De dónde salen estas cuatro formas: `docs/explicacion/casos-medidos.md` § «Por qué existe la
+sección».)*
 
 Las cuatro están **prohibidas por nombre**. Un criterio que caiga en cualquiera de ellas está **mal
 formado**: el QA lo reporta como hallazgo de clase `contrato` contra el REQ **antes** de ejecutar
@@ -458,10 +482,7 @@ la prueba, y quien lo reescribe es el analista (write-back, `AGENTS.md` §9).
 
 ### (a) Enumerar lo que el código reconoce
 
-**Caso medido.** Un criterio listaba **tres** envoltorios de shell; el código toleraba **siete**.
-El resultado se contó como hallazgo —«el código cerró un límite en silencio»— cuando lo que había
-pasado es que el criterio se quedó corto. Una lista escrita en un contrato envejece **hacia el
-lado que abre**.
+*(Caso medido: `docs/explicacion/casos-medidos.md` § «(a) Enumerar lo que el código reconoce».)*
 
 - **Mal:** «Entonces se deniegan las formas envueltas en `if`, en `for` y en `{ }`.»
 - **Bien:** «Entonces se deniega **todo token que el segmentador trate como envoltorio**, según la
@@ -477,9 +498,8 @@ envoltorios, prefijos, estados— enuncia la **propiedad de pertenencia**, **cit
 
 ### (b) Fijar un número que la medición desmiente después
 
-**Caso medido.** Un máximo de **262 144** bytes que la medición obligó a bajar a **131 072**. El
-número no era el contrato: la **existencia de un techo** lo era. Como el criterio no decía de qué
-tipo era su número, bajarlo costó un hallazgo y una vuelta en vez de una línea de Historial.
+*(Caso medido: `docs/explicacion/casos-medidos.md` § «(b) Fijar un número que la medición desmiente
+después».)*
 
 - **Mal:** «Entonces el tope de reconstrucción es de 262 144 bytes.»
 - **Bien:** «Entonces el tope de reconstrucción es de **no más de** 262 144 bytes (**operativo**:
@@ -497,9 +517,8 @@ depende de él, no se puede bajar en silencio.
 
 ### (c) Exigir igualdad donde corresponde un techo
 
-**Caso medido.** «El **mismo** número de procesos que la versión anterior.» El código bajó de **1
-fork a 0** y el criterio declaró **incumplida una mejora**. Ése es el que costó la vuelta entera
-del bucle.
+*(Caso medido: `docs/explicacion/casos-medidos.md` § «(c) Exigir igualdad donde corresponde un
+techo».)*
 
 - **Mal:** «Entonces el hook gasta el **mismo** número de procesos que la versión anterior.»
 - **Bien:** «Entonces el hook gasta **no más de** 0 procesos añadidos respecto a la línea base;
@@ -511,14 +530,8 @@ sobre la magnitud equivocada sigue sin ver nada: ésa es la forma (d), que viene
 
 ### (d) Fijar la magnitud equivocada
 
-**Caso medido — y lo que importa es que el criterio SE CUMPLÍA.** `CA-08` de REQ-016 contrataba el
-coste de la noción de cita en **procesos por llamada**: 4 = 4, medido correctamente, criterio en
-verde. Mientras tanto el reloj de la ruta crítica del banco se multiplicaba por **diez** (7,6 s →
-75,7 s) y el banco entero —que es la **puerta requerida de `main`**— pasaba de 39 s a 92 s. No hubo
-ningún número mal puesto ni ninguna medición mal hecha: la magnitud era correcta, medible sin ruido
-y **ortogonal a lo que se degradó**. La pregunta era la que no era. Un criterio de coste que fija
-la magnitud equivocada **da verde sobre una regresión de 10×**, y lo hace con toda la autoridad de
-una medición correcta — que es peor que no medir, porque además tranquiliza.
+*(Caso medido: `docs/explicacion/casos-medidos.md` § «(d) Fijar la magnitud equivocada»; cita REQ-016
+CA-08.)*
 
 - **Mal:** «Entonces el hook gasta **no más de 0 procesos añadidos** respecto a la línea base.»
   (bien formado según (c), y ciego a un factor de diez en el reloj)
@@ -625,6 +638,8 @@ estaba escrito. Ése es justamente el punto.
 **La regla de «se citan, no se declaran» se adopta el 2026-09-08**, con el mismo alcance y sin dueño de
 REQ: es doctrina del proyecto, no un criterio de ninguno. Ningún REQ se reescribe para conformarlo.
 
+[[R-8 · obliga: todos]]
+
 ## Plantilla
 ```markdown
 # REQ-XXX — Título
@@ -681,6 +696,8 @@ definición del `analista-requerimientos`: esa ausencia no invalida sus aprobaci
 |------------|-----------------|-------------------------|--------|
 | AAAA-MM-DD | (creación) | — | — |
 ```
+
+[[R-10 · obliga: analista, coordinadora]]
 
 ## Índice
 
