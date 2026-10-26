@@ -1,0 +1,1 @@
+1.36.0	sleep 35	rc=0	35.2s	deny	ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio (30 s desde que arranco; el clien
