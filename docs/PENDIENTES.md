@@ -2537,3 +2537,17 @@ ninguna mata al hook.»
 - **Caso de banco obligatorio, literal del propietario:** «el cambio de rama legítimo como caso de banco obligatorio».
 - **Windows/MSYS, declarado como no medido salvo que se mida.** El spike midió +8 ms y +5 procesos en Pre y en Post en Linux; en Windows, con las cifras del propio arnés, serían segundos por handler.
 - **Estimación del spike:** ≈ 400–550 k, más ≈ 100 k por cada vuelta dev↔QA. Se presupuesta cuando toque, después de 1.37 · 4.
+
+### F-137-23 — Archivo de lectura por rol: la frescura se mide por archivo, y el índice vive dentro del README (QA-036-10; coste, no seguridad)
+- **Medido por QA** (REQ-036, 2026-10-26, sobre `d722aed`):
+  - la primera vez que el analista edita el índice de `requirements/README.md`, cosa que hace en casi toda comisión, el README pasa a ser más reciente que los cuatro `.arnes/lectura/<rol>.md`;
+  - hasta el siguiente inicio de sesión, el desarrollador, QA y seguridad vuelven a la lectura por marcas, la cara;
+  - CA-02 sólo midió la primera comisión de una sesión, así que ese coste no está en sus cifras.
+- **Por qué no bloquea:** falla hacia **leer más**, nunca hacia leer menos.
+- **Formas posibles, sin decidir:**
+  - sacar el índice del README;
+  - medir la frescura por el contenido de los bloques y no por la fecha del archivo;
+  - regenerar en algún punto del ciclo que no sea el camino común.
+
+  Cualquiera de ellas toca el contrato de CA-18.
+- **Destino:** clasificado por la coordinadora (2026-10-26) como `instrumento` y fuera de la entrega de REQ-036; se informa al propietario al cerrar 4a. **Dueño:** `analista-requerimientos` (contrato), luego `desarrollador`. **Cuándo:** se mide en el uso real; si las comisiones después de la primera de cada sesión pierden el ahorro de 4a, entra en 1.37 · 5.

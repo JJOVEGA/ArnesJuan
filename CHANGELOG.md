@@ -2,6 +2,30 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, write-back de QA-036-01..09 (vuelta 1 de 3); F-137-23 registrada
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista, 24/24 turnos), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **Correcciones de contrato:**
+  - se repone la línea de CA-02 (QA-036-01);
+  - CA-02 deja de pedir `pendiente` (QA-036-02);
+  - CA-18 enumera sus límites con ejemplos no exhaustivos (QA-036-05);
+  - los procesos por orden pasan a techo (QA-036-06).
+- **QA-036-03 y 04, una fuente sin marcas.** Con tres piezas, todo termina en leer más:
+  - el generador no genera y borra;
+  - el respaldo lee entera una fuente sin marcas;
+  - `arnes-upgrade` no retira el import de `CLAUDE.md` mientras `AGENTS.md` no tenga marcas, ni los `_doc` sin destino.
+- **Otras correcciones:**
+  - QA-036-05: el hook borra si el generador está roto o es ilegible;
+  - QA-036-07: una marca mal escrita es ilegible y la leen todos;
+  - QA-036-08: el archivo se lee entero, sin `offset` ni `limit`, y si el `Read` se trunca se completa la lectura;
+  - QA-036-09: se pone al día el inventario.
+- **QA-036-10 queda fuera:** es la ficha **F-137-23** de `docs/PENDIENTES.md` (la frescura por archivo y el índice dentro del README).
+- **Dato medido por la coordinadora:**
+  - en el proyecto de prueba, el archivo del analista (57 KB, 845 líneas) se leyó **entero** en las 4 corridas, así que la evidencia de CA-01/02 se sostiene;
+  - en este repositorio, el archivo del analista (97 KB) se trunca en el `Read`. El tope cae entre 57 y 97 KB, y alcanza a los archivos de desarrollador, QA y seguridad de un consumidor (88–97 KB).
+- **Coste:** 151 659 según la notificación; al menos 158 363 no cacheados.
+- **Resultado:** el contrato de la reparación está escrito. **Falta:** el desarrollador (Opus), QA y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036, QA (Opus) sobre `d722aed`: `con-hallazgos`, 10 hallazgos (5 bloquean)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (qa-tester, 105/105 turnos), Opus (coordinadora) · agente: qa-tester, coordinadora.
 
