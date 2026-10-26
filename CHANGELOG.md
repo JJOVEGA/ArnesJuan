@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · Issue #63 reproducido: con gates de más de 30 s, `guard-completado` no deja cerrar desde 1.36.0; el cliente 2.1.289 mata el hook a ≈ 600 s, no a 60; parada en `P-137-AB`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora), Sonnet (2 corridas de `claude -p`) · agente: coordinadora.
+
+- **Reproducción en un proyecto mínimo**, con un cierre en orden:
+  - con `sleep 35` se deniega por el plazo propio en 1.36.0, 1.36.1, 1.36.2 y en el candidato `d722aed`;
+  - con `sleep 25`, y con una gate `true`, pasa; con `false`, deniega por la gate.
+- **Límite del cliente (2.1.289), medido con un plugin de prueba:**
+  - un hook de 75 s no se mata;
+  - uno de 620 s se mata a ≈ 600 s, y la llamada sigue sin su decisión.
+- **La premisa de los 60 s** de §13, `hooks/lib.sh`, `guard-completado.sh` y el motivo de la denegación **no se cumple en esta versión**.
+- **Evidencia:** `issue-63-plazo-gates/` del árbol de evidencia (`bca0598`), sin datos de ningún consumidor. **P-137-AB:** (A) hotfix 1.36.3 mínimo (recomendada), (B) dentro de 1.37, (C) un hotfix sólo del plazo.
+- **Resultado:** defecto confirmado en la cabeza actual. **Falta** que el propietario decida el vehículo. REQ-036 sigue con QA, pero no puede cerrar mientras `P-137-AB` esté pendiente.
+
 ## [Interno] — 2026-10-26 · REQ-036, CA-20: B5 pasa a ser el techo de regresión de 75 280 B; `en-revisión`
 > Origen: Interno · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
 

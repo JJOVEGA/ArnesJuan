@@ -43,7 +43,58 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-26: P-137-AA resuelta por el propietario, en § Resueltas.)_
+### P-137-AB — **Issue #63: con gates de más de 30 s, `guard-completado` no deja cerrar nada desde 1.36.0, y el cliente no mata el hook a los 60 s sino a ≈ 600 s.** ¿Hotfix 1.36.3 o dentro de 1.37?
+
+**Qué se midió** (evidencia en `issue-63-plazo-gates/` del árbol de evidencia, `bca0598`; proyecto mínimo, sin datos de ningún consumidor):
+- **Reproducido en 1.36.0, 1.36.1, 1.36.2 y en el candidato `d722aed`:** un cierre con todo en orden y una gate `sleep 35` se deniega siempre por el plazo propio.
+  - Con `sleep 25` pasa.
+  - Los controles se comportan como deben: una gate `false` deniega y una `true` deja pasar.
+- **No lo introdujo 1.36.2: viene de 1.36.0.** La comprobación del plazo detrás de las gates cuenta el tiempo de las propias gates.
+- **El límite del cliente, medido en 2.1.289 con un plugin de prueba** (una corrida por punto):
+  - un hook de 75 s **no se mata**, y su `deny` se aplica;
+  - uno de 620 s se mata a **≈ 600 s**, y la llamada sigue **sin su decisión**.
+- **La premisa del arnés es falsa.** §13, `hooks/lib.sh`, `guard-completado.sh` y el propio motivo de la denegación dicen que el cliente mata a los **60 s**. **Sobre esa premisa se fijó el plazo de 30 s.**
+
+**Qué significa:**
+
+| Gates del proyecto | Qué ocurre hoy |
+|---|---|
+| menos de 30 s | se juzga bien |
+| entre 30 s y ≈ 600 s | **el cierre se deniega siempre**, aunque todo esté en verde. Es el issue: en la práctica, cualquier proyecto real |
+| más de ≈ 600 s | el cliente mata el hook y **el cierre se aplica sin veredicto**. Es SEC-132 (a), ya declarado, pero con la cifra equivocada (60 s) |
+
+**Qué detiene, y qué no:**
+- **Detiene la acción «cerrar»** en los proyectos instalados cuyas gates sumen más de 30 s. Lo impide `guard-completado`, por su plazo propio (REQ-007 CA-68).
+- **La única salida hoy** es que el propietario de cada proyecto haga la transición a mano.
+- **A este repositorio no le afecta**: sus tres gates tardan menos de 1 s. REQ-036 sigue su curso.
+- **Esta entrada, mientras esté en `## Pendientes`, impide cerrar cualquier REQ de este repositorio**, también REQ-036 (`guard-completado`, cola de aprobaciones).
+
+**Opciones**
+- **(A) — recomendada: hotfix 1.36.3 mínimo, desde `v1.36.2`, con su ciclo completo** (analista Sonnet; desarrollador, QA y seguridad en Opus). Alcance:
+  1. el plazo propio **deja de contar el tiempo de las gates**, de modo que un cierre con gates en verde de menos de ≈ 600 s se juzga;
+  2. **`timeout` explícito en `hooks.json`** para `guard.sh`, para que el límite no dependa del valor por defecto del cliente;
+  3. **se corrige la promesa entera** que dice «60 s»: §13, el motivo de la denegación, los comentarios y SEC-132 (a), con la cifra medida;
+  4. casos de banco, con las lecciones L4 y L5 de F-136-22 delante:
+     - una gate verde de 35 s → deja cerrar;
+     - una gate roja de 35 s → deniega;
+     - ninguna gate roja pasa nunca.
+
+  **Residual que se declara:** unas gates que, sumadas, se acercan al límite del cliente siguen pudiendo dejar el hook sin decisión (SEC-132 (a)). Su arreglo de fondo sigue en F-136-22, dentro de 1.37.
+
+  **Después:** se fusiona en `cand/1.37.0`.
+
+  *Consecuencia:* desbloquea el cierre en los proyectos instalados en una intervención corta. Coste estimado ≈ 500–650 k tokens en los cuatro roles. Interrumpe 4a entre QA y seguridad, o espera a que REQ-036 cierre; lo eliges tú.
+- **(B): dentro de 1.37, con F-136-22** (la intervención única sobre el bucle de gates). *Consecuencia:* los proyectos instalados no pueden cerrar desde el agente hasta 1.37. Quedan por delante 4b, 3b y 5.
+- **(C): hotfix sólo del punto 1**, sin corregir la promesa de los 60 s. *Consecuencia:* más barato, pero deja escrita una cifra falsa en §13 y en el motivo, y SEC-132 (a) sigue describiendo un límite que no es el real. No la recomiendo.
+
+**Lo que no se ha medido:**
+- Windows/MSYS.
+- Otras versiones del CLI.
+- Un `guard.sh` real con gates de más de 600 s (sólo el plugin de prueba).
+- Qué versión corría en un cierre de un consumidor que pasó el 2026-10-21. Por debajo de 1.36.0 no hay plazo propio, y unas gates de menos de 600 s se habrían juzgado con decisión.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-AB (A): hotfix 1.36.3 mínimo desde v1.36.2 —el plazo propio no cuenta las gates, timeout explícito en hooks.json, se corrige la promesa de los 60 s con la cifra medida, y casos de banco verde/rojo de 35 s—, con su ciclo completo; se hace después de cerrar REQ-036 y antes de 4b; luego se fusiona en cand/1.37.0.
 
 ## Resueltas
 
