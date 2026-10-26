@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036: write-back de P-137-Y (analista, Sonnet): CA-16 (`CLAUDE.md` sin import), CA-17 (recordatorio `SessionStart`), CA-02 con `claude -p` aislado; `en-progreso`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
+
+- **CA-16:** la plantilla y este `CLAUDE.md` sin `@AGENTS.md`, con la instrucción literal del propietario (comprobada por la coordinadora) y `arnes-upgrade` con las reglas de CA-08 y CA-09.
+- **CA-17:** `hooks/inicio-sesion.sh` en `SessionStart`, sin `jq` ni manifiesto, con fail-before y los procesos por orden iguales a la base; si no cabe sin coste, queda como instrucción declarada.
+- **CA-02:** medida con `claude -p` aislado y `--plugin-dir`; línea base, `081cb10` medido igual. **CA-06** admite sólo lo de CA-17 en `hooks/`. **CA-14:** la marca A-00, corregida.
+- **Coste:** analista 67 185 (un agente nuevo tras reiniciar la sesión).
+- Resultado: el contrato está ajustado; el desarrollador, despachado.
+
 ## [Interno] — 2026-10-26 · `P-137-Y` (A) resuelta: `CLAUDE.md` deja de importar `@AGENTS.md`; recordatorio por `SessionStart`; medida con `claude -p` aislado
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
