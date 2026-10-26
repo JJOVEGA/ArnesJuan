@@ -1,0 +1,5 @@
+corrida	USD	no_cacheados	total	turnos	Rigor	Sensible	Seguridad	lectura_generada
+cand2-dinero-1	0.2062548	41568	149322	8	Rigor: critico	Sensible a seguridad: no	Seguridad: pendiente	sí
+cand2-dinero-2	0.20451180000000002	40960	160964	7	Rigor: critico	Sensible a seguridad: no	Seguridad: pendiente	sí
+cand2-normal-1	0.25051520000000005	52346	150687	8	Rigor: ligero	Sensible a seguridad: no	Seguridad: n/a	sí
+cand2-normal-2	0.21979080000000004	42257	193666	8	Rigor: ligero	Sensible a seguridad: no	Seguridad: n/a	sí
