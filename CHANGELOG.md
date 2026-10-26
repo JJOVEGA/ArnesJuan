@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · `P-137-Z (A)` resuelta: lectura por rol generada; USD por corrida como métrica principal; write-back en REQ-036
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **Decisión del propietario, literal en `PENDING_APPROVAL.md` § Resueltas:**
+  - un archivo de lectura por rol, derivado y comprobado byte a byte por el banco;
+  - se cierra el hueco de `Seguridad:`;
+  - USD por corrida pasa a ser la métrica principal, con el total de tokens como dato secundario;
+  - es la última pasada de 4a; si no da 4/4 con USD por debajo de la base, se cierra con (B).
+- **REQ-036, write-back del analista:**
+  - CA-18 nuevo: `.arnes/lectura/<rol>.md` y `tools/arnes-lectura-rol.sh`. Se regenera en `SessionStart`; la definición comprueba la frescura con un `Glob` en el mismo turno del `Read` y, si el archivo no está al día, lee por marcas.
+  - CA-19 nuevo: ámbito alcanzado → `QA: pendiente`, `Seguridad: pendiente`.
+  - CA-02: USD como métrica principal, base 0,308.
+  - CA-01 (i) y CA-06 ajustados.
+  - `Archivos:`: se añaden `skills/arnes-init/SKILL.md` y `ARCHITECTURE.md` (deriva de la pasada anterior).
+  - `Estado: en-progreso`.
+- **Coste:** analista en Sonnet (16 de 16 turnos): 77 288 tokens no cacheados (entrada 32 + creación de caché 67 237 + salida 10 019) y 70 532 según la notificación.
+- **Resultado:** el contrato está listo para el desarrollador. **Falta:** la implementación (Opus), las 4 corridas, QA y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036, CA-02 medido con `claude -p` aislado: el contexto al empezar −73 %; el analista, +17 % en tokens y −13 % en USD; parada en `P-137-Z`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (6 corridas), Opus (coordinadora) · agente: coordinadora.
 

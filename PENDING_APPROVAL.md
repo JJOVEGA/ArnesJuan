@@ -43,7 +43,41 @@
 
 ## Pendientes
 
-### P-137-Z — **REQ-036, medida de CA-02 con `claude -p`: el import fuera ahorra mucho, pero leer bloque a bloque sube los turnos y los tokens.** ¿Cómo seguimos?
+_(Vacía desde el 2026-10-26: P-137-Z resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-26) — **P-137-Z (A)**: lectura por rol generada como derivado y comprobada byte a byte por el banco; se cierra el hueco de `Seguridad:`; se repite la medida. **Cambio de métrica:** USD por corrida como principal. **Tope:** última pasada de 4a
+
+**Texto del propietario, literal** (mensaje del 2026-10-26 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-Z (A): un archivo de lectura por rol, generado por el arnés
+> como derivado (concatenación exacta de los bloques marcados), comprobado
+> byte a byte por el banco; el analista lo lee en un solo Read. Se cierra
+> el hueco de Seguridad: (ámbito alcanzado no sensible) en la plantilla, y
+> se repite la medida.
+>
+> Cambio de métrica, decisión del propietario: desde aquí la métrica
+> principal de coste es USD por corrida (o, si no está disponible, tokens
+> NO cacheados de entrada + salida), y el total de tokens se registra como
+> dato secundario. Las tablas de 1.36.2–1.37 · 2 se dejan como están; las
+> nuevas llevan las dos columnas.
+>
+> Tope: esta es la última pasada de 4a. Si con el archivo por rol la
+> prueba no da 4/4 o el USD por corrida no baja de la base, se cierra con
+> (B): se acepta lo medido, se cierra el hueco y se declara.
+
+**Lo que añade la coordinadora, rotulado como suyo** (decisiones que no cambian una protección, un alcance ni un riesgo):
+- **Las comisiones no tienen USD.** La notificación de un subagente da sólo el total de tokens. Para ellas, la métrica principal se calcula sumando, turno a turno, el `usage` de su transcripción: `input_tokens` + `cache_creation_input_tokens` + `output_tokens`. Es la lectura de «no cacheados» que tomo: la creación de caché tampoco sale de la caché. Los tres sumandos se registran por separado, así que la otra lectura (sin la creación de caché) se puede recalcular sin repetir nada. El total de la notificación sigue como dato secundario.
+- **La base de la comparación es la ya medida:** 0,308 USD por corrida (2 corridas sobre `081cb10`). No se vuelve a correr, porque la base no cambia. Ojo: el candidato actual ya está en 0,267, así que de las dos condiciones del tope la que decide en la práctica es el 4/4.
+- **4/4** significa que las 4 corridas del candidato escriben la cabecera que el caso exige: `Rigor:` y `Seguridad:` coherentes con su ámbito.
+- **Orden:**
+  1. El analista (Sonnet) transcribe P-137-Z en REQ-036. Incluye el contrato de frescura del archivo generado y el write-back de `skills/arnes-init/SKILL.md` y `ARCHITECTURE.md` en `Archivos:`.
+  2. El desarrollador (Opus explícito) lo implementa.
+  3. La coordinadora hace las 4 corridas con `claude -p`.
+  4. QA y seguridad.
+
+### P-137-Z (texto de la consulta, conservado; resuelta arriba) — **REQ-036, medida de CA-02 con `claude -p`: el import fuera ahorra mucho, pero leer bloque a bloque sube los turnos y los tokens.** ¿Cómo seguimos?
 
 **Qué se midió** (evidencia en `1.37-4a-conducta-claude-p/` del árbol de evidencia, commit `6c59cde`). El analista corrió como sesión principal de `claude -p`, aislado, con el `CLAUDE.md` de cada plantilla y su plugin (`--plugin-dir`): 4 corridas sobre el candidato (`d4e68d6`) y 2 sobre la base (`081cb10`, con import). El número de corridas de la base lo decidió la coordinadora, para no duplicar el coste.
 
@@ -67,8 +101,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-Z (A): lectura por rol generada y comprobada por el banco, una sola lectura por comisión; se cierra el hueco de Seguridad en ámbito alcanzado; se repite la medida con claude -p.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-26) — **P-137-Y (A)**: `CLAUDE.md` deja de importar `@AGENTS.md` (plantilla, `arnes-upgrade` y este repositorio); medida con `claude -p` aislado; el desarrollador puede pasar de su presupuesto; recordatorio de inicio de sesión si no cuesta en el camino común
 
