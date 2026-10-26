@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · `P-137-AA (A)` resuelta: se acepta lo medido en CA-01; write-back en REQ-036 (CA-20 nuevo para B5)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **Decisión del propietario, literal en `PENDING_APPROVAL.md` § Resueltas:**
+  - se acepta lo medido, con las tres cifras y su razón;
+  - 4a se cumple por USD (−28 %) y 4/4;
+  - sin más pasadas.
+- **REQ-036:**
+  - CA-01 queda cumplido por decisión del propietario, con las tres cifras declaradas. Los techos quedan incumplidos y aceptados, no rebajados.
+  - CA-02 queda cumplido, con su evidencia.
+  - CA-13 anota que la parada se ejerció.
+  - CA-20, nuevo: B5 pasa a ser un techo de regresión de 75 280 B, que no es el techo de contrato.
+  - El estado sigue en `en-progreso` hasta que el desarrollador cambie B5.
+- **Coste del analista:** Sonnet en sus 8 turnos; 59 999 tokens no cacheados (la salida es parcial) y 60 057 según la notificación. Leyó sólo las primeras 40 líneas de su archivo por rol: es una desviación de su definición, y queda anotada para QA.
+- **Resultado:** el contrato del cierre está escrito. **Falta:** B5 (desarrollador), QA y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036, CA-02 con el archivo de lectura por rol: 4/4 y USD −28 %; parada en `P-137-AA` por el techo de bytes
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (4 corridas), Opus (coordinadora) · agente: coordinadora.
 

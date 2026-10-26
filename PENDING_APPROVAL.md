@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-### P-137-AA — **REQ-036, última pasada de 4a: tu condición de cierre se cumple (4/4 y USD −28 %), pero el techo de bytes de CA-01, que fijaste tú, no.** ¿Se acepta lo medido?
+_(Vacía desde el 2026-10-26: P-137-AA resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-26) — **P-137-AA (A)**: se acepta lo medido, con las tres cifras en REQ-036; 4a cumplida por USD (−28 %) y 4/4; sin más pasadas; siguen QA y seguridad, y la parada antes de 4b
+
+**Texto del propietario, literal** (mensaje del 2026-10-26 a la sesión coordinadora del worktree `ArnesJuan-v1.36`; justo antes había reenviado el texto de P-137-Z, ya registrado, y no se aplicó dos veces):
+
+> Adopto P-137-AA (A): se acepta lo medido, con las tres cifras escritas en
+> REQ-036 (75 280 B por el guion; 66,4 KB leídos de verdad; ≈82,8 KB
+> contados como la línea base) y la razón de cada una. El criterio de éxito
+> de 4a queda cumplido por la métrica principal: 0,220 USD por corrida
+> frente a 0,308 de la base (−28 %), 4/4. Sin más pasadas. Sigue con QA y
+> seguridad, y después la parada antes de 4b.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Orden:**
+  1. el analista (Sonnet) transcribe P-137-AA en REQ-036 (CA-01 y CA-02, con las tres cifras y su razón) y deja el REQ en `en-revisión`;
+  2. QA (Opus explícito);
+  3. seguridad (Opus);
+  4. cierre por `Edit` y métrica por rol;
+  5. parada antes de 4b.
+- **El FAIL B5 del banco** (el techo de 75 000 B) **queda abierto**: lo resuelve este write-back, no se arregla tocando el techo por fuera. Si hace falta cambiar el caso del banco para que refleje lo aceptado, es del desarrollador y se le encarga como una dependencia acotada.
+
+### P-137-AA (texto de la consulta, conservado; resuelta arriba) — **REQ-036, última pasada de 4a: tu condición de cierre se cumple (4/4 y USD −28 %), pero el techo de bytes de CA-01, que fijaste tú, no.** ¿Se acepta lo medido?
 
 **Qué se midió.** Árbol `cfdc60e`, 4 corridas con `claude -p`, mismo método. Evidencia en `1.37-4a-conducta-claude-p/pasada-P-137-Z/` del árbol de evidencia (`a1d2032`).
 
@@ -96,8 +120,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-AA (A): CA-01 se cierra con lo medido, declarado en el REQ con sus tres cifras (75 280 B por el método del guion; 66,4 KB leídos; ≈ 82,8 KB recibidos contados como la base), sin más pasadas; 4a se aprueba por USD (−28 %) y 4/4; siguen QA y seguridad.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-26) — **P-137-Z (A)**: lectura por rol generada como derivado y comprobada byte a byte por el banco; se cierra el hueco de `Seguridad:`; se repite la medida. **Cambio de métrica:** USD por corrida como principal. **Tope:** última pasada de 4a
 
