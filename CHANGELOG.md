@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · `P-137-Y` (A) resuelta: `CLAUDE.md` deja de importar `@AGENTS.md`; recordatorio por `SessionStart`; medida con `claude -p` aislado
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **P-137-Y (A)**, literal en la cola: la plantilla, `arnes-upgrade` y el `CLAUDE.md` de este repositorio. El desarrollador puede pasar de su presupuesto en esta pasada, con el aviso a 1,5× (525 k).
+- **La coordinadora comprobó** que `hooks.json` no tiene hook de inicio de sesión. Un `SessionStart` corre una vez en la sesión principal y no toca el camino común, así que el recordatorio **se hace**, y REQ-036 pasa a tocar `hooks/`.
+- Resultado: el analista transcribe en REQ-036; después, el desarrollador.
+
 ## [Interno] — 2026-10-21 · 1.37 · 4a, fase 1 (desarrollador, Opus): REQ-036 implementado, **sin validar**; parada en `P-137-Y` por D-036-1 (`CLAUDE.md` importa `@AGENTS.md`)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 

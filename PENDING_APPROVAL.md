@@ -43,7 +43,31 @@
 
 ## Pendientes
 
-### P-137-Y — **REQ-036: `CLAUDE.md` importa `@AGENTS.md` entero en el contexto de todo agente, así que la lectura por destinatario no baja lo que recibe.** ¿Cómo seguimos?
+_(Vacía desde el 2026-10-26: P-137-Y resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-26) — **P-137-Y (A)**: `CLAUDE.md` deja de importar `@AGENTS.md` (plantilla, `arnes-upgrade` y este repositorio); medida con `claude -p` aislado; el desarrollador puede pasar de su presupuesto; recordatorio de inicio de sesión si no cuesta en el camino común
+
+**Texto del propietario, literal** (mensaje del 2026-10-26 a la sesión coordinadora del worktree `ArnesJuan-v1.36`; lo envió dos veces seguidas, y se registra una):
+
+> Adopto P-137-Y (A): CLAUDE.md deja de importar @AGENTS.md y lleva sólo
+> la instrucción corta («lee AGENTS.md según tu rol, por sus marcas; la
+> coordinadora lo lee entero al empezar»). Aplica a la plantilla de
+> CLAUDE.md, a arnes-upgrade y también al CLAUDE.md de este repositorio.
+> Acepto la medida corregida (claude -p aislado, --plugin-dir, tokens del
+> JSON de uso). Autorizo que el desarrollador pase de su presupuesto para
+> esta pasada; el aviso de 1,5× sigue en pie.
+> Salvaguarda: si se puede sin coste en el camino común, el hook de inicio
+> de sesión recuerda a la coordinadora que lea AGENTS.md entero; si no,
+> queda como instrucción en CLAUDE.md y se declara.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Comprobado:** hoy `hooks/hooks.json` no registra ningún hook de inicio de sesión (sólo `PreToolUse`, `Stop` y `SubagentStop`). Un `SessionStart` corre **una vez al abrir la sesión principal** —no en cada orden ni en los subagentes—, así que **no toca el camino común**. Se hace, y por eso REQ-036 pasa a tocar `hooks/`, que es crítico: el ciclo lleva seguridad, como ya tenía.
+- **Presupuesto del desarrollador:** lleva 357 467; el aviso de 1,5× está en 525 k.
+- **Orden:** el analista nuevo (Sonnet) transcribe P-137-Y en REQ-036; después, un desarrollador nuevo en Opus explícito; luego, las 4 corridas con `claude -p` aislado (la coordinadora), QA y seguridad.
+
+### P-137-Y (texto de la consulta, conservado; resuelta arriba) — **REQ-036: `CLAUDE.md` importa `@AGENTS.md` entero en el contexto de todo agente, así que la lectura por destinatario no baja lo que recibe.** ¿Cómo seguimos?
 
 **Qué pasó.** El desarrollador terminó la fase 1, **sin validar**:
 - lo que la definición del analista le manda leer mide **74 294 B** (antes 138 574), dentro de tus 75 KB;
@@ -66,8 +90,6 @@ Pero registró **D-036-1**, y la coordinadora lo confirma: `templates/CLAUDE.md.
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-Y (A): CLAUDE.md sin import de AGENTS.md, con instrucción de lectura por rol; también en este repositorio. CA-02 se mide con claude -p aislado.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-21) — **P-137-X (D)**: lectura por destinatario; criterio de éxito de hasta 75 KB con 4/4; la salvaguarda de QA bloque por bloque; si no hay raíz del plugin demostrable, lo explicativo se queda en el proyecto
 
