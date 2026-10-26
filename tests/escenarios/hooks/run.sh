@@ -1775,7 +1775,11 @@ done
 # proyecto sintético, la idempotencia, los fallos del hook, las definiciones y `--verificar`; B12 CA-19, la línea del
 # ámbito alcanzado), más (3a) y la cabecera rota, fail-before sobre fixtures—. La 51 no cambia su número (B6 admite el
 # archivo nuevo de `tools/`; B10 cuenta aparte los procesos del generador; B2 exige el «derivado: se regenera»).
-CASOS_ESPERADOS=3092
+# Y 3092 → 3094 por P-137-AA (A) en REQ-036 (CA-20): +2 en la sección 51 (37 → 39) —B5 pasa de «< 75 000 B» a
+# «<= 75 280 B», techo de regresión de lo aceptado y no el de contrato de CA-01, sin cambiar de número; y dos
+# fixtures de B5 sobre una copia de la candidata: 75 280 B pasa y 75 281 B falla con la cifra y el techo, y sin
+# generador el guion no mide y el caso falla—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3094
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

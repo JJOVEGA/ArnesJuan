@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, CA-20: B5 pasa a ser el techo de regresión de 75 280 B; `en-revisión`
+> Origen: Interno · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
+
+- **B5 (sección 51):**
+  - sigue midiendo con el guion de `docs/explicacion/medida-4a.md`, que no cambia;
+  - pasa si cada modo mide ≤ 75 280 B, y el nombre y el motivo dicen que ésa es la cifra aceptada por P-137-AA, no el techo de contrato de CA-01 (75 000 B);
+  - falla con la cifra y el techo en el motivo si mide más, y también falla si el guion sale con error o no mide sus dos modos.
+- **Fail-before, con dos fixtures nuevas sobre una copia de la candidata:**
+  - con la definición rellenada hasta 75 280 B pasa, y con 1 B más (75 281 B) falla;
+  - sin el generador, el guion no mide y el caso falla.
+  - Además se comprobó a mano: el B5 anterior falla con 75 280 B, y con el techo alterado a 75 281 B la primera fixture falla.
+- **Recuento:** la sección 51 pasa de 37 a 39 casos y `CASOS_ESPERADOS` de 3092 a 3094.
+- **Resultado en Linux/WSL2:**
+  - quality gates en verde;
+  - banco: 3060 PASS, 0 FAIL y 34 SKIP, cada uno con su motivo;
+  - autoprueba: 117 PASS, 0 FAIL.
+- **Falta:** QA y seguridad.
+
 ## [Interno] — 2026-10-26 · `P-137-AA (A)` resuelta: se acepta lo medido en CA-01; write-back en REQ-036 (CA-20 nuevo para B5)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
 
