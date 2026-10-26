@@ -20,9 +20,15 @@
     "Bash en Windows) y se acepta: una puerta lenta protege; una puerta que no se invoca, no.",
     "",
     "Stop/SubagentStop: un solo proceso (stop.sh) para continuidad y rotacion. Eso si se queda: es",
-    "independiente y correcto."
+    "independiente y correcto.",
+    "",
+    "SessionStart: inicio-sesion.sh recuerda a la coordinadora leer AGENTS.md entero (REQ-036 CA-17). Solo al abrir",
+    "la sesion, nunca por orden: no toca PreToolUse ni Stop, no lee el manifiesto ni usa jq, y no decide nada."
   ],
   "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}\"/hooks/inicio-sesion.sh" } ] }
+    ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit|Bash",

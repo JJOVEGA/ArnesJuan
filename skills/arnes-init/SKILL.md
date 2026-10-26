@@ -22,7 +22,7 @@ marcador antes de hacer nada.
 2. **Si no existe**, crea el andamiaje copiando desde `templates/` del plugin y rellenando
    los `{{PLACEHOLDERS}}`:
    - `AGENTS.md`  ← `templates/AGENTS.md.tpl`  (archivo canónico)
-   - `CLAUDE.md`  ← `templates/CLAUDE.md.tpl`  (importa AGENTS.md)
+   - `CLAUDE.md`  ← `templates/CLAUDE.md.tpl`  (no importa AGENTS.md: manda leerlo por marcas)
    - `CHANGELOG.md` ← `templates/CHANGELOG.md.tpl`
    - `docs/ESTADO.md` ← `templates/ESTADO.md.tpl`
    - `PENDING_APPROVAL.md` ← `templates/PENDING_APPROVAL.md.tpl`

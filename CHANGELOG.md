@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, parte de P-137-Y (desarrollador, Opus): `CLAUDE.md` sin import, recordatorio `SessionStart` y la marca A-00 (**sin validar**); `en-revisión`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
+
+- **CA-16:** la plantilla y el `CLAUDE.md` de este repositorio, sin `@AGENTS.md` y con la instrucción literal. `arnes-upgrade` acepta `QUE=CLAUDE.md`, con los casos INTACTO, PROPIO, CONFLICTO y UNKNOWN.
+- **CA-17:** `hooks/inicio-sesion.sh` en `SessionStart`, con 0 procesos y sin `jq` ni manifiesto. Los procesos por orden, idénticos a la base (1, 3 y 2).
+- **CA-14:** A-00 y §12, en `AGENTS.md` y su plantilla, y `skills/arnes-init/SKILL.md`. También tocó `ARCHITECTURE.md` y la skill de init, que **están fuera de `Archivos:`**.
+- **Pruebas:** sección 51 con 37 casos; banco 3020/0/36 (3056); autoprueba 117/0. `hooks/` sólo trae lo de CA-17, comprobado por la coordinadora. CA-01 queda en 74 547 B, con ≈ 450 B de margen sobre 75 000.
+- **Coste:** desarrollador 170 212. **El rol suma 527 679 y pasa el aviso de 1,5× (525 k)**; el propietario autorizó pasar de presupuesto, y se le avisa.
+- Resultado: falta la medida de CA-02 con `claude -p`; después, QA y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036: write-back de P-137-Y (analista, Sonnet): CA-16 (`CLAUDE.md` sin import), CA-17 (recordatorio `SessionStart`), CA-02 con `claude -p` aislado; `en-progreso`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agentes: `analista-requerimientos`, coordinadora.
 

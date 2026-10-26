@@ -4,7 +4,9 @@
 
 > Archivo canónico de contexto y reglas del proyecto (estándar AGENTS.md, leído por
 > Claude Code, Codex, Cursor y otros). Cualquier IA que abra el proyecto lo lee primero.
-> Para Claude Code, `CLAUDE.md` importa este archivo.
+> Para Claude Code, `CLAUDE.md` **no** importa este archivo —importarlo lo cargaría entero en todo
+> agente—: lleva la instrucción «lee AGENTS.md según tu rol, por sus marcas; la coordinadora lo lee
+> entero al empezar», y cada agente lo lee por sus marcas, como sigue.
 >
 > **Lectura por destinatario.** Cada bloque empieza con una marca `[[<id> · obliga: <roles>]]` y
 > llega hasta la marca siguiente. Los roles son `coordinadora`, `analista`, `desarrollador`, `qa`
@@ -743,7 +745,7 @@ y obtener la aprobación del destinatario.
 
 ```
 AGENTS.md              ← este archivo (canónico, cross-tool)
-CLAUDE.md              ← importa AGENTS.md (Claude Code)
+CLAUDE.md              ← no importa AGENTS.md: manda leerlo por marcas (Claude Code)
 CHANGELOG.md           ← bitácora de cambios
 requirements/          ← requerimientos (el contrato)
 docs/

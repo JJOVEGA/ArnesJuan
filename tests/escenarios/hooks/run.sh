@@ -1766,7 +1766,11 @@ done
 # en la candidata y en 081cb10 (el fail-before: B1 la orden de `arnes-upgrade` sobre tres proyectos de prueba, B2 el
 # plan, B3 el manifiesto, B4 punteros y salvaguardas, B5 la medida, B7 las marcas, B8 CA-10 y CA-11), más el control
 # positivo de la salvaguarda (i) y el diff vacío de hooks/ y tools/—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3043
+# Y 3043 → 3056 por P-137-Y (A) en REQ-036: +13 en la sección 51 —seis filas más en la candidata y en 081cb10 (B9
+# CA-16: el texto de CLAUDE.md y de la marca A-00, y la migración de CLAUDE.md sin tocar, propio, sin base y su
+# plan; B10 CA-17: el recordatorio de SessionStart) y B10 sin coste en el camino común—; B6 pasa de «hooks/ sin
+# diff» a «hooks/ sólo con lo de CA-17» sin cambiar de número. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3056
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

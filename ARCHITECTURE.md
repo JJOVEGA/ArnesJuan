@@ -13,8 +13,11 @@ concede a un plugin:
   `Bash`). Es donde viven los **guardianes**: pueden **denegar** la llamada.
 - **`Stop` / `SubagentStop`** — cuando un agente para. Es donde viven los hooks que **no
   deciden nada**: la continuidad derivada y la rotación de artefactos.
+- **`SessionStart`** — al abrir la sesión principal (1.37.0, REQ-036 CA-17). Sólo un
+  **recordatorio** a la coordinadora de que lea `AGENTS.md` entero, porque `CLAUDE.md` ya no
+  lo importa. No decide nada y ninguna orden lo lanza.
 
-Los dos se registran en `hooks/hooks.json`. La configuración que gobierna a los hooks
+Los tres se registran en `hooks/hooks.json`. La configuración que gobierna a los hooks
 —qué es código de la app, qué agente lo edita, qué quality gates hay, qué órdenes de git
 se prohíben— vive en el manifiesto del proyecto, `.arnes/config.json`, **no** en el
 plugin: el arnés trae el mecanismo, el proyecto pone el mapeo. Sin manifiesto los hooks
@@ -31,6 +34,7 @@ son **inertes**; sin `jq` también, con aviso por stderr.
 | `hooks/guard-completado.sh` | La transición de un REQ a `completado`: veredictos, fecha y caducidad, clase del hallazgo, cola de aprobaciones y quality gates. Por `Bash` no juzga: **deriva** a `Edit`/`Write` | documento resultante del REQ, `PENDING_APPROVAL.md`, `quality_gates`, `veredictos.*` | `deny` con motivo, o aviso de vocabulario |
 | `hooks/lib.sh` | Toda la lógica compartida: lectura del input y del manifiesto, normalización de campos y veredictos, **vocabulario** de los veredictos, descuento de comillas y heredocs (`arnes_bash_sin_texto`), detector de escrituras, contención de rutas | — | funciones; ninguna decide por su cuenta |
 | `hooks/stop.sh` | Punto de entrada único de `Stop`/`SubagentStop`; **nunca bloquea la parada** | JSON de `Stop` | rc 0 siempre |
+| `hooks/inicio-sesion.sh` | Único hook de `SessionStart`: recuerda a la coordinadora leer `AGENTS.md` entero. Sólo órdenes internas del intérprete: sin `jq`, sin manifiesto, sin leer la entrada | — | el recordatorio por stdout (contexto de la sesión); rc 0 siempre |
 | `hooks/estado-derivado.sh` | Reescribe entre marcadores de `docs/ESTADO.md` un bloque **derivado del disco** (estado y veredictos de cada REQ, cola, rama, limpieza del árbol) | `requirements/*.md` vía `campos-req.awk`, `PENDING_APPROVAL.md`, git | bloque en `docs/ESTADO.md` |
 | `hooks/rotar-artefactos.sh` | **Mueve** (nunca resume) las secciones viejas de un artefacto de bitácora, o las entradas viejas de **una sección** declarada de un documento | `rotacion.*` del manifiesto | archivo de historia + puntero |
 | `hooks/campos-req.awk` | Extrae en **una** pasada los campos de cabecera de todos los REQ | `requirements/*.md` | registros separados por `\001` |

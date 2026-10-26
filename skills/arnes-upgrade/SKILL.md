@@ -1579,7 +1579,10 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
   en `AGENTS.md` bloque A-00). Además: tres `_doc` del manifiesto pasan, **literales**, a `AGENTS.md`
   § 14 y en el manifiesto queda su puntero; los casos medidos de «Cómo se escribe un criterio que no
   se desmiente» pasan, literales, al «Anexo explicativo» del mismo README; y `AGENTS.md` gana la regla
-  de qué archivos van siempre por `Edit` y la de la corrección que sólo borra. **Nada normativo se
+  de qué archivos van siempre por `Edit` y la de la corrección que sólo borra. Y `CLAUDE.md` **deja de
+  importar `AGENTS.md`** (P-137-Y (A), REQ-036 CA-16): el import lo cargaba entero en todo agente; en
+  su lugar lleva la instrucción «lee AGENTS.md según tu rol, por sus marcas; la coordinadora lo lee
+  entero al empezar», y el hook de inicio de sesión del plugin se lo recuerda a la coordinadora. **Nada normativo se
   mueve ni se condensa**, y lo explicativo **se queda en tu proyecto** (no hay forma demostrada de que
   un agente encuentre la raíz del plugin: REQ-036 CA-04). **Necesita `jq` 1.6 o posterior.**
   **Antes de aplicar, se ve.** La orden **sólo lee** y escribe en su salida; las rutas que escribe las
@@ -1587,12 +1590,12 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
   1. `PLUGIN` es la raíz del plugin instalado: dos niveles por encima del directorio base de esta
      skill, que Claude Code te da al cargarla. La **base** es `.arnes/plantillas-origen/`, con los
      mismos nombres que las plantillas (`AGENTS.md.tpl`, `requirements-README.md.tpl`,
-     `arnes-config.json.tpl`).
+     `arnes-config.json.tpl`, `CLAUDE.md.tpl`).
   2. Ejecútala con `QUE=plan` y escribe su salida, entera, en `.arnes/migracion.md`. Enséñasela al
      propietario: por cada bloque, su estado y, si sale texto, **de dónde sale, adónde va y el texto
      que sale**. **No apliques nada hasta que lo confirme.**
-  3. Confirmado, ejecútala con `QUE=AGENTS.md`, `QUE=requirements/README.md` y
-     `QUE=.arnes/config.json`. **Código 0:** escribe la salida, entera y tal cual, en ese archivo con
+  3. Confirmado, ejecútala con `QUE=AGENTS.md`, `QUE=requirements/README.md`,
+     `QUE=.arnes/config.json` y `QUE=CLAUDE.md`. **Código 0:** escribe la salida, entera y tal cual, en ese archivo con
      `Write` (si el archivo está en `codigo_app.globs`, ese `Write` es del `desarrollador`). **Código
      distinto de 0:** es `UNKNOWN`; **no escribas nada en ese archivo** e informa el mensaje.
   4. Qué decide, por sección `## `: **INTACTO** —idéntica a la base salvo los valores de sus
@@ -1601,7 +1604,10 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
      ante la duda, se lee—; **ELIMINADO** sale como `CONFLICTO` y no se repone; **NUEVO** se añade. Sin
      base, con encabezados repetidos, con secciones que la base no tiene o en otro orden, el archivo
      entero es `UNKNOWN` y no se toca. En el manifiesto sólo cambian los `_doc` que el proyecto dejó
-     como la base; los demás valores no se tocan.
+     como la base; los demás valores no se tocan. **En `CLAUDE.md`**, una sección MODIFICADO que
+     trae el import de `AGENTS.md` en **una sola línea propia** sale como `PROPIO`: se conserva byte a
+     byte salvo esa línea, que se sustituye por la instrucción; si no lo trae, o lo trae de otra forma
+     o más de una vez, sale `CONFLICTO` y se conserva entera —con el import—, para que lo decidas tú.
   5. Fase 4 releyendo el disco, y al terminar, `.arnes/plantillas-origen/` con las plantillas de
      1.37.0, como siempre.
   **Límite declarado:** la sección 51 del banco del arnés mide el resultado de la orden sobre
@@ -1609,7 +1615,7 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
 
   <!-- orden: adelgazar (REQ-036 CA-08 y CA-09; la ejecuta la sección 51 del banco del arnés) -->
   ```bash
-  : "${QUE:?QUE: plan, AGENTS.md, requirements/README.md o .arnes/config.json}"
+  : "${QUE:?QUE: plan, AGENTS.md, requirements/README.md, .arnes/config.json o CLAUDE.md}"
   : "${PLUGIN:?PLUGIN: la raíz del plugin instalado (dos niveles por encima del directorio de esta skill)}"
   O=.arnes/plantillas-origen
   md_jq='
@@ -1667,6 +1673,18 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
              ($cl.c[$x.h] // "NUEVO") as $e
              | ([$N[] | select(.h == $x.h)] | .[0]) as $y
              | if $e == "ELIMINADO" then .p += [{h: $x.h, e: "CONFLICTO", m: "el proyecto la borró: no se repone"}]
+               elif $e == "MODIFICADO" and $modo == "claude" then
+                 ([range(0; $y.l | length) | select($y.l[.] | test("^[ \t]*@(\\./)?AGENTS\\.md[ \t]*$"))]) as $ix
+                 | ([$y.l[] | select(test("@(\\./)?AGENTS\\.md"))] | length) as $todas
+                 | ([$S[].l[] | select(contains("lee AGENTS.md según tu rol, por sus marcas"))] | .[0]) as $ins
+                 | if ($ix | length) == 1 and $todas == 1 and $ins != null then
+                     .o += ($y.l[:($ix[0])] + [$ins] + $y.l[($ix[0] + 1):])
+                     | .p += [{h: $x.h, e: "PROPIO", m: "el proyecto la cambió: se conserva byte a byte; sólo se retira el import de AGENTS.md y en su lugar va la instrucción",
+                               sale: [{l: $y.l[$ix[0]], a: "(se retira; en su lugar: " + $ins + ")"}]}]
+                   else .o += $y.l
+                     | .p += [{h: $x.h, e: "CONFLICTO", m: (if $todas == 0 then "el proyecto la cambió y no trae el import: se conserva byte a byte"
+                               else "el proyecto la cambió y el import no se puede retirar sin tocar lo propio: se conserva byte a byte, con el import" end)}]
+                   end
                elif $e == "MODIFICADO" then
                  ($x | marca) as $mk
                  | .o += ((if $mk != null and ($x.l[0] == $mk) then ["[[" + ($mk | ltrimstr("[[") | sub(" ·.*$"; "")) + " · obliga: todos]]", ""] else [] end) + $y.l)
@@ -1706,12 +1724,13 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
     end
   '
   uno() {   # <archivo del proyecto> <plantilla>: imprime el JSON del resultado; sin base, UNKNOWN
-    local f="$1" t="$2" prog="$md_jq"
+    local f="$1" t="$2" prog="$md_jq" modo=''
     [ "$f" = .arnes/config.json ] && prog="$cfg_jq"
+    [ "$f" = CLAUDE.md ] && modo=claude
     if [ ! -r "$O/$t" ]; then jq -n --arg m "no hay base: falta $O/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     elif [ ! -r "$PLUGIN/templates/$t" ]; then jq -n --arg m "no hay destino: falta $PLUGIN/templates/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     elif [ ! -r "$f" ]; then jq -n --arg m "no existe $f en el proyecto" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
-    else jq -n --rawfile b "$O/$t" --rawfile n "$f" --rawfile s "$PLUGIN/templates/$t" "$prog" \
+    else jq -n --rawfile b "$O/$t" --rawfile n "$f" --rawfile s "$PLUGIN/templates/$t" --arg modo "$modo" "$prog" \
            || jq -n --arg m "no se pudo calcular el plan de $f" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     fi
   }
@@ -1719,10 +1738,11 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
     AGENTS.md) r="$(uno AGENTS.md AGENTS.md.tpl)" ;;
     requirements/README.md) r="$(uno requirements/README.md requirements-README.md.tpl)" ;;
     .arnes/config.json) r="$(uno .arnes/config.json arnes-config.json.tpl)" ;;
+    CLAUDE.md) r="$(uno CLAUDE.md CLAUDE.md.tpl)" ;;
     plan)
       printf '# Migración hacia 1.37.0 — adelgazar lo que leen los agentes (REQ-036 del arnés)\n\n'
       printf 'Nada se aplica hasta que el propietario lo confirme. Por cada bloque: estado y, si sale texto, de dónde sale, adónde va y el texto.\n'
-      for par in AGENTS.md:AGENTS.md.tpl requirements/README.md:requirements-README.md.tpl .arnes/config.json:arnes-config.json.tpl; do
+      for par in AGENTS.md:AGENTS.md.tpl requirements/README.md:requirements-README.md.tpl .arnes/config.json:arnes-config.json.tpl CLAUDE.md:CLAUDE.md.tpl; do
         uno "${par%%:*}" "${par#*:}" | jq -r --arg f "${par%%:*}" '
           "\n## " + $f + " — " + .estado + (if .motivo != "" then ": " + .motivo else "" end)
           + (if .estado == "UNKNOWN" then "\n\n**No se aplica nada de este archivo.**" else "" end),
