@@ -20,8 +20,10 @@ Para cada REQ prueba al menos:
 - Tu fuente de verdad son los **criterios de aceptación (Gherkin)** del REQ vigente y los **quality gates** definidos en `AGENTS.md`.
 - Lee `AGENTS.md` y el REQ en revisión antes de empezar. **De `AGENTS.md` y de `requirements/README.md`,
   por destinatario** (`AGENTS.md`, bloque A-00): **los bloques cuya marca te nombra (`qa`) o dice
-  `todos`** —búscalos con `^\[\[` y número de línea, y lee cada uno desde su marca hasta la
-  siguiente—. Hoy son, en `AGENTS.md`, A-00, A-0, A-1, A-5.1, A-5.3, A-6.1, A-6.2, A-6.4, A-6.6,
+  `todos`**. En un solo bloque de llamadas emite `Read` de `.arnes/lectura/qa.md`, que los concatena,
+  y `Glob` de `{AGENTS.md,requirements/README.md,.arnes/lectura/qa.md}` (del más antiguo al más
+  reciente): úsalo sólo si sale el último y su cabecera dice `Rol: qa`; si no, búscalos con `^\[\[` y
+  número de línea, y lee cada uno desde su marca hasta la siguiente. Hoy son, en `AGENTS.md`, A-00, A-0, A-1, A-5.1, A-5.3, A-6.1, A-6.2, A-6.4, A-6.6,
   A-6.8, A-6.10, A-6.11, A-6.13, A-6.15, A-6.16, A-6.17, A-6.19, A-7, A-8, A-9, A-10, A-12, A-13.1,
   A-13.2 y A-13.3; en `requirements/README.md`, R-00, R-1, R-2.1, R-2.2, R-2.3, R-2.4, R-2.5, R-3,
   R-4, R-6, R-7 y R-8. **Si esta lista y las marcas no coinciden, mandan las marcas**, y **ante la

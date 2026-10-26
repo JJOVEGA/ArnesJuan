@@ -99,6 +99,13 @@ marcador antes de hacer nada.
    una persona» de «esto es andamiaje que nadie tocó», y ante esa duda se detiene. Es la base
    del merge a tres vías.
 
+4b. **Genera los archivos de lectura por rol** (REQ-036 CA-18 del arnés): con `AGENTS.md` y
+   `requirements/README.md` ya escritos, desde la raíz del proyecto ejecuta
+   `bash "<raíz del plugin>/tools/arnes-lectura-rol.sh"` (la raíz del plugin está dos niveles por encima
+   del directorio base de esta skill). Escribe `.arnes/lectura/{analista,desarrollador,qa,seguridad}.md`,
+   los bloques de cada rol concatenados: son **derivados**, no se editan a mano. Si sale distinto de 0,
+   informa el mensaje y sigue: sin ellos, cada agente lee por marcas.
+
 5. **Crea el marcador** `.arnes-initialized` con la fecha y la versión del arnés.
 
 6. **Resumen:** lista lo creado y el próximo paso (normalmente: levantar el primer REQ con

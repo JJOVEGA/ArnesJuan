@@ -1770,7 +1770,12 @@ done
 # CA-16: el texto de CLAUDE.md y de la marca A-00, y la migración de CLAUDE.md sin tocar, propio, sin base y su
 # plan; B10 CA-17: el recordatorio de SessionStart) y B10 sin coste en el camino común—; B6 pasa de «hooks/ sin
 # diff» a «hooks/ sólo con lo de CA-17» sin cambiar de número. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3056
+# Y 3056 → 3092 por P-137-Z (A) en REQ-036: +36 de la sección 52 nueva —diecisiete filas en la candidata y en c330940
+# (el fail-before: B11 CA-18 (1) a (7), el archivo de lectura por rol contra un extractor aparte, sus reglas sobre un
+# proyecto sintético, la idempotencia, los fallos del hook, las definiciones y `--verificar`; B12 CA-19, la línea del
+# ámbito alcanzado), más (3a) y la cabecera rota, fail-before sobre fixtures—. La 51 no cambia su número (B6 admite el
+# archivo nuevo de `tools/`; B10 cuenta aparte los procesos del generador; B2 exige el «derivado: se regenera»).
+CASOS_ESPERADOS=3092
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

@@ -2,6 +2,29 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, P-137-Z (desarrollador, Opus): lectura por rol generada (CA-18) y ámbito alcanzado (CA-19), **sin validar**; parada de CA-13 con 75 280 B; `en-progreso`
+> Origen: GitHub (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: `desarrollador`.
+
+- **CA-18:**
+  - `tools/arnes-lectura-rol.sh [--verificar] [ruta]`, sin `jq` ni red;
+  - los cuatro `.arnes/lectura/<rol>.md`, versionados;
+  - `hooks/inicio-sesion.sh` lo llama después del recordatorio;
+  - `arnes-init` y `arnes-upgrade` lo generan, y el plan lo lista como «derivado: se regenera»;
+  - las cuatro definiciones mandan `Read` + `Glob` en un solo bloque y, si no está al día, leen por marcas.
+- **Orden del `Glob`**, medido con `claude -p` (Sonnet): del más antiguo al más reciente. Ni `Read` ni `Glob` pasan por `PreToolUse`.
+- **CA-19:** ámbito alcanzado → `Rigor: critico`, `QA: pendiente`, `Seguridad: pendiente`; sensible sólo si toca sesión, seguridad o datos personales. Mismo texto en la plantilla y en `requirements/README.md`.
+- **Pruebas:**
+  - sección 52 nueva, con 36 casos y su fail-before contra `c330940` y sobre fixtures; 7 mutantes del generador, todos detectados;
+  - banco 3059 PASS / 1 FAIL / 32 SKIP (3092); autoprueba 117/0; gates en verde;
+  - `guard.sh`, `stop.sh`, `lib.sh` y los `tools/` existentes, con diff vacío.
+- **Parada de CA-13:** el FAIL es B5. CA-01 (i) da **75 280 B**, con el techo en 75 000:
+  - `analista.md` 57 089 B, que incluye la cabecera de 352 B y los +155 B de CA-19;
+  - la definición, 16 481 B (+289 B);
+  - `rigor_politica`, 1 710 B.
+
+  No se condensa normativa; se escala con la cifra.
+- Resultado: falta la decisión sobre CA-01 (i); después, las 4 corridas de CA-02, QA y seguridad.
+
 ## [Interno] — 2026-10-26 · `P-137-Z (A)` resuelta: lectura por rol generada; USD por corrida como métrica principal; write-back en REQ-036
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
 

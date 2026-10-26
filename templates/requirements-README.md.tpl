@@ -185,7 +185,7 @@ cada proyecto pone el mapeo con sus ejemplos concretos.
   (personales, esquema, migración, borrado) o **arnés** (lo que el arnés instala y gobierna a los
   agentes). Los globs son ayuda **necesaria y no suficiente**: que ninguno case no prueba nada.
   Normal → `Rigor: ligero`, `Sensible a seguridad: no`, `QA: pendiente`, `Seguridad: n/a`.
-  Ámbito alcanzado → `critico`, y sensible si toca sesión, seguridad o datos personales.
+  Ámbito alcanzado → `Rigor: critico`, `QA: pendiente`, `Seguridad: pendiente`, y `Sensible a seguridad: sí` si toca sesión, seguridad o datos personales (si no, `no`: un ámbito alcanzado puede ser `critico` sin ser sensible, p. ej. dinero).
   **Ante la duda, completo.**
 - La política sólo da `ligero` a lo que sin ella no sería `critico`, y no toca el suelo de abajo.
   **Todo cambio de la política que reduzca lo que alcanza un ámbito exige la firma del auditor**

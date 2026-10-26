@@ -23,8 +23,11 @@ Si el usuario no lo mencionó, es justamente lo que tienes que descubrir, no alg
 - Usas la plantilla y el sistema de estados definidos en `requirements/README.md`.
 - Mantienes actualizado el índice de `requirements/README.md` al crear o cambiar un REQ/NFR.
 - **Qué lees al empezar: lectura por destinatario** (`AGENTS.md`, bloque A-00). De `AGENTS.md` y de
-  `requirements/README.md` lees **los bloques cuya marca te nombra (`analista`) o dice `todos`**:
-  búscalos con `^\[\[` y número de línea, y lee cada uno desde su marca hasta la siguiente. Hoy son,
+  `requirements/README.md` lees **los bloques cuya marca te nombra (`analista`) o dice `todos`**. En
+  un solo bloque de llamadas emite `Read` de `.arnes/lectura/analista.md`, que los concatena, y `Glob`
+  de `{AGENTS.md,requirements/README.md,.arnes/lectura/analista.md}` (del más antiguo al más reciente):
+  úsalo sólo si sale el último y su cabecera dice `Rol: analista`; si no, búscalos con `^\[\[` y número
+  de línea, y lee cada uno desde su marca hasta la siguiente. Hoy son,
   en `AGENTS.md`, A-00, A-0, A-1, A-5.1, A-5.3, A-6.1, A-6.2, A-6.6, A-6.10, A-6.15, A-6.16, A-6.19,
   A-8, A-9, A-10, A-12 y A-13.2; en `requirements/README.md`, R-00, R-1, R-2.1, R-2.3, R-2.5, R-3,
   R-5.1, R-6, R-7 y R-8. **Si esta lista y las marcas no coinciden, mandan las marcas**, y **ante la

@@ -1608,6 +1608,14 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
      trae el import de `AGENTS.md` en **una sola línea propia** sale como `PROPIO`: se conserva byte a
      byte salvo esa línea, que se sustituye por la instrucción; si no lo trae, o lo trae de otra forma
      o más de una vez, sale `CONFLICTO` y se conserva entera —con el import—, para que lo decidas tú.
+  4b. **Archivos de lectura por rol (REQ-036 CA-18, P-137-Z (A)).** Después de aplicar —y sólo si el
+     propietario confirmó—, desde la raíz del proyecto ejecuta `bash "$PLUGIN/tools/arnes-lectura-rol.sh"`.
+     Genera `.arnes/lectura/{analista,desarrollador,qa,seguridad}.md` de `AGENTS.md` y
+     `requirements/README.md`: son **derivados**, se **regeneran, no se migran** (nunca `CONFLICTO` ni
+     `UNKNOWN`; el plan los lista como «derivado: se regenera»), y un proyecto que aún no los tiene los
+     recibe aquí. **Código distinto de 0:** el generador ya los borró (un archivo ausente se lee por
+     marcas); informa el mensaje y sigue. En la Fase 4, `bash "$PLUGIN/tools/arnes-lectura-rol.sh"
+     --verificar` sale 0 si están al día.
   5. Fase 4 releyendo el disco, y al terminar, `.arnes/plantillas-origen/` con las plantillas de
      1.37.0, como siempre.
   **Límite declarado:** la sección 51 del banco del arnés mide el resultado de la orden sobre
@@ -1752,6 +1760,8 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
                 + "\n  **Va a:** " + (if $f == ".arnes/config.json" then "el puntero que lo sustituye: " + (.a | tostring)
                                       else "`" + $f + "` § «" + (.a | tostring | ltrimstr("## ")) + "»" end)))'
       done
+      printf '\n## .arnes/lectura/{analista,desarrollador,qa,seguridad}.md — derivado: se regenera\n\n'
+      printf 'Los genera tools/arnes-lectura-rol.sh del plugin después de aplicar; no se migran ni se conservan.\n'
       exit 0 ;;
     *) echo "QUE no reconocido: $QUE" >&2; exit 2 ;;
   esac

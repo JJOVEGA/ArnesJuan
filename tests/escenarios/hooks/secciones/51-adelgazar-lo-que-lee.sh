@@ -117,6 +117,7 @@ fxp51() {   # CA-09: el plan sale ANTES de aplicar, no toca nada y dice de dónd
     && grep -q '^  \*\*Va a:\*\* `requirements/README.md` § «Anexo explicativo — casos medidos»' "$FX51/out" \
     && grep -q '^- \*\*Sale\*\* de `.arnes/config.json` § «_doc»: Manifiesto machine-readable' "$FX51/out" \
     || { MOT51='el plan no dice qué sale, de dónde ni adónde'; return 1; }
+  grep -q '^## \.arnes/lectura/.* — derivado: se regenera$' "$FX51/out" || { MOT51='el plan no lista los archivos por rol (CA-18)'; return 1; }
 }
 b3_51() {   # CA-07: JSON válido; el resto idéntico a la base; cada _doc cambiado apunta a un ancla que existe
   local t="$ARB51/templates/arnes-config.json.tpl" p='' n=0 a='' sec=''
@@ -309,10 +310,12 @@ c17b_51() {
     cmp -s "$FX51/esp-$k-${RV51##*/}" "$FX51/esp-$k-${CAND51##*/}" || { MOT51="la orden $k lanza otros procesos que en 081cb10"; return 1; }
     e+="$(wc -l < "$FX51/esp-$k-${RV51##*/}") "
   done
-  sonda51 "$CAND51" SessionStart '{}' "$FX51/esp-s" || return 1
-  [ "$(grep -c 'AGENTS.md ENTERO' "$FX51/ev")" -eq 1 ] && [ "$CTA51" = 0 ] \
-    || { MOT51="el script nuevo: $(grep -c 'AGENTS.md ENTERO' "$FX51/ev") recordatorios y $CTA51 procesos"; return 1; }
-  MOT51="procesos por orden, iguales y en el mismo orden: $e; inicio-sesion.sh: 0 procesos, un recordatorio"
+  # El script nuevo, contado aparte y en un proyecto con fuentes, para que el generador de CA-18 trabaje de verdad.
+  mkdir -p "$FX51/s18/requirements" "$FX51/s18/.arnes"; cp "$CAND51/AGENTS.md" "$FX51/s18/"; cp "$CAND51/requirements/README.md" "$FX51/s18/requirements/"
+  CLAUDE_PROJECT_DIR="$FX51/s18" sonda51 "$CAND51" SessionStart '{}' "$FX51/esp-s" || return 1
+  [ "$(grep -c 'AGENTS.md ENTERO' "$FX51/ev")" -eq 1 ] && [ "$CTA51" -ge 1 ] && [ -s "$FX51/s18/.arnes/lectura/qa.md" ] \
+    || { MOT51="el script nuevo: $(grep -c 'AGENTS.md ENTERO' "$FX51/ev") recordatorios, $CTA51 procesos y sin generar"; return 1; }
+  MOT51="procesos por orden, iguales y en el mismo orden: $e; inicio-sesion.sh, una vez al abrir: $CTA51 procesos (generador), un recordatorio"
 }
 # sonda51 <árbol> <evento> <entrada> <lista>: las órdenes del evento, bajo tests/util/sonda-procesos.sh (la sede
 # única de contar procesos con envoltorios, REQ-021 CA-07.4). Deja la salida del hook en $FX51/ev, la CUENTA de la
@@ -325,7 +328,7 @@ sonda51() {
   done < <(jq -r --arg e "$2" '.hooks[$e][]?.hooks[]?.command' "$1/hooks/hooks.json" 2>/dev/null)
   : > "$FX51/ev"; : > "$4"
   r="$("$UTIL_DIR/sonda-procesos.sh" --etiqueta req036-ca17 --sujeto "${s}printf '%s\n' \"\$(<\"\$SP_REG\")\" > $(printf %q "$4")" \
-       --binarios 'jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git cut uniq find stat realpath readlink cksum ls rm mv cp touch mkdir tee od xargs sleep timeout id' 2>/dev/null)"
+       --binarios 'jq awk grep sed tr date cat basename dirname mktemp wc head tail sort git cut uniq find stat realpath readlink cksum ls rm mv cp touch mkdir tee od xargs sleep timeout id sha256sum' 2>/dev/null)"
   [[ " $r" =~ \ cuenta=([0-9]+) ]] || { MOT51="la sonda no emitió registro: ${r:0:80}"; return 1; }
   CTA51="${BASH_REMATCH[1]}"; [ "$CTA51" = 0 ] && : > "$4"
   return 0
@@ -367,9 +370,13 @@ else v51 FAIL "REQ-036 B10 CA-17: $MOT51"; fi
 if [ -n "$(abierto51 'Texto de prueba que cita SEC-020 como medido.')" ]; then
   v51 PASS "REQ-036 B4 CA-05 (i) fixture: un bloque que cita SEC-020 (abierto) se detiene"
 else v51 FAIL "REQ-036 B4 CA-05 (i) fixture: un bloque que cita SEC-020 (abierto) NO se detuvo"; fi
-# B6 CA-06: tools/ sin diff y hooks/ sólo con lo de CA-17 (hooks.json e inicio-sesion.sh; el registro lo mide B10),
-# contra la línea base, árbol de trabajo incluido; y ningún archivo nuevo sin versionar fuera de inicio-sesion.sh.
-if git -C "$REPO51" diff --quiet "$REF51" -- tools hooks ':(exclude)hooks/hooks.json' ':(exclude)hooks/inicio-sesion.sh' 2>/dev/null \
-   && [ -z "$(git -C "$REPO51" ls-files --others --exclude-standard -- tools hooks ':(exclude)hooks/inicio-sesion.sh' 2>/dev/null)" ]; then
-  v51 PASS "REQ-036 B6 CA-06: tools/ sin diff y hooks/ sólo con lo de CA-17 contra 081cb10"
-else v51 FAIL "REQ-036 B6 CA-06: tools/ o hooks/ cambiaron contra 081cb10 fuera de CA-17"; fi
+# B6 CA-06: tools/ sólo con el archivo nuevo de CA-18 (todo lo existente sin diff) y hooks/ sólo con lo de CA-17 y
+# CA-18 (hooks.json e inicio-sesion.sh; el registro lo mide B10), contra la línea base, árbol de trabajo incluido; y
+# ningún archivo nuevo sin versionar fuera de esos dos. `arnes-lectura-rol.sh` no existía en 081cb10: es nuevo.
+if git -C "$REPO51" diff --quiet "$REF51" -- tools hooks ':(exclude)hooks/hooks.json' ':(exclude)hooks/inicio-sesion.sh' \
+     ':(exclude)tools/arnes-lectura-rol.sh' 2>/dev/null \
+   && [ -z "$(git -C "$REPO51" ls-tree --name-only "$REF51" tools/arnes-lectura-rol.sh 2>/dev/null)" ] \
+   && [ -z "$(git -C "$REPO51" ls-files --others --exclude-standard -- tools hooks ':(exclude)hooks/inicio-sesion.sh' \
+              ':(exclude)tools/arnes-lectura-rol.sh' 2>/dev/null)" ]; then
+  v51 PASS "REQ-036 B6 CA-06: tools/ sólo con el archivo nuevo de CA-18 y hooks/ sólo con lo de CA-17 y CA-18 contra 081cb10"
+else v51 FAIL "REQ-036 B6 CA-06: tools/ o hooks/ cambiaron contra 081cb10 fuera de CA-17 y CA-18"; fi

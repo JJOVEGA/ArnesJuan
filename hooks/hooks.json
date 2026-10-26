@@ -23,7 +23,9 @@
     "independiente y correcto.",
     "",
     "SessionStart: inicio-sesion.sh recuerda a la coordinadora leer AGENTS.md entero (REQ-036 CA-17). Solo al abrir",
-    "la sesion, nunca por orden: no toca PreToolUse ni Stop, no lee el manifiesto ni usa jq, y no decide nada."
+    "la sesion, nunca por orden: no toca PreToolUse ni Stop, no lee el manifiesto ni usa jq, y no decide nada.",
+    "Despues del recordatorio regenera .arnes/lectura/<rol>.md con tools/arnes-lectura-rol.sh (REQ-036 CA-18), una vez",
+    "por sesion; si no puede, los borra (se leen por marcas) y sale 0 igual."
   ],
   "hooks": {
     "SessionStart": [
