@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, CA-02 medido con `claude -p` aislado: el contexto al empezar −73 %; el analista, +17 % en tokens y −13 % en USD; parada en `P-137-Z`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (6 corridas), Opus (coordinadora) · agente: coordinadora.
+
+- **Calibración:** el contexto al abrir la sesión es de 10 895 tokens con el candidato y 39 673 con la base (`081cb10`, con import).
+- **6 corridas** (4 del candidato y 2 de la base): Rigor correcto en 6/6. Candidato: 248 432 tokens, 15 turnos y 0,267 USD de media; base: 212 564, 6 turnos y 0,308 USD. El candidato lee bloque a bloque.
+- `cand-dinero-2`: `Seguridad: n/a` con `critico`, por un hueco de la plantilla heredado de REQ-034.
+- Evidencia: `1.37-4a-conducta-claude-p/` (`6c59cde`). **P-137-Z:** (A) una lectura por rol generada (recomendada), (B) aceptar lo medido, (C) leer `AGENTS.md` entero.
+- Resultado: el ahorro del import está medido; falta decidir cómo lee el analista.
+
 ## [Interno] — 2026-10-26 · REQ-036, parte de P-137-Y (desarrollador, Opus): `CLAUDE.md` sin import, recordatorio `SessionStart` y la marca A-00 (**sin validar**); `en-revisión`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (desarrollador), Opus (coordinadora) · agentes: `desarrollador`, coordinadora.
 

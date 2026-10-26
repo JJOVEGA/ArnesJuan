@@ -43,7 +43,30 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-26: P-137-Y resuelta por el propietario, en § Resueltas.)_
+### P-137-Z — **REQ-036, medida de CA-02 con `claude -p`: el import fuera ahorra mucho, pero leer bloque a bloque sube los turnos y los tokens.** ¿Cómo seguimos?
+
+**Qué se midió** (evidencia en `1.37-4a-conducta-claude-p/` del árbol de evidencia, commit `6c59cde`). El analista corrió como sesión principal de `claude -p`, aislado, con el `CLAUDE.md` de cada plantilla y su plugin (`--plugin-dir`): 4 corridas sobre el candidato (`d4e68d6`) y 2 sobre la base (`081cb10`, con import). El número de corridas de la base lo decidió la coordinadora, para no duplicar el coste.
+
+| | Contexto al empezar | Tokens procesados por corrida (media) | Turnos | USD por corrida |
+|---|---|---|---|---|
+| Base (con import) | 39 673 | 212 564 | 6,0 | 0,308 |
+| Candidato | **10 895 (−73 %)** | **248 432 (+17 %)** | **15,0** | **0,267 (−13 %)** |
+
+- **Rigor:** 6 de 6 correctos. **Lo que lee el analista:** 74 547 B, dentro de tus 75 KB.
+- **Por qué suben los tokens:** el analista localiza sus bloques con `Grep` y los lee **uno a uno** con `Read` por rangos; son ≈ 15 turnos, y **cada turno vuelve a procesar todo el contexto**. Esas relecturas salen de la caché, así que el USD baja y el recuento de tokens sube.
+- **Un fallo de cabecera, en 1 de 4:** `cand-dinero-2` escribió `Seguridad: n/a` con `Rigor: critico`. **La causa es un hueco de la plantilla heredado de REQ-034**, no el corte: dice qué lleva `Seguridad:` en un cambio normal (`n/a`), pero no en un ámbito alcanzado que no es sensible, como el de dinero. Falla hacia lo cerrado (la puerta no cierra un `critico` sin `Seguridad: aprobado`), pero **no es «4/4 igual»**.
+
+**Qué detiene, y qué no.** Detiene QA de REQ-036: el objetivo de bytes se cumple, pero el de coste, medido como pediste, no. **El ahorro grande ya está ganado y no depende de esto:** sin el import, **cada subagente** de un consumidor arranca con ≈ 29 k tokens menos de contexto, y eso se repite en cada uno de sus turnos.
+
+**Opciones**
+- **(A) — recomendada: una lectura por rol, generada.** El arnés genera, para cada rol, **un archivo con la concatenación exacta de sus bloques** (por ejemplo `lectura-analista.md`). Es **derivado**, como el bloque de ESTADO: no es una segunda redacción, y el banco comprueba byte a byte que coincide con las marcas. La definición lo lee de **una vez**: un `Read`, pocos turnos y ≈ 45 KB en vez de 75. `arnes-init` y `arnes-upgrade` lo generan en los proyectos. Además se cierra el hueco de la plantilla («ámbito alcanzado → `Seguridad: pendiente`»). Luego se repite la medida. *Consecuencia:* una pasada más del desarrollador, ≈ 100–150 k, más QA y seguridad.
+- **(B):** aceptar lo medido (USD −13 % y tokens +17 % en el analista), cerrar el hueco de la plantilla y seguir. *Consecuencia:* por tu métrica de tokens, el analista empeora en este caso.
+- **(C):** la definición del analista lee `AGENTS.md` **entero, de una vez**, sin bloques, y el import sigue fuera. *Consecuencia:* pocos turnos y el ahorro de los subagentes se conserva, pero los ≈ 138 KB que lee el analista vuelven, y no se cumple tu objetivo de bytes.
+
+**Coste de REQ-036 hasta aquí:** analista 191 274 (dos agentes) · desarrollador **527 679** (pasó el aviso de 1,5× por ≈ 2,7 k, con tu autorización) · prueba de conducta: 6 corridas a ≈ 0,27–0,31 USD cada una.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-Z (A): lectura por rol generada y comprobada por el banco, una sola lectura por comisión; se cierra el hueco de Seguridad en ámbito alcanzado; se repite la medida con claude -p.
 
 ## Resueltas
 
