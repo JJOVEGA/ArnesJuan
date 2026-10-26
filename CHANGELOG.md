@@ -2,6 +2,25 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, CA-02 con el archivo de lectura por rol: 4/4 y USD −28 %; parada en `P-137-AA` por el techo de bytes
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (4 corridas), Opus (coordinadora) · agente: coordinadora.
+
+- **4 corridas con `claude -p` sobre `cfdc60e`:**
+  - cabecera correcta en 4/4, incluido `Seguridad: pendiente` en dinero (CA-19);
+  - USD 0,220 de media frente a 0,308 de la base (−28 %);
+  - tokens no cacheados 44 283 frente a 64 770 (−32 %);
+  - total de tokens 163 660 frente a 212 564 (−23 %).
+- **Comportamiento observado:** las 4 leen su archivo por rol en un solo `Read`, sin volver a leer por marcas, y escriben sólo en `requirements/`.
+- **Bytes:**
+  - 75 280 B por el método del guion de CA-01;
+  - 66,4 KB leídos de verdad;
+  - ≈ 82,8 KB recibidos, contados como la línea base de 138 574 B, porque el analista lee el manifiesto entero y la definición llega inyectada.
+- **Coste del desarrollador anterior (CA-18/19):**
+  - 233 526 tokens según la notificación;
+  - al menos 230 768 no cacheados: entrada y creación de caché suman 227 138; la salida que guarda la transcripción es parcial y sólo da un mínimo.
+- Evidencia: `1.37-4a-conducta-claude-p/pasada-P-137-Z/` (`a1d2032`).
+- **Resultado:** la condición de cierre de P-137-Z se cumple. **Falta** que el propietario decida sobre el techo de bytes (`P-137-AA`); después vienen QA y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036, P-137-Z (desarrollador, Opus): lectura por rol generada (CA-18) y ámbito alcanzado (CA-19), **sin validar**; parada de CA-13 con 75 280 B; `en-progreso`
 > Origen: GitHub (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: `desarrollador`.
 

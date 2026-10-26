@@ -43,7 +43,59 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-26: P-137-Z resuelta por el propietario, en § Resueltas.)_
+### P-137-AA — **REQ-036, última pasada de 4a: tu condición de cierre se cumple (4/4 y USD −28 %), pero el techo de bytes de CA-01, que fijaste tú, no.** ¿Se acepta lo medido?
+
+**Qué se midió.** Árbol `cfdc60e`, 4 corridas con `claude -p`, mismo método. Evidencia en `1.37-4a-conducta-claude-p/pasada-P-137-Z/` del árbol de evidencia (`a1d2032`).
+
+| | USD por corrida | No cacheados | Total de tokens | Turnos | Cabecera correcta |
+|---|---|---|---|---|---|
+| Base (`081cb10`) | 0,308 | 64 770 | 212 564 | 6,0 | 2/2 |
+| Pasada anterior (`d4e68d6`) | 0,267 | 48 992 | 248 432 | 15,0 | 3/4 |
+| **Esta pasada** | **0,220 (−28 %)** | **44 283 (−32 %)** | **163 660 (−23 %)** | 7,75 | **4/4** |
+
+- **Cumple las dos condiciones de P-137-Z.**
+  - Las 4 corridas escriben la cabecera que su caso exige, y el caso de dinero ya lleva `Seguridad: pendiente` (CA-19).
+  - El USD medio queda por debajo de 0,308.
+- **Las 4 leen su archivo por rol en un solo `Read`** y ninguna vuelve a leer por marcas. La comprobación de frescura va en el mismo mensaje que el `Read` en 3 de 4; en la cuarta va en el mensaje anterior.
+- **Las 4 escriben sólo en `requirements/`.**
+
+**Lo que no se cumple: el techo de bytes (CA-01, 75 000 B, P-137-X (D)).** Hay tres formas de contarlo, y las tres se escriben:
+
+| Cómo se cuenta | Bytes |
+|---|---|
+| Lo que la definición manda leer, contando sólo el bloque `rigor_politica` del manifiesto (método del guion de CA-01, el mismo que dio 74 547 B en la pasada anterior) | **75 280** |
+| Lo que el analista **leyó de verdad** con `Read` en las corridas: archivo por rol 57 089 + manifiesto **entero** 9 274 (+ 117 de código) | **66 363–66 480** |
+| **Lo que recibe**, contado como la línea base de 138 574 B: definición inyectada 16 481 + manifiesto entero + archivo por rol | **≈ 82 844** |
+
+- **El desarrollador paró en 75 280 B (CA-13)** y no condensó normativa.
+  - El exceso, 280 B, lo ponen la cabecera del archivo por rol y la línea de CA-19.
+- **La coordinadora añade lo que la cifra de 75 280 no dice:**
+  - el analista lee el manifiesto entero, no sólo el bloque de la política;
+  - la línea base lo contaba entero.
+
+  Contado como la base, lo que recibe baja de 138,6 KB a ≈ 82,8 KB (−40 %), por encima de 75 KB y de 70 KB.
+
+**Qué detiene, y qué no.**
+- **Detiene que QA dé por cumplido CA-01**, y con ello el cierre de REQ-036.
+- **No detiene nada más:** el resto de lo construido no depende de esta respuesta.
+- **No despacho QA hasta tener tu respuesta.** Si eliges (B), QA tendría que repetirse sobre otro árbol.
+
+**Opciones**
+- **(A) — recomendada: aceptar lo medido y cerrar 4a.** CA-01 se cierra con las tres cifras declaradas en el REQ como residual con dueño, sin más pasadas. La métrica con la que aprueba 4a es la que fijaste en P-137-Z, USD, y ésa baja un 28 %. *Consecuencia:* el objetivo de bytes queda incumplido y escrito. Siguen QA (Opus) y seguridad (Opus), y luego la parada entre 4a y 4b.
+- **(B): otra pasada para bajar de 75 KB.** Por ejemplo:
+  - que el analista lea sólo la política del manifiesto, con un `Grep` en vez del `Read` entero (≈ −7,5 KB leídos, y quizá un turno más);
+  - o quitar de las definiciones la lista «Hoy son…» (−299 B).
+
+  *Consecuencia:* rompe tu tope («ésta es la última pasada de 4a»). Cuesta otro desarrollador (≈ 150 k) y otras 4 corridas, para una cifra que ya no es la métrica de aprobado.
+- **(C): aceptar sólo con el método del guion (75 280 B), sin declarar las otras dos cifras.** No la recomiendo: esconde que el analista lee el manifiesto entero.
+
+**Coste de REQ-036 hasta aquí:**
+- analista: 191 274 + 70 532 = 261 806 (notificaciones);
+- desarrollador: 527 679 + 233 526 = 761 205. El último pasó el aviso de 1,5× de su presupuesto de ≈ 150 k por ≈ 8,5 k;
+- corridas de esta pasada: 0,88 USD en total.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-AA (A): CA-01 se cierra con lo medido, declarado en el REQ con sus tres cifras (75 280 B por el método del guion; 66,4 KB leídos; ≈ 82,8 KB recibidos contados como la base), sin más pasadas; 4a se aprueba por USD (−28 %) y 4/4; siguen QA y seguridad.
 
 ## Resueltas
 
