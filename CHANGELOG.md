@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036: B5 pasa a 75 520 B por el texto de seguridad de la reparación; parada en `P-137-AC`
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **El desarrollador de la pasada correctiva 1** (Opus, 56/56 turnos) entregó QA-036-03 a 09 en `330dc86`, sin validar.
+  - Banco: 3082/2/34; los 2 FAIL son B5 y su fixture.
+  - Coste: 305 679 según la notificación; al menos 585 228 no cacheados, contando la creación de caché. Pasa el aviso de 1,5× (300 k) por ≈ 5,7 k.
+- **Qué hace subir B5:** la definición del analista crece 240 B con las frases de QA-036-03 y QA-036-08.
+- **B10** sigue comparando procesos por igualdad cuando CA-17 ya es un techo; lo vio el desarrollador.
+- **P-137-AC**, agrupada con `P-137-AB`: (A) aceptar 75 520 B (recomendada), (B) condensar, (C) sacar las frases.
+- **Resultado:** la reparación está construida y probada. **Falta:** la decisión sobre el techo; luego QA, en la vuelta 2 de 3, y seguridad.
+
 ## [Interno] — 2026-10-26 · REQ-036, pasada correctiva 1 de 2 (vuelta dev↔QA 1 de 3): QA-036-03 a 09 construidos; parada por B5
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
 

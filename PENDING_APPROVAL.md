@@ -43,6 +43,26 @@
 
 ## Pendientes
 
+### P-137-AC — **REQ-036: la reparación de QA añade 240 B de texto de seguridad a la definición del analista, y B5 pasa de 75 280 B (lo que aceptaste) a 75 520 B.** ¿Se acepta?
+
+**Qué pasó.** El desarrollador (Opus) construyó QA-036-03 a 09 en `330dc86` (sin validar), y paró en B5, como manda CA-20. Banco: 3082 PASS, 2 FAIL, 34 SKIP; los 2 FAIL son B5 y su fixture. `--verificar` sale 0.
+- **Origen del exceso:** sólo la definición del analista, que pasa de 16 481 a 16 721 B (+240 B). Son las dos frases que la reparación exige:
+  - «una fuente sin ninguna marca, léela entera» (QA-036-03, el hallazgo `usuario/dinero`);
+  - «si llega truncado, sigue leyendo hasta el final» (QA-036-08).
+- **Lo que no cambia:** el archivo por rol del analista y el guion.
+- **Por qué no hay holgura:** el techo se fijó en la cifra exacta medida (75 280), así que cualquier byte de texto lo pasa. Recortar otra parte de la definición es condensar normativa, y eso CA-13 lo reserva al propietario.
+
+**Qué detiene, y qué no.** Detiene el paso de REQ-036 a `en-revisión` y, por tanto, QA, seguridad y el cierre. Nada más.
+
+**Opciones**
+- **(A) — recomendada: aceptar 75 520 B como nuevo techo de regresión de B5.** Los 240 B son texto que hace leer **más** a los agentes, no menos. En la misma dependencia acotada, el desarrollador corrige B10, que todavía compara procesos por **igualdad** cuando CA-17 ya es un techo (QA-036-06). Lo vio él mismo.
+  *Consecuencia:* ≈ 60 k más de desarrollador; luego QA, en la vuelta 2 de 3, y seguridad. El objetivo de 75 000 B ya estaba incumplido y aceptado (P-137-AA), y lo sigue estando.
+- **(B): condensar en la definición del analista otros 240 B de texto normativo**, sin mover nada. *Consecuencia:* ataca la regla que lleva toda 4a, «nada normativo se condensa», por 0,3 % de bytes; y otro desarrollador más.
+- **(C): sacar las dos frases de la definición y dejarlas sólo en `AGENTS.md`.** *Consecuencia:* el respaldo de «fuente sin marcas» tiene que estar en la definición, porque es lo que se lee cuando el archivo por rol no sirve. Quitarlo deshace la reparación de QA-036-03. No la recomiendo.
+
+**Decisión propuesta, lista para adoptar:**
+> Adopto P-137-AC (A): B5 pasa a 75 520 B como techo de regresión, porque los 240 B son el texto de seguridad de QA-036-03 y QA-036-08; el desarrollador corrige además B10 a techo (QA-036-06); siguen QA y seguridad.
+
 ### P-137-AB — **Issue #63: con gates de más de 30 s, `guard-completado` no deja cerrar nada desde 1.36.0, y el cliente no mata el hook a los 60 s sino a ≈ 600 s.** ¿Hotfix 1.36.3 o dentro de 1.37?
 
 **Qué se midió** (evidencia en `issue-63-plazo-gates/` del árbol de evidencia, `bca0598`; proyecto mínimo, sin datos de ningún consumidor):
