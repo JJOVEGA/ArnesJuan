@@ -1,6 +1,6 @@
 <!-- DERIVADO — no editar a mano: lo genera tools/arnes-lectura-rol.sh y se pisa en la siguiente generación. -->
 <!-- Rol: seguridad -->
-<!-- Fuentes: AGENTS.md 78476 B sha256 11782afbe89233c7d2b5333b731225036c42352c6eed3689cb5b3b14616701a0; requirements/README.md 78590 B sha256 7fa50448e2440b99bc87943991d9334d97e8801645a2bdee4f0d28233b97207a -->
+<!-- Fuentes: AGENTS.md 78476 B sha256 11782afbe89233c7d2b5333b731225036c42352c6eed3689cb5b3b14616701a0; requirements/README.md 79087 B sha256 b741c400a5f4f3b779f7bd039160d1658bd80e0e67c040b26d1fddb0bf69c1ab -->
 
 [[A-00 · obliga: todos]]
 

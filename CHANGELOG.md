@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, pasada correctiva 1 de 2 (vuelta dev↔QA 1 de 3): QA-036-03 a 09 construidos; parada por B5
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
+
+- **QA-036-03 y 04, «Fuente sin marcas»:**
+  - `tools/arnes-lectura-rol.sh` no genera y borra si una fuente no tiene marcas o tiene texto antes de la primera;
+  - las cuatro definiciones leen entera una fuente sin marcas;
+  - `arnes-upgrade` conserva el import de `CLAUDE.md` («pendiente») y los `_doc` cuyo puntero no resuelve (`UNKNOWN`) mientras `AGENTS.md` no esté migrado.
+- **QA-036-05:**
+  - `hooks/inicio-sesion.sh` quita los archivos por rol si el generador no sirve, sin seguir enlaces;
+  - avisa de lo que no pudo quitar;
+  - el paso 4b ya no dice «ya los borró».
+- **QA-036-07:** el obligado ilegible se decide por propiedad, con aviso `fuente:línea`, en el generador y en el extractor del banco.
+- **QA-036-08:** «entero, en un solo `Read` sin `offset` ni `limit`», y completar la lectura si llega truncada.
+- **QA-036-09:** los «Después» del inventario y la frase de `medida-4a.md`.
+- **Banco:** sección 52 de 36 a 60 casos (fail-before contra `d722aed`); total 3118; **3082 PASS · 2 FAIL · 34 SKIP**; autoprueba 117/0; gates en verde; `--verificar` 0.
+- **Parada:** los 2 FAIL son B5. El guion mide **75 520 B** (proyecto) y 75 456 B (plantilla), por encima de 75 280 B. Los +240 B son de la definición del analista, por el texto que contratan QA-036-08 y la pieza 2. El techo no se tocó. Estado: `en-progreso`; decide el propietario.
+
 ## [Interno] — 2026-10-26 · REQ-036, write-back de QA-036-01..09 (vuelta 1 de 3); F-137-23 registrada
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista, 24/24 turnos), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
 

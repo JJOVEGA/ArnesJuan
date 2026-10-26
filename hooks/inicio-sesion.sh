@@ -15,10 +15,28 @@
 # El recordatorio sale ANTES de generar, sólo con órdenes internas del intérprete, así que ningún fallo del
 # generador lo impide; el generador escribe a /dev/null (stdout de SessionStart entra en el contexto) y, si no
 # puede generar, borra los archivos por rol (un archivo ausente se lee por marcas). Sale 0 pase lo que pase.
+#
+# EL BORRADO NO DEPENDE DEL GENERADOR (REQ-036 CA-18 (c), QA-036-05). Si el generador no existe, no se puede leer,
+# no arranca o sale con un código distinto de 0 y quedan archivos por rol, este script los quita él —un solo
+# `rm -f` sobre las cuatro rutas fijas, sólo en ese caso— y nunca a través de un enlace: con `.arnes` o
+# `.arnes/lectura` como enlace simbólico no toca nada (límite declarado L2). Lo que no puede quitar lo avisa por
+# stderr con su ruta (L3: destino no escribible). Sigue sin decidir nada.
 builtin printf '%s\n' \
   'Recordatorio del arnés (sesión principal = coordinadora): lee AGENTS.md ENTERO antes de tu primer encargo.' \
   'CLAUDE.md ya no lo importa; cada subagente lo lee según su rol, por sus marcas [[<id> · obliga: <roles>]], y la coordinadora lee todos los bloques.' \
   2>/dev/null
 GEN="${CLAUDE_PLUGIN_ROOT:-${BASH_SOURCE[0]%/*}/..}/tools/arnes-lectura-rol.sh"
-[ -r "$GEN" ] && "${BASH:-bash}" "$GEN" "${CLAUDE_PROJECT_DIR:-.}" >/dev/null 2>&1
+P="${CLAUDE_PROJECT_DIR:-.}"; RC=1
+[ -r "$GEN" ] && { "${BASH:-bash}" "$GEN" "$P" >/dev/null 2>&1; RC=$?; }
+if [ "$RC" -ne 0 ] && [ ! -L "$P/.arnes" ] && [ ! -L "$P/.arnes/lectura" ]; then
+  F=("$P/.arnes/lectura/analista.md" "$P/.arnes/lectura/desarrollador.md" "$P/.arnes/lectura/qa.md" "$P/.arnes/lectura/seguridad.md")
+  Q=no; for f in "${F[@]}"; do { [ -e "$f" ] || [ -L "$f" ]; } && Q=si; done
+  if [ "$Q" = si ]; then
+    rm -f -- "${F[@]}" 2>/dev/null
+    for f in "${F[@]}"; do
+      { [ -e "$f" ] || [ -L "$f" ]; } \
+        && builtin printf 'arnes (inicio de sesión): no se pudo quitar %s; puede estar viejo: bórralo a mano\n' "$f" >&2
+    done
+  fi
+fi
 exit 0

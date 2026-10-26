@@ -1779,7 +1779,12 @@ done
 # «<= 75 280 B», techo de regresión de lo aceptado y no el de contrato de CA-01, sin cambiar de número; y dos
 # fixtures de B5 sobre una copia de la candidata: 75 280 B pasa y 75 281 B falla con la cifra y el techo, y sin
 # generador el guion no mide y el caso falla—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3094
+# Y 3094 → 3118 por la vuelta 1 de QA en REQ-036 (QA-036-03 a 08): +24 en la sección 52 (36 → 60) —doce filas en la
+# candidata y en d722aed (el fail-before): (3b) el obligado ilegible por propiedad, con aviso; (5b) el hook que borra
+# si el generador no sirve y avisa de lo que no pudo quitar; (6) el `Read` entero; y S1 a S8 de «Fuente sin marcas»
+# (el generador, el hook, las definiciones y la orden de `arnes-upgrade` sobre un proyecto de 081cb10)—. Ninguna otra
+# sección cambia su número.
+CASOS_ESPERADOS=3118
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

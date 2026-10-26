@@ -12,7 +12,10 @@ no se suma aquí: sólo ocurre si el archivo falta o está viejo, y entonces se 
 **Qué NO mide.** El sumando (ii) de CA-01 —los bytes que de verdad leyeron las corridas de conducta, vistos en
 sus transcripciones— es de la coordinadora (CA-02). Y no mide lo que el cliente inyecta solo: si `CLAUDE.md`
 importa `AGENTS.md` con `@AGENTS.md`, el archivo entero entra en el contexto **aunque la definición mande leer
-por bloques** (defecto D-036-1 del informe de la fase 1; la plantilla de `CLAUDE.md` está fuera de REQ-036).
+por bloques** (defecto D-036-1 del informe de la fase 1). Desde P-137-Y la plantilla de `CLAUDE.md` está dentro de
+REQ-036 (CA-16) y ya no importa `AGENTS.md`; un `CLAUDE.md` que aún lo importe —un proyecto sin migrar, o el que
+`arnes-upgrade` conserva con su import mientras `AGENTS.md` no tiene marcas (CA-18, «Fuente sin marcas»)— sigue
+inyectándolo entero, y eso este guion no lo cuenta.
 
 **Cómo se corre.** Desde la raíz del repositorio del arnés: el guion de abajo, con `TPL` apuntando a un
 directorio de plantillas, `DEF` a la definición, `ROL` a uno de los cuatro roles y `GEN` al generador (por

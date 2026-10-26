@@ -1608,16 +1608,30 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
      trae el import de `AGENTS.md` en **una sola línea propia** sale como `PROPIO`: se conserva byte a
      byte salvo esa línea, que se sustituye por la instrucción; si no lo trae, o lo trae de otra forma
      o más de una vez, sale `CONFLICTO` y se conserva entera —con el import—, para que lo decidas tú.
+     **Lo que depende de otro archivo no se retira antes de que exista** (REQ-036 CA-18, «Fuente sin
+     marcas», pieza 3): la orden mira `AGENTS.md` **tal como queda tras aplicar el plan** (lo que ella
+     misma escribiría; si sale `UNKNOWN`, el del disco). (i) Si no tiene **ninguna** marca `[[…`,
+     `CLAUDE.md` —INTACTO o `PROPIO`— **se conserva entero, con su import**, y el plan lo dice como
+     «pendiente: `AGENTS.md` sin marcas» (no es `CONFLICTO` ni `UNKNOWN` de `CLAUDE.md`: el código es 0 y la
+     salida es el mismo archivo). (ii) Un `_doc` del manifiesto sólo pasa a su puntero si el destino del
+     puntero (`AGENTS.md` § N, «ancla») existe en ese `AGENTS.md`; si no, se **conserva** y el manifiesto
+     sale `UNKNOWN`, sin aplicar. Cuando `AGENTS.md` quede migrado, la siguiente `arnes-upgrade` completa
+     (i) y (ii) por las mismas reglas.
   4b. **Archivos de lectura por rol (REQ-036 CA-18, P-137-Z (A)).** Después de aplicar —y sólo si el
      propietario confirmó—, desde la raíz del proyecto ejecuta `bash "$PLUGIN/tools/arnes-lectura-rol.sh"`.
      Genera `.arnes/lectura/{analista,desarrollador,qa,seguridad}.md` de `AGENTS.md` y
      `requirements/README.md`: son **derivados**, se **regeneran, no se migran** (nunca `CONFLICTO` ni
      `UNKNOWN`; el plan los lista como «derivado: se regenera»), y un proyecto que aún no los tiene los
-     recibe aquí. **Código distinto de 0:** el generador ya los borró (un archivo ausente se lee por
-     marcas); informa el mensaje y sigue. En la Fase 4, `bash "$PLUGIN/tools/arnes-lectura-rol.sh"
+     recibe aquí. **Código distinto de 0** (por ejemplo, una fuente sin marcas): **no afirmes que «ya los
+     borró»**. Informa el mensaje del generador y **comprueba si queda algún `.arnes/lectura/<rol>.md`**;
+     los que queden —porque `.arnes` o `.arnes/lectura` es un enlace, el destino no es escribible o el
+     generador no pudo correr— **lístalos por su ruta** en el informe de la migración, con «puede estar
+     viejo: bórralo a mano; hasta entonces el agente lo usa si su fecha es posterior a la de las fuentes»,
+     y **no los sigas ni los toques**. En la Fase 4, `bash "$PLUGIN/tools/arnes-lectura-rol.sh"
      --verificar` sale 0 si están al día.
   5. Fase 4 releyendo el disco, y al terminar, `.arnes/plantillas-origen/` con las plantillas de
-     1.37.0, como siempre.
+     1.37.0, como siempre, **salvo** la de un archivo que quedó `UNKNOWN` o «pendiente»: ésa conserva la
+     de origen —la migración es **parcial** (Fase 5)—, para que la siguiente `arnes-upgrade` lo complete.
   **Límite declarado:** la sección 51 del banco del arnés mide el resultado de la orden sobre
   proyectos de prueba, **no** que un agente siga esta skill.
 
@@ -1656,6 +1670,10 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
           else .ok = false | .t += ("{{" + $q) end);
   def texto: .l | join("\n");
   def marca: [.l[] | select(test("^\\[\\[.*\\]\\][ \t]*$"))] | .[0];
+  if $modo == "claude" and $marcado != "si" then
+    {estado: "OK", motivo: "pendiente: `AGENTS.md` sin marcas", texto: $n,
+     plan: [{h: "", e: "pendiente", m: "`AGENTS.md`, tal como queda tras este plan, no tiene ninguna marca: `CLAUDE.md` se conserva entero, con su import, para que se siga leyendo; cuando `AGENTS.md` esté migrado, la siguiente `arnes-upgrade` lo completa"}]}
+  else
   ($b | secciones) as $B | ($n | secciones) as $N | ($s | secciones) as $S
   | [$B[].h] as $hb | [$N[].h] as $hn | [$S[].h] as $hs
   | def unk($m): {estado: "UNKNOWN", motivo: $m, texto: null, plan: []};
@@ -1711,9 +1729,18 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
                              else . end]}
         end
     end
+  end
   '
   cfg_jq='
   def tpl: gsub("\\{\\{[A-Z_]+\\}\\}"; "null") | fromjson;
+  def seccion($num): ($ag | split("\n")) as $L
+    | ([range(0; $L | length) | select($L[.] | startswith("## " + $num + ".") or startswith("## " + $num + " "))] | .[0]) as $i
+    | if $i == null then null
+      else ([range($i + 1; $L | length) | select($L[.] | startswith("## "))] | .[0] // ($L | length)) as $j
+      | $L[$i:$j] | join("\n") | gsub("`"; "") end;
+  def resuelve: [scan("([A-Za-z0-9_./-]+) § ([0-9][0-9.]*), «([^»]+)»")] as $ms
+    | ($ms | length) > 0
+      and all($ms[]; . as $m | $m[0] == "AGENTS.md" and (seccion($m[1]) as $c | $c != null and ($c | contains($m[2]))));
   ($b | tpl) as $B | ($s | tpl) as $S | (try ($n | fromjson) catch null) as $N
   | if ($N | type) != "object" then {estado: "UNKNOWN", motivo: "el manifiesto no es un único objeto JSON", texto: null, plan: []}
     else
@@ -1723,6 +1750,8 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
          | if $bv == $sv then .
            elif $bv == null then .p += [{h: ($p | join(".")), e: "UNKNOWN", m: "_doc que la base no tiene: no se añade"}] | .u = true
            elif $nv != $bv then .p += [{h: ($p | join(".")), e: "CONFLICTO", m: "el proyecto lo cambió o lo quitó: se conserva"}]
+           elif ($sv | test("§ [0-9]")) and ($sv | resuelve | not) then .u = true
+             | .p += [{h: ($p | join(".")), e: "UNKNOWN", m: ("el destino de su puntero no existe en el proyecto (" + $sv + "): el _doc se conserva con su texto")}]
            else (($p[-1] | tojson) + ": " + ($bv | tojson)) as $o | (($p[-1] | tojson) + ": " + ($sv | tojson)) as $w
              | if (.t | [indices($o)[]] | length) == 1 then .t = (.t | split($o) | join($w))
                  | .p += [{h: ($p | join(".")), e: "SAFE", sale: [{l: $bv, a: $sv}]}]
@@ -1731,14 +1760,27 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
       | {estado: (if $r.u then "UNKNOWN" else "OK" end), motivo: "", texto: (if $r.u then null else $r.t end), plan: $r.p}
     end
   '
+  # tras_plan: `AGENTS.md` tal como queda tras aplicar el plan —el resultado de la orden si lo migra; si sale
+  # UNKNOWN, el del disco—. De él dependen el import de `CLAUDE.md` y los punteros del manifiesto (REQ-036 CA-18,
+  # «Fuente sin marcas», pieza 3): no se retira lo que sustituye a algo que todavía no existe.
+  tras_plan() {
+    local r
+    r="$(uno AGENTS.md AGENTS.md.tpl)"
+    if [ "$(jq -r .estado <<< "$r")" = OK ]; then jq -j .texto <<< "$r"; elif [ -r AGENTS.md ]; then cat AGENTS.md; fi
+  }
   uno() {   # <archivo del proyecto> <plantilla>: imprime el JSON del resultado; sin base, UNKNOWN
-    local f="$1" t="$2" prog="$md_jq" modo=''
+    local f="$1" t="$2" prog="$md_jq" modo='' ag='' marcado=si
     [ "$f" = .arnes/config.json ] && prog="$cfg_jq"
     [ "$f" = CLAUDE.md ] && modo=claude
+    case "$f" in
+      CLAUDE.md|.arnes/config.json) ag="$(tras_plan)"
+        case $'\n'"$ag" in *$'\n[['*) ;; *) marcado=no ;; esac ;;
+    esac
     if [ ! -r "$O/$t" ]; then jq -n --arg m "no hay base: falta $O/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     elif [ ! -r "$PLUGIN/templates/$t" ]; then jq -n --arg m "no hay destino: falta $PLUGIN/templates/$t" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     elif [ ! -r "$f" ]; then jq -n --arg m "no existe $f en el proyecto" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
-    else jq -n --rawfile b "$O/$t" --rawfile n "$f" --rawfile s "$PLUGIN/templates/$t" --arg modo "$modo" "$prog" \
+    else jq -n --rawfile b "$O/$t" --rawfile n "$f" --rawfile s "$PLUGIN/templates/$t" --arg modo "$modo" \
+           --arg marcado "$marcado" --rawfile ag <(printf '%s' "$ag") "$prog" \
            || jq -n --arg m "no se pudo calcular el plan de $f" '{estado: "UNKNOWN", motivo: $m, texto: null, plan: []}'
     fi
   }

@@ -15,8 +15,10 @@
 # sólo si ninguna fuente es más reciente que él, y un archivo al día no debe parecer viejo tras un checkout.
 # Con `--verificar` no escribe nada y sale 1 si algún archivo falta o no es lo que se generaría.
 #
-# FALLOS. Toda generación fallida (fuente ausente o ilegible, `.arnes` ausente, enlace simbólico, destino no
-# escribible, falta `sha256sum`) BORRA los cuatro archivos y sale 1: un archivo ausente se lee por marcas, así
+# FALLOS. Toda generación fallida (sitio único de las causas: las llamadas a `falla`; ejemplos no exhaustivos:
+# fuente ausente, ilegible, sin ninguna marca o con texto antes de la primera que no sea el título, `.arnes`
+# ausente, enlace simbólico, destino no escribible, falta `sha256sum`) BORRA los cuatro archivos y sale 1: un
+# archivo ausente se lee por marcas (o entera la fuente sin marcas), así
 # que todo fallo termina en leer más, nunca en leer una norma vieja. Nunca sigue un enlace simbólico: con
 # `.arnes` o `.arnes/lectura` como enlace no escribe ni borra nada; un destino que es enlace se quita, no se sigue.
 #
@@ -58,36 +60,42 @@ falla() {
   exit 1
 }
 
-# roles_de <marca sin salto>: deja en INCLUYE los roles (de ROLES) que leen el bloque. Fail-safe: una marca
-# que no se puede leer, o sin ningún rol reconocido, la leen los cuatro; sólo `explicativo` no la lee nadie.
+# roles_de <marca sin salto> <fuente:línea>: deja en INCLUYE los roles (de ROLES, en su orden) que leen el bloque.
+# La obligación es LEGIBLE sólo si, tras `[[<id> · `, la marca dice exactamente `explicativo` (no la lee nadie) u
+# `obliga:` y una lista en la que TODOS y cada uno de los elementos son un rol, `coordinadora` o `todos` (se toleran
+# mayúsculas y blancos alrededor). Todo lo demás es ilegible —un solo elemento mal escrito basta— y la leen los
+# cuatro, con aviso que nombra el bloque y la línea: ante la duda, se lee (REQ-036 CA-18, QA-036-07).
+ilegible() {
+  printf 'arnes-lectura-rol: aviso: %s: obligado ilegible, lo leen los cuatro roles: %.80s\n' "$1" "$2" >&2
+  INCLUYE=("${ROLES[@]}")
+}
 roles_de() {
-  local m="$1" t lista rec=no
+  local m="$1" r t lista sel=' '
   INCLUYE=()
   m="${m%"${m##*[![:space:]]}"}"            # sin blancos finales (incluido un \r de fin de línea CRLF)
   case "$m" in
-    '[['*']]') m="${m#\[\[}"; m="${m%\]\]}" ;;
-    *) printf 'arnes-lectura-rol: aviso: marca sin cierre, la leen todos: %.60s\n' "$m" >&2
-       INCLUYE=("${ROLES[@]}"); return 0 ;;
+    '[['*' · '*']]') r="${m%\]\]}"; r="${r#*' · '}" ;;
+    *) ilegible "$2" "$m"; return 0 ;;
   esac
-  case "$m" in
-    *obliga:*) lista="${m#*obliga:}" ;;
-    *explicativo*) return 0 ;;
-    *) printf 'arnes-lectura-rol: aviso: marca sin `obliga:`, la leen todos: %.60s\n' "$m" >&2
-       INCLUYE=("${ROLES[@]}"); return 0 ;;
+  r="${r#"${r%%[![:space:]]*}"}"; r="${r%"${r##*[![:space:]]}"}"
+  [ "$r" = explicativo ] && return 0
+  case "$r" in
+    obliga:*) lista="${r#obliga:}," ;;
+    *) ilegible "$2" "$m"; return 0 ;;
   esac
-  lista="${lista,,}"; lista="${lista//[[:space:]]/}"
-  local IFS=,
-  for t in $lista; do
+  while [ -n "$lista" ]; do
+    t="${lista%%,*}"; lista="${lista#*,}"
+    t="${t#"${t%%[![:space:]]*}"}"; t="${t%"${t##*[![:space:]]}"}"; t="${t,,}"
     case "$t" in
-      todos) INCLUYE=("${ROLES[@]}"); return 0 ;;
-      analista|desarrollador|qa|seguridad) INCLUYE+=("$t"); rec=si ;;
-      coordinadora) rec=si ;;
+      todos) sel=" ${ROLES[*]} " ;;
+      analista|desarrollador|qa|seguridad) sel+="$t " ;;
+      coordinadora) ;;
+      *) ilegible "$2" "$m"; return 0 ;;   # incluido el elemento vacío: `obliga:` sola, `,,` o una coma final
     esac
   done
-  if [ "$rec" = no ]; then
-    printf 'arnes-lectura-rol: aviso: marca sin ningún rol reconocido, la leen todos: %.60s\n' "$m" >&2
-    INCLUYE=("${ROLES[@]}")
-  fi
+  for t in "${ROLES[@]}"; do
+    case "$sel" in *" $t "*) INCLUYE+=("$t") ;; esac
+  done
   return 0
 }
 
@@ -104,14 +112,24 @@ while read -r h _; do SUMAS+=("$h"); done <<< "$SAL"
 
 declare -A CUERPO=()
 FUENTES_CAB=''
+# Una fuente SIN NINGUNA marca, o con texto antes de la primera que no sea el título (`# …`) —un bloque sin
+# marca, de obligado ilegible—, no da archivos: un archivo por rol sin esa fuente es leer MENOS, y en silencio.
+# Se falla (y se borran los cuatro): sin archivo, la definición lee esa fuente entera (REQ-036 CA-18, «Fuente sin
+# marcas», pieza 1; QA-036-03).
 for i in 0 1; do
   mapfile LINEAS < "${FUENTES[$i]}" || falla "no se pudo leer ${FUENTES[$i]}"
-  n=0; leen=()   # antes de la primera marca, nadie: el título no es bloque
+  n=0; nl=0; marcas=0; pre=0; leen=()   # antes de la primera marca, nadie: el título no es bloque
   for l in "${LINEAS[@]}"; do
-    n=$((n + ${#l}))
-    if [ "${l:0:2}" = '[[' ]; then roles_de "${l%$'\n'}"; leen=("${INCLUYE[@]}"); fi
+    n=$((n + ${#l})); nl=$((nl + 1))
+    if [ "${l:0:2}" = '[[' ]; then
+      marcas=$((marcas + 1)); roles_de "${l%$'\n'}" "${NOMBRES[$i]}:$nl"; leen=("${INCLUYE[@]}")
+    elif [ "$marcas" -eq 0 ] && [ "$pre" -eq 0 ]; then
+      case "$l" in '# '*) ;; *[![:space:]]*) pre=$nl ;; esac
+    fi
     for r in "${leen[@]}"; do CUERPO[$r]+="$l"; done
   done
+  [ "$marcas" -gt 0 ] || falla "${NOMBRES[$i]}: sin ninguna marca [[<id> · …]]: sin archivo por rol, esa fuente se lee entera"
+  [ "$pre" -eq 0 ] || falla "${NOMBRES[$i]}: texto antes de la primera marca (línea $pre): un bloque sin marca no se puede asignar; sin archivo por rol, esa fuente se lee entera"
   FUENTES_CAB+="${FUENTES_CAB:+; }${NOMBRES[$i]} $n B sha256 ${SUMAS[$i]}"
 done
 
