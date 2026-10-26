@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-26 · REQ-036, QA (Opus) sobre `d722aed`: `con-hallazgos`, 10 hallazgos (5 bloquean)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (qa-tester, 105/105 turnos), Opus (coordinadora) · agente: qa-tester, coordinadora.
+
+- **Banco:** 3063 PASS, 0 FAIL, 31 SKIP (3094 casos), y la autoprueba 117/0. Las gates de §7 en verde y `--verificar` en 0.
+- **CA-15 en verde:** la tabla bloque por bloque y los archivos por rol coinciden byte a byte, comprobados con un extractor propio.
+- **CA-01, CA-02 y CA-20:** recalculados de la evidencia, coinciden.
+- **Bloquean el cierre:**
+  - QA-036-01 (`contrato`): el write-back de P-137-AA borró la línea de CA-02;
+  - QA-036-02 (`contrato`): CA-02 se contradice con `pendiente`/`borrador`;
+  - **QA-036-03 (`usuario/dinero`):** con una fuente sin marcas, el archivo por rol es «válido» y está vacío de esa fuente, así que los agentes del consumidor leen menos, en silencio;
+  - QA-036-05 (`contrato`): CA-18 dice que su límite es «el único», y hay más;
+  - QA-036-06 (`contrato`): «idénticos» debe ser un techo.
+- **`instrumento`:** QA-036-04, 07, 08, 09 y 10.
+- **Modelo efectivo de las cuatro comisiones de esta pasada:** verificado.
+- **Coste de QA:** 347 406 según la notificación; al menos 341 642 no cacheados (la salida es parcial).
+- **Resultado:** REQ-036 en `en-progreso`, vuelta dev↔QA 1 de 3. **Falta:** el write-back del analista y la pasada correctiva del desarrollador.
+
 ## [Interno] — 2026-10-26 · Issue #63 reproducido: con gates de más de 30 s, `guard-completado` no deja cerrar desde 1.36.0; el cliente 2.1.289 mata el hook a ≈ 600 s, no a 60; parada en `P-137-AB`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora), Sonnet (2 corridas de `claude -p`) · agente: coordinadora.
 
