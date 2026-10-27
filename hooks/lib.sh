@@ -472,6 +472,10 @@ ARNES_GATES_CORTE_S=5
 # de error (QA-007-16). Si vence, lo dice el reloj del HOOK (EPOCHREALTIME, que el entorno no puede fijar),
 # no el `sleep`: quien llama compara lo transcurrido con el presupuesto, y si el `sleep` murió antes de tiempo
 # —una gate puede matarlo—, el motivo es otro, y también deniega. A la gate nunca se le cree.
+# EL RELOJ SE RETIRA CON KILL, NO CON TERM (QA-037-01). Tras una gate rápida el reloj puede no haber llegado
+# todavía a su `exec`: es aún un hijo de bash con los manejadores del hook. Medido (bash 5.3.9, 300 por punto,
+# sin carga): con TERM, ese hijo ejecutaba la trampa de salida del hook o se tragaba la señal y el `sleep`
+# seguía hasta su fin —el hook esperaba al reloj entero: el cuelgue de 420 s—; con KILL, ninguna de las dos.
 ARNES_GATES_T=''
 arnes_gates_reloj() {
   sleep "$(( ($1 + 999999) / 1000000 ))" </dev/null >/dev/null 2>&1 &
@@ -479,8 +483,29 @@ arnes_gates_reloj() {
 }
 arnes_gates_sin_reloj() {
   [ -n "$ARNES_GATES_T" ] || return 0
-  kill "$ARNES_GATES_T" 2>/dev/null; wait "$ARNES_GATES_T" 2>/dev/null
+  kill -KILL "$ARNES_GATES_T" 2>/dev/null; wait "$ARNES_GATES_T" 2>/dev/null
   ARNES_GATES_T=''
+}
+
+# arnes_gates_salida -> ARNES_GATES_SAL: el archivo donde escriben las gates de un cierre, creado SIN procesos
+# (QA-037-02, REQ-017 CA-08 (ii)): el `mktemp` de hasta 1.36.2 era un fork y un exec en cada cierre con gates
+# —≈ 3,5 ms en Linux/WSL2; en Windows/MSYS, 1,2–6 s por fork (AGENTS.md §2)—. Las dos garantías de `mktemp`: un
+# nombre que no se puede predecir (`SRANDOM`, de la fuente aleatoria del sistema, dos veces; las gates ya exigen
+# bash 5.1) y una creación EXCLUSIVA (`set -C` con el nombre libre: bash abre con O_EXCL, que no sigue enlaces).
+# Un nombre que ya existe, sea lo que sea, se descarta sin abrirlo. Tres intentos; si no, 1, y quien llama cae a
+# `mktemp` como hasta 1.36.2. `local -` devuelve las opciones al salir: `noclobber` no llega a las gates.
+arnes_gates_salida() {
+  local -
+  local d="${TMPDIR:-/tmp}" f i
+  for i in 1 2 3; do
+    f="${d%/}/arnes_gate.$BASHPID.$SRANDOM$SRANDOM"
+    { [ -e "$f" ] || [ -L "$f" ]; } && continue
+    set -C
+    { : > "$f"; } 2>/dev/null || continue
+    { [ -f "$f" ] && [ ! -L "$f" ]; } || continue
+    ARNES_GATES_SAL=$f; return 0
+  done
+  return 1
 }
 
 # arnes_gate <orden> <salida> -> ARNES_GATE_FIN y ARNES_GATE_RC. Ejecuta UNA quality gate como hasta 1.36.2
@@ -509,9 +534,13 @@ arnes_gates_sin_reloj() {
 # mientras se bifurcaba el reloj no despertaba a `wait -n` —10 de 40 cierres con la gate `true`— y el hook
 # esperaba al reloj entero; con este orden, 0 de 100. Y aun así, si la espera vuelve por el reloj, se mira si la
 # gate seguía viva: si ya no, se recoge su código y vale como terminada antes que el reloj.
-# LO QUE NO CAMBIA RESPECTO DE 1.36.2, A PROPÓSITO (REQ-037 CA-03): la gate hereda la entrada estándar del
-# bucle —por la que el hook lee la lista— y las funciones importadas del entorno; SEC-133 y SEC-131 (a)
-# siguen como estaban, declarados en AGENTS.md §13, y su resolución no es de este REQ.
+# LA ENTRADA ESTÁNDAR DE LA GATE ES /dev/null (P-137-AD, punto 2, del propietario): una gate que pide una
+# confirmación o lee su entrada lee fin de archivo. Hasta aquí heredaba la del bucle —la lista de gates, por la que
+# el hook la lee, nunca una terminal—, así que leerla no la detenía: se comía las gates que la seguían, y una roja
+# detrás no corría (el vector de SEC-133). Medido: ninguna gate esperaba por su entrada estándar, con pty o sin él;
+# lo que espera hasta el presupuesto es lo que abre la terminal por su nombre (`/dev/tty`), y esta línea no lo cubre.
+# LO QUE NO CAMBIA RESPECTO DE 1.36.2, A PROPÓSITO (REQ-037 CA-03): la gate hereda las funciones importadas del
+# entorno; SEC-131 (a) sigue como estaba, declarado en AGENTS.md §13, y su resolución no es de este REQ.
 # Necesita bash 5.1 (`wait -n -p`): quien la llama lo comprueba antes, y arma el reloj.
 arnes_gate() {
   local cmd="$1" sal="$2" g quien='' rc
@@ -519,7 +548,7 @@ arnes_gate() {
   set -m
   ( trap : TERM; exec {ARNES_GATE_FD}>&2 2>/dev/null
     ( cd "$ARNES_PROJ" && eval "$cmd" ) 2>&"$ARNES_GATE_FD" {ARNES_GATE_FD}>&-
-    exit $? ) <&0 >"$sal" 2>&1 &
+    exit $? ) </dev/null >"$sal" 2>&1 &
   g=$!
   set +m
   wait -n -p quien "$g" "$ARNES_GATES_T"; rc=$?
@@ -541,7 +570,7 @@ arnes_gate_corta() {
   wait -n -p quien "$g" "$t"
   kill -KILL -- "-$g" 2>/dev/null
   [ "$quien" = "$g" ] || { kill -KILL "$g" 2>/dev/null; wait "$g" 2>/dev/null; }
-  [ "$quien" = "$t" ] || { kill "$t" 2>/dev/null; wait "$t" 2>/dev/null; }
+  [ "$quien" = "$t" ] || { kill -KILL "$t" 2>/dev/null; wait "$t" 2>/dev/null; }   # KILL: QA-037-01
   return 0
 }
 

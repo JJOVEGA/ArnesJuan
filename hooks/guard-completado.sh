@@ -960,7 +960,9 @@ arnes_guard_completado() {
   arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
-  tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
+  # El archivo de salida de las gates se crea al lanzar la primera, sin procesos (`arnes_gates_salida`, lib.sh;
+  # QA-037-02); sólo si eso falla, `mktemp`, como hasta 1.36.2. Sin gates, ni se crea ni se borra.
+  tmp=''
   presupuesto=$(( ARNES_GATES_PRESUPUESTO_S * 1000000 ))
   while IFS= read -r cmd; do
     [ -n "$cmd" ] || continue
@@ -968,10 +970,10 @@ arnes_guard_completado() {
       # Vigilar una gate exige `wait -n -p` (bash 5.1). Sin él, una gate que no termina dejaría al hook sin
       # decisión: no se lanza ninguna y se deniega, que es lo que hace una puerta que no puede medir.
       if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )); then
-        rm -f "$tmp"
         arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': este bash (${BASH_VERSION}) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—, asi que no se lanza ninguna: una gate que no terminara dejaria al hook sin decision, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Cierra el REQ desde un entorno con bash 5.1 o posterior."
       fi
       corrieron=si
+      if arnes_gates_salida; then tmp="$ARNES_GATES_SAL"; else tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"; fi
       t_gates=${EPOCHREALTIME//[!0-9]/}
       analisis=''; [ -z "${ARNES_T0_US:-}" ] || analisis=$(( t_gates - ARNES_T0_US ))
     fi
@@ -998,7 +1000,7 @@ arnes_guard_completado() {
     arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el reloj que vigila el presupuesto de las quality gates termino antes de tiempo mientras la gate \`$cmd\` seguia en curso (algo lo mato, o la espera fallo), y la gate se corto. No es un veredicto sobre las gates: la puerta no pudo medir si terminan dentro de su presupuesto, y una puerta que no puede medir no deja pasar (REQ-037 CA-02)."
   done <<< "$ARNES_GATES"
   arnes_gates_sin_reloj
-  rm -f "$tmp"
+  [ -z "$tmp" ] || rm -f "$tmp"
   # El reloj del plazo propio vuelve a lo que llevaba el ANÁLISIS cuando se lanzó la primera gate (REQ-037
   # CA-01): ningún segundo de las gates cuenta en la comprobación que va detrás. Sin gates no hay nada que
   # descontar y el reloj no se toca. Con el valor en segundos enteros, la lectura siguiente puede subir uno

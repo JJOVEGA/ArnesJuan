@@ -4,12 +4,12 @@
 # Hotfix 1.36.3, REQ-037 (issue #63): el plazo propio de 30 s mide el ANÁLISIS y no las quality gates (CA-01); las
 # gates tienen su presupuesto de 420 s con su motivo propio de deny (CA-02), y la gate es código no confiable (CA-03).
 #   G1–G6 y A2  CA-04 y CA-01 · C, B, I1–I8  CA-05 y CA-03, controles que no se mueven · P1–P6  CA-03, sólo la
-#   candidata · M  CA-07, el motivo del plazo por la cadena · PROC, RELOJ  CA-06, cada rama contra su techo.
+#   candidata · E1  P-137-AD (2), la entrada de la gate · R1–R3  QA-037-01 · M  CA-07 · PROC, RELOJ  CA-06.
 # DOS ÁRBOLES por fila: la CANDIDATA (`$HOOKS_DIR`) y v1.36.2 (46ee7ca), por SHA con `mat53` (copia de `mat49`); sin
 # ella, SKIP y motivo, nunca PASS. COPIAS DE PRUEBA («Convenciones» de REQ-037): `hooks/` con UNA constante de lib.sh
 # reducida —el plazo en 2 o 1 s, el presupuesto en 5 o 30 s—; si la constante no está una sola vez, la fila sale FAIL
 # (con v1.36.2 como candidata el presupuesto no existe, y eso es parte de su fail-before). Las corridas, en paralelo.
-CASOS_ESPERADOS_SECCION=62
+CASOS_ESPERADOS_SECCION=68
 PISO_AUTONOMO_SECCION=108  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO53, mat53_reg y mat53, copia de mat49, líneas 15-38) + 70 bloque indivisible mayor (l53, j53, pe53, pw53, gj53 y fila53: el brazo, el juez, los proyectos y las filas, líneas 52-121)
 seccion_nueva "--- 53 · el plazo propio mide el análisis; las quality gates tienen su presupuesto (REQ-037, hotfix 1.36.3) ---"
 REPO53="${SEC_DIR%/}/../../../.."; MAT53_RUTAS='hooks'; MAT53_REG=''; MAT53_T0=0; MAT53_REF='-'
@@ -143,7 +143,7 @@ I3G53='printf %s "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"pe
 P3G53='for f in 0 3 4 5 6 7 8 9 10 11 12 255; do { echo 0 >&$f; } 2>/dev/null; done; sleep 1000'
 P4G53='exec bash -c '\''exec 3< <(exec sleep 300); for ((i = 0; i < 14000; i++)); do { read -r -u 3; } & disown; done; echo "$i" > listo53; read -r -u 3'\'''
 P5G53='read -r _ _ _ _ p _ < /proc/$BASHPID/stat && echo "$p" > pg53; sleep 1000 & { while :; do sleep 1; done; } & true'
-P6G53='read -r _ _ _ o _ < /proc/$BASHPID/stat; read -r _ _ _ h _ < /proc/$o/stat; pkill -P "$h" -x sleep; sleep 1000'
+P6G53='read -r _ _ _ o _ < /proc/$BASHPID/stat; read -r _ _ _ h _ < /proc/$o/stat; until pkill -P "$h" -x sleep; do sleep 0.1; done; echo si > mato53; sleep 1000'
 fila53 G1 'G1 cierre legítimo con una gate verde `sleep 35` (la reproducción del issue)' E 'sleep 35' "$C53" allow 40000 "$B53" plazo
 fila53 A2 'CA-01 dos gates verdes `sleep 20` (40 s en total, menos que N)' E $'sleep 20\nsleep 20' "$C53" allow 50000 "$B53" plazo
 fila53 G2 'G2 copia con el plazo en 2 s, gate verde `sleep 3`' E 'sleep 3' "$C2" allow 10000 "$B2" plazo
@@ -172,10 +172,32 @@ fila53 P2 'P2 copia con N en 5 s: agotada que ignora TERM' E "trap '' TERM; slee
 fila53 P3 'P3 copia con N en 5 s: agotada que escribe 0 en todo descriptor heredado antes de colgarse' E "$P3G53" "$CN5" presupuesto:5 15000 -
 fila53 P5 'P5 verde que deja vivos `sleep 1000` y un bucle de bash' E "$P5G53" "$C53" allow 5000 -
 # P6: la gate mata el reloj del hook (el `sleep` hijo del hook) y se cuelga: el hook no le cree, deniega con el
-# motivo del reloj muerto —no el del presupuesto, que no se agotó (CA-02 (d))—; en la copia de 5 s, por si no lo mata.
-NP6_53='REQ-037 P6 copia con N en 5 s: la gate mata el reloj del hook y se cuelga'; P6MOT53=''
+# motivo del reloj muerto —no el del presupuesto, que no se agotó (CA-02 (d))—. DETERMINISTA (QA-037-07): la gate
+# reintenta hasta matar el reloj ya convertido en `sleep` y lo deja escrito (`mato53`), y la copia es la de 30 s,
+# así que el presupuesto no gana la carrera bajo carga; si aun así no llegó a matarlo, SKIP con motivo, no FAIL.
+NP6_53='REQ-037 P6 copia con N en 30 s: la gate mata el reloj del hook y se cuelga'; P6MOT53=''
 command -v pkill >/dev/null 2>&1 && [ -r "/proc/$BASHPID/stat" ] || P6MOT53='sin `pkill` o sin /proc: la gate no puede encontrar el reloj del hook'
-[ -n "$P6MOT53" ] || fila53 P6 "${NP6_53#REQ-037 }" E "$P6G53" "$CN5" reloj 15000 -
+[ -n "$P6MOT53" ] || fila53 P6 "${NP6_53#REQ-037 }" E "$P6G53" "$CN30" reloj 35000 -
+# E1 (P-137-AD, punto 2): la gate lee su entrada estándar —una confirmación, `read -r x`— y detrás va una roja. Con la
+# entrada desde /dev/null la roja corre y deniega; en v1.36.2 la gate se comía la lista y el cierre pasaba (SEC-133).
+fila53 E1 'E1 P-137-AD (2) una gate que lee su entrada estándar (`read -r x; true`) y detrás una roja `false`' E $'read -r x; true\nfalse' "$C53" gate:false - "$B53" allow
+# R3 (QA-037-01): cierres seguidos a nivel de hook bajo la concurrencia de la propia sección (P4 y las demás filas),
+# en segundo plano. Cada uno, con la gate `false`, UN documento con el motivo de la gate; con `true`, allow (nada y
+# rc 0); ninguno sin decidir en 20 s. Deja «n dobles cuelgues espurios» en $W53/r3-<gate>.
+rq53() {   # <gate> <n>
+  local p="$W53/p-R3-$1" i o rc d x m dob=0 cue=0 esp=0
+  for ((i = 0; i < $2; i++)); do
+    o="$(cd "$p" && CLAUDE_PROJECT_DIR="$p" timeout 20 bash "$C53/guard.sh" < "$p/in" 2>/dev/null)"; rc=$?
+    d=0; x="$o"; while [[ "$x" == *'"permissionDecision"'* ]]; do d=$((d + 1)); x="${x#*'"permissionDecision"'}"; done
+    if [ "$rc" = 124 ]; then cue=$((cue + 1)); continue; fi
+    [ "$d" -le 1 ] || { dob=$((dob + 1)); continue; }
+    m=no; if [ "$1" = false ]; then [[ "$d" = 1 && "$o" == *'falló la quality gate `false`'* ]] && m=si
+    else [ "$rc" = 0 ] && [ -z "$o" ] && m=si; fi
+    [ "$m" = si ] || esp=$((esp + 1))
+  done
+  printf '%s %s %s %s\n' "$i" "$dob" "$cue" "$esp" > "$W53/r3-$1"
+}
+for g53 in false true; do pe53 "$W53/p-R3-$g53" "[\"$g53\"]" && rq53 "$g53" 80 & done
 # P4: 14 000 descendientes de un bash pequeño, sin tabla de trabajos (`disown`), miden ≈ 2,9 GB y ≈ 7,7 s de
 # bifurcaciones en Linux/WSL2 (con la tabla de trabajos creciendo, cada hijo copiaba más: 1,2 MB por hijo a 8 000 y
 # sin terminar de crearse en 60 s a 14 000). Donde no caben, SKIP con motivo. El techo de 40 s es N + 10 s: el corte
@@ -188,6 +210,25 @@ m53k=0; [ -n "$P4MOT53" ] || while read -r k53 v53k _; do [ "$k53" != MemAvailab
 pm53=0; [ -n "$P4MOT53" ] || read -r pm53 2>/dev/null < /proc/sys/kernel/pid_max; [ -n "$P4MOT53" ] || [ "$pm53" -ge 65536 ] || P4MOT53="pid_max = $pm53, menos de 65 536"
 NP4_53='REQ-037 P4 copia con N en 30 s: agotada con 14 000 descendientes, corte lineal'
 [ -n "$P4MOT53" ] || fila53 P4 "${NP4_53#REQ-037 }" E "$P4G53" "$CN30" presupuesto:30 40000 -
+# R1 y R2 (QA-037-01), deterministas, con la trampa de `entrada.sh` y las funciones del reloj de la candidata, en un
+# proceso propio (su `$$` es él). R1: 200 relojes retirados nada más armarse —la ventana en que el hijo aún no hizo su
+# `exec`—: ningún documento en la salida y ninguna retirada que espere al `sleep` (> 1,5 s). Con los hooks de d47cfba
+# (dev-pasada/05- del árbol de evidencia): 77 documentos y 59 esperas hasta agotar el `timeout`, que aquí es de 30 s
+# para que un fallo no saque la sección de su techo. R2: el control, el proceso del hook que termina sin juicio sigue
+# emitiendo UN deny fijo. R3 no es un fail-before: es probabilístico (con d47cfba salió PASS en `05-`).
+NR1_53='REQ-037 R1 QA-037-01 200 relojes retirados al armarse: sólo el proceso del hook escribe, y ninguna retirada espera al reloj candidata'
+o53="$(timeout 30 bash -c '. "$1/entrada.sh"; set -uo pipefail; . "$1/lib.sh"
+  for ((i = 0; i < 200; i++)); do t=${EPOCHREALTIME/./}; arnes_gates_reloj 2000000; arnes_gates_sin_reloj
+    (( ${EPOCHREALTIME/./} - t < 1500000 )) || echo LENTA; done; ARNES_JUICIO=fin' _ "$C53" 2>/dev/null)"; x53=$?
+d53=0; s53="$o53"; while [[ "$s53" == *'"permissionDecision"'* ]]; do d53=$((d53 + 1)); s53="${s53#*'"permissionDecision"'}"; done
+l53n=0; s53="$o53"; while [[ "$s53" == *LENTA* ]]; do l53n=$((l53n + 1)); s53="${s53#*LENTA}"; done
+if [ "$x53" = 0 ] && [ "$d53" = 0 ] && [ "$l53n" = 0 ]; then v53 PASS "$NR1_53"
+else v53 FAIL "$NR1_53  rc $x53, $d53 documentos de decisión, $l53n retiradas que esperaron al reloj"; fi
+NR2_53='REQ-037 R2 QA-037-01 control: el proceso del hook que termina sin juicio emite UN deny fijo candidata'
+o53="$(bash -c '. "$1/entrada.sh"; exit 3' _ "$C53" 2>/dev/null)"; x53=$?
+d53=0; s53="$o53"; while [[ "$s53" == *'"permissionDecision":"deny"'* ]]; do d53=$((d53 + 1)); s53="${s53#*'"permissionDecision":"deny"'}"; done
+if [ "$x53" = 0 ] && [ "$d53" = 1 ] && [[ "$o53" == *'el hook termino sin concluir el juicio'* ]]; then v53 PASS "$NR2_53"
+else v53 FAIL "$NR2_53  rc $x53, $d53 deny: <${o53:0:160}>"; fi
 wait
 # P5 tiene que haber dejado vivo lo que retendría la salida (si no, no midió), y P4 haber llegado a sus 14 000
 # descendientes antes del corte (si no, tampoco): se miran ANTES de juzgarlas, y lo que P5 dejó vivo se mata después.
@@ -198,11 +239,19 @@ for r53 in "${R53[@]}"; do
     v53 SKIP "$nom53 candidata  la gate no llegó a 14 000 descendientes antes del corte: no midió el tamaño (listo53=<$(cat "$W53/p-P4-c/listo53" 2>/dev/null)>)"; continue
   fi
   if [ "$id53" = P5 ] && [[ "$hc53" != '!'* ]] && [ "$P5VIVO53" != si ]; then v53 SKIP "$nom53 candidata  lo que la gate dejó vivo no seguía vivo al leer el EOF: no midió la retención"; continue; fi
+  if [ "$id53" = P6 ] && [[ "$hc53" != '!'* ]] && [ "$(cat "$W53/p-P6-c/mato53" 2>/dev/null)" != si ]; then v53 SKIP "$nom53 candidata  la gate no llegó a matar el reloj antes del presupuesto: no midió el vector ($(cat "$W53/P6-c.ms" 2>/dev/null) ms)"; continue; fi
   if [[ "$hc53" == '!'* ]]; then v53 FAIL "$nom53 candidata  ${hc53#!}"; else j53 "$nom53 candidata" "$id53-c" "$ec53" "$tc53"; fi
   if [ "$hb53" = - ] && [ -z "$eb53" ]; then :
   elif [ "$RV53_OK" != si ]; then v53 SKIP "$nom53 v1.36.2  $RV53_MOT"
   elif [[ "$hb53" == '!'* ]]; then v53 FAIL "$nom53 v1.36.2  ${hb53#!}"
   else j53 "$nom53 v1.36.2" "$id53-b" "$eb53" -; fi
+done
+for g53 in false true; do
+  nom53="REQ-037 R3 QA-037-01 cierres seguidos con la gate \`$g53\` bajo la concurrencia de la sección: sin dobles, cuelgues ni deny espurios candidata"
+  read -r n53 dob53 cue53 esp53 2>/dev/null < "$W53/r3-$g53" || n53=''
+  if [ "$n53" != 80 ]; then v53 FAIL "$nom53  el bucle no terminó sus 80 cierres (<$(cat "$W53/r3-$g53" 2>/dev/null)>)"
+  elif [ "$dob53$cue53$esp53" = 000 ]; then v53 PASS "$nom53  (80 cierres)"
+  else v53 FAIL "$nom53  de 80: $dob53 con dos o más documentos, $cue53 sin decidir en 20 s, $esp53 con otra decisión"; fi
 done
 [ -z "$P4MOT53" ] || v53 SKIP "$NP4_53 candidata  $P4MOT53"
 [ -z "$P6MOT53" ] || v53 SKIP "$NP6_53 candidata  $P6MOT53"

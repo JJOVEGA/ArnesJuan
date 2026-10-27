@@ -43,7 +43,62 @@
 
 ## Pendientes
 
-### [2026-10-27] (coordinadora) — P-137-AD: hotfix 1.36.3 (REQ-037). **Con bash anterior a 5.1, la puerta deniega todo cierre que tenga quality gates.** ¿Se mantiene y se declara, o se busca otra vía?
+### [2026-10-27] (coordinadora) — P-137-AE: hotfix 1.36.3. **La entrada desde `/dev/null` (P-137-AD (2)) no acelera ninguna gate interactiva, pero cierra SEC-133.** ¿Se queda la línea o se revierte?
+
+**Qué midió el desarrollador en la pasada correctiva** (evidencia `issue-63-plazo-gates/dev-pasada/03-`, con pty y sin pty, en v1.36.2, `d47cfba` y la candidata):
+- **Ninguna gate esperaba por su entrada estándar en ningún árbol.** `read -r x`, una confirmación y un modo vigilancia simulado terminan en unos 105 ms. Por el `<&0` sólo entraba la lista de gates que el hook lee en su bucle, nunca una terminal.
+- **Lo que espera los 7 minutos es abrir `/dev/tty`** (`stty sane </dev/tty`). La línea no lo cubre y, por tu condición, se declara.
+- **El único efecto medido de la línea es SEC-133** (`contrato`, media, preexistente, abierto; F-136-23 para 1.37). Hoy, una gate que lee su entrada estándar se come la lista de las gates siguientes. Con `read -r x; true` seguida de `false`:
+  - v1.36.2 y `d47cfba` dejan pasar el cierre;
+  - la candidata lo deniega por la gate roja.
+  - Está en el banco como E1.
+
+**Por qué se escala.** CA-03 de REQ-037 dice que SEC-133 no entra y que, si cambia, se escala. CA-05 no lista este paso de allow a deny.
+
+**Opciones.**
+- **(A) Mantener la línea.**
+  - SEC-133 queda cerrado en 1.36.3. El cambio va en la dirección protectora: sólo afecta a cierres en los que una gate posterior está roja, y ahora se deniegan como deben.
+  - Las notas `[1.36.3]` lo declaran. El analista escribe el movimiento en CA-03 y CA-05. El auditor lo revisa y cierra SEC-133 en el registro.
+  - F-136-23 sale de 1.37.
+- **(B) Revertir la línea y E1.**
+  - El hotfix vuelve a su alcance mínimo, y SEC-133 sigue como límite declarado para 1.37.
+  - *Coste:* deshacer una línea medida que cierra un hallazgo conocido.
+
+**Recomendación de la coordinadora: (A).** Texto listo para adoptar:
+
+> Adopto P-137-AE (A): la entrada desde `/dev/null` se queda. SEC-133 se cierra en 1.36.3 (allow → deny sólo cuando una gate posterior está roja), declarado en las notas `[1.36.3]`, en CA-03/CA-05 de REQ-037 por el write-back del analista y en el registro por el auditor; F-136-23 sale de 1.37. La gate que abre `/dev/tty` se declara como dice P-137-AD (2).
+
+**Qué bloquea.** El write-back del analista en CA-03 y CA-05, la revisión del auditor sobre SEC-133 y el cierre de REQ-037. La vuelta 2 de QA puede verificar ya el código tal como está, que es la opción (A).
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-27) — **P-137-AD: bash < 5.1 y el reloj detenido con STOP, límites declarados; la gate que toca la terminal entra en la pasada con la entrada estándar desde `/dev/null`, si cabe en esa línea**; QA-037-01 sigue siendo la condición de publicar
+
+> P-137-AD:
+> 1. bash anterior a 5.1 deniega todo cierre con gates: se declara como
+>    límite (fail-closed; tus equipos y el CI van en 5.2+).
+> 2. Gate que toca la terminal: NO se declara; entra en esta pasada si es
+>    tan simple como parece: las gates se ejecutan con la entrada estándar
+>    desde /dev/null (sin terminal). Así una gate interactiva falla rápido
+>    en vez de esperar 7 min. Es un caso real: un `npm test` que entra en
+>    modo vigilancia o pide confirmación. Si no cabe en esa línea sin abrir
+>    otra cosa, se declara y va a 1.37 con la ficha de gates fuera del hook.
+> 3. Gate que detiene el reloj con STOP: se declara (no es regresión; una
+>    gate hostil no es el caso de la barandilla).
+> QA-037-01 sigue siendo la condición de publicar: 0 respuestas dobles,
+> 0 cuelgues, 0 deny espurios con la misma carga de QA. Si la pasada no lo
+> consigue, 1.36.3 no se publica y lo traes.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Punto 2.**
+  - Hoy `arnes_gate` lanza la gate con `<&0` (`hooks/lib.sh:522`, en `127a6ac`). La línea del propietario es cambiarlo por `</dev/null`.
+  - Se le pasó al desarrollador, ya en su pasada, con el texto literal. Medirá dos casos:
+    - **(a)** una gate que lee de su entrada estándar o pide confirmación: entra en el banco;
+    - **(b)** el caso de QA `stty sane </dev/tty`. Esa orden abre la terminal directamente, así que la línea no lo cubre. Si sigue esperando hasta el presupuesto, esa parte se declara, según la condición del propietario. No se abre nada más allá de esa línea.
+- **Puntos 1 y 3.** Van al write-back del analista: notas `[1.36.3]`, requisitos del README y residuales de REQ-037.
+- **Discrepancia de versión, para que la confirme el propietario.** El texto dice «va a 1.37 con la ficha de gates fuera del hook», pero esa ficha es F-137-24 y P-137-AB (A) la fijó «para 1.38». Mientras no diga otra cosa, la parte declarada del punto 2 viaja con F-137-24, sin cambiar su versión.
+
+### P-137-AD (texto de la consulta, conservado; resuelta arriba) — hotfix 1.36.3 (REQ-037). **Tres conductas nuevas que el REQ no lista: bash anterior a 5.1, una gate que usa la terminal y una gate que detiene el reloj.** ¿Se declaran como límites o se cambian?
 
 **Qué pasa.** Para vigilar el presupuesto de 420 s, el arreglo espera a la vez a la gate y a su reloj con `wait -n -p`, que existe desde bash 5.1. Con un bash anterior, `guard-completado.sh` no lanza ninguna gate y deniega con un motivo propio: «este bash (…) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—… Cierra el REQ desde un entorno con bash 5.1 o posterior». Los cierres con `quality_gates: []` no cambian. CA-05 no lista este cambio de conducta, y el desarrollador lo dejó sin medir.
 
@@ -54,13 +109,24 @@
 - **(B) Sondear en vez de esperar.** Con bash anterior a 5.1, el hook comprobaría con `kill -0`, varias veces por segundo, si la gate y el reloj siguen vivos. No hay regresión de plataforma. *Coste:* es código nuevo dentro de la única pasada correctiva de un hotfix crítico, y no se puede medir aquí sin compilar un bash 5.0.
 - **(C) Correr sin presupuesto, como en v1.36.2, pero ya con el plazo arreglado.** *Coste:* vuelve a ser posible un cierre sin veredicto si una gate se cuelga más de unos 600 s, y eso contradice el punto 2 de P-137-AB (A).
 
-**Recomendación de la coordinadora: (A).** Texto listo para adoptar:
+**Ampliada tras la vuelta 1 de QA (`127a6ac`): dos movimientos más que el REQ no lista, del mismo tipo.**
 
-> Adopto P-137-AD (A): con bash anterior a 5.1 la puerta deniega todo cierre con quality gates, con el motivo que ya tiene. Se declara en las notas `[1.36.3]` y en los requisitos del README como suelo de bash 5.1 para cerrar con gates, nombrando las distribuciones afectadas, y queda como residual de REQ-037. El analista lo escribe en su write-back. Sin código nuevo: F-137-24 (1.38) quita la causa.
+- **(2) Una gate que usa la terminal de control** (QA-037-03 (b)). La gate corre ahora en un grupo de procesos propio. Si toca la terminal, el sistema la detiene, y el presupuesto la corta.
+  - **Medido por QA a nivel de hook, con un pty:** `stty sane </dev/tty` da allow en 108 ms en v1.36.2. En la candidata, deny de presupuesto a N + C. Con el N real, son unos 7 minutos de espera.
+  - **Opciones:**
+    - **(A)** Declararlo como límite: las quality gates deben ser no interactivas.
+    - **(B)** Correr la gate sin terminal de control, para que falle en el acto en vez de esperar. *Coste:* amplía la única pasada y cambia otra conducta.
+- **(3) Una gate que detiene con `STOP` el reloj del hook** (QA-037-05). El cierre queda sin decisión: el cliente mata el hook a los 600 s y, según lo que QA midió en CA-08, deja pasar el cierre.
+   - **No es una regresión:** en v1.36.2, cualquier gate colgada hacía lo mismo.
+   - **Opciones:**
+     - **(A)** Declararlo como límite, junto a R-2. Una gate que corre como el mismo usuario puede detener también al propio hook, y nada dentro del hook se defiende de eso.
+     - **(B)** Endurecer el reloj. *Coste:* no cierra el caso de una gate que detiene al hook, y es código nuevo dentro de la única pasada.
 
-**Qué bloquea.** Sólo el write-back del analista en este punto y el cierre de REQ-037. QA ya verifica la conducta tal como está construida, que es la de (A).
+**Recomendación de la coordinadora: (A) en los tres puntos.** Texto listo para adoptar:
 
-## Resueltas
+> Adopto P-137-AD (A) en sus tres puntos, como límites declarados y sin código nuevo: (1) con bash anterior a 5.1 la puerta deniega todo cierre con quality gates, con el motivo que ya tiene; suelo de bash 5.1 para cerrar con gates, nombrando las distribuciones afectadas; (2) una gate que usa la terminal de control se corta por el presupuesto: las quality gates deben ser no interactivas; (3) una gate que detiene el reloj del hook deja el cierre sin decisión, igual que una que detiene el propio hook: se declara junto a R-2. Va en las notas `[1.36.3]`, en los requisitos del README y en los residuales de REQ-037, por el write-back del analista. F-137-24 (1.38) quita la causa al sacar las gates del hook.
+
+**Qué bloquea.** El write-back del analista en estos puntos y el cierre de REQ-037. La pasada correctiva del desarrollador ya está en marcha sin ellos. Si eliges (B) en el punto (2) o en el (3), entra en esa misma pasada; si el desarrollador ya ha terminado, no hay segunda pasada.
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-J adoptada con sus tres decisiones de redacción: hotfix 1.36.2 mínimo autorizado**
 

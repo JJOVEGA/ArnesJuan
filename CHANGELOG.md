@@ -2,6 +2,27 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): pasada correctiva de REQ-037 (la única), `en-revisión`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **QA-037-01 (`usuario/dinero`):**
+  - **Causa:** un hijo de bash recién bifurcado que recibe una señal antes de rehacer sus manejadores ejecuta la trampa de
+    salida heredada del hook —en la salida estándar del hook— o se traga la señal. El hook retiraba el reloj con `TERM`
+    justo después de una gate rápida: dos documentos JSON, `deny` espurios y cuelgues hasta el reloj.
+  - **Arreglo:** la trampa sólo emite en el proceso del hook (`hooks/entrada.sh`, guarda con `case`), y los relojes se
+    retiran con `KILL` (`hooks/lib.sh`).
+  - **Medido con el arnés de carga de QA** (300 rojas y 570 verdes): `d47cfba` 4 dobles o cuelgues en rojas y 7 espurios
+    o cuelgues en verdes; la candidata y v1.36.2, 0.
+- **QA-037-02:** el archivo de salida de las gates se crea sin procesos y sólo si hay gates; REQ-017 CA-08 (ii) vuelve
+  bajo su techo en la sección sola (máx 1,237×) e INCONCLUSO en el banco entero.
+- **QA-037-07:** P6 determinista (copia de 30 s, la gate reintenta hasta matar el reloj).
+- **P-137-AD (2):** las gates leen `/dev/null`. Ninguna gate esperaba por su entrada estándar; el efecto medido es el
+  vector de SEC-133 (una gate que lee la entrada ya no se come la lista). La gate que abre `/dev/tty` sigue esperando al
+  presupuesto: no lo cubre, se declara.
+- **Banco:** sección 53 de 62 a 68 casos (E1, R1, R2, R3); completo 2992 PASS, 0 FAIL, 36 SKIP, cuadre 3028;
+  autoprueba 117/0; gates rc 0. Evidencia: `issue-63-plazo-gates/dev-pasada/`.
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` registra P-137-AD como resuelta por el propietario (texto literal) y abre P-137-AE, sobre si se queda la entrada desde `/dev/null` ahora que cambia el veredicto de SEC-133.
+
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 3: QA de REQ-037, vuelta 1 de la única pasada: `con-hallazgos`
 > Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 

@@ -1716,7 +1716,9 @@ done
 # Y 2960 → 3022 por el hotfix 1.36.3 (REQ-037): +62 de la sección 53 nueva —23 filas × 2 árboles (candidata y v1.36.2,
 # 46ee7ca), P1–P6 sólo en la candidata, M de CA-07 en los dos y PROC y RELOJ de CA-06 por rama (4 ramas × 2)—.
 # Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3022
+# Y 3022 → 3028 por la pasada correctiva de REQ-037: +6 en la 53 (62 → 68) —E1 en los dos árboles (P-137-AD (2)), y
+# R1, R2 y R3 con la gate `false` y con `true` en la candidata (QA-037-01)—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3028
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
