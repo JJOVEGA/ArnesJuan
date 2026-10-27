@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **Pedido del propietario:** P-137-AB (A), literal en `PENDING_APPROVAL.md` de `cand/1.37.0` (`d9b3348`). Alcance de cuatro puntos, ciclo completo y una sola pasada correctiva.
+- **REQ-037** (`critico`, sensible):
+  - CA-01: el plazo de 30 s mide sólo el análisis;
+  - CA-02: presupuesto de gates de **N = 420 s**, con el motivo propio «las quality gates no terminaron dentro de su presupuesto de 420 s»;
+  - CA-03: la gate es código no confiable (L4 y L5);
+  - CA-04: fail-before contra `v1.36.2`;
+  - CA-05: movimientos declarados;
+  - CA-06: coste;
+  - CA-07: barrido del «60 s»;
+  - CA-08: hallazgo colateral en `v1.35.0` y `v1.36.0`, que mide QA con el cliente real;
+  - CA-09 a CA-11: banco, versión y notas.
+- **ADR-018:** las quality gates tienen su propio presupuesto.
+- **Por qué N = 420:** con el análisis (≤ 40 s) y el corte (≤ 10 s), el peor caso es 470 s frente a los ≈ 600 s medidos del cliente en 2.1.289, un 21,7 % de margen.
+- **Fuera del alcance:** el `timeout` en `hooks.json` y las gates fuera del hook (F-137-24). R-1 declara que N depende del valor por defecto del cliente.
+- **Coste:** analista, 169 700 según la notificación (presupuesto ≈ 100 k; pasa el aviso de 1,5× por ≈ 20 k).
+- **Resultado:** el contrato está escrito. **Falta:** el desarrollador (Opus), QA (Opus), el write-back de AGENTS.md y de REQ-007 CA-68 (analista) y seguridad (Opus).
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2 CERRADO (fase 4, coordinadora): REQ-033 `completado` por `Edit` juzgado en vivo; notas `[1.36.2]`; métrica por rol
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
