@@ -43,7 +43,22 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-16: P-137-J adoptada por el propietario, en § Resueltas.)_
+### [2026-10-27] (coordinadora) — P-137-AD: hotfix 1.36.3 (REQ-037). **Con bash anterior a 5.1, la puerta deniega todo cierre que tenga quality gates.** ¿Se mantiene y se declara, o se busca otra vía?
+
+**Qué pasa.** Para vigilar el presupuesto de 420 s, el arreglo espera a la vez a la gate y a su reloj con `wait -n -p`, que existe desde bash 5.1. Con un bash anterior, `guard-completado.sh` no lanza ninguna gate y deniega con un motivo propio: «este bash (…) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—… Cierra el REQ desde un entorno con bash 5.1 o posterior». Los cierres con `quality_gates: []` no cambian. CA-05 no lista este cambio de conducta, y el desarrollador lo dejó sin medir.
+
+**Qué suelo había antes.** El arnés no declara ninguna versión mínima de bash. Pero v1.36.2 ya usa `${x,,}` y namerefs, así que el suelo real era bash 4.3: el `/bin/bash` 3.2 de macOS ya no servía. Con el arreglo, el suelo pasa a 5.1, pero sólo para cerrar con gates. **Afectados, sin medir:** Ubuntu 20.04 y Debian 10, que traen bash 5.0, y RHEL, Rocky o Alma 8, que traen 4.4. En 1.36.2, quien tenga uno de esos sistemas y gates rápidas cierra hoy sin problema; con 1.36.3 dejaría de poder cerrar.
+
+**Opciones.**
+- **(A) Mantener el deny y declararlo.** Se declara el suelo de bash 5.1 para cerrar con gates en las notas `[1.36.3]` y en los requisitos del README, con las distribuciones afectadas. Queda como residual de REQ-037. No hay código nuevo. Es coherente con «nunca un cierre sin veredicto», y el motivo dice qué hacer. Para 1.38, F-137-24 saca las gates del hook y, con eso, desaparece la necesidad de `wait -n -p`. *Coste:* quien use una de esas distribuciones con gates rápidas pierde el cierre hasta que tenga un bash más reciente.
+- **(B) Sondear en vez de esperar.** Con bash anterior a 5.1, el hook comprobaría con `kill -0`, varias veces por segundo, si la gate y el reloj siguen vivos. No hay regresión de plataforma. *Coste:* es código nuevo dentro de la única pasada correctiva de un hotfix crítico, y no se puede medir aquí sin compilar un bash 5.0.
+- **(C) Correr sin presupuesto, como en v1.36.2, pero ya con el plazo arreglado.** *Coste:* vuelve a ser posible un cierre sin veredicto si una gate se cuelga más de unos 600 s, y eso contradice el punto 2 de P-137-AB (A).
+
+**Recomendación de la coordinadora: (A).** Texto listo para adoptar:
+
+> Adopto P-137-AD (A): con bash anterior a 5.1 la puerta deniega todo cierre con quality gates, con el motivo que ya tiene. Se declara en las notas `[1.36.3]` y en los requisitos del README como suelo de bash 5.1 para cerrar con gates, nombrando las distribuciones afectadas, y queda como residual de REQ-037. El analista lo escribe en su write-back. Sin código nuevo: F-137-24 (1.38) quita la causa.
+
+**Qué bloquea.** Sólo el write-back del analista en este punto y el cierre de REQ-037. QA ya verifica la conducta tal como está construida, que es la de (A).
 
 ## Resueltas
 

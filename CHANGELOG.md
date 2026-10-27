@@ -2,6 +2,23 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 3: QA de REQ-037, vuelta 1 de la única pasada: `con-hallazgos`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Medido sobre `d47cfba`:**
+  - **Banco completo, una vez:** 2985 PASS, 7 FAIL, 30 SKIP (cuadre 3022). Los FAIL, clasificados:
+    - 2 de producto (secciones 16 y 36, QA-037-01);
+    - 1 de contrato por coste (REQ-017 CA-08 (ii), QA-037-02; **no es la carga de la sección 53**: falla sin ella);
+    - 4 de instrumento (P6 flaky, QA-037-07; tres sondas de reloj bajo concurrencia, QA-037-08).
+  - Autoprueba 117/0; gates rc 0; CA-02 (f) `deny` de gates a 420 241 ms.
+  - **CA-08:** en v1.35.0 y v1.36.0 el cierre pasó sin veredicto (el cliente cancela el hook a 600 000 ms).
+- **Hallazgos:** QA-037-01 (`usuario/dinero`, alta), QA-037-02 a 06 (`contrato`), QA-037-07 y 08 (`instrumento`). Registro y reproducción en `docs/qa/REQ-037.md`. Lo central:
+  - bajo carga de CPU, una gate roja sale a veces con dos documentos JSON;
+  - medido con el cliente: dos documentos = el `deny` no se aplica.
+- **Coste de `claude -p`:** 0,2398 USD (CA-08, 2 corridas; el experimento de los dos documentos, 2).
+- **Incidente propio:** un `kill` a un grupo mal identificado mató el grupo de la propia llamada de consola de QA, nada más.
+- **(coordinadora) En el mismo commit:** se abre `PENDING_APPROVAL.md` P-137-AD. Con bash < 5.1 la puerta deniega todo cierre con gates; es lo que QA registró como QA-037-03 (a), y lo decide el propietario.
+
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 2: REQ-037 construido por el desarrollador, `en-revisión`
 > Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus · agente: desarrollador.
 
@@ -32,7 +49,12 @@ Ningún otro caso de v1.36.2 cambia en lo medido (sección 53 del banco, en los 
 
 **La cifra del cliente, corregida (CA-07).** Los textos de 1.36.x daban por hecho que el cliente mata un hook `PreToolUse` a los **60 s**. Medido: lo mata a **≈ 600 s** (CLI 2.1.289, Linux/WSL2, un plugin de prueba sin `timeout` explícito, como `hooks/hooks.json`; una corrida por punto: un hook de 75 s emitió su `deny` y se aplicó; uno de 620 s murió a ≈ 600 s y la llamada siguió sin su decisión). En esta versión se corrigen el motivo del plazo propio («30 s de análisis, sin contar lo que tardan las quality gates») y los comentarios de `hooks/`. **Quedan, con su porqué:** las cifras medidas con el `timeout` de 60 s del banco («sin decisión a los 60 s»), que son ciertas de ese instrumento; la historia fechada (entradas anteriores de este archivo, `docs/qa/`, el registro de seguridad, `PENDING_APPROVAL.md`, `docs/PENDIENTES.md`, ADR anteriores); los demás REQ, que no se reabren; y los comentarios de las secciones del banco que llaman «límite del cliente» al `timeout` del banco, que se corrigen en 1.37. *(El write-back del analista en `AGENTS.md`, `requirements/README.md`, su plantilla y REQ-007 CA-68 completa esta lista antes de publicar.)*
 
-**El hallazgo colateral (CA-08).** *Pendiente de la medición del `qa-tester` en v1.35.0 y v1.36.0 con el cliente real; hasta entonces, **no medido en el cliente**.*
+**El hallazgo colateral (CA-08), medido por el `qa-tester` con el cliente real.** Condiciones: `claude -p` (CLI 2.1.289, Linux/WSL2); el plugin de cada tag, extraído limpio; un proyecto desechable con el cierre legítimo del issue y una gate `sleep 700`; una corrida por versión. **En v1.35.0 y en v1.36.0 el cierre se aplicó sin veredicto:** el cliente dio el hook por vencido a los **600 000 ms** («timed out after 600000ms», `cancelled`), y la edición siguió. El REQ quedó `Estado: completado` en disco.
+- **v1.35.0:** el hook murió sin salida.
+- **v1.36.0:** al morir, su trampa de salida llegó a escribir el `deny` fijo, pero de un hook ya cancelado, y el cliente **no lo aplicó**.
+- **Coste:** 0,0668 y 0,0665 USD.
+- **Contraste (no es el hallazgo colateral):** unas gates de entre 30 s y ≈ 600 s, en v1.35.0, se juzgaban con veredicto; en 1.36.0–1.36.2 las denegaba el plazo propio.
+- **Lo que no se midió:** otras versiones del CLI y Windows/MSYS.
 
 **Coste** (CA-06, medido frente a v1.36.2 en la misma corrida): el camino común y el cierre con `quality_gates: []`, **0 procesos** añadidos; el cierre con gates, **un `sleep`** (el reloj del presupuesto) **por cierre** y **un subshell por gate** (el que encabeza su grupo de procesos); con 3 gates `true`, ≈ **1,25×** de reloj (techo 1,5×). Un cierre cuyo presupuesto se agota añade un `sleep` más (el del corte).
 
@@ -42,11 +64,19 @@ Ningún otro caso de v1.36.2 cambia en lo medido (sección 53 del banco, en los 
 - **R-3** — sin medir: Windows/MSYS, otras versiones del CLI, un bash distinto de 5.3.9 y el cliente real con el presupuesto de 420 s.
 - **R-4** — sin cambio: una sola operación del análisis que crece más que linealmente (SEC-132 (b), QA-007-09), y SEC-133 y SEC-131 (a), declarados en `AGENTS.md` §13.
 - **Vigilar una gate exige bash 5.1 o posterior** (`wait -n -p`). Con uno anterior, **todo cierre con gates se deniega**, con un motivo que lo dice (una puerta que no puede medir no deja pasar). Sin medir: no había un bash anterior a 5.1 a mano.
-- **La gate corre en un grupo de procesos propio**, no en el de la terminal: una gate que lea de la terminal de control quedaría detenida y se cortaría por presupuesto. Sin medir.
+- **La gate corre en un grupo de procesos propio**, no en el de la terminal: una gate que lea de la terminal de control quedaría detenida y se cortaría por presupuesto. **Medido por QA a nivel de hook, con un pty** (no en el cliente real): `stty sane </dev/tty` da allow en v1.36.2 y `deny` de presupuesto a N + C en el candidato (QA-037-03 (b)).
 
 **Lo que no entra, con su ficha:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); **sacar las gates del hook** (F-137-24, 1.38); **SEC-133** y **SEC-131 (a)** (mismo veredicto que v1.36.2 en sus formas medidas); **SEC-132 (b)**; **QA-007-09**.
 
-**Firmas.** *Pendientes: QA (Opus), el write-back del analista y seguridad (Opus).*
+**Firmas.**
+- **QA (Opus, 2026-10-27, cabeza `d47cfba`): `con-hallazgos`** (`docs/qa/REQ-037.md`).
+  - Conformes: CA-01, CA-04 y CA-10.
+  - CA-02 (f) a nivel de hook: `deny` de gates a 420 241 ms con N = 420 s.
+  - CA-08, medido (arriba).
+  - Abiertos: **QA-037-01 (`usuario/dinero`)**. Bajo carga de CPU, la vigilancia de las gates rompe el veredicto: una gate roja puede salir con **dos** documentos JSON, que el cliente no aplica; hay `deny` espurios y cuelgues hasta los 420 s. **Esto desmiente, bajo carga, el «ningún otro caso de v1.36.2 cambia» de arriba.**
+  - Abiertos, `contrato`: QA-037-02 a 06 (el coste frente a REQ-017 CA-08 (ii), dos movimientos sin listar en CA-05, la fila I2, una gate que detiene el reloj y los textos de CA-07).
+  - Abiertos, `instrumento`: QA-037-07 y 08.
+- *Pendientes: el write-back del analista y seguridad (Opus).*
 
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
