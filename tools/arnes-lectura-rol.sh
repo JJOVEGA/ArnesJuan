@@ -7,8 +7,11 @@
 # líneas, una línea en blanco y la CONCATENACIÓN EXACTA, sin cambiar un byte, de los bloques de `AGENTS.md` y
 # luego de `requirements/README.md` (siempre los de la raíz del proyecto) cuya marca nombra al rol o dice
 # `todos`, más todo bloque cuya obligación no se puede leer (ante la duda, se lee). Sólo queda fuera un bloque
-# `explicativo`. Un bloque va de su marca (línea que empieza por `[[`) a la línea anterior a la siguiente; lo
-# que precede a la primera marca no es bloque. La regla de las marcas vive en A-00 de `AGENTS.md`.
+# `explicativo`. Un bloque va de su marca (línea que empieza por `[[`) a la línea anterior a la siguiente. Antes
+# de la primera marca, el título (`# …`) y las líneas en blanco no son bloque; el texto propio sí: desde la primera
+# línea que no está en blanco ni empieza por `# ` hasta la anterior a la primera marca, es un bloque sin marca, de
+# obligado ilegible, y lo leen los cuatro, con aviso (REQ-036 CA-18, pieza 1; QA-036-03, marcas parciales).
+# La regla de las marcas vive en A-00 de `AGENTS.md`.
 # Es un DERIVADO: nunca una segunda redacción, y se pisa en la siguiente generación.
 #
 # FRESCURA. Si un archivo ya es idéntico no se reescribe, pero se le pone la fecha de ahora: el agente lo usa
@@ -16,8 +19,8 @@
 # Con `--verificar` no escribe nada y sale 1 si algún archivo falta o no es lo que se generaría.
 #
 # FALLOS. Toda generación fallida (sitio único de las causas: las llamadas a `falla`; ejemplos no exhaustivos:
-# fuente ausente, ilegible, sin ninguna marca o con texto antes de la primera que no sea el título, `.arnes`
-# ausente, enlace simbólico, destino no escribible, falta `sha256sum`) BORRA los cuatro archivos y sale 1: un
+# fuente ausente, ilegible o sin ninguna marca, `.arnes` ausente, enlace simbólico, destino no escribible,
+# falta `sha256sum`) BORRA los cuatro archivos y sale 1: un
 # archivo ausente se lee por marcas (o entera la fuente sin marcas), así
 # que todo fallo termina en leer más, nunca en leer una norma vieja. Nunca sigue un enlace simbólico: con
 # `.arnes` o `.arnes/lectura` como enlace no escribe ni borra nada; un destino que es enlace se quita, no se sigue.
@@ -112,24 +115,26 @@ while read -r h _; do SUMAS+=("$h"); done <<< "$SAL"
 
 declare -A CUERPO=()
 FUENTES_CAB=''
-# Una fuente SIN NINGUNA marca, o con texto antes de la primera que no sea el título (`# …`) —un bloque sin
-# marca, de obligado ilegible—, no da archivos: un archivo por rol sin esa fuente es leer MENOS, y en silencio.
-# Se falla (y se borran los cuatro): sin archivo, la definición lee esa fuente entera (REQ-036 CA-18, «Fuente sin
-# marcas», pieza 1; QA-036-03).
+# Una fuente SIN NINGUNA marca no da archivos: un archivo por rol sin esa fuente es leer MENOS, y en silencio. Se
+# falla (y se borran los cuatro): sin archivo, la definición lee entera la fuente sin marcas (REQ-036 CA-18, «Fuente
+# sin marcas», pieza 1; QA-036-03). El texto propio antes de la primera marca, en cambio, NO es causa de fallo: es
+# un bloque sin marca, de obligado ilegible, y va a los cuatro en su sitio (ante la duda, se lee; QA-036-03,
+# marcas parciales). Sólo el mensaje de la fuente sin ninguna marca dice «se lee entera», porque sólo ése es cierto.
 for i in 0 1; do
   mapfile LINEAS < "${FUENTES[$i]}" || falla "no se pudo leer ${FUENTES[$i]}"
-  n=0; nl=0; marcas=0; pre=0; leen=()   # antes de la primera marca, nadie: el título no es bloque
+  n=0; nl=0; marcas=0; pre=0; leen=()   # antes de la primera marca, nadie hasta el texto propio: el título no es bloque
   for l in "${LINEAS[@]}"; do
     n=$((n + ${#l})); nl=$((nl + 1))
     if [ "${l:0:2}" = '[[' ]; then
       marcas=$((marcas + 1)); roles_de "${l%$'\n'}" "${NOMBRES[$i]}:$nl"; leen=("${INCLUYE[@]}")
     elif [ "$marcas" -eq 0 ] && [ "$pre" -eq 0 ]; then
-      case "$l" in '# '*) ;; *[![:space:]]*) pre=$nl ;; esac
+      case "$l" in '# '*) ;; *[![:space:]]*) pre=$nl; leen=("${ROLES[@]}") ;; esac
     fi
     for r in "${leen[@]}"; do CUERPO[$r]+="$l"; done
   done
   [ "$marcas" -gt 0 ] || falla "${NOMBRES[$i]}: sin ninguna marca [[<id> · …]]: sin archivo por rol, esa fuente se lee entera"
-  [ "$pre" -eq 0 ] || falla "${NOMBRES[$i]}: texto antes de la primera marca (línea $pre): un bloque sin marca no se puede asignar; sin archivo por rol, esa fuente se lee entera"
+  # El aviso, después de saber que la fuente tiene marcas: sin ninguna, no hay archivo que lo lea, y se falla arriba.
+  [ "$pre" -eq 0 ] || ilegible "${NOMBRES[$i]}:$pre" 'texto antes de la primera marca: bloque sin marca'
   FUENTES_CAB+="${FUENTES_CAB:+; }${NOMBRES[$i]} $n B sha256 ${SUMAS[$i]}"
 done
 

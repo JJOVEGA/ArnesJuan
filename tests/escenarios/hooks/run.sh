@@ -1790,7 +1790,12 @@ done
 # 75 520 pasa / 75 521 falla, sin cambiar de número; B10 compara los procesos por orden como TECHO (CA-17 tras
 # QA-036-06) y gana dos fixtures: una variante con más procesos que 081cb10 falla y una con menos pasa—. Ninguna otra
 # sección cambia su número.
-CASOS_ESPERADOS=3120
+# Y 3120 → 3125 por la última pasada correctiva de REQ-036 (QA-036-03, variante con marcas parciales): la sección 52
+# se parte en dos por REQ-014 CA-18 (la parte 1 estaba a 11 líneas del tope de 400) —parte 1, 60 → 58: sale S3 con
+# su fail-before; parte 2 nueva, `52-…-2-texto-previo.sh`, 7: S3 revisada (el texto previo va a los cuatro, sale 0),
+# S3b (lo mismo en el README) y S9 (la fixture de QA con `arnes-upgrade` y el paso 4b), cada una en la candidata y en
+# 3c8394b (fail-before), más el control S3c, sólo en la candidata—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3125
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

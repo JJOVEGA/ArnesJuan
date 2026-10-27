@@ -43,7 +43,37 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-27: P-137-AC y P-137-AB resueltas por el propietario, en § Resueltas.)_
+### [2026-10-27] (coordinadora) — P-137-AG: REQ-036, última pasada correctiva. **Un residual `usuario/dinero` (L4) sólo se cierra con una frase en las definiciones, y esa frase sube B5 por encima de los 75 520 B.** Además, falta confirmar el matiz de P-137-Y.
+
+**Qué queda tras la vuelta 2 de QA y el write-back del analista** (`f648e94`):
+- **QA-036-03 (`usuario/dinero`), variante con marcas parciales.** Si el texto propio del proyecto está entre el título y la primera marca, después de `arnes-upgrade` no lo lee ningún subagente. En 1.36 lo leían todos, por el import de CLAUDE.md.
+- **El analista eligió la opción (a), sin bytes nuevos:** el generador manda ese texto, intacto, a los cuatro archivos por rol, con un aviso. Lo construye ahora el desarrollador.
+- **Queda L4:** si hay texto previo **y** el archivo por rol no se puede generar por una causa del entorno, el respaldo por marcas no lee ese texto, y CLAUDE.md, ya sin import, tampoco. Las causas son:
+  - `.arnes` enlazado;
+  - destino no escribible;
+  - falta `sha256sum` (`tools/arnes-lectura-rol.sh:106`). macOS no lo trae de serie (sin medir aquí).
+- **El REQ declara L4 como «ni aceptado ni reparado».** Una etiqueta no cierra un `usuario/dinero`, así que QA, en la vuelta 3, lo dejará abierto, y la puerta no deja cerrar REQ-036.
+
+**Opciones para L4.**
+- **(A) Cerrar L4 con una frase en las cuatro definiciones.** En el respaldo por marcas: «Si una fuente tiene texto antes de su primera marca, léelo también».
+  - **Medido por el desarrollador en una copia:** +70 B en cada una de las cuatro definiciones. **B5 pasa de 75 520 B a 75 590 B** en modo proyecto y a 75 526 B en modo plantilla. Se escribe la razón y queda como trinquete, igual que en P-137-AC.
+  - El techo de contrato sigue en 75 000 B.
+- **(B) Aceptar L4 como laguna declarada.** No hay bytes nuevos.
+  - *Coste:* el texto previo se pierde en silencio en esos entornos, y aceptar una laguna no la acredita. QA-036-03 sólo podría cerrarse con tu aceptación escrita.
+
+**Confirmación de P-137-Y.**
+- La pieza 3 de la reparación de QA-036-03 condiciona P-137-Y en un caso límite: `arnes-upgrade` conserva el import de CLAUDE.md mientras AGENTS.md no tenga marcas.
+- Te lo informé, pero tu respuesta no consta en ninguna sede.
+- El REQ lo apoya en P-137-X (D) y P-137-W. QA pide que la autorización sea verificable.
+
+**Recomendación de la coordinadora: (A) y confirmar el matiz.** Texto listo para adoptar:
+
+> Adopto P-137-AG (A): las cuatro definiciones leen también el texto anterior a la primera marca de una fuente cuando caen al respaldo por marcas; B5 sube a 75 590 B (lo medido con esa frase: +70 B por definición), con su razón escrita, como trinquete; el techo de contrato sigue en 75 000 B. Confirmo el matiz de P-137-Y: `arnes-upgrade` conserva el import de CLAUDE.md mientras AGENTS.md no tenga marcas.
+
+**Qué bloquea.** La vuelta 3 de QA, que es la última, y el cierre de REQ-036.
+- La pasada del desarrollador ya terminó con la opción (a): banco 3094/0/31.
+- Si adoptas (A), el mismo desarrollador aplica la frase en el árbol dentro de la misma pasada. Luego van el write-back del analista en CA-20 y B5 sube a 75 590 B. Después, QA de la vuelta 3.
+- Si eliges (B), QA de la vuelta 3 sale ya, con tu aceptación escrita.
 
 ## Resueltas
 

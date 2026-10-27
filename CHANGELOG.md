@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · REQ-036, última pasada correctiva del desarrollador (QA-036-03, marcas parciales); `en-revisión`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **Generador:** el texto propio antes de la primera marca ya no hace fallar: es un bloque sin marca, va a los cuatro archivos por rol en su sitio, con aviso `fuente:línea`, y sale 0. Sólo la fuente sin ninguna marca falla y dice «se lee entera».
+- **Banco:** la sección 52 se parte en dos (tope de 400 líneas); la parte 2 trae S3 revisada, S3b, S3c (control) y S9 con fail-before contra `3c8394b`. 3120 → 3125.
+- **Sin cambio:** los archivos por rol de este repositorio, B5 (75 520 B) y el inventario.
+- **L4, sólo medida (P-137-AG, sin aplicar):** la frase añade 70 B por definición y deja B5 en 75 590 B.
+- **Pruebas:** banco 3094 PASS · 0 FAIL · 31 SKIP (una corrida); autoprueba 117/0; gates en verde; `--verificar` 0.
+- **Siguiente:** QA, vuelta 3 de 3; después, seguridad.
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` abre P-137-AG (L4: la frase sube B5 a 75 590 B; confirmar el matiz de P-137-Y). La vuelta 3 de QA espera la decisión.
+
 ## [Interno] — 2026-10-27 · REQ-036, última pasada correctiva: write-back del analista (QA-036-03, variante con marcas parciales, y QA-036-11)
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
 

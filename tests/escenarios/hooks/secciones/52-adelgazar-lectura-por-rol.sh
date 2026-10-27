@@ -9,9 +9,10 @@
 # antes de CA-18 y CA-19), archivo a archivo y verificada contra su objeto; sin ella, SKIP y motivo, nunca PASS. Todas
 # las filas son fail-before contra `c330940`; (3a) y la cabecera rota son fail-before sobre fixtures de la candidata.
 # La vuelta 1 de QA (QA-036-03 a 08: (3b) del obligado ilegible, (5b), (6) y S1 a S8 de «Fuente sin marcas») añade un
-# TERCER árbol, `d722aed` —la cabeza que QA validó—, que es el de su fail-before (`filad52`).
-CASOS_ESPERADOS_SECCION=60
-PISO_AUTONOMO_SECCION=127  # 15 preámbulo (líneas 1-15, con seccion_nueva) + 0 maquinaria compartida duplicada + 112 bloque indivisible mayor (los árboles c330940, d722aed y 081cb10, rellena, el extractor, gen52, hook52, c1_52, c2_52, fxs52 y en52, líneas 16-127)
+# TERCER árbol, `d722aed` —la cabeza que QA validó—, que es el de su fail-before (`filad52`). PARTE 1 DE 2 (REQ-014
+# CA-18): S3 y la última pasada (QA-036-03, marcas parciales: S3b, S3c, S9) van en `52-…-2-texto-previo.sh`; aquí no cabían.
+CASOS_ESPERADOS_SECCION=58
+PISO_AUTONOMO_SECCION=131  # 16 preámbulo (líneas 1-16, con seccion_nueva) + 0 maquinaria compartida duplicada + 115 bloque indivisible mayor (los árboles c330940, d722aed y 081cb10, rellena, el extractor, gen52, hook52, c1_52, c2_52, fxs52 y en52, líneas 17-131)
 seccion_nueva "--- 52 · lectura por rol, derivada y comprobada byte a byte; ámbito alcanzado (REQ-036 CA-18, CA-19) ---"
 REPO52="${SEC_DIR%/}/../../../.."; REF52=c330940; CAND52="${TPL_DIR%/*}"
 v52() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
@@ -47,10 +48,12 @@ mat52 d722aed "$RD52" tools/arnes-lectura-rol.sh hooks/inicio-sesion.sh agents/a
 # `rellena` (los marcadores de arnes-init con los valores de «tienda-demo») tiene su sede en el guion de medida.
 eval "$(awk '/<!-- guion: medida-4a/ { e = 1; next } e == 1 && /^```bash/ { e = 2; next } e == 2 && /^```/ { exit } e == 2' \
   "$CAND52/docs/explicacion/medida-4a.md" 2>/dev/null | awk '/^rellena\(\)/, /^}/')"
-# --- El extractor aparte (awk). Un bloque va de su marca a la línea anterior a la siguiente; lo de antes de la
-# primera marca no es bloque. Obligación LEGIBLE (CA-18, QA-036-07): tras `[[<id> · `, exactamente `explicativo`
-# (nadie) u `obliga:` y una lista cuyos elementos son TODOS un rol, `coordinadora` o `todos` (mayúsculas y blancos
-# alrededor tolerados). Todo lo demás —sin cierre, sin ` · `, un elemento mal escrito, la lista vacía— la leen los cuatro.
+# --- El extractor aparte (awk). Un bloque va de su marca a la línea anterior a la siguiente. Antes de la primera
+# marca, el título y los blancos no son bloque; desde la primera línea que no es ni lo uno ni lo otro, sí: bloque sin
+# marca, para los cuatro (CA-18, «Qué contiene»; QA-036-03). Obligación LEGIBLE (CA-18, QA-036-07): tras `[[<id> · `,
+# exactamente `explicativo` (nadie) u `obliga:` y una lista cuyos elementos son TODOS un rol, `coordinadora` o `todos`
+# (mayúsculas y blancos alrededor tolerados). Todo lo demás —sin cierre, sin ` · `, un elemento mal escrito, la lista
+# vacía— la leen los cuatro.
 EXT52='
 function lim(s) { sub(/^[ \t\r]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
 function lee(m,   r, n, i, t, sel) {
@@ -69,8 +72,9 @@ function lee(m,   r, n, i, t, sel) {
   }
   return sel
 }
-FNR == 1 { dentro = 0 }
-/^\[\[/ { dentro = lee($0) }
+FNR == 1 { dentro = 0; previo = 1 }
+/^\[\[/ { dentro = lee($0); previo = 0 }
+previo && !dentro && $0 !~ /^# / && $0 ~ /[^ \t\r\f\v]/ { dentro = 1 }
 dentro { print }'
 ext52() { LC_ALL=C awk -v rol="$1" "$EXT52" "$2/AGENTS.md" "$2/requirements/README.md"; }   # <rol> <proyecto>
 gen52() {   # [--verificar] <proyecto>: el generador del árbol en prueba; deja RC52
@@ -267,10 +271,10 @@ def52() {
 c6e52() { def52 'Lee el archivo por rol entero, en un solo `Read` sin `offset` ni `limit`; si llega truncado, sigue leyendo hasta el final antes de actuar.'; }
 s6_52() { def52 'búscalos con `^\[\[`' '(una fuente sin ninguna marca, léela entera: leer por marcas un archivo sin marcas no lee nada)'; }
 # --- «Fuente sin marcas» (QA-036-03 y 04), S1 a S5: el generador no genera y borra; el hook no deja archivos. -------
-fsm52() {   # <nombre> <AGENTS.md: marcado|sin|previo> <README: marcado|sin>
+fsm52() {   # <nombre> <AGENTS.md: marcado|sin> <README: marcado|sin>  (el texto previo a la primera marca: parte 2)
   FXS52="$FX52/$1"; rm -rf "$FXS52"; mkdir -p "$FXS52/requirements" "$FXS52/.arnes"
   case "$2" in marcado) printf '%s\n' '# A' '' '[[A-1 · obliga: todos]]' 'a-uno' ;; sin) printf '%s\n' '# A' '' 'Un AGENTS.md de 1.36: sin marcas.' ;;
-               previo) printf '%s\n' '# A' '' 'Texto suelto antes de la primera marca.' '[[A-1 · obliga: todos]]' 'a-uno' ;; esac > "$FXS52/AGENTS.md"
+               esac > "$FXS52/AGENTS.md"
   case "$3" in marcado) printf '%s\n' '# R' '[[R-1 · obliga: todos]]' 'r-uno' ;; sin) printf '%s\n' '# R' '' 'Un README sin marcas.' ;; esac \
     > "$FXS52/requirements/README.md"
 }
@@ -282,7 +286,6 @@ sgen52() {  # <AGENTS> <README> <lo que stderr nombra>: el generador sale ≠ 0,
 }
 s1_52() { sgen52 sin marcado 'AGENTS.md: sin ninguna marca'; }
 s2_52() { sgen52 marcado sin 'requirements/README.md: sin ninguna marca'; }
-s3_52() { sgen52 previo marcado 'AGENTS.md: texto antes de la primera marca'; }
 s4_52() {   # archivos por rol al día y una fuente que pierde sus marcas: se borran los cuatro
   fsm52 s4 marcado marcado; gen52 "$FXS52" || return 1
   [ "$RC52" -eq 0 ] && [ -f "$FXS52/.arnes/lectura/qa.md" ] || { MOT52="el control no generó (código $RC52)"; return 1; }
@@ -367,7 +370,6 @@ filad52 "B11 CA-18 (5b) QA-036-05: destino no escribible -> el hook avisa por st
 filad52 "B11 CA-18 (6) QA-036-08: las cuatro definiciones mandan leerlo entero, sin offset ni limit, y completar si llega truncado" c6e52
 filad52 "B11 CA-18 (9) S1: AGENTS.md sin marcas -> sale ≠ 0, ningún archivo y stderr nombra la fuente" s1_52
 filad52 "B11 CA-18 (9) S2: requirements/README.md sin marcas -> sale ≠ 0, ningún archivo y stderr nombra la fuente" s2_52
-filad52 "B11 CA-18 (9) S3: texto antes de la primera marca -> sale ≠ 0, ningún archivo y stderr nombra la fuente" s3_52
 filad52 "B11 CA-18 (9) S4: archivos por rol al día y una fuente que pierde sus marcas -> se borran los cuatro" s4_52
 filad52 "B11 CA-18 (9) S5: el hook con fuentes sin marcas recuerda, sale 0 y no deja archivos" s5_52
 filad52 "B11 CA-18 (9) S6: las cuatro definiciones mandan leer entera una fuente sin marcas" s6_52
