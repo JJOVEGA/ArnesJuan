@@ -43,6 +43,41 @@
 
 ## Pendientes
 
+### [2026-10-27] (coordinadora) — P-137-AF: hotfix 1.36.3. **La pasada no cumple tu condición para publicar: siguen los cuelgues** (3 de 3 870 cierres bajo carga). Por tu texto de P-137-AD, 1.36.3 no se publica. ¿Qué se hace con el issue #63?
+
+**Lo medido por QA en la vuelta 2** (cabeza `cdbe2a8`; evidencia `issue-63-plazo-gates/qa-v2/`, con la carga de QA y v1.36.2 como control en la misma sesión):
+- **Dobles y deny espurios: 0 en 3 870 cierres de la candidata.** Lo que arregló la pasada está verificado, también contra ataques: siete señales, subshells y el deny legítimo cuando el hook muere sin juicio.
+- **Cuelgues: 3 en 3 870 en la candidata, frente a 0 en 2 870 en v1.36.2.**
+  - 1 en 300 + 570 cierres con carga mayor que la del arnés;
+  - 0 en 1 000 con sólo la carga de QA;
+  - 2 en 2 000 con la carga de QA y cierres concurrentes.
+- **Qué muestra la foto de un cuelgue:**
+  - la gate ya terminó y sólo vive el reloj `sleep 420`;
+  - el hook sigue en `wait -n -p` (`hooks/lib.sh:554`), que no volvió.
+  - Es otro mecanismo, no el que arregló la pasada. No se reproduce con sólo las funciones de `lib.sh` (0 de 3 000), así que **la causa no está explicada**.
+- **Lo que pasa tras un cuelgue:** el hook decide a los ≈ 420 s.
+  - Medido sólo en un cierre verde de la vuelta 1: allow a 420 384 ms.
+  - Para una gate roja colgada es lectura del código, sin medir.
+- **El resto:** QA-037-02 y QA-037-07 cerrados; banco 2994/1/33 (el FAIL es una sonda de reloj, QA-037-08); dos hallazgos nuevos, QA-037-09 (SEC-133, depende de P-137-AE) y QA-037-10 (instrumento).
+- **El tope está agotado:** fijaste una sola pasada.
+
+**Opciones.**
+- **(A) No publicar 1.36.3, como dice tu condición.**
+  - La rama `hotfix/1.36.3` se conserva, sin borrarla, como evidencia y punto de partida. REQ-037 queda `bloqueado` con su registro.
+  - El arreglo de #63 se hace por diseño con F-137-24: las gates salen del hook y la puerta sólo comprueba el veredicto ligado al hash del árbol, así que desaparece la espera. F-137-24 pasaría de 1.38 a 1.37, detrás de REQ-036, y eso añade alcance a la ventana.
+  - Mientras tanto, 1.36.2 sigue denegando los cierres cuyas gates tardan más de 30 s. El rodeo para los consumidores es sacar las gates lentas de `quality_gates` y correrlas aparte. Decirlo en el issue #63 es público: lo escribes tú o me autorizas.
+  - P-137-AE queda sin efecto: SEC-133 sigue en F-136-23.
+- **(B) Una pasada más, de excepción, acotada al cuelgue.** Por ejemplo, que la espera no dependa de un único `wait -n` y despierte cada segundo para comprobar la gate.
+  - *Coste:* levanta el tope que fijaste, sobre un mecanismo sin reproducción mínima. Hacen falta otra vuelta de QA y seguridad.
+- **(C) Publicar con el cuelgue declarado.** Hoy, 1.36.2 deniega siempre los cierres con gates de más de 30 s; 1.36.3 los deja pasar y, en raras ocasiones y bajo carga, tarda unos 7 minutos.
+  - *Coste:* contradice tu condición literal («0 cuelgues»). Además, que el veredicto sea correcto tras un cuelgue rojo no está medido, y la causa no está explicada.
+
+**Recomendación de la coordinadora: (A).** Tu condición es explícita. Con la causa sin explicar, no queda acreditado ni el arreglo de (B) ni el «veredicto correcto» de (C). Y F-137-24 elimina el problema entero en vez de parchearlo. Texto listo para adoptar:
+
+> Adopto P-137-AF (A): 1.36.3 no se publica. La rama `hotfix/1.36.3` se conserva como evidencia; REQ-037 queda `bloqueado` con su registro y P-137-AE sin efecto (SEC-133 sigue en F-136-23). El arreglo de #63 va por F-137-24 (gates fuera del hook, veredicto ligado al hash del árbol), que pasa a 1.37 detrás de REQ-036. [Comentario en #63: lo escribo yo / la coordinadora redacta el rodeo y yo lo publico.]
+
+**Qué bloquea.** Todo el hotfix. Mientras tanto, el trabajo vuelve a 1.37: QA de REQ-036, vuelta 2.
+
 ### [2026-10-27] (coordinadora) — P-137-AE: hotfix 1.36.3. **La entrada desde `/dev/null` (P-137-AD (2)) no acelera ninguna gate interactiva, pero cierra SEC-133.** ¿Se queda la línea o se revierte?
 
 **Qué midió el desarrollador en la pasada correctiva** (evidencia `issue-63-plazo-gates/dev-pasada/03-`, con pty y sin pty, en v1.36.2, `d47cfba` y la candidata):

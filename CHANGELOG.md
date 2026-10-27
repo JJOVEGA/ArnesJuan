@@ -2,6 +2,27 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): QA de REQ-037, vuelta 2 (re-verificación de la única pasada), `con-hallazgos`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cabeza `cdbe2a8`.** Control: v1.36.2. Fail-before: `d47cfba`. Evidencia: `issue-63-plazo-gates/qa-v2/`.
+- **QA-037-01 sigue abierto (`usuario/dinero`).** Medido con el arnés de carga de la vuelta 1, sin cambios:
+  - **0 dobles y 0 `deny` espurios** en la candidata, en 3 870 cierres.
+  - **3 cuelgues:** 1 de 570 verdes en la corrida con el arnés de QA, y 2 de 2 000 con cierres concurrentes.
+  - v1.36.2, en las mismas condiciones: 0.
+  - **Otro mecanismo:** `wait -n` no vuelve cuando termina la gate (`hooks/lib.sh:554`).
+  - **La condición de P-137-AD no se cumple.**
+- **Cerrados:** QA-037-02 (la candidata, igual que v1.36.2: INCONCLUSO) y QA-037-07 (P6, 15 de 15 bajo carga).
+- **Nuevos:** QA-037-09 (`contrato`: E1 y SEC-133 frente a CA-03 y CA-05, P-137-AE) y QA-037-10 (`instrumento`: P6 puede salir SKIP).
+- **Verificado:**
+  - la guarda de la trampa, con siete señales y tres formas de hijo: 0 documentos;
+  - el `deny` legítimo, que se mantiene;
+  - los relojes con `KILL`: 0 procesos vivos;
+  - el temporal: colisión, `TMPDIR` sin escritura y que no quede nada;
+  - E1, R1, R2 y R3.
+- **Banco:** 2994 PASS, 1 FAIL (sonda de reloj de la sección 49, QA-037-08) y 33 SKIP; cuadre 3028. Autoprueba 117/0. Gates rc 0.
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` abre P-137-AF. Por la condición de P-137-AD, 1.36.3 no se publica, y el propietario decide qué se hace con #63. El hotfix queda detenido hasta entonces.
+
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): pasada correctiva de REQ-037 (la única), `en-revisión`
 > Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
 
@@ -90,13 +111,19 @@ Ningún otro caso de v1.36.2 cambia en lo medido (sección 53 del banco, en los 
 **Lo que no entra, con su ficha:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); **sacar las gates del hook** (F-137-24, 1.38); **SEC-133** y **SEC-131 (a)** (mismo veredicto que v1.36.2 en sus formas medidas); **SEC-132 (b)**; **QA-007-09**.
 
 **Firmas.**
-- **QA (Opus, 2026-10-27, cabeza `d47cfba`): `con-hallazgos`** (`docs/qa/REQ-037.md`).
-  - Conformes: CA-01, CA-04 y CA-10.
-  - CA-02 (f) a nivel de hook: `deny` de gates a 420 241 ms con N = 420 s.
-  - CA-08, medido (arriba).
-  - Abiertos: **QA-037-01 (`usuario/dinero`)**. Bajo carga de CPU, la vigilancia de las gates rompe el veredicto: una gate roja puede salir con **dos** documentos JSON, que el cliente no aplica; hay `deny` espurios y cuelgues hasta los 420 s. **Esto desmiente, bajo carga, el «ningún otro caso de v1.36.2 cambia» de arriba.**
-  - Abiertos, `contrato`: QA-037-02 a 06 (el coste frente a REQ-017 CA-08 (ii), dos movimientos sin listar en CA-05, la fila I2, una gate que detiene el reloj y los textos de CA-07).
-  - Abiertos, `instrumento`: QA-037-07 y 08.
+- **QA (Opus, 2026-10-27, cabeza `cdbe2a8`, vuelta 2): `con-hallazgos`** (`docs/qa/REQ-037.md`).
+  - Conformes desde la vuelta 1 (`d47cfba`): CA-01, CA-04 y CA-10; CA-02 (f) a nivel de hook, `deny` de gates a 420 241 ms
+    con N = 420 s; CA-08, medido (arriba).
+  - Cerrados en la vuelta 2: QA-037-02 (coste) y QA-037-07 (P6).
+  - Abierto: **QA-037-01 (`usuario/dinero`)**.
+    - Ya no hay dobles ni `deny` espurios bajo carga.
+    - **Queda un cuelgue:** 3 en 3 870 cierres de la candidata bajo carga, y 0 en 2 870 de v1.36.2 en las mismas condiciones.
+    - La gate ya terminó y el hook sigue esperando al reloj: decidiría a los ≈ 420 s.
+    - **Esto desmiente, bajo carga, el «ningún otro caso de v1.36.2 cambia» de arriba.**
+  - Abiertos, `contrato`:
+    - QA-037-03 a 06: dos movimientos sin listar en CA-05, la fila I2, una gate que detiene el reloj y los textos de CA-07.
+    - QA-037-09: E1 cambia el veredicto de SEC-133, y «Lo que no entra» dice que no. Lo decide P-137-AE.
+  - Abiertos, `instrumento`: QA-037-08 y 10.
 - *Pendientes: el write-back del analista y seguridad (Opus).*
 
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
