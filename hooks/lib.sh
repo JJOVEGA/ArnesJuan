@@ -430,20 +430,119 @@ arnes_juicio_puerta() {   # <puerta> — tras `{ arnes_guard_X; ARNES_PUERTA_FIN
   arnes_plazo
 }
 
-# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C). Cada punto de entrada pone `SECONDS=0` al
-# arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo comprueba
-# ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
-# OPERATIVO: la comprobación salta a los 30 s, para que la respuesta llegue en no más de 40 s con la
-# unidad en curso y la emisión; se baja con la medición. Lo que NO alcanza, dicho: una sola operación
-# que no termina no se interrumpe sin un proceso aparte; por eso las que crecen más que linealmente
-# tienen techo de tamaño delante (`ARNES_PIEZAS_MAX_BYTES`, `ARNES_EDIT_MAX_BUSQUEDA`).
+# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C; REQ-037 CA-01, ADR-018). Cada punto de entrada
+# pone `SECONDS=0` al arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo
+# comprueba ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
+# MIDE EL ANÁLISIS, NO LAS QUALITY GATES (REQ-037 CA-01): las gates tienen su propio presupuesto (abajo), y al
+# salir de su bucle `guard-completado` devuelve este reloj a lo que llevaba el análisis, así que ningún
+# segundo de una gate cuenta, ni antes ni después del bucle. Hasta 1.36.2 lo contaba, y un cierre con una
+# gate verde de 35 s se denegaba por este plazo (issue #63).
+# OPERATIVO: la comprobación salta a los 30 s de análisis, para que la respuesta llegue en no más de 40 s con
+# la unidad en curso y la emisión; se baja con la medición. Del otro lado, el cliente mata un `PreToolUse`
+# sin `timeout` explícito a ≈ 600 s (medido: CLI 2.1.289, Linux/WSL2, una corrida por punto; REQ-037, Notas);
+# hasta 1.36.2 estos textos daban por hecho que lo mataba a los 60 s, y no era así. Lo que NO alcanza,
+# dicho: una sola operación que no termina no se interrumpe sin un proceso aparte; por eso las que crecen
+# más que linealmente tienen techo de tamaño delante (`ARNES_PIEZAS_MAX_BYTES`, `ARNES_EDIT_MAX_BUSQUEDA`).
 ARNES_PLAZO_S=30
 # Sólo en un proceso que arrancó por un punto de entrada (`ARNES_EN_HOOK`, entrada.sh): quien carga la
 # librería en otro shell —el banco, a nivel de librería— no tiene un reloj que signifique nada.
 arnes_plazo() {
   [ -n "${ARNES_EN_HOOK:-}" ] || return 0
   [ "${SECONDS:-0}" -ge "$ARNES_PLAZO_S" ] || return 0
-  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s desde que arranco; el cliente mata el hook a los 60 s y un hook muerto no deniega). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
+  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s de analisis desde que arranco, sin contar lo que tardan las quality gates, que tienen su propio presupuesto). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
+}
+
+# EL PRESUPUESTO DE LAS QUALITY GATES (REQ-037 CA-02, ADR-018). DE CONTRATO: 420 s EN TOTAL para todas las
+# gates de un cierre, en serie, contados desde que se lanza la primera. Un proyecto elige la duración de sus
+# gates por este valor y el motivo lo cita; no cambia sin ADR y sin write-back (AGENTS.md §13, el motivo y las
+# notas). Sede única: esta constante.
+# EL PORQUÉ: en el peor caso el hook tarda A + N + C —el análisis (≤ 40 s, el plazo de arriba), este
+# presupuesto y el corte de una gate agotada (`ARNES_GATES_CORTE_S`)—, y eso no puede pasar de 0,8 × el límite
+# medido del cliente (≈ 600 s): 40 + 420 + 5 = 465 s. Si una medición posterior baja el límite, N baja con ella.
+# Agotado el presupuesto, la gate en curso se corta, las siguientes no se lanzan y se deniega con un motivo
+# propio de gates: nunca un cierre sin veredicto.
+ARNES_GATES_PRESUPUESTO_S=420
+# EL CORTE (OPERATIVO; se baja con la medición): la gate agotada recibe TERM en todo su grupo de procesos, y lo
+# que siga vivo a los ARNES_GATES_CORTE_S segundos, KILL.
+ARNES_GATES_CORTE_S=5
+
+# EL RELOJ DEL PRESUPUESTO: UNO por cierre, no uno por gate. `arnes_gates_reloj <restante_us>` lo arma —un
+# `sleep` de los segundos enteros hacia arriba, así que nunca vence antes de <restante_us>— y deja su pid en
+# ARNES_GATES_T; `arnes_gates_sin_reloj` lo retira. Es un hijo directo del hook, sin su salida estándar ni la
+# de error (QA-007-16). Si vence, lo dice el reloj del HOOK (EPOCHREALTIME, que el entorno no puede fijar),
+# no el `sleep`: quien llama compara lo transcurrido con el presupuesto, y si el `sleep` murió antes de tiempo
+# —una gate puede matarlo—, el motivo es otro, y también deniega. A la gate nunca se le cree.
+ARNES_GATES_T=''
+arnes_gates_reloj() {
+  sleep "$(( ($1 + 999999) / 1000000 ))" </dev/null >/dev/null 2>&1 &
+  ARNES_GATES_T=$!
+}
+arnes_gates_sin_reloj() {
+  [ -n "$ARNES_GATES_T" ] || return 0
+  kill "$ARNES_GATES_T" 2>/dev/null; wait "$ARNES_GATES_T" 2>/dev/null
+  ARNES_GATES_T=''
+}
+
+# arnes_gate <orden> <salida> -> ARNES_GATE_FIN y ARNES_GATE_RC. Ejecuta UNA quality gate como hasta 1.36.2
+# —`eval` en un subshell, en el directorio del proyecto, con su salida estándar y la de error a <salida>— y la
+# espera junto al reloj armado (ARNES_GATES_T):
+#   fin    la gate terminó: su veredicto es ARNES_GATE_RC, su código de salida;
+#   reloj  el reloj terminó con la gate en curso, o la espera falló: la gate se cortó (ARNES_GATE_RC no cuenta)
+#          y quien llama decide, con su reloj, si fue el presupuesto o un reloj muerto antes de tiempo.
+# LA GATE ES CÓDIGO NO CONFIABLE (REQ-037 CA-03; lecciones de F-136-22 y L4/L5 de R-057):
+#   * su veredicto es SÓLO su código de salida, que el hook lee con `wait` sobre su hijo directo: no hay canal
+#     que la gate pueda escribir (QA-007-15). Lo que imprime va a <salida>, que sólo se cita en el motivo;
+#   * el corte es UNA señal al grupo de procesos de la gate, lineal en el número de descendientes (QA-007-17):
+#     el hijo directo se lanza con `set -m` y encabeza un grupo propio, y todo lo que la gate lanza sin
+#     desligarse cae en él. Lo que se desliga del grupo (`setsid`, ...) o ignora KILL puede sobrevivir; el hook
+#     decide igual y no lo espera (límite declarado, REQ-037 R-2);
+#   * LA GATE NO ENCABEZA EL GRUPO: lo encabeza un subshell que sólo la espera y sale con su código, y la gate
+#     corre en un subshell suyo, como en 1.36.2. Medido: con la gate de jefa de grupo, `exec setsid false` salía
+#     con 0 —`setsid` se bifurca cuando quien lo llama encabeza un grupo, y el padre sale con éxito— y una gate
+#     roja pasaba; v1.36.2 la deniega. Ese subshell espera a la gate aunque le llegue TERM (`trap : TERM`), así
+#     que el corte le da a la gate ARNES_GATES_CORTE_S segundos, y su propia salida de error va a /dev/null: el
+#     «Terminated» que bash escribe de un hijo muerto por señal no se mezcla con la de la gate;
+#   * las redirecciones se hacen DENTRO del hijo, después de bifurcar: el hook no guarda copia de su salida
+#     estándar ni de la de error que un superviviente pudiera retener (QA-007-16).
+# NADA SE BIFURCA ENTRE LA GATE Y LA ESPERA, y el reloj ya existe cuando se lanza la gate. Medido (bash 5.3.9,
+# Linux/WSL2, con la trampa de salida de entrada.sh): con el reloj lanzado DESPUÉS, una gate que terminaba
+# mientras se bifurcaba el reloj no despertaba a `wait -n` —10 de 40 cierres con la gate `true`— y el hook
+# esperaba al reloj entero; con este orden, 0 de 100. Y aun así, si la espera vuelve por el reloj, se mira si la
+# gate seguía viva: si ya no, se recoge su código y vale como terminada antes que el reloj.
+# LO QUE NO CAMBIA RESPECTO DE 1.36.2, A PROPÓSITO (REQ-037 CA-03): la gate hereda la entrada estándar del
+# bucle —por la que el hook lee la lista— y las funciones importadas del entorno; SEC-133 y SEC-131 (a)
+# siguen como estaban, declarados en AGENTS.md §13, y su resolución no es de este REQ.
+# Necesita bash 5.1 (`wait -n -p`): quien la llama lo comprueba antes, y arma el reloj.
+arnes_gate() {
+  local cmd="$1" sal="$2" g quien='' rc
+  ARNES_GATE_FIN=reloj; ARNES_GATE_RC=''
+  set -m
+  ( trap : TERM; exec {ARNES_GATE_FD}>&2 2>/dev/null
+    ( cd "$ARNES_PROJ" && eval "$cmd" ) 2>&"$ARNES_GATE_FD" {ARNES_GATE_FD}>&-
+    exit $? ) <&0 >"$sal" 2>&1 &
+  g=$!
+  set +m
+  wait -n -p quien "$g" "$ARNES_GATES_T"; rc=$?
+  [ -z "$quien" ] || [ "$quien" != "$ARNES_GATES_T" ] || ARNES_GATES_T=''
+  if [ "$quien" != "$g" ] && ! kill -0 "$g" 2>/dev/null; then wait "$g"; rc=$?; quien=$g; fi
+  if [ "$quien" = "$g" ]; then ARNES_GATE_FIN=fin; ARNES_GATE_RC=$rc; return 0; fi
+  arnes_gate_corta "$g"
+  return 0
+}
+
+# arnes_gate_corta <pid> — corta la gate cuyo subshell es <pid> (que encabeza su grupo): TERM al grupo, hasta
+# ARNES_GATES_CORTE_S segundos para que termine, y KILL a lo que quede del grupo. Si no hubo grupo propio
+# (un bash sin control de trabajos), al menos el subshell. El reloj del corte, como el del presupuesto, antes.
+arnes_gate_corta() {
+  local g="$1" t quien=''
+  sleep "$ARNES_GATES_CORTE_S" </dev/null >/dev/null 2>&1 &
+  t=$!
+  kill -TERM -- "-$g" 2>/dev/null || kill -TERM "$g" 2>/dev/null
+  wait -n -p quien "$g" "$t"
+  kill -KILL -- "-$g" 2>/dev/null
+  [ "$quien" = "$g" ] || { kill -KILL "$g" 2>/dev/null; wait "$g" 2>/dev/null; }
+  [ "$quien" = "$t" ] || { kill "$t" 2>/dev/null; wait "$t" 2>/dev/null; }
+  return 0
 }
 
 # R2 (SEC-129): un codigo del analizador de escrituras de Bash fuera de su vocabulario declarado —0, y
@@ -1589,8 +1688,10 @@ arnes_agente_legible() {  # <agent_type>
 # --- Presupuesto de analisis del detector de Bash -----------------------------
 # "Una puerta que no puede medir no deja pasar" (AGENTS.md 1). El detector de escrituras
 # es ahora LINEAL en todos sus ejes, pero ningun algoritmo carece de acantilado: un hook
-# PreToolUse muere a los 60 s y UN HOOK MUERTO NO DENIEGA — guard.sh recibe salida vacia y
-# el comando pasa. Antes de llegar ahi por agotamiento, se deniega por TAMANO y se dice
+# PreToolUse que tarda demasiado lo mata el cliente (≈ 600 s medidos sin `timeout` explicito,
+# CLI 2.1.289, REQ-037) y UN HOOK MUERTO NO DENIEGA — guard.sh
+# recibe salida vacia y el comando pasa; antes, el plazo propio de 30 s deniega sin juzgar.
+# Y antes de llegar a eso por agotamiento, se deniega por TAMANO y se dice
 # como salir. Fallar cerrado y a tiempo es preferible a fallar abierto y en silencio.
 #
 # QUE SE MIDE, exactamente (y no otra cosa):
@@ -1614,15 +1715,16 @@ arnes_agente_legible() {  # <agent_type>
 # antes de que el hook muera.)
 #
 # De esa serie: 64 KiB de material denso se analizan de punta a punta en 0,61 s, frente a
-# los 60 s en que el hook muere PERMITIENDO. El doble (128 KiB) ya cuesta 2,31 s, asi que
+# los 30 s del plazo propio, que deniega sin juzgar (y al cliente, que mata el hook a los ≈ 600 s
+# medidos, REQ-037, y entonces nadie deniega). El doble (128 KiB) ya cuesta 2,31 s, asi que
 # el margen se agota rapido: por eso el techo por defecto esta aqui y no mas arriba. El
 # material real de un comando normal son decenas de bytes; esto solo lo toca una entrada
 # construida a proposito.
 ARNES_BASH_MAX_ANALISIS=65536
 # MÁXIMO que un manifiesto puede declarar en `limites.bash_max_analisis`. Es OPERATIVO,
 # no arbitrario: en este techo el peor caso analizable —cuerpo denso en `$(`— tiene que
-# seguir respondiendo por debajo de los 5 s, muy lejos de los 60 s en que el hook muere
-# PERMITIENDO.
+# seguir respondiendo por debajo de los 5 s, muy lejos de los 30 s del plazo propio (y de los
+# ≈ 600 s medidos en que el cliente mata el hook PERMITIENDO, REQ-037).
 #
 # LA SERIE — es la UNICA de este archivo, y la citan los dos techos. Plataforma de
 # desarrollo (Linux/WSL2), re-medida el 2026-09-05 sobre `arnes_bash_escrituras`, material
@@ -1650,13 +1752,14 @@ ARNES_GIT_PROHIBIDOS_DEFECTO=$'clean -f\treset --hard\tcheckout .\trestore .\tst
 # cada edicion sobre una copia completa del texto —coste del orden de ediciones x tamano,
 # SIN techo—. Medido (Linux/WSL2, 2026-09-05) sobre un REQ de ~300 KB: 101 ediciones 2,2 s ·
 # 401 ediciones 8,0 s · 1.501 ediciones 25,7 s; y con un REQ de 3,1 MB + 401 ediciones, SIN
-# respuesta a los 30 s. Por encima de 60 s el hook muere, no emite nada y el resultado
-# efectivo es PERMITIR: la familia del reloj, otra vez. 64 MiB-edicion deja holgadamente
+# respuesta a los 30 s. Hoy el plazo propio deniega a los 30 s de analisis; y si una sola
+# operacion no termina, el cliente mata el hook (≈ 600 s medidos, REQ-037), no emite nada y el resultado efectivo es PERMITIR: la familia del reloj, otra vez. 64 MiB-edicion deja holgadamente
 # dentro el caso ordinario (un REQ grande con un punado de ediciones) y corta antes de que
 # el reloj decida. Igual que el otro techo: el numero es operativo y sale impreso en el deny.
 ARNES_EDIT_MAX_PRESUPUESTO=67108864
 # TECHOS DE TAMAÑO DE SEC-115 (REQ-007 CA-68, P-136-C), los dos OPERATIVOS: se bajan con la medición, y
-# subirlos por encima de lo medido devuelve el hook a la pared de los 60 s, donde un hook muerto no deniega.
+# subirlos por encima de lo medido devuelve el hook a operaciones que el plazo propio no interrumpe y que pueden
+# no terminar antes de que el cliente lo mate (≈ 600 s medidos, REQ-037), y un hook muerto no deniega.
 #   * ARNES_PIEZAS_MAX_BYTES: el texto que trae una escritura de un REQ, tal como lo trocea `guard-completado`
 #     —el `content` de un `Write` más 4 bytes de cabecera de piezas, o las cadenas de todas las ediciones con
 #     sus separadores—, medido en BYTES antes de la normalización de transporte, que crece más que
@@ -1723,7 +1826,8 @@ arnes_techo_bash() {   # -> ARNES_TECHO
 # saber, sin resolver el techo, si resolverlo avisaria (CA-54, nota del 2026-10-03).
 #
 # TOPE DEL VALOR DECLARADO (SEC-006(b), R-001). El coste del análisis crece con el
-# tamaño y un hook `PreToolUse` MUERE a los 60 s permitiendo: sin máximo, subir el
+# tamaño y un hook `PreToolUse` que no termina lo mata el cliente PERMITIENDO (≈ 600 s
+# medidos, REQ-037): sin máximo, subir el
 # techo desde el manifiesto reabre POR CONFIGURACIÓN el fallo en abierto que el
 # presupuesto cerró. `4294967296` se aceptaba tal cual.
 #
@@ -1752,8 +1856,9 @@ _arnes_techo_excede() {
 #
 #   2. COSTE. El bucle anterior RECONSTRUIA la cadena entera por cada par: cuadratico
 #      sobre el texto conservado. Medido: 500 lineas de cuerpo con expansiones 5,5 s,
-#      1.000 -> 40 s, 1.500 -> sin respuesta en 65 s. Un hook PreToolUse muere a los 60 s
-#      y UN HOOK MUERTO NO DENIEGA: el coste era, el solo, un fallo en abierto.
+#      1.000 -> 40 s, 1.500 -> sin respuesta en 65 s. Un hook PreToolUse que no termina lo
+#      mata el cliente (≈ 600 s medidos, REQ-037) y UN HOOK
+#      MUERTO NO DENIEGA: el coste era, el solo, un fallo en abierto.
 #
 # COSTE, SEGUNDA VUELTA (REQ-001 v3). Consumir el prefijo con `${s#*"$q"}` acoto el
 # problema al fragmento, pero NO lo elimino: cada `${s#...}` COPIA el resto de la cadena,
@@ -1825,8 +1930,9 @@ _arnes_desentrecomilla() {   # <texto> -> ARNES_SINCOM
 # que va detras. El recorrido toca cada atomo exactamente una vez, y el texto del
 # fragmento se acumula en un ARRAY que se une al cerrar —nunca concatenando cadenas, que
 # es copiar, y copiar dentro de un bucle es justo lo que hacia cuadratica a la version de
-# la vuelta 1 (2.000 expansiones 1.151 ms, 4.000 -> 5,1 s, 8.000 -> 18,2 s, 16.000 -> el
-# hook muere a los 60 s y guard.sh recibe salida vacia: FALLO EN ABIERTO).
+# la vuelta 1 (2.000 expansiones 1.151 ms, 4.000 -> 5,1 s, 8.000 -> 18,2 s, 16.000 -> sin
+# respuesta a los 60 s del `timeout` del banco; un hook que no termina lo mata el cliente,
+# ≈ 600 s medidos, REQ-037, y guard.sh recibe salida vacia: FALLO EN ABIERTO).
 # Sin procesos: solo `IFS`, expansion de parametros y arrays.
 #
 # LAS COMILLAS SOLO SON SINTAXIS DENTRO DE LA SUSTITUCION, y no es un detalle: en el
@@ -3389,8 +3495,9 @@ arnes_campos_normaliza() {   # <qa> <seg> <sens> <hall> <rigor> -> ARNES_QA/SEG/
   arnes_norm_campo "$2"; arnes_veredicto "$ARNES_CAMPO"; ARNES_SEG="$ARNES_VEREDICTO"
   arnes_norm_campo "$3"; ARNES_SENS="$ARNES_CAMPO"
   # EL TECHO SE MIDE ANTES DE NORMALIZAR (CA-A15). `arnes_norm_campo` es cuadratico en la longitud
-  # del valor (`${v// /}` en UTF-8): medido, 255 371 bytes -> 67,0 s, y el cliente mata el hook a
-  # los 60 s sin decision. Por encima del techo el valor NO se normaliza, NO se recorta y NO queda
+  # del valor (`${v// /}` en UTF-8): medido, 255 371 bytes -> 67,0 s, una sola operacion que el plazo
+  # propio no interrumpe (y que, si no termina, deja el hook sin decision cuando el cliente lo mata, a
+  # los ≈ 600 s medidos, REQ-037). Por encima del techo el valor NO se normaliza, NO se recorta y NO queda
   # vacio: ARNES_HALL lleva un marcador que no es ninguna ausencia legitima ni ninguna lista, para
   # que ningun lector —la puerta, el bloque derivado— lo lea como «sin hallazgos». La puerta
   # deniega por tamaño antes de mirarlo (guard-completado, CA-A13). Por debajo, lo de siempre.

@@ -2,6 +2,52 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 2: REQ-037 construido por el desarrollador, `en-revisión`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus · agente: desarrollador.
+
+- **Código** (`hooks/lib.sh`, `hooks/guard-completado.sh`, `hooks/entrada.sh`): el plazo propio mide el análisis (`ARNES_T0_US`; al salir del bucle de gates el reloj vuelve a lo que llevaba el análisis); presupuesto de gates `ARNES_GATES_PRESUPUESTO_S=420` con su motivo propio; `arnes_gate`, `arnes_gate_corta`, `arnes_gates_reloj` y `arnes_gates_sin_reloj`; el motivo del plazo y los comentarios ya no dan el «60 s» como límite del cliente. `hooks/hooks.json` sin cambio.
+- **Banco:** sección 53 nueva (62 casos; `CASOS_ESPERADOS` 2960 → 3022), README del banco y un comentario de `run.sh`.
+- **Versión** 1.36.3 en `plugin.json` y `marketplace.json`; **notas `[1.36.3]`** (borrador, sin firmas).
+- **Hallados y cerrados antes de entregar:** una carrera de `wait -n` (la gate que terminaba mientras se bifurcaba el reloj no despertaba la espera) y una gate roja que pasaba (`exec setsid false`, con la gate de jefa de su grupo de procesos). Los dos tienen caso o medida en la evidencia.
+- **Medido:** sección 53, 60 PASS y 2 SKIP; fail-before con los hooks de v1.36.2, 11 FAIL; banco completo 2985 PASS, 4 FAIL (sondas de reloj de otras secciones; no se repitió), 33 SKIP; autoprueba 117/0; gates rc 0. Evidencia: `issue-63-plazo-gates/dev/` del árbol de evidencia.
+- **Incidente propio:** una prueba con `pkill -x sleep` sin acotar mató por un instante todos los `sleep` del usuario en la máquina, también los que pudiera tener el otro worktree. Declarado en la evidencia (`21-`).
+
+## [1.36.3] — 2026-10-27 · Hotfix: el plazo propio de 30 s mide el análisis y no las quality gates; las gates tienen su presupuesto de 420 s, con su propio motivo de `deny`
+
+> Origen: borrador del `desarrollador` (REQ-037, fase 2) · **sin firmar todavía**: faltan QA (con CA-02 (f) y CA-08), el write-back del analista y seguridad · gobernado por la instalación estable **1.36.2**.
+> **Estas notas no publican nada:** la fusión, el tag y la publicación son del propietario.
+
+**Qué cambia** (REQ-037, CA-01 y CA-02; ADR-018). Desde 1.36.0, `guard-completado` contaba en su plazo propio de 30 s lo que tardaban las quality gates, así que un cierre con todo en orden y unas gates verdes de más de 30 s se denegaba siempre (issue #63; medido en 1.36.0, 1.36.1 y 1.36.2 con una gate `sleep 35`). Ahora:
+- **el plazo propio mide sólo el análisis** de la puerta: el valor (30 s, respuesta en no más de 40 s) no cambia; ningún segundo de una gate cuenta, ni antes ni después del bucle;
+- **las gates tienen su propio presupuesto: 420 s en total, en serie** (de contrato; un proyecto elige la duración de sus gates por este valor). Si no terminan dentro de él, la gate en curso se corta —una señal a su grupo de procesos, `TERM` y a los 5 s `KILL`—, las siguientes no se lanzan y el `deny` lleva un motivo propio: «las quality gates no terminaron dentro de su presupuesto de 420 s». No es un veredicto sobre las gates: es que no terminaron. **Nunca un cierre sin veredicto** por gates lentas o colgadas.
+- **Por qué 420 s:** en el peor caso el hook tarda análisis (≤ 40 s) + presupuesto + corte (≤ 5 s) = **465 s**, por debajo de 0,8 × el límite medido del cliente. Si una medición posterior baja ese límite, el presupuesto baja con él.
+
+| Movimiento (CA-05) | v1.36.2 | 1.36.3 |
+|---|---|---|
+| **M-037-1** — gates **verdes** que suman más de 30 s y no más de 420 s | `deny` (plazo propio) | **allow** |
+| **M-037-2** — gates que suman más de 420 s y menos de ≈ 600 s | `deny` (plazo propio) | `deny` (motivo de gates). Frente a 1.35.0, que las juzgaba, es `allow` → `deny`: **cambio de compatibilidad** |
+| **M-037-3** — gates que no terminan antes de ≈ 600 s, o una gate colgada | sin decisión (el cliente mata el hook) | `deny` (motivo de gates) |
+
+Ningún otro caso de v1.36.2 cambia en lo medido (sección 53 del banco, en los dos árboles y en la misma corrida): una gate roja sigue denegando con su motivo —byte a byte el mismo—, con `quality_gates: []` el presupuesto no interviene, y los vectores adversarios de QA-007-15 (una gate que escribe en un descriptor heredado, que pone una trampa `EXIT`, que imprime un `allow`) y `exec setsid false` deciden igual que en v1.36.2.
+
+**La cifra del cliente, corregida (CA-07).** Los textos de 1.36.x daban por hecho que el cliente mata un hook `PreToolUse` a los **60 s**. Medido: lo mata a **≈ 600 s** (CLI 2.1.289, Linux/WSL2, un plugin de prueba sin `timeout` explícito, como `hooks/hooks.json`; una corrida por punto: un hook de 75 s emitió su `deny` y se aplicó; uno de 620 s murió a ≈ 600 s y la llamada siguió sin su decisión). En esta versión se corrigen el motivo del plazo propio («30 s de análisis, sin contar lo que tardan las quality gates») y los comentarios de `hooks/`. **Quedan, con su porqué:** las cifras medidas con el `timeout` de 60 s del banco («sin decisión a los 60 s»), que son ciertas de ese instrumento; la historia fechada (entradas anteriores de este archivo, `docs/qa/`, el registro de seguridad, `PENDING_APPROVAL.md`, `docs/PENDIENTES.md`, ADR anteriores); los demás REQ, que no se reabren; y los comentarios de las secciones del banco que llaman «límite del cliente» al `timeout` del banco, que se corrigen en 1.37. *(El write-back del analista en `AGENTS.md`, `requirements/README.md`, su plantilla y REQ-007 CA-68 completa esta lista antes de publicar.)*
+
+**El hallazgo colateral (CA-08).** *Pendiente de la medición del `qa-tester` en v1.35.0 y v1.36.0 con el cliente real; hasta entonces, **no medido en el cliente**.*
+
+**Coste** (CA-06, medido frente a v1.36.2 en la misma corrida): el camino común y el cierre con `quality_gates: []`, **0 procesos** añadidos; el cierre con gates, **un `sleep`** (el reloj del presupuesto) **por cierre** y **un subshell por gate** (el que encabeza su grupo de procesos); con 3 gates `true`, ≈ **1,25×** de reloj (techo 1,5×). Un cierre cuyo presupuesto se agota añade un `sleep` más (el del corte).
+
+**Residuales declarados** (no se resuelven añadiendo alcance)
+- **R-1** — el presupuesto depende de un valor por defecto del cliente que puede cambiar: otra versión del CLI, o un `timeout` que el usuario ponga en su configuración, pueden matar el hook antes de los 465 s, y unas gates entre ese límite y 420 s volverían a quedar sin decisión. Un `timeout` explícito en `hooks.json` lo cerraría y **no está pedido**.
+- **R-2** — lo que una gate desliga de su grupo de procesos (`setsid`, ...) o lo que ignora `KILL` puede sobrevivir al corte; el hook decide `deny` igual y no lo espera.
+- **R-3** — sin medir: Windows/MSYS, otras versiones del CLI, un bash distinto de 5.3.9 y el cliente real con el presupuesto de 420 s.
+- **R-4** — sin cambio: una sola operación del análisis que crece más que linealmente (SEC-132 (b), QA-007-09), y SEC-133 y SEC-131 (a), declarados en `AGENTS.md` §13.
+- **Vigilar una gate exige bash 5.1 o posterior** (`wait -n -p`). Con uno anterior, **todo cierre con gates se deniega**, con un motivo que lo dice (una puerta que no puede medir no deja pasar). Sin medir: no había un bash anterior a 5.1 a mano.
+- **La gate corre en un grupo de procesos propio**, no en el de la terminal: una gate que lea de la terminal de control quedaría detenida y se cortaría por presupuesto. Sin medir.
+
+**Lo que no entra, con su ficha:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); **sacar las gates del hook** (F-137-24, 1.38); **SEC-133** y **SEC-131 (a)** (mismo veredicto que v1.36.2 en sus formas medidas); **SEC-132 (b)**; **QA-007-09**.
+
+**Firmas.** *Pendientes: QA (Opus), el write-back del analista y seguridad (Opus).*
+
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
 

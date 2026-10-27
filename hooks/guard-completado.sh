@@ -51,8 +51,9 @@ DIR="${BASH_SOURCE[0]%/*}"
 arnes_clase_hallazgo() {
   # BYTES, NO CARACTERES, y por dos razones medidas (REQ-031 CA-A13/CA-A14, SEC-113): el techo
   # se cuenta en bytes, y en un locale UTF-8 cada `${s:i:1}` recorre la cadena desde el
-  # principio, asi que leer un valor largo era CUADRATICO (60 006 bytes: 81 s, y el cliente
-  # mata el hook a los 60 s — un hook muerto no deniega). `local` devuelve el locale al salir.
+  # principio, asi que leer un valor largo era CUADRATICO (60 006 bytes: 81 s, por encima del plazo
+  # propio; y si una operacion no termina, el cliente mata el hook —≈ 600 s medidos, REQ-037— y un
+  # hook muerto no deniega). `local` devuelve el locale al salir.
   local LC_ALL=C
   local techo="$ARNES_HALL_TECHO_BYTES" hall crudo_h n_hall n_crudo est prof e_ini idh id_malo clase err err_ini \
         sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco \
@@ -79,7 +80,8 @@ arnes_clase_hallazgo() {
   # `ARNES_HALL_TECHO_BYTES` (hooks/lib.sh): es de CONTRATO, anunciado en requirements/README.md
   # (mayor valor real medido al fijarlo: 6 672 bytes); se sube con la medicion, nunca se baja.
   # APARTE, SU LIMITACION CONOCIDA Y SIN REPARAR, que no forma parte de la propiedad: SEC-115.
-  # Un hook que el cliente mata por tiempo (60 s) no deniega. Medido, 255 371 bytes deniegan a
+  # Un hook que el cliente mata por tiempo (≈ 600 s medidos, REQ-037) no deniega. Medido, 255 371
+  # bytes deniegan a
   # tiempo: 0,31 s por Edit y 1,6 s por Write (Linux/WSL2, una corrida por punto). Por encima de
   # lo medido no hay promesa (por Write, otra operacion anterior sobre el contenido crece mas que
   # linealmente; residuo en docs/PENDIENTES.md), y en Windows/MSYS no esta medido.
@@ -304,6 +306,7 @@ arnes_guard_completado() {
   local cita_desp est_citado cr_desp cr_linea
   local seg_antes amb intento v
   local obj existe ilegible arreglo
+  local t_gates analisis resta presupuesto corrieron=''
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -566,8 +569,9 @@ arnes_guard_completado() {
   # que borrara la linea `QA:` no se libra del veredicto que hay en disco.
   # PRESUPUESTO DE RECONSTRUCCION (SEC-007, R-001). Reconstruir cuesta del orden de
   # `ediciones x tamano` y no tenia techo: 1.501 ediciones sobre un REQ de 300 KB tardaban
-  # 25,7 s, y un REQ de 3 MB con 401 ediciones no respondia en 30 s. A los 60 s el hook
-  # MUERE, no emite nada y el resultado efectivo es PERMITIR. Asi que por encima del
+  # 25,7 s, y un REQ de 3 MB con 401 ediciones no respondia en 30 s. Un hook que no termina lo
+  # mata el cliente (≈ 600 s medidos, REQ-037): no emite nada y el
+  # resultado efectivo es PERMITIR. Asi que por encima del
   # presupuesto no se reconstruye: se deniega, y el deny alcanza TAMBIEN al agente de
   # codigo, porque nadie cierra un REQ desde una llamada que la puerta no puede medir.
   np=${#piezas[@]}
@@ -949,20 +953,57 @@ arnes_guard_completado() {
   fi
 
   # --- Gate A3: quality gates en verde antes de completar ---
-  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas: lo que tarde una gate no lo interrumpe.
+  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas y NO cuenta lo que ellas tardan (REQ-037 CA-01,
+  # ADR-018): las gates tienen su propio presupuesto, ARNES_GATES_PRESUPUESTO_S en total y en serie, y cada una
+  # corre vigilada por `arnes_gate` (lib.sh), que la corta si lo agota. Hasta 1.36.2 lo que tardaba una gate
+  # no lo interrumpía nadie, y la comprobación del plazo que va detrás lo contaba (issue #63).
   arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
   tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
+  presupuesto=$(( ARNES_GATES_PRESUPUESTO_S * 1000000 ))
   while IFS= read -r cmd; do
     [ -n "$cmd" ] || continue
-    if ! ( cd "$ARNES_PROJ" && eval "$cmd" ) >"$tmp" 2>&1; then
+    if [ -z "$corrieron" ]; then
+      # Vigilar una gate exige `wait -n -p` (bash 5.1). Sin él, una gate que no termina dejaría al hook sin
+      # decisión: no se lanza ninguna y se deniega, que es lo que hace una puerta que no puede medir.
+      if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )); then
+        rm -f "$tmp"
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': este bash (${BASH_VERSION}) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—, asi que no se lanza ninguna: una gate que no terminara dejaria al hook sin decision, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Cierra el REQ desde un entorno con bash 5.1 o posterior."
+      fi
+      corrieron=si
+      t_gates=${EPOCHREALTIME//[!0-9]/}
+      analisis=''; [ -z "${ARNES_T0_US:-}" ] || analisis=$(( t_gates - ARNES_T0_US ))
+    fi
+    resta=$(( presupuesto - (${EPOCHREALTIME//[!0-9]/} - t_gates) ))
+    if [ "$resta" -le 0 ]; then
+      arnes_gates_sin_reloj; rm -f "$tmp"
+      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': las quality gates no terminaron dentro de su presupuesto de $ARNES_GATES_PRESUPUESTO_S s (en total y en serie, desde que se lanzo la primera): la gate \`$cmd\` no llego a lanzarse, ni ninguna de las que la siguen. No es un veredicto sobre las gates: es que no terminaron, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Acorta las gates para que quepan en el presupuesto y reintenta."
+    fi
+    # Un reloj para todo el presupuesto; se rearma, con lo que queda, sólo si terminó y la gate también.
+    [ -n "$ARNES_GATES_T" ] || arnes_gates_reloj "$resta"
+    arnes_gate "$cmd" "$tmp"
+    if [ "$ARNES_GATE_FIN" = fin ]; then
+      [ "$ARNES_GATE_RC" -eq 0 ] && continue
+      arnes_gates_sin_reloj
       out="$(tail -c 600 "$tmp" 2>/dev/null)"
       rm -f "$tmp"
       arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"
     fi
+    arnes_gates_sin_reloj; rm -f "$tmp"
+    # La gate se cortó. Si se agotó el presupuesto lo dice el reloj del hook, no el `sleep` (lib.sh).
+    if [ $(( ${EPOCHREALTIME//[!0-9]/} - t_gates )) -ge "$presupuesto" ]; then
+      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': las quality gates no terminaron dentro de su presupuesto de $ARNES_GATES_PRESUPUESTO_S s (en total y en serie, desde que se lanzo la primera): la gate \`$cmd\` seguia en curso y se corto, y ninguna de las que la siguen se lanzo. No es un veredicto sobre las gates: es que no terminaron, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Acorta las gates para que quepan en el presupuesto y reintenta."
+    fi
+    arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el reloj que vigila el presupuesto de las quality gates termino antes de tiempo mientras la gate \`$cmd\` seguia en curso (algo lo mato, o la espera fallo), y la gate se corto. No es un veredicto sobre las gates: la puerta no pudo medir si terminan dentro de su presupuesto, y una puerta que no puede medir no deja pasar (REQ-037 CA-02)."
   done <<< "$ARNES_GATES"
+  arnes_gates_sin_reloj
   rm -f "$tmp"
+  # El reloj del plazo propio vuelve a lo que llevaba el ANÁLISIS cuando se lanzó la primera gate (REQ-037
+  # CA-01): ningún segundo de las gates cuenta en la comprobación que va detrás. Sin gates no hay nada que
+  # descontar y el reloj no se toca. Con el valor en segundos enteros, la lectura siguiente puede subir uno
+  # al cruzar un segundo de reloj: el mismo grano que tiene `SECONDS` desde que arranca el hook.
+  [ -z "$corrieron" ] || [ -z "$analisis" ] || [ "$analisis" -lt 0 ] || SECONDS=$(( analisis / 1000000 ))
 
   return 0
 }

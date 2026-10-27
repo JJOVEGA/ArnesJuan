@@ -408,8 +408,9 @@ ver_check() {
 # `timeout tope_s` —si no responde, FAIL (a): un hook muerto no decide, y el cliente lo trata
 # como si no hubiera hook—; (b) la decision que recibe el entorno (`permissionDecision`, o su
 # ausencia = allow); (c) si el archivo quedo modificado. El tope es OPERATIVO, no un reloj
-# contratado: esta por debajo de los 60 s del cliente para que el caso no espere a un hook
-# muerto, y la duracion medida se imprime para anotar el margen.
+# contratado: es del banco, no el limite del cliente (que mata el hook a los ≈ 600 s medidos,
+# REQ-037), para que el caso no espere a un hook muerto, y la duracion medida se imprime para
+# anotar el margen.
 check_efecto() {
   local nombre="$1" esperado="$2" f="$3" json="$4" est_esp="$5" patron="${6:-}" tope="${7:-}" \
         out got motivo txt os ns k n est dur=''
@@ -1712,7 +1713,10 @@ done
 # 53 FAIL. Ninguna otra sección cambia su número.
 # Y 2862 → 2960 por el hotfix 1.36.2 (REQ-033): +98 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
 # e21baef), más PROC y RELOJ de CA-06 por rama (5 ramas × 2, pasada correctiva QA-033-01)—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2960
+# Y 2960 → 3022 por el hotfix 1.36.3 (REQ-037): +62 de la sección 53 nueva —23 filas × 2 árboles (candidata y v1.36.2,
+# 46ee7ca), P1–P6 sólo en la candidata, M de CA-07 en los dos y PROC y RELOJ de CA-06 por rama (4 ramas × 2)—.
+# Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3022
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
