@@ -2,6 +2,24 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · REQ-036, QA vuelta 2 de 3 sobre `3c8394b`: `con-hallazgos`; `en-progreso`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cerrados, verificados en la cabeza:** QA-036-01, 02, 04, 05, 06, 07, 08 y 09.
+- **QA-036-03 (`usuario/dinero`) sigue abierto**, en una variante con marcas parciales: un texto propio entre el título y la primera marca, tras `arnes-upgrade`, no lo lee ningún subagente. Ocurre en `AGENTS.md` y en el README.
+  - El generador falla, como manda la pieza 1.
+  - `CLAUDE.md` pierde el import, porque la pieza 3 sólo mira que haya una marca.
+  - El respaldo de la pieza 2 sólo lee entera una fuente sin ninguna marca.
+  - El mensaje del generador dice que la fuente «se lee entera», y no es así.
+  - Las demás fixtures son conformes: fuente sin marcas, `CONFLICTO` de bloque, fila propia del índice y archivo desfasado.
+- **Nuevos:**
+  - QA-036-11 (`contrato`): CA-01 y CA-20 describen el estado de antes de P-137-AC, y faltan en la correspondencia B10 y la condición de la pieza 3;
+  - QA-036-12 (`instrumento`): una lectura del archivo por rol paró en 1 000 de 1 004 líneas.
+- **Sigue abierto, sin bloquear:** QA-036-10 (`instrumento`, F-137-23).
+- **CA-20 y el banco coinciden:** proyecto 75 520 B, plantilla 75 456 B; 75 521 B falla; B10 como techo (1<=1 3<=3 2<=2).
+- **Pruebas:** banco **3086 PASS · 0 FAIL · 34 SKIP** (3120; una corrida; 3 INCONCLUSO de reloj); autoprueba 117/0; gates en verde; `--verificar` 0.
+- **Siguiente:** la última pasada correctiva, en el orden de `docs/qa/REQ-036.md`. Primero va el analista. Si la forma elegida añade texto a la definición del analista, B5 se pasa del techo y hay que volver al propietario.
+
 ## [Interno] — 2026-10-27 · REQ-036: write-back de P-137-AC (CA-20 a 75 520 B y fila de correspondencia)
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
 
