@@ -629,7 +629,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-26 17:12
+## Estado derivado — 2026-10-27 08:42
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -639,10 +639,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `e0dca66` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.37.0` @ `d9b3348` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
-**Aprobaciones pendientes:** 2
-**REQ:** 34 — completado 18 · en-revisión 5 · en-progreso 2 · bloqueado 1 · otros 8
+**Aprobaciones pendientes:** 0
+**REQ:** 34 — completado 18 · en-revisión 6 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 18 completados no se listan._
@@ -664,6 +664,6 @@ _Sólo los REQ abiertos; los 18 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-036 | en-progreso | con-hallazgos | pendiente | critico | qa-036-01(contrato),qa-036-02(contrato),… |
+| REQ-036 | en-revision | con-hallazgos | pendiente | critico | qa-036-01(contrato),qa-036-02(contrato),… |
 
 <!-- ARNES:DERIVADO fin -->

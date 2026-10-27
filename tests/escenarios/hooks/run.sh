@@ -1784,7 +1784,13 @@ done
 # si el generador no sirve y avisa de lo que no pudo quitar; (6) el `Read` entero; y S1 a S8 de «Fuente sin marcas»
 # (el generador, el hook, las definiciones y la orden de `arnes-upgrade` sobre un proyecto de 081cb10)—. Ninguna otra
 # sección cambia su número.
-CASOS_ESPERADOS=3118
+# Y 3118 → 3120 por P-137-AC (A) en REQ-036: +2 en la sección 51 (39 → 41) —B5 pasa de «<= 75 280 B» a «<= 75 520 B»
+# (techo de regresión, trinquete: +240 B de las dos frases de la definición del analista que hacen leer más, fuente sin
+# marcas por QA-036-03 y `Read` truncado por QA-036-08; el de contrato de CA-01 sigue en 75 000 B), y su fixture a
+# 75 520 pasa / 75 521 falla, sin cambiar de número; B10 compara los procesos por orden como TECHO (CA-17 tras
+# QA-036-06) y gana dos fixtures: una variante con más procesos que 081cb10 falla y una con menos pasa—. Ninguna otra
+# sección cambia su número.
+CASOS_ESPERADOS=3120
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

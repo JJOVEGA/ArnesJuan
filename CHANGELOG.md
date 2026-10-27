@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · REQ-036, dependencia acotada de `P-137-AC`: B5 a 75 520 B y B10 como techo; `en-revisión`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
+
+- **B5 (sección 51, CA-20):** techo de regresión de 75 280 B a **75 520 B**; sigue siendo trinquete.
+  - **Razón**, escrita en el caso y en su motivo: los +240 B son las dos frases que hacen leer más (fuente sin marcas, QA-036-03; `Read` truncado, QA-036-08), aceptadas por P-137-AC.
+  - El techo de contrato de CA-01 sigue en 75 000 B.
+  - Medido: proyecto 75 520 B, plantilla 75 456 B. Fixture: 75 520 pasa y 75 521 falla.
+- **B10 (`c17b_51`, CA-17 tras QA-036-06):** compara los procesos por orden como techo, no por igualdad. Dos fixtures nuevas: con más procesos que la base falla; con menos, pasa.
+- **Pruebas:** sección 51 de 39 a 41 casos; total 3120; **3085 PASS · 0 FAIL · 35 SKIP**; autoprueba 117/0; gates en verde.
+- **Pendiente:** el texto de CA-20 aún dice 75 280 B. Ajustarlo es un write-back del analista.
+
 ## [Interno] — 2026-10-27 · `P-137-AC (A)` y `P-137-AB (A)` resueltas: B5 a 75 520 B; hotfix 1.36.3 con prioridad; F-137-24 para 1.38
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
