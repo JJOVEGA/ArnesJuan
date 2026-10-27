@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · REQ-036: write-back de P-137-AC (CA-20 a 75 520 B y fila de correspondencia)
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **CA-20:** dice 75 520 B, con la razón escrita: 75 280 de P-137-AA + 240 de P-137-AC, por las dos frases que hacen leer más. Sigue siendo trinquete; el borde de 75 521 B hace fallar, y el techo de contrato de CA-01 sigue en 75 000 B. Ahora coincide con el banco de `bf40fc3`.
+- **Correspondencia con el encargo:** una fila nueva de P-137-AC.
+- **Historial:** una fila nueva, que declara resuelto el desfase anotado por el desarrollador.
+- **Coste:** analista ≈ 72 k según la notificación del primer tramo; la continuación aún no tiene cifra.
+- **Resultado:** el REQ y el banco coinciden. **Falta:** QA vuelta 2 y seguridad; QA se despacha cuando termine el banco del hotfix, para no cargar la medida de reloj de su CA-06.
+
 ## [Interno] — 2026-10-27 · REQ-036, dependencia acotada de `P-137-AC`: B5 a 75 520 B y B10 como techo; `en-revisión`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (desarrollador) · agente: desarrollador.
 
