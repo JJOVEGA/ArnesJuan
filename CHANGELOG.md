@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · REQ-036, última pasada correctiva: write-back del analista (QA-036-03, variante con marcas parciales, y QA-036-11)
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
+
+- **QA-036-03 (variante), decisión (a):** el texto propio entre el título y la primera marca es un bloque sin marca de obligado ilegible; va a los cuatro archivos por rol sin cambiar un byte, con aviso `fuente:línea`, y el generador sale 0 (CA-18, «Qué contiene» y pieza 1). Banco: S3 revisada, S3b, S3c y S9, con fail-before contra `3c8394b`. Límite L4 declarado.
+- **Sin añadir texto** a `AGENTS.md`, al README, a las definiciones ni a la skill: B5 sigue en 75 520 B. La opción (d) queda como cierre posible de L4 y exige al propietario.
+- **QA-036-11:** CA-01 y CA-20 dicen que B5 mide 75 520 B por P-137-AC; dos filas de correspondencia (B10 de P-137-AC; P-137-Y en el caso límite de la pieza 3); `Origen:` y `Tocado por:` al día.
+- **Falta:** el desarrollador (generador, banco, derivados), QA vuelta 3 y seguridad.
+
 ## [Interno] — 2026-10-27 · REQ-036, QA vuelta 2 de 3 sobre `3c8394b`: `con-hallazgos`; `en-progreso`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 
