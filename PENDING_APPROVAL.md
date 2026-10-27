@@ -43,7 +43,53 @@
 
 ## Pendientes
 
-### P-137-AC — **REQ-036: la reparación de QA añade 240 B de texto de seguridad a la definición del analista, y B5 pasa de 75 280 B (lo que aceptaste) a 75 520 B.** ¿Se acepta?
+_(Vacía desde el 2026-10-27: P-137-AC y P-137-AB resueltas por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-27) — **P-137-AC (A)** y **P-137-AB (A)**: B5 sube a 75 520 B; hotfix 1.36.3 mínimo desde `main`, con prioridad sobre el resto de 1.37; ficha para 1.38 (gates fuera del hook, veredicto con hash)
+
+**Texto del propietario, literal** (mensaje del 2026-10-27 a la sesión coordinadora del worktree `ArnesJuan-v1.36`):
+
+> Adopto P-137-AC (A): B5 sube a 75 520 B, con la razón escrita (las dos
+> frases que hacen leer más); el techo sigue funcionando como trinquete. El
+> desarrollador corrige B10 en el mismo encargo. QA vuelta 2 de 3 y
+> seguridad.
+>
+> Adopto P-137-AB (A): hotfix 1.36.3 mínimo, rama desde main (v1.36.2),
+> PRIORIDAD sobre el resto de 1.37. Alcance, sólo esto:
+> 1. El plazo propio de 30 s mide el ANÁLISIS de la puerta, no el tiempo de
+>    las quality gates: el reloj del plazo no cuenta lo que tardan las gates.
+> 2. Las gates tienen su propio presupuesto, por debajo de lo que el cliente
+>    tarda en matar el hook (medir ese valor: el issue dice ~600 s, no 60;
+>    corregir el texto de SEC-132 (a) con la cifra medida). Si las gates lo
+>    exceden, deny con un motivo propio de gates («las quality gates no
+>    terminaron dentro de su presupuesto de N s»), nunca un cierre sin
+>    veredicto.
+> 3. Fail-before contra v1.36.2 con la reproducción del issue (una gate
+>    `sleep 35`, cierre legítimo → hoy deny, con el arreglo allow) y un caso
+>    con gates por encima del presupuesto (→ deny con el motivo de gates).
+> 4. El «hallazgo colateral» del issue (cierres que pasaron sin veredicto en
+>    versiones anteriores al morir el hook): se comprueba en v1.35.0 y
+>    v1.36.0 y se declara en las notas con lo que salga.
+> Ciclo completo, desarrollador y QA en Opus (es crítico). Tope: una pasada.
+> Al publicar 1.36.3: fusión de main en cand/1.37.0.
+>
+> Ficha para 1.38 (pieza de veredictos con hash): las gates no deberían
+> correr dentro del hook. QA o la coordinadora las corren antes y registran
+> el resultado con el hash del árbol; la puerta sólo comprueba que el árbol
+> actual es ese. Así el cierre tarda un segundo sea cual sea el proyecto.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Hotfix:**
+  - worktree `/home/juan/dev/ArnesJuan-1.36.3`, rama `hotfix/1.36.3` desde `origin/main` (`46ee7ca`, `v1.36.2`);
+  - REQ nuevo **REQ-037**, numerado después de los de `cand/1.37.0` (034–036) para que no choquen al fusionar;
+  - orden: analista (Sonnet) → desarrollador (Opus) → QA (Opus) → seguridad (Opus);
+  - «tope: una pasada» = una sola pasada correctiva.
+- **REQ-036 (P-137-AC):** la dependencia acotada del desarrollador (B5 y B10) es pequeña y va en otro worktree y otra rama, así que corre a la vez que el analista del hotfix, sin retrasarlo. QA vuelta 2 y seguridad de REQ-036 van detrás del hotfix si compiten por el mismo turno.
+- **La ficha para 1.38** se registra en `docs/PENDIENTES.md` como F-137-24.
+
+### P-137-AC (texto de la consulta, conservado; resuelta arriba) — **REQ-036: la reparación de QA añade 240 B de texto de seguridad a la definición del analista, y B5 pasa de 75 280 B (lo que aceptaste) a 75 520 B.** ¿Se acepta?
 
 **Qué pasó.** El desarrollador (Opus) construyó QA-036-03 a 09 en `330dc86` (sin validar), y paró en B5, como manda CA-20. Banco: 3082 PASS, 2 FAIL, 34 SKIP; los 2 FAIL son B5 y su fixture. `--verificar` sale 0.
 - **Origen del exceso:** sólo la definición del analista, que pasa de 16 481 a 16 721 B (+240 B). Son las dos frases que la reparación exige:
@@ -63,7 +109,7 @@
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-AC (A): B5 pasa a 75 520 B como techo de regresión, porque los 240 B son el texto de seguridad de QA-036-03 y QA-036-08; el desarrollador corrige además B10 a techo (QA-036-06); siguen QA y seguridad.
 
-### P-137-AB — **Issue #63: con gates de más de 30 s, `guard-completado` no deja cerrar nada desde 1.36.0, y el cliente no mata el hook a los 60 s sino a ≈ 600 s.** ¿Hotfix 1.36.3 o dentro de 1.37?
+### P-137-AB (texto de la consulta, conservado; resuelta arriba) — **Issue #63: con gates de más de 30 s, `guard-completado` no deja cerrar nada desde 1.36.0, y el cliente no mata el hook a los 60 s sino a ≈ 600 s.** ¿Hotfix 1.36.3 o dentro de 1.37?
 
 **Qué se midió** (evidencia en `issue-63-plazo-gates/` del árbol de evidencia, `bca0598`; proyecto mínimo, sin datos de ningún consumidor):
 - **Reproducido en 1.36.0, 1.36.1, 1.36.2 y en el candidato `d722aed`:** un cierre con todo en orden y una gate `sleep 35` se deniega siempre por el plazo propio.
@@ -115,8 +161,6 @@
 
 **Decisión propuesta, lista para adoptar:**
 > Adopto P-137-AB (A): hotfix 1.36.3 mínimo desde v1.36.2 —el plazo propio no cuenta las gates, timeout explícito en hooks.json, se corrige la promesa de los 60 s con la cifra medida, y casos de banco verde/rojo de 35 s—, con su ciclo completo; se hace después de cerrar REQ-036 y antes de 4b; luego se fusiona en cand/1.37.0.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-26) — **P-137-AA (A)**: se acepta lo medido, con las tres cifras en REQ-036; 4a cumplida por USD (−28 %) y 4/4; sin más pasadas; siguen QA y seguridad, y la parada antes de 4b
 

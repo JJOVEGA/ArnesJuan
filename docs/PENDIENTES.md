@@ -2551,3 +2551,9 @@ ninguna mata al hook.»
 
   Cualquiera de ellas toca el contrato de CA-18.
 - **Destino:** clasificado por la coordinadora (2026-10-26) como `instrumento` y fuera de la entrega de REQ-036; se informa al propietario al cerrar 4a. **Dueño:** `analista-requerimientos` (contrato), luego `desarrollador`. **Cuándo:** se mide en el uso real; si las comisiones después de la primera de cada sesión pierden el ahorro de 4a, entra en 1.37 · 5.
+
+### F-137-24 — 1.38, pieza de veredictos con hash: las quality gates fuera del hook (decisión del propietario, 2026-10-27)
+- **Literal del propietario:** «las gates no deberían correr dentro del hook. QA o la coordinadora las corren antes y registran el resultado con el hash del árbol; la puerta sólo comprueba que el árbol actual es ese. Así el cierre tarda un segundo sea cual sea el proyecto.»
+- **Origen:** issue #63. Con las gates dentro del hook, el cierre queda atado al límite del cliente (≈ 600 s, medido en 2.1.289) y a SEC-132 (a); el hotfix 1.36.3 sólo separa sus relojes.
+- **Relación:** sustituye la ejecución de gates que hoy hace `guard-completado`. Encaja con F-136-22 (lecciones L4 y L5: la gate es código no confiable) y con la frontera de confianza del entorno (SEC-131).
+- **Dueño:** `analista-requerimientos` (contrato) y `desarrollador`. **Cuándo:** 1.38.

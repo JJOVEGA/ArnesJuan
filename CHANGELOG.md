@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-27 · `P-137-AC (A)` y `P-137-AB (A)` resueltas: B5 a 75 520 B; hotfix 1.36.3 con prioridad; F-137-24 para 1.38
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
+
+- **Decisiones del propietario**, literales en `PENDING_APPROVAL.md` § Resueltas:
+  - B5 sube a 75 520 B como trinquete, y B10 se corrige;
+  - hotfix 1.36.3 mínimo desde `main`, con cuatro puntos de alcance, ciclo completo y una sola pasada correctiva, con prioridad sobre el resto de 1.37;
+  - las gates salen del hook en 1.38 (F-137-24 en `docs/PENDIENTES.md`).
+- **Worktree del hotfix:** `/home/juan/dev/ArnesJuan-1.36.3`, rama `hotfix/1.36.3` desde `46ee7ca`. El REQ será REQ-037.
+- **Resultado:** las decisiones están registradas. **Falta:** el analista del hotfix y la dependencia acotada de REQ-036.
+
 ## [Interno] — 2026-10-26 · REQ-036: B5 pasa a 75 520 B por el texto de seguridad de la reparación; parada en `P-137-AC`
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 
