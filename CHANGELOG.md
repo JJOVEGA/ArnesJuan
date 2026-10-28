@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, analista: pasada acotada de P-137-AI (A), CA-17 y CA-18 (inercia sin `.arnes/`, la condición primero); `bloqueado` → `en-progreso`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos.
+
+- **Sólo `requirements/REQ-036.md` y este archivo.** Sin código: la condición y las pruebas las hace el desarrollador.
+- **CA-17:** sin `.arnes/` el hook sale 0 sin emitir nada, sin lanzar el generador, sin leer fuentes y sin procesos, y la comprobación es lo primero que hace. «Tener `.arnes/`» = resuelve a un directorio (real, vacío o no, o enlace a un directorio); un archivo o un enlace roto no cuenta. Con `.arnes/` el recordatorio sigue sin depender del manifiesto.
+- **Tres pruebas con fail-before contra `7af469c`:** directorio vacío, `AGENTS.md` ajeno y fuente de 1,5 MB, todas sin `.arnes/`. Exigen sin aviso (0 bytes), sin lectura (señuelo de `sha256sum` y ausencia del mensaje de lectura del generador; un FIFO no discrimina) y no más de 1 s (operativo; la base mide ≈ 10,9 s). Cuatro controles con `.arnes/`.
+- **CA-18:** el generador comprueba `.arnes` (y los enlaces) antes de abrir, medir o resumir ninguna fuente. Nada más cambia.
+- **Correspondencia:** filas de P-137-AI y de P-137-AH (la que QA echó en falta). `Origen:` y `Tocado por:` al día; recuento de CA-01 a CA-20 intacto (20).
+- **Nota:** el literal del propietario dice `.arnes/`; `README.md:86`, `AGENTS.md` §13 y `ARCHITECTURE.md` dicen «sin `.arnes/config.json`». Con `.arnes/` sin manifiesto el hook sigue avisando. Sin tocar esos textos.
+
 ## [Interno] — 2026-10-28 · P-137-AI (A) resuelta por el propietario: el hook de inicio y el generador no hacen nada sin `.arnes/`; pasada acotada; F-137-25 y F-137-26; F-137-24 se publica sola como 1.36.3 desde `main`
 > Origen: P-137-AI · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 
