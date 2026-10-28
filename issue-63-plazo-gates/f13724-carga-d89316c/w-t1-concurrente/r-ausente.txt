@@ -1,0 +1,1 @@
+== d89316c ausente n=850 s=423 max_ms=1023 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0

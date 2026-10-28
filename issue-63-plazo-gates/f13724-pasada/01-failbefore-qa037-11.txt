@@ -1,0 +1,29 @@
+# QA-037-11 fail-before, 2026-10-28T13:50:27-06:00, bash 5.3.9(1)-release
+== árbol: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-pasada/arb/42a320c/hooks
+  puerta, registro regular    -> allow
+  puerta, registro simbolico  -> allow
+  puerta, registro duro       -> allow
+  Bash `ln -s VJ .arnes/gates-veredicto.json`   -> allow
+  Bash `ln -sf VJ .arnes/gates-veredicto.json`  -> allow
+  Bash `ln VJ .arnes/gates-veredicto.json`      -> allow
+  Bash `ln -f VJ .arnes/gates-veredicto.json`   -> allow
+  Bash `ln .arnes/gates-veredicto.json otro.json` -> allow
+  Bash `ln -t .arnes VJ/gates-veredicto.json`   -> allow
+  Bash `cat .arnes/gates-veredicto.json`        -> allow
+  Bash `rm -f .arnes/gates-veredicto.json`      -> allow
+  Bash `unlink .arnes/gates-veredicto.json`     -> allow
+  Bash `ln -s .arnes/gates-veredicto.json otro.json` -> allow
+== árbol: /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-pasada/arb/cand/hooks
+  puerta, registro regular    -> allow
+  puerta, registro simbolico  -> deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': el veredicto de las quality gates (.arn
+  puerta, registro duro       -> deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': el veredicto de las quality gates (.arn
+  Bash `ln -s VJ .arnes/gates-veredicto.json`   -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `ln -sf VJ .arnes/gates-veredicto.json`  -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `ln VJ .arnes/gates-veredicto.json`      -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `ln -f VJ .arnes/gates-veredicto.json`   -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `ln .arnes/gates-veredicto.json otro.json` -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `ln -t .arnes VJ/gates-veredicto.json`   -> deny: ARNES: este comando enlaza con `ln` el registro del veredicto de las quality gates ('.arnes/gates-veredicto.js
+  Bash `cat .arnes/gates-veredicto.json`        -> allow
+  Bash `rm -f .arnes/gates-veredicto.json`      -> allow
+  Bash `unlink .arnes/gates-veredicto.json`     -> allow
+  Bash `ln -s .arnes/gates-veredicto.json otro.json` -> allow

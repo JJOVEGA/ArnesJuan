@@ -1,0 +1,1 @@
+== d89316c caducado n=850 s=524 max_ms=1709 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0

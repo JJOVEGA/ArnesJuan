@@ -1,0 +1,9 @@
+== d89316c ausente n=850 s=423 max_ms=1023 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c caducado n=850 s=524 max_ms=1709 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c rojo n=850 s=465 max_ms=1523 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c valido n=850 s=503 max_ms=1174 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c valido n=150 s=85 max_ms=759 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c rojo n=150 s=79 max_ms=743 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c caducado n=150 s=89 max_ms=837 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c ausente n=150 s=73 max_ms=855 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+fin 2026-10-28T14:12:09-06:00

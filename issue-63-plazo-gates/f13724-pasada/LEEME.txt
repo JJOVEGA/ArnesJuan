@@ -1,0 +1,5 @@
+# Pasada correctiva de F-137-24 (QA-037-11 y 13), desarrollador Opus (claude-opus-5-5), 2026-10-28, cabeza d89316c.
+01-failbefore-qa037-11.txt  a nivel de hook, 42a320c frente a la candidata: registro regular, simbólico y duro; formas de ln y controles (bin/failbefore.sh; arb/ con los dos árboles).
+02-seccion53-candidata.txt  la sección 53 sola: 100 PASS, 2 SKIP.
+03-gates.txt, 04-autoprueba.txt, 05-banco-completo.txt  gates de §7, autoprueba 117/0, banco completo una vez: 3032/0/30, cuadre 3062.
+Sin carga (P-137-AM: la lanza la coordinadora).

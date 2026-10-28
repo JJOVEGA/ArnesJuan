@@ -1,0 +1,7 @@
+# sondas de REQ-033 a mano: d89316c y ceb7bf3 frente a v1.36.2 (46ee7ca), alternadas, 31 por árbol (ms), 2026-10-28T14:19:37-06:00, loadavg 2.40 7.73 11.67
+write d89316c decisión=deny min=37.7 mediana=41.6
+write ceb7bf3 decisión=deny min=36.9 mediana=41.2
+write 46ee7ca decisión=deny min=37.2 mediana=40.2
+mv d89316c decisión=deny min=33.8 mediana=36.5
+mv ceb7bf3 decisión=deny min=32.7 mediana=36.5
+mv 46ee7ca decisión=deny min=31.7 mediana=34

@@ -1,0 +1,9 @@
+# t2-serie (serie, 150 por clase), 2026-10-28T14:06:24-06:00; carga PGID 3952127 (el mío 3349189)
+loadavg al empezar: 23.89 22.29 14.22
+== d89316c valido n=150 s=85 max_ms=759 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c rojo n=150 s=79 max_ms=743 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c caducado n=150 s=89 max_ms=837 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c ausente n=150 s=73 max_ms=855 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+loadavg al terminar: 23.87 23.38 17.12 14:12:08
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/carga-ca09.sh: line 33: 3952127 Killed                     setsid bash $C/bin/carga.sh $W/pgid > /dev/null 2>&1
+quedan en el grupo de carga 3952127: 0

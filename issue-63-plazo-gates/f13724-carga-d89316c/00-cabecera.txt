@@ -1,0 +1,8 @@
+# CA-09 sobre d89316c, lanzada por la coordinadora (Opus), 2026-10-28T13:57:19-06:00, bash 5.3.9(1)-release, 12 núcleos
+# sha256 de los guiones (iguales a los de QA):
+1934147d76df35d987337df4e1fe5cac276ef1288db3d37373d8e2b9d49944a7  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-qa/bin/carga.sh
+1934147d76df35d987337df4e1fe5cac276ef1288db3d37373d8e2b9d49944a7  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-carga-d89316c/bin/carga.sh
+4b4d28cd85f0d2dbcb525ba3da2401f6f72561434a79dce11f6602017f36bf81  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-qa/bin/cierres.sh
+4b4d28cd85f0d2dbcb525ba3da2401f6f72561434a79dce11f6602017f36bf81  /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-carga-d89316c/bin/cierres.sh
+# sha256 del árbol congelado:
+8cc09432a1413a7dc0b896b118a36160c35ea4f0069840daed06472940eb8f57  -

@@ -1,0 +1,11 @@
+# QA-037-11, tercera tanda, 2026-10-28T14:14:36-06:00
+  [cp F .arnes/] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [cp F .arnes] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [mv F .arnes/] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [cp -t .arnes F] candidata: deny | v1.36.2: deny
+  [install -m 644 F .arnes/] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [cp --link F .arnes/ && rm F] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [cp -l F .arnes && rm F] candidata: allow | v1.36.2: allow → ejecutada; cierre: allow
+  [cp M .arnes/] candidata: allow | v1.36.2: allow
+  [cp M .arnes] candidata: allow | v1.36.2: allow
+  [mv M .arnes/] candidata: allow | v1.36.2: allow

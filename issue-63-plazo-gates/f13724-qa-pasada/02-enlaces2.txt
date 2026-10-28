@@ -1,0 +1,12 @@
+# QA-037-11, segunda tanda, 2026-10-28T14:14:15-06:00
+  [link F .arnes/gates-veredicto.json] allow | allow | allow → ejecutada; cierre: deny (leer como un veredicto completo (no es un archivo regular de un solo enlace (tiene enlaces duros, o no se pudo contar))
+  [link F .arnes/gates-veredicto.json && rm F] allow | allow | allow → ejecutada; cierre: allow
+  [ln F .arnes/gates-veredicto.json && rm F] deny | deny | allow
+  [ln -t .arnes F] deny | deny | allow
+  [ln -s -t .arnes F] deny | deny | allow
+  [ln --target-directory=.arnes F] deny | deny | allow
+  [ln F .arnes] deny | deny | deny
+  [ln -s F .arnes/] deny | deny | deny
+  [cp --link F .arnes/] allow | allow | allow → ejecutada; cierre: deny (leer como un veredicto completo (no es un archivo regular de un solo enlace (tiene enlaces duros, o no se pudo contar))
+  [cp -l F .arnes] allow | allow | allow → ejecutada; cierre: deny (leer como un veredicto completo (no es un archivo regular de un solo enlace (tiene enlaces duros, o no se pudo contar))
+  [cp -al F .arnes/gates-veredicto.json] deny | deny | allow

@@ -1,0 +1,9 @@
+# t1-concurrente (concurrente, 850 por clase), 2026-10-28T13:57:22-06:00; carga PGID 3349210 (el mío 3349189)
+loadavg al empezar: 5.65 2.53 4.39
+== d89316c ausente n=850 s=423 max_ms=1023 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c caducado n=850 s=524 max_ms=1709 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c rojo n=850 s=465 max_ms=1523 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== d89316c valido n=850 s=503 max_ms=1174 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+loadavg al terminar: 24.84 22.35 14.06 14:06:21
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/carga-ca09.sh: line 33: 3349210 Killed                     setsid bash $C/bin/carga.sh $W/pgid > /dev/null 2>&1
+quedan en el grupo de carga 3349210: 0
