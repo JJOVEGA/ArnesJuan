@@ -2,6 +2,29 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): QA de REQ-037 sobre `ceb7bf3`, `con-hallazgos`
+> Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **CA-08 (a), el fail-before de las respuestas dobles:** reproducido en la misma sesión, con la carga de QA sin cambios.
+  - `d47cfba`: 3 dobles, 3 cuelgues y 4 `deny` espurios, en 600 cierres.
+  - La candidata: 0 dobles en 4 000.
+- **CA-09, la condición de publicar:** cumplida.
+  - 4 000 cierres (válido, rojo, caducado y ausente; 3 400 a la vez y 600 en serie).
+  - 0 dobles, 0 cuelgues (máximo 999 ms), 0 `deny` espurios y 0 `allow` espurios.
+- **CA-01:** el código hace lo que dice la lista, pero no se aprueba mientras P-137-AL siga en Pendientes.
+- **Conformes:** CA-02, CA-03, CA-06 (el intento, retirado), CA-08 (b), CA-10 y CA-15.
+- **Hallazgos nuevos, los tres `contrato`:**
+  - QA-037-11: `ln` sobre el registro fabrica un verde.
+  - QA-037-12: lanzar la herramienta con el entorno suplantado fabrica un verde.
+  - QA-037-13: la sección 04 ya no prueba las gates en forma de objeto.
+- **Del diseño anterior:**
+  - cerrados: QA-037-01, 04, 06 y 09;
+  - retirados por reversión: 03, 05 y 10;
+  - sigue abierto: QA-037-08 (`instrumento`).
+- **Banco:** 3016 PASS, 1 FAIL (la sonda de reloj de REQ-033, QA-037-08) y 30 SKIP; cuadre 3047.
+- **Herramienta:** `tools/arnes-gates.sh --quien qa-tester` sobre el repositorio da VERDE.
+- **Evidencia:** en el scratchpad de la sesión, `issue-63-f13724-qa/`.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): write-back del analista sobre `42a320c`; documentación de CA-14 y barrido del «60 s» (CA-11)
 > Origen: P-137-AK · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
 
@@ -165,7 +188,18 @@ CHANGELOG — ArnesJuan
 
 **Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` (propuesto para 1.37); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).
 
-**Firmas.** *Pendientes: QA (Opus), el write-back del analista y seguridad (Opus).* Las firmas del diseño anterior (QA, vueltas 1 y 2, `con-hallazgos`) juzgaban un contrato que ya no existe; sus hallazgos siguen en `docs/qa/REQ-037.md` hasta que QA los cierre.
+**Firmas.**
+- **QA (Opus, 2026-10-28, cabeza `ceb7bf3`): `con-hallazgos`** (`docs/qa/REQ-037.md`).
+  - **CA-08 (a):** `d47cfba` da 3 respuestas dobles con carga; la candidata, 0 en 4 000.
+  - **CA-09:** 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
+  - **CA-01:** pendiente de P-137-AL.
+  - **Abiertos, `contrato`:**
+    - QA-037-11: `ln` sobre el registro.
+    - QA-037-12: el entorno suplantado de la herramienta.
+    - QA-037-13: las gates en forma de objeto, sin caso en el banco.
+  - **Abierto, `instrumento`:** QA-037-08.
+  - Los hallazgos del diseño anterior quedan cerrados o retirados por la reversión.
+- *Pendiente: seguridad (Opus).*
 
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
 > Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
