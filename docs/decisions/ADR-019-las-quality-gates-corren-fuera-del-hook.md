@@ -14,6 +14,7 @@ Estado: aceptada (2026-10-28). Sustituye a [ADR-018](ADR-018-las-quality-gates-t
 
 ## Consecuencias
 - Un cierre con gates verdes de cualquier duración, con veredicto válido, tarda ≈ 1 s (M-037-1). **Cambio de compatibilidad:** un proyecto con `quality_gates` ya no cierra hasta que alguien corre la herramienta (M-037-2); sin git no cierra.
+- **Adenda (P-137-AO, 2026-10-28; SEC-151):** el hash es lo único del hook que crece con los datos, así que tiene **presupuesto propio de 30 s**, fijo en el código; si no termina (o el corte no se arma, o el proceso muere), la puerta deniega con motivo propio y la herramienta sale con rc 2. El hook responde en ≈ 61 s como mucho; el límite práctico es ≈ 6 GiB no ignorados (≈ 4,5 s/GiB), y con más no se cierra un REQ con gates hasta ignorar lo que no es del producto. El «≈ 1 s» de la decisión del propietario es independiente de la duración de las gates, no del tamaño del árbol. Corte de `git.exe` en Git Bash: sin medir. SEC-150 y SEC-152 se declaran (REQ-037 CA-01), sin arreglo.
 - SEC-133 queda cerrado por construcción; SEC-132 (a) deja de ser un vector del hook; SEC-131 (a) y SEC-132 (b) no cambian.
 - Una suite de más de 600 s se corre en segundo plano o desde la terminal del propietario; el hash, no la duración, da la fiabilidad.
 - **Residual:** quien escribe el registro por una forma que las puertas no ven puede fabricar un verde (F-136-13). Endurecimiento posible, no incluido: restringir por `Bash` quién lanza la herramienta.

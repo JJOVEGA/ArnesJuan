@@ -48,7 +48,9 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
   `tools/arnes-gates.sh --quien <quien>` (QA, la coordinadora o el propietario), que deja en
   `.arnes/gates-veredicto.json` el código de salida de cada gate y el **hash del árbol**, y la puerta
   sólo lo comprueba, en ≈ 1 s sea cual sea la duración de las gates. Un proyecto con `quality_gates`
-  no cierra un REQ hasta que alguien corra la herramienta; sin git no cierra. Riesgos y límites:
+  no cierra un REQ hasta que alguien corra la herramienta; sin git no cierra. El cálculo de la huella
+  tiene un presupuesto propio de 30 s: con más de ≈ 6 GiB de contenido no ignorado la puerta deniega
+  con motivo propio hasta que se ignore lo que no es del producto. Riesgos y límites:
   `AGENTS.md` §13.
 - **El orden del ciclo se cumple:** `Seguridad: aprobado` no se escribe sobre un árbol que QA no
   ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría

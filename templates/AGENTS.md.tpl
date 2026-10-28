@@ -566,7 +566,10 @@ se fijan por proyecto; si no se definieron, se usa el estándar del stack.
 > propietario—, que deja en `.arnes/gates-veredicto.json` el código de salida de cada gate y el **hash del
 > árbol**. El hook `guard-completado` **deniega** la transición de un REQ a `completado` si ese veredicto
 > falta, no se puede leer, es de otra lista de gates, tiene una gate que no salió 0 o no es del árbol actual
-> (alcance y límites en §13). Sin git no se cierra un REQ con gates. Mantén la lista de gates idéntica aquí
+> (alcance y límites en §13). Sin git no se cierra un REQ con gates. El cálculo del hash tiene un presupuesto
+> propio de **30 s**, fijo en el código: con más de ≈ 6 GiB de contenido no ignorado la puerta deniega con motivo
+> propio («presupuesto propio de la huella») y la herramienta sale con rc 2 sin veredicto, hasta que se ignore en
+> git lo que no es del producto. Mantén la lista de gates idéntica aquí
 > y en el manifiesto, e ignora `.arnes/gates-veredicto.json` en git.
 
 ## 8. CHANGELOG — reglas
@@ -698,6 +701,12 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
      `PreToolUse` sin `timeout` explícito a los **≈ 600 s** (medido: CLI 2.1.289, Linux/WSL2; no a los 60 s que
      daba este texto); en 1.35.0 y 1.36.0 un cierre con una gate de 700 s **se aplicó sin veredicto** (medido con
      el cliente real);
+   - **el hash del árbol** (SEC-151, P-137-AO): crece con los bytes no ignorados (≈ 4,5 s/GiB) y **tiene presupuesto
+     propio de 30 s**, fijo en el código; si no termina, la puerta deniega con motivo propio (el hook responde en
+     ≈ 61 s como mucho). Límite: ≈ 6 GiB no ignorados; el corte de un `git.exe` nativo en Git Bash **no está medido**.
+     Declarados sin arreglo en 1.36.3 (P-137-AO): **SEC-150** (un cambio del árbol hecho durante la corrida de la
+     herramienta y deshecho antes del hash final no se ve) y **SEC-152** (lo que una gate lee fuera del proyecto, p. ej.
+     a través de un enlace simbólico, puede cambiar tras el verde sin invalidarlo);
    - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
      `Hallazgos abiertos:` repetidas en la cabecera **en disco** (SEC-132 (b)) y un REQ de varios MB con CRLF
      en disco (QA-007-09), límites declarados de 1.36.0;

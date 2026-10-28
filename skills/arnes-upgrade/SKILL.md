@@ -1551,7 +1551,12 @@ con gates que sumaban más de 30 s `guard-completado` denegaba todo cierre (el p
 - **Qué ves si tu manifiesto tiene `quality_gates`:** el cierre de un REQ se **deniega hasta que alguien corra
   `tools/arnes-gates.sh --quien <quien>`** del plugin (QA, la coordinadora o tú); el motivo dice cómo, con la ruta. La herramienta
   deja `.arnes/gates-veredicto.json` con el código de cada gate y el **hash del árbol**; si el árbol cambia después, caduca. La
-  puerta no ejecuta gates y responde en ≈ 1 s. **Sin `quality_gates`, nada cambia. Sin git, no se cierra un REQ con gates.**
+  puerta no ejecuta gates y responde en ≈ 1 s sea cual sea la duración de las gates. **Sin `quality_gates`, nada cambia. Sin git, no se cierra un REQ con gates.**
+  **El cálculo de la huella tiene un presupuesto propio de 30 s** (fijo): caben **≈ 6 GiB de contenido no ignorado**; con más,
+  el cierre se deniega siempre con el motivo «presupuesto propio de la huella» y la herramienta sale con rc 2 sin veredicto,
+  hasta que ignores en git lo que no es del producto (datos, binarios, salidas). En v1.36.2 la puerta no leía el árbol. El corte
+  en Git Bash/Windows no está medido. **Declarados sin arreglo:** SEC-150 (un cambio durante la corrida deshecho antes del hash
+  final no se ve) y SEC-152 (lo que una gate lee fuera del proyecto puede cambiar tras el verde).
 - **Qué haces:** ignora `.arnes/gates-veredicto.json` en git; corre la herramienta **lo último** (tras los veredictos); una
   suite de más de 10 min, en segundo plano o desde tu terminal. No escribas el registro a mano.
 - **Riesgo declarado, no aceptado como definitivo** (`AGENTS.md` §13): quien escribe el registro por una forma que las puertas
