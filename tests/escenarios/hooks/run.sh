@@ -1728,7 +1728,9 @@ done
 # Y 3047 → 3062 por la pasada correctiva de F-137-24: +15 en la 53 (87 → 102) —L8 y L9 (el registro enlazado), O1–O3 (gates
 # en forma de objeto, QA-037-13) en la candidata, y cuatro formas de `ln` y el control `unlink` en los dos árboles
 # (QA-037-11)—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3062
+# Y 3062 → 3066 por SEC-151 (P-137-AO): +4 en la 53 (102 → 106) —S1 y S2 (la huella con presupuesto propio: archivo disperso
+# y `.gitignore` FIFO), S3 (sin huérfanos) y S4 (el corte falla cerrado)—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3066
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

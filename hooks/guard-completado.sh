@@ -978,6 +978,10 @@ arnes_guard_completado() {
         arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': en el veredicto registrado ($ARNES_VEREDICTO_REL) la quality gate \`$ARNES_VER_DETALLE\` no salio 0 (o no llego a correr), y ninguna gate roja deja cerrar (AGENTS.md §7; REQ-037 CA-03). Corrigela, y despues: $corre" ;;
       caducado)
         arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) no es del arbol actual ($ARNES_VER_DETALLE): el hash del arbol con el que corrieron no es el de ahora (REQ-037 CA-01 y CA-03). No es un veredicto sobre el codigo: caduco. $corre" ;;
+      presupuesto)
+        # SEC-151 (P-137-AO): la huella tiene su presupuesto propio (ARNES_HASH_PRESUPUESTO_S, lib.sh); sin ella no se
+        # sabe si el verde es del árbol actual, y el hook no puede seguir midiendo hasta que el cliente lo cancele.
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la huella del arbol no se calculo dentro del presupuesto propio de la huella (${ARNES_VER_DETALLE:-sin detalle}), asi que no se puede comprobar que el veredicto de las quality gates ($ARNES_VEREDICTO_REL) sea del arbol actual, y una puerta que no puede medir no deja pasar (REQ-037 CA-01; SEC-151). No es un veredicto sobre el codigo. El calculo crece con los bytes de lo no ignorado: si hay datos o binarios grandes que no son del producto, ignoralos en .gitignore, vuelve a correr las gates y reintenta." ;;
       *)
         arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': no se puede medir el arbol del proyecto para comprobar el veredicto de las quality gates (${ARNES_VER_DETALLE:-sin detalle}), y una puerta que no puede medir no deja pasar: sin git no se cierra un REQ con gates (REQ-037 CA-01)." ;;
     esac

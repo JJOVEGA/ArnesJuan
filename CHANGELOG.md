@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: SEC-151 reparado (P-137-AO); REQ-037 `en-revisión`
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
+
+- **La huella tiene presupuesto propio: 30 s, fijo en el código.** El hash del árbol corre en un proceso aparte. Si no termina a tiempo, se corta: muere ese proceso y el git en curso. La puerta deniega con un motivo propio. Si el corte falla, también deniega.
+- **Medido con la sonda de 200 GiB dispersos:** `deny` en 30 152 ms y sin procesos vivos. Antes, en `d89316c`: 923 826 ms, más allá de los 600 000 del cliente.
+- **Mismo defecto, otra vía:** un `.gitignore` que es una FIFO colgaba `git ls-files`. El presupuesto también lo cubre.
+- **Banco:** la sección 53 suma S1–S4 y el cuadre pasa de 3062 a 3066. Un árbol normal tarda lo mismo que antes.
+- Criterios y notas: los reescribe el analista con el valor construido.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AO, decisión del propietario sobre R-066
 > Origen: R-066 · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
 

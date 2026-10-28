@@ -492,7 +492,83 @@ _arnes_hash_excluido() {   # <ruta relativa> -> 0 si la lista cerrada la deja fu
   return 1
 }
 
-# arnes_hash_arbol <raíz> -> ARNES_HASH ; 0 = medido, 1 = no medible (ARNES_HASH_MOTIVO).
+# EL PRESUPUESTO DE LA HUELLA (SEC-151; decisión del propietario P-137-AO). Calcular el hash del árbol es lineal
+# en los BYTES de lo no ignorado y no tiene techo: un archivo disperso de 200 GiB (`truncate -s 200G`, sin ocupar
+# disco) lo llevaba a ≈ 924 s dentro del hook, más allá de los ≈ 600 s en que el cliente cancela un `PreToolUse` y
+# aplica la llamada sin decisión. Y `git ls-files --exclude-standard` se queda esperando para siempre si un
+# `.gitignore` del árbol es una FIFO. `arnes_plazo` no alcanza a ninguna de las dos: es una sola orden externa.
+# Por eso el cálculo entero corre en un proceso propio y quien lo pide sólo lee, con `read -t`, líneas cortas que
+# ese proceso le escribe; si a los ARNES_HASH_PRESUPUESTO_S segundos no llegó el resultado, mata el git en curso y
+# el proceso, y el hash es «no medible por presupuesto» (código 2), que la puerta deniega con su motivo propio.
+# EL VALOR, 30 s, FIJO AQUÍ: ninguna variable del entorno lo cambia (esta asignación pisa la heredada). La puerta
+# llega a la huella dentro del plazo del análisis (30 s, `arnes_plazo` justo antes), así que el hook responde en
+# ≈ 30 + 30 + 1 s (el último, el drenaje del corte): más de ocho veces por debajo de los ≈ 600 s del cliente. Del
+# otro lado, a ≈ 4,5 s por GiB (medido en R-066, Linux/WSL2) caben ≈ 6 GiB de contenido no ignorado; un proyecto
+# con más no cierra REQ con gates hasta ignorar lo que no es del producto, y el motivo lo dice. El mismo
+# presupuesto rige en la herramienta (`tools/arnes-gates.sh`), que usa esta función: un árbol que la puerta no
+# podrá medir no recibe un veredicto que nunca se podrá comprobar.
+ARNES_HASH_PRESUPUESTO_S=30
+
+# arnes_hash_arbol <raíz> -> ARNES_HASH ; 0 = medido, 1 = no medible (ARNES_HASH_MOTIVO), 2 = no terminó dentro
+# del presupuesto, o el corte no se pudo armar (ARNES_HASH_MOTIVO). EL CORTE: el cálculo (`_arnes_hash_proceso`)
+# corre en una sustitución de procesos y escribe, una por línea: `S <su pid>` al empezar, `P <pid>` al lanzar cada
+# git largo (listar, hashear el contenido), `F` cuando ese git terminó, y al final `H <hash>` o `M <motivo>`. Aquí
+# sólo se leen esas líneas, cada `read` con lo que queda del presupuesto: nunca se lee aquí una salida de git
+# —leerla con `read -t` cuesta ≈ 2,4 µs por byte, medido—. Al vencer: KILL al proceso del cálculo (ya no lanza
+# nada más) y al último git anunciado sin su `F`, que es el que seguiría leyendo, y un drenaje de hasta 1 s de las
+# líneas que queden por si un `P` llegó tarde. FALLA CERRADO: si la sustitución no se crea, si el proceso muere sin resultado o escribe algo
+# que no es del protocolo, es código 2 con su motivo, nunca un hash. Sin `timeout`, `wait -n` ni grupos de
+# procesos: `read -t`, `kill` y `wait` de bash 4, iguales en Linux, macOS y Git Bash. LÍMITE DECLARADO: en Git Bash
+# el KILL a un git nativo de Windows lo traduce el runtime de MSYS; no está medido en esa plataforma.
+arnes_hash_arbol() {
+  local fin=$(( SECONDS + ARNES_HASH_PRESUPUESTO_S )) f='' l r rest s='' p='' res=roto
+  ARNES_HASH=''; ARNES_HASH_MOTIVO=''
+  if exec {f}< <(_arnes_hash_proceso "$1"); then
+    while :; do
+      rest=$(( fin - SECONDS ))
+      if (( rest <= 0 )); then res=agotado; break; fi
+      IFS= read -r -t "$rest" -u "$f" l; r=$?
+      if (( r > 128 )); then res=agotado; break; fi
+      (( r == 0 )) || break                                   # fin sin resultado: el proceso murió
+      case "$l" in
+        'S '[1-9]*) s=${l#S } ;;
+        'P '[1-9]*) p=${l#P } ;;
+        F) p='' ;;
+        'H '*) l=${l#H }; case "$l" in ''|*[!0-9a-f]*) ;; *) ARNES_HASH=$l; res=ok ;; esac; break ;;
+        'M '*) ARNES_HASH_MOTIVO=${l#M }; res=no; break ;;
+        *) break ;;
+      esac
+    done
+    if [ "$res" != ok ] && [ "$res" != no ]; then
+      _arnes_hash_mata "$s"; _arnes_hash_mata "$p"
+      # Un git lanzado justo antes del KILL al cálculo, cuyo `P` aún no se había leído: su envoltorio lo anuncia
+      # igual. El drenaje acaba en cuanto el último envoltorio sale (fin de la tubería) o a 1 s.
+      while IFS= read -r -t 1 -u "$f" l; do case "$l" in 'P '[1-9]*) p=${l#P }; _arnes_hash_mata "$p" ;; esac; done
+    fi
+    exec {f}<&-
+  fi
+  case "$res" in
+    ok) return 0 ;;
+    no) return 1 ;;
+    agotado) ARNES_HASH_MOTIVO="el calculo no termino en $ARNES_HASH_PRESUPUESTO_S s, su presupuesto propio, y se corto" ;;
+    *) ARNES_HASH_MOTIVO="el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado" ;;
+  esac
+  ARNES_HASH=''
+  return 2
+}
+_arnes_hash_mata() { [[ $1 =~ ^[1-9][0-9]*$ ]] && kill -KILL "$1" 2>/dev/null; return 0; }
+
+# _arnes_hash_proceso <raíz> — el cálculo, en el proceso propio que lanza `arnes_hash_arbol`: el protocolo de
+# líneas por su salida estándar (ARNES_HASH_FD, que cada git largo hereda cerrado y su envoltorio usa para `P`).
+_arnes_hash_proceso() {
+  exec {ARNES_HASH_FD}>&1
+  printf 'S %s\n' "$BASHPID"
+  if _arnes_hash_calcula "$1"; then printf 'H %s\n' "$ARNES_HASH"
+  else printf 'M %s\n' "${ARNES_HASH_MOTIVO//[$'\n\r']/ }"; fi
+}
+
+# _arnes_hash_calcula <raíz> -> ARNES_HASH ; 0 = medido, 1 = no medible (ARNES_HASH_MOTIVO). Sólo dentro de
+# `_arnes_hash_proceso`.
 # EL ÁRBOL (CA-01): lo que `git ls-files -c -o --exclude-standard` lista —lo comiteado, lo modificado sin
 # comitear y lo nuevo no ignorado; lo borrado no está, y eso cambia el hash—, con el CONTENIDO de cada archivo
 # tal como está en disco (`hash-object --no-filters`: sin filtros del proyecto, que serían órdenes ajenas) y su
@@ -503,7 +579,9 @@ _arnes_hash_excluido() {   # <ruta relativa> -> 0 si la lista cerrada la deja fu
 # mide (falla cerrado).
 # COSTE: tres procesos de git —listar, hashear los archivos, hashear el resultado— y `readlink` sólo si hay
 # enlaces; lineal en el número de archivos y en sus bytes. Sin git, o fuera de un repositorio: no medible.
-arnes_hash_arbol() {
+# Los dos git largos se lanzan en segundo plano dentro de su envoltorio, que anuncia su pid (`P`) antes de
+# esperarlo y deja su código en la propia salida (`RC`), como hasta ahora; tras leerla entera, `F`.
+_arnes_hash_calcula() {
   local raiz="$1" e p m q n prev='' io=0 ic=0 no nc rc lineas='' texto='' LC_ALL=C
   local -a otros=() segui=() ps=() ms=() hs=() enl=() dest=()
   local -a git=(git -C "$raiz" -c core.fsmonitor=false -c core.untrackedCache=false -c core.quotePath=false)
@@ -515,7 +593,9 @@ arnes_hash_arbol() {
       ?' '*) segui+=("${e#? }") ;;
       'RC '*) rc="${e#RC }" ;;
     esac
-  done < <("${git[@]}" ls-files -z -t -c -o --exclude-standard 2>/dev/null; printf 'RC %s\0' "$?")
+  done < <("${git[@]}" ls-files -z -t -c -o --exclude-standard 2>/dev/null {ARNES_HASH_FD}>&- &
+           printf 'P %s\n' "$!" >&"$ARNES_HASH_FD"; wait "$!"; printf 'RC %s\0' "$?")
+  printf 'F\n'
   if [ "$rc" != 0 ]; then
     ARNES_HASH_MOTIVO="git no pudo listar el arbol de '$raiz' (no es un repositorio git, o git no esta disponible)"; return 1
   fi
@@ -541,7 +621,9 @@ arnes_hash_arbol() {
     ps+=("$p"); ms+=("$m")
   done
   if [ -n "$lineas" ]; then
-    mapfile -t hs < <("${git[@]}" hash-object --no-filters --stdin-paths <<< "${lineas%$'\n'}" 2>/dev/null; printf 'RC %s\n' "$?")
+    mapfile -t hs < <("${git[@]}" hash-object --no-filters --stdin-paths <<< "${lineas%$'\n'}" 2>/dev/null {ARNES_HASH_FD}>&- &
+                      printf 'P %s\n' "$!" >&"$ARNES_HASH_FD"; wait "$!"; printf 'RC %s\n' "$?")
+    printf 'F\n'
     n=${#hs[@]}
     if (( n == 0 )) || [ "${hs[n-1]}" != 'RC 0' ]; then
       ARNES_HASH_MOTIVO="git no pudo leer el contenido de los archivos del arbol (uno cambio o desaparecio mientras se media, o no se puede leer)"; return 1
@@ -572,7 +654,8 @@ arnes_hash_arbol() {
 # arnes_veredicto_juzga <raíz> <gates del manifiesto, una por línea> -> ARNES_VER_ESTADO y ARNES_VER_DETALLE.
 # Estados: ok, ausente, ilegible, lista (la del registro no es la del manifiesto), roja (ARNES_VER_DETALLE: la
 # primera gate que no salió 0, o que no corrió), caducado (el hash no es el del árbol actual, o el registro es de
-# otra definición de árbol) y nomedible (el hash del árbol actual no se pudo calcular). REQ-037 CA-03:
+# otra definición de árbol), nomedible (el hash del árbol actual no se pudo calcular) y presupuesto (su cálculo no
+# terminó dentro de ARNES_HASH_PRESUPUESTO_S, o su corte no se pudo armar; SEC-151). REQ-037 CA-03:
 # LEGIBLE ES ESTRICTO: exactamente los campos del formato, `formato` 1, cada gate con `comando` (texto), `rc`
 # (entero de 0 a 255, o null si no corrió) y `ms` (entero o null), `quien` con algo que no sea blanco, `fecha` en
 # UTC y `hash` en hexadecimal. Un `0` escrito como texto, un número fuera de rango o un campo de más: ilegible,
@@ -614,7 +697,9 @@ arnes_veredicto_juzga() {
   esac
   ARNES_VER_ESTADO="${r%%$'\t'*}"; ARNES_VER_DETALLE="${r#*$'\t'}"
   [ "$ARNES_VER_ESTADO" = ok ] || return 0
-  if ! arnes_hash_arbol "$1"; then ARNES_VER_ESTADO=nomedible; ARNES_VER_DETALLE="$ARNES_HASH_MOTIVO"; return 0; fi
+  arnes_hash_arbol "$1"; r=$?
+  if (( r == 2 )); then ARNES_VER_ESTADO=presupuesto; ARNES_VER_DETALLE="$ARNES_HASH_MOTIVO"; return 0; fi
+  if (( r != 0 )); then ARNES_VER_ESTADO=nomedible; ARNES_VER_DETALLE="$ARNES_HASH_MOTIVO"; return 0; fi
   [ "$ARNES_HASH" = "$ARNES_VER_DETALLE" ] || { ARNES_VER_ESTADO=caducado; ARNES_VER_DETALLE="el arbol cambio despues de correr las gates"; }
   return 0
 }

@@ -6,10 +6,11 @@
 #   G1 y C*  CA-08 (b), fail-before y controles · M2  el movimiento M-037-2 · W  CA-05, fail-before por forma
 #   A*  CA-01 · L*  CA-03 · H*  CA-02, la herramienta · I1–I8, E1, T1  CA-06 sobre la herramienta · MK  CA-03
 #   D  CA-08 (a), un documento por respuesta · K*, PROC, RELOJ  CA-10, coste · O1–O3  gates en forma de objeto.
+#   S1–S4  SEC-151 (P-137-AO): el presupuesto propio de la huella (30 s), su corte y su fallo cerrado.
 # DOS ÁRBOLES donde la fila lo pide: la CANDIDATA (`$HOOKS_DIR`) y v1.36.2 (46ee7ca), por SHA con `mat53` (copia de
 # `mat49`); sin ella, SKIP y motivo, nunca PASS. Las corridas, en paralelo; el juicio, después y en orden.
-CASOS_ESPERADOS_SECCION=102
-PISO_AUTONOMO_SECCION=136  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO53, mat53_reg y mat53, copia de mat49, líneas 15-38) + 98 bloque indivisible mayor (l53, j53, pe53, t53, r53, prep53 y caso53: el brazo, el juez, los proyectos, la herramienta y las filas, líneas 44-141)
+CASOS_ESPERADOS_SECCION=106
+PISO_AUTONOMO_SECCION=140  # 15 preámbulo (líneas 1-15, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO53, mat53_reg y mat53, copia de mat49, líneas 16-39) + 101 bloque indivisible mayor (l53, j53, pe53, t53, r53, prep53 y caso53: el brazo, el juez, los proyectos, la herramienta y las filas, líneas 45-145)
 seccion_nueva "--- 53 · las quality gates corren fuera del hook; la puerta comprueba un veredicto con el hash del árbol (REQ-037, hotfix 1.36.3) ---"
 REPO53="${SEC_DIR%/}/../../../.."; MAT53_RUTAS='hooks'; MAT53_REG=''; MAT53_T0=0; MAT53_REF='-'
 mat53_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT53_REG, UNA sola línea (la lee `sonda_lee`)
@@ -70,6 +71,7 @@ j53() {
       *'no es del arbol actual'*) got=caducado ;;
       *'no se puede medir el arbol del proyecto'*) got=nomedible ;;
       *'el registro del veredicto de las quality gates'*) got=registro ;;
+      *'presupuesto propio de la huella'*) got=huella ;;
       *'plazo propio'*) got=plazo ;;
       *'falló la quality gate `'*) n="${mot#*falló la quality gate \`}"; got="gate:${n%%\`*}" ;;
       *) got="deny: ${mot:0:160}"; [[ "$esp" != regla:* || "$mot" != *"${esp#regla:}"* ]] || got="$esp" ;;
@@ -124,6 +126,8 @@ prep53() {
     singit) rm -rf "$p/.git" ;;
     simb) mv "$p/.arnes/gates-veredicto.json" "$p.verde" && ln -s "$p.verde" "$p/.arnes/gates-veredicto.json" ;;
     duro) ln "$p/.arnes/gates-veredicto.json" "$p.otro" ;;
+    disperso) truncate -s 256G "$p/datos.bin" ;;   # disperso: 0 bytes en disco; leerlo entero, minutos
+    fifo) mkfifo "$p/src/.gitignore" ;;           # `git ls-files --exclude-standard` la abre y no vuelve
   esac
   return 0
 }
@@ -172,6 +176,12 @@ caso53 L9 'L9 CA-03 (a) el registro verde tiene un segundo enlace duro' true dur
 caso53 O1 'O1 gates en forma de objeto, verdes, con su veredicto' 'json:[{"nombre":"Verde","comando":"true"}]' v allow - -
 caso53 O2 'O2 gates en forma de objeto, roja, con su veredicto' 'json:[{"nombre":"Roja","comando":"false"}]' v roja:false - -
 caso53 O3 'O3 gates mezcla de objeto y cadena, verdes, con su veredicto' 'json:["true",{"nombre":"Eco","comando":"echo o3"}]' v allow - -
+# --- SEC-151 (P-137-AO): la huella tiene presupuesto propio, 30 s; techo 40 s. Fail-before: d89316c, sin decisión a los
+# 60 s del brazo (el hash seguía). Sólo en Linux: el archivo disperso no ocupa disco allí; en otro sistema, SKIP y motivo.
+if [ "$(uname -s)" = Linux ]; then S53=si
+  caso53 S1 'S1 SEC-151 verde previo y un archivo disperso de 256 GiB no ignorado: deny por la huella, en ≤ 40 s' true disperso huella 40000 -
+  caso53 S2 'S2 SEC-151 verde previo y un `.gitignore` que es una FIFO (git no vuelve): deny por la huella, en ≤ 40 s' true fifo huella 40000 -
+else S53="sólo en Linux (archivo disperso y FIFO sin ocupar disco ni colgar el banco); aquí $(uname -s)"; fi
 # --- CA-06: los vectores, sobre la herramienta (registro y puerta) ----------------------------------------------------
 I1G53='for f in 0 3 4 5 6 7 8 9 10 11 12 255; do { echo 0 >&$f; } 2>/dev/null; done; false'
 I3G53='printf %s "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}"; false'
@@ -260,6 +270,15 @@ done
 nom53='REQ-037 MK CA-03 la puerta no ejecuta ninguna gate: con el veredicto válido, el marcador de la gate no aparece candidata'
 if [ "$(cat "$W53/MK.rc" 2>/dev/null)" = 0 ] && [ ! -s "$W53/MK.out" ] && [ ! -e "$MG53" ]; then v53 PASS "$nom53"
 else v53 FAIL "$nom53  rc=<$(cat "$W53/MK.rc" 2>/dev/null)> salida=<$(head -c 120 "$W53/MK.out" 2>/dev/null)> marcador=<$([ -e "$MG53" ] && echo está || echo no)>"; fi
+# SEC-151: el corte no deja huérfanos (S3) y su fallo es cerrado (S4, a nivel de librería, en todo sistema).
+nom53='REQ-037 S3 SEC-151 tras S1 y S2 no queda vivo ningún proceso sobre esos proyectos (el git que seguía leyendo)'
+if [ "$S53" != si ]; then v53 SKIP "REQ-037 S1 SEC-151  $S53"; v53 SKIP "REQ-037 S2 SEC-151  $S53"; v53 SKIP "$nom53  $S53"
+elif ! command -v pgrep >/dev/null 2>&1; then v53 SKIP "$nom53  sin pgrep no se puede mirar"
+else x53="$(pgrep -af -- "$W53/p-S[12]-c" 2>/dev/null)"
+  if [ -z "$x53" ]; then v53 PASS "$nom53"; else v53 FAIL "$nom53  <${x53:0:200}>"; pkill -KILL -f -- "$W53/p-S[12]-c" 2>/dev/null; fi; fi
+nom53='REQ-037 S4 SEC-151 el proceso que calcula la huella muere sin resultado: código 2 y ningún hash (falla cerrado)'
+x53="$( ( . "$C53/lib.sh" >/dev/null 2>&1 || exit 97; _arnes_hash_calcula() { kill -KILL "$BASHPID"; }; arnes_hash_arbol "$W53/p-C2-c"; printf '%s|%s' "$?" "$ARNES_HASH" ) 2>/dev/null )"
+if [ "$x53" = '2|' ]; then v53 PASS "$nom53"; else v53 FAIL "$nom53  <$x53>"; fi
 # La herramienta: CA-02 (iv) y sus bordes.
 h53() {   # <nombre> <rc esperado> <rc obtenido> <registro esperado si|no> <proyecto>
   local hay=no; [ -e "$5/.arnes/gates-veredicto.json" ] && hay=si
