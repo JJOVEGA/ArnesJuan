@@ -2,6 +2,17 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-066, primera revisión de seguridad de REQ-037, `con-hallazgos`; REQ-037 `bloqueado` por la regla de parada de P-137-AN
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad; registro de la coordinadora.
+
+- **No firma.** Frente a v1.36.2 hay dos conductas que pasan de deny a allow fuera de la clase que admitió el propietario:
+  - **SEC-150** (`contrato`, media): un cambio del árbol hecho durante la corrida de la herramienta y deshecho antes del hash final deja un verde sobre un contenido que las gates no evaluaron.
+  - **SEC-151** (`contrato`, media, introducido por REQ-037): el hash del árbol se calcula dentro del hook y no tiene techo, a ≈ 4,5 s por GiB no ignorado. Con un verde previo y un archivo disperso grande, el hook pasaría del límite del cliente y la llamada se aplicaría sin decisión.
+- **SEC-152** (`contrato`, baja): un enlace simbólico que sale del árbol queda dentro de la clase admitida, pero falta declararlo.
+- **SEC-132 (a) y SEC-133** pasan a `mitigado` en el candidato, sin publicar.
+- **Lista completa de movimientos** (D1–D9) en `docs/seguridad/registro-seguridad.md`, R-066. Decide el propietario.
+- **Desvío de forma:** el auditor escribió la fila de Historial y «Tocado por» de REQ-037 con `python3` desde `Bash`, y no con `Edit`. La coordinadora revisó el diff y el contenido es el esperado.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada de sólo texto de P-137-AN (A) y su lectura de QA; REQ-037 `QA: aprobado`, `en-revisión` hasta la firma de seguridad
 > Origen: P-137-AN · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`, analista) y Opus 5.5 (`claude-opus-5-5`, QA) · agente: analista-requerimientos, qa-tester; registro de la coordinadora.
 
