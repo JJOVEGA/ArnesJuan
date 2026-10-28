@@ -43,7 +43,7 @@
 
 ## Pendientes
 
-### [2026-10-28] (qa-tester) — REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? *(La coordinadora le pone número y la decisión propuesta.)*
+### [2026-10-28] (qa-tester; número y decisión propuesta de la coordinadora) — P-137-AN: REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? Por P-137-AL («si no cierra, se para y me lo traes»), se para.
 
 **Qué pasa.** Medido sobre `d89316c` (`docs/qa/REQ-037.md`). El proyecto de prueba tiene la gate `false`, así que su veredicto real es rojo. Cada forma se ejecutó después de que la puerta de `Bash` la dejara pasar a `qa-tester` y a la coordinadora, y el cierre salió **`allow`**:
 - `cp /otro/gates-veredicto.json .arnes/`: el destino es el directorio. También `cp … .arnes`, `mv … .arnes/` e `install -m 644 … .arnes/`.
@@ -60,6 +60,22 @@
 **Lo que la pasada sí cerró:** QA-037-11 (`ln` y `ln -s` sobre el registro, y el registro enlazado) y QA-037-13. CA-09: 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
 
 **Qué impide esta entrada:** cerrar REQ-037 (`completado`) y publicar 1.36.3. No impide la revisión de seguridad ni el commit de la evidencia.
+
+**Contexto para decidir (coordinadora).** Un agente que quiere fabricar un verde ya puede hacerlo en 1.36.3: es el riesgo (1) de CA-05, que aceptaste con QA-037-12. Basta escribir el registro por consola, con `python3 -c`, una variable, comillas, `cd` o un glob. Así que en esta versión el registro protege contra el error, no contra un agente hostil. Las formas de QA-037-14 son tres más de esa clase, pero el contrato prometía denegarlas porque son «llanas». Que la promesa sea falsa es lo que hace `contrato` el hallazgo.
+
+**Opciones.**
+- **(A) Declararlas para 1.36.3 y arreglarlas en 1.37:** pasada de sólo texto.
+  - El analista corrige la promesa de CA-05 (ii): la puerta deniega las formas que **nombran el registro como destino**, y no las que copian, mueven o instalan **dentro de `.arnes/` como directorio**, ni `link`, ni `cp -l`/`--link`. Las añade al riesgo (1) y a las notas `[1.36.3]`, y lleva el arreglo a F-137-24-B (1.37) junto con el endurecimiento del entorno.
+  - El caso preexistente del manifiesto (`cp …/config.json .arnes/`) va a la pieza b de 1.37, en la familia de REQ-033. Se declara también en las notas, porque es de v1.36.2.
+  - QA lee el texto y seguridad hace su primera firma sobre el código actual, que no cambia.
+  - *Coste:* el analista reanudado en frío (≈ 330 k no cacheados), una lectura de QA y una firma de seguridad.
+- **(B) Arreglarlas ahora:** otra pasada de código fuera del tope.
+  - El detector compone `directorio/<nombre>` para `cp`/`mv`/`install` cuando el destino es `.arnes/`, y ve `link` y `cp -l`/`--link`. Es un retoque como el de `ln`, pero en el juicio de destinos de CA-47, que comparten todas las puertas, así que hace falta el banco entero.
+  - *Coste:* el desarrollador reanudado (su contexto ya pasa de 600 k, así que reanudarlo cuesta eso), QA, la carga y seguridad. Calculo ≈ 1,5–2 M no cacheados y otra media jornada. Y no cambia el fondo: el registro seguiría siendo falsificable por consola.
+
+**Recomendación de la coordinadora: (A).** Arreglar ahora cierra tres formas de una clase que sigue abierta por otras, y retrasa la publicación que espera un consumidor. Texto listo para adoptar:
+
+> Adopto P-137-AN (A): las formas de QA-037-14 (destino `.arnes/` como directorio, `link`, `cp -l`/`--link`) se declaran para 1.36.3 dentro del riesgo (1) de CA-05, se corrige la promesa de CA-05 (ii) y su arreglo va a 1.37 con F-137-24-B; el caso del manifiesto, preexistente, se declara en las notas y va a la pieza b. Pasada de sólo texto: el analista corrige, QA lo lee y seguridad firma. Si seguridad encuentra algo que no sea de esta clase, se para y me lo traes.
 
 ## Resueltas
 

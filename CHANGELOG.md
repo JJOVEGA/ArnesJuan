@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN, QA-037-14 escalado al propietario (la pasada fuera del tope no cierra)
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La consulta de QA** en `PENDING_APPROVAL.md` lleva ahora el número P-137-AN, el contexto (el riesgo (1) ya aceptado), las opciones (A) declarar y arreglar en 1.37 y (B) arreglar ahora, y la recomendación (A) con su texto.
+- **La carga de CA-09 sobre `d89316c`** la lanzó la coordinadora por P-137-AM: 4 000 cierres con 0 en todas las columnas. Evidencia en `scratchpad/issue-63-f13724-carga-d89316c/`, para el repositorio de evidencia.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA de la pasada fuera del tope (`d89316c`), `con-hallazgos`; REQ-037 `bloqueado`
 > Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 
