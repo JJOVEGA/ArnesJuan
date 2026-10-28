@@ -138,7 +138,7 @@ printf '## Pendientes\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 setgates '.quality_gates = ["false"]'
 check_motivo "transicion por documento: SOLO el valor con una quality gate roja -> deny" "quality gate" \
   guard-completado.sh "$(emite_edit_real "$PROJ/requirements/REQ-129.md" 'en-revisión' 'completado')"
-setgates '.quality_gates = ["true"]'
+setgates '.quality_gates = []'   # la base del banco desde REQ-037 (run.sh)
 # --- El estado terminal es el DEL MANIFIESTO, no la palabra «completado» ---------------
 mkreq "$PROJ/requirements/REQ-130.md" "no" "pendiente" "n/a"
 setcfg '.estados.completado = "hecho"'

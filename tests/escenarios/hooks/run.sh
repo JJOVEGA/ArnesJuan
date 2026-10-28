@@ -72,11 +72,14 @@ JOBS="${ARNES_JOBS:-6}"
 ERRLOG="$(mktemp)"   # el despachador da uno propio a cada seccion
 trap 'rm -rf "$RAIZ"; rm -f "$ERRLOG"' EXIT
 
+# SIN quality gates (REQ-037, 1.36.3): la puerta ya no las ejecuta, pide su veredicto ligado al hash del árbol, y
+# los proyectos del banco no son repositorios git. Hasta 1.36.2 la base llevaba `["true"]`, una gate que pasaba
+# siempre; su equivalente ahora es no tener gates. Lo que mide las gates y su veredicto vive en la sección 53.
 MANIFIESTO_BASE='{
   "agentes": { "agente_codigo": "desarrollador",
                "conocidos": ["analista-requerimientos","desarrollador","qa-tester","auditor-seguridad"] },
   "codigo_app": { "globs": ["src/*", "app/*"] },
-  "quality_gates": ["true"],
+  "quality_gates": [],
   "estados": { "completado": "completado" },
   "requirements_dir": "requirements",
   "pending_approval": "PENDING_APPROVAL.md"
@@ -1718,7 +1721,11 @@ done
 # Ninguna otra sección cambia su número.
 # Y 3022 → 3028 por la pasada correctiva de REQ-037: +6 en la 53 (62 → 68) —E1 en los dos árboles (P-137-AD (2)), y
 # R1, R2 y R3 con la gate `false` y con `true` en la candidata (QA-037-01)—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3028
+# Y 3028 → 3047 por REQ-037 reescrito (F-137-24, las gates fuera del hook): la 53 se rehace (68 → 87) —G1, C1–C4, M2 y
+# las 13 formas de CA-05 en los dos árboles; A1–A9, L1–L7, MK, los vectores de CA-06 sobre la herramienta, H1–H7, D y el
+# coste de CA-10 en la candidata—; se retiran P1–P6, R1–R3, A2, M, G1–G6 y B1–B2 del diseño anterior. Ninguna otra
+# sección cambia su número.
+CASOS_ESPERADOS=3047
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

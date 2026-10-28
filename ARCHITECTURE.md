@@ -28,13 +28,14 @@ son **inertes**; sin `jq` también, con aviso por stderr.
 | `hooks/entrada.sh` | Lo primero que carga cada punto de entrada de los guardianes (`guard.sh`, y los tres guardianes cuando se ejecutan por su cuenta), antes que `lib.sh`. Sale del modo POSIX heredado (SEC-129), arranca el reloj del plazo propio (`SECONDS`; `arnes_plazo` deniega a los 30 s para responder en no más de 40; SEC-115) y pone una trampa de salida que emite un `deny` fijo, sin `jq`, si el proceso termina sin juicio concluido (REQ-007 CA-68) | entorno del proceso | nada; o un `deny` fijo al salir sin juicio |
 | `hooks/guard-git.sh` | **Ninguna orden destructiva de git**, venga del agente que venga (regla del *comando*, no de la identidad) | `tool_input.command`, `git.*` del manifiesto | `deny` con motivo |
 | `hooks/guard-codigo.sh` | Sólo el agente declarado edita `codigo_app.globs` (regla de la *identidad*) | `agent_type`, `file_path` o `command`, `codigo_app.globs` | `deny` con motivo |
-| `hooks/guard-completado.sh` | La transición de un REQ a `completado`: veredictos, fecha y caducidad, clase del hallazgo, cola de aprobaciones y quality gates. Por `Bash` no juzga: **deriva** a `Edit`/`Write` | documento resultante del REQ, `PENDING_APPROVAL.md`, `quality_gates`, `veredictos.*` | `deny` con motivo, o aviso de vocabulario |
+| `hooks/guard-completado.sh` | La transición de un REQ a `completado`: veredictos, fecha y caducidad, clase del hallazgo, cola de aprobaciones y el **veredicto de las quality gates**, que **no ejecuta** (desde 1.36.3, REQ-037, ADR-019): comprueba que `.arnes/gates-veredicto.json` existe, es legible, es de la lista del manifiesto, está en verde y es del **hash del árbol actual**. Por `Bash` no juzga: **deriva** a `Edit`/`Write` | documento resultante del REQ, `PENDING_APPROVAL.md`, `quality_gates`, `.arnes/gates-veredicto.json`, árbol (git), `veredictos.*` | `deny` con motivo, o aviso de vocabulario |
 | `hooks/lib.sh` | Toda la lógica compartida: lectura del input y del manifiesto, normalización de campos y veredictos, **vocabulario** de los veredictos, descuento de comillas y heredocs (`arnes_bash_sin_texto`), detector de escrituras, contención de rutas | — | funciones; ninguna decide por su cuenta |
 | `hooks/stop.sh` | Punto de entrada único de `Stop`/`SubagentStop`; **nunca bloquea la parada** | JSON de `Stop` | rc 0 siempre |
 | `hooks/estado-derivado.sh` | Reescribe entre marcadores de `docs/ESTADO.md` un bloque **derivado del disco** (estado y veredictos de cada REQ, cola, rama, limpieza del árbol) | `requirements/*.md` vía `campos-req.awk`, `PENDING_APPROVAL.md`, git | bloque en `docs/ESTADO.md` |
 | `hooks/rotar-artefactos.sh` | **Mueve** (nunca resume) las secciones viejas de un artefacto de bitácora, o las entradas viejas de **una sección** declarada de un documento | `rotacion.*` del manifiesto | archivo de historia + puntero |
 | `hooks/campos-req.awk` | Extrae en **una** pasada los campos de cabecera de todos los REQ | `requirements/*.md` | registros separados por `\001` |
 | `tools/arnes-lectura.sh` | Informe en frío: qué lee la máquina en cada REQ. Usa **el mismo lector y el mismo vocabulario** que las puertas (`lib.sh`) | `requirements/*.md`, manifiesto | informe; rc 1 si hay anomalías |
+| `tools/arnes-gates.sh` | Corre las quality gates del manifiesto **fuera del hook** (QA, la coordinadora o el propietario), en serie, con la entrada desde `/dev/null` y parando en la primera roja, y escribe de forma atómica el veredicto con el **hash del árbol** (`arnes_hash_arbol` de `lib.sh`, la misma función que usa la puerta). Es el único escritor del registro: `guard-codigo` y `guard-completado` deniegan escribirlo a todo agente | manifiesto, árbol del proyecto (git) | `.arnes/gates-veredicto.json`; rc 0 verde, 1 roja, 2 no pudo medir |
 | `tools/arnes-paralelo.sh` | Despacho: dice si dos REQ son **disjuntos** o **colisionan** por su campo `Archivos:`, expandiendo los globs contra el árbol real. Reutiliza la **normalización** de `lib.sh` sin entrar en el lector de las puertas; ningún hook la invoca | `requirements/*.md`, manifiesto, árbol del repo | `disjunto`/`colisiona` (texto o `--json`); rc 1 si colisiona, 2 si no pudo medir |
 | `tests/escenarios/hooks/run.sh` | El **corredor** del banco: ayudantes compartidos, canario global, descubrimiento de las secciones (glob de bash, sin forks) y despacho en paralelo con proyecto efímero propio | `secciones/NN-<slug>.sh` | PASS/FAIL/SKIP + cuadre **por archivo y total** |
 | `tests/escenarios/hooks/secciones/` | El banco: los casos, **una sección por archivo**, descubiertos por el corredor. Cada uno declara su `CASOS_ESPERADOS_SECCION`; ninguno hace `source` de otro | hooks reales con JSON fabricado | líneas PASS/FAIL/SKIP |
@@ -81,17 +82,21 @@ sería cerrar un REQ sin puerta alguna.
 ```
 analista -> requirements/REQ-xxx.md (contrato)
 desarrollador -> código + pruebas          guard-codigo vigila quién escribe
+qa-tester -> tools/arnes-gates.sh           veredicto de las gates + hash del árbol
 qa-tester -> QA: aprobado (ronda, fecha)
 auditor -> Seguridad: aprobado             guard-completado exige el orden
 Estado: completado                         guard-completado: veredictos, fecha/caducidad,
-                                           clase del hallazgo, cola humana, quality gates
+                                           clase del hallazgo, cola humana, y el veredicto
+                                           de las gates del árbol actual (no las ejecuta)
 ```
 
 ## Integraciones externas
 
 - **git**, sólo en local y sólo de lectura: `git log -1 --format='%cs %h' -- <globs>` y
   `git status --porcelain -- <globs>` en `guard-completado` (cuando el proyecto enciende
-  `veredictos.caducan_con_codigo`), y las consultas de rama/limpieza del bloque derivado.
+  `veredictos.caducan_con_codigo`), las consultas de rama/limpieza del bloque derivado, y el hash
+  del árbol (`git ls-files` y `git hash-object`, sin escribir objetos) que calculan `tools/arnes-gates.sh`
+  y `guard-completado` cuando el proyecto tiene `quality_gates`.
   Ninguna toca el remoto: un hook que hace red puede colgar una parada.
 - **GitHub**: `main` protegido por el ruleset `proteger-main`, con el check
   `hooks-en-linux` (el banco completo) requerido. Fuera del runtime del plugin.

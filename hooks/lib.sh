@@ -430,15 +430,14 @@ arnes_juicio_puerta() {   # <puerta> — tras `{ arnes_guard_X; ARNES_PUERTA_FIN
   arnes_plazo
 }
 
-# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C; REQ-037 CA-01, ADR-018). Cada punto de entrada
-# pone `SECONDS=0` al arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo
-# comprueba ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
-# MIDE EL ANÁLISIS, NO LAS QUALITY GATES (REQ-037 CA-01): las gates tienen su propio presupuesto (abajo), y al
-# salir de su bucle `guard-completado` devuelve este reloj a lo que llevaba el análisis, así que ningún
-# segundo de una gate cuenta, ni antes ni después del bucle. Hasta 1.36.2 lo contaba, y un cierre con una
-# gate verde de 35 s se denegaba por este plazo (issue #63).
-# OPERATIVO: la comprobación salta a los 30 s de análisis, para que la respuesta llegue en no más de 40 s con
-# la unidad en curso y la emisión; se baja con la medición. Del otro lado, el cliente mata un `PreToolUse`
+# EL PLAZO PROPIO DEL HOOK (SEC-115; REQ-007 CA-68, P-136-C). Cada punto de entrada pone `SECONDS=0` al
+# arrancar —una asignación: un `SECONDS` heredado del entorno no lo mueve— y el juicio lo comprueba
+# ENTRE unidades de trabajo, sin procesos. Al vencer deja de juzgar y deniega, a todo agente.
+# MIDE EL ANÁLISIS: desde 1.36.3 las quality gates no corren en el hook (REQ-037, ADR-019), así que ningún
+# segundo de una gate se le suma. Hasta 1.36.2 corrían dentro, y un cierre con una gate verde de 35 s se
+# denegaba por este plazo (issue #63).
+# OPERATIVO: la comprobación salta a los 30 s, para que la respuesta llegue en no más de 40 s con la
+# unidad en curso y la emisión; se baja con la medición. Del otro lado, el cliente mata un `PreToolUse`
 # sin `timeout` explícito a ≈ 600 s (medido: CLI 2.1.289, Linux/WSL2, una corrida por punto; REQ-037, Notas);
 # hasta 1.36.2 estos textos daban por hecho que lo mataba a los 60 s, y no era así. Lo que NO alcanza,
 # dicho: una sola operación que no termina no se interrumpe sin un proceso aparte; por eso las que crecen
@@ -449,128 +448,168 @@ ARNES_PLAZO_S=30
 arnes_plazo() {
   [ -n "${ARNES_EN_HOOK:-}" ] || return 0
   [ "${SECONDS:-0}" -ge "$ARNES_PLAZO_S" ] || return 0
-  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s de analisis desde que arranco, sin contar lo que tardan las quality gates, que tienen su propio presupuesto). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
+  arnes_deny "ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio ($ARNES_PLAZO_S s de analisis desde que arranco; las quality gates no corren en el hook). No es un veredicto sobre la llamada: es que la puerta no pudo terminar de medirla, y una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68). Si la llamada es legitima, partela en llamadas mas pequenas."
 }
 
-# EL PRESUPUESTO DE LAS QUALITY GATES (REQ-037 CA-02, ADR-018). DE CONTRATO: 420 s EN TOTAL para todas las
-# gates de un cierre, en serie, contados desde que se lanza la primera. Un proyecto elige la duración de sus
-# gates por este valor y el motivo lo cita; no cambia sin ADR y sin write-back (AGENTS.md §13, el motivo y las
-# notas). Sede única: esta constante.
-# EL PORQUÉ: en el peor caso el hook tarda A + N + C —el análisis (≤ 40 s, el plazo de arriba), este
-# presupuesto y el corte de una gate agotada (`ARNES_GATES_CORTE_S`)—, y eso no puede pasar de 0,8 × el límite
-# medido del cliente (≈ 600 s): 40 + 420 + 5 = 465 s. Si una medición posterior baja el límite, N baja con ella.
-# Agotado el presupuesto, la gate en curso se corta, las siguientes no se lanzan y se deniega con un motivo
-# propio de gates: nunca un cierre sin veredicto.
-ARNES_GATES_PRESUPUESTO_S=420
-# EL CORTE (OPERATIVO; se baja con la medición): la gate agotada recibe TERM en todo su grupo de procesos, y lo
-# que siga vivo a los ARNES_GATES_CORTE_S segundos, KILL.
-ARNES_GATES_CORTE_S=5
+# --- EL VEREDICTO DE LAS QUALITY GATES (REQ-037, ADR-019; issue #63, F-137-24) ------------------------------
+# Las gates NO corren en el hook: las corre `tools/arnes-gates.sh` (QA, la coordinadora o el propietario), que
+# deja en ARNES_VEREDICTO_REL el código de salida de cada una y el HASH DEL ÁRBOL sobre el que corrieron. La
+# puerta de cierre sólo comprueba ese registro (`arnes_veredicto_juzga`). Una sola función calcula el hash
+# (`arnes_hash_arbol`), y la usan la herramienta y la puerta: no hay segunda transcripción.
+ARNES_VEREDICTO_REL='.arnes/gates-veredicto.json'
+ARNES_VEREDICTO_FORMATO=1
+# LO QUE EL HASH NO CUBRE (REQ-037 CA-01; P-137-AL 1 (A)): LISTA CERRADA, fija aquí y no configurable por el
+# proyecto. Es lo que el ciclo de gobierno escribe DESPUÉS de que corren las gates (QA firma, seguridad firma, la
+# coordinadora escribe la cola, el CHANGELOG y ESTADO); si entrara, cada firma invalidaría el veredicto. Con barra
+# final, un directorio y todo lo de debajo; sin ella, ese archivo exacto, relativo a la raíz del proyecto. Las
+# rotaciones son las que el arnés escribe por defecto (`-archivo.md` y `historial/`); una carpeta de archivo que
+# el proyecto declare no está, y su cambio invalida el veredicto (falla cerrado). LÍMITE DECLARADO: una gate que
+# evalúa estas rutas no se re-valida cuando cambian después.
+ARNES_HASH_EXCLUYE=(
+  .arnes/gates-veredicto.json
+  requirements/
+  docs/qa/
+  docs/seguridad/
+  PENDING_APPROVAL.md PENDING_APPROVAL-archivo.md historial/PENDING_APPROVAL.md
+  CHANGELOG.md CHANGELOG-archivo.md historial/CHANGELOG.md
+  docs/ESTADO.md
+)
+# La definición de «árbol» viaja en el registro: si cambia (otra lista, otra forma de hashear), un registro
+# anterior no vale.
+ARNES_ARBOL_DEF="arbol-v1 (git ls-files -c -o --exclude-standard; contenido sin filtros y modo; sin: ${ARNES_HASH_EXCLUYE[*]})"
+# La herramienta, con su ruta absoluta tomada de esta librería: los motivos dicen cómo correrla.
+_arnes_d="${BASH_SOURCE[0]%/*}"; [ "$_arnes_d" != "${BASH_SOURCE[0]}" ] || _arnes_d=.
+case "$_arnes_d" in /*) ;; *) _arnes_d="$PWD/$_arnes_d" ;; esac
+case "$_arnes_d" in */hooks) ARNES_HERRAMIENTA_GATES="${_arnes_d%/hooks}/tools/arnes-gates.sh" ;;
+                    *) ARNES_HERRAMIENTA_GATES="$_arnes_d/../tools/arnes-gates.sh" ;; esac
+unset _arnes_d
 
-# EL RELOJ DEL PRESUPUESTO: UNO por cierre, no uno por gate. `arnes_gates_reloj <restante_us>` lo arma —un
-# `sleep` de los segundos enteros hacia arriba, así que nunca vence antes de <restante_us>— y deja su pid en
-# ARNES_GATES_T; `arnes_gates_sin_reloj` lo retira. Es un hijo directo del hook, sin su salida estándar ni la
-# de error (QA-007-16). Si vence, lo dice el reloj del HOOK (EPOCHREALTIME, que el entorno no puede fijar),
-# no el `sleep`: quien llama compara lo transcurrido con el presupuesto, y si el `sleep` murió antes de tiempo
-# —una gate puede matarlo—, el motivo es otro, y también deniega. A la gate nunca se le cree.
-# EL RELOJ SE RETIRA CON KILL, NO CON TERM (QA-037-01). Tras una gate rápida el reloj puede no haber llegado
-# todavía a su `exec`: es aún un hijo de bash con los manejadores del hook. Medido (bash 5.3.9, 300 por punto,
-# sin carga): con TERM, ese hijo ejecutaba la trampa de salida del hook o se tragaba la señal y el `sleep`
-# seguía hasta su fin —el hook esperaba al reloj entero: el cuelgue de 420 s—; con KILL, ninguna de las dos.
-ARNES_GATES_T=''
-arnes_gates_reloj() {
-  sleep "$(( ($1 + 999999) / 1000000 ))" </dev/null >/dev/null 2>&1 &
-  ARNES_GATES_T=$!
-}
-arnes_gates_sin_reloj() {
-  [ -n "$ARNES_GATES_T" ] || return 0
-  kill -KILL "$ARNES_GATES_T" 2>/dev/null; wait "$ARNES_GATES_T" 2>/dev/null
-  ARNES_GATES_T=''
-}
-
-# arnes_gates_salida -> ARNES_GATES_SAL: el archivo donde escriben las gates de un cierre, creado SIN procesos
-# (QA-037-02, REQ-017 CA-08 (ii)): el `mktemp` de hasta 1.36.2 era un fork y un exec en cada cierre con gates
-# —≈ 3,5 ms en Linux/WSL2; en Windows/MSYS, 1,2–6 s por fork (AGENTS.md §2)—. Las dos garantías de `mktemp`: un
-# nombre que no se puede predecir (`SRANDOM`, de la fuente aleatoria del sistema, dos veces; las gates ya exigen
-# bash 5.1) y una creación EXCLUSIVA (`set -C` con el nombre libre: bash abre con O_EXCL, que no sigue enlaces).
-# Un nombre que ya existe, sea lo que sea, se descarta sin abrirlo. Tres intentos; si no, 1, y quien llama cae a
-# `mktemp` como hasta 1.36.2. `local -` devuelve las opciones al salir: `noclobber` no llega a las gates.
-arnes_gates_salida() {
-  local -
-  local d="${TMPDIR:-/tmp}" f i
-  for i in 1 2 3; do
-    f="${d%/}/arnes_gate.$BASHPID.$SRANDOM$SRANDOM"
-    { [ -e "$f" ] || [ -L "$f" ]; } && continue
-    set -C
-    { : > "$f"; } 2>/dev/null || continue
-    { [ -f "$f" ] && [ ! -L "$f" ]; } || continue
-    ARNES_GATES_SAL=$f; return 0
+_arnes_hash_excluido() {   # <ruta relativa> -> 0 si la lista cerrada la deja fuera del hash
+  local x
+  for x in "${ARNES_HASH_EXCLUYE[@]}"; do
+    case "$x" in */) [[ $1 == "$x"* ]] && return 0 ;; *) [[ $1 == "$x" ]] && return 0 ;; esac
   done
   return 1
 }
 
-# arnes_gate <orden> <salida> -> ARNES_GATE_FIN y ARNES_GATE_RC. Ejecuta UNA quality gate como hasta 1.36.2
-# —`eval` en un subshell, en el directorio del proyecto, con su salida estándar y la de error a <salida>— y la
-# espera junto al reloj armado (ARNES_GATES_T):
-#   fin    la gate terminó: su veredicto es ARNES_GATE_RC, su código de salida;
-#   reloj  el reloj terminó con la gate en curso, o la espera falló: la gate se cortó (ARNES_GATE_RC no cuenta)
-#          y quien llama decide, con su reloj, si fue el presupuesto o un reloj muerto antes de tiempo.
-# LA GATE ES CÓDIGO NO CONFIABLE (REQ-037 CA-03; lecciones de F-136-22 y L4/L5 de R-057):
-#   * su veredicto es SÓLO su código de salida, que el hook lee con `wait` sobre su hijo directo: no hay canal
-#     que la gate pueda escribir (QA-007-15). Lo que imprime va a <salida>, que sólo se cita en el motivo;
-#   * el corte es UNA señal al grupo de procesos de la gate, lineal en el número de descendientes (QA-007-17):
-#     el hijo directo se lanza con `set -m` y encabeza un grupo propio, y todo lo que la gate lanza sin
-#     desligarse cae en él. Lo que se desliga del grupo (`setsid`, ...) o ignora KILL puede sobrevivir; el hook
-#     decide igual y no lo espera (límite declarado, REQ-037 R-2);
-#   * LA GATE NO ENCABEZA EL GRUPO: lo encabeza un subshell que sólo la espera y sale con su código, y la gate
-#     corre en un subshell suyo, como en 1.36.2. Medido: con la gate de jefa de grupo, `exec setsid false` salía
-#     con 0 —`setsid` se bifurca cuando quien lo llama encabeza un grupo, y el padre sale con éxito— y una gate
-#     roja pasaba; v1.36.2 la deniega. Ese subshell espera a la gate aunque le llegue TERM (`trap : TERM`), así
-#     que el corte le da a la gate ARNES_GATES_CORTE_S segundos, y su propia salida de error va a /dev/null: el
-#     «Terminated» que bash escribe de un hijo muerto por señal no se mezcla con la de la gate;
-#   * las redirecciones se hacen DENTRO del hijo, después de bifurcar: el hook no guarda copia de su salida
-#     estándar ni de la de error que un superviviente pudiera retener (QA-007-16).
-# NADA SE BIFURCA ENTRE LA GATE Y LA ESPERA, y el reloj ya existe cuando se lanza la gate. Medido (bash 5.3.9,
-# Linux/WSL2, con la trampa de salida de entrada.sh): con el reloj lanzado DESPUÉS, una gate que terminaba
-# mientras se bifurcaba el reloj no despertaba a `wait -n` —10 de 40 cierres con la gate `true`— y el hook
-# esperaba al reloj entero; con este orden, 0 de 100. Y aun así, si la espera vuelve por el reloj, se mira si la
-# gate seguía viva: si ya no, se recoge su código y vale como terminada antes que el reloj.
-# LA ENTRADA ESTÁNDAR DE LA GATE ES /dev/null (P-137-AD, punto 2, del propietario): una gate que pide una
-# confirmación o lee su entrada lee fin de archivo. Hasta aquí heredaba la del bucle —la lista de gates, por la que
-# el hook la lee, nunca una terminal—, así que leerla no la detenía: se comía las gates que la seguían, y una roja
-# detrás no corría (el vector de SEC-133). Medido: ninguna gate esperaba por su entrada estándar, con pty o sin él;
-# lo que espera hasta el presupuesto es lo que abre la terminal por su nombre (`/dev/tty`), y esta línea no lo cubre.
-# LO QUE NO CAMBIA RESPECTO DE 1.36.2, A PROPÓSITO (REQ-037 CA-03): la gate hereda las funciones importadas del
-# entorno; SEC-131 (a) sigue como estaba, declarado en AGENTS.md §13, y su resolución no es de este REQ.
-# Necesita bash 5.1 (`wait -n -p`): quien la llama lo comprueba antes, y arma el reloj.
-arnes_gate() {
-  local cmd="$1" sal="$2" g quien='' rc
-  ARNES_GATE_FIN=reloj; ARNES_GATE_RC=''
-  set -m
-  ( trap : TERM; exec {ARNES_GATE_FD}>&2 2>/dev/null
-    ( cd "$ARNES_PROJ" && eval "$cmd" ) 2>&"$ARNES_GATE_FD" {ARNES_GATE_FD}>&-
-    exit $? ) </dev/null >"$sal" 2>&1 &
-  g=$!
-  set +m
-  wait -n -p quien "$g" "$ARNES_GATES_T"; rc=$?
-  [ -z "$quien" ] || [ "$quien" != "$ARNES_GATES_T" ] || ARNES_GATES_T=''
-  if [ "$quien" != "$g" ] && ! kill -0 "$g" 2>/dev/null; then wait "$g"; rc=$?; quien=$g; fi
-  if [ "$quien" = "$g" ]; then ARNES_GATE_FIN=fin; ARNES_GATE_RC=$rc; return 0; fi
-  arnes_gate_corta "$g"
+# arnes_hash_arbol <raíz> -> ARNES_HASH ; 0 = medido, 1 = no medible (ARNES_HASH_MOTIVO).
+# EL ÁRBOL (CA-01): lo que `git ls-files -c -o --exclude-standard` lista —lo comiteado, lo modificado sin
+# comitear y lo nuevo no ignorado; lo borrado no está, y eso cambia el hash—, con el CONTENIDO de cada archivo
+# tal como está en disco (`hash-object --no-filters`: sin filtros del proyecto, que serían órdenes ajenas) y su
+# MODO, menos ARNES_HASH_EXCLUYE. Un enlace simbólico entra por su destino escrito; un directorio que git lista
+# como entrada (un submódulo, un repositorio anidado) entra sólo por su presencia (límite declarado).
+# EL ORDEN ES CANÓNICO: git da lo no seguido y lo seguido en dos listas ordenadas por bytes, y aquí se mezclan;
+# así añadir un archivo nuevo al índice o comitearlo no cambia el hash. Si una lista no viniera ordenada, no se
+# mide (falla cerrado).
+# COSTE: tres procesos de git —listar, hashear los archivos, hashear el resultado— y `readlink` sólo si hay
+# enlaces; lineal en el número de archivos y en sus bytes. Sin git, o fuera de un repositorio: no medible.
+arnes_hash_arbol() {
+  local raiz="$1" e p m q n prev='' io=0 ic=0 no nc rc lineas='' texto='' LC_ALL=C
+  local -a otros=() segui=() ps=() ms=() hs=() enl=() dest=()
+  local -a git=(git -C "$raiz" -c core.fsmonitor=false -c core.untrackedCache=false -c core.quotePath=false)
+  ARNES_HASH=''; ARNES_HASH_MOTIVO=''
+  rc=''
+  while IFS= read -r -d '' e; do
+    case "$e" in
+      '? '*) otros+=("${e#\? }") ;;
+      ?' '*) segui+=("${e#? }") ;;
+      'RC '*) rc="${e#RC }" ;;
+    esac
+  done < <("${git[@]}" ls-files -z -t -c -o --exclude-standard 2>/dev/null; printf 'RC %s\0' "$?")
+  if [ "$rc" != 0 ]; then
+    ARNES_HASH_MOTIVO="git no pudo listar el arbol de '$raiz' (no es un repositorio git, o git no esta disponible)"; return 1
+  fi
+  no=${#otros[@]}; nc=${#segui[@]}
+  while (( io < no || ic < nc )); do
+    if (( ic >= nc )) || { (( io < no )) && [[ ${otros[io]} < ${segui[ic]} ]]; }; then p=${otros[io]}; io=$((io + 1))
+    else p=${segui[ic]}; ic=$((ic + 1)); fi
+    [[ $p == "$prev" ]] && continue          # una entrada en conflicto sale una vez por etapa
+    if [[ -n $prev && ! $prev < $p ]]; then
+      ARNES_HASH_MOTIVO="git no listo el arbol ordenado por bytes ('$prev' antes que '$p')"; return 1
+    fi
+    prev=$p
+    _arnes_hash_excluido "$p" && continue
+    if [[ -L $raiz/$p ]]; then m=120000; enl+=("${#ps[@]}")
+    elif [[ -d $raiz/$p ]]; then m=160000
+    elif [[ -f $raiz/$p ]]; then
+      if [[ -x $raiz/$p ]]; then m=100755; else m=100644; fi
+      q=$p
+      if [[ $q == *$'\n'* || $q == '"'* ]]; then q=${q//\\/\\\\}; q=${q//\"/\\\"}; q=${q//$'\n'/\\n}; q="\"$q\""; fi
+      lineas+="$q"$'\n'
+    elif [[ -e $raiz/$p ]]; then m=0      # ni archivo, ni directorio, ni enlace: sólo su presencia
+    else continue; fi                     # borrado
+    ps+=("$p"); ms+=("$m")
+  done
+  if [ -n "$lineas" ]; then
+    mapfile -t hs < <("${git[@]}" hash-object --no-filters --stdin-paths <<< "${lineas%$'\n'}" 2>/dev/null; printf 'RC %s\n' "$?")
+    n=${#hs[@]}
+    if (( n == 0 )) || [ "${hs[n-1]}" != 'RC 0' ]; then
+      ARNES_HASH_MOTIVO="git no pudo leer el contenido de los archivos del arbol (uno cambio o desaparecio mientras se media, o no se puede leer)"; return 1
+    fi
+    unset 'hs[n-1]'
+  fi
+  if (( ${#enl[@]} > 0 )); then
+    rc=''
+    while IFS= read -r -d '' e; do dest+=("$e"); done < <(cd "$raiz" 2>/dev/null && for n in "${enl[@]}"; do readlink -z -- "${ps[n]}" || printf '\0'; done)
+    if (( ${#dest[@]} != ${#enl[@]} )); then ARNES_HASH_MOTIVO="no se pudieron leer los enlaces simbolicos del arbol"; return 1; fi
+  fi
+  local i k=0 l=0 h
+  for ((i = 0; i < ${#ps[@]}; i++)); do
+    case "${ms[i]}" in
+      100*) h=${hs[k]:-}; k=$((k + 1)) ;;
+      120000) h="l${#dest[l]}:${dest[l]}"; l=$((l + 1)) ;;
+      *) h=- ;;
+    esac
+    texto+="${ms[i]} $h ${#ps[i]}:${ps[i]}"$'\n'
+  done
+  if (( k != ${#hs[@]} )); then ARNES_HASH_MOTIVO="el recuento del contenido no cuadra con la lista del arbol"; return 1; fi
+  h="$("${git[@]}" hash-object --no-filters --stdin <<< "$texto" 2>/dev/null)" || h=''
+  case "$h" in ''|*[!0-9a-f]*) ARNES_HASH_MOTIVO="git no pudo calcular el hash del arbol"; return 1 ;; esac
+  ARNES_HASH=$h
   return 0
 }
 
-# arnes_gate_corta <pid> — corta la gate cuyo subshell es <pid> (que encabeza su grupo): TERM al grupo, hasta
-# ARNES_GATES_CORTE_S segundos para que termine, y KILL a lo que quede del grupo. Si no hubo grupo propio
-# (un bash sin control de trabajos), al menos el subshell. El reloj del corte, como el del presupuesto, antes.
-arnes_gate_corta() {
-  local g="$1" t quien=''
-  sleep "$ARNES_GATES_CORTE_S" </dev/null >/dev/null 2>&1 &
-  t=$!
-  kill -TERM -- "-$g" 2>/dev/null || kill -TERM "$g" 2>/dev/null
-  wait -n -p quien "$g" "$t"
-  kill -KILL -- "-$g" 2>/dev/null
-  [ "$quien" = "$g" ] || { kill -KILL "$g" 2>/dev/null; wait "$g" 2>/dev/null; }
-  [ "$quien" = "$t" ] || { kill -KILL "$t" 2>/dev/null; wait "$t" 2>/dev/null; }   # KILL: QA-037-01
+# arnes_veredicto_juzga <raíz> <gates del manifiesto, una por línea> -> ARNES_VER_ESTADO y ARNES_VER_DETALLE.
+# Estados: ok, ausente, ilegible, lista (la del registro no es la del manifiesto), roja (ARNES_VER_DETALLE: la
+# primera gate que no salió 0, o que no corrió), caducado (el hash no es el del árbol actual, o el registro es de
+# otra definición de árbol) y nomedible (el hash del árbol actual no se pudo calcular). REQ-037 CA-03:
+# LEGIBLE ES ESTRICTO: exactamente los campos del formato, `formato` 1, cada gate con `comando` (texto), `rc`
+# (entero de 0 a 255, o null si no corrió) y `ms` (entero o null), `quien` con algo que no sea blanco, `fecha` en
+# UTC y `hash` en hexadecimal. Un `0` escrito como texto, un número fuera de rango o un campo de más: ilegible,
+# nunca verde. Un `jq` para todo; el hash (tres procesos de git) sólo si lo demás está en orden.
+arnes_veredicto_juzga() {
+  local reg="$1/$ARNES_VEREDICTO_REL" r
+  ARNES_VER_ESTADO=''; ARNES_VER_DETALLE=''
+  if [ ! -e "$reg" ] && [ ! -L "$reg" ]; then ARNES_VER_ESTADO=ausente; return 0; fi
+  if ! arnes_lee_archivo "$reg" || [ -z "$ARNES_TEXTO" ]; then
+    ARNES_VER_ESTADO=ilegible; ARNES_VER_DETALLE='no se puede leer entero'; return 0
+  fi
+  r="$(jq -r --arg g "$2" --arg def "$ARNES_ARBOL_DEF" --argjson fmt "$ARNES_VEREDICTO_FORMATO" '
+    def entero: type == "number" and . == floor and . >= 0;
+    ["arbol","fecha","formato","gates","hash","quien"] as $k
+    | if type != "object" then "ilegible\tno es un objeto JSON"
+      elif (keys != $k) then "ilegible\tsus campos no son los del formato"
+      elif .formato != $fmt then "ilegible\tel formato no es el \($fmt)"
+      elif (.hash | type) != "string" or (.hash | test("^[0-9a-f]{40,64}$") | not) then "ilegible\tel hash no es hexadecimal"
+      elif (.fecha | type) != "string" or (.fecha | test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$") | not) then "ilegible\tla fecha no es UTC"
+      elif (.quien | type) != "string" or (.quien | test("[^ \t\r\n]") | not) then "ilegible\tno dice quien lo corrio"
+      elif (.arbol | type) != "string" then "ilegible\tno dice que arbol mide"
+      elif (.gates | type) != "array" or any(.gates[];
+             type != "object" or (keys != ["comando","ms","rc"]) or (.comando | type) != "string"
+             or ((.rc == null or (.rc | entero and . <= 255)) | not) or ((.ms == null or (.ms | entero)) | not))
+        then "ilegible\tsus gates no tienen la forma comando, rc y ms"
+      elif [.gates[].comando] != ($g | split("\n") | map(select(length > 0))) then "lista\t"
+      elif any(.gates[]; .rc != 0) then "roja\t" + (first(.gates[] | select(.rc != 0)) | .comando)
+      elif .arbol != $def then "caducado\totra definicion de arbol"
+      else "ok\t" + .hash end' <<< "$ARNES_TEXTO" 2>/dev/null)" || r=''
+  case "$r" in
+    ilegible$'\t'*|lista$'\t'*|roja$'\t'*|caducado$'\t'*|ok$'\t'*) ;;
+    *) ARNES_VER_ESTADO=ilegible; ARNES_VER_DETALLE='no es JSON valido'; return 0 ;;
+  esac
+  ARNES_VER_ESTADO="${r%%$'\t'*}"; ARNES_VER_DETALLE="${r#*$'\t'}"
+  [ "$ARNES_VER_ESTADO" = ok ] || return 0
+  if ! arnes_hash_arbol "$1"; then ARNES_VER_ESTADO=nomedible; ARNES_VER_DETALLE="$ARNES_HASH_MOTIVO"; return 0; fi
+  [ "$ARNES_HASH" = "$ARNES_VER_DETALLE" ] || { ARNES_VER_ESTADO=caducado; ARNES_VER_DETALLE="el arbol cambio despues de correr las gates"; }
   return 0
 }
 
@@ -887,7 +926,8 @@ declare -gA ARNES_IDM_E=() ARNES_IDM_C=() ARNES_IDM_A=() ARNES_IDM_F=() ARNES_ID
 declare -gA ARNES_TRAMO_FIS=() ARNES_TRAMO_TXT=() ARNES_DIRFIS=() ARNES_AMB_LISTO=() ARNES_AMB_NT=()
 declare -ga ARNES_AMB_req_P=() ARNES_AMB_req_T=() ARNES_AMB_req_F=() ARNES_AMB_req_Q=() \
             ARNES_AMB_codigo_P=() ARNES_AMB_codigo_T=() ARNES_AMB_codigo_F=() ARNES_AMB_codigo_Q=() \
-            ARNES_AMB_manifiesto_P=() ARNES_AMB_manifiesto_T=() ARNES_AMB_manifiesto_F=() ARNES_AMB_manifiesto_Q=()
+            ARNES_AMB_manifiesto_P=() ARNES_AMB_manifiesto_T=() ARNES_AMB_manifiesto_F=() ARNES_AMB_manifiesto_Q=() \
+            ARNES_AMB_veredicto_P=() ARNES_AMB_veredicto_T=() ARNES_AMB_veredicto_F=() ARNES_AMB_veredicto_Q=()
 ARNES_RAICES_LISTAS=''; ARNES_ID_RUTA=''; ARNES_DOBLE_ES_RAIZ=0; ARNES_HAY_CYGPATH=''; ARNES_MANIF_REL='.arnes/config.json'
 
 # `$PWD` tras `cd -P`. Linux conserva la doble barra inicial (`//tmp`) y alli `//` es `/`; en Windows
@@ -1468,7 +1508,8 @@ _arnes_casa_patron() {   # <amb> <patron> <rel>
     req)        case "$3" in "$2"/*) return 0 ;; esac; return 1 ;;
     # shellcheck disable=SC2053  -- glob a la derecha a proposito
     codigo)     [[ "$3" == $2 ]] ;;
-    manifiesto) [ "$3" = "$2" ] ;;
+    manifiesto|veredicto) [ "$3" = "$2" ] ;;
+    *)          return 1 ;;   # un ambito sin regla no tiene «dentro» (sin esta rama, `case` devolvia 0)
   esac
 }
 
@@ -1492,6 +1533,7 @@ _arnes_ambito() {   # <req|codigo|manifiesto> -> ARNES_AMB_<amb>_P (patrones), _
     req)        g=0; [ -z "${ARNES_REQ_DIR:-}" ] || p=("$ARNES_REQ_DIR") ;;
     codigo)     for x in ${ARNES_GLOBS[@]+"${ARNES_GLOBS[@]}"}; do p+=("$x"); done ;;
     manifiesto) p=("$ARNES_MANIF_REL") ;;
+    veredicto)  p=("$ARNES_VEREDICTO_REL") ;;
   esac
   for x in ${p[@]+"${p[@]}"}; do
     _arnes_tramo_fijo "$x" "$g"; [ -n "$ARNES_TRAMO" ] || continue
@@ -2706,6 +2748,38 @@ arnes_deny_escribe_manifiesto() {   # [destinos de escritura de Bash, uno por li
         ARNES_MANIF_CONTENIDO="${ARNES_JQ:-vacio}"
       fi
       [ "$ARNES_MANIF_CONTENIDO" = lleno ] || _arnes_deny_manifiesto "$ARNES_FP" "este Write deja sin contenido" ;;
+  esac
+  return 0
+}
+
+# --- REQ-037 CA-05: el registro del veredicto de las gates sólo lo escribe la herramienta ------------------------
+# Con las gates dentro del hook nadie podía fabricar un verde; con ellas fuera, el registro es lo que la puerta
+# cree. Se protege con el mismo mecanismo que el manifiesto (identidad del destino, REQ-007 CA-47): escribirlo
+# por `Edit`, `Write` o `MultiEdit`, o por una forma de `Bash` que el detector ve, se deniega A TODO AGENTE,
+# también al de código. Leerlo y BORRARLO no: sin registro la puerta deniega. El trabajo interno de la herramienta
+# no pasa por el hook. Lo que el detector no ve (comillas, `cd`, intérpretes...; F-136-13) puede fabricar un
+# verde: riesgo declarado en REQ-037 CA-05, no aceptado como definitivo.
+_arnes_deny_veredicto() {   # <ruta como llego> <que hace la orden>
+  local quien
+  if [ -n "$ARNES_AGENT_ID" ]; then quien="el subagente $(arnes_agente_legible "${ARNES_AGENT_TYPE:-desconocido}")"
+  else quien="la sesión coordinadora"; fi
+  arnes_cita_ruta "$1"
+  arnes_deny "ARNES: $2 el registro del veredicto de las quality gates ('$ARNES_VEREDICTO_REL', aquí $ARNES_CITA_RUTA). Ese registro sólo lo escribe la herramienta que corre las gates; escribirlo de otra forma fabricaría un veredicto que nadie midió, y no se permite a ningún agente, tampoco al agente de código (intento de $quien; REQ-037 CA-05). Para producirlo, corre las gates desde la raíz del proyecto con: bash '$ARNES_HERRAMIENTA_GATES' --quien <quien las corre>. Leerlo o borrarlo sí se permite."
+}
+arnes_deny_escribe_veredicto() {   # [destinos de escritura de Bash, uno por linea]
+  local d
+  case "$ARNES_TOOL" in
+    Bash)
+      while IFS= read -r d; do
+        [ -n "$d" ] || continue
+        d="${d#"$ARNES_FORMA_DIR"}"
+        arnes_identidad "$d"
+        arnes_id_pertenece veredicto && _arnes_deny_veredicto "$d" "este comando escribe por Bash"
+      done <<< "${1:-}" ;;
+    Edit|Write|MultiEdit)
+      [ -n "$ARNES_FP" ] || return 0
+      arnes_identidad "$ARNES_FP"
+      arnes_id_pertenece veredicto && _arnes_deny_veredicto "$ARNES_FP" "este $ARNES_TOOL escribe" ;;
   esac
   return 0
 }

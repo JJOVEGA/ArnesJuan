@@ -306,7 +306,6 @@ arnes_guard_completado() {
   local cita_desp est_citado cr_desp cr_linea
   local seg_antes amb intento v
   local obj existe ilegible arreglo
-  local t_gates analisis resta presupuesto corrieron=''
 
   # El análisis del input y del manifiesto es COMPARTIDO y memorizado: si
   # `guard-codigo` ya corrió en este mismo proceso, aquí no se vuelve a pagar.
@@ -381,6 +380,7 @@ arnes_guard_completado() {
   # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
   arnes_deny_manifiesto_roto "${escrituras:-}"
   arnes_deny_escribe_manifiesto "${escrituras:-}"   # REQ-033 CA-01, como en `guard-codigo`
+  arnes_deny_escribe_veredicto "${escrituras:-}"    # REQ-037 CA-05, como en `guard-codigo`
 
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
 
@@ -952,60 +952,35 @@ arnes_guard_completado() {
     fi
   fi
 
-  # --- Gate A3: quality gates en verde antes de completar ---
-  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas y NO cuenta lo que ellas tardan (REQ-037 CA-01,
-  # ADR-018): las gates tienen su propio presupuesto, ARNES_GATES_PRESUPUESTO_S en total y en serie, y cada una
-  # corre vigilada por `arnes_gate` (lib.sh), que la corta si lo agota. Hasta 1.36.2 lo que tardaba una gate
-  # no lo interrumpía nadie, y la comprobación del plazo que va detrás lo contaba (issue #63).
+  # --- Gate A3: un veredicto verde de las quality gates, del árbol actual, antes de completar ---
+  # LAS GATES NO CORREN AQUÍ (REQ-037, ADR-019; issue #63). Hasta 1.36.2 la puerta las ejecutaba y su tiempo se
+  # sumaba al plazo propio: una gate verde de 35 s impedía todo cierre. Ahora las corre `tools/arnes-gates.sh`
+  # fuera del hook y deja un registro con el código de cada gate y el hash del árbol; la puerta sólo lo comprueba
+  # (`arnes_veredicto_juzga`, lib.sh) y responde en lo que tarda ese hash, sea cual sea la duración de las gates.
+  # Sin `quality_gates` no se pide registro, como hasta ahora. Cada motivo dice cuál de las condiciones falló y
+  # cómo correr la herramienta; ninguno es un veredicto sobre el código: es que el veredicto falta o caducó.
   arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
-  # El archivo de salida de las gates se crea al lanzar la primera, sin procesos (`arnes_gates_salida`, lib.sh;
-  # QA-037-02); sólo si eso falla, `mktemp`, como hasta 1.36.2. Sin gates, ni se crea ni se borra.
-  tmp=''
-  presupuesto=$(( ARNES_GATES_PRESUPUESTO_S * 1000000 ))
-  while IFS= read -r cmd; do
-    [ -n "$cmd" ] || continue
-    if [ -z "$corrieron" ]; then
-      # Vigilar una gate exige `wait -n -p` (bash 5.1). Sin él, una gate que no termina dejaría al hook sin
-      # decisión: no se lanza ninguna y se deniega, que es lo que hace una puerta que no puede medir.
-      if (( BASH_VERSINFO[0] < 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] < 1) )); then
-        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': este bash (${BASH_VERSION}) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—, asi que no se lanza ninguna: una gate que no terminara dejaria al hook sin decision, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Cierra el REQ desde un entorno con bash 5.1 o posterior."
-      fi
-      corrieron=si
-      if arnes_gates_salida; then tmp="$ARNES_GATES_SAL"; else tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"; fi
-      t_gates=${EPOCHREALTIME//[!0-9]/}
-      analisis=''; [ -z "${ARNES_T0_US:-}" ] || analisis=$(( t_gates - ARNES_T0_US ))
-    fi
-    resta=$(( presupuesto - (${EPOCHREALTIME//[!0-9]/} - t_gates) ))
-    if [ "$resta" -le 0 ]; then
-      arnes_gates_sin_reloj; rm -f "$tmp"
-      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': las quality gates no terminaron dentro de su presupuesto de $ARNES_GATES_PRESUPUESTO_S s (en total y en serie, desde que se lanzo la primera): la gate \`$cmd\` no llego a lanzarse, ni ninguna de las que la siguen. No es un veredicto sobre las gates: es que no terminaron, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Acorta las gates para que quepan en el presupuesto y reintenta."
-    fi
-    # Un reloj para todo el presupuesto; se rearma, con lo que queda, sólo si terminó y la gate también.
-    [ -n "$ARNES_GATES_T" ] || arnes_gates_reloj "$resta"
-    arnes_gate "$cmd" "$tmp"
-    if [ "$ARNES_GATE_FIN" = fin ]; then
-      [ "$ARNES_GATE_RC" -eq 0 ] && continue
-      arnes_gates_sin_reloj
-      out="$(tail -c 600 "$tmp" 2>/dev/null)"
-      rm -f "$tmp"
-      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"
-    fi
-    arnes_gates_sin_reloj; rm -f "$tmp"
-    # La gate se cortó. Si se agotó el presupuesto lo dice el reloj del hook, no el `sleep` (lib.sh).
-    if [ $(( ${EPOCHREALTIME//[!0-9]/} - t_gates )) -ge "$presupuesto" ]; then
-      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': las quality gates no terminaron dentro de su presupuesto de $ARNES_GATES_PRESUPUESTO_S s (en total y en serie, desde que se lanzo la primera): la gate \`$cmd\` seguia en curso y se corto, y ninguna de las que la siguen se lanzo. No es un veredicto sobre las gates: es que no terminaron, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Acorta las gates para que quepan en el presupuesto y reintenta."
-    fi
-    arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el reloj que vigila el presupuesto de las quality gates termino antes de tiempo mientras la gate \`$cmd\` seguia en curso (algo lo mato, o la espera fallo), y la gate se corto. No es un veredicto sobre las gates: la puerta no pudo medir si terminan dentro de su presupuesto, y una puerta que no puede medir no deja pasar (REQ-037 CA-02)."
-  done <<< "$ARNES_GATES"
-  arnes_gates_sin_reloj
-  [ -z "$tmp" ] || rm -f "$tmp"
-  # El reloj del plazo propio vuelve a lo que llevaba el ANÁLISIS cuando se lanzó la primera gate (REQ-037
-  # CA-01): ningún segundo de las gates cuenta en la comprobación que va detrás. Sin gates no hay nada que
-  # descontar y el reloj no se toca. Con el valor en segundos enteros, la lectura siguiente puede subir uno
-  # al cruzar un segundo de reloj: el mismo grano que tiene `SECONDS` desde que arranca el hook.
-  [ -z "$corrieron" ] || [ -z "$analisis" ] || [ "$analisis" -lt 0 ] || SECONDS=$(( analisis / 1000000 ))
+  if [ -n "${ARNES_GATES//$'\n'/}" ]; then
+    arnes_veredicto_juzga "$ARNES_PROJ" "$ARNES_GATES"
+    local corre="Corre las gates desde la raiz del proyecto con: bash '$ARNES_HERRAMIENTA_GATES' --quien <quien las corre> (una suite de mas de 10 min, en segundo plano o desde la terminal del propietario; REQ-037 CA-07) y reintenta."
+    case "$ARNES_VER_ESTADO" in
+      ok) ;;
+      ausente)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el proyecto tiene quality gates y no hay veredicto de ellas ($ARNES_VEREDICTO_REL). Las gates no corren en este hook: las corre la herramienta, que deja el veredicto ligado al hash del arbol (REQ-037 CA-03). No es un veredicto sobre el codigo: falta. $corre" ;;
+      ilegible)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) no se puede leer como un veredicto completo ($ARNES_VER_DETALLE), y una puerta que no puede medir no deja pasar (REQ-037 CA-03). No es un veredicto sobre el codigo. $corre" ;;
+      lista)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) es de otra lista de gates que la del manifiesto actual (en comandos u orden): se anadio, se quito o se cambio una gate despues de correrlas (REQ-037 CA-03). No es un veredicto sobre el codigo: caduco. $corre" ;;
+      roja)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': en el veredicto registrado ($ARNES_VEREDICTO_REL) la quality gate \`$ARNES_VER_DETALLE\` no salio 0 (o no llego a correr), y ninguna gate roja deja cerrar (AGENTS.md §7; REQ-037 CA-03). Corrigela, y despues: $corre" ;;
+      caducado)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) no es del arbol actual ($ARNES_VER_DETALLE): el hash del arbol con el que corrieron no es el de ahora (REQ-037 CA-01 y CA-03). No es un veredicto sobre el codigo: caduco. $corre" ;;
+      *)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': no se puede medir el arbol del proyecto para comprobar el veredicto de las quality gates (${ARNES_VER_DETALLE:-sin detalle}), y una puerta que no puede medir no deja pasar: sin git no se cierra un REQ con gates (REQ-037 CA-01)." ;;
+    esac
+  fi
 
   return 0
 }

@@ -10,19 +10,11 @@
 #     Lo que NO alcanza: un `BASH_ENV` con otro contenido corre antes de la primera línea del hook
 #     (O-54-1, ficha F-136-9).
 #   * El plazo propio del hook arranca aquí: `SECONDS=0` es una asignación, así que un `SECONDS` heredado
-#     del entorno no lo mueve (`arnes_plazo`, lib.sh). Mide el ANÁLISIS, no las quality gates (REQ-037 CA-01):
-#     `ARNES_T0_US`, el mismo arranque en microsegundos, es con lo que `guard-completado` devuelve el reloj a lo
-#     que llevaba el análisis al salir del bucle de gates. También es una asignación, y de `EPOCHREALTIME`, que
-#     el entorno no puede fijar (bash 5.0 o posterior; con uno anterior no se usa: las gates exigen 5.1).
+#     del entorno no lo mueve (`arnes_plazo`, lib.sh).
 #   * La trampa de salida: si el proceso termina sin que el juicio haya concluido —sólo `ARNES_JUICIO=fin`
 #     lo dice: la salida inerte, el final de un punto de entrada y una denegación que `jq` llegó a
 #     escribir—, emite una denegación FIJA, con `printf`, sin `jq` y sin interpolar nada, para que nada
 #     pueda impedir emitirla. `ARNES_JUICIO` se vacía aquí: un valor heredado del entorno no cuenta.
-#     LA EMITE SÓLO EL PROCESO DEL HOOK (`$BASHPID` igual a `$$`; REQ-037, QA-037-01). Medido (bash 5.3.9): un hijo
-#     recién bifurcado que recibe una señal ANTES de rehacer sus manejadores ejecuta esta trampa heredada, y la
-#     escribía en la salida estándar del hook —dos documentos JSON, que el cliente no aplica, o un `deny` espurio
-#     tras una gate verde—. La guarda va con `case`, sin órdenes: en ese hijo `[` devuelve 127. Y sin `BASHPID`
-#     legible se emite (fail-closed).
 #   * Y el resto del estado del intérprete heredado que se puede deshacer desde dentro (QA-007-11 (a); REQ-007
 #     CA-68 (ii), P-136-P (2) (A)), sin procesos:
 #       - las FUNCIONES importadas del entorno (`BASH_FUNC_<nombre>%%`) con el nombre de una orden que el hook
@@ -54,7 +46,7 @@ unset -f return exit break continue set shift : eval trap unset exec . \
 unset FUNCNEST BASH_COMPAT
 shopt -u compat31 compat32 compat40 compat41 compat42 compat43 compat44 2>/dev/null
 set +o keyword
-SECONDS=0; ARNES_T0_US=${EPOCHREALTIME//[!0-9]/}; ARNES_JUICIO=''; ARNES_EN_HOOK=1
-trap 'case ${BASHPID:-}:${ARNES_JUICIO:-} in "$$:fin") ;; "$$:"*|:*) printf "%s\n" "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68).\"}}"; exit 0 ;; esac' EXIT
+SECONDS=0; ARNES_JUICIO=''; ARNES_EN_HOOK=1
+trap '[ "${ARNES_JUICIO:-}" = fin ] || { printf "%s\n" "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"deny\",\"permissionDecisionReason\":\"ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo protegido. Una puerta que no puede medir no deja pasar, a ningun agente (REQ-007 CA-68).\"}}"; exit 0; }' EXIT
 # Fin del preludio: R1, fuera del modo POSIX —el heredado y el que esta limpieza puso—, antes de cargar `lib.sh`.
 unset POSIXLY_CORRECT; set +o posix

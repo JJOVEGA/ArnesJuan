@@ -592,7 +592,7 @@ Señales automáticas de verdad. El `qa-tester` las usa como fuente de verdad an
 - `for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done` — sintaxis de todo el mecanismo.
 - `jq -e . hooks/hooks.json >/dev/null` — el registro de hooks es JSON válido.
 - `jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null` — versión y marketplace válidos.
-- **El banco completo (`tests/escenarios/hooks/run.sh`) corre en CI, no como gate del hook:** en Windows dura ~30 min y un hook `PreToolUse` muere a los 60 s, y un hook muerto no deniega. En Linux dura segundos y es la puerta requerida de `main` (`hooks-en-linux`). Antes de pedir la fusión, el banco tiene que estar en verde en CI y correrse entero al menos una vez en la plataforma del desarrollador.
+- **El banco completo (`tests/escenarios/hooks/run.sh`) corre en CI, no como gate del hook:** en Windows dura ~30 min, el cliente mata un hook `PreToolUse` sin `timeout` explícito a los ≈ 600 s (medido, CLI 2.1.289, Linux/WSL2; REQ-037) y un hook muerto no deniega; desde 1.36.3 las gates tampoco corren en el hook (abajo). En Linux dura segundos y es la puerta requerida de `main` (`hooks-en-linux`). Antes de pedir la fusión, el banco tiene que estar en verde en CI y correrse entero al menos una vez en la plataforma del desarrollador.
 
 (por defecto, para stack Node/TS: `npm run typecheck`, `npm run lint`, `npm run build`, `npm test`)
 
@@ -602,10 +602,14 @@ Las **pruebas automatizadas** son parte de cada REQ: las escribe el `desarrollad
 no pasa a `en-revisión` sin ellas. El tipo (unitarias/integración/e2e) y la cobertura mínima
 se fijan por proyecto; si no se definieron, se usa el estándar del stack.
 
-> 🔒 **Vigilado por máquina:** el hook `guard-completado` (plugin) corre las quality gates de
-> `.arnes/config.json` justo antes de aceptar la transición de un REQ a `completado` y la
-> **deniega** si alguna falla (alcance real en §13). Mantén la lista de gates idéntica aquí y
-> en el manifiesto.
+> 🔒 **Vigilado por máquina:** las quality gates de `.arnes/config.json` **no corren dentro del hook**
+> (desde 1.36.3, REQ-037). Las corre `tools/arnes-gates.sh --quien <quien>` del plugin —QA, la
+> coordinadora o el propietario; una suite de más de 10 min, en segundo plano o desde la terminal del
+> propietario—, que deja en `.arnes/gates-veredicto.json` el código de salida de cada gate y el **hash del
+> árbol**. El hook `guard-completado` **deniega** la transición de un REQ a `completado` si ese veredicto
+> falta, no se puede leer, es de otra lista de gates, tiene una gate que no salió 0 o no es del árbol actual
+> (alcance y límites en §13). Sin git no se cierra un REQ con gates. Mantén la lista de gates idéntica aquí
+> y en el manifiesto, e ignora `.arnes/gates-veredicto.json` en git.
 
 ## 8. CHANGELOG — reglas
 
@@ -694,7 +698,7 @@ Las invariantes de este documento que no se quedan en la prosa las vigila la má
 |------------|---------|------|------------------------|
 | La coordinadora no edita código de la app (sólo el `desarrollador`) | §5 | `guard-codigo` | `Edit`/`Write`/`MultiEdit` + `Bash` (parcial) |
 | No completar un REQ con aprobaciones pendientes | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
-| No completar un REQ con quality gates en rojo. **Lo que esta fila no cubre en 1.36.0, límites declarados, ni aceptados ni reparados** —ejemplos **no exhaustivos**—: una gate que **lee su entrada estándar** se come la lista de las gates siguientes, que no se ejecutan (SEC-133); y una **función importada** del entorno con el nombre de la orden de una gate hace pasar esa gate aunque esté en rojo (SEC-131 (a), que también declara la fila del entorno heredado). **Consecuencia:** en esas formas el cierre puede salir **sin decisión** con una gate en rojo —una posterior a la que lee la entrada, o la propia gate suplantada—, y salir sin decisión no deniega. Preexistentes, iguales en v1.35.0; su resolución es de 1.37 (fichas F-136-23 y F-136-21; norma única: REQ-007 CA-68, «Límites declarados de 1.36.0», del repositorio del arnés) | §7 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
+| No completar un REQ **sin un veredicto verde de las quality gates del árbol actual** (`tools/arnes-gates.sh`; desde 1.36.3 la puerta no ejecuta gates, REQ-037). **Riesgo y límites declarados, no aceptados como definitivos** —ejemplos **no exhaustivos**—: el registro se protege contra `Edit`/`Write`/`MultiEdit` y contra las formas de `Bash` que el detector ve, **a todo agente**; lo que el detector no ve (F-136-13: comillas, `cd`, globs, intérpretes…) y la consola del propietario **pueden fabricar un verde**; una gate hostil, o un superviviente suyo, puede reescribir el registro; `--quien` no se verifica; lo **ignorado** por git y la lista cerrada de exclusiones (`requirements/`, `docs/qa/`, `docs/seguridad/`, la cola, el CHANGELOG, `docs/ESTADO.md`) no entran en el hash; y una **función importada** del entorno con el nombre de la orden de una gate la hace salir 0 (SEC-131 (a)). SEC-133 (una gate que leía su entrada se comía la lista) queda **cerrado por construcción**: la herramienta no pasa la lista por la entrada estándar y la gate lee `/dev/null` | §7 | `guard-completado`; el registro, también `guard-codigo` | `Edit`/`Write`/`MultiEdit`/`Bash` |
 | No completar con un hallazgo `usuario/dinero` o `contrato` abierto —ni con uno **sin clase**, ni con una lista que la puerta **no puede interpretar**, ni con el campo **repetido** en la cabecera, ni con el campo **por encima de su techo** de tamaño, que se mide antes de normalizar—. **Aparte de la regla, sus límites:** en 1.36.0 la denegación de esta fila **llega al cliente** —el motivo viaja por la entrada estándar de `jq`, nunca como argumento, acotado a 16 384 bytes— y un juicio que no termina a tiempo deniega por el plazo propio del hook: SEC-118 y SEC-115 están **`mitigado`**, con sus residuales (cláusula 1, abajo). **Residual propio de esta fila, límite declarado y sin reparar:** con miles de líneas `Hallazgos abiertos:` repetidas en la cabecera **en disco**, el juicio crece más que linealmente y puede pasar de los 40 s o quedarse sin decisión (SEC-132 (b); medido en Linux/WSL2, una corrida por punto: 20 000 líneas cortas, `deny` a los 48,5 s; 20 000 de 66 caracteres, sin decisión a los 60 s). *(Hasta 1.35.0 esta fila declaraba SEC-115 y SEC-118 como limitaciones sin reparar, con lo medido entonces: la denegación por tamaño, hasta 255 371 bytes; y, con el motivo en un argumento cuyo límite es de bytes, con líneas ASCII de 60 caracteres o más 1 601 deniegan y 1 801 salen sin decisión, con ASCII cortas 2 501 y 3 000, y con multibyte salen sin decisión 1 601 con `ñ`, 1 001 con caracteres de 4 bytes y 2 501 cortas con `ñ`. Es historia de 1.35.0, no un límite de 1.36.0.)* (sintaxis, techo, repetición, sus límites y lo que la puerta no lee: `requirements/README.md` § «Clases de hallazgo») | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | El rigor se puede subir, nunca bajar: `Sensible a seguridad: sí` impone `critico` | §6 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
 | No completar sin `QA: aprobado` (salvo `Rigor: ligero`), ni un REQ `critico` sin `Seguridad: aprobado` | §9 | `guard-completado` | `Edit`/`Write`/`MultiEdit` |
@@ -724,14 +728,12 @@ y aparte, y ninguna fila se lee como garantía sin ello:**
      **acota a 16 384 bytes**.
 
    **Sus residuales, que siguen abiertos o declarados:**
-   - las **quality gates** (SEC-132 (a)), **límite declarado de 1.36.0 y sin reparar:** el plazo propio no
-     alcanza a las quality gates —se comprueba antes de la primera, y no entre una y la siguiente ni durante la
-     que está en curso—, así que cuatro gates de 20 s, o una sola gate colgada, dejan el hook **sin decisión** a
-     los 60 s (medido en Linux/WSL2), y el cierre se aplica. **1.36.0 no cambia ese caso:** el límite es el mismo
-     que en 1.35.0, donde el hook moría sin denegar y el REQ quedaba `completado`; el `deny` fijo de la trampa sale
-     después de que el cliente ya mató el hook. La reparación preparada en 1.36.0 se revirtió antes de publicar por los defectos que abría, uno
-     de ellos un cierre con una gate en rojo; la resolución es de 1.37, con tres lecciones de diseño (ficha
-     F-136-22 del repositorio del arnés);
+   - las **quality gates** (SEC-132 (a)): **desde 1.36.3 no corren en el hook** (REQ-037), así que una gate lenta
+     o colgada ya no puede dejarlo sin decisión: **deja de ser un vector del hook**, y su estado lo fija la
+     revisión de seguridad. Hasta 1.36.2 lo era: el plazo propio no alcanzaba a las gates, y el cliente mata un
+     `PreToolUse` sin `timeout` explícito a los **≈ 600 s** (medido: CLI 2.1.289, Linux/WSL2; no a los 60 s que
+     daba este texto); en 1.35.0 y 1.36.0 un cierre con una gate de 700 s **se aplicó sin veredicto** (medido con
+     el cliente real);
    - **una sola operación que crece más que linealmente**, que el plazo no interrumpe: miles de líneas
      `Hallazgos abiertos:` repetidas en la cabecera **en disco** (SEC-132 (b)) y un REQ de varios MB con CRLF
      en disco (QA-007-09), límites declarados de 1.36.0;
