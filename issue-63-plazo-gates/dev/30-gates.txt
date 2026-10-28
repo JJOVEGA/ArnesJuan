@@ -1,0 +1,6 @@
+# 2026-10-27T09:50:44-06:00 — quality gates de AGENTS.md §7 sobre el árbol final de la fase 2
+gates rc=0
+git diff v1.36.2 -- hooks/hooks.json: 0 líneas
+.claude-plugin/plugin.json:4:  "version": "1.36.3",
+.claude-plugin/marketplace.json:8:    "version": "1.36.3"
+.claude-plugin/marketplace.json:15:      "version": "1.36.3"

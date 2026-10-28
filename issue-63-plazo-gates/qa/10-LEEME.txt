@@ -1,0 +1,11 @@
+# 10: cierres legítimos bajo carga sintética (bin/carga.sh: 12 bucles de CPU + 6 de fork, en su propio grupo; loadavg ≈ 18-25)
+# Resultados (los que no tienen archivo propio se transcriben de la consola de QA):
+#   v1.36.2, gate `true`, 300 cierres: 300 allow (max 928 ms)                         [consola]
+#   candidata, gate `true`, 300 cierres: no terminó en 300 s (cuelgues)              [consola; primera corrida, sin registro por iteración]
+#   candidata, gate `true`, 120: 119 allow, 1 deny espurio                          10-carga-verde-candidata-120.txt
+#   candidata (copia trazada, tr1/), gate `true`, 250: 247 allow, 2 deny espurios, 1 colgado (rc 124 a 60 s)   [consola] y tr1/
+#   candidata, gate `true`, caza del cuelgue: 40 allow y el 41.º colgado 420 384 ms; foto a los 8 s en la consola: el hook en
+#     do_wait, sólo `sleep 420` vivo, el hook con el fd 2 en /dev/null y el fd 10 en su stderr original        [consola] y cu1/
+#   candidata, gate `false`, 300: 294 correctos, 4 con DOS documentos JSON, 2 colgados > 30 s      10-carga-roja-candidata.txt
+#   v1.36.2, gate `false`, 300: 300 correctos                                      10-carga-roja-v1.36.2.txt
+#   candidata, gate `true`, 200: 198 allow, 2 deny espurios                         10-carga-verde-candidata.txt

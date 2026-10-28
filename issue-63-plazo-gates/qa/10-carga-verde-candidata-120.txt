@@ -1,0 +1,4 @@
+  it=43 rc=0 ms=422 ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote
+== cand-carga n=120 gates=["true"] max_ms=548
+      1  ARNES: el hook termino sin concluir el juicio de esta llamada (un error del interprete o una salida inesperada), asi que no se sabe si toca algo prote
+    119  ALLOW

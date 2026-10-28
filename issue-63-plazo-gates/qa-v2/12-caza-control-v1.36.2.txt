@@ -1,0 +1,12 @@
+# caza de cuelgues, 2026-10-27T12:52:24-06:00, carga PGID 3416238 (el mío 3416235)
+loadavg 17.41 18.72 19.72
+v1.36.2 gate=["true"] n=1000 cazados(>3 s)=0
+v1.36.2: 500 + 500 cierres; sesión 3443842; procesos que quedan en ella: 0 
+  anomalías (true): 0 
+  anomalías (false): 0 
+  temporal: /tmp/arnes_gate.1583872.913389561217601543
+  temporal: /tmp/arnes_gate.3016900.64702680788730988
+  temporal: /tmp/arnes_gate.3184341.35789276001601639466
+fin 13:00:16 loadavg 24.74 24.08 22.13
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/conduce-caza3.sh: line 14: 3416238 Killed                     setsid bash $Q/carga.sh $W/pgid > /dev/null 2>&1
+quedan en el grupo de carga: 0

@@ -1,0 +1,10 @@
+  it=6 rc=124 ms=30135 TIMEOUT30 1 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|
+  it=68 rc=124 ms=30044 TIMEOUT30 1 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|
+  it=132 rc=0 ms=432 2 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+  it=159 rc=0 ms=425 2 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+  it=241 rc=0 ms=422 2 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+  it=262 rc=0 ms=539 2 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+== ArnesJuan-1.36.3 n=300 gates=["false"] s=218
+    294  1 docs: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+      4  2 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|ARNES: no se puede marcar 'requirements/REQ-001.md' como 'co|
+      2  TIMEOUT30 1 docs: ARNES: el hook termino sin concluir el juicio de esta llamad|

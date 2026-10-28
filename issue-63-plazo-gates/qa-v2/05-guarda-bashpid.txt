@@ -1,0 +1,23 @@
+# 05 — guarda de la trampa: BASHPID y el deny legítimo (qa-tester, Opus), 2026-10-27T12:14:33-06:00
+## el proceso del hook (R2 ampliado)
+  [exit 3] env(X=1) → documentos=1
+  [ARNES_JUICIO=fin; exit 0] env(X=1) → documentos=0
+  [ARNES_JUICIO=fin; exit 7] env(X=1) → documentos=0
+  [ARNES_JUICIO=x; exit 0] env(X=1) → documentos=1
+  [false; set -e; false] env(X=1) → documentos=1
+  [set -u; echo $NOEXISTE53] env(X=1) → documentos=1
+  [( exit 3 ); exit 4] env(X=1) → documentos=1
+  [( ARNES_JUICIO=fin; exit 0 ); exit 0] env(X=1) → documentos=1
+  [( ARNES_JUICIO=x; exit 1 ); ARNES_JUICIO=fin] env(X=1) → documentos=0
+  [kill -TERM $$] env(X=1) → documentos=1
+  [kill -HUP $$] env(X=1) → documentos=1
+  [kill -USR1 $$] env(X=1) → documentos=1
+## BASHPID desde el entorno (el cliente no puede fijarlo: bash lo ignora)
+  [ARNES_JUICIO=fin] env(BASHPID=) → documentos=0
+  [ARNES_JUICIO=fin] env(BASHPID=1) → documentos=0
+  [exit 3] env(BASHPID=) → documentos=1
+## BASHPID vacío DENTRO del proceso (inalcanzable: ningún hook lo quita; se mide la rama «sin BASHPID legible»)
+  [unset BASHPID; exit 3] env(X=1) → documentos=1
+  [unset BASHPID; ARNES_JUICIO=fin] env(X=1) → documentos=1
+  [unset BASHPID; for i in $(seq 50); do sleep 3 </dev/null >/dev/null 2>&1 & kill -TERM $!; wait $! 2>/dev/null; done; ARNES_JUICIO=fin] env(X=1) → documentos=51
+  ningún hook quita BASHPID: 0 líneas

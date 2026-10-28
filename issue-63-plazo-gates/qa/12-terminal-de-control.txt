@@ -1,0 +1,13 @@
+# 12: una gate que toca la terminal de control, con el hook bajo un pty (`script -qec`), copia con N = 5 s (cn5) frente a
+# v1.36.2 (b362); bin/rq.sh <..> pty. 2026-10-27. QA-037-03 (b).
+cn5    rc=0       111ms deny                 GATE     ["stty sane"]                 (stty sobre la entrada estándar, que no es la terminal: falla en los dos)
+b362   rc=0       109ms deny                 GATE     ["stty sane"]
+cn5    rc=0      3116ms sin-decision         -        ["read -t 3 x </dev/tty; true"]
+b362   rc=0      3118ms sin-decision         -        ["read -t 3 x </dev/tty; true"]
+cn5    rc=0       107ms sin-decision         -        ["echo hola >/dev/tty; true"]
+b362   rc=0       108ms sin-decision         -        ["echo hola >/dev/tty; true"]
+cn5    rc=0     10230ms deny                 PRESUP   ["stty sane </dev/tty"]
+b362   rc=0       108ms sin-decision         -        ["stty sane </dev/tty"]
+cn5    rc=0     10132ms deny                 PRESUP   ["dd if=/dev/tty bs=1 count=1 2>/dev/null & p=$!; sleep 2; kill -9 $p 2>/dev/null; true"]
+b362   rc=0      2112ms sin-decision         -        ["dd if=/dev/tty bs=1 count=1 2>/dev/null & p=$!; sleep 2; kill -9 $p 2>/dev/null; true"]
+# sin-decision = allow. Lo que no se midió: si el hook tiene terminal de control dentro del cliente real.

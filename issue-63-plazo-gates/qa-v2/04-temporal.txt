@@ -1,0 +1,58 @@
+# 04 — arnes_gates_salida, lo funcional (qa-tester, Opus), 2026-10-27T12:13:37-06:00, cabeza cdbe2a8; copia «colision» = la candidata con el nombre fijo /tmp/arnes_gate.fijo (lib.sh:501)
+base-verde [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; true"] TMPDIR=- rc=0 → allow
+    la gate escribió en: /tmp/arnes_gate.1427563.34250744593781756005 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+base-roja [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1428357.3496310673241854412 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+sin-gates [cdbe2a8] gates=[] TMPDIR=- rc=0 → allow
+    la gate escribió en: 
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-ro-verde [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; true"] TMPDIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/w-temporal/no-escribible rc=0 → allow
+    la gate escribió en: /tmp/arnes_gate.1430072 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-ro-roja [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/w-temporal/no-escribible rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1430899 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-noexiste-roja [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/w-temporal/no/existe rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1431761 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-barra-final [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=/tmp/ rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1432765.10127229843270729919 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-raiz [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=/ rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1433638 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+tmpdir-relativo [cdbe2a8] gates=["readlink /proc/$BASHPID/fd/1 > donde53; false"] TMPDIR=rel rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.1434578 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+ls: cannot access '/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/w-temporal/p-tmpdir-relativo/rel': No such file or directory
+noclobber-no-llega [cdbe2a8] gates=["echo a > f53; echo b > f53; [ \"$(cat f53)\" = b ]"] TMPDIR=- rc=0 → allow
+    la gate escribió en: 
+    /tmp/arnes_gate.* antes=0 después=0
+colision-regular [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/tmp.uQsIkUMZzg (existe tras salir: no)
+    /tmp/arnes_gate.* antes=1 después=1
+    tras: regular file contenido=<ajeno> destino=<intacto> no-hay=<ls: cannot access '/tmp/claude-1000/-hom>
+colision-enlace-a-archivo [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/tmp.rNw8OtmsjI (existe tras salir: no)
+    /tmp/arnes_gate.* antes=1 después=1
+    tras: symbolic link contenido=<intacto> destino=<intacto> no-hay=<ls: cannot access '/tmp/claude-1000/-hom>
+colision-enlace-colgante [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/tmp.vjKxsCfwr7 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=1 después=1
+    tras: symbolic link contenido=<> destino=<intacto> no-hay=<ls: cannot access '/tmp/claude-1000/-hom>
+colision-fifo [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/tmp.RzczwYcEp7 (existe tras salir: no)
+    /tmp/arnes_gate.* antes=1 después=1
+    tras: fifo contenido=<> destino=<intacto> no-hay=<ls: cannot access '/tmp/claude-1000/-hom>
+colision-directorio [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/tmp.eCBsDAakLt (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+    tras: directory contenido=<> destino=<intacto> no-hay=<ls: cannot access '/tmp/claude-1000/-hom>
+colision-libre [colision] gates=["readlink /proc/$BASHPID/fd/1 > donde53; echo GATE; false"] TMPDIR=- rc=0 → deny: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': falló la quality ga|
+    la gate escribió en: /tmp/arnes_gate.fijo (existe tras salir: no)
+    /tmp/arnes_gate.* antes=0 después=0
+ls: cannot access '/tmp/arnes_gate.fijo': No such file or directory
+control v1.36.2 TMPDIR no escribible: deny en /tmp/arnes_gate.1478848
+control cdbe2a8 TMPDIR no escribible: deny en /tmp/arnes_gate.1479636

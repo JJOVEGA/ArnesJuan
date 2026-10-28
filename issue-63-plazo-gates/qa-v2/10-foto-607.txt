@@ -1,0 +1,22 @@
+# Foto del cuelgue de 10- (it=607), TRANSCRITA de la consola de QA: el archivo original (w-caza/c-true/foto.607 del
+# scratchpad) lo borró el `rm -rf` de conduce-caza3.sh al arrancar el control de 12-. Rutas del scratchpad abreviadas: $S.
+== it=607 12:44:40.675942588 hook=3017278 sid=3016900 loadavg=27.93 20.85 19.64
+    PID    PPID    PGID STAT WCHAN                  ELAPSED COMMAND
+3016900 2729349 3016900 Ss   do_wait                      3 bash $S/arb/cdbe2a8/hooks/guard.sh
+3017278 3016900 3016900 S    hrtimer_nanosleep            2 sleep 420
+-- 3016900: bash $S/arb/cdbe2a8/hooks/guard.sh
+State:	S (sleeping) SigQ:	3/125647 SigPnd:	0000000000000000 ShdPnd:	0000000000000000 SigBlk:	0000000000010000 SigIgn:	0000000000000006 SigCgt:	0000000043817ef9
+   fd 0 pipe:[16387215]
+   fd 1 $S/w-caza/c-true/out
+   fd 10 $S/w-caza/c-true/p/in
+   fd 2 /dev/null
+   fd 255 $S/arb/cdbe2a8/hooks/guard.sh
+-- 3017278: sleep 420
+State:	S (sleeping) SigQ:	3/125647 SigPnd:	0000000000000000 ShdPnd:	0000000000000000 SigBlk:	0000000000000000 SigIgn:	0000000000000006 SigCgt:	0000000000000000
+   fd 0 /dev/null
+   fd 1 /dev/null
+   fd 2 /dev/null
+salida hasta ahora: <>
+it=607: 30039 ms; salida <>
+# Nota: «hook=» en la cabecera es el primer hijo del lanzador (el reloj); el hook es el líder de la sesión 3016900.
+# fd 2 en /dev/null y fd 0 en una tubería son del arnés (2>/dev/null) y del `done <<< "$ARNES_GATES"` del hook.

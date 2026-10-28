@@ -1,0 +1,13 @@
+R1c: sección 37-5 sola con la candidata: 2026-10-27T10:47:35-06:00 load=3.07 12.98 17.46 1/978 3017841
+--- 37/5 · el camino de una cabecera normal: procesos y reloj (REQ-017 CA-08 y CA-06) ---
+  PASS  REQ-017 CA-08 (i) un REQ real de 6 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  FAIL  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  mín(r) 1.309× > techo 1.250× en las 5 de 5 resueltas: 1.342× 1.386× 1.309× 1.354× 1.412× (todas resueltas) — describe una medición que excede el techo; no afirma la causa
+  PASS  REQ-017 CA-08 (i) una cabecera de 200 líneas: 0 procesos añadidos respecto a v1.32.1  5 procesos frente a 5 (menos es conforme)
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.241× <= techo 1.250× en 5 de 5 resueltas: 1.204× 1.238× 1.214× 1.202× 1.241× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )
+  PASS  REQ-017 CA-06 el envoltorio resuelve rutas absolutas antes de tocar el PATH y no se llama a sí mismo (<5> procesos)
+  PASS  REQ-017 CA-06 el corredor acusa POR SU NOMBRE a la sección que deja un proceso vivo, y la vuelta sale en rojo
+aviso: vuelta parcial (1 de 64 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 6 PASS, 1 FAIL
+rc=1 load_fin=2.25 11.83 16.93 2/947 3023946

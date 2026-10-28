@@ -1,0 +1,9 @@
+# 08 — gates de AGENTS.md §7 y alcance (qa-tester, Opus), 2026-10-27T12:18:46-06:00, cabeza cdbe2a8ea895e1007b022122f42e0c07389642a0
+sintaxis rc=0
+hooks.json rc=0
+plugin/marketplace rc=0
+diff v1.36.2 hooks.json: 0 líneas; tools/ 0; .arnes/ 0
+.claude-plugin/marketplace.json:"version": "1.36.3"
+.claude-plugin/marketplace.json:"version": "1.36.3"
+.claude-plugin/plugin.json:"version": "1.36.3"
+archivos de la pasada: CHANGELOG.md PENDING_APPROVAL.md hooks/entrada.sh hooks/guard-completado.sh hooks/lib.sh requirements/REQ-037.md tests/escenarios/hooks/README.md tests/escenarios/hooks/run.sh tests/escenarios/hooks/secciones/53-presupuesto-de-las-gates.sh 

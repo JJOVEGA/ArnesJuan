@@ -1,0 +1,30 @@
+# 02 — guarda de la trampa frente a otras señales y otros hijos (qa-tester, Opus), 2026-10-27T12:04:08-06:00, loadavg 27.80 13.18 16.49 (bajo la carga de 01-)
+cdbe2a8 señal=TERM forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=HUP forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=INT forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=USR1 forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=USR2 forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=PIPE forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=ALRM forma=sleep n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=TERM forma=sub n=300 rc=0 documentos=0 lentas=0
+cdbe2a8 señal=TERM forma=cs n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=TERM forma=sleep n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=HUP forma=sleep n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=INT forma=sleep n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=USR1 forma=sleep n=300 rc=0 documentos=2 lentas=0
+d47cfba señal=USR2 forma=sleep n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=PIPE forma=sleep n=300 rc=0 documentos=0 lentas=0
+d47cfba señal=ALRM forma=sleep n=300 rc=0 documentos=1 lentas=0
+d47cfba señal=TERM forma=sub n=300 rc=0 documentos=2 lentas=0
+d47cfba señal=TERM forma=cs n=300 rc=0 documentos=2 lentas=0
+# variante sin KILL de respaldo (sólo la señal), 2026-10-27T12:04:41-06:00, loadavg 29.54 15.27 17.06
+cdbe2a8 solo-señal=TERM n=100 rc=0 documentos=0 lentas=0
+cdbe2a8 solo-señal=HUP n=100 rc=0 documentos=0 lentas=0
+cdbe2a8 solo-señal=INT n=100 rc=0 documentos=0 lentas=7
+cdbe2a8 solo-señal=USR1 n=100 rc=0 documentos=0 lentas=1
+cdbe2a8 solo-señal=ALRM n=100 rc=0 documentos=0 lentas=0
+d47cfba solo-señal=TERM n=100 rc=0 documentos=97 lentas=0
+d47cfba solo-señal=HUP n=100 rc=0 documentos=97 lentas=0
+d47cfba solo-señal=INT n=100 rc=0 documentos=100 lentas=0
+d47cfba solo-señal=USR1 n=100 rc=0 documentos=98 lentas=0
+d47cfba solo-señal=ALRM n=100 rc=0 documentos=99 lentas=0

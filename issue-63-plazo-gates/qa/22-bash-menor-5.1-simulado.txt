@@ -1,0 +1,5 @@
+# bash < 5.1 simulado: copia con la condición de versión forzada (BASH_VERSINFO[1] < 99); gate que deja marca en /tmp de QA
+cv     rc=0       104ms deny                 BASH     ["touch /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/marca-bash51; true"]
+marca creada por la gate: no
+cv     rc=0       105ms sin-decision         -        []
+ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': este bash (5.3.9(1)-release) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—, asi que no se lanza ninguna: una gate que no terminara dejaria al hook sin decision, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Cierra el REQ desde un entorno con bash 5.1 o posterior.

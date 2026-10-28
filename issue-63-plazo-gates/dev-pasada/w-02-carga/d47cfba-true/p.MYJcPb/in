@@ -1,0 +1,12 @@
+{
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "cwd": "/home/juan/dev/ArnesJuan-evidencia/issue-63-plazo-gates/dev-pasada/w-02-carga/d47cfba-true/p.MYJcPb",
+  "agent_id": "a1",
+  "agent_type": "qa-tester",
+  "tool_input": {
+    "file_path": "/home/juan/dev/ArnesJuan-evidencia/issue-63-plazo-gates/dev-pasada/w-02-carga/d47cfba-true/p.MYJcPb/requirements/REQ-001.md",
+    "old_string": "Estado: en-revisión",
+    "new_string": "Estado: completado"
+  }
+}

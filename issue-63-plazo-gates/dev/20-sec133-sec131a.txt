@@ -1,0 +1,12 @@
+# SEC-133 y SEC-131 (a): mismo veredicto en v1.36.2 (b = git archive 46ee7ca) y en la candidata (c = hooks del árbol de trabajo de hotfix/1.36.3 sobre 22a60d4); 2026-10-27T09:31:27-06:00; bash 5.3.9(1)-release
+# columnas: árbol, rc, ms, decisión, motivo (GATE:<orden> = falló esa gate), gates
+b    rc=0      108ms sin-decision -              ["cat >/dev/null","false"]
+b    rc=0      109ms sin-decision -              ["read -r x; true","false"]
+b    rc=0      108ms deny         GATE:false     ["cat </dev/null >/dev/null","false"]
+b    rc=0      108ms sin-decision -              ["npm test"]
+b    rc=0      110ms deny         GATE:npm test  ["npm test"]
+c    rc=0      108ms sin-decision -              ["cat >/dev/null","false"]
+c    rc=0      113ms sin-decision -              ["read -r x; true","false"]
+c    rc=0      109ms deny         GATE:false     ["cat </dev/null >/dev/null","false"]
+c    rc=0      111ms sin-decision -              ["npm test"]
+c    rc=0      109ms deny         GATE:npm test  ["npm test"]

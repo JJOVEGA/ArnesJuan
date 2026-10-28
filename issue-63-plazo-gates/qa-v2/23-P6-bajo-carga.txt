@@ -1,0 +1,17 @@
+# 23 — P6 (QA-037-07) bajo la carga de QA, 15 cierres con la copia de 30 s (qa-tester, Opus), 2026-10-27T13:14:44-06:00; carga PGID 4113866 (el mío 4113851)
+loadavg 8.15 5.09 11.10
+  1 rc=0 ms=571 docs=1 mato53= motivo=<termino antes de tiempo>
+  2 rc=0 ms=448 docs=1 mato53=si motivo=<termino antes de tiempo>
+  3 rc=0 ms=466 docs=1 mato53=si motivo=<termino antes de tiempo>
+  4 rc=0 ms=481 docs=1 mato53=si motivo=<termino antes de tiempo>
+  5 rc=0 ms=582 docs=1 mato53=si motivo=<termino antes de tiempo>
+  6 rc=0 ms=693 docs=1 mato53=si motivo=<termino antes de tiempo>
+  7 rc=0 ms=464 docs=1 mato53=si motivo=<termino antes de tiempo>
+  8 rc=0 ms=684 docs=1 mato53=si motivo=<termino antes de tiempo>
+  9 rc=0 ms=555 docs=1 mato53=si motivo=<termino antes de tiempo>
+  10 rc=0 ms=441 docs=1 mato53=si motivo=<termino antes de tiempo>
+  11 rc=0 ms=454 docs=1 mato53=si motivo=<termino antes de tiempo>
+  12 rc=0 ms=340 docs=1 mato53=si motivo=<termino antes de tiempo>
+  13 rc=0 ms=574 docs=1 mato53=si motivo=<termino antes de tiempo>
+  14 rc=0 ms=483 docs=1 mato53=si motivo=<termino antes de tiempo>
+  15 rc=0 ms=555 docs=1 mato53=si motivo=<termino antes de tiempo>

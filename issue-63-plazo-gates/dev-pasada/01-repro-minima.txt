@@ -1,0 +1,18 @@
+# 01 reproducción mínima, bash 5.3.9(1)-release, 2026-10-27T11:15:59-06:00, sin carga (loadavg 0.19); 300 iteraciones por punto
+# mini.sh: trampa EXIT sin guarda; mini-guarda.sh: guarda por BASHPID con case (sin órdenes); 1 TRAMPA es la del padre al salir
+== mini.sh senal=TERM
+    272 TRAMPA (pid,padre)
+      1 n=300 senal=TERM esperas_de_mas_de_1s=23
+== mini.sh senal=KILL
+      1 TRAMPA (pid,padre)
+      1 n=300 senal=KILL esperas_de_mas_de_1s=0
+== mini-guarda.sh senal=TERM
+      1 TRAMPA (pid,padre)
+      1 n=300 senal=TERM esperas_de_mas_de_1s=8
+== mini-guarda.sh senal=KILL
+      1 TRAMPA (pid,padre)
+      1 n=300 senal=KILL esperas_de_mas_de_1s=0
+# dbg2: en el hijo que ejecuta la trampa heredada, `[` devuelve 127 (por eso la guarda va con case):
+      1 rc=0
+      1 rc=1
+      5 rc=127

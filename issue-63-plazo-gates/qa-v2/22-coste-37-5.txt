@@ -1,0 +1,8 @@
+== 37-5 sola con los hooks de cdbe2a8 2026-10-27T13:13:13-06:00 loadavg 1.32 4.40 11.68
+  SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.100×, 1.286×] de 5 razones resueltas de 5: 1.236× 1.100× 1.286× 1.201× 1.159× (todas resueltas) · presupuesto fijo, no se repite
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.204× <= techo 1.250× en 5 de 5 resueltas: 1.182× 1.153× 1.149× 1.178× 1.204× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )
+== 37-5 sola con los hooks de v1.36.2 2026-10-27T13:13:47-06:00 loadavg 1.60 4.12 11.31
+  SKIP  REQ-017 CA-08 (ii) un REQ real de 6 líneas: el reloj no sube más de 1,25× el de v1.32.1  [INCONCLUSO] [rendimiento] el techo 1.250× cae DENTRO del recorrido [1.150×, 1.306×] de 5 razones resueltas de 5: 1.195× 1.150× 1.154× 1.306× 1.236× (todas resueltas) · presupuesto fijo, no se repite
+  PASS  REQ-017 CA-08 (ii) una cabecera de 200 líneas: el reloj no sube más de 1,25× el de v1.32.1  máx(r) 1.243× <= techo 1.250× en 5 de 5 resueltas: 1.195× 1.184× 1.243× 1.167× 1.141× (todas resueltas)
+  PASS  REQ-017 CA-08 (ii) la sonda que no converge se ABSTIENE: nunca PASS y nunca FAIL, y la abstención manda sobre el rojo  (7 sondas → PASS FAIL INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO INCONCLUSO )

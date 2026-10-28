@@ -1,0 +1,35 @@
+# copia d47cfba con N=5: 1
+# copia cand con N=5: 1
+# 2026-10-27T11:39:52-06:00, bash 5.3.9(1)-release; columnas: árbol rc ms decisión motivo gates
+-- sin-pty
+v1.36.2 rc=0       105ms sin-decision         -        ["read -r x; true","false"]
+d47-N5 rc=0       104ms sin-decision         -        ["read -r x; true","false"]
+cand-N5 rc=0       106ms deny                 GATE     ["read -r x; true","false"]
+-- pty
+v1.36.2 rc=0       107ms sin-decision         -        ["read -r x; true","false"]
+d47-N5 rc=0       109ms sin-decision         -        ["read -r x; true","false"]
+cand-N5 rc=0       109ms deny                 GATE     ["read -r x; true","false"]
+-- sin-pty
+v1.36.2 rc=0       105ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+d47-N5 rc=0       108ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+cand-N5 rc=0       104ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+-- pty
+v1.36.2 rc=0       108ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+d47-N5 rc=0       112ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+cand-N5 rc=0       110ms deny                 GATE     ["read -r r && [ \"$r\" = s ]"]
+-- sin-pty
+v1.36.2 rc=0       105ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+d47-N5 rc=0       104ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+cand-N5 rc=0       108ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+-- pty
+v1.36.2 rc=0       110ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+d47-N5 rc=0       111ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+cand-N5 rc=0       110ms sin-decision         -        ["if [ -t 0 ]; then while :; do sleep 1; done; fi; true"]
+-- sin-pty
+v1.36.2 rc=0       107ms deny                 GATE     ["stty sane </dev/tty"]
+d47-N5 rc=0       105ms deny                 GATE     ["stty sane </dev/tty"]
+cand-N5 rc=0       105ms deny                 GATE     ["stty sane </dev/tty"]
+-- pty
+v1.36.2 rc=0       109ms sin-decision         -        ["stty sane </dev/tty"]
+d47-N5 rc=0     10129ms deny                 PRESUP   ["stty sane </dev/tty"]
+cand-N5 rc=0     10127ms deny                 PRESUP   ["stty sane </dev/tty"]

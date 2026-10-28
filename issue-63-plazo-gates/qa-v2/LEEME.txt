@@ -1,0 +1,21 @@
+# REQ-037, QA vuelta 2 (qa-tester, modelo efectivo Opus, claude-opus-5-5), 2026-10-27, cabeza cdbe2a8 (hotfix/1.36.3). Sin commit.
+# Linux/WSL2, bash 5.3.9, 12 núcleos. Árboles por git archive en el scratchpad: cdbe2a8 (candidata), v1.36.2 (control), d47cfba (fail-before).
+# Carga: qa/bin/carga.sh y qa/bin/dobles.sh de la vuelta 1, SIN cambios. Scripts nuevos en bin/.
+00-candidata-sha256.txt     sha256 de los hooks congelados de la candidata
+01-carga.txt                QA-037-01: 3 bloques × (100 rojas + 190 verdes) por árbol, intercalados; d47cfba 300 + 300 (control positivo)
+02-senales.txt              guarda de la trampa: 7 señales × hijos recién bifurcados, 3 formas de hijo; candidata y d47cfba
+03-muere-sin-juicio.txt     el hook recibe TERM/HUP/INT con una gate en curso: un deny; lo que queda vivo y el temporal
+04-temporal.txt             arnes_gates_salida: base, TMPDIR sin escritura/inexistente/relativo/raíz, colisión (5 formas), noclobber
+05-guarda-bashpid.txt       el deny legítimo del proceso del hook; BASHPID desde el entorno y quitado
+06-R1-R2-fail-before.txt    R1 y R2 fuera del banco: candidata y d47cfba
+07-vivos.txt                KILL al reloj: 150 + 150 cierres en sesión propia, procesos que quedan
+08-gates.txt                gates de AGENTS.md §7, alcance (hooks.json, tools/, .arnes/), versión
+09-caza-true.txt            1000 cierres verdes con la carga de QA sola, foto si > 3 s: 0
+10-caza-true-con-concurrencia.txt  carga de QA + 500 + 500 cierres concurrentes: 1 cuelgue verde (foto) y 1 rojo
+10-foto-607.txt             la foto del cuelgue (transcrita; el original lo borró conduce-caza3.sh)
+11-mini-espera.txt          reproducción mínima con las funciones de lib.sh: 0 de 3000 (no reproduce)
+12-caza-control-v1.36.2.txt las condiciones de 10- con v1.36.2: 0
+20-banco-completo.txt       el banco completo, una vez
+21-autoprueba.txt           autoprueba del corredor
+22-coste-37-5.txt           QA-037-02: la sección 37-5 sola, candidata y v1.36.2, misma sesión
+23-P6-bajo-carga.txt        QA-037-07: P6 con la copia de 30 s, 15 cierres bajo la carga de QA

@@ -1,0 +1,16 @@
+# REQ-037, pasada correctiva del desarrollador (modelo efectivo Opus, claude-opus-5-5), 2026-10-27, sobre 127a6ac + cambios sin commit.
+# Linux/WSL2, bash 5.3.9, 12 núcleos. Sin commit. Scripts en bin/ (los de QA se usan sin cambios desde ../qa/bin/).
+01-repro-minima.txt        causa de QA-037-01 en 300 iteraciones por punto: un padre con trampa EXIT mata un `sleep` recién
+                           bifurcado. TERM: el hijo ejecuta la trampa heredada (272/300) o se traga la señal y el sleep sigue
+                           (23/300, el cuelgue). KILL: 0 y 0. La guarda por BASHPID con `case` quita las trampas de hijos; en ese
+                           hijo `[` devuelve 127 (dbg2), por eso no sirve una guarda con `[`.
+02-carga.txt               el arnés de carga de QA (carga.sh + dobles.sh), 300 rojas y 570 verdes por árbol, en serie, misma carga:
+                           d47cfba (fail-before), la candidata (copia congelada, 02-candidata-sha256.txt) y v1.36.2 (control).
+03-entrada-y-terminal.txt  P-137-AD (2): gates que leen la entrada estándar o tocan /dev/tty, con y sin pty, en los tres árboles
+                           (d47cfba y candidata en copia con N = 5 s). «sin-decision» en rq.sh = salida vacía = allow.
+04-seccion53-candidata.txt la sección 53 sola con la candidata. 04x-: corrida por error con un selector mal escrito (filtro sobre las 64).
+05-seccion53-con-d47cfba.txt la sección 53 con los hooks de d47cfba: fail-before de R1 y E1.
+06-coste-37-5.txt          REQ-017 CA-08 (ii) (la parte 37-5 sola) con la candidata, d47cfba y v1.36.2.
+07-coste-directo.txt       el mismo cierre, 60 corridas intercaladas, mínimos y medianas por árbol.
+08-autoprueba.txt          autoprueba del corredor.
+09-banco-completo.txt      el banco completo, una vez.

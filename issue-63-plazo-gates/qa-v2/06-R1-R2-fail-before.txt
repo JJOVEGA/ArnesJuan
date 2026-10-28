@@ -1,0 +1,5 @@
+# 06 — R1 y R2 de la sección 53, fuera del banco, en la candidata y en d47cfba (fail-before), 2026-10-27T12:14:53-06:00, loadavg 30.75 28.15 23.16
+R1 cdbe2a8: rc=0 documentos=0 lentas=0
+R2 cdbe2a8: rc=0 deny=1
+R1 d47cfba: rc=0 documentos=182 lentas=7
+R2 d47cfba: rc=0 deny=1

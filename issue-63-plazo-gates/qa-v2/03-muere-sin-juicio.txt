@@ -1,0 +1,31 @@
+# 03 — el hook muere sin juicio con una gate en curso (qa-tester, Opus), 2026-10-27T12:05:41-06:00, loadavg 29.00 17.70 17.79
+cdbe2a8 señal=TERM gate=["sleep 1000"]: docs=<"permissionDecision":"deny" > en 8 ms; vivos en la sesión 871323: <871713[sleep 420] 871714[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 871721[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 871725[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/muere.sh: line 11: 875175 Hangup                     ( cd "$P" && CLAUDE_PROJECT_DIR="$P" exec setsid bash "$S/arb/$A/hooks/guard.sh" < "$P/in" > "$P/out" 2> "$P/err" )
+cdbe2a8 señal=HUP gate=["sleep 1000"]: docs=<"permissionDecision":"deny" > en 8 ms; vivos en la sesión 875175: <875536[sleep 420] 875538[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 875544[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 875549[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+  temporal que queda: /tmp/arnes_gate.875175.16904780114068203536
+# (cont.) 2026-10-27T12:11:41-06:00 loadavg 28.06 25.41 21.30; el lanzador restablece SIGINT (env --default-signal=INT): un hijo asíncrono lo hereda ignorado y la primera corrida de INT esperó al presupuesto (artefacto del arnés, cortado)
+cdbe2a8 señal=INT gate=["sleep 1000"]: docs=<"permissionDecision":"deny" > en 112 ms; vivos en la sesión 1292145: <1292529[sleep 420] 1292532[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 1292540[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/cdbe2a8/hooks/guard.sh] 1292560[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.1292145.17103789112770860017
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+  temporal que queda: /tmp/arnes_gate.875175.16904780114068203536
+  temporal que queda: /tmp/arnes_gate.878501.37886192371356663893
+v1.36.2 señal=TERM gate=["sleep 1000"]: docs=<"permissionDecision":"deny" > en 113 ms; vivos en la sesión 1296237: <1296709[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/v1.36.2/hooks/guard.sh] 1296715[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.1292145.17103789112770860017
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+  temporal que queda: /tmp/arnes_gate.875175.16904780114068203536
+  temporal que queda: /tmp/arnes_gate.878501.37886192371356663893
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/muere.sh: line 12: 1300021 Hangup                     ( cd "$P" && CLAUDE_PROJECT_DIR="$P" exec env --default-signal=INT setsid bash "$S/arb/$A/hooks/guard.sh" < "$P/in" > "$P/out" 2> "$P/err" )
+v1.36.2 señal=HUP gate=["sleep 1000"]: docs=<"permissionDecision":"deny" > en 113 ms; vivos en la sesión 1300021: <1300406[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/v1.36.2/hooks/guard.sh] 1300410[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.1292145.17103789112770860017
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+  temporal que queda: /tmp/arnes_gate.875175.16904780114068203536
+  temporal que queda: /tmp/arnes_gate.878501.37886192371356663893
+  el hook SIGUE VIVO a los 20 s
+v1.36.2 señal=INT gate=["sleep 1000"]: docs=<> en 24108 ms; vivos en la sesión 1303235: <1303235[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/v1.36.2/hooks/guard.sh] 1303815[bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/arb/v1.36.2/hooks/guard.sh] 1303824[sleep 1000] >
+  temporal que queda: /tmp/arnes_gate.1292145.17103789112770860017
+  temporal que queda: /tmp/arnes_gate.871323.19529597192560880255
+  temporal que queda: /tmp/arnes_gate.875175.16904780114068203536
+  temporal que queda: /tmp/arnes_gate.878501.37886192371356663893
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/muere.sh: line 18: 1303235 Killed                     ( cd "$P" && CLAUDE_PROJECT_DIR="$P" exec env --default-signal=INT setsid bash "$S/arb/$A/hooks/guard.sh" < "$P/in" > "$P/out" 2> "$P/err" )

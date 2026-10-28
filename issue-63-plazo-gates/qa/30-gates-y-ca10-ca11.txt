@@ -1,0 +1,23 @@
+# gates de AGENTS.md §7 y comprobaciones de CA-10/CA-11, 2026-10-27T10:50:20-06:00, cabeza d47cfba
+gate1 bash -n rc=0
+gate2 rc=0
+gate3 rc=0
+.claude-plugin/plugin.json:4:  "version": "1.36.3",
+.claude-plugin/marketplace.json:8:    "version": "1.36.3"
+.claude-plugin/marketplace.json:15:      "version": "1.36.3"
+diff hooks.json v1.36.2: 0 líneas
+tocados vs v1.36.2:
+.claude-plugin/marketplace.json
+.claude-plugin/plugin.json
+CHANGELOG.md
+docs/decisions/ADR-018-las-quality-gates-tienen-su-propio-presupuesto.md
+hooks/entrada.sh
+hooks/guard-completado.sh
+hooks/lib.sh
+requirements/README.md
+requirements/REQ-037.md
+tests/escenarios/hooks/README.md
+tests/escenarios/hooks/run.sh
+tests/escenarios/hooks/secciones/53-presupuesto-de-las-gates.sh
+tools/ .arnes/: 0
+secciones [1.36.3]: 1

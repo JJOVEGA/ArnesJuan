@@ -1,0 +1,45 @@
+# Dos defectos de la primera versión del mecanismo, hallados por el desarrollador ANTES de entregar
+# (ninguno llegó a una entrega). 2026-10-27, Linux/WSL2, bash 5.3.9, con la trampa de salida de hooks/entrada.sh.
+
+## 1. La carrera de `wait -n`
+Primera versión de arnes_gate: se lanzaba la gate (con `set -m`) y DESPUÉS el reloj (`sleep N &`), y se esperaba con
+`wait -n -p quien <gate> <reloj>`. Con una gate que termina mientras se bifurca el reloj, `wait -n` no la veía terminar
+y esperaba al reloj entero (fin=fin, pero con el retraso del reloj; con el reloj real, hasta 420 s).
+
+Medido con un bucle de llamadas a arnes_gate, reloj de 3 s (lento = más de 1 s):
+  gate `true`       lentos=10 de 40
+  gate `exit 3`     lentos=8 de 40
+  gate `/bin/true`  lentos=0 de 40
+Lo mismo en el corte: con el reloj del corte lanzado DESPUÉS de `kill -TERM -- -<grupo>`, una gate `sleep 1000` agotada
+tardaba N + 5 s en decidir en 2 de 3 corridas (esperaba al reloj del corte).
+
+Arreglo: el reloj existe ANTES de lanzar la gate (uno por cierre, rearmado sólo si terminó y la gate también), el del
+corte se lanza antes del TERM, y entre la gate y la espera no se bifurca nada. Si la espera vuelve por el reloj, se mira
+si la gate seguía viva (`kill -0`); si no, se recoge su código con `wait <pid>` y vale como terminada.
+Después (versión entregada, t17: un reloj por bucle, como en el hook):
+  gate `true`       lentos=0 malos=0 de 100
+  gate `exit 3`     lentos=0 malos=0 de 100
+  gate `exec true`  lentos=0 malos=0 de 50
+
+## 2. Una gate roja pasaba: la gate encabezaba su grupo de procesos
+Con `set -m` el subshell de la gate encabeza un grupo propio. `setsid` (util-linux), cuando quien lo llama encabeza un
+grupo, se bifurca y el padre sale con 0. Medido (bash -c, con la trampa EXIT de un hook):
+  ( exec setsid false ) como jefa de grupo                 -> 0   (una gate ROJA pasa)
+  la misma gate dentro de un subshell que no es jefe        -> 1
+  v1.36.2 (la gate en el grupo del hook, nunca jefa)        -> deny, «falló la quality gate `exec setsid false`»
+Arreglo: el grupo lo encabeza un subshell que sólo espera a la gate (`trap : TERM`, su salida de error a /dev/null) y sale
+con su código; la gate corre en un subshell suyo, como en v1.36.2. Caso del banco: I8, en los dos árboles.
+Comprobado además que los motivos de las gates rojas son idénticos byte a byte entre v1.36.2 y la candidata para
+`kill -TERM $BASHPID`, `echo out; echo err >&2; exit 4`, `ls /no-existe` y `sleep 0.2 & echo x; false`.
+
+## 3. Ataques al reloj (candidata, copia con N = 5 s)
+  la gate mata el `sleep` hijo del hook y se cuelga          -> deny «el reloj ... termino antes de tiempo», 107 ms
+  la gate mata el reloj y sale con 0; detrás `sleep 1000`     -> el reloj se rearma con lo que queda; deny de presupuesto a 5,1 s
+  la gate mata el reloj y sale con 0; detrás `true` (N real) -> allow (las dos gates verdes por su código)
+  `exec setsid sleep 1000` (se desliga del grupo)            -> deny de presupuesto a N + C = 10,1 s; el `sleep` sobrevive (R-2)
+
+## 4. Incidente propio, declarado
+Al probar el ataque al reloj lancé, en un lote paralelo, gates con `pkill -x sleep` SIN acotar al hook: eso mató, por un
+instante, todo proceso `sleep` del usuario `juan` en la máquina, también los que pudiera tener en marcha el otro worktree
+(`ArnesJuan-v1.36`). Las corridas de ese lote se descartaron; el ataque se repitió acotado a los hijos del hook
+(`pkill -P <hook> -x sleep`), que es la forma que quedó en el banco (P6).

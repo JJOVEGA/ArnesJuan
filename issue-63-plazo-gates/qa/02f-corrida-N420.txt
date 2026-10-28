@@ -1,0 +1,5 @@
+hooks=/home/juan/dev/ArnesJuan-1.36.3/hooks presupuesto=464:ARNES_GATES_PRESUPUESTO_S=420 inicio=2026-10-27T10:30:14-06:00
+rc=0 ms=420241 fin=2026-10-27T10:37:14-06:00
+decision=deny
+motivo=ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': las quality gates no terminaron dentro de su presupuesto de 420 s (en total y en serie, desde que se lanzo la primera): la gate `sleep 1000` seguia en curso y se corto, y ninguna de las que la siguen se lanzo. No es un veredicto sobre las gates: es que no terminaron, y una puerta que no puede medir no deja pasar (REQ-037 CA-02). Acorta las gates para que quepan en el presupuesto y reintenta.
+sleep vivos con cwd en el proyecto tras la decisión: <>

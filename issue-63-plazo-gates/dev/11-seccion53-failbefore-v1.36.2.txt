@@ -1,0 +1,70 @@
+# Fail-before: sección 53 con ARNES_HOOKS_DIR = hooks de v1.36.2 (46ee7ca, git archive, sin cambios) como CANDIDATA; el banco es el del árbol de trabajo de hotfix/1.36.3 sobre 22a60d4; 2026-10-27T09:43:12-06:00
+--- 53 · el plazo propio mide el análisis; las quality gates tienen su presupuesto (REQ-037, hotfix 1.36.3) ---
+  FAIL  REQ-037 G1 cierre legítimo con una gate verde `sleep 35` (la reproducción del issue) candidata  esperado=allow got=plazo (rc 0, 35160 ms)
+  PASS  REQ-037 G1 cierre legítimo con una gate verde `sleep 35` (la reproducción del issue) v1.36.2  (plazo, 35159 ms)
+  FAIL  REQ-037 CA-01 dos gates verdes `sleep 20` (40 s en total, menos que N) candidata  esperado=allow got=plazo (rc 0, 40171 ms)
+  PASS  REQ-037 CA-01 dos gates verdes `sleep 20` (40 s en total, menos que N) v1.36.2  (plazo, 40168 ms)
+  FAIL  REQ-037 G2 copia con el plazo en 2 s, gate verde `sleep 3` candidata  esperado=allow got=plazo (rc 0, 3216 ms)
+  PASS  REQ-037 G2 copia con el plazo en 2 s, gate verde `sleep 3` v1.36.2  (plazo, 3215 ms)
+  FAIL  REQ-037 G3 copia con N en 5 s, gate colgada `sleep 1000` candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  PASS  REQ-037 G3 copia con N en 5 s, gate colgada `sleep 1000` v1.36.2  (sin-decision, 15034 ms)
+  FAIL  REQ-037 G4 copia con N en 5 s, dos gates verdes `sleep 3` en serie candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  PASS  REQ-037 G4 copia con N en 5 s, dos gates verdes `sleep 3` en serie v1.36.2  (allow, 6223 ms)
+  PASS  REQ-037 G5 control: gate roja `false` candidata  (gate:false, 210 ms)
+  PASS  REQ-037 G5 control: gate roja `false` v1.36.2  (gate:false, 209 ms)
+  PASS  REQ-037 G6 control: gate verde `sleep 35` y detrás roja `false` candidata  (gate:false, 35168 ms)
+  PASS  REQ-037 G6 control: gate verde `sleep 35` y detrás roja `false` v1.36.2  (gate:false, 35167 ms)
+  PASS  REQ-037 C control: gate verde corta `true` candidata  (allow, 211 ms)
+  PASS  REQ-037 C control: gate verde corta `true` v1.36.2  (allow, 209 ms)
+  PASS  REQ-037 C control y CA-02 (g): `quality_gates: []` candidata  (allow, 211 ms)
+  PASS  REQ-037 C control y CA-02 (g): `quality_gates: []` v1.36.2  (allow, 210 ms)
+  PASS  REQ-037 C control: cierre ilegítimo (`QA: pendiente`) con las gates en verde candidata  (regla:QA: aprobado, 109 ms)
+  PASS  REQ-037 C control: cierre ilegítimo (`QA: pendiente`) con las gates en verde v1.36.2  (regla:QA: aprobado, 108 ms)
+  PASS  REQ-037 CA-01 borde: copia con el plazo en 1 s, el Write de 393 212 bytes, sin gates candidata  (plazo, 7020 ms)
+  PASS  REQ-037 CA-01 borde: copia con el plazo en 1 s, el Write de 393 212 bytes, sin gates v1.36.2  (plazo, 7120 ms)
+  PASS  REQ-037 CA-01 borde: copia con el plazo en 1 s, el Write de 393 212 bytes, con la gate `true` candidata  (plazo, 7220 ms)
+  PASS  REQ-037 CA-01 borde: copia con el plazo en 1 s, el Write de 393 212 bytes, con la gate `true` v1.36.2  (plazo, 7120 ms)
+  PASS  REQ-037 I1 roja que escribe 0 en todo descriptor heredado y sale con false candidata  (gate:for f in 0 3 4 5 6 7 8 9 10 11 12 255; do { echo 0 >&$f; } 2>/dev/null; done; false, 211 ms)
+  PASS  REQ-037 I1 roja que escribe 0 en todo descriptor heredado y sale con false v1.36.2  (gate:for f in 0 3 4 5 6 7 8 9 10 11 12 255; do { echo 0 >&$f; } 2>/dev/null; done; false, 209 ms)
+  PASS  REQ-037 I2 roja con una trampa EXIT que escribe 0 (el vector de QA-007-15) candidata  (gate:trap "echo 0" EXIT; false, 210 ms)
+  PASS  REQ-037 I2 roja con una trampa EXIT que escribe 0 (el vector de QA-007-15) v1.36.2  (gate:trap "echo 0" EXIT; false, 209 ms)
+  PASS  REQ-037 I2b la trampa EXIT que hace `exit 0` deja el código de salida en 0: verde, igual en los dos (no es movimiento) candidata  (allow, 219 ms)
+  PASS  REQ-037 I2b la trampa EXIT que hace `exit 0` deja el código de salida en 0: verde, igual en los dos (no es movimiento) v1.36.2  (allow, 222 ms)
+  PASS  REQ-037 I3 roja que imprime un allow en su salida candidata  (gate:printf %s "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}"; false, 221 ms)
+  PASS  REQ-037 I3 roja que imprime un allow en su salida v1.36.2  (gate:printf %s "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}"; false, 217 ms)
+  PASS  REQ-037 I4 verde `exec true`, sin deny falso candidata  (allow, 215 ms)
+  PASS  REQ-037 I4 verde `exec true`, sin deny falso v1.36.2  (allow, 215 ms)
+  PASS  REQ-037 I5 roja `sleep 3; false`: su motivo, ni el del plazo ni allow candidata  (gate:sleep 3; false, 3222 ms)
+  PASS  REQ-037 I5 roja `sleep 3; false`: su motivo, ni el del plazo ni allow v1.36.2  (gate:sleep 3; false, 3220 ms)
+  PASS  REQ-037 I6 verde lenta `sleep 3` y detrás roja `false` candidata  (gate:false, 3223 ms)
+  PASS  REQ-037 I6 verde lenta `sleep 3` y detrás roja `false` v1.36.2  (gate:false, 3223 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 124 dentro del presupuesto candidata  (gate:exit 124, 213 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 124 dentro del presupuesto v1.36.2  (gate:exit 124, 235 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 137 dentro del presupuesto candidata  (gate:exit 137, 214 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 137 dentro del presupuesto v1.36.2  (gate:exit 137, 322 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 143 dentro del presupuesto candidata  (gate:exit 143, 218 ms)
+  PASS  REQ-037 I7 y CA-02 (d) roja que sale ella misma con 143 dentro del presupuesto v1.36.2  (gate:exit 143, 210 ms)
+  PASS  REQ-037 I8 roja `exec setsid false` (con la gate de jefa de grupo, `setsid` se bifurcaba y salía con 0) candidata  (gate:exec setsid false, 214 ms)
+  PASS  REQ-037 I8 roja `exec setsid false` (con la gate de jefa de grupo, `setsid` se bifurcaba y salía con 0) v1.36.2  (gate:exec setsid false, 214 ms)
+  FAIL  REQ-037 P1 copia con N en 5 s: agotada que sale con 0 al recibir TERM candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  FAIL  REQ-037 P2 copia con N en 5 s: agotada que ignora TERM candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  FAIL  REQ-037 P3 copia con N en 5 s: agotada que escribe 0 en todo descriptor heredado antes de colgarse candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  PASS  REQ-037 P5 verde que deja vivos `sleep 1000` y un bucle de bash candidata  (allow, 209 ms)
+  FAIL  REQ-037 P6 copia con N en 5 s: la gate mata el reloj del hook y se cuelga candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  FAIL  REQ-037 P4 copia con N en 30 s: agotada con 14 000 descendientes, corte lineal candidata  la copia de prueba no se pudo hacer: «ARNES_GATES_PRESUPUESTO_S=420» no está una sola vez en lib.sh
+  FAIL  REQ-037 M CA-07 el motivo del plazo propio dice «30 s de analisis» y no cita «60 s» candidata  <ARNES: esta puerta no termino de juzgar la llamada dentro de su plazo propio (30 s desde que arranco; el cliente mata el hook a los 60 s y un hook muerto no deniega). No es un veredicto sobre la llamada: es que la puerta>
+  PASS  REQ-037 M CA-07 el motivo del plazo propio de 1.36.2 cita «60 s» (el movimiento de CA-07) v1.36.2
+  PASS  REQ-037 PROC CA-06 camino común, ls -la: procesos añadidos frente a v1.36.2, techo 0  (candidata 1 / v1.36.2 1)
+  SKIP  REQ-037 RELOJ CA-06 camino común, ls -la (operativo): mínimo de 5 frente a v1.36.2, techo 1,25×  bajo el suelo de 50 ms en v1.36.2; no acredita (candidata/v1.36.2: 32/29 ms, 1070/1000 ×)
+  PASS  REQ-037 PROC CA-06 camino común, Edit de un archivo no REQ: procesos añadidos frente a v1.36.2, techo 0  (candidata 2 / v1.36.2 2)
+  SKIP  REQ-037 RELOJ CA-06 camino común, Edit de un archivo no REQ (operativo): mínimo de 5 frente a v1.36.2, techo 1,25×  bajo el suelo de 50 ms en v1.36.2; no acredita (candidata/v1.36.2: 36/39 ms, 947/1000 ×)
+  PASS  REQ-037 PROC CA-06 cierre con quality_gates: []: procesos añadidos frente a v1.36.2, techo 0  (candidata 6 / v1.36.2 6)
+  PASS  REQ-037 RELOJ CA-06 cierre con quality_gates: [] (operativo): mínimo de 5 frente a v1.36.2, techo 1,25×  (candidata/v1.36.2: 54/56 ms, 951/1000 ×)
+  PASS  REQ-037 PROC CA-06 cierre con 3 gates verdes true: procesos añadidos frente a v1.36.2, techo 6  (candidata 6 / v1.36.2 6)
+  PASS  REQ-037 RELOJ CA-06 cierre con 3 gates verdes true (operativo): mínimo de 5 frente a v1.36.2, techo 1,50×  (candidata/v1.36.2: 66/56 ms, 1184/1000 ×)
+aviso: vuelta parcial (1 de 64 secciones): el cuadre TOTAL queda suspendido; el de cada sección sigue exigiéndose.
+-------------------------------------------
+Resultado: 49 PASS, 11 FAIL, 2 SKIP (de ellos 0 INCONCLUSO: 0 rendimiento, 0 instrumento, 0 sin clasificar) — ninguna causa común: cada uno con su motivo
+       · REQ-037 RELOJ CA-06 camino común, ls -la (operativo): mínimo de 5 frente a v1.36.2, techo 1,25×  bajo el suelo de 50 ms en v1.36.2; no acredita (candidata/v1.36.2: 32/29 ms, 1070/1000 ×)
+       · REQ-037 RELOJ CA-06 camino común, Edit de un archivo no REQ (operativo): mínimo de 5 frente a v1.36.2, techo 1,25×  bajo el suelo de 50 ms en v1.36.2; no acredita (candidata/v1.36.2: 36/39 ms, 947/1000 ×)
+rc=1

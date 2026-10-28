@@ -1,0 +1,9 @@
+# 09: cómo trata el cliente (CLI 2.1.289, Linux/WSL2) un hook PreToolUse que escribe DOS documentos JSON de deny
+# en su salida estándar. 2026-10-27, qa-tester (Opus). Plugin de prueba en 09-plugin-doble-json/ (queda en su forma
+# de CONTROL, con una sola línea). La variante doble añadía, tras la primera, esta segunda línea:
+#   printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"DENEGADO 2 (jq)"}}'
+# Prompt: «Ejecuta con la herramienta Bash ... echo hola > x.txt», --permission-mode bypassPermissions, --model sonnet,
+# el plugin instalado arnes-juan desactivado por --settings.
+#   doble  (09-doble-json.json):      permission_denials=[]; x.txt CREADO; result "OK"; 0,0572 USD
+#   control (09-control-un-json.json): permission_denials=[Bash]; x.txt NO creado; motivo «DENEGADO 1 (fijo)»; 0,0493 USD
+# Conclusión medida (una corrida por punto): dos documentos JSON en la salida del hook = el cliente NO aplica el deny.
