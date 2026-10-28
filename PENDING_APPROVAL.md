@@ -43,7 +43,37 @@
 
 ## Pendientes
 
-### [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, cuántas pasadas tiene el diseño nuevo y si se acepta un riesgo de QA-037-12.** La condición de publicar ya se cumple (QA, `426ea1d`).
+_(Vacía desde el 2026-10-28: P-137-AL resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AL 1 (A), 2 (A) y 3 (A)**: lista cerrada de exclusiones del hash; una pasada correctiva fuera del tope (QA-037-11 y QA-037-13); se acepta para 1.36.3 el riesgo de QA-037-12; cargas largas fuera de los agentes
+
+> Adopto P-137-AL 1 (A), 2 (A) y 3 (A): lo que el hash no cubre es la lista
+> cerrada de la ficha, fija en el código y escrita en CA-01, con su límite
+> declarado; cualquier otro cambio tras las gates invalida el veredicto. El
+> diseño nuevo tiene una pasada correctiva fuera del tope, que arregla
+> QA-037-11 y QA-037-13; si no cierra, se para y me lo traes. Acepto para
+> 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la
+> herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en
+> las notas y el endurecimiento va a 1.37 (F-137-24-B).
+>
+> Adopto P-137-AM: reanudar al mismo agente siempre que se pueda. Y
+> adopto tu propuesta: las cargas largas las lanzas tú fuera de los
+> agentes, y el agente sólo lee el resultado. Para la pasada: reanuda al
+> mismo desarrollador y al mismo QA.
+
+**Registro de la coordinadora.**
+- La lista cerrada es la de `ARNES_HASH_EXCLUYE` (`hooks/lib.sh`), tal como la escribió el analista en CA-01. Ya no lleva el rótulo de pendiente.
+- P-137-AM es de la cola de `cand/1.37.0` y se resolvió allí (`720bea5`).
+- *Orden de la pasada:*
+  1. el analista declara QA-037-12 en CA-05 y en las notas `[1.36.3]`, y quita el rótulo de CA-01;
+  2. el desarrollador arregla QA-037-11 y QA-037-13;
+  3. la coordinadora lanza la carga de CA-09 sobre la cabeza nueva;
+  4. QA re-verifica;
+  5. seguridad firma.
+
+#### Ficha original: [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, cuántas pasadas tiene el diseño nuevo y si se acepta un riesgo de QA-037-12.** La condición de publicar ya se cumple (QA, `426ea1d`).
 
 **1. Lo que el hash no cubre.** El veredicto se liga al contenido del árbol de trabajo (CA-01). Pero entre que las gates corren y el cierre, el propio ciclo de gobierno escribe archivos: QA pone `QA: aprobado`, seguridad firma, y la coordinadora escribe CHANGELOG, ESTADO y la cola. Si esos archivos entran en el hash, cada firma invalida el veredicto y hay que volver a correr las gates, que es lo que #63 quiere evitar. Por eso el analista los excluye.
 
@@ -78,8 +108,6 @@ Hay un problema: su CA-01 dice «no exhaustivo» y deja la lista al desarrollado
 > Adopto P-137-AL 1 (A), 2 (A) y 3 (A): lo que el hash no cubre es la lista cerrada de la ficha, fija en el código y escrita en CA-01, con su límite declarado; cualquier otro cambio tras las gates invalida el veredicto. El diseño nuevo tiene una pasada correctiva fuera del tope, que arregla QA-037-11 y QA-037-13; si no cierra, se para y me lo traes. Acepto para 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en las notas y el endurecimiento va a 1.37 (F-137-24-B).
 
 **Qué bloquea.** La pasada correctiva y la firma de seguridad. La firma se despacha cuando el alcance esté decidido. También bloquea el cierre de REQ-037: mientras esta entrada siga en Pendientes, la puerta no deja cerrar.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AK: F-137-24 (issue #63) arranca ya, en paralelo con el cierre de 4a, en `hotfix/1.36.3` desde `main`**; se publica sola como 1.36.3 en cuanto QA y seguridad la validen; las respuestas dobles con carga, fail-before obligatorio
 

@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL resuelta por el propietario, con 1 (A), 2 (A) y 3 (A)
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Qué se decide:**
+  - la lista cerrada de lo que el hash no cubre;
+  - una pasada correctiva fuera del tope, para QA-037-11 y QA-037-13;
+  - el riesgo de QA-037-12 aceptado para 1.36.3, declarado en las notas, con el endurecimiento en 1.37 (F-137-24-B);
+  - por P-137-AM, las cargas largas las lanza la coordinadora fuera de los agentes.
+
+  El literal está en `PENDING_APPROVAL.md` § Resueltas.
+- **Orden de la pasada:** write-back del analista, desarrollador, carga lanzada por la coordinadora, QA y seguridad.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL ampliada con el QA de `426ea1d`
 > Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 
