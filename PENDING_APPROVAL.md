@@ -43,7 +43,42 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AH resuelta por el propietario, en § Resueltas.)_
+### [2026-10-28] (coordinadora, con el texto del auditor) — P-137-AI: REQ-036. **Seguridad no veta, pero abre SEC-145 (`contrato`, media): el hook de inicio de sesión no es inerte fuera del arnés.** ¿Pasada acotada o se declara?
+
+**Qué encontró el auditor** (R-063, `docs/seguridad/registro-seguridad.md`; Opus):
+- **Qué hace hoy el hook.** `hooks/inicio-sesion.sh:24-30` emite «lee AGENTS.md ENTERO antes de tu primer encargo…» y corre el generador en **cualquier** proyecto con el plugin activo, aunque no tenga `.arnes/`.
+- **Qué hace el generador.** Lee las fuentes (`tools/arnes-lectura-rol.sh:107-145`) antes de comprobar `.arnes` (`:150`).
+- **Medido:**
+  - en un directorio vacío y en uno con un `AGENTS.md` ajeno, el hook emite y sale 0;
+  - con una fuente de 1,5 MB y sin `.arnes`, el generador tarda 10,9 s.
+- **Qué promesas desmiente:** `README.md:86` («inertes sin `.arnes/config.json`… no estorban en repos ajenos al arnés»), `AGENTS.md:945`, `templates/AGENTS.md.tpl:923` y `ARCHITECTURE.md:24-25`.
+- **Riesgo:** inyección indirecta (OWASP LLM01). En un repositorio de terceros, el plugin convierte un `AGENTS.md` sin revisar en «léelo ENTERO», con la autoridad de un hook.
+- **Cómo queda REQ-036:** `bloqueado`. La puerta deniega el cierre por un `contrato` abierto, y P-137-AH dijo «sin más vueltas».
+
+**Los otros hallazgos de R-063 son `instrumento` y no bloquean:**
+- **SEC-146 (baja):** las fuentes se siguen por enlace simbólico.
+- **SEC-147 (baja):**
+  - un byte NUL trunca una línea en silencio;
+  - el coste crece más que linealmente: 3 MB tardan 91,6 s. En este repositorio, 0,15 s.
+  - *Nota de la coordinadora:* el auditor lo compara con «los 60 s de un hook». El límite medido en CLI 2.1.289 fue ≈ 600 s, para PreToolUse; para SessionStart no está medido.
+- **SEC-148 (media):** los archivos por rol pasan de lo que entrega un `Read`, y completar la lectura depende de la conducta (QA-036-12). Vence en 4b.
+
+**Opciones.**
+- **(A) Pasada acotada fuera del tope, sólo esto:**
+  - el hook de inicio de sesión y el generador no hacen nada en un proyecto sin `.arnes/`: el hook sale 0 sin emitir, y el generador comprueba `.arnes` antes de leer las fuentes;
+  - el analista ajusta CA-17 y CA-18;
+  - el desarrollador, la condición y su caso con fail-before contra `7af469c`;
+  - QA re-verifica sólo eso, y seguridad re-firma.
+  - *Coste:* una pasada corta más. Las promesas de inercia vuelven a ser ciertas sin tocar texto.
+- **(B) Declarar la excepción** en `README.md`, §13 (repositorio y plantilla) y `ARCHITECTURE.md`.
+  - *Coste:* el riesgo de inyección indirecta sigue vivo.
+  - Además, el texto nuevo de §13 entra en lo que leen los roles, y puede mover B5.
+
+**Recomendación del auditor y de la coordinadora: (A).** Texto del auditor, listo para adoptar:
+
+> Adopto (A) para SEC-145: el hook de inicio de sesión y el generador no hacen nada en un proyecto sin `.arnes/` (el hook sale 0 sin emitir; el generador comprueba `.arnes` antes de leer las fuentes). Pasada acotada fuera del tope, sólo esto: el analista ajusta CA-17 y CA-18; el desarrollador, la condición y su caso con fail-before contra `7af469c`; QA re-verifica sólo eso; seguridad re-firma.
+
+**Qué bloquea:** el cierre de REQ-036, y con él el cierre de 4a y el comienzo de F-137-24. Mientras esta entrada siga en Pendientes, la puerta no deja cerrar ningún REQ.
 
 ## Resueltas
 

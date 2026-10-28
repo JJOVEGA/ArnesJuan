@@ -11384,3 +11384,120 @@ Contra R-059 (REQ-032, código de `77b71f7`): los controles de lo protegido sigu
 - **Veredicto:** `Seguridad: aprobado (R-062 y su adenda, 2026-10-21)` en REQ-035.
 - **Estado de seguridad aprobado de REQ-035:** el de R-062, más §5 con Opus explícito para el desarrollador y QA en este repositorio, sin condición de rigor ni de REQ.
 - **Numeración:** sin cambio. Próximos libres: **R-063** y **SEC-145**, porque SEC-144 está reservado.
+
+## Revisión R-063 — **1.37 · 4a, fase 3: auditoría de REQ-036** (adelgazar lo que lee el analista: archivo de lectura por rol, `SessionStart`, `CLAUDE.md` sin import, `arnes-upgrade`). `cand/1.37.0` @ `7af469c`, código validado por QA en `5217212` — 2026-10-28 — **CON HALLAZGOS, SIN VETO**
+
+- **Auditor:** `auditor-seguridad`, Opus (`claude-opus-5-5`, F-137-21). **Lectura:** `.arnes/lectura/seguridad.md` entero, en cuatro tramos con `offset` (1–300, 301–600, 601–900, 901–1156; última línea leída: 1156 de 1156), porque un `Read` sin `offset` lo trunca; `requirements/REQ-036.md` entero, en tramos; `docs/qa/REQ-036.md` (pasada de P-137-AH, vueltas 3 y 2, y de la vuelta 1 la tabla de CA-18 y los hallazgos); los literales de P-137-W, X, Y, Z, AA, AC, AG y AH en `PENDING_APPROVAL.md` § Resueltas; SEC-131 en este registro.
+- **Alcance** (decidido por la coordinadora): `git diff 081cb10..7af469c` sin `requirements/`, `docs/`, `CHANGELOG.md`, `PENDING_APPROVAL.md` ni `tests/` (a las pruebas sólo me remito como evidencia): 20 archivos. Orden de fases respetado: `QA: aprobado` sobre `5217212` (`docs/qa/REQ-036.md`). Marco: OWASP LLM01 (inyección indirecta) y LLM06 (agencia excesiva), A05 (configuración insegura por defecto), A04 (diseño) y la gobernanza de la lectura (§6, §9).
+
+### 1. CA-06: nada toca el mecanismo existente — **conforme**
+`git diff --stat 081cb10..7af469c -- hooks/guard.sh hooks/stop.sh hooks/lib.sh tools/ .github/ .arnes/config.json` da sólo `tools/arnes-lectura-rol.sh` (nuevo). En `hooks/` sólo cambian `hooks.json` (M) e `inicio-sesion.sh` (A). El diff de `hooks.json` añade la clave `SessionStart` y cuatro líneas de `_doc`; `PreToolUse`, `Stop` y `SubagentStop`, sin tocar, y ningún `matcher` nuevo. `Read` y `Glob` siguen fuera del `matcher` de `guard.sh`.
+
+### 2. El generador (`tools/arnes-lectura-rol.sh`) como código que corre en cada `SessionStart`
+- **Escritura y atomicidad — conforme.** Temporal en el mismo directorio (`.<rol>.md.tmp.$$`) con `set -C`, y `mv -f` encima: nunca queda un archivo a medias en el destino. Un destino que es enlace simbólico, se quita y no se sigue; uno que es directorio, falla. Con `.arnes` o `.arnes/lectura` enlazados no escribe ni borra (`borra_derivados`, `:52-60`). Si no hay `.arnes`, no lo crea. Medido: en este repositorio, `--verificar` da rc 0 en 0,15 s.
+- **Todo fallo borra — conforme**, con los límites L1–L3 declarados en CA-18. Las causas viven en las llamadas a `falla`. El hook borra por su cuenta si el generador no existe, no se lee, no arranca o sale ≠ 0 (`hooks/inicio-sesion.sh:31-41`), nunca a través de un enlace. Al matarlo a mitad no deja un destino parcial: como mucho, un temporal huérfano y los archivos anteriores, que el agente sólo usa si son más recientes que las dos fuentes.
+- **Marcas no confiables — conforme: todo lo dudoso hace leer más.** Revisé `roles_de` (`:76-104`). Sólo excluye a un rol la marca exacta `explicativo` o una lista cuyos elementos son **todos** roles reconocidos. Lo demás va a los cuatro, con aviso: marca sin ` · `, texto tras `]]`, `obliga:` vacía, coma final, mayúsculas en `obliga`, tabuladores, CRLF (el `\r` se recorta) y una marca con un blanco delante, que no es marca. Lo mismo con el texto previo a la primera marca (P-137-AH): el título es sólo la primera línea no en blanco que empieza por `# ` (`:132-137`), y la regla se reinicia por fuente. BOM: deja de ser título y se lee. Coinciden los 19 ataques de QA.
+- **Fuentes enlazadas fuera del proyecto: SEC-146** (abajo).
+- **NUL y tamaño: SEC-147** (abajo).
+- **Entorno heredado.** El hook y el generador heredan el entorno del host: funciones importadas con el nombre de `rm`, `mv`, `touch` o `sha256sum`, `BASH_ENV` en el `"${BASH:-bash}"` que lanza el generador, y `PATH`. No deciden nada, pero lo que escriben es lo que leen los agentes. **No es hallazgo nuevo:** es la frontera de confianza del entorno de proceso del host, que SEC-131 y F-136-20 declaran y cuya resolución es de 1.37. Esta revisión añade estos dos scripts a la superficie de esa frontera. El recordatorio usa `builtin printf`, que no se puede suplantar.
+
+### 3. Gobernanza de la lectura
+- **Marca `obliga`, ilegible a los cuatro, fuente sin marcas — conforme.** Las tres piezas de «Fuente sin marcas» hacen lo que dicen:
+  - una fuente sin ninguna marca no da archivos, y la definición la lee entera;
+  - el texto previo llega a los cuatro;
+  - las cuatro definiciones (`agents/*.md`) dicen, una vez cada una, la frase de P-137-AG («Si una fuente tiene texto antes de su primera marca, léelo también.»), la de la fuente sin marcas y la de completar un `Read` truncado.
+  La tabla bloque por bloque de CA-15 es de QA, vuelta 1. La muestreé (A-6.4, A-6.13, A-6.17, A-13.1, R-2.4 y R-4 frente a lo que obligan al analista) y no encontré ningún obligado sin su lectura.
+- **Frescura por `Glob` — conforme, con los límites declarados.** La regla «úsalo sólo si sale el último y su cabecera dice `Rol: <rol>`» falla hacia leer por marcas en todo empate o ausencia. La dirección del orden está medida con `claude -p`. `touch -c` deja un archivo al día más reciente que las fuentes. L1 (fecha de fuente falseada), L2 (enlace) y L3 (no escribible) siguen declarados en CA-18, sin «el único».
+- **Retirada del import de `CLAUDE.md` — conforme con el matiz de P-137-Y**, confirmado por el propietario el 2026-10-28. La orden calcula `marcado` sobre `AGENTS.md` tal como queda tras el plan (`tras_plan`). Sin ninguna línea `[[`, `CLAUDE.md` sale entero, con su import, como «pendiente». Con una, el generador produce archivo, porque cuenta las marcas igual. Si alguien aplica `CLAUDE.md` y después no escribe `AGENTS.md`, cubre la pieza 2: sin archivo por rol, la fuente sin marcas se lee entera.
+- **CA-19 — conforme.** La línea del ámbito alcanzado dice `Rigor: critico`, `QA: pendiente`, `Seguridad: pendiente` y el `Sensible a seguridad` condicionado. Es idéntica, byte a byte, en `templates/requirements-README.md.tpl:188` y en `requirements/README.md:188`. El hueco de `Seguridad:` que dejaba `n/a` con `critico` queda cerrado en el texto. Que el analista lo aplique es el residual ya declarado de SEC-139.
+- **Lectura truncada: SEC-148** (abajo).
+
+### 4. `arnes-upgrade` — **conforme: no sobrescribe trabajo humano**
+- **Merge a tres vías.** INTACTO se sustituye conservando los valores de `{{…}}`. MODIFICADO sale `CONFLICTO`, byte a byte, con su marca en `todos`. ELIMINADO no se repone. NUEVO se añade. Encabezados repetidos, secciones ajenas u otro orden dan `UNKNOWN` del archivo entero. La orden **sólo lee**: el usuario escribe con `Write` tras confirmar el plan (`.arnes/migracion.md`, CA-09).
+- **Un riesgo que comprobé y no existe:** un marcador `{{…}}` captura con `[\s\S]*?`, así que podría absorber texto humano como «valor». Ese texto se perdería sólo si la plantilla destino retirara el marcador. Comparé las tres plantillas de `081cb10` con las del candidato: **los mismos marcadores, el mismo número de veces y en la misma sección `## `**. Un marcador con dos valores distintos da `UNKNOWN`.
+- **Manifiesto:** un `_doc` sólo pasa a puntero si el ancla resuelve; si no, se conserva y sale `UNKNOWN` (QA-036-04, S7 y S8).
+- **`CLAUDE.md` `PROPIO`:** sólo si el import está en una sola línea propia y una sola vez; si no, `CONFLICTO` con el import.
+- **Límite declarado de CA-08:** se mide la orden sobre fixtures, no que un agente siga la skill.
+
+#### SEC-145 — **`contrato` · severidad media · `abierto` · nuevo (REQ-036, CA-17 y CA-18 (iii)) · dueños `analista-requerimientos` (CA-17 y la decisión de alcance) y `desarrollador` (mecanismo y textos)**
+**Qué:** el hook de `SessionStart` **no es inerte fuera del arnés**. Corre en toda sesión de todo proyecto en que el plugin esté activo, y el plugin suele instalarse en el ámbito del usuario.
+- **El recordatorio sale siempre** (`hooks/inicio-sesion.sh:24-27`): «Recordatorio del arnés (sesión principal = coordinadora): lee AGENTS.md ENTERO antes de tu primer encargo», más «CLAUDE.md ya no lo importa». No mira si el proyecto es del arnés.
+- **El generador también corre** (`:28-30`), y procesa las fuentes (`tools/arnes-lectura-rol.sh:107-145`) **antes** de comprobar que exista `.arnes` (`:150`).
+- **Medido** (Linux/WSL2, hook con `CLAUDE_PROJECT_DIR` apuntando a un directorio sin `.arnes/`): con un `AGENTS.md` ajeno, y también con el directorio **vacío**, el hook emite las dos líneas a la salida estándar —que entra en el contexto de la sesión— y sale 0. Con un `AGENTS.md` de 1,5 MB y un README con marcas, sin `.arnes`, el generador tarda 10,9 s antes de fallar.
+
+**Qué promesa desmiente:**
+- `README.md:86`: «Son **inertes** sin `.arnes/config.json` (**no estorban en repos ajenos al arnés**)».
+- `AGENTS.md:945` y `templates/AGENTS.md.tpl:923`, §13: «Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban)».
+- `ARCHITECTURE.md:24-25`: «Sin manifiesto los hooks son **inertes**».
+
+CA-17 contrata que el recordatorio se emita «con `.arnes/config.json` ausente», pero no distingue un proyecto del arnés con el manifiesto roto de un proyecto que no es del arnés. P-137-Y autoriza recordar **a la coordinadora**, y fuera del arnés no hay coordinadora.
+
+**Riesgo (LLM01):** en un repositorio de terceros, el plugin eleva un `AGENTS.md` que nadie revisó a «léelo ENTERO antes de tu primer encargo». La orden llega con la autoridad de un hook, no del repositorio. La ventaja que da a un atacante es pequeña, porque Claude Code ya carga el `CLAUDE.md` del repositorio. Pero es el propio arnés el que amplía la confianza en contenido ajeno, y además afirma cosas falsas en ese proyecto: que hay coordinadora y que `CLAUDE.md` «ya no lo importa». Cuesta tokens en toda sesión ajena.
+
+**Por qué `contrato`:** el texto normativo que esta entrega lleva a los proyectos (`AGENTS.md` §13 y su plantilla, en `Archivos:` de REQ-036) y la promesa pública de `README.md` dicen algo falso sobre lo construido. Es la clase de SEC-134. **Por qué media:**
+- está activo por defecto, sin atacante, en todas las sesiones fuera del arnés;
+- no baja ninguna puerta ni cambia ninguna decisión.
+
+**Remediación, por propiedad:** el arnés no hace nada en un proyecto que no es suyo. Ejemplos **no exhaustivos**:
+- **(A)** `inicio-sesion.sh` sale 0 sin emitir nada si no existe `$CLAUDE_PROJECT_DIR/.arnes`. Es una prueba interna, sin proceso, así que no cambia el coste. El generador comprueba `.arnes` antes de leer las fuentes. CA-17 conserva «sin depender del manifiesto» para un proyecto **con** `.arnes/`, y el banco gana un caso con fail-before contra `7af469c`.
+- **(B)** Declarar la excepción en `README.md:86`, §13 (repositorio y plantilla) y `ARCHITECTURE.md`.
+
+Recomiendo (A). **El tope de REQ-036 está agotado** (P-137-AH: «sin más vueltas»), así que la decisión es del propietario.
+
+#### SEC-146 — **`instrumento` · severidad baja · `abierto` · nuevo (REQ-036, CA-18) · dueño `desarrollador`**
+**Qué:** el generador **sigue los enlaces simbólicos de las fuentes**. `[ -f ]`, `sha256sum` y `mapfile` resuelven `AGENTS.md` y `requirements/README.md` (y un `requirements/` enlazado) hasta fuera del proyecto, y copian el contenido en `.arnes/lectura/*.md`, dentro del árbol de trabajo (`tools/arnes-lectura-rol.sh:48`, `:107-111`, `:125`). «No sigue enlaces simbólicos» (CA-18, `REQ-036.md:391`) sólo cubre el destino.
+**Medido:** `AGENTS.md` como enlace a un `config.toml` de fuera con `[[bin]]` y `secreto = "TOKEN-DE-FUERA"`. Resultado: rc 0, la línea `[[bin]]` es obligado ilegible y **los cuatro archivos por rol contienen el secreto**.
+**Riesgo:** confidencialidad. Un repositorio hostil (basta con que tenga `.arnes/`, porque el hook corre en todos, SEC-145) puede materializar en el árbol un archivo de la máquina con líneas `[[`, que es lo normal en TOML. Los consumidores no ignoran `.arnes/lectura/` en git, así que un `git add -A` lo versiona.
+**Por qué `instrumento` y baja:**
+- exige un repositorio preparado y que la víctima versione y publique;
+- un agente con `Read` sigue el mismo enlace, así que el arnés no amplía lo que el modelo puede leer: sólo deja una copia en disco;
+- no cambia ninguna decisión.
+
+**Remediación:** que una fuente o `requirements/` que sea enlace simbólico, o cuya ruta real quede fuera del proyecto, sea causa de `falla`. Así se borran los cuatro y se lee por marcas, como con el destino. Caso del banco con fail-before. **No bloquea.** **Vencimiento:** antes de publicar 1.37.0, o declarado.
+
+#### SEC-147 — **`instrumento` · severidad baja · `abierto` · nuevo (REQ-036, CA-18) · dueño `desarrollador`**
+**Qué:** dos defectos del generador ante entradas que el proyecto no escribiría a mano.
+- **(a) NUL.** `mapfile` (`:125`) descarta desde un byte NUL hasta el final de la línea, **incluido su salto**. Medido: con `antes\0[[A-2 · obliga: coordinadora]]\nregla oculta`, `qa.md` contiene `antesregla oculta`. Se pierde texto en silencio y la línea se pega a la siguiente. La cabecera declara un tamaño (`n`, `:129`) menor que el real, lo que desmiente «sin cambiar un byte» y «con el tamaño en bytes» de CA-18 para esa clase de entrada. `--verificar` no lo ve, porque se compara consigo mismo.
+- **(b) Coste superlineal sin techo.** `CUERPO[$r]+="$l"` (`:139`), línea a línea. Medido con una sola corrida por punto: 0,75 MB → 2,9 s; 1,5 MB → 12,1 s; **3 MB → 91,6 s**, por encima de los 60 s de un hook. Si el cliente mata el hook, no se regenera nada, y no queda un destino parcial: falla hacia los archivos anteriores, que el agente usa sólo si son más recientes que las fuentes. Puede perderse el recordatorio. En este repositorio, 0,15 s.
+
+**Por qué `instrumento` y baja:** un NUL en Markdown es corrupción o manipulación deliberada, y quien escribe la fuente ya puede excluir un bloque legítimamente con una marca `coordinadora`, así que (a) no da ninguna capacidad nueva. Es la clase de QA-036-07. (b) exige fuentes de megabytes. **Remediación:**
+- (a) comparar `n` con el tamaño real y fallar si difiere: «fuente con NUL»;
+- (b) un techo de tamaño por fuente que haga `falla`, para que se lea por marcas.
+
+Las dos con su caso. **No bloquea.**
+
+#### SEC-148 — **`instrumento` · severidad media · `abierto` · nuevo (REQ-036, CA-14 y CA-18; misma familia que QA-036-08 y QA-036-12) · dueños coordinadora (conducta, F-137-21) y `desarrollador` (forzador)**
+**Qué:** la lectura completa del archivo por rol depende de la conducta, y **en la mayoría de los casos el `Read` único no puede entregarlo entero**.
+- **Tamaños:** en este repositorio, 97 745, 100 572, 104 059 y 92 827 B. En un consumidor recién instalado, generados de las plantillas: analista 57 003, desarrollador 94 376, QA 97 117 y seguridad 88 233 B.
+- **Proporción medida en esta comisión:** 105 912 B de `REQ-036.md` dieron 48 481 tokens frente a un tope de 25 000 por `Read`.
+- **Consecuencia:** tres de los cuatro archivos de un consumidor, y los cuatro de este repositorio, salen **siempre** truncados en el primer `Read`, y completarlos depende de que el agente siga leyendo, como manda su definición.
+- **Observado:** QA-036-08 (40 líneas) y QA-036-12 (1 000 de 1 004). En la pasada de P-137-AH, QA declaró que no leyó entero su archivo por rol, y el desarrollador tampoco (PR-137-3).
+
+Hasta 1.36, el import de `CLAUDE.md` inyectaba `AGENTS.md` entero en todo agente de forma mecánica. P-137-Y lo retiró por coste, y es decisión del propietario. **El efecto de seguridad:** un desarrollador, un QA o un auditor puede actuar sin haber leído una regla que le obliga, como A-13.2 (`Edit`) o las del «Loop de error», y ninguna máquina lo detecta.
+**Por qué `instrumento` y no `contrato`:** CA-14 y CA-18 prometen lo que dicen las definiciones («un solo `Read` sin `offset` ni `limit`; si llega truncado, sigue leyendo hasta el final»), y eso es cierto. Lo que falla es la conducta. **Por qué media:** afecta a todos los roles salvo, quizá, el analista de un consumidor, y está observado varias veces.
+**Remediación**, ejemplos no exhaustivos:
+- que la definición mande leer por tramos de un tamaño que quepa, con el número de líneas en la cabecera, que es un dato determinista;
+- que el encargo de la coordinadora no conceda saltarse la lectura por presupuesto;
+- el forzador de QA-036-12: contar las líneas leídas frente a las del archivo.
+
+**Vencimiento:** 1.37 · 4b, con QA-036-12. **No bloquea.**
+
+### 5. Regresión respecto del estado aprobado
+- No hay estado aprobado previo de REQ-036. Frente al de REQ-035 (R-062): `hooks/` (salvo `SessionStart`), `tools/` existentes, `.github/` y `.arnes/config.json` idénticos.
+- **Una regresión de garantía, aceptada por el propietario y no hallazgo propio:** la lectura de `AGENTS.md` por subagentes pasa de mecánica (import) a conductual (P-137-Y). Su riesgo va en SEC-148.
+
+### 6. Veredicto — **`Seguridad: con-hallazgos (R-063, 2026-10-28)` en REQ-036, sin veto**
+- **(i) Acción que impide:** **cerrar** REQ-036. `guard-completado` deniega con un hallazgo `contrato` abierto (§6 «No todo hallazgo bloquea», §13), y además falta `Seguridad: aprobado` en un REQ `critico`. Por eso impide también **publicar** 1.37.0 por delegación con REQ-036 dentro: un hallazgo abierto devuelve la decisión a Juan (§4, §6). No impide **implementar** ni **probar**, ni el trabajo de otros REQ.
+- **(ii) Parte afectada:** el hook de inicio de sesión, el orden de comprobaciones del generador y los textos de inercia: `README.md:86`, `AGENTS.md:945`, `templates/AGENTS.md.tpl:923` y `ARCHITECTURE.md:24-25`. El resto de la entrega queda revisado y conforme (§1-§4).
+- **(iii) Evidencia:** SEC-145, arriba, con su medida.
+- **(iv) Lo resuelve:** una decisión del propietario entre (A) y (B) de SEC-145, con su pasada acotada (analista, desarrollador, QA, y re-firma aquí). **El tope está agotado y P-137-AH dijo «sin más vueltas»: no hay otra pasada de REQ-036 sin el propietario.** `Estado: bloqueado`.
+- SEC-146, SEC-147 y SEC-148 son `instrumento` y no bloquean. QA-036-10 y QA-036-12 siguen como los dejó QA.
+- **Estado de seguridad revisado de REQ-036**, contra el que se comparará la re-firma:
+  - `guard.sh`, `stop.sh`, `lib.sh`, `tools/` existentes, `.github/` y `.arnes/config.json` idénticos a `081cb10`; `hooks.json` sólo con `SessionStart`;
+  - el generador escribe por temporal y renombrado, no sigue enlaces en el destino y todo fallo borra;
+  - toda marca dudosa y todo texto previo a la primera marca van a los cuatro;
+  - las cuatro definiciones dicen el respaldo, la fuente sin marcas, el texto previo y el `Read` completo;
+  - `arnes-upgrade` sólo retira el import con `AGENTS.md` marcado tras el plan, conserva lo modificado byte a byte, y las plantillas conservan sus marcadores por sección;
+  - CA-19, igual en plantilla y README.
+- `docs/seguridad/gobernanza-datos.md`: sin cambios. REQ-036 no maneja datos personales; SEC-146 es confidencialidad de archivos de la máquina, no un dato que el arnés gestione.
+- **Numeración:** esta revisión es **R-063** y abre **SEC-145**, **SEC-146**, **SEC-147** y **SEC-148**. Próximos libres: **R-064** y **SEC-149**.

@@ -2,6 +2,26 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, seguridad (R-063): `Seguridad: con-hallazgos`, sin veto; SEC-145 `contrato` abierto; `bloqueado`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: auditor-seguridad.
+
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` abre P-137-AI (SEC-145: pasada acotada (A) o excepción declarada (B)), con el texto del auditor listo para adoptar.
+
+- **Alcance:** `git diff 081cb10..7af469c` sin `requirements/`, `docs/`, `CHANGELOG.md`, `PENDING_APPROVAL.md` ni `tests/` (20 archivos), sobre el código validado por QA en `5217212`.
+- **Conforme:**
+  - CA-06: `guard.sh`, `stop.sh`, `lib.sh` y `tools/` existentes con diff vacío, y `hooks.json` sólo gana `SessionStart`;
+  - el generador escribe por temporal y renombrado y no sigue enlaces en el destino; todo fallo borra;
+  - las marcas dudosas y el texto previo a la primera marca van a los cuatro roles;
+  - las cuatro definiciones llevan el respaldo y la frase de P-137-AG;
+  - `arnes-upgrade` sólo retira el import con `AGENTS.md` marcado tras el plan y no sobrescribe trabajo humano: las plantillas conservan sus marcadores por sección;
+  - CA-19 es igual en plantilla y README.
+- **SEC-145 (`contrato`, media):** el hook de `SessionStart` emite «lee AGENTS.md ENTERO…» y corre el generador en cualquier proyecto, también sin `.arnes/`. Desmiente `README.md:86`, `AGENTS.md` §13 y su plantilla, y `ARCHITECTURE.md`. Bloquea el cierre. Se propone (A): inerte sin `.arnes/`.
+- **SEC-146, SEC-147 y SEC-148 (`instrumento`, no bloquean):**
+  - SEC-146: las fuentes enlazadas se copian al árbol;
+  - SEC-147: un NUL trunca en silencio, y el coste crece más que linealmente (3 MB → 91,6 s);
+  - SEC-148: los archivos por rol superan lo que entrega un `Read`, y completar la lectura depende de la conducta.
+- **Tope agotado** (P-137-AH): no hay otra pasada de REQ-036 sin el propietario. Evidencia en `docs/seguridad/registro-seguridad.md`, R-063.
+
 ## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), QA: `QA: aprobado` sobre `5217212`; QA-036-03 cerrado; `en-revisión` hasta seguridad
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 
