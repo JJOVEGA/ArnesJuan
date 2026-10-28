@@ -43,7 +43,41 @@
 
 ## Pendientes
 
-### [2026-10-28] (coordinadora, con el texto del auditor) — P-137-AI: REQ-036. **Seguridad no veta, pero abre SEC-145 (`contrato`, media): el hook de inicio de sesión no es inerte fuera del arnés.** ¿Pasada acotada o se declara?
+_(Vacía desde el 2026-10-28: P-137-AI resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AI (A)**: el hook de inicio de sesión y el generador no hacen nada sin `.arnes/`, y la comprobación va primero; pasada acotada, y si no cierra, se para; SEC-146–148 como instrumento; F-137-24 se publica sola como 1.36.3 desde `main`
+
+> Adopto P-137-AI (A): el hook de inicio de sesión y el generador no hacen
+> nada si el proyecto no tiene .arnes/; la comprobación va PRIMERO, antes
+> de leer ninguna fuente. Pasada acotada fuera del tope, como P-137-AH: el
+> analista ajusta CA-17 y CA-18; el desarrollador cambia la condición y
+> añade la prueba con fail-before contra 7af469c (directorio vacío, AGENTS.md
+> ajeno y fuente grande sin .arnes: sin aviso, sin lectura, en milisegundos);
+> QA re-verifica sólo eso; seguridad firma. Si no cierra, no hay (B): se
+> para y me lo traes.
+>
+> SEC-146, SEC-147 y SEC-148: instrumento, registrados; SEC-148 va a 4b.
+> Para SEC-147, ficha: medir el límite real de SessionStart en el CLI y, si
+> hace falta, poner un tope de tamaño a las fuentes del generador.
+>
+> Recordatorio del cambio de plan: al cerrar 4a, F-137-24 (issue #63) va
+> primero y se publica solo como 1.36.3 desde main.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Orden de la pasada:**
+  1. analista (Sonnet): CA-17 y CA-18;
+  2. desarrollador (Opus): la condición y las tres pruebas con fail-before contra `7af469c`;
+  3. QA (Opus): sólo eso;
+  4. seguridad (Opus): re-firma.
+- **`docs/PENDIENTES.md`:**
+  - F-137-25 es la ficha de SEC-147;
+  - F-137-26 lleva SEC-148 a 4b;
+  - F-137-24 registra que se publica sola como 1.36.3 desde `main`.
+- **La rama `hotfix/1.36.3`** ya existe con el intento no publicado. Qué hacer con ella al abrir la nueva 1.36.3 se decide en el contrato de F-137-24. La coordinadora propondrá conservarla renombrada como evidencia.
+
+### P-137-AI (texto de la consulta, conservado; resuelta arriba) — REQ-036. **Seguridad no veta, pero abre SEC-145 (`contrato`, media): el hook de inicio de sesión no es inerte fuera del arnés.** ¿Pasada acotada o se declara?
 
 **Qué encontró el auditor** (R-063, `docs/seguridad/registro-seguridad.md`; Opus):
 - **Qué hace hoy el hook.** `hooks/inicio-sesion.sh:24-30` emite «lee AGENTS.md ENTERO antes de tu primer encargo…» y corre el generador en **cualquier** proyecto con el plugin activo, aunque no tenga `.arnes/`.
@@ -79,8 +113,6 @@
 > Adopto (A) para SEC-145: el hook de inicio de sesión y el generador no hacen nada en un proyecto sin `.arnes/` (el hook sale 0 sin emitir; el generador comprueba `.arnes` antes de leer las fuentes). Pasada acotada fuera del tope, sólo esto: el analista ajusta CA-17 y CA-18; el desarrollador, la condición y su caso con fail-before contra `7af469c`; QA re-verifica sólo eso; seguridad re-firma.
 
 **Qué bloquea:** el cierre de REQ-036, y con él el cierre de 4a y el comienzo de F-137-24. Mientras esta entrada siga en Pendientes, la puerta no deja cerrar ningún REQ.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AH (A)**: el título es sólo la primera línea no en blanco que empieza por «# »; pasada acotada fuera del tope; si no cierra, (B) y se declara; al cerrar 4a, F-137-24
 

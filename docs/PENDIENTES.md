@@ -2574,3 +2574,17 @@ ninguna mata al hook.»
   - **Lo que quedó sin explicar:** un `wait -n -p` que no volvía al terminar la gate (3 cuelgues en 3 870 cierres con carga).
   - Sacar las gates del hook quita la espera entera.
 - **Medido en CA-08 de REQ-037** (`claude -p`, CLI 2.1.289): en v1.35.0 y v1.36.0, un cierre cuyas gates pasan de ≈ 600 s se aplica sin veredicto cuando el cliente mata el hook.
+- **Cómo se publica (P-137-AI, 2026-10-28), literal del propietario:** «al cerrar 4a, F-137-24 (issue #63) va primero y se publica solo como 1.36.3 desde main.»
+  - Es una versión de parche, desde `main`, fuera de 1.37.0.
+  - La rama `hotfix/1.36.3` ya existe, con el intento no publicado (`52ee2bc`, en el remoto hasta `46367aa`). Antes de abrir la nueva hay que decidir qué hacer con esa rama: renombrarla como evidencia o partir de ella.
+
+### F-137-25 — SEC-147: medir el límite real de SessionStart en el CLI y, si hace falta, poner un tope de tamaño a las fuentes del generador (instrumento; decisión del propietario, 2026-10-28)
+- **Literal del propietario (P-137-AI):** «Para SEC-147, ficha: medir el límite real de SessionStart en el CLI y, si hace falta, poner un tope de tamaño a las fuentes del generador.»
+- **Medido por el auditor (R-063):** el coste del generador crece más que linealmente: 0,75 MB → 2,9 s; 1,5 MB → 12,1 s; 3 MB → 91,6 s. En este repositorio tarda 0,15 s. Además, un byte NUL trunca una línea en silencio y la cabecera declara un tamaño falso.
+- **Lo que falta:** el límite medido en CLI 2.1.289 (≈ 600 s) es de PreToolUse. El de SessionStart no está medido.
+- **Dueño:** `desarrollador` (medida), luego `analista-requerimientos` si hace falta un tope. **Cuándo:** sin fecha; no bloquea.
+
+### F-137-26 — SEC-148: los archivos por rol superan lo que entrega un `Read`, y completar la lectura depende de la conducta (instrumento, media; va a 1.37 · 4b)
+- **Decisión del propietario (P-137-AI, 2026-10-28), literal:** «SEC-146, SEC-147 y SEC-148: instrumento, registrados; SEC-148 va a 4b.»
+- **Familia:** QA-036-08, QA-036-12 y PR-137-3. En esta ventana, QA y el desarrollador no completaron la lectura de sus archivos por rol («por presupuesto»; ≈ 100 KB cada uno).
+- **Dueño:** la coordinadora y `analista-requerimientos`. **Cuándo:** 1.37 · 4b.

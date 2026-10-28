@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · P-137-AI (A) resuelta por el propietario: el hook de inicio y el generador no hacen nada sin `.arnes/`; pasada acotada; F-137-25 y F-137-26; F-137-24 se publica sola como 1.36.3 desde `main`
+> Origen: P-137-AI · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- `PENDING_APPROVAL.md`: la resolución, literal, en § Resueltas; la cola de Pendientes queda vacía.
+- `docs/PENDIENTES.md`:
+  - F-137-25 (SEC-147: medir el límite de SessionStart y, si hace falta, poner un tope de tamaño a las fuentes);
+  - F-137-26 (SEC-148, a 4b);
+  - F-137-24 se publica sola como 1.36.3 desde `main`.
+- **Siguiente:** el analista (CA-17 y CA-18), el desarrollador (la condición y tres pruebas con fail-before contra `7af469c`), QA y seguridad. Si la pasada no cierra, se para y se lleva al propietario.
+
 ## [Interno] — 2026-10-28 · REQ-036, seguridad (R-063): `Seguridad: con-hallazgos`, sin veto; SEC-145 `contrato` abierto; `bloqueado`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: auditor-seguridad.
 
