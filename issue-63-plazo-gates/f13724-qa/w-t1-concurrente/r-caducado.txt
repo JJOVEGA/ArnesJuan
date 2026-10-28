@@ -1,0 +1,1 @@
+== ceb7bf3 caducado n=850 s=477 max_ms=999 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0

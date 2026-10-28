@@ -1,0 +1,16 @@
+# CA-06: hooks/ de ceb7bf3 frente a 46ee7ca
+ hooks/guard-codigo.sh     |   2 +
+ hooks/guard-completado.sh |  52 ++++++----
+ hooks/lib.sh              | 252 ++++++++++++++++++++++++++++++++++++++++++----
+ 3 files changed, 268 insertions(+), 38 deletions(-)
+## restos del intento (grep en hooks/ y tools/)
+hooks/guard-completado.sh:570:  # PRESUPUESTO DE RECONSTRUCCION (SEC-007, R-001). Reconstruir cuesta del orden de
+hooks/guard-completado.sh:580:    if (( ${#disk} * k > ARNES_EDIT_MAX_PRESUPUESTO )); then
+hooks/guard-completado.sh:581:      arnes_deny "ARNES: no se juzga esta edicion: reconstruir el documento resultante costaria mas de lo que esta puerta puede medir antes de morir (documento en disco x numero de ediciones supera el presupuesto de $ARNES_EDIT_MAX_PRESUPUESTO bytes-edicion). No es un veredicto sobre la edicion: es que la puerta no puede medirla, y una puerta que no puede medir no deja pasar (AGENTS.md 1). Salidas: parte el cambio en llamadas mas pequenas, o escribe el documento entero con Write."
+hooks/guard-completado.sh:615:    # SEC-115 (REQ-007 CA-68, R-045-A §5): PRESUPUESTO DE LA BUSQUEDA. Buscar y sustituir cada `old_string`
+hooks/lib.sh:1820:# PRESUPUESTO de la reconstruccion de un REQ en `guard-completado`, en bytes-edicion
+hooks/lib.sh:1830:ARNES_EDIT_MAX_PRESUPUESTO=67108864
+hooks/lib.sh:2277:              # PRESUPUESTO, antes de analizar la linea y no despues: pasado el techo se
+## entrada.sh frente a 46ee7ca
+## hooks.json
+(vacío = idéntico)

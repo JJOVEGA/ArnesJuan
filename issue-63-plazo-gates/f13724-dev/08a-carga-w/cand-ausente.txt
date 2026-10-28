@@ -1,0 +1,2 @@
+== ausente hooks=/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724/arb-cand/hooks n=300 s=145 respuestas_distintas_de_1=0 mas_de_5s=0
+    300  1 docs: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado':

@@ -1,0 +1,7 @@
+# t1-concurrente (concurrente, 850 por clase), qa-tester (Opus), 2026-10-28T13:06:13-06:00, bash 5.3.9(1)-release; carga PGID 1725540 (el mío 1725536)
+loadavg al empezar: 5.46 1.98 4.84
+(tramo cortado por mi timeout de 590 s: el `wait` sin argumentos esperaba también a la carga; los cuatro bucles ya habían terminado —el más lento a los 477 s—. Carga matada después por su PGID 1725540, 13:16:22.)
+== ceb7bf3 ausente n=850 s=396 max_ms=933 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 caducado n=850 s=477 max_ms=999 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 rojo n=850 s=419 max_ms=916 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 valido n=850 s=452 max_ms=897 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0

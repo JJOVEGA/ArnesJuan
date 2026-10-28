@@ -1,0 +1,14 @@
+# REQ-037 reescrito (F-137-24): evidencia cruda del desarrollador (Opus, claude-opus-5-5), 2026-10-28.
+# Cabeza 42a320c (rama hotfix/1.36.3). Linux/WSL2, bash 5.3.9, 12 núcleos. Scripts en bin/.
+08a-carga.txt     CA-08 (a): carga de QA-037-01 (qa/bin/carga.sh sin cambios, PGID propio, comprobado y matado por grupo).
+                  Fail-before: qa/bin/dobles.sh sin cambios sobre d47cfba (300 rojas, 570 verdes). Candidata: bin/dobles-v.sh,
+                  300 por clase (verde, roja, caducado, ausente), las cuatro a la vez. Copia congelada: 08a-candidata-sha256.txt
+                  (arb-cand/hooks; difiere de 42a320c sólo en lo que no es hooks/). Los w/ guardan las salidas fuera de lo esperado.
+08b-issue63.txt   CA-08 (b): #63, gate `sleep 35` con marcador: 46ee7ca, la candidata sin veredicto, la herramienta y la candidata con él.
+s53-1.txt, s53-2.txt  la sección 53 sola (la 1 con el fallo del separador «|» de la fila de `tee`, corregido; la 2 en verde).
+banco-completo-1-base-con-gate-true.txt  el banco completo con la base del banco aún en `quality_gates: ["true"]`: 149 FAIL, todos
+                  cierres que esperaban allow con una gate verde y sin veredicto (M-037-2). Se cambió la base a `[]`.
+banco-completo-2.txt  el banco completo tras ese cambio: 3014 PASS, 1 FAIL (sonda de reloj), 32 SKIP, cuadre 3047.
+mide-mv.txt       la rama de la sonda que falló («mv con origen protegido»), medida a mano: candidata frente a v1.36.2.
+autoprueba.txt    autoprueba del corredor, 117/0.
+Fail-before determinista de la vuelta anterior (R1, d47cfba: 77 documentos, 59 esperas): ArnesJuan-evidencia/issue-63-plazo-gates/dev-pasada/05-.

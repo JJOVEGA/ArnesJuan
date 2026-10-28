@@ -1,0 +1,14 @@
+{
+  "formato": 1,
+  "arbol": "arbol-v1 (git ls-files -c -o --exclude-standard; contenido sin filtros y modo; sin: .arnes/gates-veredicto.json requirements/ docs/qa/ docs/seguridad/ PENDING_APPROVAL.md PENDING_APPROVAL-archivo.md historial/PENDING_APPROVAL.md CHANGELOG.md CHANGELOG-archivo.md historial/CHANGELOG.md docs/ESTADO.md)",
+  "hash": "3a62243f96f49774dd3688092cbc2cef95b0b6ac",
+  "gates": [
+    {
+      "comando": "false",
+      "rc": 0,
+      "ms": 1
+    }
+  ],
+  "fecha": "2026-10-28T00:00:00Z",
+  "quien": "qa-tester"
+}

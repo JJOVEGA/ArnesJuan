@@ -1,0 +1,5 @@
+# 11 — sondas de REQ-033 a mano: candidata frente a v1.36.2 (46ee7ca), alternadas, 31 por árbol, mínimo y mediana (ms), 2026-10-28T13:34:36-06:00, loadavg 1.45 9.69 14.66
+write ceb7bf3 decisión=deny min=36.8 mediana=41.7
+write 46ee7ca decisión=deny min=34.4 mediana=40.5
+mv ceb7bf3 decisión=deny min=32.9 mediana=36
+mv 46ee7ca decisión=deny min=31.4 mediana=35.6

@@ -1,0 +1,6 @@
+arnes-gates: 3 gate(s) en /home/juan/dev/ArnesJuan-1.36.3 (quien: qa-tester)
+  [rc   0]       24 ms  for f in hooks/*.sh tools/*.sh; do bash -n "$f" || exit 1; done
+  [rc   0]        3 ms  jq -e . hooks/hooks.json >/dev/null
+  [rc   0]        5 ms  jq -e . .claude-plugin/plugin.json >/dev/null && jq -e . .claude-plugin/marketplace.json >/dev/null
+arnes-gates: VERDE: todas las gates salieron 0 sobre el arbol b73f2607c06f7c595b2821317290fbc0f8c1ba77. Registro: /home/juan/dev/ArnesJuan-1.36.3/.arnes/gates-veredicto.json
+rc=0

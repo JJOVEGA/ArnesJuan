@@ -1,0 +1,9 @@
+# t2-serie (serie, 150 por clase), qa-tester (Opus), 2026-10-28T13:16:33-06:00, bash 5.3.9(1)-release; carga PGID 2411845 (el mío 2411841)
+loadavg al empezar: 20.17 21.20 14.71
+== ceb7bf3 valido n=150 s=80 max_ms=843 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 rojo n=150 s=75 max_ms=855 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 caducado n=150 s=84 max_ms=738 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+== ceb7bf3 ausente n=150 s=69 max_ms=651 dobles=0 cuelgues=0 deny_espurios=0 allow_espurios=0 otro_motivo=0
+loadavg al terminar: 24.25 23.19 17.45 13:21:58
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/issue-63-f13724-qa/bin/tramo.sh: line 21: 2411845 Killed                     setsid bash $V/bin/carga.sh $W/pgid > /dev/null 2>&1
+quedan en el grupo de carga 2411845: 0

@@ -1,0 +1,14 @@
+# REQ-037 F-137-24, QA (qa-tester, modelo efectivo Opus, claude-opus-5-5), 2026-10-28, cabeza ceb7bf3 (hotfix/1.36.3). Sin commit.
+# Linux/WSL2, bash 5.3.9, 12 núcleos. Árboles por git archive (hooks + tools): ceb7bf3 (candidata), d47cfba (fail-before), 46ee7ca (v1.36.2).
+# Carga: bin/carga.sh y bin/dobles.sh, copias byte a byte de qa/bin de la vuelta 1 (mismo sha256). PGID de cada carga en pgids-carga.txt.
+00-candidata-sha256.txt   sha256 de hooks/ y tools/ congelados
+01-carga-concurrente.txt  CA-09: 4 clases × 850 a la vez (valido, rojo, caducado, ausente) bajo la carga de QA
+02-carga-serie.txt        CA-09: 4 clases × 150 en serie bajo la carga
+03-failbefore-d47cfba.txt CA-08 (a): d47cfba con dobles.sh sin cambios, 300 rojas + 300 verdes, bajo la misma carga, misma sesión
+10-banco-completo.txt     el banco, una vez
+11-reloj-033-a-mano.txt   las dos sondas de reloj de REQ-033, candidata frente a v1.36.2, 31 alternadas
+12-falsificacion.txt      CA-05: Edit/Write/MultiEdit por agente; formas de Bash; ln; suplantación del entorno de la herramienta
+13-ca06-retirada.txt      CA-06: hooks/ frente a 46ee7ca y restos del intento
+14-objetos.txt            gates en forma de objeto por la herramienta y la puerta
+15-herramienta-repo.txt   tools/arnes-gates.sh --quien qa-tester sobre este repositorio
+bin/                      cierres.sh (contador por clase), tramo.sh (carga + cierres), falsifica.sh

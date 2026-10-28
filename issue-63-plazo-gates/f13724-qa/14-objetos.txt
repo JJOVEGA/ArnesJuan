@@ -1,0 +1,5 @@
+# 14 — manifiesto con gates en forma de objeto (la propiedad de la sección 04), 2026-10-28T13:37:41-06:00
+gates=[{"nombre":"Verde","comando":"true"}] | herramienta: arnes-gates: VERDE: todas las gates salieron 0 sobre el arbol 4cf06065a600bd4680 rc=0  | cierre: allow
+gates=[{"nombre":"Roja","comando":"false"}] | herramienta: arnes-gates: ROJO: la gate `false` no salio 0; las siguientes no se corrieron. R rc=1  | cierre: ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': en el veredicto registrado (.arnes/gate
+gates=["true",{"nombre":"x","comando":"true"}] | herramienta: arnes-gates: VERDE: todas las gates salieron 0 sobre el arbol 718980095c36df5f03 rc=0  | cierre: allow
+gates=[{"nombre":"sin comando"}] | herramienta: arnes-gates: el manifiesto no tiene quality_gates: no hay nada que correr ni ver rc=2  | cierre: allow

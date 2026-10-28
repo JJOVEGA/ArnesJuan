@@ -1,0 +1,24 @@
+REPO53="${SEC_DIR%/}/../../../.."; MAT53_RUTAS='hooks'; MAT53_REG=''; MAT53_T0=0; MAT53_REF='-'
+mat53_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT53_REG, UNA sola línea (la lee `sonda_lee`)
+  local mot="${2//[[:space:]]/_}"; [ -n "$mot" ] || mot='-'
+  MAT53_REG="sonda=linea-base modo=medicion estado=$1 motivo=$mot corrida=${ARNES_CORRIDA:-desconocido} invocacion=$BASHPID-$MAT53_T0 arbol=${ARNES_ARBOL:-desconocido} k=1 r=1 us=$(( ${EPOCHREALTIME/./} - MAT53_T0 )) procesos=$4 etiqueta=$MAT53_REF ref=$MAT53_REF archivos=$3"
+}
+# mat53 <ref> <destino>: las propiedades de REQ-021 CA-05 —cada archivo con el contenido Y el modo del
+# objeto de ESE árbol, verificados; `archivos=<n>`; y `sin-linea-base` con motivo, nunca un árbol a medias—.
+mat53() {
+  local ref="$1" dst="$2" lista m o r i n=0 hs; local -a modos=() oids=() rutas=()
+  MAT53_T0=${EPOCHREALTIME/./}; MAT53_REF="${ref//[[:space:]]/_}"
+  lista="$(git -C "$REPO53" ls-tree -r "$ref" -- $MAT53_RUTAS 2>/dev/null)"
+  [ -n "$lista" ] || { mat53_reg sin-linea-base "la-referencia-no-resuelve:$ref" desconocido 1; return 1; }
+  while IFS=$' \t' read -r m _ o r; do n=$((n + 1)); modos+=("$m"); oids+=("$o"); rutas+=("$dst/$r"); done <<< "$lista"
+  mkdir -p "$dst" && git -C "$REPO53" archive "$ref" $MAT53_RUTAS 2>/dev/null | tar -x -C "$dst" 2>/dev/null \
+    || { mat53_reg sin-linea-base no-se-pudo-materializar desconocido 4; return 1; }
+  hs="$(printf '%s\n' "${rutas[@]}" | git -C "$REPO53" hash-object --stdin-paths 2>/dev/null)"$'\n'
+  for ((i = 0; i < n; i++)); do
+    [ "${hs%%$'\n'*}" = "${oids[i]}" ] || { mat53_reg sin-linea-base "el-contenido-no-coincide-en:${rutas[i]#"$dst"/}" desconocido 6; return 1; }
+    hs="${hs#*$'\n'}"
+    case "${modos[i]}" in *755) [ -x "${rutas[i]}" ] ;; *) [ ! -x "${rutas[i]}" ] ;; esac \
+      || { mat53_reg sin-linea-base "el-modo-no-coincide-en:${rutas[i]#"$dst"/}" desconocido 6; return 1; }
+  done
+  mat53_reg ok - "$n" 6
+}
