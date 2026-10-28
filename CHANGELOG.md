@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036: P-137-AJ resuelta (A), sólo texto en los cuatro sitios de inercia; norma de re-despacho en la plantilla de autorización
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **P-137-AJ (A):** la frase de R-064 §2 va en `README.md:86`, `AGENTS.md:945`, `templates/AGENTS.md.tpl:923` y `ARCHITECTURE.md:24-25`. Después se regeneran los archivos por rol, QA comprueba que B5 no se mueve y seguridad re-firma, reanudando a los mismos agentes. Al cerrar REQ-036, se cierra 4a y sigue F-137-24 (issue #63), que se publica como 1.36.3.
+- **Norma del propietario:** las pasadas acotadas y las re-firmas se hacen reanudando al mismo agente siempre que se pueda. Medido: ≈ 25 k tokens en R-064 frente a 262 k en R-063. Queda en `templates/autorizacion.md`, en un párrafo «Re-despachos» del encabezado.
+
 ## [Interno] — 2026-10-28 · REQ-036, seguridad (R-064): re-firma de SEC-145 en la pasada de P-137-AI; sigue `con-hallazgos`, sin veto; `bloqueado`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad.
 

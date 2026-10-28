@@ -23,6 +23,14 @@
 >
 > (`<id>` es el nombre con que la autorización se registra en la cola; `N` y `M`, con la numeración del
 > propio plan.) Cuando el plan termina, la línea deja de estar.
+>
+> **Re-despachos.** Una pasada acotada o una re-firma se hacen **reanudando al mismo agente** que hizo
+> la pasada anterior, con el contexto que ya tiene, siempre que se pueda. Sólo se despacha uno nuevo
+> cuando ese agente ya no está disponible. La razón es el coste: un agente nuevo vuelve a leer todo lo
+> que el anterior ya había leído. En el repositorio del arnés, una re-firma de seguridad reanudada
+> costó ≈ 25 k tokens, frente a 262 k de la revisión con un despacho nuevo. La reanudación no cambia
+> qué se valida: el agente reanudado hace la misma verificación que haría uno nuevo. (Norma del
+> propietario del arnés, 2026-10-28, P-137-AJ.)
 
 ## Plan autorizado
 <!-- Qué va aquí: las fases, en orden; de cada una, quién la ejecuta y qué deja hecho. Cada fase termina en

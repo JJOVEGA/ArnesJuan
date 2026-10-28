@@ -43,7 +43,24 @@
 
 ## Pendientes
 
-### [2026-10-28] (coordinadora, con el texto del auditor) — P-137-AJ: REQ-036. **La pasada de P-137-AI no cierra: el código cumple, pero cuatro textos siguen prometiendo inercia «sin `.arnes/config.json`».** Por P-137-AI, se para y se trae.
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AJ (A)**: sólo texto en los cuatro sitios de inercia; se regeneran los archivos por rol, QA comprueba B5 y seguridad re-firma, reanudando a los mismos agentes; al cerrar REQ-036, 4a y F-137-24 como 1.36.3; norma: pasadas acotadas y re-firmas reanudando al mismo agente
+
+> Adopto P-137-AJ (A): sólo texto, en los cuatro sitios, con la frase de la
+> ficha (los hooks son inertes sin .arnes/config.json, salvo el de inicio de
+> sesión, que lo es sin .arnes/ y avisa si hay .arnes/ sin manifiesto).
+> Regenerar los archivos por rol; QA comprueba que B5 no se mueve; seguridad
+> re-firma. Reanudando a los mismos agentes. Al cerrar REQ-036, cierra 4a y
+> sigue con F-137-24 (issue #63) para publicarlo como 1.36.3.
+>
+> Práctica que adopto como norma desde aquí: las pasadas acotadas y las
+> re-firmas se hacen reanudando al mismo agente siempre que se pueda (25k
+> frente a 262k medidos). Regístralo en la plantilla de autorización.
+
+**Registro de la coordinadora.** La norma queda en `templates/autorizacion.md`, en el encabezado («Re-despachos»). Las cifras: la re-firma R-064, reanudando al auditor, costó ≈ 25 k tokens; la revisión R-063, con un despacho nuevo, costó 262 k. La ficha original se conserva a continuación.
+
+#### Ficha original: [2026-10-28] (coordinadora, con el texto del auditor) — P-137-AJ: REQ-036. **La pasada de P-137-AI no cierra: el código cumple, pero cuatro textos siguen prometiendo inercia «sin `.arnes/config.json`».** Por P-137-AI, se para y se trae.
 
 **Qué cumple** (R-064, `docs/seguridad/registro-seguridad.md`; QA aprobó en `8038db3`):
 - Sin `.arnes/`, el hook de inicio y el generador no hacen nada, y la comprobación va primero.
@@ -82,8 +99,6 @@ En `README.md:86` basta con conservar «(no estorban en repos ajenos al arnés)�
 > Adopto P-137-AJ (A): los cuatro textos de inercia (`README.md:86`, `AGENTS.md:945`, `templates/AGENTS.md.tpl:923`, `ARCHITECTURE.md:24-25`) dicen la frase propuesta en R-064 §2; pasada acotada, sólo texto: el desarrollador los cambia y regenera los archivos por rol, QA los lee (y B5 no se mueve) y seguridad re-firma. Si no cierra, se para y me lo traes.
 
 **Qué bloquea.** El cierre de REQ-036 y, con él, el de 4a y el comienzo de F-137-24. Mientras esta entrada siga en Pendientes, la puerta no deja cerrar ningún REQ.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AI (A)**: el hook de inicio de sesión y el generador no hacen nada sin `.arnes/`, y la comprobación va primero; pasada acotada, y si no cierra, se para; SEC-146–148 como instrumento; F-137-24 se publica sola como 1.36.3 desde `main`
 
