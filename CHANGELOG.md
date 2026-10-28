@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-28 · REQ-036, pasada de P-137-AJ (A), QA: `QA: aprobado` sobre `170e8c6`; `bloqueado` → `en-revisión` hasta la re-firma de seguridad
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester (reanudado).
+
+- **Los cuatro textos de inercia** (`README.md:86`, `AGENTS.md` §13, `templates/AGENTS.md.tpl:923` y `ARCHITECTURE.md:24-27`):
+  - llevan la frase de R-064 §2;
+  - cubren el paréntesis del propietario («avisa si hay .arnes/ sin manifiesto»);
+  - coinciden con `hooks/inicio-sesion.sh:29` y CA-17;
+  - `AGENTS.md` y la plantilla son idénticos en ese párrafo.
+- **B5, medido con el guion en `bde57fb` y en `170e8c6`:** 75 590 B (proyecto) y 75 526 B (plantilla) en las dos, sin moverse.
+  - `analista.md` sólo cambia en la línea `Fuentes`.
+  - `--verificar` da 0.
+- **Banco:** una corrida, 3119 PASS · 0 FAIL · 31 SKIP = 3150. Gates de §7 en verde.
+- **Los tres sitios sin tocar** (`skills/arnes-upgrade/SKILL.md:521`, `.arnes/plantillas-origen/AGENTS.md.tpl:321` y `docs/arnes/notas-1.36.1-borrador.md:138`) no son promesa vigente: son una nota de migración de 1.31.0, la base de `arnes-upgrade` y notas históricas.
+- **Sin hallazgos nuevos.** Queda una observación para seguridad: `ARCHITECTURE.md:27` y `README.md:86` dicen que sin `jq` los hooks son inertes o lo requieren, y el de inicio no usa `jq`.
+- Evidencia en `docs/qa/REQ-036.md`.
+
 ## [GitHub] — 2026-10-28 · REQ-036 (sin validar), desarrollador: P-137-AJ (A), la frase de inercia de R-064 en los cuatro sitios
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
 
