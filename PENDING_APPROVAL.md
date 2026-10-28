@@ -45,6 +45,17 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-28; dada en P-137-AN de `hotfix/1.36.3`) — **Ajuste a P-137-AM: reanudar al mismo agente sólo si su contexto es pequeño (menos de ~150 k)**
+
+> Ajuste a P-137-AM, por las cifras: reanudar al mismo agente sólo si su
+> contexto es pequeño (menos de ~150k); con contextos de 300–600k sale más
+> caro que uno nuevo con un encargo bien escrito. Para esta pasada de
+> texto, analista y QA nuevos, con encargo corto.
+
+**Registro de la coordinadora.**
+- *En `templates/autorizacion.md`* (párrafo «Re-despachos»): la regla pasa de «siempre que se pueda» a «sólo con contexto de menos de ~150 k»; con más, un agente nuevo con encargo corto. Se quita la frase «reanudar es muy barato si terminó hace menos de 5 minutos», que el propietario no recoge como excepción.
+- *Cifras en que se apoya* (pasada correctiva de REQ-037, no cacheados): desarrollador reanudado 634 554 (561 k de ellos en reescribir la caché), QA reanudado 518 483.
+
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AM: se mantiene reanudar al mismo agente siempre que se pueda; las cargas largas las lanza la coordinadora fuera de los agentes**
 
 > Adopto P-137-AM: reanudar al mismo agente siempre que se pueda. Y

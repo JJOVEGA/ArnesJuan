@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Ajuste a P-137-AM: reanudar al mismo agente sólo con contexto de menos de ~150 k
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La decisión del propietario** (dada en P-137-AN, en `hotfix/1.36.3`): con contextos de 300–600 k, reanudar sale más caro que un agente nuevo con un encargo bien escrito. El texto literal está en `PENDING_APPROVAL.md`.
+- **`templates/autorizacion.md`**, párrafo «Re-despachos»: reanudar sólo con contexto de menos de ~150 k; si no, un agente nuevo con encargo corto.
+
 ## [Interno] — 2026-10-28 · P-137-AM resuelta: se mantiene reanudar al mismo agente; las cargas largas, fuera de los agentes; cifras corregidas en la plantilla de autorización
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
 

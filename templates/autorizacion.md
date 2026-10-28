@@ -25,13 +25,13 @@
 > propio plan.) Cuando el plan termina, la línea deja de estar.
 >
 > **Re-despachos.** Una pasada acotada o una re-firma se hacen **reanudando al mismo agente** que hizo
-> la pasada anterior, con el contexto que ya tiene, siempre que se pueda. Sólo se despacha uno nuevo
-> cuando ese agente ya no está disponible. La reanudación no cambia qué se valida: el agente reanudado
-> hace la misma verificación que haría uno nuevo. **El coste se mide en tokens no cacheados**, no con
-> el total que da la notificación del agente. Ese total no cuenta la escritura de caché, y la caché
-> de un subagente dura 5 minutos. Por eso reanudar es muy barato si el agente terminó hace menos de
-> 5 minutos (≈ 4 k en el repositorio del arnés). Pasado ese plazo, vuelve a escribir todo su
-> contexto: 200–300 k no cacheados por pasada.
+> la pasada anterior **sólo si su contexto es pequeño (menos de ~150 k)**. Con un contexto mayor, o si
+> ese agente ya no está disponible, se despacha **uno nuevo con un encargo corto y bien escrito**. La
+> reanudación no cambia qué se valida: el agente reanudado hace la misma verificación que haría uno
+> nuevo. **El coste se mide en tokens no cacheados**, no con el total que da la notificación del
+> agente. Ese total no cuenta la escritura de caché, y la caché de un subagente dura 5 minutos.
+> Pasado ese plazo, reanudar vuelve a escribir todo su contexto: en el repositorio del arnés, con
+> contextos de 300–600 k, una pasada reanudada costó más que una nueva.
 >
 > **Cargas largas.** Una prueba de carga o cualquier comando que dure más de unos minutos lo lanza la
 > coordinadora **fuera de los agentes**, y el agente sólo lee el resultado. Un agente que espera un
@@ -39,7 +39,7 @@
 > cargas largas costaron ≈ 1,2 M no cacheados cada una.
 >
 > (Normas del propietario del arnés: P-137-AJ, 2026-10-28; cifras corregidas y cargas largas por
-> P-137-AM, el mismo día.)
+> P-137-AM, el mismo día; umbral de ~150 k por su ajuste, en P-137-AN.)
 
 ## Plan autorizado
 <!-- Qué va aquí: las fases, en orden; de cada una, quién la ejecuta y qué deja hecho. Cada fase termina en
