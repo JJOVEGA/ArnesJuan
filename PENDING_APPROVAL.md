@@ -43,7 +43,21 @@
 
 ## Pendientes
 
-### [2026-10-28] (coordinadora) — P-137-AM: **la cifra en la que se apoyó la norma de P-137-AJ estaba mal medida, y la di yo.** Reanudar a un agente sólo sale barato si su caché sigue viva.
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AM: se mantiene reanudar al mismo agente siempre que se pueda; las cargas largas las lanza la coordinadora fuera de los agentes**
+
+> Adopto P-137-AM: reanudar al mismo agente siempre que se pueda. Y
+> adopto tu propuesta: las cargas largas las lanzas tú fuera de los
+> agentes, y el agente sólo lee el resultado. Para la pasada: reanuda al
+> mismo desarrollador y al mismo QA.
+
+**Registro de la coordinadora.**
+- *Cómo leo la decisión:* el propietario no eligió letra. El contenido coincide con (B): la norma de P-137-AJ se queda como está. A eso se suma la práctica de las cargas largas.
+- *En `templates/autorizacion.md`* (párrafos «Re-despachos» y «Cargas largas»): se corrige la cifra mal medida, que era mía; el coste se mide en tokens no cacheados, y se explica cuándo sale barato reanudar. La regla no cambia. Las cargas largas quedan como práctica.
+- *«La pasada»* es la de P-137-AL 2 (A), en `hotfix/1.36.3`.
+
+#### Ficha original: [2026-10-28] (coordinadora) — P-137-AM: **la cifra en la que se apoyó la norma de P-137-AJ estaba mal medida, y la di yo.** Reanudar a un agente sólo sale barato si su caché sigue viva.
 
 **Qué medí mal.** «25 k frente a 262 k» comparaba el campo `subagent_tokens` de la notificación. Ese campo **no cuenta** la escritura de caché que hace un agente al reanudarse. Los subagentes usan caché de **5 minutos**. Si se reanuda a un agente cuando ese plazo ya pasó, el primer mensaje vuelve a escribir en caché **todo** su contexto anterior: 260 665 tokens en la re-firma R-064 y 201 297 en el desarrollador de P-137-AJ. Medido sobre los transcritos de esta sesión:
 
@@ -79,8 +93,6 @@
 > Adopto P-137-AM (A): se reanuda al mismo agente sólo si terminó hace menos de 5 minutos; si no, despacho nuevo con encargo acotado. Corrige la cifra y la regla en la plantilla de autorización, y mide presupuestos y el aviso de 1,5× en tokens no cacheados.
 
 **Qué bloquea.** Mientras esté en Pendientes, la puerta no deja cerrar ningún REQ de `cand/1.37.0`. Ahora no hay ninguno en curso: 4a ya está cerrada. Al hotfix no lo bloquea, porque tiene su propia cola. Mientras no decidas, la coordinadora sigue la norma adoptada, porque no le corresponde reinterpretarla. El siguiente despacho que toca es QA del hotfix, y se hará reanudado. La plantilla no se toca.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AJ (A)**: sólo texto en los cuatro sitios de inercia; se regeneran los archivos por rol, QA comprueba B5 y seguridad re-firma, reanudando a los mismos agentes; al cerrar REQ-036, 4a y F-137-24 como 1.36.3; norma: pasadas acotadas y re-firmas reanudando al mismo agente
 

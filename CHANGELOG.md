@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · P-137-AM resuelta: se mantiene reanudar al mismo agente; las cargas largas, fuera de los agentes; cifras corregidas en la plantilla de autorización
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La decisión del propietario:** se sigue reanudando al mismo agente siempre que se pueda, y las cargas largas las lanza la coordinadora fuera de los agentes, que sólo leen el resultado. El texto literal está en `PENDING_APPROVAL.md`.
+- **`templates/autorizacion.md`:** el párrafo «Re-despachos» corrige la cifra mal medida («25 k frente a 262 k») y dice que el coste se mide en tokens no cacheados. El párrafo nuevo «Cargas largas» recoge la práctica.
+
 ## [Interno] — 2026-10-28 · REQ-036 `completado`: 1.37 · 4a cerrada; métrica por rol; P-137-AM abierta (coste real de reanudar a un agente)
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
 
