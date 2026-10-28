@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, QA vuelta 3 de 3 sobre `d24b383`: `con-hallazgos`; `bloqueado` y escalado
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cerrado:** QA-036-11. CA-01 y CA-20 dicen 75 590 B. El guion mide 75 590 B en modo proyecto y 75 526 B en modo
+  plantilla. B5 pasa con 75 590 B y falla con 75 591 B; el contrato sigue en 75 000 B.
+- **Sigue abierto QA-036-03 (`usuario/dinero`).** Lo que se sostiene:
+  - S9 y L4;
+  - los ataques con `#` sin espacio, blancos, comentario HTML, marca mal formada, CRLF, sin salto final y BOM.
+
+  Lo que falla: una segunda línea propia que empieza por `# ` entre el título y la primera marca no llega a ningún
+  archivo por rol, sin aviso, y tras `arnes-upgrade` no la lee nadie.
+- **Sección 52 partida:** 58 + 9 casos, ninguno perdido; la copia de funciones no diverge.
+- **Banco:** 3093 PASS · 0 FAIL · 34 SKIP (3127). Autoprueba 117/0. Gates en verde.
+- **Tope agotado:** `Estado: bloqueado`, escalado en `PENDING_APPROVAL.md` § Pendientes con las opciones (A) y (B), y
+  bloqueo registrado en `docs/ESTADO.md`.
+
 ## [Interno] — 2026-10-28 · REQ-036, write-back del analista de P-137-AG (A): CA-20, CA-01, CA-18 y correspondencia
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
 

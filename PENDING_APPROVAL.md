@@ -43,7 +43,66 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AG resuelta por el propietario, en § Resueltas.)_
+### [2026-10-28] (qa-tester) — REQ-036, tope de QA agotado: una línea propia que empieza por `# ` antes de la primera marca no la lee ningún subagente
+
+**Contexto.** QA terminó la vuelta 3 de 3, la última, sobre `d24b383`. Su veredicto es `con-hallazgos`, y la evidencia
+está en `docs/qa/REQ-036.md`, «Vuelta 3».
+- **Qué se sostiene:**
+  - el texto propio entre el título y la primera marca llega a los cuatro archivos por rol (S9);
+  - L4 está reparado por la frase de las definiciones;
+  - QA-036-11 queda cerrado;
+  - el banco da 3093/0/34.
+- **Qué no se sostiene:** QA-036-03 (`usuario/dinero`) sigue abierto en una forma más estrecha.
+  - El caso: una línea **propia** que empieza por `# ` está entre el título y la primera marca. Por ejemplo,
+    «# Regla del equipo: todo cambio en src/pagos/ es de cobro y es crítico.».
+  - Esa línea no llega a ninguno de los cuatro archivos. No hay aviso y el generador sale con rc 0.
+  - Tras `arnes-upgrade`, `CLAUDE.md` ya no importa `AGENTS.md`, así que ningún subagente la lee. En 1.36 la leían
+    todos.
+  - La causa: CA-18 y el generador tratan como título **toda** línea `# ` que va antes del primer texto. Eso
+    contradice la frase de CA-18 «contiene todo el texto de la fuente que no sea el título».
+  - La frecuencia es baja, porque exige una regla escrita como encabezado de nivel 1, pero la clase es la misma.
+- **No quedan vueltas:** «Loop de error» manda `bloqueado` y escalar.
+
+**Opciones.**
+- **(A) Una pasada acotada más, autorizada fuera del tope.**
+  - El título pasa a ser **sólo la primera línea no en blanco** de la fuente, si empieza por `# `.
+  - Cualquier otra línea no en blanco antes de la primera marca abre el bloque sin marca, que va a los cuatro con
+    aviso.
+  - **Quién y qué:**
+    - el analista escribe CA-18 («Qué contiene» y pieza 1);
+    - el desarrollador cambia una condición del generador y el extractor de las dos partes de la sección 52, y añade
+      un caso con fail-before contra `d24b383`;
+    - QA re-verifica sólo eso.
+  - *Consecuencia:* no hay bytes nuevos en las definiciones y **B5 no se mueve**, porque las plantillas y este
+    repositorio sólo tienen el título y blancos (S3c). Cuesta una pasada corta más.
+- **(B) Aceptar la laguna por escrito.** Una línea `# ` entre el título y la primera marca se trata como título.
+  - *Consecuencia:* esa línea se pierde en silencio tras `arnes-upgrade` cuando hay archivo por rol.
+  - Aceptarla no la acredita. QA-036-03 se cerraría con la aceptación escrita, como residual con dueño.
+
+**Recomendación de QA: (A).** Es la regla general «ante la duda, se lee» (P-137-X (D)) y no cuesta bytes de lectura.
+Texto listo para adoptar:
+> Adopto (A) para QA-036-03: en el archivo por rol, el título es sólo la primera línea no en blanco de la fuente si
+> empieza por `# `; cualquier otra línea no en blanco antes de la primera marca es texto propio y va a los cuatro, con
+> aviso. Autorizo una pasada acotada fuera del tope de vueltas: analista (CA-18), desarrollador (generador, extractor y
+> un caso con fail-before contra `d24b383`) y QA sólo sobre eso. B5 no se mueve.
+
+**Qué impide** (`AGENTS.md` §6, regla 2):
+- (i) **Acción impedida: cerrar.**
+  - REQ-036 no puede pasar a `completado`, por el hallazgo `usuario/dinero` abierto y por `Estado: bloqueado`
+    (`guard-completado`; §6, «Loop de error»).
+  - Mientras esta entrada siga bajo § Pendientes, `guard-completado` también deniega marcar **cualquier** REQ como
+    `completado`.
+- (ii) **Parte de la entrega:** REQ-036, CA-18 (pieza 1, «Qué contiene»). La firma de seguridad espera a QA (§6).
+- (iii) **Evidencia:**
+  - `docs/qa/REQ-036.md`, «Vuelta 3», con la reproducción;
+  - `tools/arnes-lectura-rol.sh`, el `case "$l" in '# '*) ;;` del bucle de fuentes;
+  - `requirements/REQ-036.md`, CA-18.
+- (iv) **Lo resuelve:** la elección del propietario.
+
+**Qué trabajo sigue:** el que no depende de esta decisión, por ejemplo F-137-24. Implementar y probar no quedan
+impedidos.
+
+**Espera:** elección del propietario.
 
 ## Resueltas
 
