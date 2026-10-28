@@ -43,7 +43,23 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AL resuelta por el propietario, en § Resueltas.)_
+### [2026-10-28] (qa-tester) — REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? *(La coordinadora le pone número y la decisión propuesta.)*
+
+**Qué pasa.** Medido sobre `d89316c` (`docs/qa/REQ-037.md`). El proyecto de prueba tiene la gate `false`, así que su veredicto real es rojo. Cada forma se ejecutó después de que la puerta de `Bash` la dejara pasar a `qa-tester` y a la coordinadora, y el cierre salió **`allow`**:
+- `cp /otro/gates-veredicto.json .arnes/`: el destino es el directorio. También `cp … .arnes`, `mv … .arnes/` e `install -m 644 … .arnes/`.
+- `link /otro/gates-veredicto.json .arnes/gates-veredicto.json && rm /otro/gates-veredicto.json`.
+- `cp -l …/gates-veredicto.json .arnes && rm …` y `cp --link … .arnes/ && rm …`.
+
+**Por qué choca con el REQ.** CA-05 (ii) promete que toda forma llana que deja el registro con contenido se deniega, y la lista de riesgos declarados no recoge estas formas.
+
+**Lo que se sabe de la causa.**
+- El detector juzga un destino que es directorio como `directorio/`, no como `directorio/<nombre>`. Lo fijó el propietario en P-032-1 (A), CA-47 punto 10.
+- No ve `link`.
+- La misma forma reemplaza el **manifiesto** desde v1.36.2 (`cp …/config.json .arnes/`: `allow` en los dos árboles). Es preexistente y de la familia de REQ-033.
+
+**Lo que la pasada sí cerró:** QA-037-11 (`ln` y `ln -s` sobre el registro, y el registro enlazado) y QA-037-13. CA-09: 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
+
+**Qué impide esta entrada:** cerrar REQ-037 (`completado`) y publicar 1.36.3. No impide la revisión de seguridad ni el commit de la evidencia.
 
 ## Resueltas
 

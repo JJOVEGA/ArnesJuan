@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA de la pasada fuera del tope (`d89316c`), `con-hallazgos`; REQ-037 `bloqueado`
+> Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cerrados, verificados:**
+  - QA-037-11: `ln` y `ln -s` sobre el registro se deniegan, y un registro enlazado se juzga ilegible.
+  - QA-037-13: O1 a O3.
+- **Cerrado por decisión del propietario:** QA-037-12, aceptado en P-137-AL 3 (A) y declarado en todos los sitios que pide.
+- **CA-01:** conforme.
+- **CA-09:** la carga la lanzó la coordinadora (P-137-AM); yo la leí y la juzgué. 4 000 cierres, 0 fallos.
+- **Nuevo: QA-037-14 (`contrato`).**
+  - Formas llanas de `Bash` que siguen fabricando un verde:
+    - `cp`, `mv` o `install` al directorio `.arnes/`;
+    - `link` o `cp -l` seguidos de `rm`.
+  - Como era la única pasada, REQ-037 queda `bloqueado` y se escala en `PENDING_APPROVAL.md`.
+- **Banco:** 3030 PASS, 1 FAIL (la sonda de reloj de REQ-033, QA-037-08) y 31 SKIP; cuadre 3062. La sección 53, sola: 100 PASS, 0 FAIL y 2 SKIP.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada correctiva de F-137-24 (QA-037-11 y 13), `en-revisión` (sin validar)
 > Origen: GitHub (commit local, sin validar) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
 
@@ -236,16 +252,17 @@ CHANGELOG — ArnesJuan
 **Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` y del entorno que hereda (propuesto para 1.37, F-137-24-B); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).
 
 **Firmas.**
-- **QA (Opus, 2026-10-28, cabeza `ceb7bf3`): `con-hallazgos`** (`docs/qa/REQ-037.md`).
-  - **CA-08 (a):** `d47cfba` da 3 respuestas dobles con carga; la candidata, 0 en 4 000.
-  - **CA-09:** 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
-  - **CA-01:** pendiente de P-137-AL.
-  - **Abiertos, `contrato`:**
-    - QA-037-11: `ln` sobre el registro.
-    - QA-037-12: el entorno suplantado de la herramienta.
-    - QA-037-13: las gates en forma de objeto, sin caso en el banco.
+- **QA (Opus, 2026-10-28, cabeza `d89316c`, pasada fuera del tope): `con-hallazgos`; REQ-037 `bloqueado`** (`docs/qa/REQ-037.md`).
+  - **CA-08 (a):** `d47cfba` da 3 respuestas dobles con carga; la candidata (`ceb7bf3`), 0 en 4 000.
+  - **CA-09:** sobre `d89316c`, 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
+  - **CA-01:** conforme, por P-137-AL 1 (A).
+  - **Cerrados:** QA-037-11 (`ln`), QA-037-13 (objetos) y QA-037-12 (aceptado por el propietario).
+  - **Abierto, `contrato`: QA-037-14.**
+    - `cp`, `mv` o `install` de un verde falsificado al directorio `.arnes/` pasan la puerta.
+    - También `link` o `cp -l` seguidos de `rm`.
+    - En todos esos casos el cierre sale `allow` con la gate en rojo.
+    - Lo decide el propietario.
   - **Abierto, `instrumento`:** QA-037-08.
-  - Los hallazgos del diseño anterior quedan cerrados o retirados por la reversión.
 - *Pendiente: seguridad (Opus).*
 
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
