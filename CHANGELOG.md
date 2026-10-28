@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL ampliada con el QA de `426ea1d`
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **P-137-AL, punto 3:** QA-037-11 (`ln` sobre el registro) y QA-037-13 (la prueba de las gates en forma de objeto) entran en la pasada correctiva de 2 (A). Para QA-037-12 se propone aceptar el riesgo para 1.36.3: el veredicto confía en el entorno de quien lanza la herramienta, igual que el riesgo (1) de CA-05, y el endurecimiento va a 1.37.
+- **Evidencia** del desarrollador y de QA en el repositorio de evidencia: `issue-63-plazo-gates/f13724-dev` y `f13724-qa` (`36262fb`, `a1790bb`), sin los 21 proyectos de prueba con `.git` propio, que regeneran los guiones.
+- **La pasada correctiva y la firma de seguridad esperan la decisión del propietario.**
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): QA de REQ-037 sobre `ceb7bf3`, `con-hallazgos`
 > Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 

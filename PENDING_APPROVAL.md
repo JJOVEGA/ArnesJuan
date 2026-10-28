@@ -43,7 +43,7 @@
 
 ## Pendientes
 
-### [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, y cuántas pasadas tiene el diseño nuevo.** El desarrollador empieza ya con la recomendación; cambiarla cuesta una constante.
+### [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, cuántas pasadas tiene el diseño nuevo y si se acepta un riesgo de QA-037-12.** La condición de publicar ya se cumple (QA, `426ea1d`).
 
 **1. Lo que el hash no cubre.** El veredicto se liga al contenido del árbol de trabajo (CA-01). Pero entre que las gates corren y el cierre, el propio ciclo de gobierno escribe archivos: QA pone `QA: aprobado`, seguridad firma, y la coordinadora escribe CHANGELOG, ESTADO y la cola. Si esos archivos entran en el hash, cada firma invalida el veredicto y hay que volver a correr las gates, que es lo que #63 quiere evitar. Por eso el analista los excluye.
 
@@ -65,11 +65,19 @@ Hay un problema: su CA-01 dice «no exhaustivo» y deja la lista al desarrollado
 - **(A) Una pasada correctiva fuera del tope, como en P-137-AH y P-137-AI:** si no cierra, se para y te lo traigo.
 - **(B) Ninguna:** el primer hallazgo de QA o de seguridad para el hotfix.
 
-**Recomendación de la coordinadora: 1 (A) y 2 (A).** Texto listo para adoptar:
+**3. Añadido tras el QA de `426ea1d` (2026-10-28).** QA cumple **la condición de publicar**: 4 000 cierres con carga, con 0 respuestas dobles, 0 cuelgues y 0 respuestas espurias, sean deny o allow. **El fail-before obligatorio queda reproducido:** con la misma carga, `d47cfba` dio 3 respuestas dobles, 3 cuelgues y 4 deny espurios en 600 cierres. Pero abre tres hallazgos `contrato`. Dos se arreglan en la pasada de 2 (A) sin que tengas que decidir nada; el tercero pide que aceptes un riesgo.
+- **QA-037-11 (media), se arregla:** `ln` o `ln -s` sobre `.arnes/gates-veredicto.json` es una forma llana de `Bash` que la puerta deja pasar, y la puerta de cierre acepta el verde enlazado. El desarrollador lo deniega, y la puerta juzga ilegible un registro que sea un enlace.
+- **QA-037-13 (baja), se arregla:** por M-037-2 se perdió la prueba de las gates en forma de objeto. El desarrollador añade el caso a la sección 53. De paso, este repositorio pasa a ignorar `.arnes/gates-veredicto.json`.
+- **QA-037-12 (media), riesgo que hay que aceptar.** Cualquier agente puede lanzar la herramienta con el entorno manipulado (un `PATH` con un `grep` falso, una función exportada con el nombre de la gate) y obtener un verde con hash válido. Antes las gates corrían en el entorno del hook, que fija el cliente; ahora lo fija quien lanza la herramienta. Es de la misma clase que el riesgo (1) ya declarado en CA-05: un agente puede escribir el registro por consola, por ejemplo con `python3 -c`. Por eso blindar el entorno no cierra la falsificación.
+  - **(A) Declararlo para 1.36.3:** el veredicto confía en quien lanza la herramienta, entorno incluido. El analista lo escribe en CA-05 junto al riesgo (1), el auditor lo lee, y el endurecimiento va a 1.37 (F-137-24-B).
+  - **(B) Blindar la herramienta ahora:** las gates corren con un entorno limpio y un `PATH` fijo.
+    - *Coste:* rompe las gates de los consumidores que dependen de su `PATH`, como `npm` instalado con `nvm`, y eso es un cambio de compatibilidad en un parche. Además no impide escribir el registro por consola.
 
-> Adopto P-137-AL 1 (A) y 2 (A): lo que el hash no cubre es la lista cerrada de la ficha, fija en el código y escrita en CA-01, con su límite declarado; cualquier otro cambio tras las gates invalida el veredicto. El diseño nuevo tiene una pasada correctiva fuera del tope; si no cierra, se para y me lo traes.
+**Recomendación de la coordinadora: 1 (A), 2 (A) y 3 (A).** Texto listo para adoptar:
 
-**Qué bloquea.** No bloquea al desarrollador: implementa (A) como una sola constante. Sí bloquea a QA, que no puede aprobar CA-01 mientras la lista no tenga contrato, y el cierre de REQ-037: con esta entrada en Pendientes, la puerta no deja cerrar.
+> Adopto P-137-AL 1 (A), 2 (A) y 3 (A): lo que el hash no cubre es la lista cerrada de la ficha, fija en el código y escrita en CA-01, con su límite declarado; cualquier otro cambio tras las gates invalida el veredicto. El diseño nuevo tiene una pasada correctiva fuera del tope, que arregla QA-037-11 y QA-037-13; si no cierra, se para y me lo traes. Acepto para 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en las notas y el endurecimiento va a 1.37 (F-137-24-B).
+
+**Qué bloquea.** La pasada correctiva y la firma de seguridad. La firma se despacha cuando el alcance esté decidido. También bloquea el cierre de REQ-037: mientras esta entrada siga en Pendientes, la puerta no deja cerrar.
 
 ## Resueltas
 
