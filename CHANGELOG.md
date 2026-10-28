@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AK, F-137-24 (issue #63) arranca ya en esta rama, con las gates fuera del hook
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La orden del propietario:** F-137-24 arranca ya, en paralelo con el cierre de 4a en `cand/1.37.0`. Se publica sola como 1.36.3 en cuanto QA y seguridad la validen. El fail-before obligatorio son las respuestas dobles con carga. El texto literal está en `PENDING_APPROVAL.md`, con una elisión del nombre de un proyecto consumidor.
+- **La rama:** se trabaja sobre `hotfix/1.36.3`, que ya parte del `main` actual. El intento anterior queda en su historial.
+- **El siguiente paso:** el analista reescribe REQ-037 para las gates fuera del hook, con el veredicto ligado al hash del árbol, y sustituye ADR-018.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AF resuelta por el propietario: **no se publica**; el arreglo de #63 va a 1.37 como F-137-24
 > Origen: P-137-AF · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 

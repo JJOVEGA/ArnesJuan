@@ -43,9 +43,24 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AF resuelta por el propietario y P-137-AE sin efecto, en § Resueltas.)_
+_(Vacía desde el 2026-10-28: P-137-AF resuelta por el propietario y P-137-AE sin efecto, en § Resueltas; P-137-AK, orden directa del propietario, también en § Resueltas.)_
 
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AK: F-137-24 (issue #63) arranca ya, en paralelo con el cierre de 4a, en `hotfix/1.36.3` desde `main`**; se publica sola como 1.36.3 en cuanto QA y seguridad la validen; las respuestas dobles con carga, fail-before obligatorio
+
+> Prioridad cambiada: F-137-24 (issue #63) arranca YA, en paralelo con el
+> cierre de 4a, en hotfix/1.36.3 desde main. [Un proyecto consumidor] no puede cerrar REQs.
+> Se publica solo como 1.36.3 en cuanto QA y seguridad lo validen, con las
+> respuestas dobles con carga como fail-before obligatorio. Reanuda agentes
+> donde se pueda.
+
+**Registro de la coordinadora.**
+- *Elisión:* el texto entre corchetes sustituye el nombre del proyecto consumidor. Este repositorio es público y no cita a los consumidores.
+- *Rama:* `hotfix/1.36.3` ya parte del `main` actual (`46ee7ca`). F-137-24 se construye sobre ella, sin renombrarla ni forzar el remoto, y el intento no publicado (`22a60d4`–`52ee2bc`) queda en su historial como evidencia.
+- *Diseño (F-137-24, literal del propietario, `docs/PENDIENTES.md` de `cand/1.37.0`):* «las gates no deberían correr dentro del hook. QA o la coordinadora las corren antes y registran el resultado con el hash del árbol; la puerta sólo comprueba que el árbol actual es ese. Así el cierre tarda un segundo sea cual sea el proyecto.»
+- *Contrato:* REQ-037 se reescribe para este diseño. ADR-018 (presupuesto propio de las gates) queda sustituido.
+- *Agentes:* se reanuda primero al analista de REQ-037. El desarrollador y QA que se reanuden serán los del intento anterior.
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AF: 1.36.3 no se publica**; el arreglo de #63 va a 1.37 como F-137-24, con prioridad alta; P-137-AE queda sin efecto
 
