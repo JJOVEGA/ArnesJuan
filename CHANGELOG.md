@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA acotado de SEC-151 (P-137-AO), `aprobado`; en-revisión hasta la re-firma de seguridad
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester (reanudado); registro de la coordinadora.
+
+- **Lo verificado:**
+  - Deny con motivo propio en ≈ 30,15 s con un archivo disperso de 256 GiB y con la FIFO como `.gitignore`, sin procesos vivos.
+  - Falla cerrado cuando el cálculo muere o rompe el protocolo.
+  - `ARNES_HASH_PRESUPUESTO_S` del entorno no cambia nada.
+  - El cierre legítimo no cambia: `allow` 21/21, con mediana de 101,0 ms frente a 98,9 ms.
+  - El texto de `6dde1a1` no promete de más.
+- **Banco:** 3032/1/33, cuadre 3066. El FAIL es la sonda de reloj de REQ-033 «mv con origen protegido», 1,304×. QA midió a mano que la candidata y `d89316c` dan lo mismo: familia de QA-037-08 (`instrumento`), no de este cambio.
+- **Índice de requisitos:** la columna Estado de REQ-037 pasa a `en-revisión`, como el REQ (la coordinadora).
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: SEC-151 reparado (P-137-AO); REQ-037 `en-revisión`
 > Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
 
