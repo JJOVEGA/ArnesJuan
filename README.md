@@ -83,7 +83,7 @@ cadena (hereda los ajustes globales) u objeto con su `orden`, `umbral_bytes` y
 Viene **apagada**: reestructurar un documento que escribió una persona no puede ser el
 comportamiento por defecto.
 
-Son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés) y requieren `jq`.
+Los hooks son **inertes** sin `.arnes/config.json` (no estorban en repos ajenos al arnés), salvo el de inicio de sesión, que lo es sin `.arnes/`: en un proyecto con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los archivos por rol aunque falte el manifiesto (REQ-036 CA-17). Requieren `jq`.
 El `pre-commit` de git sigue exigiendo el changelog en cada commit.
 
 **El nombre del agente en el manifiesto va en corto** (`"agente_codigo": "desarrollador"`). En

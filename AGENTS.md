@@ -942,7 +942,9 @@ requerimiento describa *semánticamente* lo construido. Esa reconciliación es r
 write-back (§9) y se verifica al cierre: `/arnes-close` comprueba la **trazabilidad y no-deriva**
 de cada REQ `completado` antes de generar `DELIVERY.md`.
 
-Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban). Requieren `jq`;
+Los hooks son **inertes** sin `.arnes/config.json`, salvo el de inicio de sesión, que lo es sin
+`.arnes/`: en un proyecto con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los
+archivos por rol aunque falte el manifiesto (REQ-036 CA-17). Requieren `jq`;
 sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por
 el hook `pre-commit` de git (§8).
 

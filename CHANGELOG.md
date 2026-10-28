@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [GitHub] — 2026-10-28 · REQ-036 (sin validar), desarrollador: P-137-AJ (A), la frase de inercia de R-064 en los cuatro sitios
+> Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
+
+- **Sólo texto (SEC-145, R-064 §2):** `README.md`, `AGENTS.md` §13, `templates/AGENTS.md.tpl` §13 y `ARCHITECTURE.md` decían que los hooks son inertes sin `.arnes/config.json`. Ahora dicen que lo son, salvo el de inicio de sesión, que lo es sin `.arnes/`, y que con `.arnes/` avisa a la coordinadora y regenera los archivos por rol aunque falte el manifiesto (REQ-036 CA-17). La frase es idéntica en `AGENTS.md` y en la plantilla. `README.md` conserva «(no estorban en repos ajenos al arnés)».
+- **Archivos por rol regenerados.** El del analista sólo cambia en la línea de fuentes (tamaño y sha256 de `AGENTS.md`) y mide los mismos bytes. `--verificar` sale 0, y B5 sigue en 75 590 B (plantilla 75 526 B; el contrato es 75 000 B).
+- **Banco:** 3117 PASS · 0 FAIL · 33 SKIP (3150). Sin código y sin cambios en criterios.
+
 ## [Interno] — 2026-10-28 · REQ-036: P-137-AJ resuelta (A), sólo texto en los cuatro sitios de inercia; norma de re-despacho en la plantilla de autorización
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
 

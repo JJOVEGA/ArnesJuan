@@ -1,6 +1,6 @@
 <!-- DERIVADO — no editar a mano: lo genera tools/arnes-lectura-rol.sh y se pisa en la siguiente generación. -->
 <!-- Rol: desarrollador -->
-<!-- Fuentes: AGENTS.md 78476 B sha256 11782afbe89233c7d2b5333b731225036c42352c6eed3689cb5b3b14616701a0; requirements/README.md 79087 B sha256 b741c400a5f4f3b779f7bd039160d1658bd80e0e67c040b26d1fddb0bf69c1ab -->
+<!-- Fuentes: AGENTS.md 78657 B sha256 3e94203d19e112c67fe3c2f444b3396d0aa710165e0fc55f9999fab96ec3f89e; requirements/README.md 79087 B sha256 b741c400a5f4f3b779f7bd039160d1658bd80e0e67c040b26d1fddb0bf69c1ab -->
 
 [[A-00 · obliga: todos]]
 
@@ -736,7 +736,9 @@ requerimiento describa *semánticamente* lo construido. Esa reconciliación es r
 write-back (§9) y se verifica al cierre: `/arnes-close` comprueba la **trazabilidad y no-deriva**
 de cada REQ `completado` antes de generar `DELIVERY.md`.
 
-Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban). Requieren `jq`;
+Los hooks son **inertes** sin `.arnes/config.json`, salvo el de inicio de sesión, que lo es sin
+`.arnes/`: en un proyecto con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los
+archivos por rol aunque falte el manifiesto (REQ-036 CA-17). Requieren `jq`;
 sin él, el enforcement queda inactivo con aviso (no bloquea). El changelog sigue cubierto por
 el hook `pre-commit` de git (§8).
 

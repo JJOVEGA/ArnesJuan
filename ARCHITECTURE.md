@@ -21,8 +21,10 @@ concede a un plugin:
 Los tres se registran en `hooks/hooks.json`. La configuración que gobierna a los hooks
 —qué es código de la app, qué agente lo edita, qué quality gates hay, qué órdenes de git
 se prohíben— vive en el manifiesto del proyecto, `.arnes/config.json`, **no** en el
-plugin: el arnés trae el mecanismo, el proyecto pone el mapeo. Sin manifiesto los hooks
-son **inertes**; sin `jq` también, con aviso por stderr.
+plugin: el arnés trae el mecanismo, el proyecto pone el mapeo. Los hooks son **inertes**
+sin `.arnes/config.json`, salvo el de inicio de sesión, que lo es sin `.arnes/`: en un proyecto
+con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los archivos por rol aunque
+falte el manifiesto (REQ-036 CA-17). Sin `jq` también son inertes, con aviso por stderr.
 
 ## Componentes
 
