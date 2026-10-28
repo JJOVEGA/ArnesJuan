@@ -2397,3 +2397,16 @@ ninguna mata al hook.»
 - **Decisión del propietario (P-032-6 (2), 2026-10-15), literal:** «como propone el auditor (juzgar el origen de mv en 1.36.2; rm/unlink/git rm con la puerta posterior de 1.37; declarado en §13), MÁS una excepción estrecha en 1.36.2: borrar, mover o vaciar .arnes/config.json se deniega a todo agente. Es el interruptor que apaga todas las puertas, incluida la posterior de 1.37. Y requisito escrito para la pieza b: la puerta posterior no puede depender sólo del manifiesto que vigila; si el manifiesto desaparece en un proyecto que lo tenía, eso mismo es un evento a denegar o revertir.» **El requisito de la pieza b se lleva a su fila de `docs/PLAN.md` en `cand/1.37.0` al fusionar (paso 2b).**
 - **Recomendación del auditor:** juzgar los orígenes de `mv` en 1.36.2; `rm` y lo demás, con la puerta posterior de 1.37 (pieza b); mientras tanto, declararlo en `AGENTS.md` §13. **La ventana la decide el propietario** (`P-032-6`). **Dueños:** `analista-requerimientos` y `desarrollador`.
 
+## Fichas del hotfix 1.36.3 (rama `hotfix/1.36.3`, 2026-10-28)
+
+*(Rotuladas con sufijo para no chocar con la numeración de `cand/1.37.0` al fusionar.)*
+
+### F-137-24-B — 1.37: endurecer quién lanza `tools/arnes-gates.sh` (propuesta del analista; el propietario no la ha decidido)
+- **Qué** (REQ-037 CA-05, límite (3)): el veredicto de las gates lo escribe la herramienta, y `--quien` es texto declarado y **no verificado**; el `desarrollador` puede correrla y declararse otro. Las puertas de escritura protegen el registro de `Edit`/`Write` y de las formas llanas de `Bash`, no de quien lanza la herramienta.
+- **Propuesta:** que la puerta de `Bash` admita la orden de la herramienta sólo a `qa-tester` y a la coordinadora (no al `desarrollador` ni al `auditor-seguridad`). El `desarrollador` sigue corriendo las gates a mano antes de `en-revisión`, así que no pierde nada.
+- **Límite que no cierra:** la consola del propietario, las formas que el detector de `Bash` no ve (F-136-13) y una gate hostil; sólo sube el coste de fabricar un verde por un agente. **Dueño:** `desarrollador` con `auditor-seguridad`. Se propone antes de implementarse.
+
+### F-137-24-C — 1.37: corregir los comentarios de las secciones del banco que llaman «límite del cliente» al `timeout` de 60 s del banco
+- **Qué** (REQ-037 CA-11): el cliente mata un `PreToolUse` a ≈ 600 s (medido, CLI 2.1.289); los comentarios de las secciones `07-`, `08-`, `25-`, `32-`, `37-` y `47-` del banco atribuyen los 60 s al cliente. Las **cifras** son ciertas (son el `timeout` del banco); lo falso es la **causa**.
+- **Por qué no entra en 1.36.3:** `cand/1.37.0` toca varias de esas secciones y la edición sólo multiplicaría conflictos al fusionar. **La constante de 60 s del banco no se toca.** **Dueño:** `desarrollador`.
+

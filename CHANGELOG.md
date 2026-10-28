@@ -2,6 +2,18 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): write-back del analista sobre `42a320c`; documentación de CA-14 y barrido del «60 s» (CA-11)
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
+
+- **Decisiones de redacción, sin ficha** (ninguna abre la puerta):
+  - I2b se queda verde, por su código de salida; es el límite de la gate hostil.
+  - El deny de `mv` sobre el registro vale; «borrarlo» significa `rm` o `unlink`.
+  - Se declaran dos límites: que `truncate` no lo ve el detector y que un submódulo entra en el hash sólo por su presencia.
+  - La lista cerrada de exclusiones de CA-01 queda escrita, rotulada como pendiente de P-137-AL.
+  - M-037-2 obliga a cambiar la base del banco y la sección 04; queda escrito como consecuencia declarada.
+- **Documentación** (`README.md`, `AGENTS.md` y su plantilla, `agents/qa-tester.md`, `skills/arnes-upgrade/SKILL.md` «Hacia 1.36.3», `requirements/README.md` y su plantilla, `docs/gobernanza/autoalojamiento.md` y REQ-007 CA-68): describe el veredicto y la herramienta, y corrige el «60 s del cliente» a ≈ 600 s medido.
+- **Fichas nuevas** en `docs/PENDIENTES.md`: F-137-24-B, para que sólo QA y la coordinadora lancen la herramienta (1.37), y F-137-24-C, sobre los comentarios del banco.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): REQ-037 construido con las gates fuera del hook, `en-revisión` (sin validar)
 > Origen: GitHub (commit local, sin validar) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
 
