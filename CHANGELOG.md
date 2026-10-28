@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, P-137-AG (A) aplicada: la frase de L4 en las cuatro definiciones; B5 a 75 590 B; `en-revisión`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **Definiciones:** las cuatro dicen «Si una fuente tiene texto antes de su primera marca, léelo también.» (+70 B cada una).
+- **B5:** techo de regresión a 75 590 B, con la razón de P-137-AG; mide 75 590 B (proyecto) y 75 526 B (plantilla); 75 591 B falla. El de contrato sigue en 75 000 B.
+- **Banco:** un caso nuevo, la frase en las cuatro, con fail-before contra `3c8394b`. 3125 → 3127. Inventario al día.
+- **Pruebas:** banco 3093 PASS · 0 FAIL · 34 SKIP (una corrida); autoprueba 117/0; gates en verde; `--verificar` 0.
+- **Siguiente:** el analista (CA-20 y la correspondencia), QA vuelta 3 de 3 y seguridad.
+
 ## [Interno] — 2026-10-28 · P-137-AG (A) y P-137-AF resueltas por el propietario: B5 a 75 590 B con la frase de L4; 1.36.3 no se publica; F-137-24 pasa a 1.37 con prioridad alta
 > Origen: P-137-AG, P-137-AF · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 

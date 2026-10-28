@@ -5,14 +5,14 @@
 # propio antes de la primera marca —desde la primera línea que no está en blanco ni empieza por `# ` hasta la anterior
 # a la marca— es un bloque sin marca, de obligado ilegible: va a los cuatro archivos por rol, sin cambiar un byte y en
 # su sitio, con aviso `fuente:línea`, y el generador sale 0. Casos S3 (revisado), S3b, S3c (control, sin fail-before)
-# y S9 (la fixture de QA). PARTE 2 DE 2 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
+# y S9 (la fixture de QA), y L4 (P-137-AG). PARTE 2 DE 2 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
 # su nombre para no romper sus citas) estaba a 11 líneas del tope de 400. Ninguna parte hace `source` de otra, así que
 # el materializador, `rellena`, el extractor aparte, `gen52`, `en52`, `c1_52`, `ord52` y `filar52` vienen DUPLICADOS de
 # la parte 1 —el extractor, literal: la misma regla en las dos— y lo dice el piso. DOS ÁRBOLES por fila: la CANDIDATA y
 # `3c8394b` —la cabeza de la vuelta 2 de QA, la del fail-before—, archivo a archivo y verificada contra su objeto; sin
 # ella, SKIP y motivo, nunca PASS. S9 instala con las plantillas de `081cb10` (la línea base de REQ-036).
-CASOS_ESPERADOS_SECCION=7
-PISO_AUTONOMO_SECCION=134  # 16 preámbulo (líneas 1-16, con seccion_nueva) + 87 maquinaria compartida duplicada de la parte 1 (los árboles, mat52, rellena, el extractor, ext52, gen52, en52, c1_52 y c1r52, líneas 17-81; ord52, líneas 113-123; filar52, líneas 141-151) + 31 bloque indivisible mayor (fxp52, pre52, S3, S3b y S3c, líneas 82-112)
+CASOS_ESPERADOS_SECCION=9
+PISO_AUTONOMO_SECCION=135  # 16 preámbulo (líneas 1-16, con seccion_nueva) + 88 maquinaria compartida duplicada de la parte 1 (los árboles, mat52, rellena, el extractor, ext52, gen52, en52, c1_52 y c1r52, líneas 17-82; ord52, líneas 114-124; filar52, líneas 152-162) + 31 bloque indivisible mayor (fxp52, pre52, S3, S3b y S3c, líneas 83-113)
 seccion_nueva "--- 52 (2/2) · lectura por rol: el texto previo a la primera marca va a los cuatro (REQ-036 CA-18, QA-036-03) ---"
 REPO52="${SEC_DIR%/}/../../../.."; CAND52="${TPL_DIR%/*}"
 v52() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
@@ -29,7 +29,8 @@ mat52() {   # <ref> <dir> <rutas…>
   done
 }
 TPL52='templates/AGENTS.md.tpl templates/requirements-README.md.tpl templates/arnes-config.json.tpl templates/CLAUDE.md.tpl'
-mat52 3c8394b "$RE52" tools/arnes-lectura-rol.sh skills/arnes-upgrade/SKILL.md $TPL52 && mat52 081cb10 "$RB52" $TPL52
+mat52 3c8394b "$RE52" tools/arnes-lectura-rol.sh skills/arnes-upgrade/SKILL.md agents/analista-requerimientos.md agents/desarrollador.md \
+  agents/qa-tester.md agents/auditor-seguridad.md $TPL52 && mat52 081cb10 "$RB52" $TPL52
 # `rellena` (los marcadores de arnes-init con los valores de «tienda-demo») tiene su sede en el guion de medida.
 eval "$(awk '/<!-- guion: medida-4a/ { e = 1; next } e == 1 && /^```bash/ { e = 2; next } e == 2 && /^```/ { exit } e == 2' \
   "$CAND52/docs/explicacion/medida-4a.md" 2>/dev/null | awk '/^rellena\(\)/, /^}/')"
@@ -138,6 +139,16 @@ s9_52() {   # QA-036-03 (c): AGENTS.md y README de 1.36 con una nota propia tras
     || { MOT52="generador $RC52; sin las dos notas:${falta:- ninguno}; import en CLAUDE.md: $(grep -c '@AGENTS.md' "$FXS52/CLAUDE.md")"; return 1; }
   MOT52='generador 0; CLAUDE.md sin import; las dos notas literales en los cuatro'
 }
+# L4 (P-137-AG (A)): cada una de las cuatro definiciones, al caer al respaldo por marcas, lee también el texto previo.
+l4_52() {
+  local p t   # saltos y blancos dobles normalizados, como en la parte 1: un reflujo del párrafo no cambia la frase
+  for p in analista-requerimientos desarrollador qa-tester auditor-seguridad; do
+    t="$(<"$ARB52/agents/$p.md")"; t="${t//$'\n'/ }"; while [[ $t == *'  '* ]]; do t="${t//  / }"; done
+    [[ $t == *'no lee nada). Si una fuente tiene texto antes de su primera marca, léelo también.'* ]] \
+      || { MOT52="$p no dice la frase de L4"; return 1; }
+  done
+  MOT52='la frase de L4, literal, en las cuatro'
+}
 # filar52 <id> <función> <árbol> <nombre> <ok> <motivo>: la misma función sobre la candidata (cumple) y sobre el árbol
 # anterior (no cumple: fail-before). Una función que devuelve 2 no pudo montar su caso: SKIP con el motivo, nunca PASS.
 filar52() {
@@ -157,3 +168,4 @@ MOT52=''; ARB52="$CAND52"
 if s3c52; then v52 PASS "REQ-036 B11 CA-18 (9) S3c control: sólo título y blancos antes de la primera marca -> sin bloque ni aviso  ($MOT52)"
 else v52 FAIL "REQ-036 B11 CA-18 (9) S3c control: sólo título y blancos antes de la primera marca -> sin bloque ni aviso  $MOT52"; fi
 filae52 "B11 CA-18 (9) S9: fixture de QA-036-03 (marcas parciales), arnes-upgrade y paso 4b -> generador 0, sin import, las dos notas en los cuatro" s9_52
+filae52 "B11 CA-18 L4 (P-137-AG): las cuatro definiciones leen también el texto anterior a la primera marca al caer al respaldo" l4_52

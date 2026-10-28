@@ -174,15 +174,15 @@ $(awk '/^## 14\./ { f = 1 } f' "$ARB51/templates/AGENTS.md.tpl")"
   [ -z "$hall" ] || { MOT51="lo movido cita hallazgos de un registro: ${hall//$'\n'/ }"; return 1; }
   case "$mov" in *'norma única'*|*'sede única'*|*'sede normativa'*|*'SEDE NORMATIVA'*) MOT51='lo movido declara una sede'; return 1 ;; esac
 }
-b5_51() {   # CA-20: lo que la definición del analista manda leer (guion de CA-01 (i)), <= 75 520 B en CADA modo: techo de
-  # regresión (trinquete) de lo aceptado por P-137-AA y P-137-AC (razón en el motivo), NO el de contrato de CA-01 (75 000 B).
+b5_51() {   # CA-20: lo que la definición del analista manda leer (guion de CA-01 (i)), <= 75 590 B en CADA modo: techo de
+  # regresión (trinquete) de P-137-AA, P-137-AC y P-137-AG (razón en el motivo), NO el de contrato de CA-01 (75 000 B).
   local out='' tot='' rc=0 n=0
   out="$(TPL="$ARB51/templates" DEF="$ARB51/agents/analista-requerimientos.md" ROL=analista bash -c "$GUION51" 2>&1)"; rc=$?
   for tot in $(printf '%s\n' "$out" | sed -n 's/^modo=.* total=\([0-9]*\)$/\1/p'); do
-    n=$((n + 1)); [ "$tot" -le 75520 ] || { MOT51="medido $tot B > 75 520 B (techo de regresión: 75 280 B de P-137-AA + 240 B de P-137-AC, las dos frases que hacen leer más, fuente sin marcas y Read truncado; el de contrato de CA-01, 75 000 B, no se retoca)"; return 1; }
+    n=$((n + 1)); [ "$tot" -le 75590 ] || { MOT51="medido $tot B > 75 590 B (techo de regresión: 75 280 B de P-137-AA + 240 B de P-137-AC, las dos frases que hacen leer más, fuente sin marcas y Read truncado, + 70 B de P-137-AG, L4: la frase del respaldo que lee el texto antes de la primera marca; el de contrato de CA-01, 75 000 B, no se retoca)"; return 1; }
   done
   [ "$rc" -eq 0 ] && [ "$n" -eq 2 ] || { MOT51="el guion no midió (código $rc, $n de 2 modos): ${out:0:120}"; return 1; }   # cortado a medias no es medida
-  MOT51="$(printf '%s\n' "$out" | sed -n 's/^modo=\([a-z]*\) .* total=\([0-9]*\)$/\1 \2 B/p' | tr '\n' ' ')<= 75 520 B, lo aceptado por P-137-AA y P-137-AC (las dos frases que hacen leer más), no el techo de contrato (75 000 B)"
+  MOT51="$(printf '%s\n' "$out" | sed -n 's/^modo=\([a-z]*\) .* total=\([0-9]*\)$/\1 \2 B/p' | tr '\n' ' ')<= 75 590 B, lo aceptado por P-137-AA, P-137-AC (las dos frases que hacen leer más) y P-137-AG (L4, la frase del respaldo), no el techo de contrato (75 000 B)"
 }
 b7_51() {   # CA-14: toda marca bien formada y única; cada definición lista exactamente los bloques que la obligan
   local f='' l='' rol='' def='' t='' lista='' calc='' tok=''
@@ -351,7 +351,7 @@ fila51 "B2 CA-09: el plan sale antes de aplicar y dice qué sale, de dónde y ad
 fila51 "B3 CA-07: el manifiesto es JSON, idéntico fuera de los _doc, y cada _doc retirado apunta a un ancla" b3_51
 fila51 "B4 CA-04: todo puntero resuelve (archivo, ancla, identificadores)" b4_51
 fila51 "B4 CA-05 (i)(ii): lo movido no cita hallazgos de un registro ni declara sede" b4s_51
-fila51 "B5 CA-20: lo que lee el analista <= 75 520 B (lo aceptado por P-137-AA y P-137-AC: +240 B de las dos frases que hacen leer más; no el techo de contrato de CA-01: 75 000 B)" b5_51
+fila51 "B5 CA-20: lo que lee el analista <= 75 590 B (lo aceptado por P-137-AA, P-137-AC: +240 B de las dos frases que hacen leer más, y P-137-AG: +70 B de la frase de L4; no el techo de contrato de CA-01: 75 000 B)" b5_51
 fila51 "B7 CA-14: marcas bien formadas y cada definición lista los bloques que la obligan" b7_51
 fila51 "B8 CA-10: qué va siempre por Edit, por propiedad, en plantilla y AGENTS.md" b8a_51
 fila51 "B8 CA-11: la corrección que sólo borra, sólo en la plantilla" b8b_51
@@ -377,15 +377,15 @@ if [ -n "$(abierto51 'Texto de prueba que cita SEC-020 como medido.')" ]; then
   v51 PASS "REQ-036 B4 CA-05 (i) fixture: un bloque que cita SEC-020 (abierto) se detiene"
 else v51 FAIL "REQ-036 B4 CA-05 (i) fixture: un bloque que cita SEC-020 (abierto) NO se detuvo"; fi
 # B5 CA-20, fail-before del TECHO: la candidata con la definición del analista rellenada hasta que el modo proyecto
-# mida 75 520 B (pasa) y luego 1 B más (falla con la cifra, el techo y su razón); y sin generador el guion no mide (falla).
+# mida 75 590 B (pasa) y luego 1 B más (falla con la cifra, el techo y su razón); y sin generador el guion no mide (falla).
 V51="$FX51/b5v"; mkdir -p "$V51/agents" "$V51/tools"; cp -R "$CAND51/templates" "$V51/"; cp "$CAND51/tools/arnes-lectura-rol.sh" "$V51/tools/"
 cp "$CAND51/agents/analista-requerimientos.md" "$V51/agents/"; MOT51=''; ARB51="$V51"; T51=''; b5_51; T51="${MOT51#proyecto }"; T51="${T51%% B*}"
-if [ -n "$T51" ] && [ "$T51" -eq "$T51" ] 2>/dev/null && [ "$T51" -le 75520 ]; then printf '%*s' "$((75520 - T51))" '' >> "$V51/agents/analista-requerimientos.md"; MOT51=''
-  if ! b5_51; then v51 FAIL "REQ-036 B5 CA-20 fixture: con 75 520 B exactos NO pasa ($MOT51)"
+if [ -n "$T51" ] && [ "$T51" -eq "$T51" ] 2>/dev/null && [ "$T51" -le 75590 ]; then printf '%*s' "$((75590 - T51))" '' >> "$V51/agents/analista-requerimientos.md"; MOT51=''
+  if ! b5_51; then v51 FAIL "REQ-036 B5 CA-20 fixture: con 75 590 B exactos NO pasa ($MOT51)"
   else printf ' ' >> "$V51/agents/analista-requerimientos.md"; MOT51=''
-    if b5_51; then v51 FAIL "REQ-036 B5 CA-20 fixture: con 75 521 B PASA ($MOT51)"
-    else case "$MOT51" in *'medido 75521 B > 75 520 B'*'P-137-AA'*'P-137-AC'*'fuente sin marcas'*'Read truncado'*'75 000 B'*) v51 PASS "REQ-036 B5 CA-20 fixture: 75 520 B pasa y 75 521 B falla ($MOT51)" ;; *) v51 FAIL "REQ-036 B5 CA-20 fixture: 75 521 B falla sin la cifra, el techo o su razón en el motivo ($MOT51)" ;; esac; fi; fi
-else v51 FAIL "REQ-036 B5 CA-20 fixture: la candidata no da una medida <= 75 520 B sobre la que sumar 1 B ($MOT51)"; fi
+    if b5_51; then v51 FAIL "REQ-036 B5 CA-20 fixture: con 75 591 B PASA ($MOT51)"
+    else case "$MOT51" in *'medido 75591 B > 75 590 B'*'P-137-AA'*'P-137-AC'*'fuente sin marcas'*'Read truncado'*'P-137-AG'*'L4'*'75 000 B'*) v51 PASS "REQ-036 B5 CA-20 fixture: 75 590 B pasa y 75 591 B falla ($MOT51)" ;; *) v51 FAIL "REQ-036 B5 CA-20 fixture: 75 591 B falla sin la cifra, el techo o su razón en el motivo ($MOT51)" ;; esac; fi; fi
+else v51 FAIL "REQ-036 B5 CA-20 fixture: la candidata no da una medida <= 75 590 B sobre la que sumar 1 B ($MOT51)"; fi
 rm -f "$V51/tools/arnes-lectura-rol.sh"; MOT51=''; if b5_51; then v51 FAIL "REQ-036 B5 CA-20 fixture: sin generador el guion no mide y el caso PASA ($MOT51)"
 else case "$MOT51" in 'el guion no midió'*) v51 PASS "REQ-036 B5 CA-20 fixture: sin generador el guion no mide y el caso falla ($MOT51)" ;; *) v51 FAIL "REQ-036 B5 CA-20 fixture: sin generador falla por otro motivo ($MOT51)" ;; esac; fi
 # B6 CA-06: tools/ sólo con el archivo nuevo de CA-18 (todo lo existente sin diff) y hooks/ sólo con lo de CA-17 y

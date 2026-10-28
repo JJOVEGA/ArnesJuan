@@ -1795,7 +1795,11 @@ done
 # su fail-before; parte 2 nueva, `52-…-2-texto-previo.sh`, 7: S3 revisada (el texto previo va a los cuatro, sale 0),
 # S3b (lo mismo en el README) y S9 (la fixture de QA con `arnes-upgrade` y el paso 4b), cada una en la candidata y en
 # 3c8394b (fail-before), más el control S3c, sólo en la candidata—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3125
+# Y 3125 → 3127 por P-137-AG (A) en REQ-036 (L4): +2 en la parte 2 de la sección 52 (7 → 9) —las cuatro definiciones
+# dicen la frase del respaldo que lee el texto antes de la primera marca, en la candidata y en 3c8394b (fail-before)—;
+# B5 (sección 51) pasa de «<= 75 520 B» a «<= 75 590 B» (+70 B de esa frase; trinquete; el de contrato sigue en
+# 75 000 B) y su fixture a 75 590 pasa / 75 591 falla, sin cambiar de número. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3127
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

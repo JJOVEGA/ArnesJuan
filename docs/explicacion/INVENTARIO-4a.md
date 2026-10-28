@@ -24,17 +24,18 @@ va a `docs/explicacion/`.
 | `templates/AGENTS.md.tpl` | 69 888 | 75 116 | +5 228 | 0 | 5 228 (36 marcas y leyenda; CA-10; CA-11; § 14 con los tres `_doc`; A-00 y § 12 sin el import, CA-14 y CA-16) |
 | `templates/requirements-README.md.tpl` | 43 245 | 45 038 | +1 793 | 2 347 (a su anexo, mismo archivo) | 4 140 (15 marcas y nota de lectura; 5 punteros; el anexo con lo movido; la línea del ámbito alcanzado, CA-19) |
 | `templates/arnes-config.json.tpl` | 9 970 | 9 331 | −639 | 896 (texto de tres `_doc`, a `AGENTS.md` § 14) | 257 (los tres punteros) |
-| `agents/analista-requerimientos.md` | 15 471 | 16 721 | +1 250 | 0 | 1 250 (su lista de lectura; el `Read` del archivo por rol con el `Glob`, CA-18; leerlo entero y la fuente sin marcas, QA-036-08 y QA-036-03) |
-| `agents/desarrollador.md` | 11 070 | 12 388 | +1 318 | 0 | 1 318 (ídem) |
-| `agents/qa-tester.md` | 16 771 | 18 013 | +1 242 | 0 | 1 242 (ídem) |
-| `agents/auditor-seguridad.md` | 20 511 | 21 754 | +1 243 | 0 | 1 243 (ídem) |
+| `agents/analista-requerimientos.md` | 15 471 | 16 791 | +1 320 | 0 | 1 320 (su lista de lectura; el `Read` del archivo por rol con el `Glob`, CA-18; leerlo entero y la fuente sin marcas, QA-036-08 y QA-036-03; el texto antes de la primera marca, L4, P-137-AG: 70 B) |
+| `agents/desarrollador.md` | 11 070 | 12 458 | +1 388 | 0 | 1 388 (ídem) |
+| `agents/qa-tester.md` | 16 771 | 18 083 | +1 312 | 0 | 1 312 (ídem) |
+| `agents/auditor-seguridad.md` | 20 511 | 21 824 | +1 313 | 0 | 1 313 (ídem) |
 | `AGENTS.md` (este repositorio) | 75 448 | 78 476 | +3 028 | 0 | 3 028 (34 marcas y leyenda; CA-10; A-00 y § 12 sin el import, CA-14 y CA-16; **sin** CA-11, por F-137-19) |
 | `requirements/README.md` (este repositorio) | 78 607 | 79 087 | +480 | 2 347 (a `docs/explicacion/casos-medidos.md`) | 2 827 (15 marcas y nota; 5 punteros; la línea del ámbito alcanzado, CA-19; filas del índice) |
 | `skills/arnes-upgrade/SKILL.md` | 135 493 | 154 198 | +18 705 | 0 | 18 705 (la migración hacia 1.37.0 y su orden; `CLAUDE.md`, CA-16; los archivos por rol, CA-18; «Fuente sin marcas», pieza 3, y el paso 4b, QA-036-03 a 05) |
 
 **Cuadre (CA-03):** en cada fila, *Después − Antes = Entra − Sale*. En el README de la plantilla lo que sale
 vuelve a entrar en el mismo archivo (su anexo), así que su «Entra» lo incluye. Los «Después» son `wc -c` del
-árbol que se entrega en la vuelta 1 de QA de REQ-036 (QA-036-09); los de la fase 1 (`e1f23d2`) quedan en la
+árbol que se entrega en la vuelta 1 de QA de REQ-036 (QA-036-09), con las cuatro definiciones al día tras la frase de
+L4 (P-137-AG, +70 B cada una); los de la fase 1 (`e1f23d2`) quedan en la
 historia de git de este archivo. Lo que sale —la columna «Sale» y la lista de abajo— no cambió desde la fase 1.
 
 ## Bloques que salen

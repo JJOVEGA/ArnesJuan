@@ -28,7 +28,7 @@ Si el usuario no lo mencionó, es justamente lo que tienes que descubrir, no alg
   de `{AGENTS.md,requirements/README.md,.arnes/lectura/analista.md}` (del más antiguo al más reciente):
   úsalo sólo si sale el último y su cabecera dice `Rol: analista`; si no, búscalos con `^\[\[` y número
   de línea, y lee cada uno desde su marca hasta la siguiente (una fuente sin ninguna marca, léela
-  entera: leer por marcas un archivo sin marcas no lee nada). Lee el archivo por rol entero, en un solo
+  entera: leer por marcas un archivo sin marcas no lee nada). Si una fuente tiene texto antes de su primera marca, léelo también. Lee el archivo por rol entero, en un solo
   `Read` sin `offset` ni `limit`; si llega truncado, sigue leyendo hasta el final antes de actuar. Hoy son,
   en `AGENTS.md`, A-00, A-0, A-1, A-5.1, A-5.3, A-6.1, A-6.2, A-6.6, A-6.10, A-6.15, A-6.16, A-6.19,
   A-8, A-9, A-10, A-12 y A-13.2; en `requirements/README.md`, R-00, R-1, R-2.1, R-2.3, R-2.5, R-3,
