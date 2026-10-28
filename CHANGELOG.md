@@ -19,6 +19,7 @@ CHANGELOG — ArnesJuan
 - **Tres pruebas con fail-before contra `7af469c`:** directorio vacío, `AGENTS.md` ajeno y fuente de 1,5 MB, todas sin `.arnes/`. Exigen sin aviso (0 bytes), sin lectura (señuelo de `sha256sum` y ausencia del mensaje de lectura del generador; un FIFO no discrimina) y no más de 1 s (operativo; la base mide ≈ 10,9 s). Cuatro controles con `.arnes/`.
 - **CA-18:** el generador comprueba `.arnes` (y los enlaces) antes de abrir, medir o resumir ninguna fuente. Nada más cambia.
 - **Correspondencia:** filas de P-137-AI y de P-137-AH (la que QA echó en falta). `Origen:` y `Tocado por:` al día; recuento de CA-01 a CA-20 intacto (20).
+- **Corrección de redacción (cabeza `bdac13d`, sin decisión nueva):** en CA-17, c3 (`.arnes` como archivo o enlace roto) pasa de control a prueba con fail-before contra `7af469c` (base: recordatorio de 259 B y señuelo disparado; candidato: inerte, 2,8 ms); c1, c2 y c4 siguen como controles. Los ≈ 10,9 s son de la fixture del auditor; el banco usa otra y midió 3 031 ms aislado y 5 628,8 ms con el banco completo (≈ 3× sobre el techo de 1 s, que no cambia).
 - **Nota:** el literal del propietario dice `.arnes/`; `README.md:86`, `AGENTS.md` §13 y `ARCHITECTURE.md` dicen «sin `.arnes/config.json`». Con `.arnes/` sin manifiesto el hook sigue avisando. Sin tocar esos textos.
 
 ## [Interno] — 2026-10-28 · P-137-AI (A) resuelta por el propietario: el hook de inicio y el generador no hacen nada sin `.arnes/`; pasada acotada; F-137-25 y F-137-26; F-137-24 se publica sola como 1.36.3 desde `main`
