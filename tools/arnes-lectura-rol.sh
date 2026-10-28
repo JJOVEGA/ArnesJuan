@@ -8,9 +8,10 @@
 # luego de `requirements/README.md` (siempre los de la raíz del proyecto) cuya marca nombra al rol o dice
 # `todos`, más todo bloque cuya obligación no se puede leer (ante la duda, se lee). Sólo queda fuera un bloque
 # `explicativo`. Un bloque va de su marca (línea que empieza por `[[`) a la línea anterior a la siguiente. Antes
-# de la primera marca, el título (`# …`) y las líneas en blanco no son bloque; el texto propio sí: desde la primera
-# línea que no está en blanco ni empieza por `# ` hasta la anterior a la primera marca, es un bloque sin marca, de
-# obligado ilegible, y lo leen los cuatro, con aviso (REQ-036 CA-18, pieza 1; QA-036-03, marcas parciales).
+# de la primera marca, el título y las líneas en blanco no son bloque; el título es SÓLO la primera línea no en blanco,
+# y sólo si empieza por `# `. Cualquier otra línea no en blanco antes de la primera marca, también otra `# …`, abre un
+# bloque sin marca, de obligado ilegible, que llega hasta la anterior a la primera marca y lo leen los cuatro, con
+# aviso (REQ-036 CA-18, pieza 1; QA-036-03, marcas parciales y segunda línea `# `, P-137-AH (A)).
 # La regla de las marcas vive en A-00 de `AGENTS.md`.
 # Es un DERIVADO: nunca una segunda redacción, y se pisa en la siguiente generación.
 #
@@ -123,12 +124,17 @@ FUENTES_CAB=''
 for i in 0 1; do
   mapfile LINEAS < "${FUENTES[$i]}" || falla "no se pudo leer ${FUENTES[$i]}"
   n=0; nl=0; marcas=0; pre=0; leen=()   # antes de la primera marca, nadie hasta el texto propio: el título no es bloque
+  primera=si                             # aún no ha salido la primera línea no en blanco: sólo ésa puede ser el título
   for l in "${LINEAS[@]}"; do
     n=$((n + ${#l})); nl=$((nl + 1))
     if [ "${l:0:2}" = '[[' ]; then
       marcas=$((marcas + 1)); roles_de "${l%$'\n'}" "${NOMBRES[$i]}:$nl"; leen=("${INCLUYE[@]}")
     elif [ "$marcas" -eq 0 ] && [ "$pre" -eq 0 ]; then
-      case "$l" in '# '*) ;; *[![:space:]]*) pre=$nl; leen=("${ROLES[@]}") ;; esac
+      case "$l" in
+        *[![:space:]]*)
+          [ "$primera" = si ] && [ "${l:0:2}" = '# ' ] || { pre=$nl; leen=("${ROLES[@]}"); }
+          primera=no ;;
+      esac
     fi
     for r in "${leen[@]}"; do CUERPO[$r]+="$l"; done
   done

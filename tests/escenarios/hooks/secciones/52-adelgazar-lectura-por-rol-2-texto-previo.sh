@@ -1,18 +1,21 @@
 # Sección 52 del banco, parte 2 de 2 — 52-adelgazar-lectura-por-rol-2-texto-previo
 # Se hace `source` desde el corredor, en su propio subshell y con sus ayudantes; no se ejecuta
 # suelto ni hace `source` de otra sección (invariantes 3 y 4 del README del banco).
-# REQ-036 CA-18, «Fuente sin marcas», pieza 1, tras QA-036-03 (variante con marcas parciales, vuelta 2 de QA): el texto
-# propio antes de la primera marca —desde la primera línea que no está en blanco ni empieza por `# ` hasta la anterior
-# a la marca— es un bloque sin marca, de obligado ilegible: va a los cuatro archivos por rol, sin cambiar un byte y en
-# su sitio, con aviso `fuente:línea`, y el generador sale 0. Casos S3 (revisado), S3b, S3c (control, sin fail-before)
-# y S9 (la fixture de QA), y L4 (P-137-AG). PARTE 2 DE 2 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
+# REQ-036 CA-18, «Fuente sin marcas», pieza 1, tras QA-036-03 (marcas parciales, vuelta 2 de QA; segunda línea `# `,
+# vuelta 3 y P-137-AH (A)): el título es SÓLO la primera línea no en blanco, si empieza por `# `; el texto propio antes
+# de la primera marca —desde la primera otra línea no en blanco, también otra `# …`, hasta la anterior a la marca— es
+# un bloque sin marca, de obligado ilegible: va a los cuatro archivos por rol, sin cambiar un byte y en su sitio, con
+# aviso `fuente:línea`, y el generador sale 0. Casos S3 (revisado), S3b, S3c (control, sin fail-before), S9 (la fixture
+# de QA), L4 (P-137-AG) y, al final, S3d con su control (P-137-AH, fail-before contra `d24b383`, la cabeza de la vuelta 3).
+# PARTE 2 DE 2 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
 # su nombre para no romper sus citas) estaba a 11 líneas del tope de 400. Ninguna parte hace `source` de otra, así que
 # el materializador, `rellena`, el extractor aparte, `gen52`, `en52`, `c1_52`, `ord52` y `filar52` vienen DUPLICADOS de
 # la parte 1 —el extractor, literal: la misma regla en las dos— y lo dice el piso. DOS ÁRBOLES por fila: la CANDIDATA y
-# `3c8394b` —la cabeza de la vuelta 2 de QA, la del fail-before—, archivo a archivo y verificada contra su objeto; sin
-# ella, SKIP y motivo, nunca PASS. S9 instala con las plantillas de `081cb10` (la línea base de REQ-036).
-CASOS_ESPERADOS_SECCION=9
-PISO_AUTONOMO_SECCION=135  # 16 preámbulo (líneas 1-16, con seccion_nueva) + 88 maquinaria compartida duplicada de la parte 1 (los árboles, mat52, rellena, el extractor, ext52, gen52, en52, c1_52 y c1r52, líneas 17-82; ord52, líneas 114-124; filar52, líneas 152-162) + 31 bloque indivisible mayor (fxp52, pre52, S3, S3b y S3c, líneas 83-113)
+# `3c8394b` —la cabeza de la vuelta 2 de QA, la del fail-before; en S3d, `d24b383`, la de la vuelta 3—, archivo a
+# archivo y verificada contra su objeto; sin ella, SKIP y motivo, nunca PASS. S9 instala con las plantillas de
+# `081cb10` (la línea base de REQ-036).
+CASOS_ESPERADOS_SECCION=14
+PISO_AUTONOMO_SECCION=156  # 19 preámbulo (líneas 1-19, con seccion_nueva) + 89 maquinaria compartida duplicada de la parte 1 (los árboles, mat52, rellena, el extractor, ext52, gen52, en52, c1_52 y c1r52, líneas 20-86; ord52, líneas 118-128; filar52, líneas 156-166) + 48 bloque indivisible mayor (el árbol d24b383, fxd52, d3d52, S3d, S3d README, su control y sus filas, líneas 176-223)
 seccion_nueva "--- 52 (2/2) · lectura por rol: el texto previo a la primera marca va a los cuatro (REQ-036 CA-18, QA-036-03) ---"
 REPO52="${SEC_DIR%/}/../../../.."; CAND52="${TPL_DIR%/*}"
 v52() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
@@ -35,8 +38,9 @@ mat52 3c8394b "$RE52" tools/arnes-lectura-rol.sh skills/arnes-upgrade/SKILL.md a
 eval "$(awk '/<!-- guion: medida-4a/ { e = 1; next } e == 1 && /^```bash/ { e = 2; next } e == 2 && /^```/ { exit } e == 2' \
   "$CAND52/docs/explicacion/medida-4a.md" 2>/dev/null | awk '/^rellena\(\)/, /^}/')"
 # --- El extractor aparte (awk), el mismo de la parte 1. Un bloque va de su marca a la línea anterior a la siguiente.
-# Antes de la primera marca, el título y los blancos no son bloque; desde la primera línea que no es ni lo uno ni lo
-# otro, sí: bloque sin marca, para los cuatro (CA-18, «Qué contiene»; QA-036-03). Obligación LEGIBLE: la de la parte 1.
+# Antes de la primera marca, el título —SÓLO la primera línea no en blanco, si empieza por `# `— y los blancos no son
+# bloque; desde la primera otra línea no en blanco (también otra `# …`), sí: bloque sin marca, para los cuatro (CA-18,
+# «Qué contiene»; QA-036-03; P-137-AH). Obligación LEGIBLE: la de la parte 1.
 EXT52='
 function lim(s) { sub(/^[ \t\r]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
 function lee(m,   r, n, i, t, sel) {
@@ -55,9 +59,9 @@ function lee(m,   r, n, i, t, sel) {
   }
   return sel
 }
-FNR == 1 { dentro = 0; previo = 1 }
+FNR == 1 { dentro = 0; previo = 1; visto = 0 }
 /^\[\[/ { dentro = lee($0); previo = 0 }
-previo && !dentro && $0 !~ /^# / && $0 ~ /[^ \t\r\f\v]/ { dentro = 1 }
+previo && !dentro && $0 ~ /[^ \t\r\f\v]/ { if (visto || $0 !~ /^# /) dentro = 1; visto = 1 }
 dentro { print }'
 ext52() { LC_ALL=C awk -v rol="$1" "$EXT52" "$2/AGENTS.md" "$2/requirements/README.md"; }   # <rol> <proyecto>
 gen52() {   # <proyecto>: el generador del árbol en prueba; deja RC52 y su stderr en $FX52/gen.err
@@ -169,3 +173,51 @@ if s3c52; then v52 PASS "REQ-036 B11 CA-18 (9) S3c control: sólo título y blan
 else v52 FAIL "REQ-036 B11 CA-18 (9) S3c control: sólo título y blancos antes de la primera marca -> sin bloque ni aviso  $MOT52"; fi
 filae52 "B11 CA-18 (9) S9: fixture de QA-036-03 (marcas parciales), arnes-upgrade y paso 4b -> generador 0, sin import, las dos notas en los cuatro" s9_52
 filae52 "B11 CA-18 L4 (P-137-AG): las cuatro definiciones leen también el texto anterior a la primera marca al caer al respaldo" l4_52
+# --- S3d (P-137-AH (A), QA-036-03 vuelta 3): una segunda línea `# ` antes de la primera marca no es título. ----------
+# Fail-before contra `d24b383`, en su árbol y en un subshell: un fallo al materializarlo no toca a `3c8394b` (RE52_OK).
+RV52="$RAIZ/rv52t-$BASHPID"; RV52_OK=no; RV52_MOT='d24b383 no se materializó (tools/arnes-lectura-rol.sh)'
+( mat52 d24b383 "$RV52" tools/arnes-lectura-rol.sh ) && RV52_OK=si
+N3D52='# Regla del equipo: todo cambio en src/pagos/ es de cobro y es crítico.'
+fxd52() {   # <nombre> <AGENTS.md|README: dónde va N3D52, tras el título | sin-titulo: el control> -> FXS52
+  FXS52="$FX52/$1"; rm -rf "$FXS52"; mkdir -p "$FXS52/requirements" "$FXS52/.arnes"
+  case "$2" in
+    AGENTS.md) printf '%s\n' '# T' "$N3D52" '' ;;
+    README) printf '%s\n' '# T' '' ;;
+    *) printf '%s\n' '' 'Nota sin título.' '' '# Subtítulo propio' '' ;;
+  esac > "$FXS52/AGENTS.md"; printf '%s\n' '[[A-1 · obliga: qa]]' 'a-uno' >> "$FXS52/AGENTS.md"
+  { printf '%s\n' '# R'; if [ "$2" = README ]; then printf '%s\n' "$N3D52"; fi
+    printf '%s\n' '' '[[R-1 · obliga: todos]]' 'r-uno'; } > "$FXS52/requirements/README.md"
+}
+d3d52() {   # <fuente:línea> <la línea que precede a N3D52 en qa.md>: 0, en los cuatro y en su sitio, sin título, aviso
+  local r f
+  gen52 "$FXS52" || return 1; [ "$RC52" -eq 0 ] || { MOT52="salió $RC52: $(head -c 90 "$FX52/gen.err")"; return 1; }
+  en52 "$N3D52" "$ROLES52" || return 1
+  for r in $ROLES52; do   # en qa.md tras lo que la precede; en los otros tres, justo tras la cabecera; antes de R-1
+    f="$FXS52/.arnes/lectura/$r.md"
+    ! grep -qxE -- '# [TR]' "$f" || { MOT52="$r.md contiene un título"; return 1; }
+    awk -v b="$N3D52" -v d="$2" -v q="$r" '$0 == b && !j { j = NR; p = h } $0 == "[[R-1 · obliga: todos]]" && !k { k = NR }
+      { h = $0 } END { exit !(j && k > j && (q == "qa" ? p == d : j == 5)) }' "$f" || { MOT52="en $r.md no está en su sitio"; return 1; }
+  done
+  c1r52 "$FXS52" || return 1
+  grep -qF -- "$1: obligado ilegible" "$FX52/gen.err" || { MOT52="stderr no nombra $1"; return 1; }
+  MOT52="código 0; en los cuatro, en su sitio y sin el título; aviso $1"
+}
+s3d_52() { fxd52 s3d AGENTS.md; d3d52 AGENTS.md:2 ''; }
+s3dr52() { fxd52 s3dr README; d3d52 requirements/README.md:2 'a-uno'; }
+s3dc52() {   # control: la primera línea no en blanco no empieza por `# ` -> abre el bloque como hasta ahora, `# …` incluida
+  local r
+  fxd52 s3dc sin-titulo; gen52 "$FXS52" || return 1; [ "$RC52" -eq 0 ] || { MOT52="salió $RC52"; return 1; }
+  en52 'Nota sin título.' "$ROLES52" && en52 '# Subtítulo propio' "$ROLES52" && c1r52 "$FXS52" || return 1
+  for r in $ROLES52; do
+    [ "$(sed -n 5p "$FXS52/.arnes/lectura/$r.md")" = 'Nota sin título.' ] || { MOT52="$r.md no sigue a la cabecera con la nota"; return 1; }
+  done
+  grep -qF -- 'AGENTS.md:2: obligado ilegible' "$FX52/gen.err" || { MOT52='stderr no nombra AGENTS.md:2'; return 1; }
+  MOT52='código 0; la nota y el subtítulo en los cuatro; aviso AGENTS.md:2'
+}
+filad52() { filar52 "$1" "$2" "$RV52" d24b383 "$RV52_OK" "$RV52_MOT"; }
+filad52 "B11 CA-18 (9) S3d: una segunda línea \`# \` antes de la primera marca de AGENTS.md -> en los cuatro, sin el título, aviso AGENTS.md:<línea>" s3d_52
+filad52 "B11 CA-18 (9) S3d README: la segunda línea \`# \` del README -> tras los bloques de AGENTS.md y delante del primero del README" s3dr52
+# El control se cumple también en d24b383 (allí una primera línea sin `# ` ya abría el bloque), sin fail-before.
+MOT52=''; ARB52="$CAND52"
+if s3dc52; then v52 PASS "REQ-036 B11 CA-18 (9) S3d control: primera línea no en blanco sin \`# \` -> abre el bloque como hasta ahora  ($MOT52)"
+else v52 FAIL "REQ-036 B11 CA-18 (9) S3d control: primera línea no en blanco sin \`# \` -> abre el bloque como hasta ahora  $MOT52"; fi

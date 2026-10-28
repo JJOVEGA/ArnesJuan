@@ -49,11 +49,11 @@ mat52 d722aed "$RD52" tools/arnes-lectura-rol.sh hooks/inicio-sesion.sh agents/a
 eval "$(awk '/<!-- guion: medida-4a/ { e = 1; next } e == 1 && /^```bash/ { e = 2; next } e == 2 && /^```/ { exit } e == 2' \
   "$CAND52/docs/explicacion/medida-4a.md" 2>/dev/null | awk '/^rellena\(\)/, /^}/')"
 # --- El extractor aparte (awk). Un bloque va de su marca a la línea anterior a la siguiente. Antes de la primera
-# marca, el título y los blancos no son bloque; desde la primera línea que no es ni lo uno ni lo otro, sí: bloque sin
-# marca, para los cuatro (CA-18, «Qué contiene»; QA-036-03). Obligación LEGIBLE (CA-18, QA-036-07): tras `[[<id> · `,
-# exactamente `explicativo` (nadie) u `obliga:` y una lista cuyos elementos son TODOS un rol, `coordinadora` o `todos`
-# (mayúsculas y blancos alrededor tolerados). Todo lo demás —sin cierre, sin ` · `, un elemento mal escrito, la lista
-# vacía— la leen los cuatro.
+# marca, el título —SÓLO la primera línea no en blanco, si empieza por `# `— y los blancos no son bloque; desde la
+# primera otra línea no en blanco (también otra `# …`), sí: bloque sin marca, para los cuatro (CA-18, «Qué contiene»;
+# QA-036-03; P-137-AH). Obligación LEGIBLE (CA-18, QA-036-07): tras `[[<id> · `, exactamente `explicativo` (nadie) u
+# `obliga:` y una lista cuyos elementos son TODOS un rol, `coordinadora` o `todos` (mayúsculas y blancos alrededor
+# tolerados). Todo lo demás —sin cierre, sin ` · `, un elemento mal escrito, la lista vacía— la leen los cuatro.
 EXT52='
 function lim(s) { sub(/^[ \t\r]+/, "", s); sub(/[ \t\r]+$/, "", s); return s }
 function lee(m,   r, n, i, t, sel) {
@@ -72,9 +72,9 @@ function lee(m,   r, n, i, t, sel) {
   }
   return sel
 }
-FNR == 1 { dentro = 0; previo = 1 }
+FNR == 1 { dentro = 0; previo = 1; visto = 0 }
 /^\[\[/ { dentro = lee($0); previo = 0 }
-previo && !dentro && $0 !~ /^# / && $0 ~ /[^ \t\r\f\v]/ { dentro = 1 }
+previo && !dentro && $0 ~ /[^ \t\r\f\v]/ { if (visto || $0 !~ /^# /) dentro = 1; visto = 1 }
 dentro { print }'
 ext52() { LC_ALL=C awk -v rol="$1" "$EXT52" "$2/AGENTS.md" "$2/requirements/README.md"; }   # <rol> <proyecto>
 gen52() {   # [--verificar] <proyecto>: el generador del árbol en prueba; deja RC52

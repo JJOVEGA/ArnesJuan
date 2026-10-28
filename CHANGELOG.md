@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), desarrollador: el título es sólo la primera línea `# `; caso S3d; `en-revisión`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **Generador** (`tools/arnes-lectura-rol.sh`): sólo la primera línea no en blanco, si empieza por `# `, es el título. Cualquier otra línea no en blanco antes de la primera marca, también otra `# …`, va a los cuatro archivos por rol con aviso `fuente:línea`.
+- **Banco:** el extractor aparte, con la misma regla en las dos partes de la sección 52. S3d en `AGENTS.md` y en el README, con fail-before contra `d24b383`, más el control de la primera línea sin `# `. La parte 2 pasa de 9 a 14 casos y `CASOS_ESPERADOS` de 3127 a 3132.
+- **Sin cambios de lectura:** los cuatro archivos por rol de este repositorio no cambian ni un byte y `--verificar` da 0. B5 sigue en 75 590 B y 75 591 B falla.
+- **Verificación:** banco en una corrida, 3100 PASS · 0 FAIL · 32 SKIP = 3132, rc 0. Autoprueba 117/0 y gates de §7 en verde. `QA:`, `Seguridad:` y `Hallazgos abiertos:` sin tocar.
+
 ## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), analista: CA-18 (el título es sólo la primera línea `# `) y atribución de P-137-AG y P-137-Y; `en-progreso`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
 

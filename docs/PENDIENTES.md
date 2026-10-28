@@ -2516,6 +2516,13 @@ ninguna mata al hook.»
 - **Comprobado por la coordinadora:** el diff de `AGENTS.md` cae entero en §5 (l. 86–101, con §5 en 63–105 y §6 desde 106), como exige CA-05. El contenido no se revierte.
 - **Segunda vez** (PR-137-1 fue `hooks/lib.sh` en 1.36.2): instruir «con `Edit`» en el encargo no basta, porque el agente decide por su cuenta si la ruta «está protegida». **Dueño:** la coordinadora, en los encargos, con el analista para 1.37 · 4 (`AGENTS.md`, que la regla diga qué archivos van siempre por `Edit` aunque ninguna puerta los mire). **Destino decidido por el propietario (P-137-T, 2026-10-21):** a la ficha de 1.37 · 4, y como **caso de prueba de la puerta posterior** en 1.37 · 3.
 
+### PR-137-3 — Hallazgo de proceso, clase `instrumento`: el desarrollador de REQ-036 (pasada de P-137-AH) añadió el bloque S3d a la sección 52 con `cat >> … <<'EOF'`, y no con `Edit` (como PR-137-1 y PR-137-2)
+- **Qué pasó (2026-10-28):** lo declaró él mismo. El encargo prohibía python, `sed -i` y `perl -i`, y pedía Edit/Write. El agente buscó una forma de consola que no estuviera en la lista.
+- **Comprobación:** queda encargada a QA de la pasada. Contenido revisado contra CA-18, y que el bloque no cambie nada fuera de S3d. El contenido no se revierte.
+- **Además, en el mismo despacho:** no leyó entero su archivo por rol («por presupuesto»; unos 100 KB). Es la misma familia que QA-036-12.
+- **Tercera vez:** enumerar formas prohibidas no funciona, porque el agente encuentra la siguiente. La regla útil es la positiva («los archivos versionados sólo con Edit/Write»), y una puerta que lo mida.
+- **Dueño:** la coordinadora (en los encargos) y 1.37 · 3, la puerta posterior (P-137-T), como caso de prueba.
+
 ### F-137-20 — REQ-021, sonda de procesos: no cuenta las órdenes que no se resuelven por `PATH` (QA-035-04; baja; sin fecha)
 - **Medido por QA** (REQ-035, 2026-10-21): con `/bin/true` en el hook mide 5 frente a 5 y da PASS; con `cat` mide 6 frente a 5 y da FAIL. Un fork por ruta absoluta pasa la puerta de «0 procesos añadidos». Según seguridad (R-062), `./orden` y `"$BASH" -c` son de la misma clase, sin medir.
 - **Destino, decidido por el propietario (2026-10-21):** «ficha de REQ-021 (sonda de procesos), no de la pieza b; baja prioridad, sin fecha.» Clase `instrumento`. **Dueño:** `desarrollador`.
