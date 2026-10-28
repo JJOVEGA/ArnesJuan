@@ -9,7 +9,7 @@ Estado: aceptada (2026-10-28). Sustituye a [ADR-018](ADR-018-las-quality-gates-t
 1. **Las gates no corren en el hook.** Las corre `tools/arnes-gates.sh`, lanzada por QA, la coordinadora o el propietario, que registra en `.arnes/gates-veredicto.json` el código de salida de cada gate, el hash del árbol, la fecha y quién la corrió.
 2. **La puerta no ejecuta ninguna gate:** comprueba que hay registro legible, que su lista de gates es la del manifiesto, que todas salieron 0 y que el hash es el del árbol actual; si no, deniega y dice cómo correr la herramienta.
 3. **«El árbol»** es el contenido del árbol de trabajo (comiteado, sin comitear, nuevo no ignorado), menos el registro y los artefactos de gobierno. Sin git no hay veredicto.
-4. **Falsificación:** el registro lo protegen las puertas de escritura ya existentes (a todo agente, también al `desarrollador`); lo que queda —consola, formas que el detector no ve, una gate hostil, `quién` no verificado, la edición de la herramienta— **se declara**, no se acepta como definitivo.
+4. **Falsificación:** el registro lo protegen las puertas de escritura ya existentes (a todo agente, también al `desarrollador`); lo que queda —consola, formas que el detector no ve o no juzga como escritura del registro (`cp`/`mv`/`install` al directorio `.arnes/`, `link`, `cp -l`; P-137-AN (A), arreglo en 1.37), una gate hostil, `quién` no verificado, la edición de la herramienta— **se declara**, no se acepta como definitivo.
 5. **Se retira** el código del intento de ADR-018 (presupuesto, relojes, `wait -n -p`, guarda de la trampa); el plazo propio queda como en v1.36.2 y ADR-017 no cambia.
 
 ## Consecuencias

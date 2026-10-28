@@ -1555,7 +1555,7 @@ con gates que sumaban más de 30 s `guard-completado` denegaba todo cierre (el p
 - **Qué haces:** ignora `.arnes/gates-veredicto.json` en git; corre la herramienta **lo último** (tras los veredictos); una
   suite de más de 10 min, en segundo plano o desde tu terminal. No escribas el registro a mano.
 - **Riesgo declarado, no aceptado como definitivo** (`AGENTS.md` §13): quien escribe el registro por una forma que las puertas
-  no ven (consola, intérpretes) puede fabricar un verde; una gate hostil puede reescribirlo; `--quien` no se verifica. SEC-133 queda
+  no ven (consola, intérpretes; `cp`/`mv`/`install` con destino el directorio `.arnes/`, `link` y `cp -l`, que no nombran el registro; QA-037-14, arreglo en 1.37) puede fabricar un verde; una gate hostil puede reescribirlo; `--quien` no se verifica. SEC-133 queda
   cerrado; SEC-131 (a) sigue declarado. Esta entrada **sustituye** a «el plazo del hook no alcanza a tus quality gates» de 1.36.0.
 
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
