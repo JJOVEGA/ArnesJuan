@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: REQ-037 reescrito para F-137-24 (las gates fuera del hook); ADR-019 sustituye a ADR-018; P-137-AL abierta
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`, analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **REQ-037 (15 CA):**
+  - `tools/arnes-gates.sh` corre las gates fuera del hook y escribe `.arnes/gates-veredicto.json`, ligado al hash del árbol de trabajo.
+  - `guard-completado` ya no ejecuta gates: comprueba el registro.
+  - Se retira entero el código del intento anterior.
+  - El registro está protegido por las puertas de escritura, y el riesgo que queda se declara.
+  - Fail-before obligatorio de las respuestas dobles con carga contra `d47cfba`, y de #63 contra `46ee7ca`.
+  - Condición de publicación de P-137-AD, ampliada con 0 `allow` espurios.
+- **ADR-019** sustituye a ADR-018.
+- **(coordinadora) P-137-AL** abierta en `PENDING_APPROVAL.md`. Pregunta qué queda fuera del hash: el CA-01 del analista lo dejaba «no exhaustivo», y la recomendación es una lista cerrada en el contrato. Pregunta también cuántas pasadas tiene el diseño nuevo. El desarrollador empieza con la recomendación.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AK, F-137-24 (issue #63) arranca ya en esta rama, con las gates fuera del hook
 > Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 

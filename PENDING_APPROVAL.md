@@ -43,7 +43,33 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AF resuelta por el propietario y P-137-AE sin efecto, en § Resueltas; P-137-AK, orden directa del propietario, también en § Resueltas.)_
+### [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, y cuántas pasadas tiene el diseño nuevo.** El desarrollador empieza ya con la recomendación; cambiarla cuesta una constante.
+
+**1. Lo que el hash no cubre.** El veredicto se liga al contenido del árbol de trabajo (CA-01). Pero entre que las gates corren y el cierre, el propio ciclo de gobierno escribe archivos: QA pone `QA: aprobado`, seguridad firma, y la coordinadora escribe CHANGELOG, ESTADO y la cola. Si esos archivos entran en el hash, cada firma invalida el veredicto y hay que volver a correr las gates, que es lo que #63 quiere evitar. Por eso el analista los excluye.
+
+Hay un problema: su CA-01 dice «no exhaustivo» y deja la lista al desarrollador, en `hooks/lib.sh`. Una lista abierta cambia, sin contrato, lo que protege la puerta. Tu literal de F-137-24 dice «la puerta sólo comprueba que el árbol actual es ese».
+
+- **(A) Lista cerrada en el contrato, fija en el código** (no configurable por el proyecto):
+  - `.arnes/gates-veredicto.json`;
+  - `requirements/`;
+  - `docs/qa/` y `docs/seguridad/`;
+  - `PENDING_APPROVAL.md`, `CHANGELOG.md` y sus archivos de rotación;
+  - `docs/ESTADO.md`.
+
+  Cualquier otro cambio después de las gates invalida el veredicto, y se vuelven a correr (falla cerrado). **Límite declarado:** una gate que evalúa esas rutas (por ejemplo, un linter de Markdown sobre `requirements/`) no se re-valida cuando cambian después.
+- **(B) Sin exclusiones, salvo el propio registro:** QA corre las gates como último paso, después de su veredicto y antes de la firma de seguridad. Cada firma posterior obliga a otra corrida.
+  - *Coste:* las gates se corren dos o tres veces por cierre. En un proyecto con suites largas es justo lo que #63 quiere evitar.
+
+**2. Pasadas.** La única pasada correctiva del diseño anterior está gastada, y REQ-037 no reinicia contadores (CA-15). El diseño nuevo nace de tu decisión P-137-AK.
+
+- **(A) Una pasada correctiva fuera del tope, como en P-137-AH y P-137-AI:** si no cierra, se para y te lo traigo.
+- **(B) Ninguna:** el primer hallazgo de QA o de seguridad para el hotfix.
+
+**Recomendación de la coordinadora: 1 (A) y 2 (A).** Texto listo para adoptar:
+
+> Adopto P-137-AL 1 (A) y 2 (A): lo que el hash no cubre es la lista cerrada de la ficha, fija en el código y escrita en CA-01, con su límite declarado; cualquier otro cambio tras las gates invalida el veredicto. El diseño nuevo tiene una pasada correctiva fuera del tope; si no cierra, se para y me lo traes.
+
+**Qué bloquea.** No bloquea al desarrollador: implementa (A) como una sola constante. Sí bloquea a QA, que no puede aprobar CA-01 mientras la lista no tenga contrato, y el cierre de REQ-037: con esta entrada en Pendientes, la puerta no deja cerrar.
 
 ## Resueltas
 
