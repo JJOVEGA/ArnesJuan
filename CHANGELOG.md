@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), analista: CA-18 (el título es sólo la primera línea `# `) y atribución de P-137-AG y P-137-Y; `en-progreso`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
+
+- **CA-18:** el título es sólo la primera línea no en blanco si empieza por `# `; cualquier otra línea no en blanco antes de la primera marca, incluidas otras líneas `# `, abre el bloque sin marca que va a los cuatro archivos, con aviso. La frase «contiene todo el texto de la fuente que no sea el título» queda cierta. Caso nuevo S3d (segunda línea `# ` propia, fail-before contra `d24b383`) en la parte 2 de la sección 52.
+- **Correspondencia:** las filas de P-137-AG y P-137-Y citan como literal la forma corta del propietario y señalan que el texto largo es el propuesto en la ficha, que adoptó.
+- **Estado:** `bloqueado` → `en-progreso` (pasada autorizada). `QA:`, `Seguridad:`, `Hallazgos abiertos:`, `Rigor:` sin tocar. Sin cambio de bytes de lectura; CA-01 a CA-20 siguen siendo 20. El generador, el extractor y el banco los cambia el desarrollador.
+
 ## [Interno] — 2026-10-28 · P-137-AH (A) resuelta por el propietario: sólo la primera línea `# ` es el título; pasada acotada fuera del tope
 > Origen: P-137-AH · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 
