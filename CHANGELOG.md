@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: write-back del analista de P-137-AL y de QA-037-11 a 13 en REQ-037
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
+
+- **CA-01:** la lista de exclusiones queda decidida.
+- **CA-05:** riesgo (5), el entorno de quien lanza la herramienta (QA-037-12), aceptado para 1.36.3; el endurecimiento va a 1.37. CA-06 deja de dar SEC-131 (a) como «sin cambio».
+- **QA-037-11:**
+  - CA-03 (a): un registro que es enlace simbólico o tiene más de un enlace duro se juzga ilegible;
+  - CA-05 (ii): `ln` y `ln -s` con el registro como destino, o como fuente de un enlace duro, se deniegan.
+
+  Las dos llevan fail-before contra `42a320c`.
+- **QA-037-13:** CA-08 pone el caso de gates en forma de objeto en la sección 53.
+- **Notas `[1.36.3]`, `AGENTS.md` §13 y su plantilla, y F-137-24-B:** declaran el riesgo aceptado.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL resuelta por el propietario, con 1 (A), 2 (A) y 3 (A)
 > Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 
@@ -205,7 +218,9 @@ CHANGELOG — ArnesJuan
 
 **Coste** (REQ-037 CA-10, medido por el desarrollador frente a v1.36.2 en la misma corrida; sección 53 del banco): el cierre con veredicto válido de una gate `sleep 35` y el de una gate `true` tardan lo mismo (≈ 0,95×), sin ejecutar ninguna gate; frente al cierre con `quality_gates: []` de v1.36.2, **+2 procesos** (tres de git para el hash y uno de `jq` para el registro, menos el `mktemp` y el `rm` que ya no hacen falta); ≈ 0,1 s en el árbol de este repositorio (289 archivos); doblar los archivos del árbol dobla el hash (cociente ≈ 2,07). El camino común y el cierre sin gates: **0 procesos** añadidos (el segundo, 2 menos).
 
-**Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` (propuesto para 1.37); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).
+**Riesgo declarado y aceptado por el propietario para 1.36.3** (P-137-AL, 2026-10-28; QA-037-12; REQ-037 CA-05, riesgo (5)): **el veredicto confía en quien lanza la herramienta, entorno incluido.** Un `PATH` con una orden falsa o una función exportada con el nombre de una orden que la herramienta usa dan un **verde con hash válido**, como la escritura por consola o por una forma que el detector de `Bash` no ve (riesgo (1)). Es la misma superficie de SEC-131 (a), que pasa del hook a la herramienta: **ya no es «sin cambio»**. El endurecimiento —que sólo `qa-tester` y la coordinadora lancen la herramienta, y que ésta no confíe en el entorno heredado— va a **1.37** (ficha F-137-24-B). Además, un registro **enlazado** (simbólico o con más de un enlace duro) se juzga ilegible, y `ln` y `ln -s` sobre el registro se deniegan (QA-037-11).
+
+**Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` y del entorno que hereda (propuesto para 1.37, F-137-24-B); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).
 
 **Firmas.**
 - **QA (Opus, 2026-10-28, cabeza `ceb7bf3`): `con-hallazgos`** (`docs/qa/REQ-037.md`).

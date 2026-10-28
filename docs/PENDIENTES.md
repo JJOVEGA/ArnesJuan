@@ -2401,8 +2401,9 @@ ninguna mata al hook.»
 
 *(Rotuladas con sufijo para no chocar con la numeración de `cand/1.37.0` al fusionar.)*
 
-### F-137-24-B — 1.37: endurecer quién lanza `tools/arnes-gates.sh` (propuesta del analista; el propietario no la ha decidido)
+### F-137-24-B — 1.37: endurecer quién lanza `tools/arnes-gates.sh` (propuesta del analista; el endurecimiento a 1.37 lo fijó el propietario en P-137-AL, 2026-10-28; su forma no la ha decidido)
 - **Qué** (REQ-037 CA-05, límite (3)): el veredicto de las gates lo escribe la herramienta, y `--quien` es texto declarado y **no verificado**; el `desarrollador` puede correrla y declararse otro. Las puertas de escritura protegen el registro de `Edit`/`Write` y de las formas llanas de `Bash`, no de quien lanza la herramienta.
+- **Incluye el entorno (QA-037-12).** El veredicto confía en quien lanza la herramienta, **entorno incluido**: un `PATH` con una orden falsa o una función exportada dan un verde con hash válido. **Decisión del propietario (P-137-AL, 2026-10-28), literal:** «Acepto para 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en las notas y el endurecimiento va a 1.37 (F-137-24-B).» Endurecimiento a proponer: que la herramienta no confíe en el entorno heredado (órdenes por ruta absoluta o entorno limpio, sin funciones importadas).
 - **Propuesta:** que la puerta de `Bash` admita la orden de la herramienta sólo a `qa-tester` y a la coordinadora (no al `desarrollador` ni al `auditor-seguridad`). El `desarrollador` sigue corriendo las gates a mano antes de `en-revisión`, así que no pierde nada.
 - **Límite que no cierra:** la consola del propietario, las formas que el detector de `Bash` no ve (F-136-13) y una gate hostil; sólo sube el coste de fabricar un verde por un agente. **Dueño:** `desarrollador` con `auditor-seguridad`. Se propone antes de implementarse.
 
