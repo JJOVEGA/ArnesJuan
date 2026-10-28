@@ -11548,3 +11548,66 @@ Hasta 1.36, el import de `CLAUDE.md` inyectaba `AGENTS.md` entero en todo agente
   - el generador comprueba `.arnes` y sus enlaces antes de abrir ninguna fuente.
 - `docs/seguridad/gobernanza-datos.md`: sin cambios.
 - **Numeración:** esta revisión es **R-064** y no abre hallazgos. Próximos libres: **R-065** y **SEC-149**.
+
+## Revisión R-065 — **Re-firma de REQ-036 tras la pasada de P-137-AJ (A)** (sólo texto: los cuatro sitios de inercia). `cand/1.37.0` @ `6cbf8c0`, texto de `170e8c6` validado por QA — 2026-10-28 — **APROBADO**
+
+- **Auditor:** `auditor-seguridad`, Opus (`claude-opus-5-5`, F-137-21). Con R-063 y R-064 en contexto; no releí el archivo por rol. Orden de fases respetado: QA aprobó sobre `6cbf8c0`.
+- **Qué dice la decisión:** P-137-AJ (A), literal del propietario en `bde57fb` (`PENDING_APPROVAL.md` § Resueltas): «sólo texto, en los cuatro sitios, con la frase de la ficha».
+- **Alcance:** el diff `8038db3..6cbf8c0` en lo que toca a SEC-145.
+  - `hooks/`, `tools/`, `.github/`, `.arnes/config.json`, `agents/` y `skills/` no cambian.
+  - `templates/` sólo cambia en las líneas de la frase y en `templates/autorizacion.md`.
+  - `templates/autorizacion.md` es la norma de re-despacho de la coordinadora (P-137-AJ) y **queda fuera de esta revisión**: no la he revisado.
+
+### 1. La frase, contrastada con el código — **conforme**
+- **Dónde está:**
+  - `README.md:86`;
+  - `AGENTS.md:944-946`;
+  - `templates/AGENTS.md.tpl:922-924`, idéntica a la de `AGENTS.md` (`diff` vacío);
+  - `ARCHITECTURE.md:24-27`.
+- **Qué dice cada parte, y dónde se cumple:**
+  - «inertes sin `.arnes/config.json`»: las puertas, como hasta ahora.
+  - «salvo el de inicio de sesión, que lo es sin `.arnes/`»: `hooks/inicio-sesion.sh:29`, `[ -d "${CLAUDE_PROJECT_DIR:-.}/.arnes" ] || exit 0`, sin cambio desde `8038db3`.
+  - «en un proyecto con `.arnes/` recuerda… y regenera… aunque falte el manifiesto»: CA-17, y el generador comprueba `.arnes` antes de las fuentes (R-064 §1).
+- **`README.md:86` conserva** «(no estorban en repos ajenos al arnés)».
+- **Bytes:** el archivo por rol del analista sólo cambia en `Fuentes`, porque A-13.3 no lo obliga. B5 sigue en 75 590 / 75 526 B, según QA, y `--verificar` da 0.
+
+### 2. Los otros tres sitios — **no dejan SEC-145 abierto**
+- `skills/arnes-upgrade/SKILL.md:521`: la nota de migración de 1.31.0. Habla de las **puertas** ante un manifiesto ausente o roto, y es cierta para ellas.
+- `.arnes/plantillas-origen/AGENTS.md.tpl:321`: la **base** del merge a tres vías. Cambiarla rompería la detección de lo INTACTO, y no es una promesa.
+- `docs/arnes/notas-1.36.1-borrador.md:138`: historia de una versión.
+
+### 3. `jq` — **no es SEC-145; es SEC-149, `instrumento`**
+- **Medido:** con `.arnes/` y un `PATH` sin `jq`, el hook de inicio emite el recordatorio (259 B) y no avisa por stderr. Es lo que contrata CA-17: «sin `jq`… se emite igual».
+- **Por qué no es SEC-145:** SEC-145 era `contrato` por el texto **normativo**, `AGENTS.md` §13 y su plantilla (R-063). Ese texto acota `jq` al enforcement: «Requieren `jq`; sin él, **el enforcement** queda inactivo con aviso». El hook de inicio no hace enforcement, así que la frase es cierta. Lo que queda falso está en documentación técnica que ningún agente aplica como regla.
+
+#### SEC-149 — **`instrumento` · severidad baja · `abierto` · nuevo (REQ-036, CA-17; anterior a P-137-AJ) · dueño `desarrollador` (documentación técnica)**
+**Qué:**
+- `ARCHITECTURE.md:27` dice «Sin `jq` también son **inertes**, con aviso por stderr». Tras la frase de la excepción se lee como si valiera para los tres registros, y el de inicio de sesión, con `.arnes/` y sin `jq`, avisa y genera, sin aviso por stderr.
+- `README.md:86`, «Requieren `jq`», es impreciso en el mismo sentido: el hook de inicio no lo necesita. **No promete ninguna protección:** sobra un requisito; no falta una.
+
+**Por qué `instrumento` y baja:**
+- ni `ARCHITECTURE.md` ni `README.md` son el requerimiento ni texto normativo que los agentes apliquen;
+- la conducta que describen mal es la contratada y la que quiso el propietario;
+- no tiene efecto de seguridad: con `.arnes/` el proyecto es del arnés;
+- no cambia ninguna decisión.
+
+**Remediación** (texto, por propiedad): «Sin `jq`, las puertas son inertes con aviso por stderr; el de inicio de sesión no usa `jq`.» Y en `README.md:86`, «Las puertas requieren `jq`». **No bloquea.** **Vencimiento:** la próxima edición de esos dos archivos, o 1.37 · 4b.
+
+### 4. Veredicto — **`Seguridad: aprobado (R-063, R-064 y R-065, 2026-10-28)` en REQ-036**
+- **SEC-145 → `mitigado`:**
+  - el mecanismo de R-064 está verificado;
+  - los cuatro textos de inercia dicen la frase por propiedad y describen lo construido;
+  - CA-17 la contrata.
+  Sale de `Hallazgos abiertos:`.
+- **Siguen abiertos, `instrumento` y sin bloquear:**
+  - SEC-146;
+  - SEC-147 (F-137-25);
+  - SEC-148 (F-137-26, a 4b);
+  - SEC-149 (nuevo);
+  - QA-036-10 y QA-036-12.
+- **`Estado:`** queda en `en-revisión`, para que la coordinadora cierre. No lo paso a `completado`.
+- **Regresión:** ninguna. El estado de seguridad aprobado de REQ-036 es el «estado revisado» de R-063 y R-064, más dos condiciones:
+  - los cuatro textos de inercia dicen la excepción del hook de inicio;
+  - `AGENTS.md` y la plantilla, con la misma redacción.
+- `docs/seguridad/gobernanza-datos.md`: sin cambios.
+- **Numeración:** esta revisión es **R-065** y abre **SEC-149**. Próximos libres: **R-066** y **SEC-150**.

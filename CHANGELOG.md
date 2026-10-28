@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, seguridad (R-065): `Seguridad: aprobado`; SEC-145 mitigado; SEC-149 `instrumento` nuevo; `en-revisión` para el cierre
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad.
+
+- **Los cuatro textos de inercia** (`README.md:86`, `AGENTS.md`, la plantilla y `ARCHITECTURE.md`) dicen la frase de P-137-AJ (A) y coinciden con el código: `hooks/inicio-sesion.sh:29` y el orden del generador. `AGENTS.md` y la plantilla, idénticos.
+- **Los otros tres sitios no son promesas vigentes:** la nota de 1.31.0, la base de `plantillas-origen` y la historia de 1.36.1.
+- **SEC-145 → `mitigado`.**
+- **`jq` → SEC-149 (`instrumento`, baja, no bloquea):** `ARCHITECTURE.md:27` dice «sin `jq` también son inertes, con aviso», y no vale para el hook de inicio; en `README.md:86`, «Requieren `jq`» sobra para él. `AGENTS.md` §13 acota `jq` al enforcement y es cierto.
+- **Sin cambio**, `instrumento`: SEC-146, SEC-147 y SEC-148. Queda fuera de esta revisión `templates/autorizacion.md` (P-137-AJ).
+- **`Estado:`** sigue en `en-revisión` para que cierre la coordinadora. Evidencia en `docs/seguridad/registro-seguridad.md`, R-065.
+
 ## [GitHub] — 2026-10-28 · REQ-036, pasada de P-137-AJ (A), QA: `QA: aprobado` sobre `170e8c6`; `bloqueado` → `en-revisión` hasta la re-firma de seguridad
 > Origen: GitHub (commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester (reanudado).
 
