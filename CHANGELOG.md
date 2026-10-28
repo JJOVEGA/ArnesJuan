@@ -2,6 +2,19 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada correctiva de F-137-24 (QA-037-11 y 13), `en-revisión` (sin validar)
+> Origen: GitHub (commit local, sin validar) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **QA-037-11, la puerta:** un registro que es un enlace simbólico o tiene más de un enlace duro se juzga ilegible y
+  deniega. El registro regular de un solo enlace sigue dando allow.
+- **QA-037-11, `Bash`:** `ln` y `ln -s` con el registro de destino, y `ln` con él de fuente de un enlace duro, se
+  deniegan a todo agente. Los demás veredictos del detector no cambian: los enlaces van en una lista aparte.
+- **QA-037-13:** la sección 53 prueba las gates en forma de objeto (verde, roja y mezcla con cadenas).
+- **`.gitignore`** ignora `.arnes/gates-veredicto.json`.
+- **Fail-before contra `42a320c`:** los dos registros enlazados y las seis formas de `ln` pasaban de allow a deny; los
+  controles quedan en allow.
+- **Banco:** sección 53 con 100 PASS y 2 SKIP; completo, una vez, 3 032 PASS, 0 FAIL, 30 SKIP, cuadre 3 062.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: write-back del analista de P-137-AL y de QA-037-11 a 13 en REQ-037
 > Origen: P-137-AL · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
 

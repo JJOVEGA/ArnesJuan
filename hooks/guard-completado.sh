@@ -368,6 +368,7 @@ arnes_guard_completado() {
       # concluyo. Medido en modo POSIX: rc 1 y la lista vacia, que se leia como un comando que no escribe.
       [ "$rc" -eq 0 ] || arnes_deny_rc_analizador "$rc" guard-completado
       arnes_deny_retira_manifiesto   # REQ-033 CA-01, como en `guard-codigo`
+      arnes_deny_enlaza_veredicto    # REQ-037 CA-05 (ii), como en `guard-codigo`
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;

@@ -581,6 +581,12 @@ arnes_veredicto_juzga() {
   local reg="$1/$ARNES_VEREDICTO_REL" r
   ARNES_VER_ESTADO=''; ARNES_VER_DETALLE=''
   if [ ! -e "$reg" ] && [ ! -L "$reg" ]; then ARNES_VER_ESTADO=ausente; return 0; fi
+  # CA-03 (a), QA-037-11: un ARCHIVO REGULAR DE UN SOLO ENLACE. Un enlace simbólico o un enlace duro de más dejan que
+  # el verde cambie sin pasar por la herramienta. `_arnes_un_solo_enlace` (un `find`, memorizado) no sigue enlaces.
+  if [ -L "$reg" ]; then ARNES_VER_ESTADO=ilegible; ARNES_VER_DETALLE='es un enlace simbolico, no un archivo propio'; return 0; fi
+  if ! _arnes_un_solo_enlace "$reg"; then
+    ARNES_VER_ESTADO=ilegible; ARNES_VER_DETALLE='no es un archivo regular de un solo enlace (tiene enlaces duros, o no se pudo contar)'; return 0
+  fi
   if ! arnes_lee_archivo "$reg" || [ -z "$ARNES_TEXTO" ]; then
     ARNES_VER_ESTADO=ilegible; ARNES_VER_DETALLE='no se puede leer entero'; return 0
   fi
@@ -2485,7 +2491,8 @@ _arnes_escrituras_texto() {   # <texto sin texto> -> rutas escritas, una por lin
           case "${t[j]}" in '>'|'|'|';'|'&&'|'||'|'&') break ;; -*|'') continue ;; esac
           x="${t[j]}"
         done
-        [ -z "$x" ] || sal+=("$ARNES_RETIRO$x") ;;
+        [ -z "$x" ] || sal+=("$ARNES_RETIRO$x")
+        _arnes_ln_enlaces ;;
       sed|perl|*/sed|*/perl)
         local en_sitio=0
         for ((j = i + 1; j < n; j++)); do
@@ -2590,6 +2597,45 @@ ARNES_FORMA_DIR=$'\t'
 # REQ-033: marca de RETIRADA (rm, unlink, truncate, shred, ln, origen de mv). Ningun token lleva tabuladores;
 # `arnes_escrituras_de` la separa a `ARNES_RETIROS` antes de que nadie lea `ARNES_ESCRITURAS`.
 ARNES_RETIRO=$'\t\t'
+# REQ-037 CA-05 (ii), QA-037-11: marca de ENLACE. `ln` y `ln -s` crean una entrada nueva que designa otro archivo, y
+# la puerta de cierre leería a través de ella un verde que no pasó por la herramienta. `_arnes_ln_enlaces` deja aquí,
+# para cada `ln`, las rutas que crea (su destino, o <dir>/<nombre> con `-t` o con un directorio de destino) y, si no
+# es simbólico, también sus fuentes: un enlace duro multiplica el archivo. Sólo las juzga
+# `arnes_deny_enlaza_veredicto` contra el registro de las gates; `arnes_escrituras_de` las separa a `ARNES_ENLACES`
+# antes de que nadie lea `ARNES_ESCRITURAS`, así que ninguna otra puerta cambia.
+ARNES_ENLACE=$'\t\x1f'
+_arnes_ln_enlaces() {   # usa `t`, `i` y `n` de quien llama y añade a su `sal`
+  local j x s=0 dir='' fin=0 ultimo
+  local -a ops=()
+  for ((j = i + 1; j < n; j++)); do
+    x="${t[j]}"
+    case "$x" in '>'|'|'|';'|'&&'|'||'|'&') break ;; '') continue ;; esac
+    if (( fin )); then ops+=("$x"); continue; fi
+    case "$x" in
+      --) fin=1 ;;
+      --symbolic) s=1 ;;
+      --target-directory=*) dir="${x#*=}" ;;
+      --target-directory) j=$((j + 1)); dir="${t[j]:-}" ;;
+      --*) ;;
+      -*t) [[ $x == *s* ]] && s=1; j=$((j + 1)); dir="${t[j]:-}" ;;
+      -*t?*) [[ ${x%%t*} == *s* ]] && s=1; dir="${x#*t}" ;;
+      -?*) [[ $x == *s* ]] && s=1 ;;
+      *) ops+=("$x") ;;
+    esac
+  done
+  (( ${#ops[@]} > 0 )) || return 0
+  if [ -n "$dir" ]; then
+    for x in "${ops[@]}"; do sal+=("$ARNES_ENLACE${dir%/}/${x##*/}"); done
+  elif (( ${#ops[@]} == 1 )); then
+    sal+=("$ARNES_ENLACE${ops[0]##*/}")
+  else
+    ultimo="${ops[${#ops[@]}-1]}"; unset 'ops[${#ops[@]}-1]'
+    sal+=("$ARNES_ENLACE$ultimo")
+    for x in "${ops[@]}"; do sal+=("$ARNES_ENLACE${ultimo%/}/${x##*/}"); done
+  fi
+  (( s )) || for x in "${ops[@]}"; do sal+=("$ARNES_ENLACE$x"); done
+  return 0
+}
 declare -gA ARNES_NLINK1=()   # memoria por invocacion: archivo -> si|no (nace vacia al cargar)
 _arnes_un_solo_enlace() {   # <archivo regular, ruta absoluta> ; 0 = tiene exactamente un enlace
   local r
@@ -2688,11 +2734,12 @@ arnes_escrituras_de() {   # <comando> -> ARNES_ESCRITURAS ; rc de `arnes_bash_es
 
 # REQ-033: las RETIRADAS pasan a `ARNES_RETIROS`, sin marca; sin ninguna (camino comun) no recorre nada.
 _arnes_separa_retiros() {
-  ARNES_RETIROS=''
-  [[ $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_RETIRO"* ]] || return 0
+  ARNES_RETIROS=''; ARNES_ENLACES=''   # REQ-037: y los ENLACES de `ln` (`_arnes_ln_enlaces`), aparte
+  [[ $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_RETIRO"* || $'\n'$ARNES_ESCRITURAS == *$'\n'"$ARNES_ENLACE"* ]] || return 0
   local l e=''
   while IFS= read -r l; do
-    if [[ $l == "$ARNES_RETIRO"* ]]; then ARNES_RETIROS+="${l#"$ARNES_RETIRO"}"$'\n'; else e+="$l"$'\n'; fi
+    if [[ $l == "$ARNES_ENLACE"* ]]; then ARNES_ENLACES+="${l#"$ARNES_ENLACE"}"$'\n'
+    elif [[ $l == "$ARNES_RETIRO"* ]]; then ARNES_RETIROS+="${l#"$ARNES_RETIRO"}"$'\n'; else e+="$l"$'\n'; fi
   done <<< "$ARNES_ESCRITURAS"
   ARNES_ESCRITURAS="${e%$'\n'}"
 }
@@ -2781,6 +2828,18 @@ arnes_deny_escribe_veredicto() {   # [destinos de escritura de Bash, uno por lin
       arnes_identidad "$ARNES_FP"
       arnes_id_pertenece veredicto && _arnes_deny_veredicto "$ARNES_FP" "este $ARNES_TOOL escribe" ;;
   esac
+  return 0
+}
+# `ln` y `ln -s` con el registro de destino, o de fuente de un enlace duro (QA-037-11). Va ANTES del corte de las
+# puertas («sin escrituras, nada que juzgar»): un `ln` no deja escrituras, sólo una retirada y sus enlaces.
+arnes_deny_enlaza_veredicto() {
+  [ -n "${ARNES_ENLACES:-}" ] || return 0
+  local d
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    arnes_identidad "$d"
+    arnes_id_pertenece veredicto && _arnes_deny_veredicto "$d" "este comando enlaza con \`ln\`"
+  done <<< "$ARNES_ENLACES"
   return 0
 }
 

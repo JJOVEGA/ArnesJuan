@@ -5,11 +5,11 @@
 # `tools/arnes-gates.sh` y deja un veredicto ligado al hash del árbol, y la puerta sólo lo comprueba.
 #   G1 y C*  CA-08 (b), fail-before y controles · M2  el movimiento M-037-2 · W  CA-05, fail-before por forma
 #   A*  CA-01 · L*  CA-03 · H*  CA-02, la herramienta · I1–I8, E1, T1  CA-06 sobre la herramienta · MK  CA-03
-#   D  CA-08 (a), un documento por respuesta · K*, PROC, RELOJ  CA-10, coste.
+#   D  CA-08 (a), un documento por respuesta · K*, PROC, RELOJ  CA-10, coste · O1–O3  gates en forma de objeto.
 # DOS ÁRBOLES donde la fila lo pide: la CANDIDATA (`$HOOKS_DIR`) y v1.36.2 (46ee7ca), por SHA con `mat53` (copia de
 # `mat49`); sin ella, SKIP y motivo, nunca PASS. Las corridas, en paralelo; el juicio, después y en orden.
-CASOS_ESPERADOS_SECCION=87
-PISO_AUTONOMO_SECCION=111  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO53, mat53_reg y mat53, copia de mat49, líneas 15-38) + 73 bloque indivisible mayor (l53, j53, pe53, la herramienta, las preparaciones y caso53: el brazo, el juez, los proyectos y las filas, líneas 45-117)
+CASOS_ESPERADOS_SECCION=102
+PISO_AUTONOMO_SECCION=136  # 14 preámbulo (líneas 1-14, con seccion_nueva) + 24 maquinaria compartida duplicada (REPO53, mat53_reg y mat53, copia de mat49, líneas 15-38) + 98 bloque indivisible mayor (l53, j53, pe53, t53, r53, prep53 y caso53: el brazo, el juez, los proyectos, la herramienta y las filas, líneas 44-141)
 seccion_nueva "--- 53 · las quality gates corren fuera del hook; la puerta comprueba un veredicto con el hash del árbol (REQ-037, hotfix 1.36.3) ---"
 REPO53="${SEC_DIR%/}/../../../.."; MAT53_RUTAS='hooks'; MAT53_REG=''; MAT53_T0=0; MAT53_REF='-'
 mat53_reg() {   # <estado> <motivo> <archivos> <procesos> -> MAT53_REG, UNA sola línea (la lee `sonda_lee`)
@@ -122,15 +122,17 @@ prep53() {
     blanco) r53 "$p" '.quien = " "' ;;
     nulo) r53 "$p" '.gates[0].rc = null' ;;
     singit) rm -rf "$p/.git" ;;
+    simb) mv "$p/.arnes/gates-veredicto.json" "$p.verde" && ln -s "$p.verde" "$p/.arnes/gates-veredicto.json" ;;
+    duro) ln "$p/.arnes/gates-veredicto.json" "$p.otro" ;;
   esac
   return 0
 }
-# caso53 <id> <nombre> <gates, una por línea, o []> <prep C> <esperado C> <techo C ms|-> <prep B> [<esperado B>] [QA]
-# — prepara y LANZA en segundo plano las dos corridas; el juicio va después, con `R53`. B es v1.36.2, que ignora el
-# registro y ejecuta las gates. Timeout de 60 s.
+# caso53 <id> <nombre> <gates, una por línea, o [], o json:<array del manifiesto>> <prep C> <esperado C> <techo C ms|->
+# <prep B> [<esperado B>] [QA] — prepara y LANZA en segundo plano las dos corridas; el juicio va después, con `R53`. B es
+# v1.36.2, que ignora el registro y ejecuta las gates. Timeout de 60 s.
 R53=()
 caso53() {
-  local g; if [ "$3" = '[]' ]; then g='[]'; else g="$(jq -cRn '[inputs]' <<< "$3")"; fi
+  local g; case "$3" in '[]') g='[]' ;; json:*) g="${3#json:}" ;; *) g="$(jq -cRn '[inputs]' <<< "$3")" ;; esac
   R53+=("$1|$2|$5|$6|${8:-}")
   { pe53 "$W53/p-$1-c" "$g" "${9:-}" && prep53 "$4" "$W53/p-$1-c" && l53 "$1-c" "$C53" "$W53/p-$1-c" 60; } &
   if [ -n "${8:-}" ] && [ "$RV53_OK" = si ]; then
@@ -163,6 +165,13 @@ caso53 L4 'L4 CA-03 un campo de más' true extra ilegible - -
 caso53 L5 'L5 CA-03 `quien` en blanco' true blanco ilegible - -
 caso53 L6 'L6 CA-03 una gate añadida al manifiesto después' true lista lista - -
 caso53 L7 'L7 CA-03 una gate sin código (no corrió) cuenta como no verde' true nulo roja:true - -
+# CA-03 (a), QA-037-11: un registro verde que es un enlace simbólico, o un enlace duro de más, es ilegible (en 42a320c, allow).
+caso53 L8 'L8 CA-03 (a) el registro verde es un enlace simbólico a otro archivo' true simb ilegible - -
+caso53 L9 'L9 CA-03 (a) el registro verde tiene un segundo enlace duro' true duro ilegible - -
+# CA-08 (b), QA-037-13: gates en forma de objeto {nombre, comando}, por la herramienta y por la puerta (la misma expresión).
+caso53 O1 'O1 gates en forma de objeto, verdes, con su veredicto' 'json:[{"nombre":"Verde","comando":"true"}]' v allow - -
+caso53 O2 'O2 gates en forma de objeto, roja, con su veredicto' 'json:[{"nombre":"Roja","comando":"false"}]' v roja:false - -
+caso53 O3 'O3 gates mezcla de objeto y cadena, verdes, con su veredicto' 'json:["true",{"nombre":"Eco","comando":"echo o3"}]' v allow - -
 # --- CA-06: los vectores, sobre la herramienta (registro y puerta) ----------------------------------------------------
 I1G53='for f in 0 3 4 5 6 7 8 9 10 11 12 255; do { echo 0 >&$f; } 2>/dev/null; done; false'
 I3G53='printf %s "{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"allow\"}}"; false'
@@ -198,6 +207,11 @@ for c53 in "echo '{}' > $RW53" "printf x >> $RW53" "echo x | tee $RW53" "cp src/
 done
 w53 'W CA-05 control: leer el registro (`cat`)' Bash "cat $RW53" allow allow
 w53 'W CA-05 control: borrarlo (`rm -f`): sólo hace que la puerta deniegue' Bash "rm -f $RW53" allow allow
+# QA-037-11: `ln` y `ln -s` con el registro de destino, y de fuente de un enlace duro (en 42a320c, allow); `unlink`, control.
+for c53 in "ln -s VJ $RW53" "ln -sf VJ $RW53" "ln VJ $RW53" "ln $RW53 otro.json"; do
+  w53 "W CA-05 (ii) Bash \`$c53\`" Bash "$c53" registro allow
+done
+w53 'W CA-05 control: borrarlo (`unlink`)' Bash "unlink $RW53" allow allow
 # --- CA-02: la herramienta y sus códigos de salida --------------------------------------------------------------------
 { pe53 "$W53/h-0" '[]' && t53 "$W53/h-0"; } &
 { pe53 "$W53/h-g" '["true"]' && rm -rf "$W53/h-g/.git" && t53 "$W53/h-g"; } &

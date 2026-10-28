@@ -1725,7 +1725,10 @@ done
 # las 13 formas de CA-05 en los dos árboles; A1–A9, L1–L7, MK, los vectores de CA-06 sobre la herramienta, H1–H7, D y el
 # coste de CA-10 en la candidata—; se retiran P1–P6, R1–R3, A2, M, G1–G6 y B1–B2 del diseño anterior. Ninguna otra
 # sección cambia su número.
-CASOS_ESPERADOS=3047
+# Y 3047 → 3062 por la pasada correctiva de F-137-24: +15 en la 53 (87 → 102) —L8 y L9 (el registro enlazado), O1–O3 (gates
+# en forma de objeto, QA-037-13) en la candidata, y cuatro formas de `ln` y el control `unlink` en los dos árboles
+# (QA-037-11)—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3062
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
