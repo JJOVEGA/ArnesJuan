@@ -14,14 +14,13 @@
 
 **Este bloque es el único vigente en la rama `cand/1.37.0`** (worktree `/home/juan/dev/ArnesJuan-v1.36`). Lo de debajo es historia: los dos hotfixes y la pausa de 1.37, conservados al fusionar.
 
-- **Bloqueo, desde el 2026-10-28: REQ-036 está `bloqueado`** (qa-tester, Opus, vuelta 3 de 3 sobre `d24b383`).
-  - **Por qué:** el tope de vueltas dev↔QA se agotó con QA-036-03 (`usuario/dinero`) abierto. Una línea propia que
-    empieza por `# ` entre el título y la primera marca no llega a ningún archivo por rol, y tras `arnes-upgrade` no
-    la lee nadie.
-  - **Qué impide:** cerrar REQ-036. Mientras la entrada siga en § Pendientes, tampoco se puede cerrar ningún otro REQ.
-  - **Dónde está:** escalado en `PENDING_APPROVAL.md` § Pendientes, con las opciones (A) pasada acotada y (B)
-    aceptar la laguna. Evidencia en `docs/qa/REQ-036.md`, «Vuelta 3».
-  - **Lo demás de la vuelta:** QA-036-11 cerrado; banco 3093/0/34.
+- **1.37 · 4a CERRADA el 2026-10-28:** REQ-036 `completado` por `Edit`, juzgado en vivo, después de las pasadas acotadas de P-137-AH, AI y AJ.
+  - QA (Opus) `aprobado` sobre `170e8c6`; seguridad (Opus) `aprobado` (R-063 a R-065; SEC-145 mitigado).
+  - Banco 3119/0/31. B5: 75 590 B en el proyecto y 75 526 B en la plantilla, con techo de contrato de 75 000 B.
+  - Quedan abiertos sólo hallazgos `instrumento`: QA-036-10, QA-036-12 y SEC-146 a SEC-149.
+  - **Métrica de REQ-036** (24 comisiones de subagente; tokens **no cacheados**, la métrica de P-137-Z; sin la coordinadora): analista (Sonnet) 1 229 531 · desarrollador (Opus) 2 837 764 · QA (Opus) 1 442 329 · seguridad (Opus) 928 842 · **total 6 438 466**. Según el campo de la notificación, 4 331 402, que no cuenta la reescritura de caché al reanudar (P-137-AM).
+- **En paralelo, por P-137-AK:** F-137-24 (issue #63, las gates fuera del hook) se trabaja en `hotfix/1.36.3`, en el worktree `/home/juan/dev/ArnesJuan-1.36.3`, y se publica sola como 1.36.3. REQ-037 está reescrito y en manos del desarrollador. P-137-AL está pendiente en la cola de esa rama.
+- **Orden después:** 4b (con F-137-26 / SEC-148, QA-036-12 y F-137-23), luego 3b y luego 5. F-137-25 va sin fecha.
 
 - **v1.36.2 PUBLICADA el 2026-10-16** por el propietario: PR #62 fusionado (`main` `46ee7ca`, 14:41:44Z), tag anotado `v1.36.2` → `46ee7ca`. **CI del PR** sobre `3a0e221`: run `38915129365`, **success** (2922 PASS, 0 FAIL, 38 SKIP; 2 INCONCLUSO de rendimiento). **CI de `main`** sobre `46ee7ca`, mismo árbol (`dd3e505`): run `38917844057`, **failure** (2919 PASS, **3 FAIL**, 38 SKIP): las tres sondas de reloj de REQ-033 CA-06 por encima de su techo operativo de 1,30× (1,33×, 1,47×, 1,31×). `instrumento` por P-137-J (**INS-033-1**, `docs/PENDIENTES.md`); no se relanzó.
 - **Instalación estable: 1.36.2** (alcances `user` y `project`, `46ee7ca`; `hooks/` idéntico al tag). **Rige desde el próximo reinicio.**
@@ -638,7 +637,7 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 - [ ] Windows/MSYS: el coste allí no está medido, y es donde un `fork` cuesta entre 1,2 y 6 s.
 
 <!-- ARNES:DERIVADO inicio — lo escribe el hook; NO editar a mano -->
-## Estado derivado — 2026-10-28 09:47
+## Estado derivado — 2026-10-28 12:20
 
 > Lo **deriva** el arnés leyendo el disco en cada parada de agente; no lo redacta nadie.
 > Se reescribe entero cada vez, así que editarlo a mano no sirve: lo tuyo va **fuera**
@@ -648,10 +647,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 > tildes, sin marcado— y no como están escritos en el REQ. Es a propósito: si un valor se ve
 > raro aquí, es que la puerta lo está leyendo raro, y eso es justo lo que conviene ver.
 
-**Repositorio:** `cand/1.37.0` @ `8038db3` — CON CAMBIOS SIN COMITEAR
+**Repositorio:** `cand/1.37.0` @ `4c5191e` — CON CAMBIOS SIN COMITEAR
 **Arnés:** plugin instalado `1.36.2` · el proyecto declara `1.33.0` — **migración pendiente** (`/arnes-upgrade`)
 **Aprobaciones pendientes:** 0
-**REQ:** 34 — completado 18 · en-revisión 5 · en-progreso 1 · bloqueado 2 · otros 8
+**REQ:** 34 — completado 18 · en-revisión 6 · en-progreso 1 · bloqueado 1 · otros 8
 **Otros archivos en `requirements/` sin `Estado:` (notas, no REQ):** 0
 
 _Sólo los REQ abiertos; los 18 completados no se listan._
@@ -673,6 +672,6 @@ _Sólo los REQ abiertos; los 18 completados no se listan._
 | REQ-025 | en-revision | aprobado | aprobado | critico | qa-025-08(instrumento),sec-103(instrumen… |
 | REQ-028 | borrador | pendiente | pendiente | critico | (ninguno) |
 | REQ-031 | en-revision | aprobado | aprobado | critico | sec-115(instrumento,r-044-c:unhookquemue… |
-| REQ-036 | bloqueado | aprobado | con-hallazgos | critico | qa-036-10(instrumento),qa-036-12(instrum… |
+| REQ-036 | en-revision | aprobado | aprobado | critico | qa-036-10(instrumento),qa-036-12(instrum… |
 
 <!-- ARNES:DERIVADO fin -->

@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036 `completado`: 1.37 · 4a cerrada; métrica por rol; P-137-AM abierta (coste real de reanudar a un agente)
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **REQ-036 `completado`:** la puerta lo juzgó en vivo. QA `aprobado` (`6cbf8c0`), seguridad `aprobado` (R-065), la cola vacía, las gates en verde y sólo hallazgos `instrumento` abiertos. Se actualizan la fila de Historial, el índice y `docs/ESTADO.md`. Con esto se cierra 1.37 · 4a.
+- **Métrica de REQ-036** (24 comisiones, tokens no cacheados): analista 1 229 531, desarrollador 2 837 764, QA 1 442 329, seguridad 928 842; **total 6 438 466**. Según el campo de la notificación son 4 331 402.
+- **(coordinadora) P-137-AM:** la cifra «25 k frente a 262 k» que respaldaba la norma de P-137-AJ salía de `subagent_tokens`, que no cuenta la reescritura de caché (de 5 minutos) al reanudar en frío. Medido, una pasada corta reanudada en frío cuesta 225–311 k no cacheados, frente a 135–142 k de una nueva. Recomendación: reanudar sólo en caliente. La plantilla queda sin tocar hasta que el propietario decida.
+
 ## [Interno] — 2026-10-28 · REQ-036, seguridad (R-065): `Seguridad: aprobado`; SEC-145 mitigado; SEC-149 `instrumento` nuevo; `en-revisión` para el cierre
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad.
 

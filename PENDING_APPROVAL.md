@@ -43,6 +43,43 @@
 
 ## Pendientes
 
+### [2026-10-28] (coordinadora) — P-137-AM: **la cifra en la que se apoyó la norma de P-137-AJ estaba mal medida, y la di yo.** Reanudar a un agente sólo sale barato si su caché sigue viva.
+
+**Qué medí mal.** «25 k frente a 262 k» comparaba el campo `subagent_tokens` de la notificación. Ese campo **no cuenta** la escritura de caché que hace un agente al reanudarse. Los subagentes usan caché de **5 minutos**. Si se reanuda a un agente cuando ese plazo ya pasó, el primer mensaje vuelve a escribir en caché **todo** su contexto anterior: 260 665 tokens en la re-firma R-064 y 201 297 en el desarrollador de P-137-AJ. Medido sobre los transcritos de esta sesión:
+
+| Pasada | Cómo | No cacheados | Equivalente en entrada* |
+|---|---|---|---|
+| Seguridad R-063 (revisión completa) | nueva | 320 132 | 1 345 145 |
+| Seguridad R-064 (re-firma) | reanudada, en frío | 297 753 | 651 492 |
+| Seguridad R-065 (re-firma) | reanudada, en frío | 310 957 | 577 882 |
+| Desarrollador P-137-AH (código + fail-before) | nueva | 135 409 | 555 106 |
+| Desarrollador P-137-AJ (sólo texto) | reanudada, en frío | 224 855 | 585 586 |
+| QA P-137-AH | nueva | 142 425 | 560 572 |
+| QA P-137-AJ (sólo texto) | reanudada, en frío | 240 720 | 725 060 |
+
+\* Cada tipo de token ponderado por su precio relativo: escritura de caché ×1,25, lectura ×0,1, salida ×5. Es una aproximación al USD, que no está disponible por comisión.
+
+**Lectura de la tabla.**
+- En no cacheados, tu métrica de respaldo según P-137-Z, una pasada corta reanudada en frío costó **más** que una pasada corta nueva: 225–311 k frente a 135–142 k. Además, la reanudada era sólo de texto y la nueva tenía código y pruebas.
+- En el equivalente al USD salen parecidas.
+- Reanudar sólo ahorra de verdad **en caliente**, cuando el agente terminó hace menos de 5 minutos: entonces el contexto se lee de la caché a ×0,1. Así fue el arreglo de redacción del analista de P-137-AI (≈ 4 k).
+- **Consecuencias:**
+  - el aviso de 1,5× del presupuesto se mide con `subagent_tokens`, y se queda corto con los agentes reanudados;
+  - el desarrollador del hotfix ya va reanudado en frío (≈ 280 k de contexto), y ese coste está hecho;
+  - la métrica de REQ-036 en `docs/ESTADO.md` va en no cacheados por este motivo.
+
+**Opciones.**
+- **(A) Corregir la norma:** se reanuda al mismo agente **sólo si terminó hace menos de 5 minutos**, que es el caso típico de un retoque inmediato. Si no, se despacha uno nuevo con un encargo acotado que diga qué leer y qué no. En la plantilla se cambian la cifra y la regla. Además, el presupuesto y el aviso de 1,5× se miden en no cacheados.
+- **(B) Mantener la norma tal como está** y corregir sólo la cifra.
+  - *Coste:* cada reanudación en frío paga entera la reescritura del contexto, entre 200 y 300 k no cacheados por pasada.
+- **(C) Retirar la norma** y decidir caso a caso.
+
+**Recomendación de la coordinadora: (A).** Texto listo para adoptar:
+
+> Adopto P-137-AM (A): se reanuda al mismo agente sólo si terminó hace menos de 5 minutos; si no, despacho nuevo con encargo acotado. Corrige la cifra y la regla en la plantilla de autorización, y mide presupuestos y el aviso de 1,5× en tokens no cacheados.
+
+**Qué bloquea.** Mientras esté en Pendientes, la puerta no deja cerrar ningún REQ de `cand/1.37.0`. Ahora no hay ninguno en curso: 4a ya está cerrada. Al hotfix no lo bloquea, porque tiene su propia cola. Mientras no decidas, la coordinadora sigue la norma adoptada, porque no le corresponde reinterpretarla. El siguiente despacho que toca es QA del hotfix, y se hará reanudado. La plantilla no se toca.
+
 ## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AJ (A)**: sólo texto en los cuatro sitios de inercia; se regeneran los archivos por rol, QA comprueba B5 y seguridad re-firma, reanudando a los mismos agentes; al cerrar REQ-036, 4a y F-137-24 como 1.36.3; norma: pasadas acotadas y re-firmas reanudando al mismo agente
