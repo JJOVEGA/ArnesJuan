@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AF resuelta por el propietario: **no se publica**; el arreglo de #63 va a 1.37 como F-137-24
+> Origen: P-137-AF · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Qué deja la decisión:**
+  - la resolución, literal, en `PENDING_APPROVAL.md`;
+  - P-137-AE sin efecto;
+  - la rama se conserva como evidencia, sin fusionar en `main`;
+  - REQ-037 queda con QA-037-01 abierto.
+- **Las notas `[1.36.3]`** de abajo son un borrador que no se publicó.
+
 ## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): QA de REQ-037, vuelta 2 (re-verificación de la única pasada), `con-hallazgos`
 > Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 

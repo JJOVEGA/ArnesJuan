@@ -43,7 +43,35 @@
 
 ## Pendientes
 
-### [2026-10-27] (coordinadora) — P-137-AF: hotfix 1.36.3. **La pasada no cumple tu condición para publicar: siguen los cuelgues** (3 de 3 870 cierres bajo carga). Por tu texto de P-137-AD, 1.36.3 no se publica. ¿Qué se hace con el issue #63?
+_(Vacía desde el 2026-10-28: P-137-AF resuelta por el propietario y P-137-AE sin efecto, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AF: 1.36.3 no se publica**; el arreglo de #63 va a 1.37 como F-137-24, con prioridad alta; P-137-AE queda sin efecto
+
+> P-137-AF: 1.36.3 no se publica. El arreglo de #63 va a 1.37 como
+> F-137-24, con prioridad alta (primera intervención tras cerrar 4a), y
+> partiendo de lo aprendido: las respuestas dobles con carga vienen del
+> arreglo, no del problema original. Redáctame el comentario del issue #63
+> (causa, por qué no sale 1.36.3, que va en 1.37, y la salida manual del
+> propietario mientras tanto); lo publico yo.
+>
+> Antes de seguir: comitea en la rama de evidencia todo lo de
+> issue-63-plazo-gates/ y recuérdame el push.
+
+(Extracto: el mensaje del propietario incluía además P-137-AG, de REQ-036, transcrito entero en `PENDING_APPROVAL.md` de `cand/1.37.0`, `163f305`.)
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Esta rama** se conserva tal cual, sin borrarla ni publicarla, como evidencia y punto de partida de F-137-24. Cabeza: `46367aa` más este registro.
+- **REQ-037** queda con `QA: con-hallazgos` y QA-037-01 abierto. No se cierra ni se fusiona en `main`.
+- **P-137-AE** queda sin efecto: no hay publicación. SEC-133 sigue en F-136-23.
+- **La duda de P-137-AD** (1.37 o 1.38) la resuelve este texto: 1.37.
+- **En `cand/1.37.0`,** F-137-24 pasa a 1.37 en `docs/PENDIENTES.md` (`163f305`).
+- **Evidencia** comiteada en la rama de evidencia: `51bb090`.
+- **El comentario del issue #63** lo redacta la coordinadora y lo publica el propietario.
+- **No hay fusión de `main` en `cand/1.37.0`:** `main` no cambia.
+
+### P-137-AF (texto de la consulta, conservado; resuelta arriba) — hotfix 1.36.3. **La pasada no cumple tu condición para publicar: siguen los cuelgues** (3 de 3 870 cierres bajo carga). Por tu texto de P-137-AD, 1.36.3 no se publica. ¿Qué se hace con el issue #63?
 
 **Lo medido por QA en la vuelta 2** (cabeza `cdbe2a8`; evidencia `issue-63-plazo-gates/qa-v2/`, con la carga de QA y v1.36.2 como control en la misma sesión):
 - **Dobles y deny espurios: 0 en 3 870 cierres de la candidata.** Lo que arregló la pasada está verificado, también contra ataques: siete señales, subshells y el deny legítimo cuando el hook muere sin juicio.
@@ -78,7 +106,7 @@
 
 **Qué bloquea.** Todo el hotfix. Mientras tanto, el trabajo vuelve a 1.37: QA de REQ-036, vuelta 2.
 
-### [2026-10-27] (coordinadora) — P-137-AE: hotfix 1.36.3. **La entrada desde `/dev/null` (P-137-AD (2)) no acelera ninguna gate interactiva, pero cierra SEC-133.** ¿Se queda la línea o se revierte?
+### P-137-AE (texto de la consulta, conservado; sin efecto por P-137-AF) — hotfix 1.36.3. **La entrada desde `/dev/null` (P-137-AD (2)) no acelera ninguna gate interactiva, pero cierra SEC-133.** ¿Se queda la línea o se revierte?
 
 **Qué midió el desarrollador en la pasada correctiva** (evidencia `issue-63-plazo-gates/dev-pasada/03-`, con pty y sin pty, en v1.36.2, `d47cfba` y la candidata):
 - **Ninguna gate esperaba por su entrada estándar en ningún árbol.** `read -r x`, una confirmación y un modo vigilancia simulado terminan en unos 105 ms. Por el `<&0` sólo entraba la lista de gates que el hook lee en su bucle, nunca una terminal.
@@ -104,8 +132,6 @@
 > Adopto P-137-AE (A): la entrada desde `/dev/null` se queda. SEC-133 se cierra en 1.36.3 (allow → deny sólo cuando una gate posterior está roja), declarado en las notas `[1.36.3]`, en CA-03/CA-05 de REQ-037 por el write-back del analista y en el registro por el auditor; F-136-23 sale de 1.37. La gate que abre `/dev/tty` se declara como dice P-137-AD (2).
 
 **Qué bloquea.** El write-back del analista en CA-03 y CA-05, la revisión del auditor sobre SEC-133 y el cierre de REQ-037. La vuelta 2 de QA puede verificar ya el código tal como está, que es la opción (A).
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-27) — **P-137-AD: bash < 5.1 y el reloj detenido con STOP, límites declarados; la gate que toca la terminal entra en la pasada con la entrada estándar desde `/dev/null`, si cabe en esa línea**; QA-037-01 sigue siendo la condición de publicar
 
