@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN resuelta por el propietario, (A)
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Decisión:** las formas de QA-037-14 (destino `.arnes/` como directorio, `link`, `cp -l`/`--link`) se declaran para 1.36.3 dentro del riesgo (1) de CA-05 y se arreglan en 1.37 con F-137-24-B. El caso del manifiesto, preexistente desde v1.36.2, se declara en las notas y va a la pieza b.
+- **Pasada de sólo texto:** analista nuevo, lectura de QA nueva y primera firma de seguridad sobre `d89316c`, con la condición de la firma escrita por el propietario: comparar contra v1.36.2 y declarar toda conducta que pase de deny a allow.
+- **Ajuste a P-137-AM** (reanudar sólo con contexto de menos de ~150 k): se registra en `cand/1.37.0`.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN, QA-037-14 escalado al propietario (la pasada fuera del tope no cierra)
 > Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 

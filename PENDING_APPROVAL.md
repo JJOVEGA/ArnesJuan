@@ -43,7 +43,34 @@
 
 ## Pendientes
 
-### [2026-10-28] (qa-tester; número y decisión propuesta de la coordinadora) — P-137-AN: REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? Por P-137-AL («si no cierra, se para y me lo traes»), se para.
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AN (A)**: las formas de QA-037-14 se declaran para 1.36.3 dentro del riesgo (1) y se arreglan en 1.37 (F-137-24-B); pasada de sólo texto; condición de la firma; ajuste a P-137-AM
+
+> Adopto P-137-AN (A): las formas de QA-037-14 (destino .arnes/ como
+> directorio, link, cp -l/--link) se declaran para 1.36.3 dentro del riesgo
+> (1) de CA-05, se corrige la promesa de CA-05 (ii) y su arreglo va a 1.37
+> con F-137-24-B; el caso del manifiesto, preexistente, se declara en las
+> notas y va a la pieza b. Pasada de sólo texto: el analista corrige, QA lo
+> lee y seguridad firma. Si seguridad encuentra algo que no sea de esta
+> clase, se para y me lo traes.
+>
+> Recuerda la condición de la firma: el auditor compara contra v1.36.2 y
+> declara por escrito toda conducta que pase de deny a allow; la única
+> admitida es el cierre legítimo con gates en verde y huella vigente, más
+> las formas ya declaradas dentro del riesgo (1).
+>
+> Ajuste a P-137-AM, por las cifras: reanudar al mismo agente sólo si su
+> contexto es pequeño (menos de ~150k); con contextos de 300–600k sale más
+> caro que uno nuevo con un encargo bien escrito. Para esta pasada de
+> texto, analista y QA nuevos, con encargo corto.
+
+**Registro de la coordinadora.**
+- *La pasada:* analista nuevo (corrige CA-05 (ii), el riesgo (1), las notas `[1.36.3]`, F-137-24-B y el caso del manifiesto a la pieza b), QA nuevo (lee el texto contra `docs/qa/REQ-037.md`) y un auditor de seguridad nuevo (primera firma sobre el código de `d89316c`, que no cambia).
+- *La condición de la firma* va literal en el encargo del auditor. Cualquier paso de deny a allow que no sea el cierre legítimo ni una forma del riesgo (1) para la pasada y vuelve aquí.
+- *El ajuste a P-137-AM* es una norma del arnés: se registra en `cand/1.37.0` (`templates/autorizacion.md`), no en este hotfix.
+
+#### Ficha original: [2026-10-28] (qa-tester; número y decisión propuesta de la coordinadora) — P-137-AN: REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? Por P-137-AL («si no cierra, se para y me lo traes»), se para.
 
 **Qué pasa.** Medido sobre `d89316c` (`docs/qa/REQ-037.md`). El proyecto de prueba tiene la gate `false`, así que su veredicto real es rojo. Cada forma se ejecutó después de que la puerta de `Bash` la dejara pasar a `qa-tester` y a la coordinadora, y el cierre salió **`allow`**:
 - `cp /otro/gates-veredicto.json .arnes/`: el destino es el directorio. También `cp … .arnes`, `mv … .arnes/` e `install -m 644 … .arnes/`.
@@ -76,8 +103,6 @@
 **Recomendación de la coordinadora: (A).** Arreglar ahora cierra tres formas de una clase que sigue abierta por otras, y retrasa la publicación que espera un consumidor. Texto listo para adoptar:
 
 > Adopto P-137-AN (A): las formas de QA-037-14 (destino `.arnes/` como directorio, `link`, `cp -l`/`--link`) se declaran para 1.36.3 dentro del riesgo (1) de CA-05, se corrige la promesa de CA-05 (ii) y su arreglo va a 1.37 con F-137-24-B; el caso del manifiesto, preexistente, se declara en las notas y va a la pieza b. Pasada de sólo texto: el analista corrige, QA lo lee y seguridad firma. Si seguridad encuentra algo que no sea de esta clase, se para y me lo traes.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AL 1 (A), 2 (A) y 3 (A)**: lista cerrada de exclusiones del hash; una pasada correctiva fuera del tope (QA-037-11 y QA-037-13); se acepta para 1.36.3 el riesgo de QA-037-12; cargas largas fuera de los agentes
 
