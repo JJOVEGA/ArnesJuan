@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AO, decisión del propietario sobre R-066
+> Origen: R-066 · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **SEC-151 se repara en 1.36.3.** El cálculo de la huella tiene un presupuesto propio, del orden de decenas de segundos. Si no termina a tiempo, la puerta deniega con un motivo propio. El banco lleva un caso con un archivo disperso grande. Si no cierra en esta pasada, 1.36.3 no se publica.
+- **SEC-150 y SEC-152** se declaran en las notas `[1.36.3]`. Literal en `PENDING_APPROVAL.md`.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-066, primera revisión de seguridad de REQ-037, `con-hallazgos`; REQ-037 `bloqueado` por la regla de parada de P-137-AN
 > Origen: P-137-AN · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad; registro de la coordinadora.
 

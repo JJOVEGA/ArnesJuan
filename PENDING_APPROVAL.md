@@ -45,6 +45,22 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-28) — **P-137-AO**: SEC-151 se repara en 1.36.3 (presupuesto propio para la huella); SEC-150 y SEC-152 se declaran en las notas; si SEC-151 no cierra en esa pasada, 1.36.3 no se publica
+
+> P-137-AO: SEC-151 se repara en 1.36.3: el cálculo de la huella tiene un
+> presupuesto propio (orden de decenas de segundos, muy por debajo del
+> límite medido del cliente); si no termina, deny con motivo propio. Caso
+> de banco con un archivo disperso grande: deny dentro del presupuesto.
+> Pasada acotada: mismo desarrollador sólo si su contexto es pequeño; si
+> no, uno nuevo con encargo corto. QA verifica sólo eso; el auditor
+> re-firma reanudado (su contexto es corto).
+> SEC-150 y SEC-152: se declaran en las notas de 1.36.3.
+> Si SEC-151 no cierra en esa pasada, 1.36.3 no se publica.
+
+**Registro de la coordinadora.**
+- *Origen:* R-066 (`438c3fa`). El propietario decidió sin ficha previa, sobre el informe de la coordinadora.
+- *Quién hace la pasada:* un desarrollador nuevo, porque el contexto del anterior pasa de 600 k. Después, un analista nuevo hace el write-back: el criterio de SEC-151 con el valor construido, y la declaración de SEC-150 y SEC-152 en CA-01, CA-07 y las notas `[1.36.3]`. QA reanudado, porque su contexto es pequeño, verifica sólo SEC-151. El auditor de R-066 re-firma reanudado.
+
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AN (A)**: las formas de QA-037-14 se declaran para 1.36.3 dentro del riesgo (1) y se arreglan en 1.37 (F-137-24-B); pasada de sólo texto; condición de la firma; ajuste a P-137-AM
 
 > Adopto P-137-AN (A): las formas de QA-037-14 (destino .arnes/ como
