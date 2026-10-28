@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · P-137-AH (A) resuelta por el propietario: sólo la primera línea `# ` es el título; pasada acotada fuera del tope
+> Origen: P-137-AH · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- `PENDING_APPROVAL.md`: la resolución, literal, en § Resueltas; la cola de Pendientes queda vacía.
+- **Orden:** analista (CA-18 y la atribución de P-137-AG y P-137-Y), desarrollador (la condición y un caso con fail-before), QA sólo sobre eso, y seguridad. Si la pasada no cierra, se adopta (B) y se declara. Al cerrar 4a sigue F-137-24.
+
 ## [Interno] — 2026-10-28 · REQ-036, QA vuelta 3 de 3 sobre `d24b383`: `con-hallazgos`; `bloqueado` y escalado
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
 

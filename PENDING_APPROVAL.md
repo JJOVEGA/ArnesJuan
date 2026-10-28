@@ -43,7 +43,32 @@
 
 ## Pendientes
 
-### [2026-10-28] (qa-tester) — REQ-036, tope de QA agotado: una línea propia que empieza por `# ` antes de la primera marca no la lee ningún subagente
+_(Vacía desde el 2026-10-28: P-137-AH resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AH (A)**: el título es sólo la primera línea no en blanco que empieza por «# »; pasada acotada fuera del tope; si no cierra, (B) y se declara; al cerrar 4a, F-137-24
+
+> Adopto P-137-AH (la ficha de QA-036-03) (A): el título es sólo la primera
+> línea no en blanco que empieza por «# »; cualquier otra línea «# » es
+> texto propio y llega a los cuatro archivos por rol. Pasada acotada fuera
+> del tope, sólo esto: el analista ajusta CA-18 y corrige la atribución de
+> las filas de P-137-AG y P-137-Y (mi texto literal fue la forma corta); el
+> desarrollador cambia la condición y añade el caso con fail-before; QA
+> re-verifica sólo eso; luego seguridad firma REQ-036. Si esta pasada no
+> cierra, se adopta (B) y se declara, sin más vueltas. Al cerrar 4a, sigue
+> con F-137-24 (issue #63).
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Identificador.** La ficha de QA no lo tenía; el propietario la llama P-137-AH y así queda.
+- **Orden de la pasada:**
+  1. analista (Sonnet): CA-18 y la atribución;
+  2. desarrollador (Opus): la condición del generador y del extractor de las dos partes de la sección 52, más el caso con fail-before contra `d24b383`;
+  3. QA (Opus): sólo eso;
+  4. seguridad (Opus): firma REQ-036.
+- **Estado de REQ-036.** Sigue `bloqueado` hasta que el analista abra la pasada. El cambio de estado lo hace quien trabaja en él.
+
+### P-137-AH (texto de la consulta, conservado; resuelta arriba) — [2026-10-28] (qa-tester) — REQ-036, tope de QA agotado: una línea propia que empieza por `# ` antes de la primera marca no la lee ningún subagente
 
 **Contexto.** QA terminó la vuelta 3 de 3, la última, sobre `d24b383`. Su veredicto es `con-hallazgos`, y la evidencia
 está en `docs/qa/REQ-036.md`, «Vuelta 3».
@@ -103,8 +128,6 @@ Texto listo para adoptar:
 impedidos.
 
 **Espera:** elección del propietario.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AG (A)** y el matiz de P-137-Y confirmado; **P-137-AF**: 1.36.3 no se publica, y el arreglo de #63 va a 1.37 como F-137-24, con prioridad alta
 
