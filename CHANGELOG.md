@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, write-back del analista de P-137-AG (A): CA-20, CA-01, CA-18 y correspondencia
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet (`claude-sonnet-5-5`) · agente: analista-requerimientos.
+
+- **CA-20:** techo de B5 a 75 590 B (75 591 B falla), con la cadena 75 280 → 75 520 → 75 590 y la razón de P-137-AG (la frase de L4). El de contrato sigue en 75 000 B.
+- **CA-01 y CA-18:** la cifra de B5 al día con la misma cadena; las tres cifras de P-137-AA no cambian. L4 pasa de «ni aceptado ni reparado» a reparado por la frase, con su caso en el banco. La sección 52 se nombra con sus dos partes.
+- **Correspondencia:** fila nueva de P-137-AG (A); la de P-137-Y (caso límite de la pieza 3) cita la confirmación literal del propietario y pierde el aviso de que no constaba.
+- **Sin tocar:** `Estado:`, `QA:`, `Seguridad:`, `Hallazgos abiertos:`; los cierra QA en la vuelta 3 de 3.
+
 ## [Interno] — 2026-10-28 · REQ-036, P-137-AG (A) aplicada: la frase de L4 en las cuatro definiciones; B5 a 75 590 B; `en-revisión`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
 
