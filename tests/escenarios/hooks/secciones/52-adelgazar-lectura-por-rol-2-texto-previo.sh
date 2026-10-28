@@ -1,4 +1,4 @@
-# Sección 52 del banco, parte 2 de 2 — 52-adelgazar-lectura-por-rol-2-texto-previo
+# Sección 52 del banco, parte 2 de 3 —52-adelgazar-lectura-por-rol-2-texto-previo
 # Se hace `source` desde el corredor, en su propio subshell y con sus ayudantes; no se ejecuta
 # suelto ni hace `source` de otra sección (invariantes 3 y 4 del README del banco).
 # REQ-036 CA-18, «Fuente sin marcas», pieza 1, tras QA-036-03 (marcas parciales, vuelta 2 de QA; segunda línea `# `,
@@ -7,7 +7,7 @@
 # un bloque sin marca, de obligado ilegible: va a los cuatro archivos por rol, sin cambiar un byte y en su sitio, con
 # aviso `fuente:línea`, y el generador sale 0. Casos S3 (revisado), S3b, S3c (control, sin fail-before), S9 (la fixture
 # de QA), L4 (P-137-AG) y, al final, S3d con su control (P-137-AH, fail-before contra `d24b383`, la cabeza de la vuelta 3).
-# PARTE 2 DE 2 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
+# PARTE 2 DE 3 POR REQ-014 CA-18: la parte 1 (`52-adelgazar-lectura-por-rol.sh`, que conserva
 # su nombre para no romper sus citas) estaba a 11 líneas del tope de 400. Ninguna parte hace `source` de otra, así que
 # el materializador, `rellena`, el extractor aparte, `gen52`, `en52`, `c1_52`, `ord52` y `filar52` vienen DUPLICADOS de
 # la parte 1 —el extractor, literal: la misma regla en las dos— y lo dice el piso. DOS ÁRBOLES por fila: la CANDIDATA y
@@ -16,7 +16,7 @@
 # `081cb10` (la línea base de REQ-036).
 CASOS_ESPERADOS_SECCION=14
 PISO_AUTONOMO_SECCION=156  # 19 preámbulo (líneas 1-19, con seccion_nueva) + 89 maquinaria compartida duplicada de la parte 1 (los árboles, mat52, rellena, el extractor, ext52, gen52, en52, c1_52 y c1r52, líneas 20-86; ord52, líneas 118-128; filar52, líneas 156-166) + 48 bloque indivisible mayor (el árbol d24b383, fxd52, d3d52, S3d, S3d README, su control y sus filas, líneas 176-223)
-seccion_nueva "--- 52 (2/2) · lectura por rol: el texto previo a la primera marca va a los cuatro (REQ-036 CA-18, QA-036-03) ---"
+seccion_nueva "--- 52 (2/3) ·lectura por rol: el texto previo a la primera marca va a los cuatro (REQ-036 CA-18, QA-036-03) ---"
 REPO52="${SEC_DIR%/}/../../../.."; CAND52="${TPL_DIR%/*}"
 v52() { echo "  $1  $2"; case "$1" in PASS) PASS=$((PASS + 1)) ;; FAIL) FAIL=$((FAIL + 1)) ;; esac; }
 ARB52=''; MOT52=''; RC52=0; FX52="$RAIZ/fx52t-$BASHPID"; mkdir -p "$FX52"

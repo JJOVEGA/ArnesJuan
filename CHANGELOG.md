@@ -2,6 +2,15 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, desarrollador: pasada acotada de P-137-AI (A), sin `.arnes/` el hook y el generador no hacen nada; `en-progreso` → `en-revisión`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
+
+- **`hooks/inicio-sesion.sh`:** lo primero es `[ -d "${CLAUDE_PROJECT_DIR:-.}/.arnes" ] || exit 0`. Sin `.arnes/` sale 0 sin emitir nada, sin lanzar el generador y sin procesos.
+- **`tools/arnes-lectura-rol.sh`:** la comprobación de `.arnes` (mensaje único «no existe …/.arnes») y las de enlace van antes de abrir, medir o leer ninguna fuente. Es un cambio de orden, no de contenido.
+- **Banco:** parte 3 nueva de la sección 52 (`52-…-3-sin-arnes.sh`, 18 casos): las tres fixtures de CA-17 y c3 con fail-before contra `7af469c`; c1, c2 y c4 en los dos árboles; los enlaces del generador con fail-before. `c17a_51` crea un `.arnes/` vacío. `CASOS_ESPERADOS` 3132 → 3150.
+- **Medido:** F3 (1,5 MB) en `7af469c` tarda 3 031 ms, mínimo de 5, frente a 1,7 ms en la candidata. Derivados sin cambiar un byte; `--verificar` 0; B5 75 590 B pasa y 75 591 B falla. Banco 3119 PASS · 0 FAIL · 31 SKIP (3150); autoprueba 117/0.
+- **Para QA:** c3 no puede «no moverse», porque en `7af469c` el hook avisa con `.arnes` como archivo. El banco lo trata como fail-before.
+
 ## [Interno] — 2026-10-28 · REQ-036, analista: pasada acotada de P-137-AI (A), CA-17 y CA-18 (inercia sin `.arnes/`, la condición primero); `bloqueado` → `en-progreso`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos.
 

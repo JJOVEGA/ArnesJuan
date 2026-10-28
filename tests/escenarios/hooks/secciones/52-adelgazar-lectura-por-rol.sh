@@ -9,8 +9,8 @@
 # antes de CA-18 y CA-19), archivo a archivo y verificada contra su objeto; sin ella, SKIP y motivo, nunca PASS. Todas
 # las filas son fail-before contra `c330940`; (3a) y la cabecera rota son fail-before sobre fixtures de la candidata.
 # La vuelta 1 de QA (QA-036-03 a 08: (3b) del obligado ilegible, (5b), (6) y S1 a S8 de «Fuente sin marcas») añade un
-# TERCER árbol, `d722aed` —la cabeza que QA validó—, que es el de su fail-before (`filad52`). PARTE 1 DE 2 (REQ-014
-# CA-18): S3 y la última pasada (QA-036-03, marcas parciales: S3b, S3c, S9) van en `52-…-2-texto-previo.sh`; aquí no cabían.
+# TERCER árbol, `d722aed` —la cabeza que QA validó—, que es el de su fail-before (`filad52`). PARTE 1 DE 3 (REQ-014
+# CA-18): S3 y la última pasada (QA-036-03: S3b, S3c, S9) van en `52-…-2-texto-previo.sh`, y la inercia sin `.arnes/` (P-137-AI) en `52-…-3-sin-arnes.sh`.
 CASOS_ESPERADOS_SECCION=58
 PISO_AUTONOMO_SECCION=131  # 16 preámbulo (líneas 1-16, con seccion_nueva) + 0 maquinaria compartida duplicada + 115 bloque indivisible mayor (los árboles c330940, d722aed y 081cb10, rellena, el extractor, gen52, hook52, c1_52, c2_52, fxs52 y en52, líneas 17-131)
 seccion_nueva "--- 52 · lectura por rol, derivada y comprobada byte a byte; ámbito alcanzado (REQ-036 CA-18, CA-19) ---"

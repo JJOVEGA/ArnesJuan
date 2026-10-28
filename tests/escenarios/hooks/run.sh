@@ -1802,7 +1802,12 @@ done
 # Y 3127 → 3132 por P-137-AH (A) en REQ-036 (S3d): +5 en la parte 2 de la sección 52 (9 → 14) —una segunda línea `# `
 # antes de la primera marca llega a los cuatro, en AGENTS.md y en el README, cada una en la candidata y en d24b383
 # (fail-before), más el control de la primera línea sin `# `, sólo en la candidata—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=3132
+# Y 3132 → 3150 por P-137-AI (A) en REQ-036 (CA-17 inerte sin `.arnes/`, CA-18 el orden del generador): +18 en la parte
+# 3 nueva de la sección 52, `52-…-3-sin-arnes.sh` —las tres fixtures (vacío, ajeno, 1,5 MB) y c3, cada una en la
+# candidata y en 7af469c (fail-before); los controles c1, c2 y c4, en las dos (no se mueven); y los dos enlaces del
+# generador, en la candidata y en 7af469c (fail-before)—. En la 51, c17a crea un `.arnes/` vacío sin cambiar su número.
+# Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3150
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.

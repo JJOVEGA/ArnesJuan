@@ -21,6 +21,12 @@
 # `rm -f` sobre las cuatro rutas fijas, sólo en ese caso— y nunca a través de un enlace: con `.arnes` o
 # `.arnes/lectura` como enlace simbólico no toca nada (límite declarado L2). Lo que no puede quitar lo avisa por
 # stderr con su ruta (L3: destino no escribible). Sigue sin decidir nada.
+#
+# INERTE SIN `.arnes/` (REQ-036 CA-17, P-137-AI (A), SEC-145). Lo PRIMERO: si `.arnes` del proyecto no resuelve a
+# un directorio (ausente, archivo, enlace roto o a algo que no es directorio), el proyecto no es del arnés y el
+# script sale 0 sin emitir nada, sin lanzar el generador y sin procesos (`[` es interna). Un enlace a un directorio
+# cuenta como «tiene»: avisa como siempre y el generador no escribe a través de él (L2).
+[ -d "${CLAUDE_PROJECT_DIR:-.}/.arnes" ] || exit 0
 builtin printf '%s\n' \
   'Recordatorio del arnés (sesión principal = coordinadora): lee AGENTS.md ENTERO antes de tu primer encargo.' \
   'CLAUDE.md ya no lo importa; cada subagente lo lee según su rol, por sus marcas [[<id> · obliga: <roles>]], y la coordinadora lee todos los bloques.' \

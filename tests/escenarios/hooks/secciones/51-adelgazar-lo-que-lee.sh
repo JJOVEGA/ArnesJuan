@@ -282,9 +282,9 @@ evento51() {
     printf '%s' "$3" | CLAUDE_PLUGIN_ROOT="$1" PATH="$p" bash -c "$c" >> "$FX51/ev" 2>/dev/null || RC51=$?
   done < <(jq -r --arg e "$2" '.hooks[$e][]?.hooks[]?.command' "$1/hooks/hooks.json" 2>/dev/null)
 }
-c17a_51() { # CA-17: SessionStart recuerda leer AGENTS.md entero, sin manifiesto, con manifiesto roto y sin jq; sale 0
+c17a_51() { # CA-17: SessionStart recuerda leer AGENTS.md entero, con .arnes/ vacío (sin manifiesto), con manifiesto roto y sin jq
   local d="$FX51/s17" pr=''
-  mkdir -p "$d/sinjq" "$d/roto/.arnes"; ln -sf "$(command -v bash)" "$d/sinjq/bash"; printf '{roto' > "$d/roto/.arnes/config.json"
+  mkdir -p "$d/.arnes" "$d/sinjq" "$d/roto/.arnes"; ln -sf "$(command -v bash)" "$d/sinjq/bash"; printf '{roto' > "$d/roto/.arnes/config.json"
   for pr in "$d" "$d/roto"; do
     CLAUDE_PROJECT_DIR="$pr" evento51 "$ARB51" SessionStart '{"hook_event_name":"SessionStart","source":"startup"}' "$d/sinjq"
     [ "$RC51" -eq 0 ] || { MOT51="SessionStart salió $RC51"; return 1; }

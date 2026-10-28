@@ -103,6 +103,14 @@ roles_de() {
   return 0
 }
 
+# --- Destino PRIMERO, antes de abrir, medir o leer ninguna fuente (REQ-036 CA-18, «El orden del generador»;
+# P-137-AI (A), SEC-145): sin `.arnes/` el proyecto no es del arnés y no se lee nada suyo. `.arnes` tiene que
+# resolver a un directorio (si no —ausente, archivo, enlace roto—, el único mensaje es «no existe …/.arnes»), y ni
+# `.arnes` ni `.arnes/lectura` pueden ser enlaces simbólicos.
+[ -d "$ARNES" ] || falla "no existe $ARNES"
+[ -L "$ARNES" ] && falla '.arnes es un enlace simbólico: no se escribe'
+[ -L "$DIR" ] && falla '.arnes/lectura es un enlace simbólico: no se escribe'
+
 # --- Fuentes: legibles, y leídas línea a línea CON su salto (mapfile sin -t): la concatenación es exacta. ----
 for f in "${FUENTES[@]}"; do
   [ -f "$f" ] && [ -r "$f" ] || falla "fuente ausente o ilegible: $f"
@@ -143,11 +151,6 @@ for i in 0 1; do
   [ "$pre" -eq 0 ] || ilegible "${NOMBRES[$i]}:$pre" 'texto antes de la primera marca: bloque sin marca'
   FUENTES_CAB+="${FUENTES_CAB:+; }${NOMBRES[$i]} $n B sha256 ${SUMAS[$i]}"
 done
-
-# --- Destino: ni `.arnes` ni `.arnes/lectura` pueden ser enlaces; `.arnes` tiene que existir ya. -------------
-[ -L "$ARNES" ] && falla '.arnes es un enlace simbólico: no se escribe'
-[ -L "$DIR" ] && falla '.arnes/lectura es un enlace simbólico: no se escribe'
-[ -d "$ARNES" ] || falla "no existe $ARNES"
 
 AL_DIA=(); NUEVOS=(); DISTINTO=no
 for r in "${ROLES[@]}"; do
