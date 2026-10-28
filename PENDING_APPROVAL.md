@@ -43,7 +43,45 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-28: P-137-AI resuelta por el propietario, en § Resueltas.)_
+### [2026-10-28] (coordinadora, con el texto del auditor) — P-137-AJ: REQ-036. **La pasada de P-137-AI no cierra: el código cumple, pero cuatro textos siguen prometiendo inercia «sin `.arnes/config.json`».** Por P-137-AI, se para y se trae.
+
+**Qué cumple** (R-064, `docs/seguridad/registro-seguridad.md`; QA aprobó en `8038db3`):
+- Sin `.arnes/`, el hook de inicio y el generador no hacen nada, y la comprobación va primero.
+- Medido por el auditor: 0 bytes de salida y 15–23 ms, cuando en R-063 eran 10,9 s.
+- QA lanzó 30 ataques y ninguno rompió la inercia.
+- **La parte de seguridad de SEC-145 queda cerrada:** en un repositorio ajeno, el plugin ya no da instrucciones ni lee nada.
+
+**Qué no cierra (SEC-145 en mitigación, `contrato`, baja desde media).** Cuatro textos condicionan la inercia de **todos** los hooks a `.arnes/config.json`:
+- `README.md:86`;
+- `AGENTS.md:945` y `templates/AGENTS.md.tpl:923` (§13, normativos);
+- `ARCHITECTURE.md:24-25`.
+
+CA-17 contrata otra cosa, a propósito y como pediste: con `.arnes/` presente y sin `config.json`, el hook de inicio avisa y regenera los archivos por rol. Los textos de §13 dicen algo falso sobre lo construido, como en el precedente SEC-134.
+
+**Por qué no entró en la pasada:** el auditor reconoce que la omisión es suya. Su (A) de R-063 no incluía corregir esos textos, aunque los citaba. La pasada cumplió (A) al pie de la letra.
+
+**Lo cierra sólo texto, sin código.** Una frase en los cuatro sitios, igual en `AGENTS.md` y en la plantilla. La propuesta del auditor:
+
+> «Los hooks son **inertes** sin `.arnes/config.json`, salvo el de inicio de sesión, que lo es sin `.arnes/`: en un proyecto con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los archivos por rol aunque falte el manifiesto (REQ-036 CA-17).»
+
+En `README.md:86` basta con conservar «(no estorban en repos ajenos al arnés)».
+- **B5 no se mueve:** A-13.3 no obliga al analista. QA lo comprueba.
+- **Sí cambian** los archivos por rol del desarrollador, de QA y de seguridad, que se regeneran.
+
+**Opciones.**
+- **(A) Pasada acotada, sólo texto:**
+  1. el desarrollador cambia los cuatro sitios con la frase de R-064 §2 y regenera los archivos por rol;
+  2. QA lee los cuatro sitios, comprueba B5 y `--verificar`, y corre el banco una vez;
+  3. seguridad vuelve a firmar.
+  - *Coste:* una pasada corta. Los agentes que ya tienen contexto se reanudan, así que sale barato.
+- **(B) Cambiar la conducta para que coincida con la promesa:** el hook de inicio, inerte sin `.arnes/config.json`.
+  - *Coste:* un proyecto del arnés al que le falte el manifiesto ya no recibiría el recordatorio. Además va contra lo que pediste en P-137-AI y exige código, pruebas y otra vuelta.
+
+**Recomendación del auditor y de la coordinadora: (A).** Texto listo para adoptar:
+
+> Adopto P-137-AJ (A): los cuatro textos de inercia (`README.md:86`, `AGENTS.md:945`, `templates/AGENTS.md.tpl:923`, `ARCHITECTURE.md:24-25`) dicen la frase propuesta en R-064 §2; pasada acotada, sólo texto: el desarrollador los cambia y regenera los archivos por rol, QA los lee (y B5 no se mueve) y seguridad re-firma. Si no cierra, se para y me lo traes.
+
+**Qué bloquea.** El cierre de REQ-036 y, con él, el de 4a y el comienzo de F-137-24. Mientras esta entrada siga en Pendientes, la puerta no deja cerrar ningún REQ.
 
 ## Resueltas
 

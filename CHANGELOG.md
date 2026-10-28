@@ -2,6 +2,16 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, seguridad (R-064): re-firma de SEC-145 en la pasada de P-137-AI; sigue `con-hallazgos`, sin veto; `bloqueado`
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad.
+
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` abre P-137-AJ. Por P-137-AI, la pasada se para y se le trae al propietario.
+
+- **La inercia, conforme:** sin `.arnes/`, el hook de inicio sale 0 en su primera orden, sin emitir ni lanzar nada, y el generador comprueba `.arnes` antes de abrir ninguna fuente. Medido: con un directorio vacío, un `AGENTS.md` ajeno y una fuente de 1,5 MB, 0 bytes de salida en 15–23 ms (antes, 10,9 s). La parte de seguridad de SEC-145 queda cerrada.
+- **SEC-145 sigue `contrato`**, ahora `en-mitigación` y con severidad baja. `README.md:86`, `AGENTS.md:945`, `templates/AGENTS.md.tpl:923` y `ARCHITECTURE.md:24-25` prometen inercia «sin `.arnes/config.json`», pero con `.arnes/` y sin manifiesto el hook avisa y el generador escribe (CA-17). Lo cierra una frase por propiedad en esos cuatro textos, sin código y sin mover B5. La omisión era de la remediación (A) de R-063.
+- **`.arnes/` sin permisos:** sin hallazgo, porque lee más.
+- **Por P-137-AI, se para y se lleva al propietario.** Evidencia en `docs/seguridad/registro-seguridad.md`, R-064.
+
 ## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AI (A), QA: `QA: aprobado` sobre `03c7333`; `en-revisión` hasta la re-firma de seguridad
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester.
 

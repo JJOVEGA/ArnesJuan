@@ -11501,3 +11501,50 @@ Hasta 1.36, el import de `CLAUDE.md` inyectaba `AGENTS.md` entero en todo agente
   - CA-19, igual en plantilla y README.
 - `docs/seguridad/gobernanza-datos.md`: sin cambios. REQ-036 no maneja datos personales; SEC-146 es confidencialidad de archivos de la máquina, no un dato que el arnés gestione.
 - **Numeración:** esta revisión es **R-063** y abre **SEC-145**, **SEC-146**, **SEC-147** y **SEC-148**. Próximos libres: **R-064** y **SEC-149**.
+
+## Revisión R-064 — **Re-firma de SEC-145 en la pasada acotada de P-137-AI (A)** (REQ-036). `cand/1.37.0` @ `8038db3`, código validado por QA en `03c7333` (diff `661e3e8..8038db3`) — 2026-10-28 — **SIGUE CON HALLAZGOS, SIN VETO**
+
+- **Auditor:** `auditor-seguridad`, Opus (`claude-opus-5-5`, F-137-21). Con el archivo por rol y R-063 ya en contexto, como pidió la coordinadora. Leído: el literal de P-137-AI (A) que transcribe la coordinadora, el diff de `hooks/` y `tools/` de la pasada, CA-17 y CA-18 tal como quedan en `requirements/REQ-036.md` y el contexto de los cuatro textos de inercia. Orden de fases respetado: `QA: aprobado` sobre `03c7333`.
+- **Alcance:** sólo la re-firma de SEC-145. SEC-146, SEC-147 y SEC-148 siguen `instrumento` y `abiertos`, con F-137-25 (SEC-147) y F-137-26 (SEC-148, a 4b) en `docs/PENDIENTES.md`. No los re-reviso.
+
+### 1. La inercia es real y la comprobación va primero — **conforme**
+- **Hook.** En `hooks/inicio-sesion.sh` la primera orden es `[ -d "${CLAUDE_PROJECT_DIR:-.}/.arnes" ] || exit 0` (`:29`). Las líneas 1-28 son comentarios, así que no corre nada antes. `[` es interna. El recordatorio (`builtin printf`) y el generador van detrás.
+- **Generador.** En `tools/arnes-lectura-rol.sh:110-112`, `[ -d "$ARNES" ]` y los dos `[ -L ]` van **antes** del bucle de fuentes. Antes de ellos sólo se asignan variables y se definen funciones (`:32-104`): no se abre, no se mide (`sha256sum`) y no se lee ninguna fuente. Sin `.arnes`, `falla` llama a `borra_derivados`, que vuelve sin tocar nada porque no existe `.arnes/lectura`. Se retiró el bloque de destino antiguo, que estaba después de las fuentes. Ningún otro cambio.
+- **Medido** (Linux/WSL2, una corrida por punto, hook entero lanzado como lo lanza el cliente, tiempos con el arranque de `bash`). Con un directorio vacío, con un `AGENTS.md` ajeno y con una fuente de 1,5 MB, todos **sin `.arnes/`**: rc 0, **0 bytes** de salida, entre 15 y 23 ms. En R-063 la fuente grande costaba 10,9 s. El generador directo en el caso grande: rc 1, «no existe …/.arnes», 24 ms. Con `.arnes` como **archivo**: 0 bytes. **Control:** con `.arnes/` el recordatorio sale.
+- **La parte de seguridad de SEC-145 queda cerrada:**
+  - en un repositorio sin `.arnes/` el plugin ya no da ninguna instrucción a la sesión (LLM01) ni lee nada del proyecto;
+  - la promesa pública «no estorban en repos ajenos al arnés» (`README.md:86`, el paréntesis) ya es cierta.
+
+### 2. Lo que queda: los cuatro textos prometen inercia por el **manifiesto**, y el hook de inicio la tiene por **`.arnes/`** — **`contrato`, no cerrado**
+- **Diferencia.** Hay cuatro textos que la condicionan a la ausencia del **manifiesto** (citas literales):
+  - `README.md:86`: «Son **inertes** sin `.arnes/config.json`»;
+  - `AGENTS.md:945`, §13, bloque A-13.3: «Si `.arnes/config.json` no existe, los hooks son **inertes** (no estorban)»;
+  - `templates/AGENTS.md.tpl:923`, el mismo texto;
+  - `ARCHITECTURE.md:24-25`, justo después de presentar los **tres** registros, `SessionStart` incluido: «Sin manifiesto los hooks son **inertes**».
+
+  La conducta construida y contratada en CA-17 («Lo que decide si avisa es `.arnes/`, no el manifiesto») es otra: con `.arnes/` presente y `.arnes/config.json` ausente, el hook de inicio **avisa** y el generador **lee las fuentes y escribe** `.arnes/lectura/<rol>.md`. Ni es inerte ni deja de tocar el disco.
+- **Por qué sigue siendo `contrato`:** dos de esos textos, `AGENTS.md` §13 y su plantilla, son normativos, y los cuatro dicen algo falso sobre lo construido en ese caso. Es la clase de SEC-134. Lo que se arregló es la conducta, no la promesa.
+- **Por qué la severidad baja, de media a baja:**
+  - el caso que queda es un proyecto **del arnés**, con `.arnes/`, al que le falta el manifiesto;
+  - ahí avisar y regenerar es justo lo que el propietario quiso, porque el recordatorio no depende del manifiesto;
+  - no hay riesgo de seguridad ni hay nadie a quien la conducta perjudique: sólo es falso el texto.
+- **Responsabilidad propia, por escrito.** En R-063, mi (A) no incluía corregir esos textos, aunque los cité como la promesa desmentida. Fue una remediación incompleta: tenía que revisar la promesa entera. Por eso esta pasada, que siguió (A) al pie de la letra, no la cierra. No es un fallo del analista, del desarrollador ni de QA.
+- **Lo que lo cerraría (sólo texto, sin código).** Una frase por **propiedad** en los cuatro sitios, con la misma redacción en `AGENTS.md` y en la plantilla. Propuesta: «Los hooks son **inertes** sin `.arnes/config.json`, salvo el de inicio de sesión, que lo es sin `.arnes/`: en un proyecto con `.arnes/` recuerda a la coordinadora leer `AGENTS.md` y regenera los archivos por rol aunque falte el manifiesto (REQ-036 CA-17).» En `README.md:86` basta con que conserve «(no estorban en repos ajenos al arnés)».
+  - **Bytes:** A-13.3 no obliga al analista, así que no entra en su archivo por rol y **B5 no se mueve**. Cambian los archivos por rol de desarrollador, QA y seguridad de este repositorio, que se regeneran (`--verificar` 0).
+  - **Comprobación:** QA lee los cuatro sitios, y seguridad re-firma.
+  - **Por la regla del propietario** («Si no cierra, no hay (B): se para y me lo traes»), no se abre otra pasada sin él.
+
+### 3. `.arnes/` sin permisos (000), observado por QA — **no me preocupa; sin hallazgo**
+`[ -d ]` resuelve a un directorio y cuenta como «tiene `.arnes/`», que es la propiedad que fijó el propietario. Por eso avisa y lee las fuentes. Escribir falla, y `borra_derivados` y el hook no pueden borrar ni ver lo que haya dentro: sale 0 sin aviso de ruta. El agente tampoco puede leer un archivo por rol de dentro, así que cae al respaldo por marcas: **lee más**. Lo que ocurre es que el usuario se cierra un directorio propio; git no conserva ese modo, así que no lo puede traer un repositorio ajeno. Y quien trae `.arnes/` a propósito sólo consigue el recordatorio, que no le da más que su propio `CLAUDE.md`. La copia por enlace de SEC-146 sigue abierta con su clase.
+
+### 4. Veredicto — **`Seguridad: con-hallazgos (R-064, 2026-10-28)` en REQ-036, sin veto**
+- **SEC-145 → `en-mitigación`**, `contrato`, severidad **baja**. El mecanismo está mitigado y verificado; falta el write-back de los cuatro textos (§2).
+- **(i) Acción que impide:** **cerrar** REQ-036. `guard-completado` deniega con un `contrato` abierto (§6 «No todo hallazgo bloquea», §13), y por eso impide también **publicar** 1.37.0 por delegación con REQ-036 dentro. No impide **implementar** ni **probar**.
+- **(ii) Parte afectada:** sólo los cuatro textos de §2. El código de la pasada es conforme.
+- **(iii) Evidencia:** §1 y §2, con sus líneas.
+- **(iv) Lo resuelve:** una decisión del propietario sobre si se corrigen esos textos, con la frase propuesta o la que él fije. Después, QA lo comprueba y seguridad re-firma. **No hay más pasadas sin el propietario** (P-137-AI). `Estado: bloqueado`.
+- **Estado de seguridad revisado de REQ-036** = el de R-063, más dos condiciones:
+  - el hook de inicio de sesión sale 0 sin emitir ni lanzar nada si `.arnes` no resuelve a un directorio, y ésa es su primera orden;
+  - el generador comprueba `.arnes` y sus enlaces antes de abrir ninguna fuente.
+- `docs/seguridad/gobernanza-datos.md`: sin cambios.
+- **Numeración:** esta revisión es **R-064** y no abre hallazgos. Próximos libres: **R-065** y **SEC-149**.
