@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · P-137-AG (A) y P-137-AF resueltas por el propietario: B5 a 75 590 B con la frase de L4; 1.36.3 no se publica; F-137-24 pasa a 1.37 con prioridad alta
+> Origen: P-137-AG, P-137-AF · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- `PENDING_APPROVAL.md`: la resolución, literal, en § Resueltas; la cola de Pendientes queda vacía.
+- `docs/PENDIENTES.md`: F-137-24 (las gates fuera del hook, el arreglo de #63) pasa de 1.38 a 1.37, como primera intervención tras cerrar 4a. Lleva lo aprendido del hotfix no publicado.
+- **Siguiente en REQ-036:** el desarrollador aplica la frase en las cuatro definiciones y sube B5 a 75 590 B. Después, el write-back del analista y QA vuelta 3 de 3.
+
 ## [Interno] — 2026-10-27 · REQ-036, última pasada correctiva del desarrollador (QA-036-03, marcas parciales); `en-revisión`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
 

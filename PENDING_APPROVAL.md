@@ -43,7 +43,38 @@
 
 ## Pendientes
 
-### [2026-10-27] (coordinadora) — P-137-AG: REQ-036, última pasada correctiva. **Un residual `usuario/dinero` (L4) sólo se cierra con una frase en las definiciones, y esa frase sube B5 por encima de los 75 520 B.** Además, falta confirmar el matiz de P-137-Y.
+_(Vacía desde el 2026-10-28: P-137-AG resuelta por el propietario, en § Resueltas.)_
+
+## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AG (A)** y el matiz de P-137-Y confirmado; **P-137-AF**: 1.36.3 no se publica, y el arreglo de #63 va a 1.37 como F-137-24, con prioridad alta
+
+> Adopto P-137-AG (A) y confirmo el matiz de P-137-Y. Sigue la vuelta 3 de
+> QA de REQ-036.
+>
+> P-137-AF: 1.36.3 no se publica. El arreglo de #63 va a 1.37 como
+> F-137-24, con prioridad alta (primera intervención tras cerrar 4a), y
+> partiendo de lo aprendido: las respuestas dobles con carga vienen del
+> arreglo, no del problema original. Redáctame el comentario del issue #63
+> (causa, por qué no sale 1.36.3, que va en 1.37, y la salida manual del
+> propietario mientras tanto); lo publico yo.
+>
+> Antes de seguir: comitea en la rama de evidencia todo lo de
+> issue-63-plazo-gates/ y recuérdame el push.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **P-137-AG (A)** se adopta con el texto propuesto en la ficha de abajo:
+  - la frase va a las cuatro definiciones (+70 B cada una);
+  - B5 queda en 75 590 B como trinquete, con su razón;
+  - el techo de contrato sigue en 75 000 B.
+- **Orden.** El mismo desarrollador aplica la frase dentro de la última pasada. Después, el analista escribe CA-20 y la correspondencia (P-137-AG y la confirmación de P-137-Y). Por último, QA vuelta 3 de 3.
+- **P-137-Y.** Desde aquí, la autorización verificable del matiz (`arnes-upgrade` conserva el import de CLAUDE.md mientras AGENTS.md no tenga marcas) es esta resolución.
+- **P-137-AF.** El registro del hotfix vive en la rama `hotfix/1.36.3`: su `PENDING_APPROVAL.md` la transcribe y deja P-137-AE sin efecto (SEC-133 sigue en F-136-23).
+  - En esta rama, F-137-24 pasa de 1.38 a 1.37 en `docs/PENDIENTES.md`.
+  - La duda de 1.37 o 1.38 en P-137-AD queda resuelta por este texto: 1.37.
+- **Evidencia.** `issue-63-plazo-gates/` comiteado en la rama de evidencia como `51bb090`.
+
+### P-137-AG (texto de la consulta, conservado; resuelta arriba) — REQ-036, última pasada correctiva. **Un residual `usuario/dinero` (L4) sólo se cierra con una frase en las definiciones, y esa frase sube B5 por encima de los 75 520 B.** Además, falta confirmar el matiz de P-137-Y.
 
 **Qué queda tras la vuelta 2 de QA y el write-back del analista** (`f648e94`):
 - **QA-036-03 (`usuario/dinero`), variante con marcas parciales.** Si el texto propio del proyecto está entre el título y la primera marca, después de `arnes-upgrade` no lo lee ningún subagente. En 1.36 lo leían todos, por el import de CLAUDE.md.
@@ -74,8 +105,6 @@
 - La pasada del desarrollador ya terminó con la opción (a): banco 3094/0/31.
 - Si adoptas (A), el mismo desarrollador aplica la frase en el árbol dentro de la misma pasada. Luego van el write-back del analista en CA-20 y B5 sube a 75 590 B. Después, QA de la vuelta 3.
 - Si eliges (B), QA de la vuelta 3 sale ya, con tu aceptación escrita.
-
-## Resueltas
 
 ### RESUELTA (propietario, 2026-10-27) — **P-137-AC (A)** y **P-137-AB (A)**: B5 sube a 75 520 B; hotfix 1.36.3 mínimo desde `main`, con prioridad sobre el resto de 1.37; ficha para 1.38 (gates fuera del hook, veredicto con hash)
 

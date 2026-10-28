@@ -2552,8 +2552,18 @@ ninguna mata al hook.»
   Cualquiera de ellas toca el contrato de CA-18.
 - **Destino:** clasificado por la coordinadora (2026-10-26) como `instrumento` y fuera de la entrega de REQ-036; se informa al propietario al cerrar 4a. **Dueño:** `analista-requerimientos` (contrato), luego `desarrollador`. **Cuándo:** se mide en el uso real; si las comisiones después de la primera de cada sesión pierden el ahorro de 4a, entra en 1.37 · 5.
 
-### F-137-24 — 1.38, pieza de veredictos con hash: las quality gates fuera del hook (decisión del propietario, 2026-10-27)
+### F-137-24 — 1.37, prioridad alta (primera intervención tras cerrar 4a): las quality gates fuera del hook, con veredicto ligado al hash del árbol; arreglo del issue #63 (decisión del propietario, 2026-10-27; adelantada de 1.38 por P-137-AF, 2026-10-28)
 - **Literal del propietario:** «las gates no deberían correr dentro del hook. QA o la coordinadora las corren antes y registran el resultado con el hash del árbol; la puerta sólo comprueba que el árbol actual es ese. Así el cierre tarda un segundo sea cual sea el proyecto.»
 - **Origen:** issue #63. Con las gates dentro del hook, el cierre queda atado al límite del cliente (≈ 600 s, medido en 2.1.289) y a SEC-132 (a); el hotfix 1.36.3 sólo separa sus relojes.
 - **Relación:** sustituye la ejecución de gates que hoy hace `guard-completado`. Encaja con F-136-22 (lecciones L4 y L5: la gate es código no confiable) y con la frontera de confianza del entorno (SEC-131).
-- **Dueño:** `analista-requerimientos` (contrato) y `desarrollador`. **Cuándo:** 1.38.
+- **Dueño:** `analista-requerimientos` (contrato) y `desarrollador`. **Cuándo:** 1.37, con prioridad alta, primera intervención tras cerrar 4a (P-137-AF, 2026-10-28). Hasta el 2026-10-28 decía 1.38.
+- **P-137-AF, literal del propietario:** «1.36.3 no se publica. El arreglo de #63 va a 1.37 como F-137-24, con prioridad alta (primera intervención tras cerrar 4a), y partiendo de lo aprendido: las respuestas dobles con carga vienen del arreglo, no del problema original.»
+- **Lo aprendido en el hotfix no publicado** (rama `hotfix/1.36.3`, `46367aa`; evidencia `issue-63-plazo-gates/`, `51bb090`):
+  - **Lo que hay que llevarse:**
+    - el plazo propio no debe contar el tiempo de las gates;
+    - una gate sólo da su veredicto por su código de salida;
+    - los casos I1–I8 y P1–P6 de la sección 53 (gate roja que se hace pasar por verde, gate que mata o detiene el reloj, gate que lee su entrada estándar: SEC-133 / E1).
+  - **Lo que introdujo el arreglo y no el problema original:** con carga, un hijo bifurcado del hook ejecutaba la trampa de salida heredada y emitía un segundo documento JSON. Con dos documentos, el cliente no aplica el deny.
+  - **Lo que quedó sin explicar:** un `wait -n -p` que no volvía al terminar la gate (3 cuelgues en 3 870 cierres con carga).
+  - Sacar las gates del hook quita la espera entera.
+- **Medido en CA-08 de REQ-037** (`claude -p`, CLI 2.1.289): en v1.35.0 y v1.36.0, un cierre cuyas gates pasan de ≈ 600 s se aplica sin veredicto cuando el cliente mata el hook.
