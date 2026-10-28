@@ -2,6 +2,22 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AI (A), QA: `QA: aprobado` sobre `03c7333`; `en-revisión` hasta la re-firma de seguridad
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Lectura:** `.arnes/lectura/qa.md` entero, hasta la línea 1325, en cuatro tramos.
+- **Correspondencia:** CA-17, CA-18 y las filas de P-137-AI coinciden con el literal del propietario. Sin diferencias no autorizadas. Queda para seguridad la nota de «inertes sin `.arnes/config.json`» frente a `.arnes/`.
+- **Reproducción a mano contra `7af469c`:**
+  - F1, F2, F3 y c3 (archivo y enlace roto), en la candidata: 0 B por las dos salidas, señuelo sin disparar, nada creado, el generador sólo dice «no existe …/.arnes», y 1,3–1,8 ms.
+  - En `7af469c`: el recordatorio de 259 B en todos; el señuelo, en F2, F3 y c3; F3 tarda 2,5 s. El fail-before es real.
+- **30 ataques sin emitir, leer ni tardar donde no hay `.arnes/`:** variable vacía, sin definir, relativa, con espacios o con salto de línea; `.arnes` como FIFO, enlace a archivo, en bucle o a `/dev/null`; permisos; `cwd` distinto.
+  - `.arnes/` sin permisos resuelve a un directorio y avisa, que es lo contratado.
+  - Lo que tarda allí es SEC-147 (F-137-25).
+- **Controles:** c1, c2 y c4 no se mueven en ninguno de los dos árboles. `c17a_51` sigue probando lo mismo.
+- **B5:** 75 590 B pasa y 75 591 B falla. Los archivos por rol no cambian y `--verificar` da 0.
+- **Banco:** una corrida, 3117 PASS · 0 FAIL · 33 SKIP = 3150 (dos relojes INCONCLUSO de REQ-033). Autoprueba 117/0 y gates de §7 en verde.
+- **Sin hallazgos nuevos.** Siguen abiertos, sin bloquear, QA-036-10, QA-036-12 y SEC-146 a 148 (`instrumento`). SEC-145 (`contrato`) lo cierra la re-firma de seguridad. Evidencia en `docs/qa/REQ-036.md`.
+
 ## [Interno] — 2026-10-28 · REQ-036, desarrollador: pasada acotada de P-137-AI (A), sin `.arnes/` el hook y el generador no hacen nada; `en-progreso` → `en-revisión`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
 
