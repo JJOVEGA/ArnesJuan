@@ -2,8 +2,21 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), QA: `QA: aprobado` sobre `5217212`; QA-036-03 cerrado; `en-revisión` hasta seguridad
+> Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Correspondencia:** CA-18 coincide con P-137-AH (A), y las filas de P-137-AG y P-137-Y citan como literal la forma corta. Sin diferencias no autorizadas. Observación: P-137-AH no tiene fila propia, aunque su literal está en el `Origen:`.
+- **QA-036-03 cerrado:** el montaje S9 completo con una línea `# ` propia en `AGENTS.md` y en el README las lleva a los cuatro archivos por rol, con aviso. En `d24b383`, a ninguno. 19 ataques, entre ellos tres `# ` seguidas, el título tras blancos, `#` sola y `# ` tras texto: ninguno lee menos, y el extractor del banco coincide con el generador.
+- **Bloque S3d, añadido con `cat >>` (PR-137-3):** revisado entero. Hace lo que dice CA-18, no cambia nada fuera de lo autorizado y su fail-before es real.
+- **B5:** 75 590 B pasa y 75 591 B falla. Los archivos por rol de este repositorio no cambian y `--verificar` da 0.
+- **Banco:** una corrida, 3101 PASS · 0 FAIL · 31 SKIP = 3132. Autoprueba 117/0 y gates de §7 en verde.
+- **Siguen abiertos**, sin bloquear, QA-036-10 y QA-036-12 (`instrumento`). Para `completado` falta `Seguridad: aprobado`.
+- Evidencia en `docs/qa/REQ-036.md`.
+
 ## [Interno] — 2026-10-28 · REQ-036, pasada acotada de P-137-AH (A), desarrollador: el título es sólo la primera línea `# `; caso S3d; `en-revisión`
 > Origen: Interno (sin commit) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **(coordinadora)** `docs/PENDIENTES.md` registra PR-137-3 (comiteado en `5217212`). El bloque S3d se añadió con `cat >>` y no con Edit, y el archivo por rol no se leyó entero.
 
 - **Generador** (`tools/arnes-lectura-rol.sh`): sólo la primera línea no en blanco, si empieza por `# `, es el título. Cualquier otra línea no en blanco antes de la primera marca, también otra `# …`, va a los cuatro archivos por rol con aviso `fuente:línea`.
 - **Banco:** el extractor aparte, con la misma regla en las dos partes de la sección 52. S3d en `AGENTS.md` y en el README, con fail-before contra `d24b383`, más el control de la primera línea sin `# `. La parte 2 pasa de 9 a 14 casos y `CASOS_ESPERADOS` de 3127 a 3132.
