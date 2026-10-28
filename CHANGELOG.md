@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada de sólo texto de P-137-AN (A) y su lectura de QA; REQ-037 `QA: aprobado`, `en-revisión` hasta la firma de seguridad
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`, analista) y Opus 5.5 (`claude-opus-5-5`, QA) · agente: analista-requerimientos, qa-tester; registro de la coordinadora.
+
+- **Analista nuevo** (`4e0fb4e`): CA-05 (ii) promete sólo las formas que nombran el registro. Las tres formas de QA-037-14 pasan al riesgo (1) y su arreglo, a F-137-24-B. El manifiesto (`cp …/config.json .arnes/`, preexistente) va a la pieza b. La misma corrección llega a las notas `[1.36.3]`, a §13 de AGENTS.md y su plantilla, a ARCHITECTURE, ADR-019 y la skill `arnes-upgrade`. Costó 96 589 tokens no cacheados.
+- **QA nuevo:** código sin cambios desde `d89316c`. `install` sobre el registro se deniega, frente a allow en v1.36.2. Ningún texto vigente promete de más. Cierra QA-037-14 como declarado por el propietario; QA-037-08 (`instrumento`) sigue abierto. Costó 94 521 tokens no cacheados.
+- Con los agentes reanudados, cada pasada se estimaba en 330–520 k (ajuste a P-137-AM).
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN resuelta por el propietario, (A)
 > Origen: P-137-AN · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
 
