@@ -1,0 +1,2 @@
+sin corte: rc=2 ms=119563
+a 4,5 s: readlink en curso=0

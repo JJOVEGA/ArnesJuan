@@ -1,0 +1,10 @@
+# reloj REQ-033 a mano, N=31, 2026-10-28T17:47:02-06:00, loadavg 1.55 1.98 1.77
+[rm .arnes/config.json] candidata min=31.4 mediana=33.4 ms
+[rm .arnes/config.json] d89316c min=31.2 mediana=33.7 ms
+[rm .arnes/config.json] v1.36.1 min=24.6 mediana=26.7 ms
+[mv hooks/lib.sh docs/PLAN.md] candidata min=41.3 mediana=44.9 ms
+[mv hooks/lib.sh docs/PLAN.md] d89316c min=42.0 mediana=44.4 ms
+[mv hooks/lib.sh docs/PLAN.md] v1.36.1 min=33.8 mediana=36.0 ms
+[ls -la] candidata min=28.1 mediana=29.5 ms
+[ls -la] d89316c min=28.2 mediana=29.8 ms
+[ls -la] v1.36.1 min=24.8 mediana=27.7 ms

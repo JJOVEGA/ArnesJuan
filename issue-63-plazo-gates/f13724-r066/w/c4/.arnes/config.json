@@ -1,0 +1,19 @@
+{
+  "agentes": {
+    "agente_codigo": "desarrollador",
+    "conocidos": [
+      "analista-requerimientos",
+      "desarrollador",
+      "qa-tester",
+      "auditor-seguridad"
+    ]
+  },
+  "codigo_app": {
+    "globs": [
+      "src/*"
+    ]
+  },
+  "quality_gates": [
+    "! grep -qs mal docs/qa/x.md"
+  ]
+}

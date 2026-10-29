@@ -1,0 +1,1 @@
+hash-object 2 GiB disperso: 8536 ms

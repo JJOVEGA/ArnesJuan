@@ -1,0 +1,9 @@
+herramienta rc=0
+  1 GiB disperso, veredicto caducado: cand deny:el veredicto de las quality gates (.arnes/gates-veredic en 4620 ms
+  1 GiB disperso: base deny:falló la quality gate `grep -q bien src/a.txt`. Corríge en 113 ms
+herramienta rc=0
+  4 GiB disperso, veredicto caducado: cand deny:el veredicto de las quality gates (.arnes/gates-veredic en 17836 ms
+  4 GiB disperso: base deny:falló la quality gate `grep -q bien src/a.txt`. Corríge en 110 ms
+herramienta rc=0
+  16 GiB disperso, veredicto caducado: cand deny:ARNES: el hook termino sin concluir el juicio de esta l en 60109 ms
+  16 GiB disperso: base deny:falló la quality gate `grep -q bien src/a.txt`. Corríge en 111 ms

@@ -1,0 +1,43 @@
+## S1 control: cierre legitimo (gate verde, herramienta, huella vigente)
+herramienta rc=0
+  cand: allow
+  base: allow
+## S2 control: gate roja; registro rojo
+herramienta rc=1
+  cand: deny:en el veredicto registrado (.arnes/gates-veredicto.json) la quality gate `grep 
+  base: deny:falló la quality gate `grep -q mal src/a.txt`. Corrígela y reintenta (ver AGE
+## S3 archivo IGNORADO cambia tras el verde (gate lo evalua)
+herramienta rc=0
+  cand: allow
+  base: deny:falló la quality gate `! grep -qs mal build/out.txt`. Corrígela y reintenta (
+## S4 ruta EXCLUIDA cambia tras el verde (gate la evalua: docs/qa/)
+herramienta rc=0
+  cand: allow
+  base: deny:falló la quality gate `! grep -qs mal docs/qa/x.md`. Corrígela y reintenta (v
+## S5 enlace simbolico seguido hacia FUERA del arbol; cambia el destino tras el verde
+herramienta rc=0
+  cand: allow
+  base: deny:falló la quality gate `grep -q bien src/ext/f.txt`. Corrígela y reintenta (ve
+## S6 repositorio anidado: cambia su contenido tras el verde
+herramienta rc=0
+  cand: allow
+  base: deny:falló la quality gate `grep -q bien sub/f.txt`. Corrígela y reintenta (ver AG
+## S7 cambio TRANSITORIO durante la corrida, restaurado antes del hash final (proceso concurrente, no gate)
+herramienta rc=0
+  arbol final: mal; registro rc: [0,0,0]
+  cand: allow
+  base (mismo arbol final, sin carrera): deny:falló la quality gate `grep -q bien src/a.txt`. Corrígela y reintenta (ver AG
+  base, misma carrera durante el hook:
+    allow
+## S8 la misma carrera hecha por gates (gate 1 cambia, gate 3 restaura)
+herramienta rc=0
+  arbol final: mal
+  cand: allow
+  base: allow
+## S9 gate hostil que mata al hook (v1.36.2) / a la herramienta (cand), con una roja detras
+sondas.sh: line 25: 220761 Killed                     bash "$T" --quien auditor-seguridad > /dev/null 2>&1
+herramienta rc=137
+  registro: ls: cannot access '/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c
+  cand: deny:el proyecto tiene quality gates y no hay veredicto de ellas (.arnes/gates-vered
+sondas.sh: line 18: 220796 Killed                     CLAUDE_PROJECT_DIR="$P" timeout 60 bash "$H/hooks/guard.sh" 2> /dev/null
+  base: rc=137 salida=

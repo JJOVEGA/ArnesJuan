@@ -1,0 +1,10 @@
+# sonda SEC-151, 2026-10-28T17:40:01-06:00, loadavg 0.09
+[S1 disperso ] herramienta(verde previo) rc=0; cierre: deny | huella: el calculo no termino en 30 s, su presupuesto propio, y se corto) | 30153 ms | docs=1; vivos: ninguno
+[S2 fifo ] herramienta(verde previo) rc=0; cierre: deny | huella: el calculo no termino en 30 s, su presupuesto propio, y se corto) | 30155 ms | docs=1; vivos: ninguno
+[S2b fifoseguido ] herramienta(verde previo) rc=0; cierre: deny | caducado | 108 ms | docs=1; vivos: ninguno
+[E1 disperso ARNES_HASH_PRESUPUESTO_S=999] herramienta(verde previo) rc=0; cierre: deny | huella: el calculo no termino en 30 s, su presupuesto propio, y se corto) | 30154 ms | docs=1; vivos: ninguno
+[E2 ninguna ARNES_HASH_PRESUPUESTO_S=0] herramienta(verde previo) rc=0; cierre: allow | - | 109 ms | docs=0; vivos: ninguno
+[E3 ninguna ARNES_HASH_PRESUPUESTO_S=-5] herramienta(verde previo) rc=0; cierre: allow | - | 108 ms | docs=0; vivos: ninguno
+[L1 ninguna ] herramienta(verde previo) rc=0; cierre: allow | - | 111 ms | docs=0; vivos: ninguno
+[T1 herramienta, árbol con disperso 256G] rc=2 ms=30049 registro=no err=<arnes-gates: no puedo medir el arbol: el calculo no termino en 30 s, su presupuesto propio, y se corto>; vivos: ninguno
+[T2 herramienta, .gitignore FIFO, env 999] rc=2 ms=30045 registro=no err=<arnes-gates: no puedo medir el arbol: el calculo no termino en 30 s, su presupuesto propio, y se corto>; vivos: ninguno

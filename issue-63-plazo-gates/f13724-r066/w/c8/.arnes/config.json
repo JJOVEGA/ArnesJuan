@@ -1,0 +1,21 @@
+{
+  "agentes": {
+    "agente_codigo": "desarrollador",
+    "conocidos": [
+      "analista-requerimientos",
+      "desarrollador",
+      "qa-tester",
+      "auditor-seguridad"
+    ]
+  },
+  "codigo_app": {
+    "globs": [
+      "src/*"
+    ]
+  },
+  "quality_gates": [
+    "cp src/a.txt /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r066/s8.bak; echo bien > src/a.txt",
+    "grep -q bien src/a.txt",
+    "cp /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r066/s8.bak src/a.txt"
+  ]
+}

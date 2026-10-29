@@ -1,0 +1,5 @@
+presupuesto=1 rc=2 ms=448 motivo=el calculo no termino en 1 s, su presupuesto propio, y se co vivos_readlink=0 bash_hijos=0
+presupuesto=2 rc=2 ms=1468 motivo=el calculo no termino en 2 s, su presupuesto propio, y se co vivos_readlink=0 bash_hijos=0
+presupuesto=3 rc=2 ms=3520 motivo=el calculo no termino en 3 s, su presupuesto propio, y se co vivos_readlink=0 bash_hijos=0
+presupuesto=5 rc=2 ms=5502 motivo=el calculo no termino en 5 s, su presupuesto propio, y se co vivos_readlink=0 bash_hijos=0
+presupuesto=8 rc=2 ms=8485 motivo=el calculo no termino en 8 s, su presupuesto propio, y se co vivos_readlink=0 bash_hijos=0

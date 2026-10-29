@@ -1,0 +1,21 @@
+{
+  "agentes": {
+    "agente_codigo": "desarrollador",
+    "conocidos": [
+      "analista-requerimientos",
+      "desarrollador",
+      "qa-tester",
+      "auditor-seguridad"
+    ]
+  },
+  "codigo_app": {
+    "globs": [
+      "src/*"
+    ]
+  },
+  "quality_gates": [
+    "sleep 1",
+    "grep -q bien src/a.txt",
+    "sleep 2"
+  ]
+}

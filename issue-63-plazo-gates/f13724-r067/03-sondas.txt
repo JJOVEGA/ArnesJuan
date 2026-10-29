@@ -1,0 +1,19 @@
+## S1 cierre legitimo
+herramienta rc=0
+  cand: allow [106 ms]
+  base: allow [106 ms]
+## S2 caducado normal (cambio de codigo tras el verde)
+  cand: deny:el veredicto de las quality gates (.arnes/gates-veredicto.json) no es del arbol [111 ms]
+  base: deny:falló la quality gate `grep -q bien src/a.txt`. Corrígela y reintenta (ver AG [109 ms]
+## S10 caducado + disperso de 64 GiB, con ARNES_HASH_PRESUPUESTO_S=1000 en el entorno del hook
+  cand: deny:la huella del arbol no se calculo dentro del presupuesto propio de la huella (e [30153 ms]
+  base: deny:falló la quality gate `grep -q bien src/a.txt`. Corrígela y reintenta (ver AG [113 ms]
+  vivos tras el corte: git=0
+## S10b la herramienta sobre ese arbol (verde de gates, huella que no termina)
+herramienta rc=2
+  registro: 1=ausente
+## S12 .gitignore que es una FIFO, con verde previo
+herramienta rc=0
+  cand: deny:la huella del arbol no se calculo dentro del presupuesto propio de la huella (e [30158 ms]
+  base: allow [107 ms]
+  vivos tras el corte: git=0

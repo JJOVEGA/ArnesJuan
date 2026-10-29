@@ -1,0 +1,20 @@
+# lectura P-137-AN, 2026-10-28T16:16:18-06:00
+  [install F .arnes/gates-veredicto.json] deny | deny | allow
+  [install -m 644 F .arnes/gates-veredicto.json] deny | deny | deny
+  [install -D F .arnes/gates-veredicto.json] deny | deny | deny
+  [install -t .arnes F] deny | deny | deny
+  [install -m 644 F .arnes/] allow | allow | allow
+  [cp F .arnes/gates-veredicto.json] deny | deny | allow
+  [mv F .arnes/gates-veredicto.json] deny | deny | allow
+  [mv .arnes/gates-veredicto.json /tmp/x] deny | deny | allow
+  [echo {} > .arnes/gates-veredicto.json] deny | deny | allow
+  [echo {} >> .arnes/gates-veredicto.json] deny | deny | allow
+  [echo {} | tee .arnes/gates-veredicto.json] deny | deny | allow
+  [sed -i s/a/b/ .arnes/gates-veredicto.json] deny | deny | allow
+  [ln -s F .arnes/gates-veredicto.json] deny | deny | allow
+  [ln F .arnes/gates-veredicto.json] deny | deny | allow
+  [cp F .arnes/] allow | allow | allow
+  [mv F .arnes] allow | allow | allow
+  [link F .arnes/gates-veredicto.json] allow | allow | allow
+  [cp -l F .arnes] allow | allow | allow
+  [cp --link F .arnes/] allow | allow | allow

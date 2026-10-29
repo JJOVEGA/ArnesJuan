@@ -1,0 +1,4 @@
+herramienta rc=0 archivos=290
+# cierre legítimo en un árbol normal, N=21 alternados, 2026-10-28T17:43:23-06:00, loadavg 0.52 0.87 1.37
+candidata: allow=21/21 deny=0 min=89.5 mediana=101.0 ms
+d89316c: allow=21/21 deny=0 min=90.3 mediana=98.9 ms

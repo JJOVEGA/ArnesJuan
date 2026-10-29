@@ -1,0 +1,15 @@
+# S4 y variantes, a nivel de librería, 2026-10-28T17:41:45-06:00
+[control, árbol normal] 0|85c0f31f3c8a0f2b2cd08f77b19baa2f69af7fb6|
+[el cálculo muere (KILL a sí mismo)] 2||el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado
+[el proceso sale sin resultado] 2||el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado
+[el proceso escribe H con basura] 2||el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado
+[el proceso escribe H vacío] 2||el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado
+[el proceso escribe una línea fuera del protocolo] 2||el corte del calculo no se pudo armar, o el proceso que calcula murio sin dar resultado
+[el proceso escribe M (no medible legítimo)] 1||sin git
+[el cálculo da exit 1 sin motivo] 1||
+[env ARNES_HASH_PRESUPUESTO_S=0 antes de cargar (control: la carga lo pisa)] 0|85c0f31f3c8a0f2b2cd08f77b19baa2f69af7fb6|
+con env=0 al cargar: ARNES_HASH_PRESUPUESTO_S=30
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa-s151/arb/hooks/lib.sh:510:ARNES_HASH_PRESUPUESTO_S=30
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa-s151/arb/hooks/lib.sh:524:  local fin=$(( SECONDS + ARNES_HASH_PRESUPUESTO_S )) f='' l r rest s='' p=
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa-s151/arb/hooks/lib.sh:553:    agotado) ARNES_HASH_MOTIVO="el calculo no termino en $ARNES_HASH_PRESUP
+/tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/qa-s151/arb/hooks/guard-completado.sh:982:        # SEC-151 (P-137-AO): la huella tiene su presupuesto p

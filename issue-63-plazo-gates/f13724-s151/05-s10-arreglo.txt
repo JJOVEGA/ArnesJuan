@@ -1,0 +1,6 @@
+herramienta rc=0
+rc=0
+ARNES: no se puede marcar 'requirements/REQ-001.md' como 'completado': la huella del arbol no se calculo dentro del presupuesto propio de la huella (el calculo no termino en 30 s, su presupuesto propio, y se corto), asi que no se puede comprobar que el veredicto de las quality gates (.arnes/gates-veredicto.json) sea del arbol ac
+arreglo: 30152 ms (presupuesto 30 000 ms; umbral del cliente 600 000 ms)
+sin procesos vivos del proyecto
+fin 2026-10-28T17:26:24-06:00

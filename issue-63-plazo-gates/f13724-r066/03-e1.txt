@@ -1,0 +1,8 @@
+## E1 (SEC-133): gate que lee su entrada estandar, con una roja detras
+herramienta rc=1
+  registro rc: [0,1]
+  cand: deny:en el veredicto registrado (.arnes/gates-veredicto.json) la quality gate `false
+  base: allow
+## S11 sin quality_gates (control, sin registro)
+  cand: allow
+  base: allow
