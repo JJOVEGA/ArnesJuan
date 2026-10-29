@@ -326,6 +326,21 @@ CHANGELOG — ArnesJuan
 
 **Coste** (REQ-037 CA-10, medido por el desarrollador frente a v1.36.2 en la misma corrida; sección 53 del banco): el cierre con veredicto válido de una gate `sleep 35` y el de una gate `true` tardan lo mismo (≈ 0,95×), sin ejecutar ninguna gate; frente al cierre con `quality_gates: []` de v1.36.2, **+2 procesos** (tres de git para el hash y uno de `jq` para el registro, menos el `mktemp` y el `rm` que ya no hacen falta); ≈ 0,1 s en el árbol de este repositorio (289 archivos); doblar los archivos del árbol dobla el hash (cociente ≈ 2,07). El camino común y el cierre sin gates: **0 procesos** añadidos (el segundo, 2 menos).
 
+**Cuatro FAIL de reloj en el CI, declarados `instrumento` por decisión del propietario** (P-137-AP, 2026-10-29; PR #64, run 40897033461; REQ-033 RELOJ CA-06, techos **operativos**, no de contrato).
+- **En el runner**, frente a v1.36.1: camino común **1,82×** (techo 1,25×), `mv` con origen protegido 1,44×, `Write` del manifiesto con contenido 1,50× y `Write` vacío del manifiesto 1,42× (techo 1,30× los tres).
+- **La medición dirigida en reposo** (Linux/WSL2, 12 núcleos, carga 0,04–0,5): las mismas entradas que la sección 49, mínimo de 10 corridas con los árboles alternados, en una sola medición. Cocientes de mínimos:
+
+  | Rama | Frente a v1.36.2 | Frente a v1.36.1 |
+  |---|---|---|
+  | Camino común | **1,086×** | 1,070× |
+  | `mv` con origen protegido | 1,044× | 1,239× |
+  | `Write` con contenido | 1,101× | 1,253× |
+  | `Write` vacío | 1,185× | **1,376×** |
+
+  La regla del propietario: si el camino común queda en ≤ 1,10× frente a v1.36.2, es ruido del runner.
+- **`Write` vacío del manifiesto supera su techo operativo también en reposo:** 1,376× frente a v1.36.1, del que 1,161× ya estaba en v1.36.2. En mínimos son ≈ 41,9 ms frente a 30,4 ms (v1.36.1) y 35,3 ms (v1.36.2).
+- **Las medianas del candidato salen más altas** que las de v1.36.2 en las cuatro ramas; en el camino común, 32,0 frente a 27,4 ms.
+
 **Riesgo declarado y aceptado por el propietario para 1.36.3** (P-137-AL, 2026-10-28; QA-037-12; REQ-037 CA-05, riesgo (5)): **el veredicto confía en quien lanza la herramienta, entorno incluido.** Un `PATH` con una orden falsa o una función exportada con el nombre de una orden que la herramienta usa dan un **verde con hash válido**, como la escritura por consola o por una forma que el detector de `Bash` no ve (riesgo (1)). Es la misma superficie de SEC-131 (a), que pasa del hook a la herramienta: **ya no es «sin cambio»**. El endurecimiento —que sólo `qa-tester` y la coordinadora lancen la herramienta, y que ésta no confíe en el entorno heredado— va a **1.37** (ficha F-137-24-B). Además, un registro **enlazado** (simbólico o con más de un enlace duro) se juzga ilegible, y `ln` y `ln -s` sobre el registro se deniegan (QA-037-11).
 
 **Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` y del entorno que hereda, y la denegación de `cp`/`mv`/`install` al directorio `.arnes/`, `link` y `cp -l` (propuestos para 1.37, F-137-24-B); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).

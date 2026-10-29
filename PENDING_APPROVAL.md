@@ -45,6 +45,25 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-29) — **P-137-AP**: los 4 FAIL de reloj del CI del PR #64 se deciden con una medición dirigida en reposo; con el camino común del candidato en ≤ 1,10× frente a v1.36.2, se publica y se declaran `instrumento`
+
+> CI del PR #64 (run 40897033461): 4 FAIL, todos REQ-033 RELOJ CA-06; el
+> camino común a 1,82× frente a v1.36.1. Antes de publicar, medición
+> dirigida en la máquina en reposo, lanzada por ti fuera de los agentes:
+> mínimo de 10 corridas del camino común, de mv con origen protegido y de
+> los dos Write del manifiesto, en v1.36.1, v1.36.2 y hotfix/1.36.3.
+> Regla de decisión:
+> - Si el camino común del candidato queda ≤ 1,10× frente a v1.36.2: es
+>   ruido del runner; se publica declarando los 4 FAIL como instrumento en
+>   las notas, con las cifras locales.
+> - Si queda por encima: es regresión real del camino común; no se publica
+>   y me traes la causa.
+
+**Registro de la coordinadora.**
+- *Medición:* una sola, sobre `8a760c6`, que es la cabeza del PR. Lanzada fuera de los agentes, a las 14:38 con carga 0,04. Guion y salida en `scratchpad/pr64-reloj/` (`mide.sh`, `resultado.txt`), para el repositorio de evidencia.
+- *Resultado de la regla:* el camino común del candidato da **1,086×** frente a v1.36.2. Queda en ≤ 1,10×, así que **se publica**. Las cifras están en las notas `[1.36.3]`.
+- *Lo que la regla no mira, y se dice:* `Write` vacío del manifiesto supera su techo también en reposo (1,376× frente a v1.36.1; 1,185× frente a v1.36.2). Además, las medianas del candidato son más altas en las cuatro ramas. Las notas lo dicen con las cifras.
+
 ### RESUELTA (propietario, 2026-10-28) — **P-137-AO**: SEC-151 se repara en 1.36.3 (presupuesto propio para la huella); SEC-150 y SEC-152 se declaran en las notas; si SEC-151 no cierra en esa pasada, 1.36.3 no se publica
 
 > P-137-AO: SEC-151 se repara en 1.36.3: el cálculo de la huella tiene un
