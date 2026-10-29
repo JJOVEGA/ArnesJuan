@@ -43,7 +43,15 @@ Las invariantes críticas no se quedan en el markdown: las vigila la máquina v�
 - **Sólo el `desarrollador` edita el código de la app** (la coordinadora y demás subagentes
   reciben un rechazo en runtime, con el motivo).
 - **Un REQ no pasa a `completado`** si hay aprobaciones pendientes en `PENDING_APPROVAL.md`, si
-  alguna quality gate está en rojo, o si falta el veredicto de QA/seguridad.
+  no hay un **veredicto verde de las quality gates del árbol actual**, o si falta el veredicto de
+  QA/seguridad. Desde 1.36.3 las gates **no corren dentro del hook**: las corre
+  `tools/arnes-gates.sh --quien <quien>` (QA, la coordinadora o el propietario), que deja en
+  `.arnes/gates-veredicto.json` el código de salida de cada gate y el **hash del árbol**, y la puerta
+  sólo lo comprueba, en ≈ 1 s sea cual sea la duración de las gates. Un proyecto con `quality_gates`
+  no cierra un REQ hasta que alguien corra la herramienta; sin git no cierra. El cálculo de la huella
+  tiene un presupuesto propio de 30 s: con más de ≈ 6 GiB de contenido no ignorado la puerta deniega
+  con motivo propio hasta que se ignore lo que no es del producto. Riesgos y límites:
+  `AGENTS.md` §13.
 - **El orden del ciclo se cumple:** `Seguridad: aprobado` no se escribe sobre un árbol que QA no
   ha validado —el auditor no mira las quality gates—. La única salida es declarar la auditoría
   **preventiva**, que desbloquea el orden pero **no** cierra un REQ crítico.
@@ -122,7 +130,7 @@ formateadores que reescriben archivos (`prettier --write`, `eslint --fix`),
 `guard-completado` **sí** mira `Bash`, pero no lo juzga: lo **deriva**. Un comando que escribe en
 `requirements/` y menciona el estado terminal se deniega pidiendo que la transición se haga con
 `Edit`/`Write`, que es donde el hook puede ver el contenido resultante y evaluar veredictos, cola
-y quality gates. Reimplementar esas puertas para la shell sería una segunda transcripción de la
+y el veredicto de las quality gates (que no ejecuta). Reimplementar esas puertas para la shell sería una segunda transcripción de la
 misma regla, y dos transcripciones se desfasan. Dentro de esa vía la detección es
 **deliberadamente ancha**, porque la forma más natural de cerrar un REQ por shell
 —`sed -i 's/en-revisión/completado/'`— sustituye el **valor** y no escribe nunca la palabra

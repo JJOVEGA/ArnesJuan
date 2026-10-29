@@ -1542,6 +1542,27 @@ de `c5bf6d4`; las revisiones de seguridad R-056 y R-057, sin veto, con SEC-115, 
   alimentar la lista, el veredicto ni la salida del hook; y los casos adversarios entran al banco antes del intento.
   Sede: REQ-007, CA-68, «Límites declarados de 1.36.0», del arnés.
 
+### Hacia 1.36.3
+
+**Cambio de compatibilidad, y es el único que tienes que mirar:** **las quality gates ya no corren dentro del hook.** Desde 1.36.0,
+con gates que sumaban más de 30 s `guard-completado` denegaba todo cierre (el plazo propio contaba el tiempo de las gates; issue
+#63, REQ-037 del arnés, ADR-019), y el cliente no mata el hook a los 60 s que daban las entradas anteriores sino a **≈ 600 s**
+(medido: CLI 2.1.289, Linux/WSL2, sin `timeout` explícito; una corrida por punto).
+- **Qué ves si tu manifiesto tiene `quality_gates`:** el cierre de un REQ se **deniega hasta que alguien corra
+  `tools/arnes-gates.sh --quien <quien>`** del plugin (QA, la coordinadora o tú); el motivo dice cómo, con la ruta. La herramienta
+  deja `.arnes/gates-veredicto.json` con el código de cada gate y el **hash del árbol**; si el árbol cambia después, caduca. La
+  puerta no ejecuta gates y responde en ≈ 1 s sea cual sea la duración de las gates. **Sin `quality_gates`, nada cambia. Sin git, no se cierra un REQ con gates.**
+  **El cálculo de la huella tiene un presupuesto propio de 30 s** (fijo): caben **≈ 6 GiB de contenido no ignorado**; con más,
+  el cierre se deniega siempre con el motivo «presupuesto propio de la huella» y la herramienta sale con rc 2 sin veredicto,
+  hasta que ignores en git lo que no es del producto (datos, binarios, salidas). En v1.36.2 la puerta no leía el árbol. El corte
+  en Git Bash/Windows no está medido. **Declarados sin arreglo:** SEC-150 (un cambio durante la corrida deshecho antes del hash
+  final no se ve) y SEC-152 (lo que una gate lee fuera del proyecto puede cambiar tras el verde).
+- **Qué haces:** ignora `.arnes/gates-veredicto.json` en git; corre la herramienta **lo último** (tras los veredictos); una
+  suite de más de 10 min, en segundo plano o desde tu terminal. No escribas el registro a mano.
+- **Riesgo declarado, no aceptado como definitivo** (`AGENTS.md` §13): quien escribe el registro por una forma que las puertas
+  no ven (consola, intérpretes; `cp`/`mv`/`install` con destino el directorio `.arnes/`, `link` y `cp -l`, que no nombran el registro; QA-037-14, arreglo en 1.37) puede fabricar un verde; una gate hostil puede reescribirlo; `--quien` no se verifica. SEC-133 queda
+  cerrado; SEC-131 (a) sigue declarado. Esta entrada **sustituye** a «el plazo del hook no alcanza a tus quality gates» de 1.36.0.
+
 *(1.17.0 y 1.18.0 no requieren migración: sólo tocaron el plugin.)*
 
 ## Reglas

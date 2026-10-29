@@ -16,7 +16,7 @@ ver_proj() {
   VP="$(mktemp -d)"; mkdir -p "$VP/.arnes" "$VP/requirements" "$VP/src"
   jq -n --argjson f "$1" --argjson c "$2" --argjson g "${4:-[\"src/*\"]}" \
     '{agentes:{agente_codigo:"desarrollador"}, codigo_app:{globs:$g},
-      quality_gates:["true"], estados:{completado:"completado"},
+      quality_gates:[], estados:{completado:"completado"},
       requirements_dir:"requirements", pending_approval:"PENDING_APPROVAL.md",
       veredictos:{exigir_fecha:$f, caducan_con_codigo:$c}}' > "$VP/.arnes/config.json"
   printf '## Pendientes\n\n## Resueltas\n' > "$VP/PENDING_APPROVAL.md"

@@ -51,8 +51,9 @@ DIR="${BASH_SOURCE[0]%/*}"
 arnes_clase_hallazgo() {
   # BYTES, NO CARACTERES, y por dos razones medidas (REQ-031 CA-A13/CA-A14, SEC-113): el techo
   # se cuenta en bytes, y en un locale UTF-8 cada `${s:i:1}` recorre la cadena desde el
-  # principio, asi que leer un valor largo era CUADRATICO (60 006 bytes: 81 s, y el cliente
-  # mata el hook a los 60 s — un hook muerto no deniega). `local` devuelve el locale al salir.
+  # principio, asi que leer un valor largo era CUADRATICO (60 006 bytes: 81 s, por encima del plazo
+  # propio; y si una operacion no termina, el cliente mata el hook —≈ 600 s medidos, REQ-037— y un
+  # hook muerto no deniega). `local` devuelve el locale al salir.
   local LC_ALL=C
   local techo="$ARNES_HALL_TECHO_BYTES" hall crudo_h n_hall n_crudo est prof e_ini idh id_malo clase err err_ini \
         sin_clase clase_mala clase_mala_v bloq bloq_v ci cj c p t0 trozo id_crudo visto blanco \
@@ -79,7 +80,8 @@ arnes_clase_hallazgo() {
   # `ARNES_HALL_TECHO_BYTES` (hooks/lib.sh): es de CONTRATO, anunciado en requirements/README.md
   # (mayor valor real medido al fijarlo: 6 672 bytes); se sube con la medicion, nunca se baja.
   # APARTE, SU LIMITACION CONOCIDA Y SIN REPARAR, que no forma parte de la propiedad: SEC-115.
-  # Un hook que el cliente mata por tiempo (60 s) no deniega. Medido, 255 371 bytes deniegan a
+  # Un hook que el cliente mata por tiempo (≈ 600 s medidos, REQ-037) no deniega. Medido, 255 371
+  # bytes deniegan a
   # tiempo: 0,31 s por Edit y 1,6 s por Write (Linux/WSL2, una corrida por punto). Por encima de
   # lo medido no hay promesa (por Write, otra operacion anterior sobre el contenido crece mas que
   # linealmente; residuo en docs/PENDIENTES.md), y en Windows/MSYS no esta medido.
@@ -366,6 +368,7 @@ arnes_guard_completado() {
       # concluyo. Medido en modo POSIX: rc 1 y la lista vacia, que se leia como un comando que no escribe.
       [ "$rc" -eq 0 ] || arnes_deny_rc_analizador "$rc" guard-completado
       arnes_deny_retira_manifiesto   # REQ-033 CA-01, como en `guard-codigo`
+      arnes_deny_enlaza_veredicto    # REQ-037 CA-05 (ii), como en `guard-codigo`
       [ -n "$escrituras" ] || return 0 ;;
     Edit|Write|MultiEdit)
       [ -n "$fp" ] || return 0 ;;
@@ -378,6 +381,7 @@ arnes_guard_completado() {
   # y la ruta viaja en `ARNES_FP`. La funcion no vuelve a analizar nada.
   arnes_deny_manifiesto_roto "${escrituras:-}"
   arnes_deny_escribe_manifiesto "${escrituras:-}"   # REQ-033 CA-01, como en `guard-codigo`
+  arnes_deny_escribe_veredicto "${escrituras:-}"    # REQ-037 CA-05, como en `guard-codigo`
 
   req_dir="$ARNES_REQ_DIR"; estado_done="$ARNES_ESTADO_DONE"; pending_rel="$ARNES_PENDING"
 
@@ -566,8 +570,9 @@ arnes_guard_completado() {
   # que borrara la linea `QA:` no se libra del veredicto que hay en disco.
   # PRESUPUESTO DE RECONSTRUCCION (SEC-007, R-001). Reconstruir cuesta del orden de
   # `ediciones x tamano` y no tenia techo: 1.501 ediciones sobre un REQ de 300 KB tardaban
-  # 25,7 s, y un REQ de 3 MB con 401 ediciones no respondia en 30 s. A los 60 s el hook
-  # MUERE, no emite nada y el resultado efectivo es PERMITIR. Asi que por encima del
+  # 25,7 s, y un REQ de 3 MB con 401 ediciones no respondia en 30 s. Un hook que no termina lo
+  # mata el cliente (≈ 600 s medidos, REQ-037): no emite nada y el
+  # resultado efectivo es PERMITIR. Asi que por encima del
   # presupuesto no se reconstruye: se deniega, y el deny alcanza TAMBIEN al agente de
   # codigo, porque nadie cierra un REQ desde una llamada que la puerta no puede medir.
   np=${#piezas[@]}
@@ -948,21 +953,39 @@ arnes_guard_completado() {
     fi
   fi
 
-  # --- Gate A3: quality gates en verde antes de completar ---
-  # El plazo propio (SEC-115) se comprueba ANTES de lanzarlas: lo que tarde una gate no lo interrumpe.
+  # --- Gate A3: un veredicto verde de las quality gates, del árbol actual, antes de completar ---
+  # LAS GATES NO CORREN AQUÍ (REQ-037, ADR-019; issue #63). Hasta 1.36.2 la puerta las ejecutaba y su tiempo se
+  # sumaba al plazo propio: una gate verde de 35 s impedía todo cierre. Ahora las corre `tools/arnes-gates.sh`
+  # fuera del hook y deja un registro con el código de cada gate y el hash del árbol; la puerta sólo lo comprueba
+  # (`arnes_veredicto_juzga`, lib.sh) y responde en lo que tarda ese hash, sea cual sea la duración de las gates.
+  # Sin `quality_gates` no se pide registro, como hasta ahora. Cada motivo dice cuál de las condiciones falló y
+  # cómo correr la herramienta; ninguno es un veredicto sobre el código: es que el veredicto falta o caducó.
   arnes_plazo
   arnes_jq_file "$ARNES_MANIFEST" -r '.quality_gates[]? | if type=="object" then (.comando // empty) else . end'
   ARNES_GATES="$ARNES_JQ"
-  tmp="$(mktemp 2>/dev/null || echo /tmp/arnes_gate.$$)"
-  while IFS= read -r cmd; do
-    [ -n "$cmd" ] || continue
-    if ! ( cd "$ARNES_PROJ" && eval "$cmd" ) >"$tmp" 2>&1; then
-      out="$(tail -c 600 "$tmp" 2>/dev/null)"
-      rm -f "$tmp"
-      arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': falló la quality gate \`$cmd\`. Corrígela y reintenta (ver AGENTS.md §7). Últimas líneas: $out"
-    fi
-  done <<< "$ARNES_GATES"
-  rm -f "$tmp"
+  if [ -n "${ARNES_GATES//$'\n'/}" ]; then
+    arnes_veredicto_juzga "$ARNES_PROJ" "$ARNES_GATES"
+    local corre="Corre las gates desde la raiz del proyecto con: bash '$ARNES_HERRAMIENTA_GATES' --quien <quien las corre> (una suite de mas de 10 min, en segundo plano o desde la terminal del propietario; REQ-037 CA-07) y reintenta."
+    case "$ARNES_VER_ESTADO" in
+      ok) ;;
+      ausente)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el proyecto tiene quality gates y no hay veredicto de ellas ($ARNES_VEREDICTO_REL). Las gates no corren en este hook: las corre la herramienta, que deja el veredicto ligado al hash del arbol (REQ-037 CA-03). No es un veredicto sobre el codigo: falta. $corre" ;;
+      ilegible)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) no se puede leer como un veredicto completo ($ARNES_VER_DETALLE), y una puerta que no puede medir no deja pasar (REQ-037 CA-03). No es un veredicto sobre el codigo. $corre" ;;
+      lista)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) es de otra lista de gates que la del manifiesto actual (en comandos u orden): se anadio, se quito o se cambio una gate despues de correrlas (REQ-037 CA-03). No es un veredicto sobre el codigo: caduco. $corre" ;;
+      roja)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': en el veredicto registrado ($ARNES_VEREDICTO_REL) la quality gate \`$ARNES_VER_DETALLE\` no salio 0 (o no llego a correr), y ninguna gate roja deja cerrar (AGENTS.md §7; REQ-037 CA-03). Corrigela, y despues: $corre" ;;
+      caducado)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': el veredicto de las quality gates ($ARNES_VEREDICTO_REL) no es del arbol actual ($ARNES_VER_DETALLE): el hash del arbol con el que corrieron no es el de ahora (REQ-037 CA-01 y CA-03). No es un veredicto sobre el codigo: caduco. $corre" ;;
+      presupuesto)
+        # SEC-151 (P-137-AO): la huella tiene su presupuesto propio (ARNES_HASH_PRESUPUESTO_S, lib.sh); sin ella no se
+        # sabe si el verde es del árbol actual, y el hook no puede seguir midiendo hasta que el cliente lo cancele.
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': la huella del arbol no se calculo dentro del presupuesto propio de la huella (${ARNES_VER_DETALLE:-sin detalle}), asi que no se puede comprobar que el veredicto de las quality gates ($ARNES_VEREDICTO_REL) sea del arbol actual, y una puerta que no puede medir no deja pasar (REQ-037 CA-01; SEC-151). No es un veredicto sobre el codigo. El calculo crece con los bytes de lo no ignorado: si hay datos o binarios grandes que no son del producto, ignoralos en .gitignore, vuelve a correr las gates y reintenta." ;;
+      *)
+        arnes_deny "ARNES: no se puede marcar '$rel' como '$estado_done': no se puede medir el arbol del proyecto para comprobar el veredicto de las quality gates (${ARNES_VER_DETALLE:-sin detalle}), y una puerta que no puede medir no deja pasar: sin git no se cierra un REQ con gates (REQ-037 CA-01)." ;;
+    esac
+  fi
 
   return 0
 }

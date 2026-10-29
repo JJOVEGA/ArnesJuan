@@ -43,9 +43,301 @@
 
 ## Pendientes
 
-_(Vacía desde el 2026-10-16: P-137-J adoptada por el propietario, en § Resueltas.)_
-
 ## Resueltas
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AO**: SEC-151 se repara en 1.36.3 (presupuesto propio para la huella); SEC-150 y SEC-152 se declaran en las notas; si SEC-151 no cierra en esa pasada, 1.36.3 no se publica
+
+> P-137-AO: SEC-151 se repara en 1.36.3: el cálculo de la huella tiene un
+> presupuesto propio (orden de decenas de segundos, muy por debajo del
+> límite medido del cliente); si no termina, deny con motivo propio. Caso
+> de banco con un archivo disperso grande: deny dentro del presupuesto.
+> Pasada acotada: mismo desarrollador sólo si su contexto es pequeño; si
+> no, uno nuevo con encargo corto. QA verifica sólo eso; el auditor
+> re-firma reanudado (su contexto es corto).
+> SEC-150 y SEC-152: se declaran en las notas de 1.36.3.
+> Si SEC-151 no cierra en esa pasada, 1.36.3 no se publica.
+
+**Registro de la coordinadora.**
+- *Origen:* R-066 (`438c3fa`). El propietario decidió sin ficha previa, sobre el informe de la coordinadora.
+- *Quién hace la pasada:* un desarrollador nuevo, porque el contexto del anterior pasa de 600 k. Después, un analista nuevo hace el write-back: el criterio de SEC-151 con el valor construido, y la declaración de SEC-150 y SEC-152 en CA-01, CA-07 y las notas `[1.36.3]`. QA reanudado, porque su contexto es pequeño, verifica sólo SEC-151. El auditor de R-066 re-firma reanudado.
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AN (A)**: las formas de QA-037-14 se declaran para 1.36.3 dentro del riesgo (1) y se arreglan en 1.37 (F-137-24-B); pasada de sólo texto; condición de la firma; ajuste a P-137-AM
+
+> Adopto P-137-AN (A): las formas de QA-037-14 (destino .arnes/ como
+> directorio, link, cp -l/--link) se declaran para 1.36.3 dentro del riesgo
+> (1) de CA-05, se corrige la promesa de CA-05 (ii) y su arreglo va a 1.37
+> con F-137-24-B; el caso del manifiesto, preexistente, se declara en las
+> notas y va a la pieza b. Pasada de sólo texto: el analista corrige, QA lo
+> lee y seguridad firma. Si seguridad encuentra algo que no sea de esta
+> clase, se para y me lo traes.
+>
+> Recuerda la condición de la firma: el auditor compara contra v1.36.2 y
+> declara por escrito toda conducta que pase de deny a allow; la única
+> admitida es el cierre legítimo con gates en verde y huella vigente, más
+> las formas ya declaradas dentro del riesgo (1).
+>
+> Ajuste a P-137-AM, por las cifras: reanudar al mismo agente sólo si su
+> contexto es pequeño (menos de ~150k); con contextos de 300–600k sale más
+> caro que uno nuevo con un encargo bien escrito. Para esta pasada de
+> texto, analista y QA nuevos, con encargo corto.
+
+**Registro de la coordinadora.**
+- *La pasada:* analista nuevo (corrige CA-05 (ii), el riesgo (1), las notas `[1.36.3]`, F-137-24-B y el caso del manifiesto a la pieza b), QA nuevo (lee el texto contra `docs/qa/REQ-037.md`) y un auditor de seguridad nuevo (primera firma sobre el código de `d89316c`, que no cambia).
+- *La condición de la firma* va literal en el encargo del auditor. Cualquier paso de deny a allow que no sea el cierre legítimo ni una forma del riesgo (1) para la pasada y vuelve aquí.
+- *El ajuste a P-137-AM* es una norma del arnés: se registra en `cand/1.37.0` (`templates/autorizacion.md`), no en este hotfix.
+
+#### Ficha original: [2026-10-28] (qa-tester; número y decisión propuesta de la coordinadora) — P-137-AN: REQ-037 (hotfix 1.36.3): **la pasada fuera del tope arregla `ln`, pero otras formas llanas de `Bash` siguen fabricando un verde (QA-037-14).** ¿Se declaran para 1.36.3 o se arreglan? Por P-137-AL («si no cierra, se para y me lo traes»), se para.
+
+**Qué pasa.** Medido sobre `d89316c` (`docs/qa/REQ-037.md`). El proyecto de prueba tiene la gate `false`, así que su veredicto real es rojo. Cada forma se ejecutó después de que la puerta de `Bash` la dejara pasar a `qa-tester` y a la coordinadora, y el cierre salió **`allow`**:
+- `cp /otro/gates-veredicto.json .arnes/`: el destino es el directorio. También `cp … .arnes`, `mv … .arnes/` e `install -m 644 … .arnes/`.
+- `link /otro/gates-veredicto.json .arnes/gates-veredicto.json && rm /otro/gates-veredicto.json`.
+- `cp -l …/gates-veredicto.json .arnes && rm …` y `cp --link … .arnes/ && rm …`.
+
+**Por qué choca con el REQ.** CA-05 (ii) promete que toda forma llana que deja el registro con contenido se deniega, y la lista de riesgos declarados no recoge estas formas.
+
+**Lo que se sabe de la causa.**
+- El detector juzga un destino que es directorio como `directorio/`, no como `directorio/<nombre>`. Lo fijó el propietario en P-032-1 (A), CA-47 punto 10.
+- No ve `link`.
+- La misma forma reemplaza el **manifiesto** desde v1.36.2 (`cp …/config.json .arnes/`: `allow` en los dos árboles). Es preexistente y de la familia de REQ-033.
+
+**Lo que la pasada sí cerró:** QA-037-11 (`ln` y `ln -s` sobre el registro, y el registro enlazado) y QA-037-13. CA-09: 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
+
+**Qué impide esta entrada:** cerrar REQ-037 (`completado`) y publicar 1.36.3. No impide la revisión de seguridad ni el commit de la evidencia.
+
+**Contexto para decidir (coordinadora).** Un agente que quiere fabricar un verde ya puede hacerlo en 1.36.3: es el riesgo (1) de CA-05, que aceptaste con QA-037-12. Basta escribir el registro por consola, con `python3 -c`, una variable, comillas, `cd` o un glob. Así que en esta versión el registro protege contra el error, no contra un agente hostil. Las formas de QA-037-14 son tres más de esa clase, pero el contrato prometía denegarlas porque son «llanas». Que la promesa sea falsa es lo que hace `contrato` el hallazgo.
+
+**Opciones.**
+- **(A) Declararlas para 1.36.3 y arreglarlas en 1.37:** pasada de sólo texto.
+  - El analista corrige la promesa de CA-05 (ii): la puerta deniega las formas que **nombran el registro como destino**, y no las que copian, mueven o instalan **dentro de `.arnes/` como directorio**, ni `link`, ni `cp -l`/`--link`. Las añade al riesgo (1) y a las notas `[1.36.3]`, y lleva el arreglo a F-137-24-B (1.37) junto con el endurecimiento del entorno.
+  - El caso preexistente del manifiesto (`cp …/config.json .arnes/`) va a la pieza b de 1.37, en la familia de REQ-033. Se declara también en las notas, porque es de v1.36.2.
+  - QA lee el texto y seguridad hace su primera firma sobre el código actual, que no cambia.
+  - *Coste:* el analista reanudado en frío (≈ 330 k no cacheados), una lectura de QA y una firma de seguridad.
+- **(B) Arreglarlas ahora:** otra pasada de código fuera del tope.
+  - El detector compone `directorio/<nombre>` para `cp`/`mv`/`install` cuando el destino es `.arnes/`, y ve `link` y `cp -l`/`--link`. Es un retoque como el de `ln`, pero en el juicio de destinos de CA-47, que comparten todas las puertas, así que hace falta el banco entero.
+  - *Coste:* el desarrollador reanudado (su contexto ya pasa de 600 k, así que reanudarlo cuesta eso), QA, la carga y seguridad. Calculo ≈ 1,5–2 M no cacheados y otra media jornada. Y no cambia el fondo: el registro seguiría siendo falsificable por consola.
+
+**Recomendación de la coordinadora: (A).** Arreglar ahora cierra tres formas de una clase que sigue abierta por otras, y retrasa la publicación que espera un consumidor. Texto listo para adoptar:
+
+> Adopto P-137-AN (A): las formas de QA-037-14 (destino `.arnes/` como directorio, `link`, `cp -l`/`--link`) se declaran para 1.36.3 dentro del riesgo (1) de CA-05, se corrige la promesa de CA-05 (ii) y su arreglo va a 1.37 con F-137-24-B; el caso del manifiesto, preexistente, se declara en las notas y va a la pieza b. Pasada de sólo texto: el analista corrige, QA lo lee y seguridad firma. Si seguridad encuentra algo que no sea de esta clase, se para y me lo traes.
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AL 1 (A), 2 (A) y 3 (A)**: lista cerrada de exclusiones del hash; una pasada correctiva fuera del tope (QA-037-11 y QA-037-13); se acepta para 1.36.3 el riesgo de QA-037-12; cargas largas fuera de los agentes
+
+> Adopto P-137-AL 1 (A), 2 (A) y 3 (A): lo que el hash no cubre es la lista
+> cerrada de la ficha, fija en el código y escrita en CA-01, con su límite
+> declarado; cualquier otro cambio tras las gates invalida el veredicto. El
+> diseño nuevo tiene una pasada correctiva fuera del tope, que arregla
+> QA-037-11 y QA-037-13; si no cierra, se para y me lo traes. Acepto para
+> 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la
+> herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en
+> las notas y el endurecimiento va a 1.37 (F-137-24-B).
+>
+> Adopto P-137-AM: reanudar al mismo agente siempre que se pueda. Y
+> adopto tu propuesta: las cargas largas las lanzas tú fuera de los
+> agentes, y el agente sólo lee el resultado. Para la pasada: reanuda al
+> mismo desarrollador y al mismo QA.
+
+**Registro de la coordinadora.**
+- La lista cerrada es la de `ARNES_HASH_EXCLUYE` (`hooks/lib.sh`), tal como la escribió el analista en CA-01. Ya no lleva el rótulo de pendiente.
+- P-137-AM es de la cola de `cand/1.37.0` y se resolvió allí (`720bea5`).
+- *Orden de la pasada:*
+  1. el analista declara QA-037-12 en CA-05 y en las notas `[1.36.3]`, y quita el rótulo de CA-01;
+  2. el desarrollador arregla QA-037-11 y QA-037-13;
+  3. la coordinadora lanza la carga de CA-09 sobre la cabeza nueva;
+  4. QA re-verifica;
+  5. seguridad firma.
+
+#### Ficha original: [2026-10-28] (coordinadora) — P-137-AL: REQ-037 (F-137-24). **Qué queda fuera del hash del veredicto, cuántas pasadas tiene el diseño nuevo y si se acepta un riesgo de QA-037-12.** La condición de publicar ya se cumple (QA, `426ea1d`).
+
+**1. Lo que el hash no cubre.** El veredicto se liga al contenido del árbol de trabajo (CA-01). Pero entre que las gates corren y el cierre, el propio ciclo de gobierno escribe archivos: QA pone `QA: aprobado`, seguridad firma, y la coordinadora escribe CHANGELOG, ESTADO y la cola. Si esos archivos entran en el hash, cada firma invalida el veredicto y hay que volver a correr las gates, que es lo que #63 quiere evitar. Por eso el analista los excluye.
+
+Hay un problema: su CA-01 dice «no exhaustivo» y deja la lista al desarrollador, en `hooks/lib.sh`. Una lista abierta cambia, sin contrato, lo que protege la puerta. Tu literal de F-137-24 dice «la puerta sólo comprueba que el árbol actual es ese».
+
+- **(A) Lista cerrada en el contrato, fija en el código** (no configurable por el proyecto):
+  - `.arnes/gates-veredicto.json`;
+  - `requirements/`;
+  - `docs/qa/` y `docs/seguridad/`;
+  - `PENDING_APPROVAL.md`, `CHANGELOG.md` y sus archivos de rotación;
+  - `docs/ESTADO.md`.
+
+  Cualquier otro cambio después de las gates invalida el veredicto, y se vuelven a correr (falla cerrado). **Límite declarado:** una gate que evalúa esas rutas (por ejemplo, un linter de Markdown sobre `requirements/`) no se re-valida cuando cambian después.
+- **(B) Sin exclusiones, salvo el propio registro:** QA corre las gates como último paso, después de su veredicto y antes de la firma de seguridad. Cada firma posterior obliga a otra corrida.
+  - *Coste:* las gates se corren dos o tres veces por cierre. En un proyecto con suites largas es justo lo que #63 quiere evitar.
+
+**2. Pasadas.** La única pasada correctiva del diseño anterior está gastada, y REQ-037 no reinicia contadores (CA-15). El diseño nuevo nace de tu decisión P-137-AK.
+
+- **(A) Una pasada correctiva fuera del tope, como en P-137-AH y P-137-AI:** si no cierra, se para y te lo traigo.
+- **(B) Ninguna:** el primer hallazgo de QA o de seguridad para el hotfix.
+
+**3. Añadido tras el QA de `426ea1d` (2026-10-28).** QA cumple **la condición de publicar**: 4 000 cierres con carga, con 0 respuestas dobles, 0 cuelgues y 0 respuestas espurias, sean deny o allow. **El fail-before obligatorio queda reproducido:** con la misma carga, `d47cfba` dio 3 respuestas dobles, 3 cuelgues y 4 deny espurios en 600 cierres. Pero abre tres hallazgos `contrato`. Dos se arreglan en la pasada de 2 (A) sin que tengas que decidir nada; el tercero pide que aceptes un riesgo.
+- **QA-037-11 (media), se arregla:** `ln` o `ln -s` sobre `.arnes/gates-veredicto.json` es una forma llana de `Bash` que la puerta deja pasar, y la puerta de cierre acepta el verde enlazado. El desarrollador lo deniega, y la puerta juzga ilegible un registro que sea un enlace.
+- **QA-037-13 (baja), se arregla:** por M-037-2 se perdió la prueba de las gates en forma de objeto. El desarrollador añade el caso a la sección 53. De paso, este repositorio pasa a ignorar `.arnes/gates-veredicto.json`.
+- **QA-037-12 (media), riesgo que hay que aceptar.** Cualquier agente puede lanzar la herramienta con el entorno manipulado (un `PATH` con un `grep` falso, una función exportada con el nombre de la gate) y obtener un verde con hash válido. Antes las gates corrían en el entorno del hook, que fija el cliente; ahora lo fija quien lanza la herramienta. Es de la misma clase que el riesgo (1) ya declarado en CA-05: un agente puede escribir el registro por consola, por ejemplo con `python3 -c`. Por eso blindar el entorno no cierra la falsificación.
+  - **(A) Declararlo para 1.36.3:** el veredicto confía en quien lanza la herramienta, entorno incluido. El analista lo escribe en CA-05 junto al riesgo (1), el auditor lo lee, y el endurecimiento va a 1.37 (F-137-24-B).
+  - **(B) Blindar la herramienta ahora:** las gates corren con un entorno limpio y un `PATH` fijo.
+    - *Coste:* rompe las gates de los consumidores que dependen de su `PATH`, como `npm` instalado con `nvm`, y eso es un cambio de compatibilidad en un parche. Además no impide escribir el registro por consola.
+
+**Recomendación de la coordinadora: 1 (A), 2 (A) y 3 (A).** Texto listo para adoptar:
+
+> Adopto P-137-AL 1 (A), 2 (A) y 3 (A): lo que el hash no cubre es la lista cerrada de la ficha, fija en el código y escrita en CA-01, con su límite declarado; cualquier otro cambio tras las gates invalida el veredicto. El diseño nuevo tiene una pasada correctiva fuera del tope, que arregla QA-037-11 y QA-037-13; si no cierra, se para y me lo traes. Acepto para 1.36.3 el riesgo de QA-037-12: el veredicto confía en quien lanza la herramienta, entorno incluido, como el riesgo (1) de CA-05; se declara en las notas y el endurecimiento va a 1.37 (F-137-24-B).
+
+**Qué bloquea.** La pasada correctiva y la firma de seguridad. La firma se despacha cuando el alcance esté decidido. También bloquea el cierre de REQ-037: mientras esta entrada siga en Pendientes, la puerta no deja cerrar.
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AK: F-137-24 (issue #63) arranca ya, en paralelo con el cierre de 4a, en `hotfix/1.36.3` desde `main`**; se publica sola como 1.36.3 en cuanto QA y seguridad la validen; las respuestas dobles con carga, fail-before obligatorio
+
+> Prioridad cambiada: F-137-24 (issue #63) arranca YA, en paralelo con el
+> cierre de 4a, en hotfix/1.36.3 desde main. [Un proyecto consumidor] no puede cerrar REQs.
+> Se publica solo como 1.36.3 en cuanto QA y seguridad lo validen, con las
+> respuestas dobles con carga como fail-before obligatorio. Reanuda agentes
+> donde se pueda.
+
+**Registro de la coordinadora.**
+- *Elisión:* el texto entre corchetes sustituye el nombre del proyecto consumidor. Este repositorio es público y no cita a los consumidores.
+- *Rama:* `hotfix/1.36.3` ya parte del `main` actual (`46ee7ca`). F-137-24 se construye sobre ella, sin renombrarla ni forzar el remoto, y el intento no publicado (`22a60d4`–`52ee2bc`) queda en su historial como evidencia.
+- *Diseño (F-137-24, literal del propietario, `docs/PENDIENTES.md` de `cand/1.37.0`):* «las gates no deberían correr dentro del hook. QA o la coordinadora las corren antes y registran el resultado con el hash del árbol; la puerta sólo comprueba que el árbol actual es ese. Así el cierre tarda un segundo sea cual sea el proyecto.»
+- *Contrato:* REQ-037 se reescribe para este diseño. ADR-018 (presupuesto propio de las gates) queda sustituido.
+- *Agentes:* se reanuda primero al analista de REQ-037. El desarrollador y QA que se reanuden serán los del intento anterior.
+
+### RESUELTA (propietario, 2026-10-28) — **P-137-AF: 1.36.3 no se publica**; el arreglo de #63 va a 1.37 como F-137-24, con prioridad alta; P-137-AE queda sin efecto
+
+> P-137-AF: 1.36.3 no se publica. El arreglo de #63 va a 1.37 como
+> F-137-24, con prioridad alta (primera intervención tras cerrar 4a), y
+> partiendo de lo aprendido: las respuestas dobles con carga vienen del
+> arreglo, no del problema original. Redáctame el comentario del issue #63
+> (causa, por qué no sale 1.36.3, que va en 1.37, y la salida manual del
+> propietario mientras tanto); lo publico yo.
+>
+> Antes de seguir: comitea en la rama de evidencia todo lo de
+> issue-63-plazo-gates/ y recuérdame el push.
+
+(Extracto: el mensaje del propietario incluía además P-137-AG, de REQ-036, transcrito entero en `PENDING_APPROVAL.md` de `cand/1.37.0`, `163f305`.)
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Esta rama** se conserva tal cual, sin borrarla ni publicarla, como evidencia y punto de partida de F-137-24. Cabeza: `46367aa` más este registro.
+- **REQ-037** queda con `QA: con-hallazgos` y QA-037-01 abierto. No se cierra ni se fusiona en `main`.
+- **P-137-AE** queda sin efecto: no hay publicación. SEC-133 sigue en F-136-23.
+- **La duda de P-137-AD** (1.37 o 1.38) la resuelve este texto: 1.37.
+- **En `cand/1.37.0`,** F-137-24 pasa a 1.37 en `docs/PENDIENTES.md` (`163f305`).
+- **Evidencia** comiteada en la rama de evidencia: `51bb090`.
+- **El comentario del issue #63** lo redacta la coordinadora y lo publica el propietario.
+- **No hay fusión de `main` en `cand/1.37.0`:** `main` no cambia.
+
+### P-137-AF (texto de la consulta, conservado; resuelta arriba) — hotfix 1.36.3. **La pasada no cumple tu condición para publicar: siguen los cuelgues** (3 de 3 870 cierres bajo carga). Por tu texto de P-137-AD, 1.36.3 no se publica. ¿Qué se hace con el issue #63?
+
+**Lo medido por QA en la vuelta 2** (cabeza `cdbe2a8`; evidencia `issue-63-plazo-gates/qa-v2/`, con la carga de QA y v1.36.2 como control en la misma sesión):
+- **Dobles y deny espurios: 0 en 3 870 cierres de la candidata.** Lo que arregló la pasada está verificado, también contra ataques: siete señales, subshells y el deny legítimo cuando el hook muere sin juicio.
+- **Cuelgues: 3 en 3 870 en la candidata, frente a 0 en 2 870 en v1.36.2.**
+  - 1 en 300 + 570 cierres con carga mayor que la del arnés;
+  - 0 en 1 000 con sólo la carga de QA;
+  - 2 en 2 000 con la carga de QA y cierres concurrentes.
+- **Qué muestra la foto de un cuelgue:**
+  - la gate ya terminó y sólo vive el reloj `sleep 420`;
+  - el hook sigue en `wait -n -p` (`hooks/lib.sh:554`), que no volvió.
+  - Es otro mecanismo, no el que arregló la pasada. No se reproduce con sólo las funciones de `lib.sh` (0 de 3 000), así que **la causa no está explicada**.
+- **Lo que pasa tras un cuelgue:** el hook decide a los ≈ 420 s.
+  - Medido sólo en un cierre verde de la vuelta 1: allow a 420 384 ms.
+  - Para una gate roja colgada es lectura del código, sin medir.
+- **El resto:** QA-037-02 y QA-037-07 cerrados; banco 2994/1/33 (el FAIL es una sonda de reloj, QA-037-08); dos hallazgos nuevos, QA-037-09 (SEC-133, depende de P-137-AE) y QA-037-10 (instrumento).
+- **El tope está agotado:** fijaste una sola pasada.
+
+**Opciones.**
+- **(A) No publicar 1.36.3, como dice tu condición.**
+  - La rama `hotfix/1.36.3` se conserva, sin borrarla, como evidencia y punto de partida. REQ-037 queda `bloqueado` con su registro.
+  - El arreglo de #63 se hace por diseño con F-137-24: las gates salen del hook y la puerta sólo comprueba el veredicto ligado al hash del árbol, así que desaparece la espera. F-137-24 pasaría de 1.38 a 1.37, detrás de REQ-036, y eso añade alcance a la ventana.
+  - Mientras tanto, 1.36.2 sigue denegando los cierres cuyas gates tardan más de 30 s. El rodeo para los consumidores es sacar las gates lentas de `quality_gates` y correrlas aparte. Decirlo en el issue #63 es público: lo escribes tú o me autorizas.
+  - P-137-AE queda sin efecto: SEC-133 sigue en F-136-23.
+- **(B) Una pasada más, de excepción, acotada al cuelgue.** Por ejemplo, que la espera no dependa de un único `wait -n` y despierte cada segundo para comprobar la gate.
+  - *Coste:* levanta el tope que fijaste, sobre un mecanismo sin reproducción mínima. Hacen falta otra vuelta de QA y seguridad.
+- **(C) Publicar con el cuelgue declarado.** Hoy, 1.36.2 deniega siempre los cierres con gates de más de 30 s; 1.36.3 los deja pasar y, en raras ocasiones y bajo carga, tarda unos 7 minutos.
+  - *Coste:* contradice tu condición literal («0 cuelgues»). Además, que el veredicto sea correcto tras un cuelgue rojo no está medido, y la causa no está explicada.
+
+**Recomendación de la coordinadora: (A).** Tu condición es explícita. Con la causa sin explicar, no queda acreditado ni el arreglo de (B) ni el «veredicto correcto» de (C). Y F-137-24 elimina el problema entero en vez de parchearlo. Texto listo para adoptar:
+
+> Adopto P-137-AF (A): 1.36.3 no se publica. La rama `hotfix/1.36.3` se conserva como evidencia; REQ-037 queda `bloqueado` con su registro y P-137-AE sin efecto (SEC-133 sigue en F-136-23). El arreglo de #63 va por F-137-24 (gates fuera del hook, veredicto ligado al hash del árbol), que pasa a 1.37 detrás de REQ-036. [Comentario en #63: lo escribo yo / la coordinadora redacta el rodeo y yo lo publico.]
+
+**Qué bloquea.** Todo el hotfix. Mientras tanto, el trabajo vuelve a 1.37: QA de REQ-036, vuelta 2.
+
+### P-137-AE (texto de la consulta, conservado; sin efecto por P-137-AF) — hotfix 1.36.3. **La entrada desde `/dev/null` (P-137-AD (2)) no acelera ninguna gate interactiva, pero cierra SEC-133.** ¿Se queda la línea o se revierte?
+
+**Qué midió el desarrollador en la pasada correctiva** (evidencia `issue-63-plazo-gates/dev-pasada/03-`, con pty y sin pty, en v1.36.2, `d47cfba` y la candidata):
+- **Ninguna gate esperaba por su entrada estándar en ningún árbol.** `read -r x`, una confirmación y un modo vigilancia simulado terminan en unos 105 ms. Por el `<&0` sólo entraba la lista de gates que el hook lee en su bucle, nunca una terminal.
+- **Lo que espera los 7 minutos es abrir `/dev/tty`** (`stty sane </dev/tty`). La línea no lo cubre y, por tu condición, se declara.
+- **El único efecto medido de la línea es SEC-133** (`contrato`, media, preexistente, abierto; F-136-23 para 1.37). Hoy, una gate que lee su entrada estándar se come la lista de las gates siguientes. Con `read -r x; true` seguida de `false`:
+  - v1.36.2 y `d47cfba` dejan pasar el cierre;
+  - la candidata lo deniega por la gate roja.
+  - Está en el banco como E1.
+
+**Por qué se escala.** CA-03 de REQ-037 dice que SEC-133 no entra y que, si cambia, se escala. CA-05 no lista este paso de allow a deny.
+
+**Opciones.**
+- **(A) Mantener la línea.**
+  - SEC-133 queda cerrado en 1.36.3. El cambio va en la dirección protectora: sólo afecta a cierres en los que una gate posterior está roja, y ahora se deniegan como deben.
+  - Las notas `[1.36.3]` lo declaran. El analista escribe el movimiento en CA-03 y CA-05. El auditor lo revisa y cierra SEC-133 en el registro.
+  - F-136-23 sale de 1.37.
+- **(B) Revertir la línea y E1.**
+  - El hotfix vuelve a su alcance mínimo, y SEC-133 sigue como límite declarado para 1.37.
+  - *Coste:* deshacer una línea medida que cierra un hallazgo conocido.
+
+**Recomendación de la coordinadora: (A).** Texto listo para adoptar:
+
+> Adopto P-137-AE (A): la entrada desde `/dev/null` se queda. SEC-133 se cierra en 1.36.3 (allow → deny sólo cuando una gate posterior está roja), declarado en las notas `[1.36.3]`, en CA-03/CA-05 de REQ-037 por el write-back del analista y en el registro por el auditor; F-136-23 sale de 1.37. La gate que abre `/dev/tty` se declara como dice P-137-AD (2).
+
+**Qué bloquea.** El write-back del analista en CA-03 y CA-05, la revisión del auditor sobre SEC-133 y el cierre de REQ-037. La vuelta 2 de QA puede verificar ya el código tal como está, que es la opción (A).
+
+### RESUELTA (propietario, 2026-10-27) — **P-137-AD: bash < 5.1 y el reloj detenido con STOP, límites declarados; la gate que toca la terminal entra en la pasada con la entrada estándar desde `/dev/null`, si cabe en esa línea**; QA-037-01 sigue siendo la condición de publicar
+
+> P-137-AD:
+> 1. bash anterior a 5.1 deniega todo cierre con gates: se declara como
+>    límite (fail-closed; tus equipos y el CI van en 5.2+).
+> 2. Gate que toca la terminal: NO se declara; entra en esta pasada si es
+>    tan simple como parece: las gates se ejecutan con la entrada estándar
+>    desde /dev/null (sin terminal). Así una gate interactiva falla rápido
+>    en vez de esperar 7 min. Es un caso real: un `npm test` que entra en
+>    modo vigilancia o pide confirmación. Si no cabe en esa línea sin abrir
+>    otra cosa, se declara y va a 1.37 con la ficha de gates fuera del hook.
+> 3. Gate que detiene el reloj con STOP: se declara (no es regresión; una
+>    gate hostil no es el caso de la barandilla).
+> QA-037-01 sigue siendo la condición de publicar: 0 respuestas dobles,
+> 0 cuelgues, 0 deny espurios con la misma carga de QA. Si la pasada no lo
+> consigue, 1.36.3 no se publica y lo traes.
+
+**Lo que añade la coordinadora, rotulado como suyo:**
+- **Punto 2.**
+  - Hoy `arnes_gate` lanza la gate con `<&0` (`hooks/lib.sh:522`, en `127a6ac`). La línea del propietario es cambiarlo por `</dev/null`.
+  - Se le pasó al desarrollador, ya en su pasada, con el texto literal. Medirá dos casos:
+    - **(a)** una gate que lee de su entrada estándar o pide confirmación: entra en el banco;
+    - **(b)** el caso de QA `stty sane </dev/tty`. Esa orden abre la terminal directamente, así que la línea no lo cubre. Si sigue esperando hasta el presupuesto, esa parte se declara, según la condición del propietario. No se abre nada más allá de esa línea.
+- **Puntos 1 y 3.** Van al write-back del analista: notas `[1.36.3]`, requisitos del README y residuales de REQ-037.
+- **Discrepancia de versión, para que la confirme el propietario.** El texto dice «va a 1.37 con la ficha de gates fuera del hook», pero esa ficha es F-137-24 y P-137-AB (A) la fijó «para 1.38». Mientras no diga otra cosa, la parte declarada del punto 2 viaja con F-137-24, sin cambiar su versión.
+
+### P-137-AD (texto de la consulta, conservado; resuelta arriba) — hotfix 1.36.3 (REQ-037). **Tres conductas nuevas que el REQ no lista: bash anterior a 5.1, una gate que usa la terminal y una gate que detiene el reloj.** ¿Se declaran como límites o se cambian?
+
+**Qué pasa.** Para vigilar el presupuesto de 420 s, el arreglo espera a la vez a la gate y a su reloj con `wait -n -p`, que existe desde bash 5.1. Con un bash anterior, `guard-completado.sh` no lanza ninguna gate y deniega con un motivo propio: «este bash (…) no puede vigilar el presupuesto de las quality gates —hace falta bash 5.1 o posterior—… Cierra el REQ desde un entorno con bash 5.1 o posterior». Los cierres con `quality_gates: []` no cambian. CA-05 no lista este cambio de conducta, y el desarrollador lo dejó sin medir.
+
+**Qué suelo había antes.** El arnés no declara ninguna versión mínima de bash. Pero v1.36.2 ya usa `${x,,}` y namerefs, así que el suelo real era bash 4.3: el `/bin/bash` 3.2 de macOS ya no servía. Con el arreglo, el suelo pasa a 5.1, pero sólo para cerrar con gates. **Afectados, sin medir:** Ubuntu 20.04 y Debian 10, que traen bash 5.0, y RHEL, Rocky o Alma 8, que traen 4.4. En 1.36.2, quien tenga uno de esos sistemas y gates rápidas cierra hoy sin problema; con 1.36.3 dejaría de poder cerrar.
+
+**Opciones.**
+- **(A) Mantener el deny y declararlo.** Se declara el suelo de bash 5.1 para cerrar con gates en las notas `[1.36.3]` y en los requisitos del README, con las distribuciones afectadas. Queda como residual de REQ-037. No hay código nuevo. Es coherente con «nunca un cierre sin veredicto», y el motivo dice qué hacer. Para 1.38, F-137-24 saca las gates del hook y, con eso, desaparece la necesidad de `wait -n -p`. *Coste:* quien use una de esas distribuciones con gates rápidas pierde el cierre hasta que tenga un bash más reciente.
+- **(B) Sondear en vez de esperar.** Con bash anterior a 5.1, el hook comprobaría con `kill -0`, varias veces por segundo, si la gate y el reloj siguen vivos. No hay regresión de plataforma. *Coste:* es código nuevo dentro de la única pasada correctiva de un hotfix crítico, y no se puede medir aquí sin compilar un bash 5.0.
+- **(C) Correr sin presupuesto, como en v1.36.2, pero ya con el plazo arreglado.** *Coste:* vuelve a ser posible un cierre sin veredicto si una gate se cuelga más de unos 600 s, y eso contradice el punto 2 de P-137-AB (A).
+
+**Ampliada tras la vuelta 1 de QA (`127a6ac`): dos movimientos más que el REQ no lista, del mismo tipo.**
+
+- **(2) Una gate que usa la terminal de control** (QA-037-03 (b)). La gate corre ahora en un grupo de procesos propio. Si toca la terminal, el sistema la detiene, y el presupuesto la corta.
+  - **Medido por QA a nivel de hook, con un pty:** `stty sane </dev/tty` da allow en 108 ms en v1.36.2. En la candidata, deny de presupuesto a N + C. Con el N real, son unos 7 minutos de espera.
+  - **Opciones:**
+    - **(A)** Declararlo como límite: las quality gates deben ser no interactivas.
+    - **(B)** Correr la gate sin terminal de control, para que falle en el acto en vez de esperar. *Coste:* amplía la única pasada y cambia otra conducta.
+- **(3) Una gate que detiene con `STOP` el reloj del hook** (QA-037-05). El cierre queda sin decisión: el cliente mata el hook a los 600 s y, según lo que QA midió en CA-08, deja pasar el cierre.
+   - **No es una regresión:** en v1.36.2, cualquier gate colgada hacía lo mismo.
+   - **Opciones:**
+     - **(A)** Declararlo como límite, junto a R-2. Una gate que corre como el mismo usuario puede detener también al propio hook, y nada dentro del hook se defiende de eso.
+     - **(B)** Endurecer el reloj. *Coste:* no cierra el caso de una gate que detiene al hook, y es código nuevo dentro de la única pasada.
+
+**Recomendación de la coordinadora: (A) en los tres puntos.** Texto listo para adoptar:
+
+> Adopto P-137-AD (A) en sus tres puntos, como límites declarados y sin código nuevo: (1) con bash anterior a 5.1 la puerta deniega todo cierre con quality gates, con el motivo que ya tiene; suelo de bash 5.1 para cerrar con gates, nombrando las distribuciones afectadas; (2) una gate que usa la terminal de control se corta por el presupuesto: las quality gates deben ser no interactivas; (3) una gate que detiene el reloj del hook deja el cierre sin decisión, igual que una que detiene el propio hook: se declara junto a R-2. Va en las notas `[1.36.3]`, en los requisitos del README y en los residuales de REQ-037, por el write-back del analista. F-137-24 (1.38) quita la causa al sacar las gates del hook.
+
+**Qué bloquea.** El write-back del analista en estos puntos y el cierre de REQ-037. La pasada correctiva del desarrollador ya está en marcha sin ellos. Si eliges (B) en el punto (2) o en el (3), entra en esa misma pasada; si el desarrollador ya ha terminado, no hay segunda pasada.
 
 ### RESUELTA (propietario, 2026-10-16) — **P-137-J adoptada con sus tres decisiones de redacción: hotfix 1.36.2 mínimo autorizado**
 

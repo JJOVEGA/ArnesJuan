@@ -2,6 +2,368 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: REQ-037 `completado`; notas `[1.36.3]` firmadas, listas para que el propietario publique
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **REQ-037 → `completado`:** QA y seguridad `aprobado` sobre el código de `f900a98`. Las tres gates de §7 dieron rc 0 con `tools/arnes-gates.sh`. Los hallazgos que siguen abiertos son de clase `instrumento`: QA-037-08, SEC-150 y SEC-152.
+- **Notas `[1.36.3]`:** el encabezado pasa de «sin firmar todavía» a firmado. La fila de REQ-037 del índice de requisitos pasa a `completado`.
+- **Falta lo que hace el propietario:** la fusión a `main`, el tag `v1.36.3` y la publicación.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-067, re-firma de seguridad de REQ-037, `aprobado` sin veto
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad (reanudado); registro de la coordinadora.
+
+- **SEC-151 → `mitigado` en `f900a98`**, sin publicar. Lo cierran las dos vías: un archivo grande no ignorado y un `.gitignore` que es una FIFO. Las dos deniegan en ≈ 30,15 s y no queda `git` vivo. El código nuevo no abre ninguna conducta de deny a allow.
+- **SEC-150 y SEC-152:** declarados como pide P-137-AO. Quedan `abierto — límite declarado`, de clase `instrumento` para REQ-037.
+- **Movimientos frente a v1.36.2:** toda conducta de deny a allow es el cierre legítimo, una forma del riesgo (1) o un límite declarado por el propietario. Las conductas nuevas de allow a deny son A7 (proyecto con más de ≈ 6 GiB no ignorados) y A8 (FIFO como `.gitignore`).
+- **Desvío de forma declarado por el auditor en R-067:** en R-066 añadió la revisión al registro con `cat >>`, además de la fila escrita con `python3`. En R-067 editó sólo con `Edit`.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA acotado de SEC-151 (P-137-AO), `aprobado`; en-revisión hasta la re-firma de seguridad
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester (reanudado); registro de la coordinadora.
+
+- **Lo verificado:**
+  - Deny con motivo propio en ≈ 30,15 s con un archivo disperso de 256 GiB y con la FIFO como `.gitignore`, sin procesos vivos.
+  - Falla cerrado cuando el cálculo muere o rompe el protocolo.
+  - `ARNES_HASH_PRESUPUESTO_S` del entorno no cambia nada.
+  - El cierre legítimo no cambia: `allow` 21/21, con mediana de 101,0 ms frente a 98,9 ms.
+  - El texto de `6dde1a1` no promete de más.
+- **Banco:** 3032/1/33, cuadre 3066. El FAIL es la sonda de reloj de REQ-033 «mv con origen protegido», 1,304×. QA midió a mano que la candidata y `d89316c` dan lo mismo: familia de QA-037-08 (`instrumento`), no de este cambio.
+- **Índice de requisitos:** la columna Estado de REQ-037 pasa a `en-revisión`, como el REQ (la coordinadora).
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: SEC-151 reparado (P-137-AO); REQ-037 `en-revisión`
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: desarrollador.
+
+- **La huella tiene presupuesto propio: 30 s, fijo en el código.** El hash del árbol corre en un proceso aparte. Si no termina a tiempo, se corta: muere ese proceso y el git en curso. La puerta deniega con un motivo propio. Si el corte falla, también deniega.
+- **Medido con la sonda de 200 GiB dispersos:** `deny` en 30 152 ms y sin procesos vivos. Antes, en `d89316c`: 923 826 ms, más allá de los 600 000 del cliente.
+- **Mismo defecto, otra vía:** un `.gitignore` que es una FIFO colgaba `git ls-files`. El presupuesto también lo cubre.
+- **Banco:** la sección 53 suma S1–S4 y el cuadre pasa de 3062 a 3066. Un árbol normal tarda lo mismo que antes.
+- Criterios y notas: los reescribe el analista con el valor construido.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AO, decisión del propietario sobre R-066
+> Origen: R-066 · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **SEC-151 se repara en 1.36.3.** El cálculo de la huella tiene un presupuesto propio, del orden de decenas de segundos. Si no termina a tiempo, la puerta deniega con un motivo propio. El banco lleva un caso con un archivo disperso grande. Si no cierra en esta pasada, 1.36.3 no se publica.
+- **SEC-150 y SEC-152** se declaran en las notas `[1.36.3]`. Literal en `PENDING_APPROVAL.md`.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-066, primera revisión de seguridad de REQ-037, `con-hallazgos`; REQ-037 `bloqueado` por la regla de parada de P-137-AN
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad; registro de la coordinadora.
+
+- **No firma.** Frente a v1.36.2 hay dos conductas que pasan de deny a allow fuera de la clase que admitió el propietario:
+  - **SEC-150** (`contrato`, media): un cambio del árbol hecho durante la corrida de la herramienta y deshecho antes del hash final deja un verde sobre un contenido que las gates no evaluaron.
+  - **SEC-151** (`contrato`, media, introducido por REQ-037): el hash del árbol se calcula dentro del hook y no tiene techo, a ≈ 4,5 s por GiB no ignorado. Con un verde previo y un archivo disperso grande, el hook pasaría del límite del cliente y la llamada se aplicaría sin decisión.
+- **SEC-152** (`contrato`, baja): un enlace simbólico que sale del árbol queda dentro de la clase admitida, pero falta declararlo.
+- **SEC-132 (a) y SEC-133** pasan a `mitigado` en el candidato, sin publicar.
+- **Lista completa de movimientos** (D1–D9) en `docs/seguridad/registro-seguridad.md`, R-066. Decide el propietario.
+- **Desvío de forma:** el auditor escribió la fila de Historial y «Tocado por» de REQ-037 con `python3` desde `Bash`, y no con `Edit`. La coordinadora revisó el diff y el contenido es el esperado.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada de sólo texto de P-137-AN (A) y su lectura de QA; REQ-037 `QA: aprobado`, `en-revisión` hasta la firma de seguridad
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`, analista) y Opus 5.5 (`claude-opus-5-5`, QA) · agente: analista-requerimientos, qa-tester; registro de la coordinadora.
+
+- **Analista nuevo** (`4e0fb4e`): CA-05 (ii) promete sólo las formas que nombran el registro. Las tres formas de QA-037-14 pasan al riesgo (1) y su arreglo, a F-137-24-B. El manifiesto (`cp …/config.json .arnes/`, preexistente) va a la pieza b. La misma corrección llega a las notas `[1.36.3]`, a §13 de AGENTS.md y su plantilla, a ARCHITECTURE, ADR-019 y la skill `arnes-upgrade`. Costó 96 589 tokens no cacheados.
+- **QA nuevo:** código sin cambios desde `d89316c`. `install` sobre el registro se deniega, frente a allow en v1.36.2. Ningún texto vigente promete de más. Cierra QA-037-14 como declarado por el propietario; QA-037-08 (`instrumento`) sigue abierto. Costó 94 521 tokens no cacheados.
+- Con los agentes reanudados, cada pasada se estimaba en 330–520 k (ajuste a P-137-AM).
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN resuelta por el propietario, (A)
+> Origen: P-137-AN · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Decisión:** las formas de QA-037-14 (destino `.arnes/` como directorio, `link`, `cp -l`/`--link`) se declaran para 1.36.3 dentro del riesgo (1) de CA-05 y se arreglan en 1.37 con F-137-24-B. El caso del manifiesto, preexistente desde v1.36.2, se declara en las notas y va a la pieza b.
+- **Pasada de sólo texto:** analista nuevo, lectura de QA nueva y primera firma de seguridad sobre `d89316c`, con la condición de la firma escrita por el propietario: comparar contra v1.36.2 y declarar toda conducta que pase de deny a allow.
+- **Ajuste a P-137-AM** (reanudar sólo con contexto de menos de ~150 k): se registra en `cand/1.37.0`.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AN, QA-037-14 escalado al propietario (la pasada fuera del tope no cierra)
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La consulta de QA** en `PENDING_APPROVAL.md` lleva ahora el número P-137-AN, el contexto (el riesgo (1) ya aceptado), las opciones (A) declarar y arreglar en 1.37 y (B) arreglar ahora, y la recomendación (A) con su texto.
+- **La carga de CA-09 sobre `d89316c`** la lanzó la coordinadora por P-137-AM: 4 000 cierres con 0 en todas las columnas. Evidencia en `scratchpad/issue-63-f13724-carga-d89316c/`, para el repositorio de evidencia.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA de la pasada fuera del tope (`d89316c`), `con-hallazgos`; REQ-037 `bloqueado`
+> Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cerrados, verificados:**
+  - QA-037-11: `ln` y `ln -s` sobre el registro se deniegan, y un registro enlazado se juzga ilegible.
+  - QA-037-13: O1 a O3.
+- **Cerrado por decisión del propietario:** QA-037-12, aceptado en P-137-AL 3 (A) y declarado en todos los sitios que pide.
+- **CA-01:** conforme.
+- **CA-09:** la carga la lanzó la coordinadora (P-137-AM); yo la leí y la juzgué. 4 000 cierres, 0 fallos.
+- **Nuevo: QA-037-14 (`contrato`).**
+  - Formas llanas de `Bash` que siguen fabricando un verde:
+    - `cp`, `mv` o `install` al directorio `.arnes/`;
+    - `link` o `cp -l` seguidos de `rm`.
+  - Como era la única pasada, REQ-037 queda `bloqueado` y se escala en `PENDING_APPROVAL.md`.
+- **Banco:** 3030 PASS, 1 FAIL (la sonda de reloj de REQ-033, QA-037-08) y 31 SKIP; cuadre 3062. La sección 53, sola: 100 PASS, 0 FAIL y 2 SKIP.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: pasada correctiva de F-137-24 (QA-037-11 y 13), `en-revisión` (sin validar)
+> Origen: GitHub (commit local, sin validar) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **QA-037-11, la puerta:** un registro que es un enlace simbólico o tiene más de un enlace duro se juzga ilegible y
+  deniega. El registro regular de un solo enlace sigue dando allow.
+- **QA-037-11, `Bash`:** `ln` y `ln -s` con el registro de destino, y `ln` con él de fuente de un enlace duro, se
+  deniegan a todo agente. Los demás veredictos del detector no cambian: los enlaces van en una lista aparte.
+- **QA-037-13:** la sección 53 prueba las gates en forma de objeto (verde, roja y mezcla con cadenas).
+- **`.gitignore`** ignora `.arnes/gates-veredicto.json`.
+- **Fail-before contra `42a320c`:** los dos registros enlazados y las seis formas de `ln` pasaban de allow a deny; los
+  controles quedan en allow.
+- **Banco:** sección 53 con 100 PASS y 2 SKIP; completo, una vez, 3 032 PASS, 0 FAIL, 30 SKIP, cuadre 3 062.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: write-back del analista de P-137-AL y de QA-037-11 a 13 en REQ-037
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
+
+- **CA-01:** la lista de exclusiones queda decidida.
+- **CA-05:** riesgo (5), el entorno de quien lanza la herramienta (QA-037-12), aceptado para 1.36.3; el endurecimiento va a 1.37. CA-06 deja de dar SEC-131 (a) como «sin cambio».
+- **QA-037-11:**
+  - CA-03 (a): un registro que es enlace simbólico o tiene más de un enlace duro se juzga ilegible;
+  - CA-05 (ii): `ln` y `ln -s` con el registro como destino, o como fuente de un enlace duro, se deniegan.
+
+  Las dos llevan fail-before contra `42a320c`.
+- **QA-037-13:** CA-08 pone el caso de gates en forma de objeto en la sección 53.
+- **Notas `[1.36.3]`, `AGENTS.md` §13 y su plantilla, y F-137-24-B:** declaran el riesgo aceptado.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL resuelta por el propietario, con 1 (A), 2 (A) y 3 (A)
+> Origen: P-137-AL · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Qué se decide:**
+  - la lista cerrada de lo que el hash no cubre;
+  - una pasada correctiva fuera del tope, para QA-037-11 y QA-037-13;
+  - el riesgo de QA-037-12 aceptado para 1.36.3, declarado en las notas, con el endurecimiento en 1.37 (F-137-24-B);
+  - por P-137-AM, las cargas largas las lanza la coordinadora fuera de los agentes.
+
+  El literal está en `PENDING_APPROVAL.md` § Resueltas.
+- **Orden de la pasada:** write-back del analista, desarrollador, carga lanzada por la coordinadora, QA y seguridad.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AL ampliada con el QA de `426ea1d`
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **P-137-AL, punto 3:** QA-037-11 (`ln` sobre el registro) y QA-037-13 (la prueba de las gates en forma de objeto) entran en la pasada correctiva de 2 (A). Para QA-037-12 se propone aceptar el riesgo para 1.36.3: el veredicto confía en el entorno de quien lanza la herramienta, igual que el riesgo (1) de CA-05, y el endurecimiento va a 1.37.
+- **Evidencia** del desarrollador y de QA en el repositorio de evidencia: `issue-63-plazo-gates/f13724-dev` y `f13724-qa` (`36262fb`, `a1790bb`), sin los 21 proyectos de prueba con `.git` propio, que regeneran los guiones.
+- **La pasada correctiva y la firma de seguridad esperan la decisión del propietario.**
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): QA de REQ-037 sobre `ceb7bf3`, `con-hallazgos`
+> Origen: GitHub (commit local de QA) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **CA-08 (a), el fail-before de las respuestas dobles:** reproducido en la misma sesión, con la carga de QA sin cambios.
+  - `d47cfba`: 3 dobles, 3 cuelgues y 4 `deny` espurios, en 600 cierres.
+  - La candidata: 0 dobles en 4 000.
+- **CA-09, la condición de publicar:** cumplida.
+  - 4 000 cierres (válido, rojo, caducado y ausente; 3 400 a la vez y 600 en serie).
+  - 0 dobles, 0 cuelgues (máximo 999 ms), 0 `deny` espurios y 0 `allow` espurios.
+- **CA-01:** el código hace lo que dice la lista, pero no se aprueba mientras P-137-AL siga en Pendientes.
+- **Conformes:** CA-02, CA-03, CA-06 (el intento, retirado), CA-08 (b), CA-10 y CA-15.
+- **Hallazgos nuevos, los tres `contrato`:**
+  - QA-037-11: `ln` sobre el registro fabrica un verde.
+  - QA-037-12: lanzar la herramienta con el entorno suplantado fabrica un verde.
+  - QA-037-13: la sección 04 ya no prueba las gates en forma de objeto.
+- **Del diseño anterior:**
+  - cerrados: QA-037-01, 04, 06 y 09;
+  - retirados por reversión: 03, 05 y 10;
+  - sigue abierto: QA-037-08 (`instrumento`).
+- **Banco:** 3016 PASS, 1 FAIL (la sonda de reloj de REQ-033, QA-037-08) y 30 SKIP; cuadre 3047.
+- **Herramienta:** `tools/arnes-gates.sh --quien qa-tester` sobre el repositorio da VERDE.
+- **Evidencia:** en el scratchpad de la sesión, `issue-63-f13724-qa/`.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): write-back del analista sobre `42a320c`; documentación de CA-14 y barrido del «60 s» (CA-11)
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`) · agente: analista-requerimientos (commit de la coordinadora).
+
+- **Decisiones de redacción, sin ficha** (ninguna abre la puerta):
+  - I2b se queda verde, por su código de salida; es el límite de la gate hostil.
+  - El deny de `mv` sobre el registro vale; «borrarlo» significa `rm` o `unlink`.
+  - Se declaran dos límites: que `truncate` no lo ve el detector y que un submódulo entra en el hash sólo por su presencia.
+  - La lista cerrada de exclusiones de CA-01 queda escrita, rotulada como pendiente de P-137-AL.
+  - M-037-2 obliga a cambiar la base del banco y la sección 04; queda escrito como consecuencia declarada.
+- **Documentación** (`README.md`, `AGENTS.md` y su plantilla, `agents/qa-tester.md`, `skills/arnes-upgrade/SKILL.md` «Hacia 1.36.3», `requirements/README.md` y su plantilla, `docs/gobernanza/autoalojamiento.md` y REQ-007 CA-68): describe el veredicto y la herramienta, y corrige el «60 s del cliente» a ≈ 600 s medido.
+- **Fichas nuevas** en `docs/PENDIENTES.md`: F-137-24-B, para que sólo QA y la coordinadora lancen la herramienta (1.37), y F-137-24-C, sobre los comentarios del banco.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3 (F-137-24): REQ-037 construido con las gates fuera del hook, `en-revisión` (sin validar)
+> Origen: GitHub (commit local, sin validar) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **Construido:**
+  - `tools/arnes-gates.sh` corre las gates fuera del hook y escribe el veredicto con el hash del árbol;
+  - `hooks/lib.sh`: `arnes_hash_arbol`, `arnes_veredicto_juzga` y la lista cerrada de exclusiones (P-137-AL 1 (A), una constante);
+  - `guard-completado` ya no ejecuta gates; `guard-codigo` y `guard-completado` protegen el registro a todo agente;
+  - retirado el código del intento anterior: `entrada.sh` idéntico a v1.36.2;
+  - `AGENTS.md` §7 y §13 y su plantilla, `ARCHITECTURE.md` y las notas `[1.36.3]`.
+- **Medido:**
+  - con la carga de QA-037-01, `d47cfba` da 3 cuelgues y 8 `deny` espurios en 870 cierres; la candidata, 1 200 de 1 200 correctos;
+  - #63: v1.36.2 deniega a los 35 s; la candidata deja pasar en 0,2 s sin ejecutar la gate.
+- **Banco:**
+  - sección 53 rehecha (87 casos); la base del banco pasa a `quality_gates: []`;
+  - completo: 3 014 PASS, 1 FAIL (una sonda de reloj de REQ-033), 32 SKIP, cuadre 3 047.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: REQ-037 reescrito para F-137-24 (las gates fuera del hook); ADR-019 sustituye a ADR-018; P-137-AL abierta
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Sonnet 5.5 (`claude-sonnet-5-5`, analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **REQ-037 (15 CA):**
+  - `tools/arnes-gates.sh` corre las gates fuera del hook y escribe `.arnes/gates-veredicto.json`, ligado al hash del árbol de trabajo.
+  - `guard-completado` ya no ejecuta gates: comprueba el registro.
+  - Se retira entero el código del intento anterior.
+  - El registro está protegido por las puertas de escritura, y el riesgo que queda se declara.
+  - Fail-before obligatorio de las respuestas dobles con carga contra `d47cfba`, y de #63 contra `46ee7ca`.
+  - Condición de publicación de P-137-AD, ampliada con 0 `allow` espurios.
+- **ADR-019** sustituye a ADR-018.
+- **(coordinadora) P-137-AL** abierta en `PENDING_APPROVAL.md`. Pregunta qué queda fuera del hash: el CA-01 del analista lo dejaba «no exhaustivo», y la recomendación es una lista cerrada en el contrato. Pregunta también cuántas pasadas tiene el diseño nuevo. El desarrollador empieza con la recomendación.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AK, F-137-24 (issue #63) arranca ya en esta rama, con las gates fuera del hook
+> Origen: P-137-AK · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La orden del propietario:** F-137-24 arranca ya, en paralelo con el cierre de 4a en `cand/1.37.0`. Se publica sola como 1.36.3 en cuanto QA y seguridad la validen. El fail-before obligatorio son las respuestas dobles con carga. El texto literal está en `PENDING_APPROVAL.md`, con una elisión del nombre de un proyecto consumidor.
+- **La rama:** se trabaja sobre `hotfix/1.36.3`, que ya parte del `main` actual. El intento anterior queda en su historial.
+- **El siguiente paso:** el analista reescribe REQ-037 para las gates fuera del hook, con el veredicto ligado al hash del árbol, y sustituye ADR-018.
+
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: P-137-AF resuelta por el propietario: **no se publica**; el arreglo de #63 va a 1.37 como F-137-24
+> Origen: P-137-AF · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: coordinadora.
+
+- **Qué deja la decisión:**
+  - la resolución, literal, en `PENDING_APPROVAL.md`;
+  - P-137-AE sin efecto;
+  - la rama se conserva como evidencia, sin fusionar en `main`;
+  - REQ-037 queda con QA-037-01 abierto.
+- **Las notas `[1.36.3]`** de abajo son un borrador que no se publicó.
+
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): QA de REQ-037, vuelta 2 (re-verificación de la única pasada), `con-hallazgos`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Cabeza `cdbe2a8`.** Control: v1.36.2. Fail-before: `d47cfba`. Evidencia: `issue-63-plazo-gates/qa-v2/`.
+- **QA-037-01 sigue abierto (`usuario/dinero`).** Medido con el arnés de carga de la vuelta 1, sin cambios:
+  - **0 dobles y 0 `deny` espurios** en la candidata, en 3 870 cierres.
+  - **3 cuelgues:** 1 de 570 verdes en la corrida con el arnés de QA, y 2 de 2 000 con cierres concurrentes.
+  - v1.36.2, en las mismas condiciones: 0.
+  - **Otro mecanismo:** `wait -n` no vuelve cuando termina la gate (`hooks/lib.sh:554`).
+  - **La condición de P-137-AD no se cumple.**
+- **Cerrados:** QA-037-02 (la candidata, igual que v1.36.2: INCONCLUSO) y QA-037-07 (P6, 15 de 15 bajo carga).
+- **Nuevos:** QA-037-09 (`contrato`: E1 y SEC-133 frente a CA-03 y CA-05, P-137-AE) y QA-037-10 (`instrumento`: P6 puede salir SKIP).
+- **Verificado:**
+  - la guarda de la trampa, con siete señales y tres formas de hijo: 0 documentos;
+  - el `deny` legítimo, que se mantiene;
+  - los relojes con `KILL`: 0 procesos vivos;
+  - el temporal: colisión, `TMPDIR` sin escritura y que no quede nada;
+  - E1, R1, R2 y R3.
+- **Banco:** 2994 PASS, 1 FAIL (sonda de reloj de la sección 49, QA-037-08) y 33 SKIP; cuadre 3028. Autoprueba 117/0. Gates rc 0.
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` abre P-137-AF. Por la condición de P-137-AD, 1.36.3 no se publica, y el propietario decide qué se hace con #63. El hotfix queda detenido hasta entonces.
+
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63): pasada correctiva de REQ-037 (la única), `en-revisión`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: desarrollador.
+
+- **QA-037-01 (`usuario/dinero`):**
+  - **Causa:** un hijo de bash recién bifurcado que recibe una señal antes de rehacer sus manejadores ejecuta la trampa de
+    salida heredada del hook —en la salida estándar del hook— o se traga la señal. El hook retiraba el reloj con `TERM`
+    justo después de una gate rápida: dos documentos JSON, `deny` espurios y cuelgues hasta el reloj.
+  - **Arreglo:** la trampa sólo emite en el proceso del hook (`hooks/entrada.sh`, guarda con `case`), y los relojes se
+    retiran con `KILL` (`hooks/lib.sh`).
+  - **Medido con el arnés de carga de QA** (300 rojas y 570 verdes): `d47cfba` 4 dobles o cuelgues en rojas y 7 espurios
+    o cuelgues en verdes; la candidata y v1.36.2, 0.
+- **QA-037-02:** el archivo de salida de las gates se crea sin procesos y sólo si hay gates; REQ-017 CA-08 (ii) vuelve
+  bajo su techo en la sección sola (máx 1,237×) e INCONCLUSO en el banco entero.
+- **QA-037-07:** P6 determinista (copia de 30 s, la gate reintenta hasta matar el reloj).
+- **P-137-AD (2):** las gates leen `/dev/null`. Ninguna gate esperaba por su entrada estándar; el efecto medido es el
+  vector de SEC-133 (una gate que lee la entrada ya no se come la lista). La gate que abre `/dev/tty` sigue esperando al
+  presupuesto: no lo cubre, se declara.
+- **Banco:** sección 53 de 62 a 68 casos (E1, R1, R2, R3); completo 2992 PASS, 0 FAIL, 36 SKIP, cuadre 3028;
+  autoprueba 117/0; gates rc 0. Evidencia: `issue-63-plazo-gates/dev-pasada/`.
+- **(coordinadora) En el mismo commit:** `PENDING_APPROVAL.md` registra P-137-AD como resuelta por el propietario (texto literal) y abre P-137-AE, sobre si se queda la entrada desde `/dev/null` ahora que cambia el veredicto de SEC-133.
+
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 3: QA de REQ-037, vuelta 1 de la única pasada: `con-hallazgos`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus (`claude-opus-5-5`) · agente: qa-tester.
+
+- **Medido sobre `d47cfba`:**
+  - **Banco completo, una vez:** 2985 PASS, 7 FAIL, 30 SKIP (cuadre 3022). Los FAIL, clasificados:
+    - 2 de producto (secciones 16 y 36, QA-037-01);
+    - 1 de contrato por coste (REQ-017 CA-08 (ii), QA-037-02; **no es la carga de la sección 53**: falla sin ella);
+    - 4 de instrumento (P6 flaky, QA-037-07; tres sondas de reloj bajo concurrencia, QA-037-08).
+  - Autoprueba 117/0; gates rc 0; CA-02 (f) `deny` de gates a 420 241 ms.
+  - **CA-08:** en v1.35.0 y v1.36.0 el cierre pasó sin veredicto (el cliente cancela el hook a 600 000 ms).
+- **Hallazgos:** QA-037-01 (`usuario/dinero`, alta), QA-037-02 a 06 (`contrato`), QA-037-07 y 08 (`instrumento`). Registro y reproducción en `docs/qa/REQ-037.md`. Lo central:
+  - bajo carga de CPU, una gate roja sale a veces con dos documentos JSON;
+  - medido con el cliente: dos documentos = el `deny` no se aplica.
+- **Coste de `claude -p`:** 0,2398 USD (CA-08, 2 corridas; el experimento de los dos documentos, 2).
+- **Incidente propio:** un `kill` a un grupo mal identificado mató el grupo de la propia llamada de consola de QA, nada más.
+- **(coordinadora) En el mismo commit:** se abre `PENDING_APPROVAL.md` P-137-AD. Con bash < 5.1 la puerta deniega todo cierre con gates; es lo que QA registró como QA-037-03 (a), y lo decide el propietario.
+
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 2: REQ-037 construido por el desarrollador, `en-revisión`
+> Origen: Interno (sin commit; lo comitea la coordinadora) · usuario: Juan · modelo de IA: Opus · agente: desarrollador.
+
+- **Código** (`hooks/lib.sh`, `hooks/guard-completado.sh`, `hooks/entrada.sh`): el plazo propio mide el análisis (`ARNES_T0_US`; al salir del bucle de gates el reloj vuelve a lo que llevaba el análisis); presupuesto de gates `ARNES_GATES_PRESUPUESTO_S=420` con su motivo propio; `arnes_gate`, `arnes_gate_corta`, `arnes_gates_reloj` y `arnes_gates_sin_reloj`; el motivo del plazo y los comentarios ya no dan el «60 s» como límite del cliente. `hooks/hooks.json` sin cambio.
+- **Banco:** sección 53 nueva (62 casos; `CASOS_ESPERADOS` 2960 → 3022), README del banco y un comentario de `run.sh`.
+- **Versión** 1.36.3 en `plugin.json` y `marketplace.json`; **notas `[1.36.3]`** (borrador, sin firmas).
+- **Hallados y cerrados antes de entregar:** una carrera de `wait -n` (la gate que terminaba mientras se bifurcaba el reloj no despertaba la espera) y una gate roja que pasaba (`exec setsid false`, con la gate de jefa de su grupo de procesos). Los dos tienen caso o medida en la evidencia.
+- **Medido:** sección 53, 60 PASS y 2 SKIP; fail-before con los hooks de v1.36.2, 11 FAIL; banco completo 2985 PASS, 4 FAIL (sondas de reloj de otras secciones; no se repitió), 33 SKIP; autoprueba 117/0; gates rc 0. Evidencia: `issue-63-plazo-gates/dev/` del árbol de evidencia.
+- **Incidente propio:** una prueba con `pkill -x sleep` sin acotar mató por un instante todos los `sleep` del usuario en la máquina, también los que pudiera tener el otro worktree. Declarado en la evidencia (`21-`).
+
+## [1.36.3] — 2026-10-28 · Hotfix: las quality gates dejan de correr dentro del hook; la puerta de cierre comprueba un veredicto ligado al hash del árbol
+
+> Origen: REQ-037 (reescrito, F-137-24; ADR-019, que sustituye a ADR-018) · **firmado**: QA `aprobado` (pasada acotada de SEC-151, `9162a6f`) y seguridad `aprobado` sin veto (R-067, `d2f22b9`), sobre el código de `f900a98` · gobernado por la instalación estable **1.36.2**.
+> **Estas notas no publican nada:** la fusión, el tag y la publicación son del propietario.
+
+**Qué cambia y por qué** (issue #63). Desde 1.36.0, `guard-completado` ejecutaba las quality gates y contaba su tiempo en su plazo propio de 30 s, así que un cierre con todo en orden y unas gates verdes de más de 30 s se denegaba siempre (medido en 1.36.0, 1.36.1 y 1.36.2 con una gate `sleep 35`). Un primer arreglo —un presupuesto de 420 s para las gates dentro del hook— produjo con carga respuestas con dos documentos JSON (el cliente no aplica ese `deny`) y cuelgues, y no se publicó. Ahora:
+- **las gates no corren en el hook.** Las corre `tools/arnes-gates.sh --quien <quien>` (QA, la coordinadora o el propietario; una suite de más de 10 min, en segundo plano o desde la terminal del propietario): en serie, en su orden, desde la raíz, con la entrada estándar desde `/dev/null`, parando en la primera roja. Deja en **`.arnes/gates-veredicto.json`** el código de salida y la duración de cada gate, el **hash del árbol** (lo comiteado, lo modificado y lo nuevo no ignorado, con su modo, menos una lista cerrada: el propio registro, `requirements/`, `docs/qa/`, `docs/seguridad/`, `PENDING_APPROVAL.md`, `CHANGELOG.md` y sus rotaciones, y `docs/ESTADO.md`), la fecha y quién la corrió. Si el árbol cambia mientras corren, o se corta a mitad, no deja veredicto;
+- **la puerta sólo comprueba ese registro**: que existe y se lee entero, que su lista de gates es la del manifiesto, que todas salieron 0 y que su hash es el del árbol actual. Si no, `deny` con un motivo propio de cada caso, que dice cómo correr la herramienta. El cierre tarda lo que el hash: **≈ 0,1 s** en el árbol de este repositorio, sea cual sea la duración de las gates (no sea cual sea el tamaño del árbol: ver «La huella tiene un presupuesto propio»). Las demás condiciones de cierre no cambian;
+- **el registro sólo lo escribe la herramienta**: `Edit`, `Write`, `MultiEdit` y las formas de `Bash` que **nombran el registro** como destino (o como origen de `mv`; `ln` y `ln -s`) se deniegan a todo agente, también al de código. Leerlo y borrarlo, no. **No se deniegan** `cp`, `mv` o `install` con destino el directorio `.arnes/`, ni `link`, ni `cp -l`/`--link` seguidos de `rm` (ver el riesgo que queda);
+- el plazo propio de 30 s queda como en v1.36.2 (ya no se le suma ninguna gate) y su motivo dice «30 s de análisis».
+
+| Movimiento | v1.36.2 | 1.36.3 |
+|---|---|---|
+| **M-037-1** — gates **verdes de más de 30 s**, con veredicto válido | `deny` (plazo propio) | **allow** |
+| **M-037-2** — **cualquier cierre con gates sin veredicto, o con uno caducado** | `allow` si sus gates duraban menos de 30 s | `deny`, con el motivo que dice cómo correr la herramienta: **cambio de compatibilidad** |
+| **M-037-3** — gates de más de ≈ 600 s | sin decisión (el cliente mata el hook) | ya no corren en el hook |
+
+**Para un proyecto que actualiza:** con `quality_gates`, el cierre se deniega hasta que alguien corra la herramienta; sin gates, nada cambia; **sin git no se cierra un REQ con gates**. Ignora `.arnes/gates-veredicto.json` en git.
+
+**La huella tiene un presupuesto propio: 30 s, fijo en el código** (SEC-151, R-066; decisión del propietario P-137-AO, 2026-10-28). Calcular el hash del árbol crece con los bytes no ignorados (≈ 4,5 s por GiB, medido en Linux/WSL2), y sin techo un archivo disperso de unos 135 GiB llevaba el cierre más allá de los ≈ 600 s del cliente, que aplica la llamada **sin decisión** (medido con 200 GiB dispersos sobre `d89316c`: `deny` a los 923 826 ms). Ahora el cálculo corre en un proceso aparte y, si no termina en 30 s, se corta y la puerta **deniega con un motivo propio** («presupuesto propio de la huella»); si el corte no se puede armar o el proceso muere sin resultado, también deniega. El hook responde en **≈ 61 s como mucho** (30 s de análisis más 30 s de huella). Con el arreglo, la misma sonda de 200 GiB: `deny` en 30 152 ms y sin procesos vivos. Cubre además un `.gitignore` que es una FIFO (dejaba a `git ls-files` esperando para siempre). **Consecuencia para tu proyecto:** caben **≈ 6 GiB de contenido no ignorado**; con más, **la puerta deniega siempre el cierre con gates** hasta que ignores en git lo que no es del producto (el motivo lo dice), y `tools/arnes-gates.sh` sale con rc 2 sin escribir veredicto. En v1.36.2 la puerta no leía el árbol: es un `deny` nuevo para ese caso. **Sin medir:** el corte de un `git.exe` nativo en Git Bash/Windows; allí el presupuesto no está demostrado. El banco suma la sección 53, casos S1 a S4 (S1 a S3 sólo en Linux).
+
+**Límites declarados, sin arreglo en 1.36.3** (P-137-AO: «SEC-150 y SEC-152: se declaran en las notas de 1.36.3»):
+- **SEC-150:** la herramienta compara el hash de antes con el de después de la corrida. Un cambio del árbol hecho **durante** ella y **deshecho antes del hash final** no se ve: queda un verde sobre un árbol que las gates no evaluaron (medido: v1.36.2 `deny`, 1.36.3 `allow`; la misma carrera contra el hook de v1.36.2 también da `allow`).
+- **SEC-152:** un enlace simbólico entra en el hash por su texto. Lo que una gate lee a través de uno que apunta **fuera del proyecto**, y en general todo lo que lee fuera de él (la toolchain incluida), puede cambiar después del verde sin invalidarlo (medido: v1.36.2 `deny`, 1.36.3 `allow`).
+
+**SEC-133 queda cerrado por construcción** (una gate que leía su entrada estándar se comía la lista de las siguientes): la herramienta no pasa la lista por la entrada estándar y la gate lee `/dev/null`. **SEC-132 (a)** deja de ser un vector del hook; su estado lo fija la revisión de seguridad.
+
+**El riesgo que queda, declarado y no aceptado como definitivo** (REQ-037 CA-05): lo que el detector de `Bash` no ve (F-136-13) y la consola del propietario pueden fabricar un verde. **Dentro del mismo riesgo (1), por decisión del propietario (P-137-AN (A), 2026-10-28; QA-037-14):** `cp`, `mv` o `install` con destino el **directorio** `.arnes/` (con o sin barra final), `link F .arnes/gates-veredicto.json && rm F` y `cp -l`/`--link … && rm` dejan un verde falsificado y **el cierre sale `allow` con una gate en rojo**; la promesa de CA-05 (ii) se corrigió para no cubrirlas, y su arreglo va a **1.37** con F-137-24-B. **Preexistente, no del registro:** `cp …/config.json .arnes/` reemplaza también el **manifiesto**; ya ocurría en v1.36.2 y va a la **pieza b** de 1.37. Además: una gate hostil, o un superviviente suyo, puede reescribir el registro; `--quien` no se verifica; quien edita la herramienta puede hacerla mentir. `truncate` sobre el registro no lo detecta el analizador (sólo lo vacía: la puerta lo juzga ilegible y deniega). Lo **ignorado** por git y la lista cerrada de exclusiones no entran en el hash: una gate que evalúa esas rutas no se re-valida cuando cambian después. Un submódulo entra en el hash sólo por su presencia. SEC-131 (a) sigue: una función importada con el nombre de la orden de una gate la hace salir 0.
+
+**La cifra del cliente, corregida.** Los textos de 1.36.x daban por hecho que el cliente mata un hook `PreToolUse` a los **60 s**. Medido: lo mata a **≈ 600 s** (CLI 2.1.289, Linux/WSL2, un plugin de prueba sin `timeout` explícito, como `hooks/hooks.json`; una corrida por punto: un hook de 75 s emitió su `deny` y se aplicó; uno de 620 s murió a ≈ 600 s y la llamada siguió sin su decisión). En esta versión se corrigen el motivo del plazo propio y los comentarios de `hooks/`, y la cláusula 1 y la fila de las gates de `AGENTS.md` §13 y su plantilla. **Quedan, con su porqué:** las cifras medidas con el `timeout` de 60 s del banco («sin decisión a los 60 s»), que son ciertas de ese instrumento; la historia fechada (entradas anteriores de este archivo, `docs/qa/`, el registro de seguridad, `PENDING_APPROVAL.md`, `docs/PENDIENTES.md`, ADR anteriores); los demás REQ, que no se reabren; y los comentarios de las secciones del banco que llaman «límite del cliente» al `timeout` del banco, que se corrigen en 1.37. *(El write-back del analista en `AGENTS.md`, `requirements/README.md`, su plantilla y REQ-007 CA-68 completa esta lista antes de publicar.)*
+
+**El hallazgo colateral (CA-12), medido por el `qa-tester` con el cliente real; no se repite: sin gates en el hook, el caso deja de existir.** Condiciones: `claude -p` (CLI 2.1.289, Linux/WSL2); el plugin de cada tag, extraído limpio; un proyecto desechable con el cierre legítimo del issue y una gate `sleep 700`; una corrida por versión. **En v1.35.0 y en v1.36.0 el cierre se aplicó sin veredicto:** el cliente dio el hook por vencido a los **600 000 ms** («timed out after 600000ms», `cancelled`), y la edición siguió. El REQ quedó `Estado: completado` en disco.
+- **v1.35.0:** el hook murió sin salida.
+- **v1.36.0:** al morir, su trampa de salida llegó a escribir el `deny` fijo, pero de un hook ya cancelado, y el cliente **no lo aplicó**.
+- **Coste:** 0,0668 y 0,0665 USD.
+- **Contraste (no es el hallazgo colateral):** unas gates de entre 30 s y ≈ 600 s, en v1.35.0, se juzgaban con veredicto; en 1.36.0–1.36.2 las denegaba el plazo propio.
+- **Lo que no se midió:** otras versiones del CLI y Windows/MSYS.
+
+**Coste** (REQ-037 CA-10, medido por el desarrollador frente a v1.36.2 en la misma corrida; sección 53 del banco): el cierre con veredicto válido de una gate `sleep 35` y el de una gate `true` tardan lo mismo (≈ 0,95×), sin ejecutar ninguna gate; frente al cierre con `quality_gates: []` de v1.36.2, **+2 procesos** (tres de git para el hash y uno de `jq` para el registro, menos el `mktemp` y el `rm` que ya no hacen falta); ≈ 0,1 s en el árbol de este repositorio (289 archivos); doblar los archivos del árbol dobla el hash (cociente ≈ 2,07). El camino común y el cierre sin gates: **0 procesos** añadidos (el segundo, 2 menos).
+
+**Riesgo declarado y aceptado por el propietario para 1.36.3** (P-137-AL, 2026-10-28; QA-037-12; REQ-037 CA-05, riesgo (5)): **el veredicto confía en quien lanza la herramienta, entorno incluido.** Un `PATH` con una orden falsa o una función exportada con el nombre de una orden que la herramienta usa dan un **verde con hash válido**, como la escritura por consola o por una forma que el detector de `Bash` no ve (riesgo (1)). Es la misma superficie de SEC-131 (a), que pasa del hook a la herramienta: **ya no es «sin cambio»**. El endurecimiento —que sólo `qa-tester` y la coordinadora lancen la herramienta, y que ésta no confíe en el entorno heredado— va a **1.37** (ficha F-137-24-B). Además, un registro **enlazado** (simbólico o con más de un enlace duro) se juzga ilegible, y `ln` y `ln -s` sobre el registro se deniegan (QA-037-11).
+
+**Lo que no entra:** el **`timeout` explícito en `hooks.json`** (no pedido; `hooks.json` es idéntico al de v1.36.2); el endurecimiento de quién puede lanzar la herramienta por `Bash` y del entorno que hereda, y la denegación de `cp`/`mv`/`install` al directorio `.arnes/`, `link` y `cp -l` (propuestos para 1.37, F-137-24-B); **SEC-131 (a)**; **SEC-132 (b)**; **QA-007-09**; y todo lo de 1.37 (archivos por rol, REQ-036, adelgazamiento). **Sin medir:** Windows/MSYS, otras versiones del CLI, el cliente real con la herramienta en segundo plano (si el cliente la cortara, no habría registro y la puerta deniega: falla cerrado).
+
+**Firmas.**
+- **QA (Opus, 2026-10-28, cabeza `d89316c`, pasada fuera del tope): `con-hallazgos`; REQ-037 `bloqueado`** (`docs/qa/REQ-037.md`).
+  - **CA-08 (a):** `d47cfba` da 3 respuestas dobles con carga; la candidata (`ceb7bf3`), 0 en 4 000.
+  - **CA-09:** sobre `d89316c`, 4 000 cierres sin dobles, cuelgues ni decisiones espurias.
+  - **CA-01:** conforme, por P-137-AL 1 (A).
+  - **Cerrados:** QA-037-11 (`ln`), QA-037-13 (objetos) y QA-037-12 (aceptado por el propietario).
+  - **Abierto, `contrato`: QA-037-14.**
+    - `cp`, `mv` o `install` de un verde falsificado al directorio `.arnes/` pasan la puerta.
+    - También `link` o `cp -l` seguidos de `rm`.
+    - En todos esos casos el cierre sale `allow` con la gate en rojo.
+    - Lo decide el propietario.
+  - **Abierto, `instrumento`:** QA-037-08.
+- *Pendiente: seguridad (Opus).*
+
+## [Interno] — 2026-10-27 · Hotfix 1.36.3 (issue #63), fase 1: REQ-037 escrito por el analista
+> Origen: GitHub (commit local) · usuario: Juan · modelo de IA: Sonnet (analista), Opus (coordinadora) · agente: analista-requerimientos, coordinadora.
+
+- **Pedido del propietario:** P-137-AB (A), literal en `PENDING_APPROVAL.md` de `cand/1.37.0` (`d9b3348`). Alcance de cuatro puntos, ciclo completo y una sola pasada correctiva.
+- **REQ-037** (`critico`, sensible):
+  - CA-01: el plazo de 30 s mide sólo el análisis;
+  - CA-02: presupuesto de gates de **N = 420 s**, con el motivo propio «las quality gates no terminaron dentro de su presupuesto de 420 s»;
+  - CA-03: la gate es código no confiable (L4 y L5);
+  - CA-04: fail-before contra `v1.36.2`;
+  - CA-05: movimientos declarados;
+  - CA-06: coste;
+  - CA-07: barrido del «60 s»;
+  - CA-08: hallazgo colateral en `v1.35.0` y `v1.36.0`, que mide QA con el cliente real;
+  - CA-09 a CA-11: banco, versión y notas.
+- **ADR-018:** las quality gates tienen su propio presupuesto.
+- **Por qué N = 420:** con el análisis (≤ 40 s) y el corte (≤ 10 s), el peor caso es 470 s frente a los ≈ 600 s medidos del cliente en 2.1.289, un 21,7 % de margen.
+- **Fuera del alcance:** el `timeout` en `hooks.json` y las gates fuera del hook (F-137-24). R-1 declara que N depende del valor por defecto del cliente.
+- **Coste:** analista, 169 700 según la notificación (presupuesto ≈ 100 k; pasa el aviso de 1,5× por ≈ 20 k).
+- **Resultado:** el contrato está escrito. **Falta:** el desarrollador (Opus), QA (Opus), el write-back de AGENTS.md y de REQ-007 CA-68 (analista) y seguridad (Opus).
+
 ## [Interno] — 2026-10-16 · Hotfix 1.36.2 CERRADO (fase 4, coordinadora): REQ-033 `completado` por `Edit` juzgado en vivo; notas `[1.36.2]`; métrica por rol
 > Origen: GitHub · usuario: Juan · modelo de IA: Opus (coordinadora) · agente: coordinadora.
 

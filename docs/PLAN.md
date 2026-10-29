@@ -58,7 +58,7 @@
 | 1.36.2 | `.arnes/config.json` intocable (borrar, mover, vaciar → `deny`) y el **origen** de `mv` juzgado. Una pasada correctiva. QA y analista en Sonnet. SEC-135 y `rm`/`unlink`/`git rm` se declaran y van a 1.37 | Autorización `P-137-J` pendiente de adoptar |
 | 1.37 · 1 | Rigor proporcional por defecto (flujo ligero para lo normal; completo para dinero, sesión, seguridad, datos y el propio Arnés); política en `.arnes/config.json` | — |
 | 1.37 · 2 | Modelo por rol (analista y QA de rutina en Sonnet; Opus para desarrollador difícil y seguridad); `/compact` entre fases | — |
-| 1.37 · 3 | **Pieza b**, puerta posterior: qué cambió después de cada orden; cierra SEC-135, SEC-136 y el hueco C. **Requisito:** no depende sólo del manifiesto que vigila (P-032-6 (2)) | — |
+| 1.37 · 3 | **Pieza b**, puerta posterior: qué cambió después de cada orden; cierra SEC-135, SEC-136 y el hueco C. **Requisito:** no depende sólo del manifiesto que vigila (P-032-6 (2)). **Caso añadido (P-137-AN (A)):** `cp …/config.json .arnes/` (destino directorio) reemplaza el manifiesto; preexistente desde v1.36.2 | — |
 | 1.37 · 4 | F-137-9 (partir REQ-007) y adelgazamiento de `AGENTS.md` | — |
 | 1.37 · 5 | Plan de desarrollo; spike de mod; 2b | — |
 | Siempre | **Tope por intervención: dos pasadas correctivas**; a la tercera se decide (1.36.2: una). **Métrica:** tokens por REQ cerrado, por rol, en el Arnés y en SENDA, registrada al cerrar cada intervención y comparada con 1.36.0; si 1.37 no la baja, se para y se revisa | — |

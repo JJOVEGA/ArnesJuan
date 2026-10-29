@@ -122,6 +122,8 @@ arnes_guard_codigo() {
       # juzgar con el.
       # REQ-033 CA-01: retirar el manifiesto, a TODO agente; antes del corte, sin leerlo (lib.sh).
       arnes_deny_retira_manifiesto
+      # REQ-037 CA-05 (ii): `ln` con el registro de las gates, a TODO agente; antes del corte (lib.sh).
+      arnes_deny_enlaza_veredicto
       [ -n "$escrituras" ] || return 0
     fi
   else
@@ -136,6 +138,8 @@ arnes_guard_codigo() {
   arnes_deny_manifiesto_roto "$escrituras"
   # REQ-033 CA-01: escribir el manifiesto por Bash, o vaciarlo con un Write, a TODO agente (lib.sh).
   arnes_deny_escribe_manifiesto "$escrituras"
+  # REQ-037 CA-05: el registro del veredicto de las gates sólo lo escribe la herramienta, a TODO agente (lib.sh).
+  arnes_deny_escribe_veredicto "$escrituras"
 
   # ¿ES CODIGO DE LA APP? Se decide por la IDENTIDAD DEL DESTINO (REQ-007 CA-47, ADR-016), no
   # por el texto de la ruta: `<raiz>/docs/../src/a.ts`, un directorio enlazado a `src/` o

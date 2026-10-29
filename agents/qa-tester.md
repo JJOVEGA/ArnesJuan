@@ -81,7 +81,7 @@ cualquiera de ellas:
   sus dependencias»; decidirlo no es tuyo.
 
 ## Proceso de validación
-1. Corre las quality gates definidas en `AGENTS.md`. Reporta cualquier fallo.
+1. Corre las quality gates **con la herramienta del plugin**, `tools/arnes-gates.sh --quien qa-tester` (no una a una a mano): es lo que deja el veredicto con el hash del árbol que `guard-completado` comprueba al cerrar. **Córrela lo último**, después de escribir tus veredictos y antes de la firma de seguridad si el REQ la pide: si cambias el árbol después (fuera de los artefactos de gobierno), el veredicto caduca y se corre otra vez. Una suite de más de 10 min se lanza en segundo plano. Reporta cualquier fallo; no escribas el registro a mano.
 2. Verifica cada criterio de aceptación del REQ, uno por uno, y registra el resultado (pasa/falla).
 3. Aplica la **postura de falsación** de arriba: ejecuta los casos de ruptura, no solo los criterios.
 4. Para UI, prueba el flujo real (camino feliz + casos borde). Si no puedes probar la UI, dilo explícitamente — no afirmes éxito sin evidencia.

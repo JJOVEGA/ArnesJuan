@@ -15,7 +15,7 @@ mkreq_r "REQ-090" "no" "pendiente" "n/a" "ligero"
 setgates '.quality_gates = ["false"]'
 check "ligero con quality gate ROJA -> deny (la plantilla promete gates)" deny guard-completado.sh \
   "$(emite_edit_lit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
-setgates '.quality_gates = ["true"]'
+setgates '.quality_gates = []'   # la base del banco desde REQ-037 (run.sh)
 printf '## Pendientes\n### [2026-09-05] (qa) — decision humana\n- Contexto: x\n\n## Resueltas\n' > "$PROJ/PENDING_APPROVAL.md"
 check "ligero con aprobacion humana PENDIENTE -> deny" deny guard-completado.sh \
   "$(emite_edit_lit "$PROJ/requirements/REQ-090.md" "" "" 'Estado: en-revisión' 'Estado: completado')"
