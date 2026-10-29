@@ -2,6 +2,13 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: REQ-037 `completado`; notas `[1.36.3]` firmadas, listas para que el propietario publique
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **REQ-037 → `completado`:** QA y seguridad `aprobado` sobre el código de `f900a98`. Las tres gates de §7 dieron rc 0 con `tools/arnes-gates.sh`. Los hallazgos que siguen abiertos son de clase `instrumento`: QA-037-08, SEC-150 y SEC-152.
+- **Notas `[1.36.3]`:** el encabezado pasa de «sin firmar todavía» a firmado. La fila de REQ-037 del índice de requisitos pasa a `completado`.
+- **Falta lo que hace el propietario:** la fusión a `main`, el tag `v1.36.3` y la publicación.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-067, re-firma de seguridad de REQ-037, `aprobado` sin veto
 > Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad (reanudado); registro de la coordinadora.
 
@@ -281,7 +288,7 @@ CHANGELOG — ArnesJuan
 
 ## [1.36.3] — 2026-10-28 · Hotfix: las quality gates dejan de correr dentro del hook; la puerta de cierre comprueba un veredicto ligado al hash del árbol
 
-> Origen: borrador del `desarrollador` (REQ-037 reescrito, F-137-24; ADR-019, que sustituye a ADR-018) · **sin firmar todavía**: faltan QA, el write-back del analista y seguridad · gobernado por la instalación estable **1.36.2**.
+> Origen: REQ-037 (reescrito, F-137-24; ADR-019, que sustituye a ADR-018) · **firmado**: QA `aprobado` (pasada acotada de SEC-151, `9162a6f`) y seguridad `aprobado` sin veto (R-067, `d2f22b9`), sobre el código de `f900a98` · gobernado por la instalación estable **1.36.2**.
 > **Estas notas no publican nada:** la fusión, el tag y la publicación son del propietario.
 
 **Qué cambia y por qué** (issue #63). Desde 1.36.0, `guard-completado` ejecutaba las quality gates y contaba su tiempo en su plazo propio de 30 s, así que un cierre con todo en orden y unas gates verdes de más de 30 s se denegaba siempre (medido en 1.36.0, 1.36.1 y 1.36.2 con una gate `sleep 35`). Un primer arreglo —un presupuesto de 420 s para las gates dentro del hook— produjo con carga respuestas con dos documentos JSON (el cliente no aplica ese `deny`) y cuelgues, y no se publicó. Ahora:
