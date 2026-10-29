@@ -2,6 +2,14 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-28 · Hotfix 1.36.3: R-067, re-firma de seguridad de REQ-037, `aprobado` sin veto
+> Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: auditor-seguridad (reanudado); registro de la coordinadora.
+
+- **SEC-151 → `mitigado` en `f900a98`**, sin publicar. Lo cierran las dos vías: un archivo grande no ignorado y un `.gitignore` que es una FIFO. Las dos deniegan en ≈ 30,15 s y no queda `git` vivo. El código nuevo no abre ninguna conducta de deny a allow.
+- **SEC-150 y SEC-152:** declarados como pide P-137-AO. Quedan `abierto — límite declarado`, de clase `instrumento` para REQ-037.
+- **Movimientos frente a v1.36.2:** toda conducta de deny a allow es el cierre legítimo, una forma del riesgo (1) o un límite declarado por el propietario. Las conductas nuevas de allow a deny son A7 (proyecto con más de ≈ 6 GiB no ignorados) y A8 (FIFO como `.gitignore`).
+- **Desvío de forma declarado por el auditor en R-067:** en R-066 añadió la revisión al registro con `cat >>`, además de la fila escrita con `python3`. En R-067 editó sólo con `Edit`.
+
 ## [Interno] — 2026-10-28 · Hotfix 1.36.3: QA acotado de SEC-151 (P-137-AO), `aprobado`; en-revisión hasta la re-firma de seguridad
 > Origen: P-137-AO · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: qa-tester (reanudado); registro de la coordinadora.
 
