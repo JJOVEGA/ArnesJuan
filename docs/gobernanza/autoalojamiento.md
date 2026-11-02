@@ -46,8 +46,9 @@ manifiesto, así que la Fase 5 de `/arnes-upgrade` en este repositorio la ejecut
 Ocurre una vez por versión y coincide con el commit en el que ya sube `plugin.json` y
 `marketplace.json`. **Esto es mapeo de este repositorio y no se traslada a las plantillas:** un
 proyecto que instale el arnés decide su propia frontera. Las quality gates del manifiesto son
-rápidas (sintaxis y JSON) porque un hook `PreToolUse` muere a los 60 s y un hook muerto no
-deniega; el banco completo es la puerta de `main` en CI (`hooks-en-linux`, requerido y estricto).
+rápidas (sintaxis y JSON) porque las corre el `qa-tester` en cada cierre (desde 1.36.3 no corren
+en el hook: `tools/arnes-gates.sh` deja un veredicto con el hash del árbol y la puerta sólo lo comprueba;
+un hook `PreToolUse` lo mata el cliente a ≈ 600 s, medido, y un hook muerto no deniega); el banco completo es la puerta de `main` en CI (`hooks-en-linux`, requerido y estricto).
 
 **Cuál es «la plataforma del desarrollador» de `AGENTS.md` §7, porque dejó de ser obvia.** Desde el
 traslado del desarrollo a WSL/Linux (2026-09-05), el banco se corre **aquí**: tarda segundos en vez de

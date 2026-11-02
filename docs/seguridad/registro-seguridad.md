@@ -10834,6 +10834,7 @@ Medido en `04-`: coordinadora con `Write` y `Bash` a `src/` y con la entrada cer
   - un tope a las líneas citadas.
 
   Qué se encarga y en qué entrega lo clasifica la coordinadora. **No aceptado.**
+- **Corrección y estado, R-066 (2026-10-28, REQ-037 CA-11):** el cliente no mata el hook a los 60 s, sino a **≈ 600 s** (medido: CLI 2.1.289, Linux/WSL2; REQ-037, Notas). Por eso «una sola gate que pasa de 60 s» se lee «de ≈ 600 s». Los 60 s de «Medido» son el `timeout` del banco y se quedan como cifra medida. **(a) pasa a `mitigado` en el candidato 1.36.3 (`d89316c`), sin publicar:** las gates ya no corren en el hook. **(b) sin cambio.** El efecto de (a) reaparece por otra vía en SEC-151 (R-066 §4).
 
 ### 8. Observaciones (no hallazgos)
 
@@ -10960,6 +10961,7 @@ Declararlos límite con ficha **no cambia su clase ni su estado**. Es la regla d
 - **Por qué media:** es un fail-open de la puerta de cierre con configuración ordinaria. Depende de que una gate que lee stdin vaya delante de una roja, y es preexistente.
 - **Remediación, por propiedad (L4):** ninguna gate hereda un canal del que el hook lea. Por ejemplo, la lista por otro descriptor o cada gate con la entrada desde `/dev/null`. Con caso de banco y su fail-before.
 - **Decisión del propietario:** reparar en 1.36.0 o declarar el límite para 1.37 (regla 4). P-136-U dice «Nada más entra». **No aceptado.**
+- **Estado, R-066 (2026-10-28): `mitigado` en el candidato 1.36.3 (`d89316c`), sin publicar, por construcción** (REQ-037 CA-06). La puerta no ejecuta gates. La herramienta da a cada gate `/dev/null` y no lee la lista de ninguna entrada estándar. Medido: E1 (`["cat >/dev/null", "false"]`) pasa de `allow` sin decisión en v1.36.2 a `deny` (R-066 §2, A3).
 
 ### 5. SEC-134 — `contrato` (REQ-007, CA-68 y su sede en `AGENTS.md` §13) · **abierto** · severidad **baja** · dueño `analista-requerimientos`
 
@@ -11246,3 +11248,195 @@ Contra R-059 (REQ-032, código de `77b71f7`): los controles de lo protegido sigu
 - **Veredicto:** `Seguridad: aprobado` de REQ-033. SEC-137 y SEC-138 pasan a **`instrumento` respecto de REQ-033**, porque ya están declarados en el contrato y en las notas. **En su sede siguen `abierto`, a 1.37** (SEC-138 incluye el motivo del `deny`, que toca `hooks/`). SEC-136 sigue `en-mitigación`.
 - **Estado de seguridad aprobado de REQ-033** (contra el que se compara la próxima auditoría): el código de `b8d8e46` (blobs en R-060) y las propiedades de «Estado de seguridad aprobado a vigilar» de R-060 §6.
 - **Numeración:** sin cambio; próximos libres **R-061** y **SEC-139**.
+
+## Revisión R-066 — **Hotfix 1.36.3: primera revisión de REQ-037** (las quality gates fuera del hook; la puerta sólo juzga `.arnes/gates-veredicto.json` con el hash del árbol). `hotfix/1.36.3` @ `178eaf0`, código de `d89316c` — 2026-10-28 — **CON HALLAZGOS, SIN FIRMA: SE PARA POR LA REGLA DE P-137-AN**
+
+- **Auditor:** `auditor-seguridad`, modelo efectivo Opus 5.5 (`claude-opus-5-5`).
+- **Numeración:** en esta rama la última era R-060 / SEC-138; en `cand/1.37.0` (`1967188`) la última es R-065 / SEC-149. Para no chocar al fusionar, esta revisión es **R-066** y abre **SEC-150**, **SEC-151** y **SEC-152**. Próximos libres en las dos ramas: **R-067** y **SEC-153**.
+- **Código revisado** (blobs de `d89316c`; `git diff d89316c 178eaf0 -- hooks tools tests` vacío): `hooks/lib.sh` `5748b36`, `hooks/guard-codigo.sh` `23920f5`, `hooks/guard-completado.sh` `fe229e5`, `tools/arnes-gates.sh` `b3ea6f9`. `hooks/hooks.json`, `guard.sh` y `entrada.sh` idénticos a `v1.36.2`. **Línea base:** `v1.36.2` (`46ee7ca`).
+- **Condición de la firma** (propietario, P-137-AN, literal): «el auditor compara contra v1.36.2 y declara por escrito toda conducta que pase de deny a allow; la única admitida es el cierre legítimo con gates en verde y huella vigente, más las formas ya declaradas dentro del riesgo (1).» Y: «Si seguridad encuentra algo que no sea de esta clase, se para y me lo traes.»
+- **Método:** lectura del diff `v1.36.2..d89316c` de `hooks/` y `tools/`; sondas cortas a nivel de hook (`guard.sh` de los dos árboles, exportados con `git archive`, mismo proyecto temporal y misma corrida), con `qa-tester` cerrando por `Edit` el fixture del issue. Guiones y salidas en el scratchpad de la sesión, `…/scratchpad/r066/` (`sondas.sh` → `01-sondas.txt`, `sonda-s10.sh` → `02-s10.txt`, `sonda-e1.sh` → `03-e1.txt`). Evidencia ajena que se lee y no se repite: CA-09 sobre `d89316c` (4 000 cierres, 0 dobles, 0 cuelgues, 0 espurias; `issue-63-f13724-carga-d89316c/resumen.txt`), las sondas de QA de `issue-63-f13724-qa-pasada/` (formas de `Bash` de CA-05 (ii) y QA-037-14) y CA-12 en `docs/qa/REQ-037.md` (el cliente cancela un hook a los 600 000 ms y aplica la llamada aunque la trampa emita su `deny`). Sin cargas largas, sin banco, sin ataques contra nada real.
+
+### 1. Movimientos `deny` → `allow` frente a v1.36.2 — la lista
+
+Cada uno con su juicio contra la condición del propietario. «Admitido» = cierre legítimo con gates en verde y huella vigente, o forma del riesgo (1).
+
+| # | Conducta | v1.36.2 | Candidato | Juicio |
+|---|---|---|---|---|
+| D1 | **M-037-1:** gates verdes de más de 30 s, con veredicto de la herramienta y huella vigente | `deny` (plazo propio) | `allow` | **Admitido.** Es el cierre legítimo. Medido por QA (CA-08 (b): 208 ms, la gate no se ejecuta); el código lo confirma: `guard-completado` no ejecuta gates, sólo `arnes_veredicto_juzga`. |
+| D2 | Gate verde en el entorno de quien lanza la herramienta y roja en el del hook (p. ej. un `PATH` de `nvm` que el hook no tiene) | `deny` | `allow` | **Admitido.** Las gates salieron 0 de verdad sobre ese árbol; el veredicto confía en el entorno de quien la lanza, riesgo (5), aceptado (P-137-AL 3 (A)). |
+| D3 | Tras un verde, cambia un archivo **ignorado** que una gate evalúa (S3) | `deny` | `allow` | **Admitido:** huella vigente según CA-01, que ya declaraba «lo ignorado no entra en el hash» cuando el propietario adoptó la lista «escrita en CA-01» (`22afffb`; el texto estaba desde `125ad50`). |
+| D4 | Tras un verde, cambia una ruta **excluida** que una gate evalúa (`docs/qa/`, S4) | `deny` | `allow` | **Admitido:** es el «límite declarado» de la lista que decidió el propietario (P-137-AL 1 (A)). |
+| D5 | Tras un verde, cambia el contenido de un **repositorio anidado** (S6) | `deny` | `allow` | **Admitido:** límite de CA-01 («sólo por su presencia»), en el texto adoptado. |
+| D6 | Tras un verde, cambia el **destino fuera del árbol** de un enlace simbólico comiteado que una gate sigue (S5) | `deny` | `allow` | **Admitido** (huella vigente: el hash ve el texto del enlace, no lo que hay fuera del proyecto, como cualquier entrada externa de una gate), **pero sin declarar**: SEC-152. |
+| D7 | Formas del riesgo (1): consola del propietario; lo que el detector de `Bash` no ve (comillas, `cd`, globs, llaves, intérpretes, expansiones); y las tres de QA-037-14 (`cp`/`mv`/`install` al directorio `.arnes/`, `link … && rm`, `cp -l`/`--link … && rm`) | `allow` del comando; el registro no existía | verde fabricado → cierre `allow` con gate roja | **Admitido** por P-137-AN (A). Medido por QA (`20-lectura-p137an.txt`). Las variantes mecánicas de los riesgos (2) y (4) —una gate hostil o la herramienta editada que escriben el registro— son escrituras que el detector no ve: misma clase. Y la gate hostil ya tenía un `allow` equivalente en v1.36.2 (D/A6 abajo). |
+| **D8** | **Un cambio transitorio del árbol durante la corrida de la herramienta, deshecho antes del hash final** (S7) | `deny` | **`allow`** | **NO ADMITIDO → SEC-150.** El veredicto dice «verde sobre H» y las gates no corrieron sobre H. No escribe el registro: no es del riesgo (1). |
+| **D9** | **Un veredicto verde caducado (o ya válido) y un archivo no ignorado lo bastante grande como para que el hash del árbol tarde más que el límite del cliente** (S10) | `deny` (≈ 110 ms) | **sin decisión → la llamada se aplica** (extrapolado; ver SEC-151) | **NO ADMITIDO → SEC-151.** No hay verde vigente; la puerta deja de decidir. Nuevo en el candidato: en v1.36.2 el hook no leía el árbol. |
+
+**Sin movimiento en el detector de `Bash` ni en las otras puertas.** Lo nuevo sólo deniega: `arnes_deny_escribe_veredicto` y `arnes_deny_enlaza_veredicto` sólo emiten `deny`; las líneas `ARNES_ENLACE` las separa `_arnes_separa_retiros` en los dos caminos de `arnes_escrituras_de` (también el memorizado) antes de que nadie lea `ARNES_ESCRITURAS`, y sólo las lee `arnes_deny_enlaza_veredicto`. La rama `*) return 1` de `_arnes_casa_patron` no mueve nada hoy: en v1.36.2 los únicos ámbitos llamados son `req`, `codigo` y `manifiesto`, todos con regla (ver O-66-1).
+
+### 2. Movimientos `allow` → `deny` (y «sin decisión» → `deny`)
+
+- **A1 — M-037-2:** cierre con gates sin veredicto, o con veredicto caducado, rojo, de otra lista o ilegible (cambio de compatibilidad, CA-14). Medido: S2, `03-e1.txt`. Incluye la sección 04 del banco.
+- **A2 — M-037-3:** gates de más de ≈ 600 s: ya no dejan al hook sin decisión porque no corren en él. Es cierto **para las gates**; el hash abre otra vía al mismo efecto (SEC-151).
+- **A3 — SEC-133 (E1):** `["cat >/dev/null", "false"]`: v1.36.2 `allow` (sin decisión), candidato `deny` con la roja por nombre. La herramienta da a cada gate `/dev/null` y no lee la lista de ninguna entrada estándar.
+- **A4 — Gate hostil que mata al proceso que la ejecuta** (`["kill -9 $$", "false"]`): v1.36.2 `guard.sh` muere con rc 137 y sin salida (sin decisión: la llamada pasa); candidato: la herramienta muere sin registro y la puerta deniega «no hay veredicto».
+- **A5 — Escribir el registro** por `Edit`/`Write`/`MultiEdit` o por las formas de `Bash` que lo nombran, y `ln`/`ln -s` con él de destino (o de fuente de un enlace duro), a **todo** agente (CA-05 (i)-(ii); medido por QA).
+- **A6 — Sin git** (o hash no medible) con gates: `deny` (CA-01, compatibilidad).
+- **Controles sin movimiento** (S1, S11, S8): el cierre legítimo (`allow` en los dos), `quality_gates: []` (`allow` en los dos) y la misma carrera de D8 hecha **por las gates** (gate 1 cambia, gate 3 restaura: `allow` en los dos).
+
+### 3. SEC-150 — `contrato` (REQ-037: CA-01 título, CA-07) · severidad **media** · **`abierto`** · introducido en su forma por REQ-037, con capacidad equivalente en v1.36.2 · dueño: **decide el propietario** (P-137-AN)
+
+- **Forma:** un proceso que escribe el árbol **después** del hash inicial de la herramienta y lo **restaura antes** del hash final hace que las gates evalúen un contenido distinto del que el registro certifica. La herramienta sólo compara el hash de antes con el de después (`tools/arnes-gates.sh:69-70` y `:89-90`): no ve un cambio deshecho a tiempo.
+- **Reproducción (S7, `01-sondas.txt`):** gates `["sleep 1", "grep -q bien src/a.txt", "sleep 2"]`, árbol comiteado con `src/a.txt` = `mal`. En paralelo, `(sleep 0.4; echo bien > src/a.txt; sleep 1.4; echo mal > src/a.txt) &` y la herramienta. Resultado: herramienta rc 0, registro `[0,0,0]`, árbol final `mal`. Cierre: **candidato `allow`**; **v1.36.2 `deny`** («falló la quality gate») sobre el mismo árbol final.
+- **Lo que no cambia y lo que sí:** la **misma carrera contra la ejecución dentro del hook** de v1.36.2 da `allow` (medido en la misma corrida), y la carrera hecha **por las gates** da `allow` en los dos (S8). La capacidad no es nueva. Lo nuevo es la ventana: ahora es la corrida de la herramienta, que puede lanzar cualquiera y cuando quiera (riesgo (3)), en vez del instante del cierre.
+- **Por qué `contrato`:** el título de CA-01 promete «si corrieron sobre otro contenido la puerta deniega», y CA-07, «si el árbol cambió durante o después, no vale». Ningún límite declarado lo recoge: el riesgo (1) es de escrituras **del registro**, y aquí el registro lo escribe la herramienta legítima.
+- **Por qué media:** no hace falta tocar el registro ni evadir el detector; basta escribir el árbol, que el `desarrollador` puede por oficio. Con suites largas y agentes en paralelo, un «cambio y deshago» de otro agente durante la corrida lo alcanza sin intención. Exige que la restauración caiga dentro de la ventana.
+- **Arreglo: no lo propongo** (regla de P-137-AN: se para y decide el propietario).
+
+### 4. SEC-151 — `contrato` (REQ-037: CA-01 «una puerta que no puede medir no deja pasar», CA-03 «≈ 1 s sea cual sea el proyecto», M-037-3; y la propiedad de REQ-007 CA-68) · severidad **media** · **`abierto`** · **introducido por REQ-037** · dueño: **decide el propietario** (P-137-AN)
+
+- **Forma:** la puerta calcula el hash del árbol **dentro del hook** (`arnes_veredicto_juzga` → `arnes_hash_arbol`, `hooks/lib.sh`, la llamada a `git hash-object --no-filters --stdin-paths`). Esa operación es lineal en los **bytes** de los archivos no ignorados y **no tiene techo**. El plazo propio (30 s) no la interrumpe: es una sola operación externa (el límite que el propio comentario de `arnes_plazo` ya declara). Cuando supera el límite del cliente (≈ 600 s), el cliente cancela el hook y **aplica la llamada sin decisión**, aunque la trampa emita después su `deny` (CA-12, medido por QA en v1.36.0 con la misma trampa que v1.36.2 y el candidato).
+- **Se alcanza** con un veredicto que pase las comprobaciones previas al hash (legible, misma lista y todas en 0; o sea, un verde de cualquier árbol anterior, que es lo normal tras una corrida de QA) y un archivo no ignorado grande. **Un archivo disperso no ocupa disco:** `truncate -s 200G datos.bin`, una orden llana que cualquier agente puede dar fuera de los globs de código. En v1.36.2 la misma situación da `deny` en ≈ 110 ms, porque el hook no leía el árbol.
+- **Medido (S10, `02-s10.txt`;** Linux/WSL2, Ryzen 5 PRO 8540U, `/tmp` en tmpfs, una corrida por punto): veredicto caducado más un archivo disperso de 1 GiB → `deny` en **4 620 ms**; 4 GiB → `deny` en **17 836 ms**; 16 GiB → **no termina** en 60 s (el `timeout 60` de la sonda lo corta; emite el `deny` de la trampa, que el cliente real no aplicaría). Lineal: ≈ **4,5 s por GiB**, así que unos **135 GiB** pasan de 600 s. **No medido:** el punto de 600 s ni el cliente real. **Es extrapolación**, y la declaro como tal. La confirmación a nivel de hook es una carga larga (≈ 15 min) que no lancé: `bash /tmp/claude-1000/-home-juan-dev-ArnesJuan-v1-36/c663bbbc-295c-4125-8a55-fa8b37c80e91/scratchpad/r066/sonda-s10-confirma.sh` (imprime los ms del hook con 200 GiB; más de 600 000 es el caso).
+- **Efecto:** un REQ se cierra con el código cambiado después del último verde, o sea, con gates que pueden estar en rojo. Es el caso `usuario/dinero` de CA-09 («`allow` con veredicto caducado») por otra vía.
+- **De paso, operativo:** CA-03 promete ≈ 1 s «sea cual sea el proyecto», y con datos no ignorados de 1 GiB el cierre ya tarda ≈ 4,6 s. CA-10 midió el árbol de este repositorio y el cociente de duplicación, no el tamaño en bytes.
+- **Por qué `contrato`:** CA-01 y CA-03 prometen que una puerta que no puede medir no deja pasar, y M-037-3 que el hook ya no queda sin decisión. Ningún límite declarado recoge el tamaño del árbol. Es de la familia de SEC-115 y SEC-132: una operación sin techo dentro del hook.
+- **Por qué media:** fail-open de la puerta de cierre con una orden llana, sin escribir el registro. Exige un verde previo de la misma lista y esperar unos diez minutos. Sin intención, sólo con ≥ ~135 GiB de datos no ignorados.
+- **Arreglo: no lo propongo** (regla de P-137-AN).
+
+### 5. SEC-152 — `contrato` (REQ-037, CA-01 «Límites declarados») · severidad **baja** · **`abierto`** · dueño `analista-requerimientos` (declarar)
+
+- **Forma:** un enlace simbólico del árbol entra en el hash por su **texto** (`hooks/lib.sh`, `arnes_hash_arbol`; lo dice el comentario del código, no el REQ). Si apunta **fuera** del proyecto, lo que una gate lee a través de él puede cambiar después del verde sin invalidarlo. Medido (S5): `src/ext → <fuera>/`, gate `grep -q bien src/ext/f.txt`; tras el verde, `f.txt` pasa a `mal`: candidato `allow`, v1.36.2 `deny`.
+- **Juicio:** dentro de la clase admitida (D6): el verde fue cierto al registrarse y la huella está vigente; es una entrada externa de la gate, como la toolchain. Pero CA-01 enumera sus límites (lo ignorado, lo excluido, el repositorio anidado) sin marcarlos **no exhaustivos** y sin este caso. Y el literal del propietario dice «cualquier otro cambio tras las gates invalida el veredicto».
+- **Lo resuelve:** declararlo en CA-01 y en las notas `[1.36.3]` (el destino de un enlace que sale del árbol y, en general, lo que una gate lee fuera del proyecto, por propiedad, no por lista). Sin código.
+
+### 6. Estado de SEC-132 (a) y SEC-133 (CA-06, CA-11)
+
+- **SEC-133 → `mitigado` en el candidato `d89316c`, sin publicar.** Cerrado por construcción: la puerta no ejecuta gates, y la herramienta da a cada una `/dev/null` (`tools/arnes-gates.sh:78`) y no lee la lista de ninguna entrada estándar (la toma de `jq` y la recorre en un array). Medido: E1 pasa de `allow` (sin decisión) a `deny` (A3). La lección L4 sigue viva **en la herramienta**: lo que la gate hereda o escribe no alimenta el veredicto (sólo `rc=$?`).
+- **SEC-132 (a) → `mitigado` en el candidato, sin publicar: deja de ser un vector del hook.** Las gates en serie ya no corren dentro del hook, así que ningún plazo tiene que alcanzarlas. **SEC-132 sigue `abierto` por (b)**, sin cambio (límite declarado, F-136-22, no aceptado). **Advertencia:** el efecto que (a) describía —el hook que se queda sin decisión por una operación sin techo— **reaparece por otra vía en SEC-151**. Cerrar (a) no autoriza a decir que la puerta de cierre ya no puede quedarse sin decisión.
+- **Corrección del texto de SEC-132 (a)** (CA-11), anotada en su entrada de R-056 §7: el cliente no mata el hook a los 60 s sino a **≈ 600 s** (CLI 2.1.289, Linux/WSL2; REQ-037 Notas). Los 60 s de su «Medido» son el `timeout` del banco y se quedan como cifra medida.
+- **SEC-131 (a):** sin cambio de estado (`abierto`, límite declarado, a 1.37). Su superficie pasa del hook a la herramienta: es el riesgo (5), aceptado por el propietario para 1.36.3 (P-137-AL 3 (A)). No se reabre.
+
+### 7. Observaciones (no hallazgos)
+
+- **O-66-1 — Regresión a vigilar en `_arnes_casa_patron`:** la rama nueva `*) return 1` invierte el defecto de un ámbito sin regla, de «todo pertenece» (cerrado) a «nada pertenece» (abierto). Hoy no mueve ninguna decisión, porque todos los ámbitos llamados tienen regla. Un ámbito futuro sin regla abriría en silencio.
+- **O-66-2 — Lo que confirmo de CA-03 y CA-05 por lectura:** el registro se juzga estricto (campos exactos, `rc` entero 0-255 o `null`, hash hexadecimal); el enlace simbólico y el enlace duro de más dan ilegible; ningún estado desconocido cae en `allow` (la rama `*)` de la Gate A3 deniega); el hash sólo se calcula si lo demás está en orden; `git` se invoca con `core.fsmonitor=false`, así que la configuración del repositorio no ejecuta una orden en el hook; un FIFO o un dispositivo entran por presencia y no se leen.
+- **O-66-3 — Dato personal mínimo:** el registro guarda `quien`, texto libre. `.arnes/gates-veredicto.json` no se versiona (ignorado en este repositorio; recomendado a consumidores). Anotado en `gobernanza-datos.md` §2.
+
+### 8. Regresión respecto del estado aprobado
+
+Comparado con R-060 y su adenda (REQ-033, código de `b8d8e46`): toda RETIRADA lleva su marca y se separa antes de juzgar escrituras (ahora también los ENLACES, aparte); `arnes_deny_retira_manifiesto` sigue antes del corte; el origen de `mv` sigue siendo escritura; el `Write` sin contenido del manifiesto sigue denegando. **Sin regresión** de lo aprobado. Lo que sí retrocede respecto de v1.36.2 son D8 y D9 (§1), que no estaban aprobados como límites.
+
+### 9. Veredicto y alcance (`AGENTS.md` §6, regla 2) — **`Seguridad: con-hallazgos` de REQ-037. No firmo: se para por la regla de P-137-AN**
+
+- **No es veto**, y no lo necesita: la regla del propietario ya para la firma, y SEC-150 y SEC-151 son `contrato`.
+- **(i) Acciones impedidas:**
+  - **cerrar** REQ-037: `guard-completado` lee `contrato` en `Hallazgos abiertos:`, y falta `Seguridad: aprobado`;
+  - **publicar** 1.36.3: P-137-AK la ata a «en cuanto QA y seguridad lo validen», y P-137-AN manda parar.
+  - No impide implementar, probar ni comitear la evidencia.
+- **(ii) Parte afectada:** la puerta de cierre (Gate A3: `hooks/guard-completado.sh` y `arnes_veredicto_juzga`/`arnes_hash_arbol` de `hooks/lib.sh`), `tools/arnes-gates.sh` y los textos de CA-01, CA-03, CA-07 y M-037-3.
+- **(iii) Evidencia:** esta revisión, §1, §3 a §5, y `…/scratchpad/r066/01-sondas.txt` y `02-s10.txt` (2026-10-28).
+- **(iv) Lo resuelve:** la **decisión del propietario** sobre SEC-150 y SEC-151 (declararlos o arreglarlos; no propongo arreglo). SEC-152 se resuelve con texto. Con lo que decida, vuelvo a auditar; si hay código nuevo, la comparación contra v1.36.2 se repite entera.
+- **Urgencia:** SEC-151 es un fail-open nuevo de la puerta de cierre. Va a la coordinadora **ahora** para la cola, con la forma de la regla 4. No se guarda como «independiente».
+- **Estados tras R-066:**
+
+| Hallazgo | Clase | Estado | ¿Bloquea algún cierre? |
+|---|---|---|---|
+| **`SEC-150`** | `contrato` (REQ-037) | **`abierto`**, nuevo; decide el propietario | **REQ-037** |
+| **`SEC-151`** | `contrato` (REQ-037) | **`abierto`**, nuevo, introducido por REQ-037; decide el propietario | **REQ-037** |
+| **`SEC-152`** | `contrato` (REQ-037) | **`abierto`**, nuevo; se resuelve declarándolo | **REQ-037** |
+| `SEC-133` | `contrato` (REQ-007) | **`mitigado`** en `d89316c`, sin publicar (por construcción) | sale de los cierres en cuanto se publique |
+| `SEC-132` | `contrato` (REQ-007) | (a) **`mitigado`** en `d89316c`, sin publicar; (b) `abierto` — límite declarado, sin cambio | REQ-007, por (b) |
+| `SEC-131` | `contrato` (REQ-007) | sin cambio (`abierto`, límite declarado; (a) = riesgo (5) aceptado para 1.36.3) | REQ-007 |
+
+- **Estado de seguridad aprobado de REQ-037:** ninguno todavía.
+- **Lo que se vigila desde aquí** (no exhaustivo):
+  - la puerta no ejecuta código del proyecto;
+  - ningún estado del registro distinto de `ok` con hash igual da `allow`;
+  - el registro es un archivo regular de un solo enlace;
+  - las escrituras y los `ln` que lo nombran se deniegan a todo agente;
+  - las RETIRADAS y los ENLACES se separan antes de juzgar escrituras;
+  - las gates leen `/dev/null`.
+- **`docs/seguridad/gobernanza-datos.md`:** una línea en §2 (O-66-3).
+
+## Revisión R-067 — **Hotfix 1.36.3: re-firma de REQ-037 tras P-137-AO** (SEC-151 reparado: la huella tiene presupuesto propio; SEC-150 y SEC-152 declarados). `hotfix/1.36.3` @ `9162a6f`, código de `f900a98` — 2026-10-28 — **APROBADO**
+
+- **Auditor:** `auditor-seguridad`, el mismo de R-066, reanudado (P-137-AO). Modelo efectivo: Opus 5.5 (`claude-opus-5-5`).
+- **Numeración:** **R-067**; no abre hallazgos. Próximos libres en las dos ramas: **R-068** y **SEC-153**.
+- **Decisión del propietario** (P-137-AO, literal en `PENDING_APPROVAL.md` § Resueltas): «SEC-151 se repara en 1.36.3: el cálculo de la huella tiene un presupuesto propio (orden de decenas de segundos, muy por debajo del límite medido del cliente); si no termina, deny con motivo propio. […] SEC-150 y SEC-152: se declaran en las notas de 1.36.3. Si SEC-151 no cierra en esa pasada, 1.36.3 no se publica.» **La condición de la firma de P-137-AN no cambia.**
+- **Código revisado:** `git diff d89316c f900a98 -- hooks tools` toca sólo `hooks/lib.sh` (`arnes_hash_arbol` pasa a ser el corte; `_arnes_hash_proceso` y `_arnes_hash_calcula`; el estado `presupuesto` en `arnes_veredicto_juzga`) y `hooks/guard-completado.sh` (la rama `presupuesto)` de la Gate A3, que deniega). `tools/` sin cambio. `git diff f900a98 9162a6f -- hooks tools tests` vacío. Lo demás de R-066 (blobs, línea base `v1.36.2`) vale sin repetirlo.
+- **Método:** lectura del diff y sondas cortas. Guiones y salidas en `…/scratchpad/r067/`:
+  - a nivel de hook, `sondas.sh` → `03-sondas.txt`;
+  - a nivel de librería, con el presupuesto bajado **después** de cargarla para que el corte caiga en la fase de `readlink`, que no se anuncia: `sonda-orfanos.sh`, `sonda-fases.sh` y `sonda-orf2.sh` → `01-orfanos.txt` y `02-fases.txt`.
+  - La sonda de 200 GiB sobre los dos árboles la lanzó la coordinadora (`r066/04-s10-confirma.txt`, `s151/05-s10-arreglo.txt`), y las de QA están en `qa-s151/`. Se leen y no se repiten.
+
+### 1. SEC-151 — **cierra. `mitigado` en el candidato `f900a98`, sin publicar**, con sus dos vías
+
+- **(a) El archivo grande no ignorado** (la vía de R-066). La coordinadora midió con 200 GiB dispersos `d89316c` → `deny` a los **923 826 ms**. Ese tiempo pasa de los ≈ 600 s del cliente, que aplica la llamada sin decisión (CA-12), así que el fail-open queda **confirmado**, ya no extrapolado. Con el arreglo: `deny` en **30 152 ms**.
+  - Medí aparte (S10, `03-sondas.txt`) un veredicto caducado con 64 GiB dispersos y `ARNES_HASH_PRESUPUESTO_S=1000` en el entorno del hook: `deny` «la huella del arbol no se calculo dentro del presupuesto propio» en **30 153 ms**, sin `git` vivo después. El entorno no mueve el valor, porque la asignación de `lib.sh` pisa la heredada.
+  - v1.36.2: `deny` en 113 ms. **Sin movimiento** frente a la línea base.
+- **(b) Un `.gitignore` que es una FIFO** (vía hallada por el desarrollador, registrada aquí con SEC-151). `git ls-files --exclude-standard` la abre y espera para siempre. En `d89316c`, con un verde previo, el hook quedaba sin decisión.
+  - Medido (S12): candidato `deny` por presupuesto en **30 158 ms**, sin `git` vivo.
+  - v1.36.2 `allow` (la gate verde corre en el hook): es un **`allow` → `deny`** (A8, §3).
+- **La herramienta** usa la misma función: con un árbol que pasa del presupuesto sale con rc 2 y **no escribe veredicto** (S10b: el registro anterior se retira y no se escribe otro).
+- **Revisión del corte (¿abre algo?) — no:**
+  - `arnes_hash_arbol` devuelve 0 **sólo** con una línea `H <hex>` del proceso propio. Una `H` vacía o no hexadecimal, otra línea fuera del protocolo, el fin sin resultado, el corte o una sustitución que no se crea dan 2 o 1, y la puerta deniega en los dos casos (`presupuesto`, `nomedible`).
+  - Ningún código del proyecto escribe en el canal del protocolo: los dos `git` largos lo heredan cerrado (`{ARNES_HASH_FD}>&-`), `fsmonitor` sigue desactivado y `hash-object --no-filters` no ejecuta filtros.
+  - Los motivos van en una línea `M` sin saltos, y un nombre de archivo dentro de ella no se lee como `H`.
+  - El corte usa `KILL`, que no ejecuta la trampa heredada. No se reproduce la causa de QA-037-01 (dos documentos por una trampa que corre en un hijo): esa nacía de `TERM`.
+  - El drenaje acaba a 1 s de silencio aunque un huérfano retenga el canal.
+  - Medido a nivel de librería, con el corte durante los `readlink` (40 000 enlaces, presupuestos de 1 a 8 s): rc 2 en el presupuesto **+ < 0,5 s**, sin `readlink` ni subshell vivos después, y con la salida entubada liberada.
+  - `SECONDS` cuenta en segundos enteros, así que el presupuesto efectivo es de 29 a 30 s. Eso es corte antes, no después: falla cerrado.
+- **Cota del hook:** plazo del análisis (30 s) + presupuesto de la huella (30 s) + drenaje (≤ 1 s) ≈ **61 s**, diez veces por debajo de los ≈ 600 s del cliente.
+- **No medido:** el `KILL` a un `git.exe` nativo en Git Bash/Windows. Por lectura, no abre: el drenaje acaba a 1 s y la puerta deniega igual. Lo que no está demostrado es que no quede un `git.exe` huérfano consumiendo CPU. Ya está declarado en CA-01 y en el comentario del código.
+
+### 2. SEC-150 y SEC-152 — **declarados como pide la decisión**
+
+- **SEC-150:** en CA-01 («Dos límites más», con el título del criterio acotado), en CA-07 («si el árbol cambió durante o después» vale sólo cuando sigue cambiado en el hash final) y en las notas `[1.36.3]` de `CHANGELOG.md`. También en `AGENTS.md` §13 y su plantilla, en ADR-019 y en la skill. Dicen la medida y la carrera equivalente de v1.36.2. **Conforme.**
+- **SEC-152:** en CA-01, por **propiedad** («todo lo que una gate lee fuera del proyecto, la toolchain incluida»), con la lista marcada **no exhaustiva**, y en las notas `[1.36.3]`. **Conforme.**
+- **Estado:** los dos quedan **`abierto` — límite declarado**, no aceptados, y pasan a **`instrumento` respecto de REQ-037**, porque ya están en el contrato y en las notas (la misma regla que la adenda de R-060). No hay vehículo de arreglo fijado: lo decide el propietario.
+
+### 3. Lista `deny` → `allow` frente a v1.36.2, rehecha sobre `f900a98`
+
+| # | Conducta | v1.36.2 | Candidato | Juicio |
+|---|---|---|---|---|
+| D1 | M-037-1: gates verdes de más de 30 s con huella vigente | `deny` | `allow` | **admitido** (cierre legítimo); S1 control, 106 ms |
+| D2 | Verde en el entorno de quien lanza la herramienta, rojo en el del hook | `deny` | `allow` | **admitido** (riesgo (5), P-137-AL 3 (A)) |
+| D3 | Cambio de un archivo ignorado tras el verde | `deny` | `allow` | **admitido** (límite de CA-01 adoptado) |
+| D4 | Cambio de una ruta excluida tras el verde | `deny` | `allow` | **admitido** (P-137-AL 1 (A)) |
+| D5 | Cambio dentro de un repositorio anidado tras el verde | `deny` | `allow` | **admitido** (límite de CA-01) |
+| D6 | Cambio fuera del árbol al que lleva un enlace simbólico (SEC-152) | `deny` | `allow` | **admitido**, ahora **declarado** (P-137-AO) |
+| D7 | Formas del riesgo (1), con las tres de QA-037-14 | — | verde fabricado → `allow` | **admitido** (P-137-AN (A)) |
+| D8 | Cambio transitorio durante la corrida, deshecho antes del hash final (SEC-150) | `deny` | `allow` | ya no dispara la parada: **lo decidió el propietario** (P-137-AO, «se declaran») y está **declarado**. Sigue abierto, no aceptado |
+| D9 | Veredicto caducado y un árbol cuya huella no termina (archivo grande, FIFO) | `deny` / `allow` | **`deny`** a ≈ 30 s | **cerrado (SEC-151).** Deja de ser un `deny` → `allow`: el archivo grande no se mueve, y la FIFO pasa de `allow` a `deny` |
+
+**El código nuevo no introduce ninguna conducta `deny` → `allow` ni ningún fallo abierto** (§1, revisión del corte). Ninguna conducta queda fuera de la clase admitida o ya decidida: **no se aplica la regla de parada.**
+
+### 4. `allow` → `deny`: los de R-066 §2 (A1 a A6), más dos nuevos
+
+- **A7 — Un cierre legítimo en un proyecto con más de ≈ 6 GiB de contenido no ignorado** (a ≈ 4,5 s/GiB, Linux/WSL2; en una máquina o un sistema de archivos más lento, menos): la puerta deniega **siempre**, con el motivo `presupuesto`, que dice cómo salir (ignorar lo que no es del producto). La herramienta sale con rc 2 sin escribir veredicto. En v1.36.2 cerraba si las gates salían 0. Es un cambio de compatibilidad; está declarado en CA-01, CA-14 y las notas `[1.36.3]`.
+- **A8 — Un `.gitignore` que es una FIFO**, con gates verdes: v1.36.2 `allow`, candidato `deny` por presupuesto (S12).
+
+### 5. Regresión y veredicto
+
+- **Regresión** frente a R-066 §9 («lo que se vigila»): se mantiene todo. La puerta no ejecuta código del proyecto. Ningún estado distinto de `ok` con hash igual da `allow`, y el nuevo, `presupuesto`, deniega. El registro sigue siendo de un solo enlace. Las escrituras y los `ln` que lo nombran se siguen denegando. Las RETIRADAS y los ENLACES se separan antes de juzgar escrituras. Las gates leen `/dev/null`. Controles S1 (`allow` en los dos) y S2 (caducado normal: `deny` en 111 ms).
+- **Veredicto: `Seguridad: aprobado` de REQ-037**, sobre el código de `f900a98` (cabeza `9162a6f`). Se cumple la condición de P-137-AN: toda conducta que pasa de `deny` a `allow` frente a v1.36.2 está en §3, y cada una es el cierre legítimo, una forma del riesgo (1) o un límite que el propietario decidió declarar (D8, D6). Se cumple la de P-137-AO: SEC-151 cierra en esta pasada.
+- **Sin veto.** `Hallazgos abiertos:` de REQ-037 queda con QA-037-08, SEC-150 y SEC-152, los tres `instrumento`: ninguno impide **cerrar**. Esta firma no impide **publicar**.
+- **Estados tras R-067:**
+
+| Hallazgo | Clase | Estado | ¿Bloquea algún cierre? |
+|---|---|---|---|
+| `SEC-151` | `contrato` (REQ-037) | **`mitigado`** en `f900a98`, sin publicar (vías (a) y (b)) | no |
+| `SEC-150` | **`instrumento`** respecto de REQ-037 | **`abierto` — límite declarado** (P-137-AO), no aceptado | no |
+| `SEC-152` | **`instrumento`** respecto de REQ-037 | **`abierto` — límite declarado** (P-137-AO), no aceptado | no |
+| `SEC-133` | `contrato` (REQ-007) | `mitigado` en el candidato, sin publicar (R-066 §6) | — |
+| `SEC-132` | `contrato` (REQ-007) | (a) `mitigado` en el candidato; (b) `abierto` — límite declarado | REQ-007, por (b) |
+
+- **Estado de seguridad aprobado de REQ-037** (contra el que se compara la próxima auditoría):
+  - el código de `f900a98` (`hooks/lib.sh`, `hooks/guard-completado.sh`; `hooks/guard-codigo.sh` `23920f5` y `tools/arnes-gates.sh` `b3ea6f9` como en R-066);
+  - las propiedades de R-066 §9;
+  - y además: **la huella tiene un presupuesto fijo que ninguna variable del entorno cambia; todo lo que no sea un hash completo del proceso propio deniega; el corte es con `KILL` y no deja procesos vivos**.
+- **Lo que no se revisó:** Windows/Git Bash (§1), el banco completo (QA: 3032/1/33, el FAIL es de reloj, QA-037-08) y la carga de CA-09 sobre `f900a98`. P-137-AO no la pide. La de `d89316c` no tocaba el hash con el corte.
+- **`docs/seguridad/gobernanza-datos.md`:** sin cambios.
+- **Corrección de método de R-066, declarada:** R-066 se añadió al final de este registro con una redirección (`cat >>`), y la fila de Historial de REQ-037 se escribió con `python3`. Son formas que la puerta de `Bash` no ve. El contenido es el que habrían dejado `Edit`/`Write`, pero en adelante uso sólo `Edit`/`Write`, como en esta revisión.

@@ -249,12 +249,12 @@ no más de 40 s, salvo sus residuales; la propiedad, esos residuales y sus lími
 REQ-007 CA-68 del mismo repositorio,
 en `AGENTS.md` §13, cláusula 1, y en las notas de 1.36.0. *(Medido en 1.35.0, y historia de esa
 versión:)* **Esa denegación se promete hasta lo medido, y no más allá**, porque el hook tiene que
-decidir dentro del límite del cliente (60 s) y un hook muerto no deniega. Medido en Linux/WSL2, una
+decidir dentro del límite del cliente (**≈ 600 s medido en 1.36.3**: CLI 2.1.289, Linux/WSL2, sin `timeout` explícito; el «60 s» que daba este texto era falso) y un hook muerto no deniega. Medido en Linux/WSL2, una
 corrida por punto, hook entero, lista no exhaustiva: 60 006 bytes → deniega por tamaño en 0,21 s;
 255 371 bytes → 0,31 s por `Edit` y `MultiEdit` y 1,6 s por `Write`. Por encima de 255 371 bytes **no
 hay promesa**: por `Edit` sigue siendo lineal (2 000 000 bytes → 2,1 s), pero por `Write` el contenido
 entrante pasa antes por otra operación del hook que crece más que linealmente (1 000 000 bytes →
-28 s; 2 000 000 → 84 s, por encima de los 60 s del cliente). En Windows/MSYS no está medido y será más lento.
+28 s; 2 000 000 → 84 s, por encima del `timeout` de 60 s del banco que lo midió; el cliente corta a ≈ 600 s). En Windows/MSYS no está medido y será más lento.
 Ese residuo tiene dueño y vencimiento en el `docs/PENDIENTES.md` del repositorio del arnés. En 1.35.0
 era una limitación aparte de la regla —SEC-115 del mismo repositorio, `mitigado` en 1.36.0 (arriba)— y
 no formaba parte de lo que la regla promete.

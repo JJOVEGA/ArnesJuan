@@ -9,11 +9,13 @@ PISO_AUTONOMO_SECCION=21  # 8 preámbulo + 0 maquinaria compartida duplicada + 1
 
 # El manifiesto real de un proyecto declara objetos {nombre, comando}; la plantilla
 # (templates/arnes-config.json.tpl) no fija la forma. El hook debe aceptar AMBAS.
+# Desde REQ-037 la puerta no ejecuta las gates: sin veredicto de la herramienta, la verde también deniega (M-037-2,
+# cambio de compatibilidad); el veredicto, con su lista leída con la misma expresión, lo mide la sección 53.
 setgates '.quality_gates = [{"nombre":"Verde","comando":"true"}]'
-check "quality_gates como objetos, en verde -> allow" allow guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-001.md" "" "" '' 'Estado: completado')"
+check "quality_gates como objetos, en verde y sin veredicto -> deny (M-037-2)" deny guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-001.md" "" "" '' 'Estado: completado')"
 setgates '.quality_gates = [{"nombre":"Roja","comando":"false"}]'
 check "quality_gates como objetos, en rojo -> deny"   deny  guard-completado.sh "$(emite_edit_lit "$PROJ/requirements/REQ-001.md" "" "" '' 'Estado: completado')"
-setgates '.quality_gates = ["true"]'
+setgates '.quality_gates = []'
 
 # En Windows el file_path llega como `C:\proj\src\a.ts` mientras que la raíz del
 # proyecto puede llegar en forma MSYS `/tmp/...`. Sin normalizar, la resta del

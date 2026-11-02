@@ -514,6 +514,10 @@ misma. Lleva **dos** salidas de ventana y cero líneas de código tocadas.
 *(REQ-023 ya no está en esta lista: salió de la ventana el 2026-09-08.)*
 
 ## Bloqueos
+- **REQ-037 (hotfix 1.36.3) `bloqueado` desde el 2026-10-28** (qa-tester). La única pasada fuera del tope (P-137-AL) cerró
+  QA-037-11 y QA-037-13. Pero QA-037-14 (`contrato`) sigue abierto: `cp`, `mv` o `install` de un verde falsificado al
+  **directorio** `.arnes/`, y `link` o `cp -l` seguidos de `rm`, fabrican un verde que la puerta acepta. Escalado en
+  `PENDING_APPROVAL.md` § Pendientes; lo decide el propietario.
 - **La fusión está bloqueada por `CA-18`** (punto 2 de arriba). No es un bloqueo de decisión: está
   autorizado y sólo falta hacerlo. Verificado en CI el 2026-09-08 a las 17:59: es el **único** rojo del
   árbol — `Autoprueba: 72 PASS, 1 FAIL`, y el FAIL nombra los tres archivos (`848 / 678 / 722`).

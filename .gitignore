@@ -14,6 +14,9 @@ node_modules/
 # Marcador que crea /arnes-init en cada proyecto (no pertenece al plugin)
 .arnes-initialized
 
+# El veredicto de las quality gates que escribe tools/arnes-gates.sh (REQ-037): ligado al hash del árbol, no se versiona
+.arnes/gates-veredicto.json
+
 # Config local de Claude Code (específica de cada máquina/sesión)
 .claude/settings.local.json
 

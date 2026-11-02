@@ -72,11 +72,14 @@ JOBS="${ARNES_JOBS:-6}"
 ERRLOG="$(mktemp)"   # el despachador da uno propio a cada seccion
 trap 'rm -rf "$RAIZ"; rm -f "$ERRLOG"' EXIT
 
+# SIN quality gates (REQ-037, 1.36.3): la puerta ya no las ejecuta, pide su veredicto ligado al hash del árbol, y
+# los proyectos del banco no son repositorios git. Hasta 1.36.2 la base llevaba `["true"]`, una gate que pasaba
+# siempre; su equivalente ahora es no tener gates. Lo que mide las gates y su veredicto vive en la sección 53.
 MANIFIESTO_BASE='{
   "agentes": { "agente_codigo": "desarrollador",
                "conocidos": ["analista-requerimientos","desarrollador","qa-tester","auditor-seguridad"] },
   "codigo_app": { "globs": ["src/*", "app/*"] },
-  "quality_gates": ["true"],
+  "quality_gates": [],
   "estados": { "completado": "completado" },
   "requirements_dir": "requirements",
   "pending_approval": "PENDING_APPROVAL.md"
@@ -408,8 +411,9 @@ ver_check() {
 # `timeout tope_s` —si no responde, FAIL (a): un hook muerto no decide, y el cliente lo trata
 # como si no hubiera hook—; (b) la decision que recibe el entorno (`permissionDecision`, o su
 # ausencia = allow); (c) si el archivo quedo modificado. El tope es OPERATIVO, no un reloj
-# contratado: esta por debajo de los 60 s del cliente para que el caso no espere a un hook
-# muerto, y la duracion medida se imprime para anotar el margen.
+# contratado: es del banco, no el limite del cliente (que mata el hook a los ≈ 600 s medidos,
+# REQ-037), para que el caso no espere a un hook muerto, y la duracion medida se imprime para
+# anotar el margen.
 check_efecto() {
   local nombre="$1" esperado="$2" f="$3" json="$4" est_esp="$5" patron="${6:-}" tope="${7:-}" \
         out got motivo txt os ns k n est dur=''
@@ -1712,7 +1716,21 @@ done
 # 53 FAIL. Ninguna otra sección cambia su número.
 # Y 2862 → 2960 por el hotfix 1.36.2 (REQ-033): +98 de la sección 49 nueva —44 filas × 2 árboles (candidata y v1.36.1,
 # e21baef), más PROC y RELOJ de CA-06 por rama (5 ramas × 2, pasada correctiva QA-033-01)—. Ninguna otra sección cambia su número.
-CASOS_ESPERADOS=2960
+# Y 2960 → 3022 por el hotfix 1.36.3 (REQ-037): +62 de la sección 53 nueva —23 filas × 2 árboles (candidata y v1.36.2,
+# 46ee7ca), P1–P6 sólo en la candidata, M de CA-07 en los dos y PROC y RELOJ de CA-06 por rama (4 ramas × 2)—.
+# Ninguna otra sección cambia su número.
+# Y 3022 → 3028 por la pasada correctiva de REQ-037: +6 en la 53 (62 → 68) —E1 en los dos árboles (P-137-AD (2)), y
+# R1, R2 y R3 con la gate `false` y con `true` en la candidata (QA-037-01)—. Ninguna otra sección cambia su número.
+# Y 3028 → 3047 por REQ-037 reescrito (F-137-24, las gates fuera del hook): la 53 se rehace (68 → 87) —G1, C1–C4, M2 y
+# las 13 formas de CA-05 en los dos árboles; A1–A9, L1–L7, MK, los vectores de CA-06 sobre la herramienta, H1–H7, D y el
+# coste de CA-10 en la candidata—; se retiran P1–P6, R1–R3, A2, M, G1–G6 y B1–B2 del diseño anterior. Ninguna otra
+# sección cambia su número.
+# Y 3047 → 3062 por la pasada correctiva de F-137-24: +15 en la 53 (87 → 102) —L8 y L9 (el registro enlazado), O1–O3 (gates
+# en forma de objeto, QA-037-13) en la candidata, y cuatro formas de `ln` y el control `unlink` en los dos árboles
+# (QA-037-11)—. Ninguna otra sección cambia su número.
+# Y 3062 → 3066 por SEC-151 (P-137-AO): +4 en la 53 (102 → 106) —S1 y S2 (la huella con presupuesto propio: archivo disperso
+# y `.gitignore` FIFO), S3 (sin huérfanos) y S4 (el corte falla cerrado)—. Ninguna otra sección cambia su número.
+CASOS_ESPERADOS=3066
 # Con FILTRO o con una corrida parcial el total no puede cuadrar por definición: se
 # suspende DICIÉNDOLO. Un cuadre que aborta en falso se acaba comentando, y un cuadre
 # que se salta en silencio es el que dejó pasar una sección entera sin ejecutar.
