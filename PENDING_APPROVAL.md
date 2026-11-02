@@ -45,6 +45,17 @@
 
 ## Resueltas
 
+### RESUELTA (propietario, 2026-10-29) — **P-137-AQ**: se publica 1.36.3; la subida del `Write` vacío del manifiesto y la de las medianas se declaran con sus cifras y van a 1.37 como ficha de coste
+
+> Se publica 1.36.3. El Write vacío del manifiesto (+1,185× en reposo, ~6 ms)
+> y la subida de las medianas en las cuatro ramas (camino común +4,6 ms) se
+> declaran en las notas con sus cifras y van a 1.37 como ficha de coste:
+> medir cuánto añade cargar el lib.sh más grande en cada hook y recuperarlo
+> (pieza c o spike de mod). La sección 49 del banco de 1.37 ya aplica
+> INCONCLUSO a estas sondas en el CI.
+
+- **Registro de la coordinadora:** las notas `[1.36.3]` de `CHANGELOG.md` llevan las dos cifras (`Write` vacío 1,185×, ≈ 6,5 ms en mínimos; medianas de +2,7 a +7,3 ms, camino común +4,6) y la remisión a 1.37. La ficha es **F-137-27**, en `docs/PENDIENTES.md` de `cand/1.37.0`. Comprobado que en `cand/1.37.0` la sección 49 (`tests/escenarios/hooks/secciones/49-manifiesto-y-origen-de-mv.sh`) da `SKIP [INCONCLUSO] [rendimiento]` a la sonda de reloj que pasa su techo (P-137-K), en cualquier entorno. En este hotfix sigue dando FAIL; por eso el CI del PR #64 seguirá en rojo con esos cuatro casos, ya declarados.
+
 ### RESUELTA (propietario, 2026-10-29) — **P-137-AP**: los 4 FAIL de reloj del CI del PR #64 se deciden con una medición dirigida en reposo; con el camino común del candidato en ≤ 1,10× frente a v1.36.2, se publica y se declaran `instrumento`
 
 > CI del PR #64 (run 40897033461): 4 FAIL, todos REQ-033 RELOJ CA-06; el

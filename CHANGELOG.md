@@ -338,8 +338,9 @@ CHANGELOG — ArnesJuan
   | `Write` vacío | 1,185× | **1,376×** |
 
   La regla del propietario: si el camino común queda en ≤ 1,10× frente a v1.36.2, es ruido del runner.
-- **`Write` vacío del manifiesto supera su techo operativo también en reposo:** 1,376× frente a v1.36.1, del que 1,161× ya estaba en v1.36.2. En mínimos son ≈ 41,9 ms frente a 30,4 ms (v1.36.1) y 35,3 ms (v1.36.2).
-- **Las medianas del candidato salen más altas** que las de v1.36.2 en las cuatro ramas; en el camino común, 32,0 frente a 27,4 ms.
+- **`Write` vacío del manifiesto supera su techo operativo también en reposo:** 1,376× frente a v1.36.1, del que 1,161× ya estaba en v1.36.2. En mínimos son ≈ 41,9 ms frente a 30,4 ms (v1.36.1) y 35,3 ms (v1.36.2): el candidato añade **1,185×, ≈ 6,5 ms**.
+- **Las medianas del candidato salen más altas** que las de v1.36.2 en las cuatro ramas: camino común 32,0 frente a 27,4 ms (**+4,6 ms**); `mv` con origen protegido 51,0 frente a 45,2 ms (+5,7); `Write` con contenido 42,6 frente a 35,2 ms (+7,3); `Write` vacío 43,3 frente a 40,6 ms (+2,7).
+- **Las dos subidas se declaran y van a 1.37 como ficha de coste** (P-137-AQ, 2026-10-29; F-137-27): medir cuánto añade cargar el `hooks/lib.sh` más grande en cada hook y recuperarlo, en la pieza c o en el spike de mod. En 1.37, la sección 49 del banco ya da `INCONCLUSO` de rendimiento, no FAIL, a una sonda de reloj operativa que pasa su techo (P-137-K).
 
 **Riesgo declarado y aceptado por el propietario para 1.36.3** (P-137-AL, 2026-10-28; QA-037-12; REQ-037 CA-05, riesgo (5)): **el veredicto confía en quien lanza la herramienta, entorno incluido.** Un `PATH` con una orden falsa o una función exportada con el nombre de una orden que la herramienta usa dan un **verde con hash válido**, como la escritura por consola o por una forma que el detector de `Bash` no ve (riesgo (1)). Es la misma superficie de SEC-131 (a), que pasa del hook a la herramienta: **ya no es «sin cambio»**. El endurecimiento —que sólo `qa-tester` y la coordinadora lancen la herramienta, y que ésta no confíe en el entorno heredado— va a **1.37** (ficha F-137-24-B). Además, un registro **enlazado** (simbólico o con más de un enlace duro) se juzga ilegible, y `ln` y `ln -s` sobre el registro se deniegan (QA-037-11).
 
