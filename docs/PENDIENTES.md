@@ -2588,3 +2588,18 @@ ninguna mata al hook.»
 - **Decisión del propietario (P-137-AI, 2026-10-28), literal:** «SEC-146, SEC-147 y SEC-148: instrumento, registrados; SEC-148 va a 4b.»
 - **Familia:** QA-036-08, QA-036-12 y PR-137-3. En esta ventana, QA y el desarrollador no completaron la lectura de sus archivos por rol («por presupuesto»; ≈ 100 KB cada uno).
 - **Dueño:** la coordinadora y `analista-requerimientos`. **Cuándo:** 1.37 · 4b.
+
+### F-137-27 — Coste de 1.36.3: cuánto añade cargar el `hooks/lib.sh` más grande en cada hook, y recuperarlo (coste, no seguridad; va a la pieza c o al spike de mod)
+- **Decisión del propietario (P-137-AQ, 2026-10-29), literal:** «Se publica 1.36.3. El Write vacío del manifiesto (+1,185× en reposo, ~6 ms) y la subida de las medianas en las cuatro ramas (camino común +4,6 ms) se declaran en las notas con sus cifras y van a 1.37 como ficha de coste: medir cuánto añade cargar el lib.sh más grande en cada hook y recuperarlo (pieza c o spike de mod). La sección 49 del banco de 1.37 ya aplica INCONCLUSO a estas sondas en el CI.» El texto completo y el registro están en `PENDING_APPROVAL.md` de `hotfix/1.36.3`.
+- **Las cifras de partida** (medición dirigida en reposo de P-137-AP, 2026-10-29; las entradas de la sección 49, mínimo de 10 corridas con los árboles alternados; evidencia `issue-63-plazo-gates/pr64-reloj/`):
+
+  | Rama | Mínimo frente a v1.36.2 | Mediana v1.36.2 → 1.36.3 |
+  |---|---|---|
+  | Camino común | 1,086× | 27,4 → 32,0 ms (+4,6) |
+  | `mv` con origen protegido | 1,044× | 45,2 → 51,0 ms (+5,7) |
+  | `Write` del manifiesto con contenido | 1,101× | 35,2 → 42,6 ms (+7,3) |
+  | `Write` vacío del manifiesto | **1,185×** (35,3 → 41,9 ms) | 40,6 → 43,3 ms (+2,7) |
+
+- **Hipótesis, no medida:** el coste viene de cargar en cada hook un `hooks/lib.sh` que creció con F-137-24 (el veredicto, la huella y su presupuesto propio): 227 710 B en v1.36.1, 232 843 B en v1.36.2 y 255 844 B en 1.36.3 (+9,9 % sobre v1.36.2). La ficha empieza por medirlo: la carga de `lib.sh` sola, por versión, separada del resto del hook.
+- **Hecho cuando** se sabe cuánto añade la carga y se ha recuperado, o se ha declarado con su cifra por qué no se recupera.
+- **Dueño:** la coordinadora; el desarrollador para el arreglo. **Cuándo:** 1.37, en la pieza c o en el spike de mod (1.37 · 5).

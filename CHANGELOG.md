@@ -2,6 +2,12 @@ CHANGELOG — ArnesJuan
 
 > Bitácora de versiones del plugin. SemVer; cada versión tiene su tag `vX.Y.Z`.
 
+## [Interno] — 2026-10-29 · F-137-27: ficha de coste de 1.36.3 (P-137-AQ)
+> Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
+
+- **La decisión del propietario** (P-137-AQ, en `hotfix/1.36.3`): se publica 1.36.3. La subida del `Write` vacío del manifiesto (1,185× en reposo) y la de las medianas de las cuatro ramas se declaran en sus notas y van a 1.37.
+- **`docs/PENDIENTES.md`, F-137-27:** medir cuánto añade cargar el `hooks/lib.sh` más grande en cada hook y recuperarlo, en la pieza c o en el spike de mod. Lleva las cifras de partida de la medición de P-137-AP.
+
 ## [Interno] — 2026-10-28 · Ajuste a P-137-AM: reanudar al mismo agente sólo con contexto de menos de ~150 k
 > Origen: Interno · usuario: Juan · modelo de IA: Opus 5.5 (`claude-opus-5-5`) · agente: coordinadora.
 
